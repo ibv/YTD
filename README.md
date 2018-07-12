@@ -7,6 +7,7 @@ Nástroj pro stahování videa z YouTube a dalších webových úložišť videa
 z příkazové řádky, odkud přijme libovolný počet URL ke stažení, případně
 soubor se seznamem URL. Soubory ukládá pod název z YouTube, preferuje
 HD video, pokud je k dispozici.
+Původní verzi autor Pepak již neudržuje, odkaz zde http://www.pepak.net/ytd/ytd/
 
 
 
