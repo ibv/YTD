@@ -1,0 +1,39 @@
+asmrule.o asmrule.o: asmrule.c \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h \
+  msdllib.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h \
+  display.h asmrule.h
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h:
+
+msdllib.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h:
+
+display.h:
+
+asmrule.h:

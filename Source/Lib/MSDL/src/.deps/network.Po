@@ -1,0 +1,222 @@
+network.o network.o: network.c \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/errno.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/fcntl.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/time.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/time.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsock2.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windows.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windef.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnt.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winerror.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetsd.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack4.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/poppack.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wincon.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winbase.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wingdi.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winuser.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnls.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winver.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnetwk.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winreg.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsvc.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cderr.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dde.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ddeml.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dlgs.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/imm.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/lzexpand.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/mmsystem.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/nb30.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpc.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdce.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetyps.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdcep.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsi.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnterr.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/shellapi.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack2.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winperf.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/commdlg.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unknwn.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objfwd.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wtypes.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcndr.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsip.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/prsht.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winspool.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ole2.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objbase.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objidl.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cguid.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/olectlid.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleauto.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oaidl.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleidl.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ws2tcpip.h \
+  _mingw_network.h msdl.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h \
+  msdllib.h display.h network.h url.h
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/errno.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/fcntl.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/time.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/time.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsock2.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windows.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windef.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnt.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winerror.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetsd.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack4.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/poppack.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wincon.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winbase.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wingdi.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winuser.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnls.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winver.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnetwk.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winreg.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsvc.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cderr.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dde.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ddeml.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dlgs.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/imm.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/lzexpand.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/mmsystem.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/nb30.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpc.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdce.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetyps.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdcep.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsi.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnterr.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/shellapi.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack2.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winperf.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/commdlg.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unknwn.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objfwd.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wtypes.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcndr.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsip.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/prsht.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winspool.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ole2.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objbase.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objidl.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cguid.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/olectlid.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleauto.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oaidl.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleidl.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ws2tcpip.h:
+
+_mingw_network.h:
+
+msdl.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h:
+
+msdllib.h:
+
+display.h:
+
+network.h:
+
+url.h:

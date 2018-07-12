@@ -1,0 +1,530 @@
+﻿______________________________________________________________________________
+
+YTD v1.57+                                                   (c) 2009-16 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
+______________________________________________________________________________
+
+PODPOROVANÍ POSKYTOVATELÉ / SUPPORTED PROVIDERS
+-----------------------------------------------
+
+Prosím čtěte poznámky k protokolům RTMP a MS v souboru ytd.cz.txt.
+Please read the notes to protocols RTMP and MS in file ytd.en.txt.
+
+------------------------------------------------------------------------------
+Poskytovatel        | Protokol | Pozn. | URL
+Provider            | Protocol | Notes | URL(s)
+------------------------------------------------------------------------------
+123Video.nl         | HTTP     |       | http://www.123video.nl/playvideos.asp?MovieID=949808
+1hd.ro              | RTMP     |       | http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
+1tv.ru              | HTTP     |       | http://www.1tv.ru/swfxml/newsvideolist/20.07.2014/6
+3news.co.nz         | HTTP     |       | http://www.3news.co.nz/Nearly-there-for-trans-Tasman-rowers-Team-Gallagher/tabid/309/articleID/239458/Default.aspx
+4tv.cz              | HTTP     |       | http://4tv.cz/serialy/simpsonovi-1989/s01e01/8
+5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
+ABC.net.au          | HTTP     |       | http://www.abc.net.au/tv/goodgame/video/default.htm?src=/tv/goodgame/video/xml/20140715_2030.xml&item=02
+AcademicEarth.org   | HTTP     |       | http://academicearth.org/lectures/measurements-space-and-time
+Agresori.com        | HTTP     |       | http://www.agresori.com/13913-zkurvene-naledi.html
+Aktualne.cz         | HTTP     |       | http://aktualne.centrum.cz/video/?id=316586
+AlternativaTV.cz    | HTTP     |       | http://alternativatv.cz/video/play/12225/
+                    |          |       | http://alternativatv.cz/magazin/priloha/9319/12292
+Ancensored.com      | HTTP     |       | http://ancensored.com/clip/clip-victorias-secret-fashion-show-2009-herself-3
+AngryAlien.com      | HTTP     |       | http://www.angryalien.com/0605/freddyjasonbuns.asp
+Animacek.tv         | RTMP     | 8     | http://www.animacek.tv/porady/pokemon/103-epizoda-52
+Archive.org         | HTTP     | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16d1t01_vbr.mp3
+                    |          | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16.sbd.vernon.9127.sbeok.shnf_vbr.m3u
+AutoTube.cz         | HTTP     |       | http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
+Azet.sk             | HTTP     |       | http://tivi.azet.sk/video/1371198/tento-druh-kultury-mame-najradsej.html
+                    |          |       | http://adam.azet.sk/clanky/13149/adam-girl-simona-divoska-co-nepokazi-ziadnu-zabavu.html
+Bahnorama.com       | HTTP     |       | http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
+BandZone.cz         | HTTP     |       | http://bandzone.cz/teensjazzbandvelkelosiny?at=video;vi=9556
+Barrandov.tv        | HTTP     |       | http://www.barrandov.tv/video/15468-hlavni-zpravy-24-6-2013
+Bewusst.tv          | HTTP     |       | http://bewusst.tv/umgang-mit-herausfordernden-zeiten/
+Bing.com            | HTTP     |       | http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
+Blenus.com          | HTTP     |       | http://www.blennus.com/index.php?option=content&task=view&id=1027&Itemid=
+Blesk.cz            | HTTP     |       | http://www.blesk.cz/clanek/celebrity-karlovy-vary-festival-karlovy-vary-2016/405487/opily-hrdlicka-libal-zeny-i-muze-mazu-si-te-vzkazala-pliskova.html
+Blip.tv             | HTTP     |       | http://blip.tv/play/hIVV4tIUAg
+                    |          |       | http://blip.tv/file/1607673/
+                    |          | 1     | http://thespoonyone.blip.tv
+BMovies.com         | RTMP     |       | http://bmovies.com/movie/night-living-dead
+Bofunk.com          | HTTP     |       | http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
+Bolt.com            | HTTP     |       | http://boltagain.ning.com/video/vacation-wellness
+Bomba.cz            | HTTP     |       | http://www.bomba.cz/video/simpsnovi-vs-cesti-politici/
+Break.com           | HTTP     |       | http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
+                    |          |       | http://media1.break.com/static/app/v1/global/swf/player10.swf?sVidLoc=http%3a%2f%2fvideo1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.flv&sThumbLoc=http%3a%2f%2fmedia1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.jpg&contentURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html&sShareURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html%23TellAFriendhttp%3a%2f%2fstats.break.com%2finvoke.txt&iContentID=359418&autoplay=0&embed=2&contentidencoded=359418&categoryid=4&userid=1620903&mode=embed&linktitle=Funny+Videos&sVidTitle=EMBED-Dude+Blows+Off+Firecracker+In+Teeth&icon=1B608EE7AFCE3765E176F3C6FBB98002B3D18C64572F2307D76FAB7CA970F3B1D7D7
+                    |          |       | http://embed.break.com/MzU5NDE4
+BritishPathe.com    | RTMP     |       | http://www.britishpathe.com/video/british-aircraft-carrier-corsairs/
+B-TV.cz             | HTTP     |       | http://www.b-tv.cz/mydlo-hi-fi-tv.html?ep=2163
+Cas.sk              | HTTP     |       | http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
+                    |          |       | http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
+CD.cz               | HTTP     |       | http://www.cd.cz/tv/aktuality/300_rekonstrukce-nadrazi-v-ceskem-brode
+CekniTo.cz          | HTTP     |       | http://www.ceknito.cz/video/446074
+CekniTo.sk          | HTTP     |       | http://www.ceknito.sk/video/446074
+CeskaTelevize.cz    | HLS      |       | http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+Cesnet.cz           | MS       | 4     | http://server3.streaming.cesnet.cz/others/av/tydenvedy/2009/amazonie.wmv
+CestyKSobe.cz       | HTTP     |       | http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
+CETV.sk             | HTTP     |       | http://cetv.sk/index.php/spravodajstvo/item/1326-spravy-05-03-2016
+CKKlic.cz           | HTTP     |       | http://www.ckklic.cz/zajezdy/rafting/dlouhe-a-expedicni-rafting-akce-na-raftech-nebo-na-dvoumistnych-yukonech/albanie-rafting-na-panenskych-rekach-vodacka-expedice-zajezd-na-yukonech.56.151.html
+Clevver.com         | HTTP     |       | http://www.clevver.com/ctv/videof/245041/the-kids-are-all-right-movie-trailer.html
+Clipfish.de         | HTTP     |       | http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
+                    |          |       | http://www.clipfish.de/special/lets-dance/home/
+Cloudzilla.to       | HTTP     |       | http://www.cloudzilla.to/embed/ZUKQ6ZMA23PZQDGHDE1NJ0QJC/
+CNBC.com            | RTMP     |       | http://www.cnbc.com/id/15840232?video=3000016920&play=1
+                    |          |       | http://video.cnbc.com/gallery/?video=3000016920
+CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:1934920
+CriticalPast.com    | RTMP     |       | http://www.criticalpast.com/video/65675022388_Nazi-dignitary-at-harvest-festival_Sudeten-German-Party_Nazi
+CrunchyRoll.com     | RTMP     | X     | http://www.crunchyroll.com/library/Naruto_Shippuden
+CSFD.cz             | HTTP     |       | http://www.csfd.cz/film/241720-lidice/videa/
+Cum.sk              | HTTP     |       | http://www.cum.sk/v/1bzs/chlap-na-streche-autobusu-bratislava
+Current.com         | HTTP     |       | http://current.com/shows/the-rotten-tomatoes-show/92561962_angelina-jolies-top-5-hottest-parts.htm
+DailyHaha.com       | HTTP     |       | http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
+DailyMail.co.uk     | HTTP     |       | http://www.dailymail.co.uk/news/article-2472674/World-View-Enterprises-plans-luxury-balloon-flights-edge-space.html
+DailyMotion.com     | HTTP     |       | http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
+                    | HTTP     |       | http://www.dailymotion.com/embed/video/x8w3pf
+DeutscheBahn.com    | HTTP     |       | http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
+Denik.cz            | HTTP     |       | http://www.denik.cz/multimedia/video/2857495.html
+                    |          |       | http://benesovsky.denik.cz/multimedia/video/1538221.html
+DevilDucky.com      | HTTP     |       | http://www.devilducky.com/media/213159/
+Dokumentarni.tv     | HTTP     |       | http://dokumentarni.tv/zahady-a-mysteria/kruhy-v-obili-brany-z-jine-dimenze-crop-circles
+DotSub.com          | HTTP     |       | http://dotsub.com/view/5dcf5b79-c9f5-426f-8909-af6fef69f015
+DoubleAgent.com     | HTTP     |       | http://www.doubleagent.com/agent/tiffany/video-blog/video-28
+                    |          |       | http://www.doubleagent.com/play/are-you-a-tweetbook-twit
+DrsnySvet.cz        | HTTP     |       | http://www.drsnysvet.cz/proskoleni-mestske-policie-pri-silnicni-kontrole/
+DUB.cz              | HTTP     |       | http://www.dub.cz/clanek.php?id=tv-101020
+                    |          |       | http://www.dub.cz/cs/koncert-spolecna-vec-2009-mlada-boleslav.php
+EbaumsWorld.com     | HTTP     |       | http://www.ebaumsworld.com/video/watch/80973186/
+eHow.com            | HTTP     |       | http://www.ehow.com/video_4871930_clean-computer-monitor-glass.html
+eKucharka.net       | HTTP     |       | http://ekucharka.net/jablka-v-zupanu
+ESPN.go.com         | HTTP     |       | http://espn.go.com/video/clip?id=5163631
+EuroGamer.cz        | HTTP     |       | http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
+EuroSeptik          | HTTP     |       | http://euroseptik.cz/nigel-farage-vs-barroso-brok-kapo-schulz-tohle-je-zvracena-demokracie/
+EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnum=15099&aid=
+Eyeneer.com         | HTTP     |       | http://www.eyeneer.com/video/rock/bee-gees/to-love-somebody
+Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php?v=1131482863478
+                    |          |       | http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
+                    |          |       | http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
+FileCabi.net        | HTTP     |       | http://www.filecabi.net/video/hiddendogstopsrobbery.html
+Film.Seznam.cz      | HLS      |       | http://film.seznam.cz
+Fishki.net          | HTTP     | 4     | http://fishki.net/comment.php?id=79682
+Flickr.com          | HTTP     |       | http://www.flickr.com/photos/landersz/2403626167/
+FreeCaster.tv       | multiple |       | http://freecaster.tv/freeski/1012253
+FreeRide.cz         | RTMP     |       | http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
+                    |          |       | http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
+FreeVideo.ru        | HTTP     |       | http://freevideo.ru/video/view/?id=v14445361101
+FunnyOrDie.com      | HTTP     |       | http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
+G4TV.com            | HTTP     |       | http://www.g4tv.com/videos/53181/Duke-Nukem-Forever-Launch-Trailer/
+GameAnyone.com      | HTTP     |       | http://www.gameanyone.com/game/PC/936.html
+                    |          |       | http://www.gameanyone.com/video/88319
+GamePark.cz         | HTTP     |       | http://www.gamepark.cz/lineage_2_babylon_371564.htm
+GameSpot.com        | HDS      |       | http://www.gamespot.com/e3/microsoft-press-conference-2014/
+                    |          |       | http://www.gamespot.com/videos/embed/6419027/
+GameZone.com        | RTMP     |       | http://www.gamezone.com/videos/guild-wars-2-cinematic-conversation-trailer
+Games.Tiscali.cz    | HTTP     |       | http://games.tiscali.cz/video/zhodnotte-alternativni-pruchod-far-cry-3-dema-z-e3-2011-56300
+Gazeta.tv           | HTTP     |       | http://www.gazeta.tv/plej/29,107457,18675257,88292,video.html?embed=0&autoplay=1
+GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
+Gordon.ura.cz       | Nested   |       | http://gordon.ura.cz/?p=1932
+GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
+Guba.com            | HTTP     |       | http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
+Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galerie/Video/Predavani-cen-RWE-_____312/Predavani-cen-RWE-_____1004/
+                    | MS       |       | http://www.hasici150.tv/cz/Media-galerie/Video/Plzenska-stovka-2012---serial-CPVK_____210/Plzenska-stovka-2012_____776/
+HejbejSe.tv         | HTTP     |       | http://www.hejbejse.tv/video/klip/Petra-4-
+Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
+HokejCb.cz          | HTTP     |       | http://www.hokejcb.cz/clanek.asp?id=VIDEO-Podivejte-se-na-sestrih-utkani-s-Kometou-Brno-5679
+Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
+HudebniVideoKlipy.cz| HTTP     |       | http://www.hudebnivideoklipy.cz/chinaski-kerka-119555.html
+i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
+iConcerts.com       | HTTP     |       | http://www3.iconcerts.com/en/concert/coldplay-how-we-saw-world-part-one
+iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
+                    |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
+                    | HTTP     |       | http://video.idnes.cz/?c=A160705_184551_brno-zpravy_vh&idVideo=V160705_180158_brnoh_sha
+iHned.cz            | RTMP     |       | http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
+                    | HTTP     |       | http://dialog.ihned.cz/komentare/c1-52351350-vondraczech-at-se-urednici-uci-v-jaderne-elektrarne
+ILikeBike.cz        | MS       | 4     | http://www.ilikebike.cz/?year=2011&week=11
+ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
+iPrima.cz           | RTMP     |       | http://play.iprima.cz/iprima/233409
+                    | RTMP     |       | http://play.iprima.cz/all/233409
+                    | RTMP     | 4,9   | http://www.iprima.cz/showjanakrause/videoarchiv-brezen-2011/
+                    | RTMP     |       | http://www.iprima.cz/videoarchiv/164106
+ITNSource.com       | HTTP     |       | http://www.itnsource.com/shotlist//BHC_RTV/1941/05/19/BGU408100018/
+iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/beastie-boys-make-some-noise-(official-music-video) 
+JenProZeny.cz       | HTTP     |       | http://www.jenprozeny.cz/video/32771-paradni-viral-medvedem
+Joj.sk              | RTMP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
+                    |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
+                    | HTTP     |       | http://anosefe.joj.sk/anosefe-epizody/2011-05-16-ano-sefe-.html
+KanalTurk.com.tr    | HTTP     |       | http://www.kanalturk.com.tr/video/?vId=13409
+Kaotic.com          | HTTP     |       | http://www.kaotic.com/video/hkXFzUEO_2016212144456_t
+Kinobox.cz          | HTTP     |       | http://www.kinobox.cz/porady/video/6273-prednaska-henriho-monforta-21112011
+Kiwi.kz             | HTTP     |       | http://kiwi.kz/watch/jiaon54nfybz/
+Kontraband.com      | HTTP     |       | http://www.kontraband.com/videos/23388/Failed-Slam-Dunks/
+Koukni.cz           | HTTP     |       | http://koukni.cz/95074707
+Kukaj.sk            | HTTP     |       | http://www.kukaj.sk/videa/5860/
+Laola1.tv           | RTMP     |       | http://www.laola1.tv/en/int/volleyball/cev-mens-olympic-qualification/cev-oq-men-sofia-italy-germany/video/353-2021-84517.html
+LenkaFilipova.cz    | HTTP     |       | http://www.lenkafilipova.cz/lf/kytarova_skola18.html
+LevelTV.Hrej.cz     | HTTP     | 9,10  | http://leveltv.hrej.cz/include/2012/leden/3/213_rec_serioussam.mp4
+LibimSeTi.cz        | HTTP     |       | http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
+Lidovky.cz          | HTTP     |       | http://www.lidovky.cz/zeny-jako-sexualni-hracky-v-reklamach-nejsme-jen-objekty-touhy-odmitaji-1al-/video.aspx?c=A160128_213853_ln-video_ELE
+LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272904024
+                    |          |       | http://www.liveleak.com/e/57d_1278546690
+LiveStream.com      | HTTP     |       | http://livestream.com/accounts/5718087/events/4480901
+LiveVideo.com       | HTTP     |       | http://www.livevideo.com/liveshow/brian3maria
+Loupak.cz           | HTTP     |       | http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
+Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
+                    |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
+                    |          |       | http://particka.markiza.sk/archiv.php?vid=65598
+Matrix-2001.cz      | HTTP     |       | http://www.matrix-2001.cz/clanek-detail/4650-david-wilcock-enigma-2012/
+MC2.sk              | RTMP     |       | http://www.mc2.sk/archiv/benzinaci/20/
+MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
+MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
+                    |          |       | http://www.megavideo.com/v/HF2OV2PPf800ca3bd438e6d30c2490a75932d6331
+MetaCafe.com        | HTTP     |       | http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
+Metoo.cz            | MS       |       | http://www.metoo.cz/tvstream/play/532
+Metoo.sk            | MS       |       | http://pohoda.metoo.sk/pohoda2011-fibernet/?relacia=cluster
+                    |          |       | http://www.metoo.sk/voicestv?relacia=vl26-sto-much-stratasoul-bene-sewologylab
+                    | RTMP     |       | http://www.metoo.sk/vychodna2012?relacia=vrchovska
+Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
+                    |          |       | http://www.metropol.cz/zpravy/z-prahy/tradicni-plavecky-zavod-otuzilcu-startuje-v-1100/
+MetroProjekt.cz     | HTTP     |       | http://www.metroprojekt.cz/cz/aktualne/metro-d/metro-d-animace.html
+Mixer.cz            | HTTP     |       | http://www.mixer.cz/1/41102-video-games
+MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
+                    |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
+MojeVideo.cz        | HTTP     |       | http://mojevideo.cz/view.php?id=5332
+MojeVideo.sk        | HTTP     | 8     | http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+Mpora.com           | HTTP     |       | http://video.mpora.com/watch/xfnGGmZDC/
+MTV.com             | RTMP     |       | http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
+                    |          |       | http://media.mtvnservices.com/mgid:uma:video:mtv.com:602324
+MULitvinov.cz       | HTTP     |       | http://www.mulitvinov.cz/videa-aktualne/gs-14455/p1=63583
+Multimedia.vse.cz   | MS       |       | http://multimedia.vse.cz/media/Viewer/?peid=e847bd00891e47389492f06651a0a7761d
+MustWatch.cz        | HTTP     |       | http://www.mustwatch.cz/film/reel-bad-arabs
+Muvi.cz             | HTTP     |       | http://www.muvi.cz/klip/344-jak-otevrit-vino-bez-vyvrtky-vasi-botou-22-bota-misto-vyvrtky
+Muzu.tv             | HTTP     |       | http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
+MySpace.com         | RTMP     |       | http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
+Myubo.sk            | HTTP     |       | http://www.myubo.sk/page/media_detail.html?movieid=deac5b36-9efe-4176-a1e9-01088aa24696
+Myvi.ru             | HTTP     |       | http://www.myvi.ru/watch/Zombi-v-Nu-Jorke_OHf1cAW_qEa_zOS60X7LRw2
+                    |          |       | http://myvi.ru/ru/flash/player/pre/oQ_uJCGiADipN8mzgriJzJrAJsecK5PYnBZErn47vhimBnv5c3zTqNrrV3chb6TFH0
+N-joy.cz            | HTTP     |       | http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+                    |          |       | http://n-joy.cz/right-now/video/honza-b/psvfmt8b61ghlgg4
+                    |          |       | http://n-joy.cz/right-now/audio/vera-spinarova/2zpSLkXoR5IteMyC
+                    |          |       | http://n-joy.cz/audio/vera-spinarova/2zpSLkXoR5IteMyC
+NaHnoji.cz          | HTTP     |       | http://nahnoji.cz/watch_video.php?v=UBMX421YR7ON
+                    |          |       | http://nahnoji.cz/player/embed_player.php?vid=7103
+NaStojaka.cz        | HTTP     |       | http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
+Natabanu.com        | HTTP     |       | http://www.natabanu.com/serija/karadayi/23101-karadayi-epizoda-55.html
+NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=5766
+NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
+NebickoVPapulke.sk  | HTTP     |       | http://www.nebickovpapulke.sk/epizoda/epizoda-26-sisi-bardejov
+News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
+NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
+NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
+Nova.cz             | RTMP     |       | http://novaplus.nova.cz/porad/snidane-s-novou/video/9731-snidane-s-novou-20-7-2016/
+                    | HTTP     |       | http://tn.nova.cz/clanek/odbornik-prozradil-nejvetsi-hrozby-ceskych-silnic-rozhovor.html
+NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
+                    |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
+Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+                    |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
+NRSR.sk             | RTMP     |       | http://mmserv2.nrsr.sk/NRSRInternet/Rokovanie/709/
+Ocko.tv             | HTTP     |       | http://ocko.tv/video/drive-90-3-kristyna-nezvedova-mlada-nadejna-ilustratorka-20983/
+OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
+Online.hokej.cz     | RTMP     | 9     | http://online.hokej.cz/?date=2012-01-20&video=69421
+OptoMedia.cz        | MS       |       | http://vox.optobone.cz/prazdniny/index.php?sekce=1&idw=2551&article
+Osobnosti.cz        | HTTP     |       | http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
+OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
+                    |          |       | http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
+Own3D.tv            | HTTP     |       | http://www.own3d.tv/stream/927952
+PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
+PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
+PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
+Play.fm             | HTTP     |       | http://www.play.fm/recording/bbcradio1essentialremixbymarkronson2007010772264
+Playtvak.cz         | HTTP     |       | http://www.playtvak.cz/nejvetsi-omyly-vedy-lobotomie-dzj-/omyly-vedy.aspx?c=A150818_110238_omylyvedy_kuko
+PlayWire.com        | HTTP     |       | http://config.playwire.com/1010178/videos/v2/4402593/zeus.json
+PlayZone.cz         | RTMP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
+Polar.cz            | HTTP     |       | http://www.polar.cz/archiv/video/regionalni-zpravy-polar-18-01-2013-09-00
+PracticalMethod.com | HTTP     |       | http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
+PrahovaHD.ro        | RTMP     |       | http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
+PrazdninyVTelci.cz  | MS       |       | http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
+Prima-Cool.cz       | HTTP     |       | http://www.prima-cool.cz/video/drsnejsi-simpsonovi
+Proglas.cz          | MS       |       | http://www.proglas.cz/audioarchiv-detail/cteni-na-pokracovani/don-bosco.html
+ProstoPleer.com     | HTTP     |       | http://prostopleer.com/tracks/503102372y2
+                    |          |       | http://prostopleer.com/#/tracks/503102372y2
+PublicTV.cz         | HTTP     |       | http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
+                    |          |       | http://www.publictv.cz/videoarchiv/535/1718/
+Qip.ru              | HTTP     |       | http://file.qip.ru/embed/141785477/17228276
+Raajje.tv           | HTTP     |       | http://www.raajje.tv/video/991/president-anni-diving
+Rajce.iDnes.cz      | HTTP     |       | http://pso.rajce.idnes.cz/Koncert_28._10._2011_v_Semilech/
+Reflex.cz           | HTTP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
+Revver.com          | HTTP     |       | http://www.revver.com/video/2378230/super-mario-bros-2-on-the-nes-level-x/
+RingTV.com          | HTTP     |       | http://www.ringtv.com/video/frankie_gomez_training/
+RockstarGames.com   | HTTPS    |       | https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
+                    | HTTP     |       | http://www.rockstargames.com/IV/#?page=johnnyKlebitz&content=video0
+Rozhlas.cz          | HTTP     |       | http://prehravac.rozhlas.cz/audio/2483476
+                    |          |       | http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+RozzlobeniMuzi.com  | HTTP     | F     | http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
+RT.com              | HTTP     |       | https://www.rt.com/shows/sophieco/324941-nuclear-cold-war-us/
+RTA.cz              | MS       |       | http://www.rta.cz/?article=140331
+                    |          |       | http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
+Rtl.be              | HTTP     |       | http://www.rtl.be/videos/video/456817.aspx
+Rtl.nl              | MS       |       | http://www.rtl.nl/xl/#/u/e6820785-1c71-381e-a3fa-37c6acc343b9/
+                    |          |       | http://www.rtl.nl/system/s4m/xldata/uuid/e6820785-1c71-381e-a3fa-37c6acc343b9.xml
+RTVS.sk             | RTMP     |       | http://www.rtvs.sk/televizia/program/detail/4686/milujem-slovensko/archiv?date=17.05.2013
+RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d309ef371dff690eb3/
+                    |          |       | http://bl.rutube.ru/c327d57926a628644fad3bc36d81ad08
+                    |          |       | http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
+                    |          |       | http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
+                    | HDS      |       | http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
+                    |          |       | http://rutube.ru/player.swf?hash=5936573
+RVP.cz              | HTTP     |       | http://audiovideo.rvp.cz/video/2799/ONLINE-SETKANI-SKOLA-V-POHODE.html
+SchoolOfCare.ru     | HTTP     |       | http://schoolofcare.ru/masha/339/
+Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx
+SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
+ShackNews.com       |          |       | http://www.shacknews.com/file/29576/minecraft-xbox-live-trailer
+Sibnet.ru           | HTTP     |       | http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
+                    |          |       | http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+Slashdot.org        | HTTP     |       | http://tech.slashdot.org/story/15/05/26/206238/the-wrap---hacked-airplane-potus-on-twitter-wifi-by-balloon
+Sme.sk              | HTTP     |       | http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
+                    |          |       | http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
+Smotri.com          | HTTP     |       | http://smotri.com/video/view/?id=v203531694dc#as
+Snotr.com           | HTTP     |       | http://www.snotr.com/video/4280
+SoundCloud.com      | HTTP     |       | http://soundcloud.com/ubi_irina/1-campaign-menu
+Spike.com           | HTTP     |       | http://www.spike.com/video/prince-of-persia/3355664
+Sport.cz            | HTTP     |       | http://fotbal.sport.cz/clanek/183261-video-wenger-si-oddechl-rosicky-mel-jen-slaby-otres-mozku.html
+SportStream.cz      | RTMP     |       | http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
+SputnikNews.com     | HTTP     |       | http://cz.sputniknews.com/videoklub/20151016/1416426/su24m-syrie-rusko-zakladna-hmeimim-video.html#ixzz3oiQuzbT4
+Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
+StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
+SteamPowered.com    | HTTP     |       | http://store.steampowered.com/video/220
+Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
+Stream.cz           | HTTP     | 8     | https://www.stream.cz/chlapidarium/10008864-zeny-ktere-byste-mit-doma-nechteli
+Streamin.to         | RTMP     |       | http://streamin.to/wpgpkcf4d3f1
+StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
+Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
+StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
+STV.sk              | RTMP     | 9     | http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
+Super.cz            | HTTP     |       | http://www.super.cz/278385-misto-jidla-pije-divne-koktejly-a-na-figure-je-to-znat-nadherna-miss-predvedla-telo-v-nebezpecnych-satech.html
+T-Music.cz          | HTTP     |       | http://www.t-music.cz/video/124044/
+                    |          |       | http://www.t-music.cz/video/124044/embed/
+Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
+TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
+Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html
+ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/penguins_dont_like_water
+TheGuardian.com     | HTTP     |       | http://www.theguardian.com/environment/2015/dec/30/giant-squid-that-swam-into-japanese-bay-guided-back-out-to-sea-by-diver
+TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
+Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
+TopRecepty.cz       | HTTP     |       | http://www.toprecepty.cz/recept/18507-bramborak-+-videorecept/
+TotallyCrap.com     | RTMP     |       | http://www.totallycrap.com/videos/videos_man_tries_to_commit_suicide_by_laying_under_a_truck/
+TV.HNOnline.sk      | HTTP     |       | http://tv.hnonline.sk/c1-59663880-nemali-v-com-fakturovat-tak-sa-stali-jednotkou-video
+TV2Nord.dk          | RTMP     |       | http://www.tv2nord.dk/arkiv/2011/11/10?video_id=30106&autoplay=1
+TV4Play.se          | HTTP     |       | http://www.tv4play.se/sport/alpint?title=inga_svenska_skidskyttemedaljer&videoid=1295009
+TV7.cz              | HTTP     |       | http://www.tv7.cz/?vid=1062
+TVcom.cz            | MS       |       | http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+                    | MS       |       | http://basketbal.tvcom.cz/Zapas/Soutez-U19-Extraliga/Cast-Zakladni/Pohlavi-Muzi/Sezona-2011-2012/10952-BC-Vysocina-BK-Kondori-Liberec.htm
+TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
+TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
+TVNoe.cz            | HTTP     |       | http://www.tvnoe.cz/video/5638
+TVP.pl              | HTTP     |       | http://vod.tvp.pl/21576772/inka-1946
+                    |          |       | http://vod.tvp.pl/sess/tvplayer.php?object_id=21576772&autoplay=true
+TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
+TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
+TV-Vysocina.cz      | MS       | 9     | http://www.tv-vysocina.cz/index.php?page=2&datum=2011-12-16%2018:10:00&vselect1=4927&jednotlive=1
+Tyzden.sk           | HTTP     |       | http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
+Uloz.to             | HTTP     |       | http://www.uloz.to/live/xZT8KZZ/harry-potter-a-sexy-hermiona-avi
+UStream.tv          | HTTP     |       | http://www.ustream.tv/recorded/7022540
+VeeHD.com           | HTTP     |       | http://veehd.com/video/4639434_Solar-Sinter
+VideaCesky.cz       | HTTP     |       | http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
+Video.Disney.cz     | HTTP     |       | http://video.disney.cz/sleduj/kacer-donald/stastny-beatbox-den-s-donaldem-bici-534eaf6e86238e34787e42d6
+Video.Google.com    | HTTP     |       | http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
+                    |          |       | http://video.google.com/videoplay?docid=-9077214414651731007&ei=y-8dS-n9JZ6q2wK7o-CRCA
+Video.Tiscali.cz    | HTTP     |       | http://video.tiscali.cz/the-duty-calls-trailer-283 
+VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
+VideoBB.com         | HTTP     |       | http://www.videobb.com/video/oh53koNnCV5S
+VideoClipsDump.com  | HTTP     |       | http://www.videoclipsdump.com/media/1951/Karate_Fail/
+VideoPortal.sf.tv   | RTMP     |       | http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
+Videu.de            | HTTP     |       | http://www.videu.de/video/4etN3FlaaY
+Vii.sk              | HTTP     |       | http://www.vii.sk/video/35sfxgmr0l/simpsonovi-23x13-fiesta-s-lizou/
+Viki.com            | HTTP     |       | http://a1.vikiassets.com/channels/1565-secret-garden/videos/32690
+                    |          |       | http://www.viki.com/channels/1565-secret-garden/videos/32690
+Vimeo.com           | HTTP     |       | http://www.vimeo.com/10777111
+Vine.co             | HTTP     |       | https://vine.co/v/blJBYtDQPd3
+VitalMtb.com        | HTTP     |       | http://www.vitalmtb.com/videos/member/Practice-at-the-bmx-track,2631/bubb120491,1836
+VKontakte.ru        | HTTP     |       | http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1
+                    |          |       | http://vk.com/video_ext.php?oid=106919938&id=161961696&hash=bb3e2d1a73bdb262
+WeGame.com          | HTTP     |       | http://www.wegame.com/watch/Pick_up_the_can/
+Wimp.com            | HTTP     |       | http://www.wimp.com/frazilice/
+WordPress.tv        | HTTP     |       | http://wordpress.tv/2010/09/18/jane-wells-how-wordpress-decisions-get-made/
+World-Club.net      | HTTP     |       | http://world-club.net/viewpage.php?page_id=7377
+Wrzuta.pl           | HTTP     |       | http://w772.wrzuta.pl/film/7KI3ZUDHrUK/
+                    |          |       | http://goovnoh.wrzuta.pl/audio/8U1t8UQ4f8W/
+Yikers.com          | HTTP     |       | http://www.yikers.com/video_dog_and_turtle_eat_cereal_together.html
+Youtu.be            | HTTP     |       | http://youtu.be/zJM_N3JG1yg
+Youtube.com         | HTTP     |       | http://www.youtube.com/v/b5AWQ5aBjgE
+                    |          |       | http://www.youtube.com/watch/v/b5AWQ5aBjgE
+                    |          |       | http://www.youtube.com/watch?v=b5AWQ5aBjgE
+                    |          |       | http://www.youtube.com/embed/b5AWQ5aBjgE
+                    |          |       | http://www.youtube.com/embedded/b5AWQ5aBjgE
+                    |          |       | http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+                    |          |       | http://www.youtube.com/titanicpiano14
+                    |          |       | http://www.youtube.com/user/titanicpiano14
+                    |          |       | http://www.youtube.com/attribution_link?a=k_jl_0XPJ9A&u=/watch%3Fv%3DdW9JY5KjjWI%26feature%3Dem-uploademail
+                    | RTMP     |       | http://www.youtube.com/watch?v=KNalERXqSTE
+Youtube-nocookie.com| HTTP     |       | http://www.youtube-nocookie.com/v/LiVxKci9Uto?version=3&hl=en_US
+Z1TV.cz             | HTTP     |       | http://www.z1tv.cz/interview-z1/interview-z1-kobzanova-diana-1972.html?page=1
+ZAKTV.cz            | HTTP     |       | http://www.zaktv.cz/cz/videos/index
+Zapiks.fr           | HTTP     |       | http://www.zapiks.fr/open-air-episode-5-a-week-in.html
+ZDF.de              | MS       |       | http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/Ägypten---4-Geheimnis-des-ewigen-Lebens
+ZkoukniTo.cz        | HTTP     |       | http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
+Zmozek.cz           | HTTP     |       | http://www.zmozek.cz/textypisni.php?pisen=415
+Zoznam.sk           | HTTP     |       | http://free.zoznam.sk/video/Splhajuci-buldozer
+------------------------------------------------------------------------------
+8teenXXX.com        | HTTP     | F     |
+AdultLoop.com       | HTTP     | F     |
+Beeg.com            | HTTP     | F     |
+Brazzers.com        | HTTP     | F     |
+Casting.xxx         | HTTP     | F,9   |
+Dachix.com          | HTTP     | F     |
+EmpFlix.com         | HTTP     | F     |
+ExtremeTube.com     | HTTP     | F     |
+FreePornoZdarma.cz  | HTTP     | F     |
+FreeVideo.cz        | HTTP     | F     |
+Gavin.xxx           | HTTP     | F     |
+Grinvi.com          | HTTP     | F     |
+HardSexTube.com     | HTTP     | F     |
+ItsAllGay.eu        | HTTP     | F     |
+JenProMuze.cz       | HTTP     | F     |
+KeezMovies.com      | HTTP     | F     |
+                    | HTTP     | F,9   | http://www.keezmovies.com/embed_player.php?vid=...
+MachoVideo.com      | HTTP     | F     |
+MegaPorn.com        | HTTP     | F     |
+MentalZero.com      | HTTP     | F     |
+MojePorno.sk        | HTTP     | F     |
+Motherless.com      | HTTP     | F,9   |
+PornHost.com        | HTTP     | F     |
+PornHub.com         | HTTP     | F     |
+PornoTube.com       | HTTP     | F     |
+PornoZdarma.cz      | HTTP     | F     |
+PornTube.com        | HTTP     | F     |
+RandyBlue.com       | HLS      | F     |
+RawTube.com         | HTTP     | F     |
+RedTube.com         | HTTP     | F     |
+Rude.com            | HTTP     | F     |
+Sex-Doma.cz         | HTTP     | F     |
+Shufuni.com         | HTTP     | F     |
+SlutLoad.com        | HTTP     | F     |
+SpankingTube.com    | HTTP     | F     |
+SpankWire.com       | HTTP     | F     |
+TeenMpegs.com       | HTTP     | F     |
+TheYNC.com          | HTTP     | F     |
+TnaFlix.com         | HTTP     | F     |
+Tube8.com           | HTTP     | F     |
+TubeSSS.com         | HTTP     | F     |
+Tumblr.com          | HTTP     | F     |
+XHamster.com        | HTTP     | F     |
+XNXX.com            | HTTP     | F     |
+XTube.com           | HTTP     | F     |
+XVideoHost.com      | HTTP     | F     |
+XVideos.com         | HTTP     | F     |
+YouJizz.com         | HTTP     | F     |
+YouPorn.com         | HTTP     | F     |
+Yuvutu.com          | HTTP     | F     |
+Zakulisi.cz         | HTTP     | F     |
+ZlutySnih.cz        | HTTP     | F     |
+Zvraceny.cz         | HTTP     | F     |
+------------------------------------------------------------------------------
+
+F ... Funkční pouze v plné (ne-lite) verzi YTD kvůli porno obsahu.
+
+      Available only in the full (non-lite) version of YTD due to porn content.
+
+
+
+N ... Nepodporováno.
+
+      Not supported.
+
+
+
+X ... Momentálně nefunkční.
+      
+      Currently non-working.
+
+
+
+1 ... Načítání obsahu playlistů nezobrazuje žádný výstup a může trvat i dost
+      dlouho. Nenechte se znervóznit tím, že se zdánlivě nic neděje.
+
+      Please don't be concerned about an apparent lack of progress while
+      processing playlist. Parsing long playlists can take quite a some time
+      and doesn't produce any output while it is being done.
+
+
+
+2 ... Poskytovatel je velmi nestabilní a běžně se stává, že jednu minutu video
+      jde a druhou nejde. Je třeba to zkoušet.
+
+      The provider is highly unstable and may start or stop working at any
+      moment without any apparent reason. You need to keep trying.
+
+
+
+3 ... Skutečným poskytovatelem je CeskaTelevize.cz.
+
+      The real provider is CeskaTelevize.cz.
+
+
+
+4 ... Není detekován skutečný název videa.
+
+      The intended video name is not detected.
+
+
+
+5 ... Některá videa jsou hostovaná na cizích serverech a nelze je stahovat
+      přímo. Můžete však použít funkci "Přidat URL z HTML stránky".
+
+      Some movies are hosted on third-party servers and can't be downloaded
+      directly. You can use the function "Add URLs from HTML page".
+
+
+
+6 ... Pozor: Nepodařilo se mi plně dekódovat způsob, jak se z URL článku dostat
+      k URL videa. Z tohoto důvodu jsem použil velmi prasácký hack, který 
+      postupně vyzkouší všechny servery, na kterých by video mohlo být. To je 
+      za prvé pomalé, za druhé nespolehlivé a za třetí se snadno může stát, že 
+      vás Nova za tento způsob útoku na jejich servery zabanuje.
+
+      Note: I couldn't properly decode, how to get a video URL from a given
+      article URL. In order to get this provider to work, I had to resort to 
+      a very dirty hack, which sequentially tries a number of possible servers 
+      to see if it can find the real one. That's slow, unreliable and above 
+      all the provider could ban you for this kind of abuse of his servers.
+
+
+
+7 ... Při použití command-line verze YTD je třeba věnovat pozornost správnému
+      zapsání URL, aby vyhovovalo požadavkům příkazového interpretu (CMD.EXE).
+
+      When using the command-line version of YTD, please make sure to properly
+      escape the URL, so that it satisfied the requirements of command 
+      interpreter (e.g. CMD.EXE).
+
+
+
+8 ... Pro správnou funkci je vyžadován Secure Token. Jde o tajný řetězec,
+      kterým se klient autentizuje serveru a potvrzuje tak, že je oprávněn
+      si o média říkat. Získání tohoto tokenu je na vás - z právních důvodů
+      ho neprozradím ani neřeknu, kde a jak ho získat.
+
+      A Secure Token is required for proper function. Secure Token is a
+      secret string, which is used to authentize the client to the server
+      during the handshake. It's up to you to provide the token - YTD doesn't
+      have it and I will not disclose either its value or how to get it, for
+      legal reasons.
+
+
+
+9 ... Název videa není detekován.
+
+      Stream name is not detected.
+
+
+
+10 .. Server podporuje a/nebo vyžaduje přihlášení. Přihlašovací údaje můžete
+      nastavit v konfiguraci poskytovatele.
+
+      The server supports and/or requires a login. You may set up the login
+      info in the provider's configuration.

@@ -1,0 +1,107 @@
+                      .:[ msdl ]:.
+            -=- media stream downloader -=-
+
+Copyright (C) 2007-2009 metro <me_t_ro@yahoo.com>
+
+]=----------------------------------------------------=[
+
+*) description
+
+This program is to download multimedia streaming files.
+Currently it supports following protocols.
+
+* mmst      (Microsoft Media Server over TCP)
+* mmsh      (MMS over HTTP)
+* http      (Hyper Text Transfer Protocol)
+* real-rtsp (Real Time Streaming Protocol / Real/helix)
+* wms-rtsp  (Real Time Streaming Protocol / WMServer  )
+* ftp       (File Transfer Protocol)
+
+This program cannot be here without these great works..
+
+o xine-lib ( http://xinehq.de/ )
+o MPlayer  ( http://www.mplayerhq.hu/ )
+
+Some functions,structures are taken from these programs,
+and many functions,structures are based on ideas of
+these programs.
+They provided great informations for each protocols and
+showed how each protocols can be implemented.
+
+
+And also thanx to these applications
+
+o Windows Media Player  :)
+o Real Media Player     ;)
+
+for showing how each protocols are correctly operated
+through packet monitoring programs...
+
+If you find a bug, please send bug report to 
+<me_t_ro@yahoo.com>, bug reports are very welcomed!
+
+]=----------------------------------------------------=[
+
+*) usage
+msdl 1.2.6 : Media Stream DownLoader
+Usage: msdl [options] targets
+  -o, --output <localfile>    specify output file name. '-o -': stdout.
+  -l, --logfile <logfile>     print log to logfile instead of console.
+  -v, --verbose               show verbose messages.
+  -V, --version               show version information.
+  -q, --quiet                 do quietly. no output.
+  -c, --continue <url>        continue (resume) downloading.
+  -a, --auto-retry <num>      auto-retry aborted download. (num times).
+  -b, --bandwidth <bandwidth> set bandwidth.
+  -s, --speed <speed>         set streaming speed.
+  -r, --range <range>         set range (for RTSP), default "0.000-".
+  -m, --metafile <url>        treat url as metafile.
+  -n, --no-metafile <url>     DO NOT treat url as metafile.
+  -h, --help                  display this help.
+  -p, --protocol <protocol>   specify download protocol.
+      --byterange <range>     set byte range (for http and ftp).
+      --username <username>   user name for basic authentication.
+      --password <password>   password for basic authentication.
+      --no-proxy              DO NOT use proxy, even if HTTP_PROXY set.
+      --no-passive-ftp        DO NOT use passive mode in FTP.
+      --stream-timeout <time> Quit Streaming after time.
+      --debug                 show debug message (super verbose).
+Supported protocols: mms(mmst) mmsh rtsp http ftp
+To use proxy for mms, mmsh, and http, set HTTP_PROXY variable.
+"-s" and "-r" are for *-rtsp, and these options may be ignored.
+If you find any bugs, please report to <me_t_ro@yahoo.com>.
+
+
+
+<targets> can be various URLs, or files, but they are
+downloaded in order you specified.
+This means 2nd file will not be downloaded until
+1st file of download finishes.
+This is because some streaming server accepts only
+1 connection / host, and otherwise disables all
+connections.
+
+so if you want to download 2 or more files at the same
+time, launch another instance of this program.
+
+-{caution}-
+
+   . mms proxy is not implemented(and I don't know if
+     there are many mms proxys available..) so to use
+     mms stream using proxy, you must set HTTP_PROXY
+     to download it via mmsh, through proxy.
+
+   . If you sepcified -q and -v options together,
+     -q is taken.
+
+   . protocol specified by -p (--protocol) option will
+     affect every <targets> arguments. this means
+     it will try to download everything using protocol
+     which you specified. Off course some download may
+     fail.
+
+   . output option will be applied to first one file
+     which was downloaded.
+
+]=----------------------------------------------------=[
+

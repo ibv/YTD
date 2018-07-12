@@ -1,0 +1,17 @@
+add new url
+load url list from file
+add urls from html file
+add urls from web page
+add urls from clipboard
+copy urls to clipboard
+save urls to file
+start selected download
+stop selected download
+convert selected download
+delete selected download
+set options
+edit config file
+refresh
+bugreport
+donate
+about

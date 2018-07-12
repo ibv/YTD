@@ -1,0 +1,6 @@
+- search for IFDEF/IFNDEF PEPAK (changes I will want in all my programs)
+  and IFDEF/IFNDEF PEPAK_YTD (changes specific to YTD)
+- compatibility with Delphi 5 (using jedi.inc rather than standard IFDEFs)
+- use statically linked PCRE (no pcre.dll dependency)
+- change constant MAX_SUBEXPRESSIONS to 1024 (IMPORTANT!!!)
+- added a non-unicode version of object files for Delphi prior to 2009

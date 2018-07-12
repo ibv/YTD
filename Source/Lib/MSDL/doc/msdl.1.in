@@ -1,0 +1,128 @@
+.TH MSDL "1" "Feb 2010" "msdl 1.2.7" "User Commands"
+.SH "NAME"
+\fBmsdl\fR \- Media Stream DownLoader
+.SH "SYNOPSIS"
+.B msdl
+[\fIoptions\fR] \fItargets\fR
+.SH "DESCRIPTION"
+.B msdl
+(media stream downloader) is a multi-protocol downloader for
+various streaming protocols, such as mms, mmsh, real-rtsp, wms-rtsp,
+ftp, and http.
+
+.SH "OPTIONS"
+.TP
+\fB\-o\fR, \fB\-\-output\fR <localfile>
+specify output file name. do '-o -' if you want the file content to
+be written to stdout.
+.TP
+\fB\-l\fR, \fB\-\-logfile\fR <logfile>
+print log to logfile instead of console.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+show verbose messages.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+show version information.
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+do quietly. no output.
+.TP
+\fB\-c\fR, \fB\-\-continue\fR <url to continue>
+continue downloading url. if file cannot be found in local directory,
+start downloading from beginning.
+.TP
+\fB\-a\fR, \fB\-\-auto-retry\fR <num>
+auto-retry aborted download, <num> times.
+if num = 0, retry will be 10 times. '-a inf' for infinite.
+.TP
+\fB\-b\fR, \fB\-\-bandwidth\fR <bandwidth>
+set bandwidth.
+.TP
+\fB\-s\fR, \fB\-\-speed\fR <speed>
+.nf
+set streaming speed. default is "1.000".
+* this option may be ignored by a server.
+.fi
+.TP
+\fB\-r\fR, \fB\-\-range\fR <range>
+.nf
+set range (for RTSP). default is "0.000\-".
+range : [time]"\-"[time]
+time  : 123.45, 1:2:3.45, 1h23m45s.67, etc
+* this option may be ignored by a server.
+.fi
+.TP
+\fB\-m\fR, \fB\-\-metafile\fR <url>
+treat url as metafile.
+.TP
+\fB\-n\fR, \fB\-\-no\-metafile\fR <url>
+DO NOT treat url as metafile.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+display help message.
+.TP
+\fB\-p\fR, \fB\-\-protocol\fR <protocol>
+specify download protocol.
+.TP
+\fB\-\-byterange\fR <url>
+specify byterange to get. [xxx]-[xxx]
+range specifier must be digit.
+.TP
+\fB\-\-username\fR <username>
+user name for http and ftp.
+.TP
+\fB\-\-password\fR <password>
+password for http and ftp.
+.TP
+\fB\-\-no\-proxy\fR
+DO NOT use proxy, even if HTTP_PROXY set.
+.TP
+\fB\-\-no\-passive\-ftp\fR
+DO NOT use passive mode in FTP.
+.TP
+\fB\-\-stream\-timeout\fR <time>
+.nf
+Quit streaming after specified time (second).
+* If you want 30 minutes streaming, do --stream-timeout 30m.
+.fi
+.TP
+\fB\-\-debug\fR
+.nf
+show debug message (super verbose).
+use this option to see protocol transactions.
+.fi
+.PP
+.nf
+* supported protocols:
+    mmst      : mms://  mmst://
+    mmsh      : mmsh:// http://
+    real\-rtsp : rtsp://
+    wms\-rtsp  : mms://  rtsp://
+    http      : http://
+    ftp       : ftp://
+* to use proxy for mms, mmsh, and http, set HTTP_PROXY variable.
+* "\-s" and "\-r" are for *\-rtsp, and these options may be ignored.
+* basic authentication is supported in HTTP.
+* if no username and password specified in ftp, anonymous will be used.
+.fi
+
+.SH "EXAMPLES"
+.nf
+$ msdl \-s 5.000 \-r 15m00s\-1:2:3.45 http://www.foo.com/bar.asx 
+$ msdl \-\-username fuga \-\-password fugafuga ftp://ftp.foo.com/bar.avi
+$ msdl \-p rtsp \-s 12 rtsp://real.server.com/foobar.rm
+$ msdl \-m http://www.foo.com:12345/fuga/playlist.txt
+$ msdl \-\-byterange 3000-6000 http://www.foooooobar.com/foooooooooo.html
+$ msdl \-c http://www.fuga.com/fuga.wmv
+$ msdl \-\-stream-timeout 30m http://www.foo.com/bar.asx 
+.fi
+
+.SH "AUTHOR"
+metro <me_t_ro@yahoo.com>
+
+.SH "REPORTING BUGS"
+please report bugs or comments to <me_t_ro@yahoo.com>
+
+.SH "COPYRIGHT"
+please see COPYING file in msdl package.

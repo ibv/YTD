@@ -1,0 +1,7 @@
+see IFDEF/IFNDEF PEPAK:
+
+- UNDEF USEGRAPHICS
+- compatibility with Delphi 5
+- proper encoding detection (UTF-8 should be used if no encoding is specified)
+
+Note: NativeXml 3.32 (2015-07-25) is completely broken in Unicode Delphi

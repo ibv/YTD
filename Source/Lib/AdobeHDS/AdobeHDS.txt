@@ -1,0 +1,109 @@
+class CLI [13-115]
+- jenom parser na command-line argumenty
+- zajimave parametry:
+  auth ... autentizacni string pro requesty (pridava se do URL za cislo fragmentu)
+  fragments ... zaklad nazvu pro soubory fragmentu
+  manifest ... "manifest file" (to .f4m, ktere definuje stream)
+  start ... od ktereho fragmentu zacit
+
+class cURL [117-317]
+- stahne zadany soubor (volanim cURL)
+- pouziva tyto HTTP hlavicky:
+  'Accept: image/gif, image/x-bitmap, image/jpeg, image/pjpeg'
+  'Connection: Keep-Alive'
+  'Content-type: application/x-www-form-urlencoded;charset=UTF-8'
+  'Mozilla/5.0 (Windows NT 5.1; rv:14.0) Gecko/20100101 Firefox/14.0.1'
+  Cookies
+
+class F4F [319-
+DONE - [373-387] GetManifest ... stahne manifest (to, co mi ted stahne i YTD)
+DONE - [389-519] ParseManifest ... vytahne si 'baseURL' a ze vsech 'media' 
+DONE    'bitrate', Url (baseURL + href) a XML (odkazovane pomoci Url). Pak ty 
+DONE    stahnute XML rozebere a pripravi si bootstrap, metadata. Zjisti dostupne 
+DONE    kvality streamu. Zavola ReadBoxHeader a ParseBootstrapBox.
+- [521-545] UpdateBootstrapInfo ... kod uplne nechapu, proc znovu stahuje 
+    $bootstrapUrl ve smycce pres vsechny fragmenty, kdyz tu URL nemeni ani
+    nemeni promenne, do kterych se uklada vysledek, ale kdyz uz to stahne,
+    tak zavola ReadBoxHeader a ParseBootstrapBox.
+DONE - [547-586] ParseBootstrapBox ... rozebere bootstrap podle jednotlivych bajtu
+DONE     a naplni si svoje promenne. Vola ReadBoxHeader, ParseAsrtBox.
+DONE - [588-627] ParseAsrtBox ... dalsi typ parsovani (zrejme jako AMF3 vs AMF).
+DONE - [629-675] ParseAfrtBox ... dalsi typ parsovani
+DONE - [677-812] DownloadFragments ... 
+DONE     - Pokud je $start (zacit od zadaneho fragmentu), tak si najde misto, odkud
+DONE       se ma zacinat:  segment := start div $this->fragsPerSegment
+DONE                       fragment := start - 1 (WTF?)
+DONE     - Pokud je fragment >= $this->fragCount, tak neni co stahovat
+DONE     - Bezi smycka od $fragNum do Pred($this->fragCount)
+DONE       - $fragnum++
+DONE       - hleda, jestli je $fragNum ve Fragments[].firstFragment
+DONE         - pokud ano, a navic je tam discontinuityIndicator 1 nebo 3 a Live,
+DONE           tak se nejspis fragment nestahuje ($this->frags[$download['id']] = false)
+DONE       - pokud $fragnum preleze pres $segNum * $this->fragsPerSeg, tak se 
+DONE         posunu na dalsi segment ($segNum++).
+DONE       - necha se stahnout $this->fragUrl . "Seg" . $segNum . "-Frag" . $fragNum . $this->auth
+DONE       - u kazdeho stahnuteho fragmentu se overuje HTTP ResultCode, pak se
+DONE         zavola VerifyFragment.
+      - spravne fragmenty se bud zapisou pomoci WriteLiveFragment (pokud jde
+        o zivy stream), nebo se ulozi do souboru pro dalsi zpracovani.
+      - u ziveho streamu muze dojit k tomu, ze kvuli pomale lince a kratkemu
+        oknu pro download se stahovani dostane do faze, ze server uz fragmenty,
+        ktere potrebuju, nema. Pak se vsechno zastavi, zavola se UpdateBootstrapInfo
+        (tim se nacte novy seznam fragmentu) a pusti se zase stahovani
+
+DONE - [814-838] VerifyFragments ... asi overeni, ze je fragment OK (ale nektere
+DONE     servery to stejne porusuji).
+NE   - [840-865] RenameFragments ... prejmenuje fragmenty tak, aby mu sly nazvy po 
+NE       sobe (protoze to stahuje externim programem do souboru, ja to nebudu
+NE       potrebovat).
+DONE - [867-888] WriteMetadata ... vypada, ze zapisuje hlavicku FLV souboru
+DONE - [890-894] WriteFlvTimestamp ... pomocna funkce
+- [896-1094] DecodeFragment ... tohle budu potrebovat, rozebira fragment na 
+    jednotlive audio a video packety a kombinuje z nich FLV soubor.
+DONE - [1096-1157] WriteLiveFragment ... generuje FLV soubor z live stream fragmentu
+
+Hlavni program
+DONE - [1159-1193] ReadByte, ReadInt24, ReadInt32, ReadInt64, ReadString.
+DONE     Zajimava informace: Pouziva se poradi MSB, pro stringy ASCIIZ.
+DONE - [1195-1211] ReadBoxHeader.
+DONE - [1213-1231] WriteByte, WriteInt24, WriteInt32
+DONE - [1233-1290] dalsi pomocne funkce specificke pro PHP
+DONE - [1292-1311] WriteFlvFile ... zapise hlavicku FLV souboru
+DONE - [1313-1345] dalsi pomocne funkce specificke pro PHP
+DONE - [1347-] vlastni kod programu
+
+
+Zpracovani fragmentu do ciloveho souboru:
+
+- Postupne prochazet jednotlive fragmenty.
+  - Vzdy nacist obsah fragmentu.
+  - Pokud zpracovavam prvni fragment:
+    - F4F->InitDecoder
+      - jen nastavi vychozi stav promennych
+    - F4F->DecodeFragment
+      - provadi se, jen pokud je fragment validni (VerifyFragment)
+      - hleda se postupne box "mdat", to je jediny box, ktery funkci zajima
+      - jeho zpracovani je pak od radku 922
+      - zbytek je potreba delat radek po radce, je toho hodne a musi se to delat presne
+    - WriteFlvFile(filename, F4F->audio, F4F->video)
+      - prednastavena hlavicka (hex): "464c5601050000000900000000"
+      - pokud je audio a neni video, tak 5. bajt (nyni 05h) bude 04h
+      - pokud je video a neni audio, tak 5. bajt (nyni 05h) bude 01h
+      - tzn. zjevne 5. bajt ma bit0=video, bit2=audio
+      - no a takhle upravena hlavicka se posle na vystup
+    - F4F->WriteMetadata
+      - pracuje s metadaty z manifestu
+      - zapise do vystupniho souboru hlavicku, metadata, paticku
+    - F4F->InitDecoder
+  - Vzdy:
+    - F4F->DecodeFragment a zapis vysledku
+    (To je o tom, ze ten predchozi F4F zrejme jen nacte obsah hlavicky, ale 
+    neresi vlastni audio/video data. To se deje az tady. Tzn. rozumnejsi by
+    bylo v prvnim pruchodu ulozit vysledek DecodeFragment, zapsat ho do souboru,
+    a nevolat InitDecoder.)
+
+WriteLiveFragment se pouziva u Live streamu a zapisuje se rovnou, kdyz prijde:
+- Posloupnost je stejna jako u ne-live fragmentu, akorat se neprovadi
+  WriteMetadata
+- Na konci si zavola UpdateBootstrapInfo, zrejme aby to donacetlo dalsi 
+  bootstrap a mohlo se pokracovat ve streamovani.

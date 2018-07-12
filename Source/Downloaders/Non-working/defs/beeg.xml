@@ -1,0 +1,27 @@
+		<script id="beeg.com" provider="Beeg.com">
+			<regexps>
+				<regexp id="id" match="ID"><![CDATA[https?://[^/]+/(?P<ID>\d+)]]></regexp>
+				<regexp id="title" match="TITLE"><![CDATA["title"\s*:\s*"(?P<TITLE>.*?)"]]></regexp>
+				<regexp id="url" match="URL"><![CDATA["(?P<QUALITY>\d+)p"\s*:\s*"(?P<URL>(?:https?:)?//.+?)"]]></regexp>
+			</regexps>
+			<set_var id="id"><regexp id="id" content="_movie_id"/></set_var>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="page"><download_page encoding="utf8">
+				<url>https://beeg.com/api/v5/video/<get_var id="id"/></url>
+				<headers>
+					<header>X-Requested-With: XMLHttpRequest</header>
+				</headers>
+			</download_page></set_var>
+			<debug><get_var id="page"/></debug>
+			<multi_regexp id="url" content="page" var_prefix="urls_" match="QUALITY,URL">
+				<best_var id="urls_QUALITY" type="numeric_ascending">
+					<set_var id="url"><replace search="{DATA_MARKERS}" replacement="data=pc.CZ"><get_var id="urls_URL"/></replace></set_var>
+				</best_var>
+			</multi_regexp>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><get_var id="url"/></url>
+			</http_download>
+		</script>
+
+		<url script="beeg.com"><![CDATA[beeg\.com/.+$]]></url>

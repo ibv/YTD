@@ -1,0 +1,2279 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: YTD 1.43\n"
+"POT-Creation-Date: 2016-08-06 16:24+0200\n"
+"PO-Revision-Date: 2016-08-06 16:25+0200\n"
+"Last-Translator: pepak <pepak@pepak.net>\n"
+"Language-Team: \n"
+"Language: cs_CZ\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+
+#. FormAbout..Caption
+#: GUI/VCL/guiAboutVCL.dfm:6
+msgid "About YTD"
+msgstr "O aplikaci YTD"
+
+#. FormAbout..Font.Name
+#. FormAbout..LabelYTD..Font.Name
+#. FormAbout..LabelVersion..Font.Name
+#. FormAbout..LabelNewestVersion..Font.Name
+#. FormAbout..LabelHomepage..Font.Name
+#. FormAbout..LabelDefsVersion..Font.Name
+#. FormAbout..LabelNewestDefsVersion..Font.Name
+#. FormSelectConverter..Font.Name
+#. FormYTD..Font.Name
+#. FormOptions..Font.Name
+#. FormSetup..Font.Name
+#: GUI/VCL/guiAboutVCL.dfm:11 GUI/VCL/guiAboutVCL.dfm:27
+#: GUI/VCL/guiAboutVCL.dfm:48 GUI/VCL/guiAboutVCL.dfm:69
+#: GUI/VCL/guiAboutVCL.dfm:91 GUI/VCL/guiAboutVCL.dfm:113
+#: GUI/VCL/guiAboutVCL.dfm:127 GUI/VCL/guiConverterVCL.dfm:12
+#: GUI/VCL/guiMainVCL.dfm:11 GUI/VCL/guiOptionsVCL.dfm:11
+#: GUI/VCL/guiSetupVCL.dfm:11
+msgid "MS Sans Serif"
+msgstr "MS Sans Serif"
+
+#. FormAbout..LabelYTD..Caption
+#. FormYTD..Caption
+#: GUI/VCL/guiAboutVCL.dfm:23 GUI/VCL/guiMainVCL.dfm:6
+msgid "YTD"
+msgstr "YTD"
+
+#. FormAbout..LabelVersionLabel..Caption
+#: GUI/VCL/guiAboutVCL.dfm:36
+msgid "Version:"
+msgstr "Verze:"
+
+#. FormAbout..LabelVersion..Caption
+#: GUI/VCL/guiAboutVCL.dfm:44
+msgid "LabelVersion"
+msgstr "LabelVersion"
+
+#. FormAbout..LabelNewestVersionLabel..Caption
+#: GUI/VCL/guiAboutVCL.dfm:57
+msgid "Newest version:"
+msgstr "Nejnovější verze:"
+
+#. FormAbout..LabelNewestVersion..Caption
+#. FormAbout..LabelNewestDefsVersion..Caption
+#: GUI/VCL/guiAboutVCL.dfm:65 GUI/VCL/guiAboutVCL.dfm:123
+#: GUI/VCL/guiAboutVCL.pas:149 GUI/VCL/guiAboutVCL.pas:150
+#: GUI/VCL/guiAboutVCL.pas:172 GUI/VCL/guiAboutVCL.pas:191
+#: GUI/WinAPI/guiAboutWINAPI.pas:368 GUI/WinAPI/guiAboutWINAPI.pas:389
+msgid "not found"
+msgstr "nenalezena"
+
+#. FormAbout..LabelHomepageLabel..Caption
+#: GUI/VCL/guiAboutVCL.dfm:79
+msgid "Homepage:"
+msgstr "Domovská stránka:"
+
+#. FormAbout..LabelHomepage..Caption
+#: GUI/VCL/guiAboutVCL.dfm:87
+msgid "http://www.pepak.net/ytd"
+msgstr "http://www.pepak.net/ytd"
+
+#. FormAbout..LabelMediaProviders..Caption
+#: GUI/VCL/guiAboutVCL.dfm:101
+msgid "Media providers:"
+msgstr "Poskytovatelé médií:"
+
+#. FormAbout..LabelDefsVersion..Caption
+#: GUI/VCL/guiAboutVCL.dfm:109
+msgid "LabelDefsVersion"
+msgstr "LabelDefsVersion"
+
+#. FormAbout..ListProviders......Caption
+#. FormYTD..Downloads......Caption
+#. Create columns
+#: GUI/VCL/guiAboutVCL.dfm:140 GUI/VCL/guiMainVCL.dfm:169
+#: GUI/WinAPI/guiAboutWINAPI.pas:451 GUI/WinAPI/guiMainWINAPI.pas:401
+msgid "Provider"
+msgstr "Poskytovatel"
+
+#. FormAbout..ListProviders......Caption
+#: GUI/VCL/guiAboutVCL.dfm:144 GUI/WinAPI/guiAboutWINAPI.pas:452
+msgid "Components"
+msgstr "Komponenty"
+
+#. FormSelectConverter..Caption
+#: GUI/VCL/guiConverterVCL.dfm:5
+msgid "Select converter"
+msgstr "Vyberte si konvertor"
+
+#. FormSelectConverter..LabelConverter..Caption
+#. FormOptions..PageOptions..TabDownloadOptions..LabelConverter..Caption
+#: GUI/VCL/guiConverterVCL.dfm:24 GUI/VCL/guiOptionsVCL.dfm:173
+msgid "&Converter:"
+msgstr "&Konvertor:"
+
+#. FormSelectConverter..ActionList..actOK..Caption
+#. FormOptions..ActionList..actOK..Caption
+#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:405
+msgid "&OK"
+msgstr "&OK"
+
+#. FormSelectConverter..ActionList..actCancel..Caption
+#. FormOptions..ActionList..actCancel..Caption
+#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:410
+msgid "&Cancel"
+msgstr "&Storno"
+
+#. FormYTD..Downloads......Caption
+#. Download list
+#: GUI/VCL/guiMainVCL.dfm:165 GUI/WinAPI/guiMainWINAPI.pas:400
+msgid "URL"
+msgstr "URL"
+
+#. FormYTD..Downloads......Caption
+#: GUI/VCL/guiMainVCL.dfm:174 GUI/WinAPI/guiMainWINAPI.pas:402
+msgid "Status"
+msgstr "Status"
+
+#. FormYTD..Downloads......Caption
+#: GUI/VCL/guiMainVCL.dfm:178 GUI/WinAPI/guiMainWINAPI.pas:403
+msgid "Title"
+msgstr "Název"
+
+#. FormYTD..Downloads......Caption
+#: GUI/VCL/guiMainVCL.dfm:183 GUI/WinAPI/guiMainWINAPI.pas:404
+msgid "Size"
+msgstr "Velikost"
+
+#. FormYTD..Downloads......Caption
+#: GUI/VCL/guiMainVCL.dfm:188 GUI/WinAPI/guiMainWINAPI.pas:405
+msgid "Progress"
+msgstr "Průběh stahování"
+
+#. FormYTD..YTDActions..actAddNewUrl..Caption
+#: GUI/VCL/guiMainVCL.dfm:217
+msgid "Add new URL"
+msgstr "Přidat URL"
+
+#. FormYTD..YTDActions..actAddNewUrl..Hint
+#: GUI/VCL/guiMainVCL.dfm:218
+msgid "Add new URL to the list"
+msgstr "Přidat nové URL do seznamu"
+
+#. FormYTD..YTDActions..actDeleteURL..Caption
+#: GUI/VCL/guiMainVCL.dfm:224
+msgid "Delete URL"
+msgstr "Smazat URL"
+
+#. FormYTD..YTDActions..actDeleteURL..Hint
+#: GUI/VCL/guiMainVCL.dfm:225
+msgid "Delete selected URL(s)"
+msgstr "Smazat vybrané URL"
+
+#. FormYTD..YTDActions..actStart..Caption
+#: GUI/VCL/guiMainVCL.dfm:231
+msgid "Start/Pause/Resume"
+msgstr "Start/Pauza/Pokračovat"
+
+#. FormYTD..YTDActions..actStart..Hint
+#: GUI/VCL/guiMainVCL.dfm:232
+msgid "Start downloading selected  URL(s)"
+msgstr "Spustit stahování vybraných URL"
+
+#. FormYTD..YTDActions..actStop..Caption
+#: GUI/VCL/guiMainVCL.dfm:238
+msgid "Stop"
+msgstr "Zastavit"
+
+#. FormYTD..YTDActions..actStop..Hint
+#: GUI/VCL/guiMainVCL.dfm:239
+msgid "Stop downloading selected  URL(s)"
+msgstr "Přerušit stahování vybraných URL"
+
+#. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
+#. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
+#: GUI/VCL/guiMainVCL.dfm:245 GUI/VCL/guiMainVCL.dfm:252
+msgid "Add URLs from Clipboard"
+msgstr "Přidat URL ze schránky"
+
+#. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
+#. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
+#: GUI/VCL/guiMainVCL.dfm:246 GUI/VCL/guiMainVCL.dfm:253
+msgid "Add URLs from Clipboard to the list"
+msgstr "Přidat nové URL ze schránky do seznamu"
+
+#. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
+#. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
+#: GUI/VCL/guiMainVCL.dfm:259 GUI/VCL/guiMainVCL.dfm:266
+msgid "Copy URLs to Clipboard"
+msgstr "Zkopírovat URL do schránky"
+
+#. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
+#. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
+#: GUI/VCL/guiMainVCL.dfm:260 GUI/VCL/guiMainVCL.dfm:267
+msgid "Copy URLs from the list to Clipboard"
+msgstr "Zkopírovat URL ze seznamu do schránky"
+
+#. FormYTD..YTDActions..actSelectAll..Caption
+#: GUI/VCL/guiMainVCL.dfm:273
+msgid "Select all"
+msgstr "Vybrat vše"
+
+#. FormYTD..YTDActions..actSelectAll..Hint
+#: GUI/VCL/guiMainVCL.dfm:274
+msgid "Select all URLs"
+msgstr "Vybrat všechny URL"
+
+#. FormYTD..YTDActions..actRefresh..Caption
+#: GUI/VCL/guiMainVCL.dfm:279
+msgid "Refresh"
+msgstr "Obnovit"
+
+#. FormYTD..YTDActions..actRefresh..Hint
+#: GUI/VCL/guiMainVCL.dfm:280
+msgid "Refresh display"
+msgstr "Překreslit formulář"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTML..Caption
+#: GUI/VCL/guiMainVCL.dfm:286
+msgid "Add URLs from HTML page"
+msgstr "Přidat URL z HTML stránky"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTML..Hint
+#: GUI/VCL/guiMainVCL.dfm:287
+msgid "Get a list of URLs from HTML page"
+msgstr "Načíst seznam URL z HTML stránky"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Caption
+#: GUI/VCL/guiMainVCL.dfm:293
+msgid "Add URLs from HTML file"
+msgstr "Přidat URL z HTML souboru"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Hint
+#: GUI/VCL/guiMainVCL.dfm:294
+msgid "Get a list of URLs from HTML file"
+msgstr "Načíst seznam URL z HTML souboru"
+
+#. FormYTD..YTDActions..actAddUrlsFromFile..Caption
+#: GUI/VCL/guiMainVCL.dfm:300
+msgid "Add URLs from file"
+msgstr "Přidat URL ze souboru"
+
+#. FormYTD..YTDActions..actAddUrlsFromFile..Hint
+#: GUI/VCL/guiMainVCL.dfm:301
+msgid "Get a list of URLs from file"
+msgstr "Načíst seznam URL ze souboru"
+
+#. FormYTD..YTDActions..actSaveUrlList..Caption
+#: GUI/VCL/guiMainVCL.dfm:307
+msgid "Save URL list"
+msgstr "Uložit seznam URL"
+
+#. FormYTD..YTDActions..actSaveUrlList..Hint
+#: GUI/VCL/guiMainVCL.dfm:308
+msgid "Save list of unfinished URLs to a list file"
+msgstr "Uložit seznam nedokončených URL do souboru"
+
+#. FormYTD..YTDActions..actAbout..Caption
+#: GUI/VCL/guiMainVCL.dfm:314
+msgid "About"
+msgstr "O aplikaci"
+
+#. FormYTD..YTDActions..actAbout..Hint
+#: GUI/VCL/guiMainVCL.dfm:315
+msgid "About this program"
+msgstr "O programu YTD"
+
+#. FormYTD..YTDActions..actConvert..Caption
+#: GUI/VCL/guiMainVCL.dfm:321
+msgid "Convert"
+msgstr "Zkonvertovat"
+
+#. FormYTD..YTDActions..actConvert..Hint
+#: GUI/VCL/guiMainVCL.dfm:322
+msgid "Convert the selected file"
+msgstr "Zkonvertovat zvolený soubor"
+
+#. FormYTD..YTDActions..actReportBug..Caption
+#: GUI/VCL/guiMainVCL.dfm:328
+msgid "Report a bug"
+msgstr "Nahlásit chybu"
+
+#. FormYTD..YTDActions..actReportBug..Hint
+#: GUI/VCL/guiMainVCL.dfm:329
+msgid "Report a bug for selected URL."
+msgstr "Nahlásit chybu ve stahování vybrané URL."
+
+#. FormYTD..YTDActions..actDonate..Caption
+#: GUI/VCL/guiMainVCL.dfm:335
+msgid "Donate"
+msgstr "Přispět"
+
+#. FormYTD..YTDActions..actDonate..Hint
+#: GUI/VCL/guiMainVCL.dfm:336
+msgid "Donate some money to further YTD's development."
+msgstr "Poslat finanční dar na další rozvoj YTD."
+
+#. FormYTD..YTDActions..actEditConfigFile..Caption
+#: GUI/VCL/guiMainVCL.dfm:342
+msgid "Edit config file"
+msgstr "Upravit konfigurační soubor"
+
+#. FormYTD..YTDActions..actEditConfigFile..Hint
+#: GUI/VCL/guiMainVCL.dfm:343
+msgid "Open the active configuration file in the editor"
+msgstr "Otevřít aktivní konfigurační soubor v editoru"
+
+#. FormYTD..YTDActions..actOptions..Caption
+#. FormOptions..Caption
+#: GUI/VCL/guiMainVCL.dfm:349 GUI/VCL/guiOptionsVCL.dfm:6
+msgid "Options"
+msgstr "Nastavení"
+
+#. FormYTD..YTDActions..actOptions..Hint
+#: GUI/VCL/guiMainVCL.dfm:350
+msgid "Change program's options"
+msgstr "Změnit základní nastavení programu"
+
+#. FormYTD..YTDActions..actPlay..Caption
+#: GUI/VCL/guiMainVCL.dfm:356
+msgid "Play"
+msgstr "Přehrát"
+
+#. FormYTD..YTDActions..actExploreFolder..Caption
+#: GUI/VCL/guiMainVCL.dfm:361
+msgid "Explore folder"
+msgstr "Otevřít složku"
+
+#. FormYTD..YTDActions..actMenu..Caption
+#: GUI/VCL/guiMainVCL.dfm:366
+msgid "Show menu"
+msgstr "Zobrazit menu"
+
+#. FormYTD..DownloadsPopup..N5..Caption
+#. FormYTD..DownloadsPopup..N4..Caption
+#. FormYTD..DownloadsPopup..N2..Caption
+#. FormYTD..DownloadsPopup..N3..Caption
+#. FormYTD..DownloadsPopup..N1..Caption
+#: GUI/VCL/guiMainVCL.dfm:1337 GUI/VCL/guiMainVCL.dfm:1346
+#: GUI/VCL/guiMainVCL.dfm:1364 GUI/VCL/guiMainVCL.dfm:1373
+#: GUI/VCL/guiMainVCL.dfm:1379
+msgid "-"
+msgstr "-"
+
+#. FormYTD..OpenHtmlFile..Filter
+#: GUI/VCL/guiMainVCL.dfm:1398 GUI/WinAPI/guiMainWINAPI.pas:714
+msgid "HTML files|*.htm;*.html|All files|*.*"
+msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
+
+#. FormYTD..OpenUrlList..Filter
+#. FormYTD..SaveUrlList..Filter
+#: GUI/VCL/guiMainVCL.dfm:1404 GUI/VCL/guiMainVCL.dfm:1411
+#: GUI/WinAPI/guiMainWINAPI.pas:691
+msgid "List files (*.lst)|*.lst|All files|*.*"
+msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
+
+#. FormYTD..SaveUrlList..DefaultExt
+#: GUI/VCL/guiMainVCL.dfm:1410
+msgid "lst"
+msgstr "lst"
+
+#. FormOptions..PageOptions..TabMain..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:51 GUI/WinAPI/guiOptionsWINAPI.pas:128
+msgid "Main settings"
+msgstr "Základní"
+
+#. FormOptions..PageOptions..TabMain..LabelLanguage..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:57
+msgid "&Language:"
+msgstr "&Jazyk"
+
+#. FormOptions..PageOptions..TabMain..CheckPortableMode..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:66
+msgid "&Portable mode"
+msgstr "Př&enositelný režim"
+
+#. FormOptions..PageOptions..TabMain..CheckCheckNewVersions..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:75
+msgid "&Check for new versions on startup"
+msgstr "Zjišťovat při startu nové &verze"
+
+#. FormOptions..PageOptions..TabMain..CheckMonitorClipboard..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:109
+msgid "Mo&nitor clipboard for downloadable URLs"
+msgstr "Sledovat s&chránku na podporovaná URL"
+
+#. FormOptions..PageOptions..TabMain..CheckIgnoreOpenSSLWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:118
+msgid "Disable &OpenSSL warning"
+msgstr "Zakázat varování před chybějícím OpenSS&L"
+
+#. FormOptions..PageOptions..TabMain..CheckIgnoreRtmpDumpWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:127
+msgid "Disable &RtmpDump warning"
+msgstr "Zakázat varování před chybějícím &RtmpDump"
+
+#. FormOptions..PageOptions..TabMain..CheckIgnoreMSDLWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:136
+msgid "Disable &MSDL warning"
+msgstr "Zakázat varování před chybějícím &MSDL"
+
+#. FormOptions..PageOptions..TabMain..CheckMinimizeToTray..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:145
+msgid "Minimize to system &tray"
+msgstr "Minimalizovat do systémového &traye"
+
+#. FormOptions..PageOptions..TabDownloadOptions..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:150 GUI/WinAPI/guiOptionsWINAPI.pas:129
+msgid "Download settings"
+msgstr "Stahování"
+
+#. FormOptions..PageOptions..TabDownloadOptions..LabelOverwriteMode..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:157
+msgid "&Existing files:"
+msgstr "&Existující soubory:"
+
+#. FormOptions..PageOptions..TabDownloadOptions..LabelDownloadDir..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:165
+msgid "&Download directory:"
+msgstr "Adresář pro &downloady"
+
+#. FormOptions..PageOptions..TabDownloadOptions..LabelRetryCount..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:181
+msgid "&Retry count:"
+msgstr "Počet opakování:"
+
+#. FormOptions..PageOptions..TabDownloadOptions..Label1..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:189
+msgid "Append &index to playlist items:"
+msgstr "Přidávat index k názvům:"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:198
+msgid "&Automatically start downloads"
+msgstr "&Automaticky spouštět downloady"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:245
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
+msgid "Download &subtitles if available"
+msgstr "Pokud jsou k dispozici, stahovat &titulky"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckAutoTryHtmlParser..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:254
+msgid "Automatically try &HTML parser"
+msgstr "Automaticky používat &HTML parser"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToTempFiles..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:263
+msgid "Append a .part e&xtension while downloading"
+msgstr "V průběhu stahování přidat k názvu &příponu .part"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:272
+msgid "Store media into su&bdirectories according to their providers"
+msgstr "&Ukládat média do podadresářů podle názvu poskytovatele"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDeleteFinishedDownloads..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:299
+msgid "Automatically delete &finished downloads"
+msgstr "Automaticky &mazat dokončené downloady"
+
+#. FormOptions..PageOptions..TabNetworkOptions..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:304 GUI/WinAPI/guiOptionsWINAPI.pas:130
+msgid "Network settings"
+msgstr "Síť"
+
+#. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:311
+msgid "Proxy &host:"
+msgstr "Proxy &server:"
+
+#. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:319
+msgid "Proxy &port:"
+msgstr "Proxy &port:"
+
+#. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:327
+msgid "Proxy &username:"
+msgstr "Proxy &uživatel:"
+
+#. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:335
+msgid "Proxy pass&word:"
+msgstr "Proxy &heslo:"
+
+#. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:344
+msgid "U&se proxy server"
+msgstr "Použít prox&y server"
+
+#. FormOptions..PageOptions..TabDownloaderOptions..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:377 GUI/WinAPI/guiOptionsWINAPI.pas:131
+msgid "Downloader settings"
+msgstr "Nastavení stahovačů"
+
+#. FormOptions..ActionList..actDownloadDir..Caption
+#. FormSetup..BtnDestinationDir..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:414 GUI/VCL/guiSetupVCL.dfm:38
+msgid "..."
+msgstr "..."
+
+#. FormOptions..ActionList..actDesktopShortcut..Caption
+#. FormSetup..CheckDesktopShortcut..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:419 GUI/VCL/guiSetupVCL.dfm:48
+msgid "Create shortcut on &desktop"
+msgstr "Vytvořit odkaz na &Ploše"
+
+#. FormOptions..ActionList..actStartMenuShortcut..Caption
+#. FormSetup..CheckStartMenuShortcut..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:423 GUI/VCL/guiSetupVCL.dfm:59
+msgid "Create shortcut in &Start menu"
+msgstr "Vytvořit odkaz ve &Start menu"
+
+#. FormSetup..Caption
+#: GUI/VCL/guiSetupVCL.dfm:6
+msgid "Setup"
+msgstr "Setup"
+
+#. FormSetup..LabelDestinationDir..Caption
+#: GUI/VCL/guiSetupVCL.dfm:21
+msgid "Install &folder:"
+msgstr "&Adresář pro instalaci:"
+
+#. FormSetup..ButtonInstall..Caption
+#: GUI/VCL/guiSetupVCL.dfm:70
+msgid "&Install"
+msgstr "Na&instalovat"
+
+#. FormSetup..ButtonRun..Caption
+#: GUI/VCL/guiSetupVCL.dfm:81
+msgid "&Run from current location without installing"
+msgstr "Sp&ustit z aktuálního umístění bez instalace"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:16
+msgid "Secure &Token:"
+msgstr "Secure &Token:"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelUserName..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:24
+msgid "&User name:"
+msgstr "Přihlašovací &jméno:"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:32
+msgid "&Password:"
+msgstr "Přihlašovací &heslo:"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckConvertSubtitles..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:50
+msgid "&Convert subtitles to .SRT format"
+msgstr "&Konvertovat titulky do formátu .SRT"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:58
+msgid "&Live stream mode (much slower, but more stable)"
+msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckRealtime..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:90
+msgid "&Realtime mode (may be slower, but doesn't skip back)"
+msgstr "&Režim realtime stahování (mnohem pomalejší, ale stabilnější)"
+
+#. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..LabelMaximumVideoBitrate..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:8
+msgid "Maximum video &bitrate:"
+msgstr "Maximální &bitrate videa:"
+
+#. FrameDownloaderOptionsPage_EuroSeptik..PanelSpecificOptions..LabelSubtitleHeaderText..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_EuroSeptik.dfm:8
+msgid "Subtitle &header text:"
+msgstr "Záhlaví textu titulků:"
+
+#. FrameDownloaderOptionsPage_Joj..PanelSpecificOptions..LabelServer..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Joj.dfm:8
+msgid "Ser&ver:"
+msgstr "Ser&ver:"
+
+#. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:27
+msgid "Resolver password:"
+msgstr "Heslo pro resolver:"
+
+#. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelConfigPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:35
+msgid "Config password:"
+msgstr "Heslo pro konfigurace:"
+
+#. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..CheckLowQuality..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:44
+msgid "Download in &low quality"
+msgstr "Download ve &snížené kvalitě"
+
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelPreferredLanguages..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:10
+msgid "&Preferred subtitle languages:"
+msgstr "&Preferované jazyky titulků:"
+
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelMaximumVideoWidth..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:18
+msgid "Maximum video &width:"
+msgstr "&Maximální šířka videa:"
+
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelMaximumVideoHeight..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:26
+msgid "Maximum video &height:"
+msgstr "Maximální &výška videa:"
+
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..CheckAvoidWebM..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:59
+msgid "&Avoid .webm format"
+msgstr "Nestahovat formát .&webm"
+
+#: Base/uDownloader.pas:891
+msgid "[%*.*d of %d]"
+msgstr "[%*.*d z %d]"
+
+#: Base/uScriptedDownloader.pas:190
+msgid "TScriptedDownloader.UrlRegExp may not be called."
+msgstr "TScriptedDownloader.UrlRegExp nesmí být volána."
+
+#: Base/uScriptedDownloader.pas:224
+msgid "Invalid MovieID - must define script and ID"
+msgstr "Chybné MovieID - musíte definovat script a ID"
+
+#. Downloader: TMSDirectDownloader;
+#: Base/uScriptedDownloader.pas:536
+msgid ""
+"SmoothStream is not supported, because I don't know how to programmatically "
+"mux MP4 streams. Can you help?"
+msgstr ""
+"SmoothStream není podporovaný, protože neumím programem muxovat MP4 streamy. "
+"Umíte s tím pomoci?"
+
+#. Intentionally no _(...) - this should not be translated
+#: CLI/uYTD.pas:145
+msgid "Command-line version options:"
+msgstr "Parametry pro command-line verzi:"
+
+#. CLI: Help for -h/-? command line argument
+#: CLI/uYTD.pas:146
+msgid " ...... Show this help screen."
+msgstr " ...... Zobrazit tuto napovedu"
+
+#. CLI: Help for -i command line argument
+#: CLI/uYTD.pas:147
+msgid " ... Load URL list from <file> (one URL per line)."
+msgstr " ... Nacist seznam URL ze souboru <file> (jeden radek=jedna URL)."
+
+#. CLI: Help for -o command line argument
+#: CLI/uYTD.pas:148
+msgid " ... Store files to <path> (default is current directory)."
+msgstr " ... Ukladat soubory do adresare <path> (vychozi je aktualni adresar)."
+
+#. CLI: Help for -e command line argument
+#: CLI/uYTD.pas:149
+msgid " ... Save failed URLs to <file>."
+msgstr " ... Zapsat chybne stahnuta URL do souboru <file>."
+
+#. CLI: Help for -s command line argument
+#: CLI/uYTD.pas:150
+msgid " .... Load links from a HTML source. <src> can be a file or an URL."
+msgstr " .... Nacist odkazy z HTML zdroje. <src> muze byt soubor nebo URL."
+
+#. CLI: Help for -n command line argument
+#: CLI/uYTD.pas:151
+msgid " .......... Never overwrite existing files."
+msgstr " .......... Nikdy neprepisovat existujici soubory."
+
+#. CLI: Help for -a command line argument
+#: CLI/uYTD.pas:152
+msgid " .......... Always overwrite existing files."
+msgstr " .......... Vzdy prepisovat existujici soubory"
+
+#. CLI: Help for -r command line argument
+#: CLI/uYTD.pas:153
+msgid " .......... Rename files to a new name if they already exist."
+msgstr " .......... Pro existujici soubory vygenerovat nove jmeno."
+
+#. CLI: Help for -k command line argument
+#: CLI/uYTD.pas:154
+msgid " .......... Ask what to do with existing files (default)."
+msgstr " .......... Zeptat se, co delat s existujicimi soubory (vychozi)."
+
+#. CLI: Help for -l command line argument
+#: CLI/uYTD.pas:155
+msgid " .......... List all available providers."
+msgstr " .......... Vypsat seznam podporovanych poskytovatelu."
+
+#. CLI: Help for -v command line argument
+#: CLI/uYTD.pas:156
+msgid " .......... Test for updated version of YTD."
+msgstr " .......... Overit existenci novejsi verze."
+
+#. CLI: Help for -u command line argument
+#: CLI/uYTD.pas:158
+msgid " .......... Test for a new version and upgrade if possible."
+msgstr " .......... Zjistit novou verzi a aktualizovat, pokud je co."
+
+#. CLI: Help for -ah command line argument
+#: CLI/uYTD.pas:160
+msgid " ...... [Don't] Automatically try HTML parser for unknown URLs."
+msgstr " ...... [Ne-] Pokusit se pouzit HTML parser na neznama URL."
+
+#. CLI: Help for -nd command line argument
+#: CLI/uYTD.pas:161
+msgid " ......... Don't actually download, just show the parameters."
+msgstr " ......... Nestahovat, jen zobrazit parametry downloadu."
+
+#: CLI/uYTD.pas:165
+msgid "Graphical version options:"
+msgstr "Parametry pro grafickou verzi:"
+
+#: CLI/uYTD.pas:166
+msgid " ....... Must be used if there are GUI arguments."
+msgstr " ....... Musi by pouzito, pokud jsou parametry pro GUI verzi."
+
+#: CLI/uYTD.pas:167
+msgid " ........ Run a new instance of YTD."
+msgstr " ........ Spustit novou instanci YTD."
+
+#: CLI/uYTD.pas:171
+msgid "Common options:"
+msgstr "Spolecne parametry:"
+
+#. CLI: Help for <url> command line argument
+#: CLI/uYTD.pas:172
+msgid " ....... URL to download."
+msgstr " ....... URL ke stazeni."
+
+#. CLI: Title for the list of providers (-l command line argument)
+#: CLI/uYTD.pas:182
+msgid "Available providers:"
+msgstr "Dostupni poskytovatele:"
+
+#. CLI: The "Total: " part of "Total: 123 providers." Note the ending space
+#: CLI/uYTD.pas:189
+msgid "Total: "
+msgstr "Celkem: "
+
+#. CLI: The " providers" part of "Total: 123 providers." Note the starting space
+#: CLI/uYTD.pas:191
+msgid " providers."
+msgstr " poskytovatelu."
+
+#: CLI/uYTD.pas:204
+msgid "Current version: "
+msgstr "Aktualni verze:   "
+
+#: CLI/uYTD.pas:207 CLI/uYTD.pas:247
+msgid ", definitions "
+msgstr ", definice "
+
+#: CLI/uYTD.pas:210
+msgid "Newest version:  "
+msgstr "Nejnovejsi verze: "
+
+#. CLI: Couldn't check for a newer version
+#: CLI/uYTD.pas:215
+msgid "check failed"
+msgstr "nenalezena"
+
+#. CLI: Note: pad with spaces to the same length as "Current version:"
+#: CLI/uYTD.pas:238
+msgid "Download URL:    "
+msgstr "URL ke stahnuti:  "
+
+#: CLI/uYTD.pas:258
+msgid ", upgraded to "
+msgstr ", aktualizovany na "
+
+#: CLI/uYTD.pas:267
+msgid "Upgraded providers:"
+msgstr "Aktualizovaní poskytovatelé:"
+
+#: CLI/uYTD.pas:273
+msgid "... and %d others..."
+msgstr "... a %d dalších..."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:392
+msgid "With -e a filename must be provided."
+msgstr "K parametru -e musi byt uvedeno jmeno souboru."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:406
+msgid "HTML source \"%s\" doesn't contain any useful links."
+msgstr "HTML zdroj \"%s\" neobsahuje zadne pouzitelne odkazy."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:411
+msgid "HTML source \"%s\" not found."
+msgstr "HTML zdroj \"%s\" nebyl nalezen."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:421
+msgid "With -s a filename or an URL must be provided."
+msgstr "K parametru -s musi byt uvedena URL nebo jmeno souboru."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:437
+msgid "URL list-file \"%s\" not found."
+msgstr "Soubor \"%s\" se seznamem URL nenalezen."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:443
+msgid "With -i a filename must be provided."
+msgstr "K parametru -i musi byt uvedeno jmeno souboru."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:453
+msgid "Destination directory \"%s\" not found."
+msgstr "Cilovy adresar \"%s\" nenalezen."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:459
+msgid "With -o a directory name must be provided."
+msgstr "K parametru -o musi byt uvedeno jmeno adresare."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:465
+msgid "Unknown parameter \"%s\"."
+msgstr "Neznamy parametr \"%s\"."
+
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:479
+msgid "No valid URLs found."
+msgstr "Nenalezeny zadne zname URL."
+
+#. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
+#: CLI/uYTD.pas:509
+msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
+msgstr "  Stahuje se: <%s> %d.%d%% (%s/%s)"
+
+#. CLI progress bar. %: Downloaded size
+#: CLI/uYTD.pas:514
+msgid "  Downloading: %s"
+msgstr "Stahuje se: %s"
+
+#: CLI/uYTD.pas:525
+msgid "  ERROR: "
+msgstr "  CHYBA: "
+
+#. CLI: Error message to be written to the log file. %: URL, message
+#: CLI/uYTD.pas:527
+msgid "FAILED \"%s\": %s"
+msgstr "CHYBA \"%s\": %s"
+
+#. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
+#: CLI/uYTD.pas:546
+msgid "  Playlist item: "
+msgstr "  Polozka seznamu:"
+
+#. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
+#: CLI/uYTD.pas:551
+msgid "            URL: "
+msgstr "            URL: "
+
+#. CLI: Title shown before media title. Pad to the same length as "File name:'
+#: CLI/uYTD.pas:572
+msgid "  Media title: "
+msgstr "  Nazev média: "
+
+#. CLI: Title shown before media file name. Pad to the same length as "Media title:'
+#. CLI: File already exists, renaming it to a new filename
+#: CLI/uYTD.pas:573 CLI/uYTD.pas:734
+msgid "    File name: "
+msgstr "Nazev souboru: "
+
+#. CLI: Title shown before media URL. Pad to the same length as "Media title:'
+#: CLI/uYTD.pas:574
+msgid "  Content URL: "
+msgstr "   URL obsahu: "
+
+#: CLI/uYTD.pas:580
+msgid "Download skipped."
+msgstr "Download byl přeskočen."
+
+#. CLI: Media downloaded successfully
+#: CLI/uYTD.pas:589
+msgid "  SUCCESS."
+msgstr "  V PORADKU."
+
+#. CLI: User aborted the download
+#: CLI/uYTD.pas:606
+msgid "  ABORTED BY USER"
+msgstr "  PRERUSENO UZIVATELEM"
+
+#. CLI: Error. %: Exception type, Exception message
+#: CLI/uYTD.pas:611
+msgid "ERROR %s: %s"
+msgstr "CHYBA %s: %s"
+
+#. CLI: URL couldn't be assigned to any available downloader
+#: CLI/uYTD.pas:626
+msgid "Unknown URL."
+msgstr "Neznama URL."
+
+#: CLI/uYTD.pas:646
+msgid "Trying to parse as HTML page..."
+msgstr "Zpracovavam URL jako HTML stranku..."
+
+#. CLI: "File ... already exists. What do you want me to do?"
+#: CLI/uYTD.pas:740
+msgid "  File "
+msgstr "  Soubor "
+
+#: CLI/uYTD.pas:742
+msgid " already exists."
+msgstr " uz existuje."
+
+#: CLI/uYTD.pas:743
+msgid "  Do you want to: "
+msgstr "Chcete ho:"
+
+#. CLI: File already exists. [S]kip it
+#: CLI/uYTD.pas:744
+msgid "kip it, "
+msgstr " preskocit, "
+
+#. CLI: File already exists. [O]verwrite it
+#: CLI/uYTD.pas:745
+msgid "verwrite it, or "
+msgstr " prepsat, nebo "
+
+#. CLI: File already exists. [R]ename it
+#: CLI/uYTD.pas:746
+msgid "ename it? "
+msgstr " prejmenovat?"
+
+#. CLI: File already exists. Asking user to provide a new filename.
+#: CLI/uYTD.pas:763
+msgid "  New filename: "
+msgstr "  Novy nazev: "
+
+#. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
+#: CLI/uYTD.pas:774
+msgid "Incorrect answer."
+msgstr "Nespravna odpoved."
+
+#. HTTP socket status: resolving began
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
+#: Common/uHttp.pas:47
+msgid "Resolving began"
+msgstr "Zahájeno zjišťování adresy"
+
+#. HTTP socket status: resolving ended
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
+#: Common/uHttp.pas:48
+msgid "Resolving ended"
+msgstr "Dokončeno zjišťování adresy"
+
+#. HTTP socket status: socket created
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
+#: Common/uHttp.pas:49
+msgid "Socket created"
+msgstr "Vytvořen socket"
+
+#. HTTP socket status: socket closed
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
+#: Common/uHttp.pas:50
+msgid "Socket closed"
+msgstr "Uzavřen socket"
+
+#. HTTP socket status: bound to IP address and port
+#. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
+#: Common/uHttp.pas:51
+msgid "Bound to IP/port"
+msgstr "Napojeno na IP/port"
+
+#. HTTP socket status: connected
+#. Programmer's name for it: SOCKSTATUS_CONNECTED
+#: Common/uHttp.pas:52
+msgid "Connected"
+msgstr "Spojeno"
+
+#. HTTP socket status: can read data
+#. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
+#: Common/uHttp.pas:53
+msgid "Can read data"
+msgstr "Možno číst data"
+
+#. HTTP socket status: can write data
+#. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
+#: Common/uHttp.pas:54
+msgid "Can write data"
+msgstr "Možno psát data"
+
+#. HTTP socket status: listening for connections
+#. Programmer's name for it: SOCKSTATUS_LISTENING
+#: Common/uHttp.pas:55
+msgid "Listening"
+msgstr "Čeká se na požadavek"
+
+#. HTTP socket status: connection accepted
+#. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
+#: Common/uHttp.pas:56
+msgid "Accepted connection"
+msgstr "Požadavek přijat"
+
+#. HTTP socket status: data was read
+#. Programmer's name for it: SOCKSTATUS_READ_DATA
+#: Common/uHttp.pas:57
+msgid "Read data"
+msgstr "Data přečtena"
+
+#. HTTP socket status: data was written
+#. Programmer's name for it: SOCKSTATUS_WROTE_DATA
+#: Common/uHttp.pas:58
+msgid "Wrote data"
+msgstr "Data zapsána"
+
+#. HTTP socket status: data is waiting
+#. Programmer's name for it: SOCKSTATUS_WAITING
+#. GUI: Download thread state: Waiting for its turn
+#. Programmer's name for it: THREADSTATE_WAITING
+#: Common/uHttp.pas:59 GUI/guiConsts.pas:46
+msgid "Waiting"
+msgstr "Čeká se"
+
+#. HTTP socket status: socket error
+#. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
+#: Common/uHttp.pas:60
+msgid "Socket error"
+msgstr "Chyba socketu"
+
+#. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
+#. Programmer's name for it: ERR_EXCEPTION_MESSAGE
+#. Programmer's name for it: ERR_EXCEPTION_MESSAGE
+#: Common/uMessages.pas:65
+msgid ""
+"Exception %s with message:\n"
+"%s"
+msgstr ""
+"Výjimka %s se zprávou:\n"
+"%s"
+
+#. Shown when installation failed
+#. Programmer's name for it: ERR_INSTALL_FAILED
+#. Programmer's name for it: ERR_INSTALL_FAILED
+#: Common/uMessages.pas:66
+msgid "Installation failed."
+msgstr "Instalace selhala"
+
+#. Shown when tried to install the necessary libraries and it failed
+#. Programmer's name for it: ERR_INSTALL_LIBRARY_FAILED
+#. Programmer's name for it: ERR_INSTALL_LIBRARY_FAILED
+#: Common/uMessages.pas:67
+msgid "Installation of the following files failed: %s"
+msgstr "Instalace následujících souborů selhala: %s"
+
+#. Shown when running YTD command-line from IDE, right before YTD is terminated
+#. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
+#. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
+#: Common/uMessages.pas:68
+msgid "Press any key to quit."
+msgstr "Stiskněte klávesu pro ukončení programu."
+
+#. Default playlist item name, %d is count
+#. Programmer's name for it: MSG_PLAYLIST_ITEM
+#. Programmer's name for it: MSG_PLAYLIST_ITEM
+#: Common/uMessages.pas:69
+msgid "Playlist item %d"
+msgstr "%d. položka seznamu"
+
+#. What to do with the newest version
+#. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
+#. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
+#: Common/uMessages.pas:70
+msgid ""
+"Do you want to upgrade (YES)\n"
+"or just download the newest version (NO)?\n"
+"\n"
+"Note: Upgrade will stop all transfers."
+msgstr ""
+"Chcete provést automatickou aktualizaci (ANO)\n"
+"nebo jen stáhnout nejnovější verzi (NE)?\n"
+"\n"
+"Pozn.: Aktualizace zastaví všechny přenosy."
+
+#. Downloading the upgrade data
+#. Programmer's name for it: MSG_UPGRADING
+#. Programmer's name for it: MSG_UPGRADING
+#: Common/uMessages.pas:71
+msgid "Upgrading..."
+msgstr "Probíhá aktualizace..."
+
+#. Programmer's name for it: MSG_PROVIDER_DEFINITIONS_UPGRADED
+#. Programmer's name for it: MSG_PROVIDER_DEFINITIONS_UPGRADED
+#: Common/uMessages.pas:72
+msgid "Provider definitions were upgraded:"
+msgstr "Definice poskytovatelů byly aktualizovány:"
+
+#. Failed to execute the upgrade file
+#. Programmer's name for it: MSG_FAILED_TO_UPGRADE
+#. Programmer's name for it: MSG_FAILED_TO_UPGRADE
+#: Common/uMessages.pas:73
+msgid "Failed to execute the upgrade file."
+msgstr "Nepodařilo se spustit aktualizační soubor."
+
+#. Failed to download the upgrade file
+#. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
+#. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
+#: Common/uMessages.pas:74
+msgid "Failed to download upgrade data: "
+msgstr "Nepodařilo se stáhnout aktualizaci."
+
+#. Programmer's name for it: MSG_FAILED_TO_UPGRADE_DEFINITIONS
+#. Programmer's name for it: MSG_FAILED_TO_UPGRADE_DEFINITIONS
+#: Common/uMessages.pas:75
+msgid "Failed to upgrade the script definitions."
+msgstr "Nepodařilo se aktualizovat definice skriptů."
+
+#. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_DEFINITIONS
+#. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_DEFINITIONS
+#: Common/uMessages.pas:76
+msgid "Failed to download the script definitions."
+msgstr "Nepodařilo se stáhnout definice skriptů."
+
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
+#: Common/uMessages.pas:77
+msgid ""
+"You don't seem to have the OpenSSL library (32bit) installed.\n"
+"YTD uses OpenSSL to enable the SSL protocol.\n"
+"Without SSL, you won't be able to download\n"
+"from YouTube any many other sites."
+msgstr ""
+"Zdá se, že nemáte nainstalovanou knihovnu OpenSSL (32bit).\n"
+"YTD používá OpenSSL ke zprovoznění SSL protokolu.\n"
+"Bez SSL nebudete moci stahovat z YouTube a mnoha\n"
+"dalších webů."
+
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
+#: Common/uMessages.pas:78
+msgid "Would you like to download and install OpenSSL?"
+msgstr "Přejete si stáhnout a nainstalovat OpenSSL?"
+
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND
+#: Common/uMessages.pas:79
+msgid ""
+"You don't seem to have the RtmpDump library installed.\n"
+"YTD uses RtmpDump to handle the RTMP protocol.\n"
+"Without RTMP, you won't be able to download\n"
+"from many sites."
+msgstr ""
+"Zdá se, že nemáte nainstalovanou knihovnu RtmpDump.\n"
+"YTD používá RtmpDump ke zprovoznění protokolu RTMP.\n"
+"Bez RTMP nebudete moci stahovat z mnoha webů."
+
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX
+#: Common/uMessages.pas:80
+msgid "Would you like to download and install RtmpDump?"
+msgstr "Přejete si stáhnout a nainstalovat RtmpDump?"
+
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND
+#: Common/uMessages.pas:81
+msgid ""
+"You don't seem to have the MSDL library installed.\n"
+"YTD uses MSDL to handle various Microsoft protocols.\n"
+"Without them, you won't be able to download\n"
+"from some sites."
+msgstr ""
+"Zdá se, že nemáte nainstalovanou knihovnu MSDL.\n"
+"YTD používá MSDL ke zprovoznění Microsoftích protokolů.\n"
+"Bez nich nebudete moci stahovat z některých webů."
+
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND_ACTION_SUFFIX
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND_ACTION_SUFFIX
+#: Common/uMessages.pas:82
+msgid "Would you like to download and install MSDL?"
+msgstr "Přejete si stáhnout a nainstalovat MSDL?"
+
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_DOWNLOAD
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_DOWNLOAD
+#: Common/uMessages.pas:83
+msgid "Download URL:"
+msgstr "URL ke stahnuti:"
+
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_WERE_DOWNLOADED
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_WERE_DOWNLOADED
+#: Common/uMessages.pas:84
+msgid ""
+"External libraries have been downloaded and installed.\n"
+"Please restart YTD to activate them."
+msgstr ""
+"Externí knihovny byly staženy a nainstalovány.\n"
+"Prosím, restartujte YTD pro jejich aktivaci."
+
+#. Programmer's name for it: MSG_WANT_TO_UNINSTALL
+#. Programmer's name for it: MSG_WANT_TO_UNINSTALL
+#: Common/uMessages.pas:85
+msgid "Are you sure you want to uninstall YTD?"
+msgstr "Jste si jistý, že chcete YTD odinstalovat?"
+
+#. Programmer's name for it: MSG_UNINSTALL_COMPLETE
+#. Programmer's name for it: MSG_UNINSTALL_COMPLETE
+#: Common/uMessages.pas:86
+msgid "Uninstallation completed."
+msgstr "Odinstalace dokončena."
+
+#. Attempted to access data which depends Prepare without running Prepare
+#. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
+#. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
+#: Common/uMessages.pas:89
+msgid "Downloader is not prepared!"
+msgstr "Downloader není připraven!"
+
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
+#: Common/uMessages.pas:90
+msgid "Download of this content is not implemented."
+msgstr "Stahování tohoto obsahu není podporováno."
+
+#. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
+#. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
+#: Common/uMessages.pas:91
+msgid "Download URL was not set."
+msgstr "Nebyla nastavena URL."
+
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
+#: Common/uMessages.pas:92
+msgid "Failed to initialize the download structures."
+msgstr "Nepodařilo se inicializovat download."
+
+#. Programmer's name for it: ERR_DOWNLOAD_FAILED
+#. Programmer's name for it: ERR_DOWNLOAD_FAILED
+#: Common/uMessages.pas:93
+msgid "Download failed."
+msgstr "Download selhal."
+
+#. Programmer's name for it: ERR_RTMPDUMP_ERROR
+#. Programmer's name for it: ERR_RTMPDUMP_ERROR
+#: Common/uMessages.pas:94
+msgid "RTMPDUMP error: %s"
+msgstr "Chyba RTMPDUMPu: %s"
+
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: Common/uMessages.pas:95
+msgid "Download to file \"%s\" was not allowed."
+msgstr "Stahování do souboru \"%s\" nebylo povoleno."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
+#: Common/uMessages.pas:97
+msgid "Failed to locate embedded object."
+msgstr "Nepodařilo se nalézt vložený objekt."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:98
+msgid "Failed to locate media info page."
+msgstr "Nepodařilo se najít stránku informací o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:99
+msgid "Failed to download media info page. Check your firewall!"
+msgstr ""
+"Nepodařilo se stáhnout stránku informací o médiu. Zkontrolujte nastavení "
+"firewallu."
+
+#. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
+#. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:100
+msgid "Failed to prepare media info page."
+msgstr "Nepodařilo se připravit stránku informací o médiu."
+
+#. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
+#. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:101
+msgid "Invalid media info page."
+msgstr "Chybná stránka informací o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
+#: Common/uMessages.pas:102
+msgid "Failed to download server list."
+msgstr "Nepodařilo se stáhnout seznam serverů."
+
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#: Common/uMessages.pas:103
+msgid "Unknown URL: %s"
+msgstr "Neznámá URL: %s"
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
+#: Common/uMessages.pas:105
+msgid "Failed to locate media info."
+msgstr "Nepodařilo se najít informace o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
+#: Common/uMessages.pas:106
+msgid "Failed to find media title."
+msgstr "Nepodařilo se najít název média."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
+#: Common/uMessages.pas:107
+msgid "Failed to find media URL."
+msgstr "Nepodařilo se najít adresu média."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
+#: Common/uMessages.pas:108
+msgid "Failed to find media server."
+msgstr "Nepodařilo se najít server média."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
+#: Common/uMessages.pas:109
+msgid "Failed to find media stream."
+msgstr "Nepodařilo se najít stream média."
+
+#. Programmer's name for it: ERR_HTTP_RESULT_CODE
+#. Programmer's name for it: ERR_HTTP_RESULT_CODE
+#: Common/uMessages.pas:111
+msgid "HTTP request failed with error code %d."
+msgstr "HTTP požadavek selhal s chybou %d."
+
+#. Programmer's name for it: ERR_HTTP_NO_DATA_READ
+#. Programmer's name for it: ERR_HTTP_NO_DATA_READ
+#: Common/uMessages.pas:112
+msgid "No data read from the connection."
+msgstr "Nepodařilo se přečíst žádná data."
+
+#. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
+#. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NOT_FOUND
+#: Common/uMessages.pas:114 Common/uMessages.pas:135
+msgid "Variable \"%s\" not found."
+msgstr "Proměnná \"%s\" nebyla nalezena."
+
+#. Programmer's name for it: ERR_SEE_LOGFILE
+#. Programmer's name for it: ERR_SEE_LOGFILE
+#: Common/uMessages.pas:115
+msgid "Error message listed in file \"%s\"."
+msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
+
+#. Programmer's name for it: ERR_MEDIA_REMOVED
+#. Programmer's name for it: ERR_MEDIA_REMOVED
+#: Common/uMessages.pas:116
+msgid "Media file was removed from the server."
+msgstr "Soubor byl ze serveru smazán."
+
+#. Programmer's name for it: ERR_SERVER_ERROR
+#. Programmer's name for it: ERR_SERVER_ERROR
+#: Common/uMessages.pas:117
+msgid "Server returned an error: %s"
+msgstr "Server hlásí chybu: %s"
+
+#. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
+#. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
+#: Common/uMessages.pas:118
+msgid "Invalid configuration: Secure token not set."
+msgstr "Chybné nastavení: SecureToken není nastaven."
+
+#. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
+#. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
+#: Common/uMessages.pas:119
+msgid "Encryption not yet supported."
+msgstr "Nepodporované šifrovací schéma."
+
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#: Common/uMessages.pas:120
+msgid "Login failed."
+msgstr "Přihlášení se nezdařilo."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
+#. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
+#: Common/uMessages.pas:122
+msgid "Failed to load library \"%s\" or its prerequisites."
+msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
+
+#. Programmer's name for it: ERR_SCRIPTS_ERROR
+#. Programmer's name for it: ERR_SCRIPTS_ERROR
+#: Common/uMessages.pas:124
+msgid "Script error: "
+msgstr "Chyba skriptu:"
+
+#. Programmer's name for it: ERR_SCRIPTS_URL_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_URL_NOT_FOUND
+#: Common/uMessages.pas:125
+msgid "URL not found."
+msgstr "URL nenalezena."
+
+#. Programmer's name for it: ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED
+#. Programmer's name for it: ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED
+#: Common/uMessages.pas:126
+msgid "Url pattern is empty."
+msgstr "Vzor pro URL je prázdný."
+
+#. Programmer's name for it: ERR_SCRIPTS_SCRIPT_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_SCRIPT_NOT_FOUND
+#: Common/uMessages.pas:127
+msgid "Requested script \"%s\" not found."
+msgstr "Požadovaný skript \"%s\" nebyl nalezen."
+
+#. Programmer's name for it: ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY
+#. Programmer's name for it: ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY
+#: Common/uMessages.pas:128
+msgid "Script may not be empty."
+msgstr "Skript nesmí být prázdný."
+
+#. Programmer's name for it: ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY
+#. Programmer's name for it: ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY
+#: Common/uMessages.pas:129
+msgid "Search pattern may not be empty."
+msgstr "Vzor pro hledání nesmí být prázdný."
+
+#. Programmer's name for it: ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY
+#. Programmer's name for it: ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY
+#: Common/uMessages.pas:130
+msgid "Pattern ID may not be empty."
+msgstr "ID vzoru nesmí být prázdné."
+
+#. Programmer's name for it: ERR_SCRIPTS_PATTERN_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_PATTERN_NOT_FOUND
+#: Common/uMessages.pas:131
+msgid "Requested regexp \"%s\" not found."
+msgstr "Požadovaný regulární výraz \"%s\" nebyl nalezen."
+
+#. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY
+#. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY
+#: Common/uMessages.pas:132
+msgid "Subexpression name may not be empty."
+msgstr "Jméno podvýrazu nesmí být prázdné."
+
+#. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND
+#: Common/uMessages.pas:133
+msgid "Subexpression \"%s\" not found."
+msgstr "Podvýraz \"%s\" nebyl nalezen."
+
+#. Programmer's name for it: ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP
+#. Programmer's name for it: ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP
+#: Common/uMessages.pas:134
+msgid "Failed to match regular expression."
+msgstr "Regulární výraz nebyl splněn."
+
+#. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY
+#. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY
+#: Common/uMessages.pas:136
+msgid "Variable name may not be empty."
+msgstr "Jméno proměnné nesmí být prázdné."
+
+#. Programmer's name for it: ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY
+#. Programmer's name for it: ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY
+#: Common/uMessages.pas:137
+msgid "Attribute \"%s\" may not be empty."
+msgstr "Atribut \"%s\" nesmí být prázdný."
+
+#. Programmer's name for it: ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE
+#. Programmer's name for it: ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE
+#: Common/uMessages.pas:138
+msgid "Attribute \"%s\" has invalid value \"%s\"."
+msgstr "Atribut \"%s\" má neplatnou hodnotu \"%s\"."
+
+#. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND
+#. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND
+#: Common/uMessages.pas:139
+msgid "Unknown command."
+msgstr "Neznámý příkaz."
+
+#. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND_NAMED
+#. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND_NAMED
+#: Common/uMessages.pas:140
+msgid "Unknown command \"%s\"."
+msgstr "Neznámý příkaz \"%s\"."
+
+#. Programmer's name for it: ERR_SCRIPTS_DOWNLOAD_FAILED
+#. Programmer's name for it: ERR_SCRIPTS_DOWNLOAD_FAILED
+#: Common/uMessages.pas:141
+msgid "Download failed: %s"
+msgstr "Download selhal: %s"
+
+#. Programmer's name for it: ERR_SCRIPTS_UNEXPECTED_NODE_TYPE
+#. Programmer's name for it: ERR_SCRIPTS_UNEXPECTED_NODE_TYPE
+#: Common/uMessages.pas:142
+msgid "Unexpected node type."
+msgstr "Neočekávaný typ uzlu."
+
+#. Programmer's name for it: ERR_SCRIPTS_MULTIPLE_ELSE
+#. Programmer's name for it: ERR_SCRIPTS_MULTIPLE_ELSE
+#: Common/uMessages.pas:143
+msgid "Multiple <else> tags encountered."
+msgstr "Nalezen několikanásobný výskyt <else>."
+
+#. Programmer's name for it: ERR_SCRIPTS_IF_NOT_SATISFIED
+#. Programmer's name for it: ERR_SCRIPTS_IF_NOT_SATISFIED
+#: Common/uMessages.pas:144
+msgid "No satisfied condition found."
+msgstr "Žádná podmínka nebyla splněna."
+
+#. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_CONDITION
+#. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_CONDITION
+#: Common/uMessages.pas:145
+msgid "Unknown condition."
+msgstr "Neznámá podmínka."
+
+#. Programmer's name for it: ERR_SCRIPTS_INVALID_PAUSE
+#. Programmer's name for it: ERR_SCRIPTS_INVALID_PAUSE
+#: Common/uMessages.pas:146
+msgid "Invalid <pause> settings."
+msgstr "Chybné nastavení příkazu <pause>."
+
+#. Programmer's name for it: ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND
+#: Common/uMessages.pas:147
+msgid "XML element not found."
+msgstr "Neurčený kořenový element XML."
+
+#. Programmer's name for it: ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND
+#: Common/uMessages.pas:148
+msgid "JSON element not found."
+msgstr "JSON element nebyl nalezen."
+
+#. Programmer's name for it: MSG_CANT_OVERWRITE_FILE
+#: Common/uOptions.pas:294
+msgid "Cannot overwrite file \"%s\"."
+msgstr "Nepodařilo se přepsat soubor \"%s\"."
+
+#. Programmer's name for it: MSG_CANT_CREATE_FILE
+#: Common/uOptions.pas:295
+msgid "Cannot create file \"%s\"."
+msgstr "Nepodařilo se vytvořit soubor \"%s\"."
+
+#. Programmer's name for it: EUROSEPTIK_SUBTITLES_LANGUAGE
+#: Downloaders/downEuroseptik.pas:107
+msgid "Přepis, angličtina"
+msgstr "Přepis, angličtina"
+
+#: Downloaders/downYouTube.pas:641
+msgid "Obfuscation scheme \"%s\" not yet supported"
+msgstr "Maskovací schéma \"%s\" není podporováno"
+
+#. GUI: Download thread state: Preparing download (getting title, URL...)
+#. Programmer's name for it: THREADSTATE_PREPARING
+#: GUI/guiConsts.pas:47
+msgid "Preparing"
+msgstr "Připravuje se download"
+
+#. GUI: Download thread state: Downloading
+#. Programmer's name for it: THREADSTATE_DOWNLOADING
+#: GUI/guiConsts.pas:48
+msgid "Downloading"
+msgstr "Stahuje se"
+
+#. GUI: Download thread state: Download finished successfully
+#. Programmer's name for it: THREADSTATE_FINISHED
+#: GUI/guiConsts.pas:49
+msgid "Finished"
+msgstr "Dokončeno"
+
+#. GUI: Download thread state: Download failed
+#. Programmer's name for it: THREADSTATE_FAILED
+#: GUI/guiConsts.pas:50
+msgid "Failed"
+msgstr "Chyba"
+
+#. GUI: Download thread state: Download was aborted by user
+#. Programmer's name for it: THREADSTATE_ABORTED
+#: GUI/guiConsts.pas:51
+msgid "Aborted"
+msgstr "Přerušeno"
+
+#. GUI: Download thread state: Download was paused by user
+#. Programmer's name for it: THREADSTATE_PAUSED
+#: GUI/guiConsts.pas:52
+msgid "Paused"
+msgstr "Pozastaveno"
+
+#. GUI: Convert thread state: Waiting for its turn
+#. Programmer's name for it: CONVERTTHREADSTATE_WAITING
+#: GUI/guiConsts.pas:56
+msgid "Awaiting conversion"
+msgstr "Čeká se konverzi"
+
+#. GUI: Convert thread state: Converting
+#. Programmer's name for it: CONVERTTHREADSTATE_CONVERTING
+#: GUI/guiConsts.pas:57
+msgid "Converting"
+msgstr "Konvertuje se"
+
+#. GUI: Convert thread state: Conversion finishes successfully
+#. Programmer's name for it: CONVERTTHREADSTATE_FINISHED
+#: GUI/guiConsts.pas:58
+msgid "Converted"
+msgstr "Konverze dokončena"
+
+#. GUI: Convert thread state: Conversion failed
+#. Programmer's name for it: CONVERTTHREADSTATE_FAILED
+#: GUI/guiConsts.pas:59
+msgid "Conversion failed"
+msgstr "Konverze selhala"
+
+#. GUI: Convert thread state: Failed to start the converter
+#. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
+#: GUI/guiConsts.pas:60
+msgid "Converter not found"
+msgstr "Konvertor nebyl nalezen"
+
+#. GUI: description of a "no converter"
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:63
+msgid "** None **"
+msgstr "** Žádný **"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:75
+msgid ""
+"Converters are not activated.\n"
+"\n"
+"You must activate them through manually editing\n"
+"the configuration file. You can find the steps\n"
+"needed in the documenation.\n"
+"\n"
+"The reason why this is necessary is, converters\n"
+"NEED to be configured properly, as documented,\n"
+"but too many people failed to read the documentation\n"
+"and instead complained that converters don't work."
+msgstr ""
+"Konvertory nejsou aktivovány.\n"
+"\n"
+"Musíte je aktivovat ručně v konfiguračním\n"
+"souboru. Popis kroků potřebných pro aktivaci\n"
+"je uveden v dokumentaci.\n"
+"\n"
+"Důvod pro aktivaci je ten, že konvertory MUSÍ\n"
+"být správně nastaveny podle dokumentace, ale\n"
+"mnoho lidí tu dokumentaci vůbec nečetlo a hned\n"
+"si stěžovalo, že konvertování nefunguje."
+
+#. Programmer's name for it: OVERWRITEMODE_ASKUSER
+#: GUI/guiConsts.pas:80
+msgid "Ask user"
+msgstr "Zeptat se uživatele"
+
+#. Programmer's name for it: OVERWRITEMODE_OVERWRITE
+#: GUI/guiConsts.pas:81
+msgid "Overwrite"
+msgstr "Přepisovat"
+
+#. Programmer's name for it: OVERWRITEMODE_SKIP
+#: GUI/guiConsts.pas:82
+msgid "Skip"
+msgstr "Přeskočit"
+
+#. Programmer's name for it: OVERWRITEMODE_RENAME
+#: GUI/guiConsts.pas:83
+msgid "Rename automatically"
+msgstr "Automaticky přejmenovat"
+
+#. Programmer's name for it: ADDINDEXTONAMES_NONE
+#: GUI/guiConsts.pas:86
+msgid "Don't add index to names"
+msgstr "Nepřidávat index k názvům"
+
+#. Programmer's name for it: ADDINDEXTONAMES_START
+#: GUI/guiConsts.pas:87
+msgid "Put the index at the start of a name"
+msgstr "Přidávat index na začátek názvu"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:88
+msgid "Put the index at the end of a name"
+msgstr "Přidávat index na konec názvu"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:95
+msgid ""
+"Config file will open now, but please do not edit\n"
+"it right away: YTD will overwrite the file before\n"
+"it quits, so any changes made would be lost.\n"
+"First quit YTD and only then start editing the file."
+msgstr ""
+"Nyní se otevře konfigurační soubor, ale prosím\n"
+"nezapisujte do něj zatím: YTD před svým ukončením\n"
+"tento soubor přepíše, takže by se všechny vaše\n"
+"ruční změny ztratily.\n"
+"Napřed ukončete YTD a teprve potom začněte konfigurační\n"
+"soubor upravovat."
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:98
+msgid ""
+"There are downloads in progress\n"
+"Do you really want to quit?"
+msgstr ""
+"Jsou aktivní downloady.\n"
+"Opravdu chcete program ukončit?"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:101
+msgid ""
+"A newer version (%s) is available.\n"
+"Do you want to download it?"
+msgstr ""
+"K dispozici je nová verze (%s).\n"
+"Chcete ji stáhnout?"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:105
+msgid ""
+"A newer version (%s) of script definitions\n"
+"is available.\n"
+"Do you want to download it?"
+msgstr ""
+"K dispozici je nová verze (%s) definic\n"
+"skriptů.\n"
+"Chcete ji stáhnout?"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:107
+msgid "Enter video URL:"
+msgstr "Zadejte URL videa:"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:109
+msgid "Enter page URL:"
+msgstr "Zadejte URL stránky:"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:112
+msgid ""
+"This URL is not supported.\n"
+"See the documenation for supported URLs."
+msgstr ""
+"Tato URL není podporována.\n"
+"Seznam podporovaných URL je uveden v dokumentaci."
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:115
+msgid ""
+"No supported URLs found.\n"
+"See the documenation for supported URLs."
+msgstr ""
+"Nebyla nalezena žádná podporovaná URL.\n"
+"Seznam podporovaných URL je uveden v dokumentaci."
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:117
+msgid "Do you really want to delete selected transfer(s)?"
+msgstr "Opravdu chcete smazat vybrané přenosy?"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:119
+msgid "Do you really want to stop selected transfer(s)?"
+msgstr "Opravdu chcete zastavit vybrané přenosy?"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:121
+msgid "Do you really want to report a bug for this transfer?"
+msgstr "Opravdu chcete pro tento odkaz nahlásit chybu?"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:127
+msgid ""
+"Bugreport is not available for this video.\n"
+"After the download has successfully started,\n"
+"its completion is dependent on the goowill\n"
+"of the server and the quality of your network\n"
+"connection. The program can't influence it."
+msgstr ""
+"Hlášení chyby není pro toto video dostupné.\n"
+"Jakmile stahování úspěšně začne, je jeho\n"
+"dokončení čistě věcí serveru a všeho připojení.\n"
+"Program to nemůže ovlivnit."
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:131
+msgid ""
+"Bugreport is not available for your computer\n"
+"because you don't have OpenSSL installed.\n"
+"Please install OpenSSL and try again."
+msgstr ""
+"Hlášení chyb není pro váš počítač povoleno,\n"
+"protože nemáte nainstalovanou knihovnu OpenSSL.\n"
+"Nainstalujte prosím OpenSSL a zkuste to znovu."
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:133
+msgid "Convert selected files with"
+msgstr "Zkonvertovat zvolené soubory pomocí"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:135
+msgid "Automatically convert with"
+msgstr "Automaticky konvertovat pomocí"
+
+#: GUI/guiFunctions.pas:185
+msgid "... and %d others"
+msgstr "... and %d others..."
+
+#. Programmer's name for it: INITIALRUN_WELCOMEMSG
+#: GUI/guiOptions.pas:105 GUI/guiOptions.pas:174 GUI/guiOptions.pas:176
+msgid ""
+"This is the first time you are running the GUI version\n"
+"of YTD, or the configuration file isn't available.\n"
+"To protect your privacy, the program will now ask you\n"
+"about some default values which may influence it."
+msgstr ""
+"Právě poprvé spouštíte grafickou verzi programu\n"
+"YTD, nebo jste smazal dosavadní konfigurační soubor.\n"
+"Aby nedošlo k narušení vašeho soukromí, zeptá se nyní\n"
+"YTD na některá nastavení, která mají na soukromí vliv."
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:113
+msgid ""
+"Would you like to run YTD in portable mode?\n"
+"\n"
+"In portable mode, YTD stores its settings in file \"ytd.xml\"\n"
+"in its application directory (which must be writable in order\n"
+"for the settings to be stored). In normal (non-portable) mode\n"
+"the settings are stored in the current user's profile.\n"
+"\n"
+"YES = portable mode, NO = normal mode"
+msgstr ""
+"Chcete spustit YTD v přenositelném\n"
+"(portable) režimu?\n"
+"\n"
+"V přenositelném režimu jsou nastavení YTD ukládána do\n"
+"souboru \"ytd.xml\" v adresáři aplikace (který tím pádem\n"
+"musí být zapisovatelný). V normálním (ne-portable) režimu\n"
+"se nastavení ukládají do souboru v profilu přihlášeného\n"
+"uživatele.\n"
+"\n"
+"ANO = přenositelný režim, NE = normální režim"
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:125
+msgid ""
+"Would you like YTD to check for new versions\n"
+"on GUI startup?\n"
+"\n"
+"In order to perform the check, YTD's server must\n"
+"be contacted, and that means your IP address will be\n"
+"known to it. While this is not a privacy issue for\n"
+"most users, it might be significant for you.\n"
+"If you turn the automatic check off, you can still\n"
+"check for new versions manually by either visiting\n"
+"the program's website or by entering the About window.\n"
+"\n"
+"Should YTD automatically check for new versions?"
+msgstr ""
+"Chcete, aby YTD při startu grafické verze testoval\n"
+"existenci nových verzí programu?\n"
+"\n"
+"Aby šlo nové verze zjistit, musí YTD kontaktovat svůj\n"
+"server, což znamená, že se autor programu dozví vaši\n"
+"IP adresu. Pro většinu uživatelů by to nemělo představovat\n"
+"žádnou hrozbu, ale zrovna vy můžete být tou výjimkou.\n"
+"I když vypnete automatický test na nové verze, můžete\n"
+"si ho ručně vyžádat otevřením okna \"O aplikaci\" nebo\n"
+"návštěvou domácí stránky programu.\n"
+"\n"
+"Má YTD automaticky zjišťovat nové verze?"
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:128
+msgid "Change container to .AVI"
+msgstr "Změnit kontejner na .AVI"
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:131
+msgid "Convert movie to AVI/XVID"
+msgstr "Zkonvertovat film do AVI/XVID"
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:134
+msgid "Convert movie to AVI/H264"
+msgstr "Zkonvertovat film do AVI/H264"
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:137
+msgid "Convert movie to MP3"
+msgstr "Zkonvertovat film do MP3"
+
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:141 GUI/guiOptions.pas:183 GUI/guiOptions.pas:185
+msgid ""
+"Error loading configuration file. Error %s:\n"
+"%s\n"
+"Default config file will be created."
+msgstr ""
+"Chyba %s při načítání konfiguračního souboru:\n"
+"%s\n"
+"Bude vytvořen nový konfigurační soubor."
+
+#. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+#. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+#: GUI/uDownloadList.pas:299 GUI/uDownloadList.pas:307
+msgid "File already exists."
+msgstr "Soubor už existuje."
+
+#. GUI: Check for a new version wasn't made yet - or failed.
+#. GUI: Check for a new version wasn't made yet - or failed.
+#. Label "Newest version:"
+#: GUI/VCL/guiAboutVCL.pas:149 GUI/VCL/guiAboutVCL.pas:150
+#: GUI/WinAPI/guiAboutWINAPI.pas:243 GUI/WinAPI/guiAboutWINAPI.pas:244
+msgid "checking..."
+msgstr "zjišťuji..."
+
+#. Programmer's name for it: sxeErrorCalcStreamLength
+#: Lib/NativeXML/NativeXml.pas:1282
+msgid "Error while calculating streamlength"
+msgstr "Chyba při výpočtu délky streamu"
+
+#. Programmer's name for it: sxeMissingDataInBinaryStream
+#: Lib/NativeXML/NativeXml.pas:1283
+msgid "Missing data in binary stream"
+msgstr "Chybějící data v binárním streamu"
+
+#. Programmer's name for it: sxeMissingElementName
+#: Lib/NativeXML/NativeXml.pas:1284
+msgid "Missing element name"
+msgstr "Chybí název elementu"
+
+#. Programmer's name for it: sxeMissingCloseTag
+#: Lib/NativeXML/NativeXml.pas:1285
+msgid "Missing close tag in element %s"
+msgstr "Chybí uzavírací tag pro element %s"
+
+#. Programmer's name for it: sxeMissingDataAfterGreaterThan
+#: Lib/NativeXML/NativeXml.pas:1286
+msgid "Missing data after \"<\" in element %s"
+msgstr "Chybí data po \"<\" v elementu %s"
+
+#. Programmer's name for it: sxeMissingLessThanInCloseTag
+#: Lib/NativeXML/NativeXml.pas:1287
+msgid "Missing \">\" in close tag of element %s"
+msgstr "Chybí \">\" v zavíracím tagu elementu %s"
+
+#. Programmer's name for it: sxeIncorrectCloseTag
+#: Lib/NativeXML/NativeXml.pas:1288
+msgid "Incorrect close tag in element %s"
+msgstr "Nesprávný uzavítrací tag pro element %s"
+
+#. Programmer's name for it: sxeIllegalCharInNodeName
+#: Lib/NativeXML/NativeXml.pas:1289
+msgid "Illegal character in node name \"%s\""
+msgstr "Nepovolený znak v názvu uzlu \"%s\""
+
+#. Programmer's name for it: sxeMoreThanOneRootElement
+#: Lib/NativeXML/NativeXml.pas:1290
+msgid "More than one root element found in xml"
+msgstr "V XML byl nalezen více než jeden kořenový element"
+
+#. Programmer's name for it: sxeMoreThanOneDeclaration
+#: Lib/NativeXML/NativeXml.pas:1291
+msgid "More than one xml declaration found in xml"
+msgstr "V XML byla nalezena více než jedna XML deklarace"
+
+#. Programmer's name for it: sxeDeclarationMustBeFirstElem
+#: Lib/NativeXML/NativeXml.pas:1292
+msgid "Xml declaration must be first element"
+msgstr "XML deklarace musí být prvním elementem"
+
+#. Programmer's name for it: sxeMoreThanOneDoctype
+#: Lib/NativeXML/NativeXml.pas:1293
+msgid "More than one doctype declaration found in root"
+msgstr "V kořeni byla nalezena více než jedna deklarace doctype"
+
+#. Programmer's name for it: sxeDoctypeAfterRootElement
+#: Lib/NativeXML/NativeXml.pas:1294
+msgid "Doctype declaration found after root element"
+msgstr "Deklarace doctype byla nalezena až za kořenovým elementem"
+
+#. Programmer's name for it: sxeNoRootElement
+#: Lib/NativeXML/NativeXml.pas:1295
+msgid "No root element found in xml"
+msgstr "V XML nebyl nalezen kořenový element"
+
+#. Programmer's name for it: sxeIllegalElementType
+#: Lib/NativeXML/NativeXml.pas:1296
+msgid "Illegal element type"
+msgstr "Nesprávný typ elementu"
+
+#. Programmer's name for it: sxeCDATAInRoot
+#: Lib/NativeXML/NativeXml.pas:1297
+msgid "No CDATA allowed in root"
+msgstr "V kořeni není povoleno CDATA"
+
+#. Programmer's name for it: sxeRootElementNotDefined
+#: Lib/NativeXML/NativeXml.pas:1298
+msgid "XML root element not defined."
+msgstr "Kořenový element XML není definován."
+
+#. Programmer's name for it: sxeCodecStreamNotAssigned
+#: Lib/NativeXML/NativeXml.pas:1299
+msgid "Encoding stream unassigned"
+msgstr "Nepřiřazený kódovací stream"
+
+#. Programmer's name for it: sxeUnsupportedEncoding
+#: Lib/NativeXML/NativeXml.pas:1300
+msgid "Unsupported string encoding"
+msgstr "Nepodporované kódování řetězců"
+
+#. Programmer's name for it: sxeCannotReadCodecForWriting
+#: Lib/NativeXML/NativeXml.pas:1301
+msgid "Cannot read from a conversion stream opened for writing"
+msgstr "Z konverzního streamu otevřeného pro zápis nelze číst"
+
+#. Programmer's name for it: sxeCannotWriteCodecForReading
+#: Lib/NativeXML/NativeXml.pas:1302
+msgid "Cannot write to an UTF stream opened for reading"
+msgstr "Do UTF streamu otevřeného pro čtení nelze zapisovat"
+
+#. Programmer's name for it: sxeCannotReadMultipeChar
+#: Lib/NativeXML/NativeXml.pas:1303
+msgid "Cannot read multiple chars from conversion stream at once"
+msgstr "Z konverzního streamu nelze číst více znaků najednou"
+
+#. Programmer's name for it: sxeCannotPerformSeek
+#: Lib/NativeXML/NativeXml.pas:1304
+msgid "Cannot perform seek on codec stream"
+msgstr "V kódovacím streamu nelze přesouvat ukazatel"
+
+#. Programmer's name for it: sxeCannotSeekBeforeReadWrite
+#: Lib/NativeXML/NativeXml.pas:1305
+msgid "Cannot seek before reading or writing in conversion stream"
+msgstr "V konverzním streamu nelze seekovat před čtením nebo zapisováním"
+
+#. Programmer's name for it: sxeCannotSeek
+#: Lib/NativeXML/NativeXml.pas:1306
+msgid "Cannot perform seek in conversion stream"
+msgstr "V konverzním streamu nelze přesouvat ukazatel"
+
+#. Programmer's name for it: sxeCannotWriteToOutputStream
+#: Lib/NativeXML/NativeXml.pas:1307
+msgid "Cannot write to output stream"
+msgstr "Do výstupního streamu nelze zapisovat"
+
+#. Programmer's name for it: sxeXmlNodeNotAssigned
+#: Lib/NativeXML/NativeXml.pas:1308
+msgid "XML Node is not assigned"
+msgstr "XML uzel není nastaven"
+
+#. Programmer's name for it: sxeCannotConverToBool
+#: Lib/NativeXML/NativeXml.pas:1309
+msgid "Cannot convert value to bool"
+msgstr "Nepodařilo se zkonvertovat hodnotu na boolean"
+
+#. Programmer's name for it: sxeCannotConvertToFloat
+#: Lib/NativeXML/NativeXml.pas:1310
+msgid "Cannot convert value to float"
+msgstr "Nepodařilo se zkonvertovat hodnotu na float"
+
+#. Programmer's name for it: sxeSignificantDigitsOutOfRange
+#: Lib/NativeXML/NativeXml.pas:1311
+msgid "Significant digits out of range"
+msgstr "Významové číslice mimo rozsah"
+
+#. Programmer's name for it: sxwIllegalVarType
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:227
+msgid "Illegal variant type"
+msgstr "Nesprávný variantní typ"
+
+#. Programmer's name for it: sxrUnregisteredClassType
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:228
+msgid "Unregistered classtype encountered in "
+msgstr "Nalezen neregistrovaný typ třídy "
+
+#. Programmer's name for it: sxrInvalidPropertyValue
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:229
+msgid "Invalid property value"
+msgstr "Nesprávná hodnota property "
+
+#. Programmer's name for it: sxwInvalidMethodName
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:230
+msgid "Invalid method name"
+msgstr "Nesprávné jméno metody "
+
+#. Programmer's name for it: re7zListStart
+#: Lib/Pepak/uSystem.pas:581
+msgid "^-{10}[- ]+$"
+msgstr "^-{10}[- ]+$"
+
+#. Programmer's name for it: re7zListItem
+#: Lib/Pepak/uSystem.pas:582
+msgid ""
+"^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]"
+"{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
+msgstr ""
+"^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]"
+"{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
+
+#. error code, error code, error message
+#. Programmer's name for it: WINDOWS_ERROR
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
+msgid ""
+"Windows error %u = %08.8x\n"
+"%s"
+msgstr ""
+"Windows chyba %u = %08.8x\n"
+"%s"
+
+#. error code, error code
+#. Programmer's name for it: WINDOWS_ERROR_UNKNOWN
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:81
+msgid "Unknown error %u = %08.8x."
+msgstr "Neznámá chyba %u = %08.8x."
+
+#. Programmer's name for it: SSelectDirectory
+#: Lib/Pepak/ApiForm/uDialogs.pas:149
+msgid "Select a directory"
+msgstr "Zvolte adresář pro downloady"
+
+#~ msgid "Invalid configuration: Config password not set."
+#~ msgstr "Chybné nastavení: Heslo pro konfigurace není nastaveno."
+
+#~ msgid "Base URL not found."
+#~ msgstr "Základní URL nenalezena."
+
+#~ msgid "&Avoid HD content"
+#~ msgstr "Nepokoušet se hledat &HD videa"
+
+#~ msgid "Main"
+#~ msgstr "Základní"
+
+#, fuzzy
+#~ msgid "Downloads"
+#~ msgstr "Stahuje se"
+
+#~ msgid "Ms Shell Dlg"
+#~ msgstr "Ms Shell Dlg"
+
+#~ msgid "0.60"
+#~ msgstr "0.60"
+
+#, fuzzy
+#~ msgid "Add new URL\tIns"
+#~ msgstr "Přidat URL"
+
+#, fuzzy
+#~ msgid "Add URLs from Clipboard\tCTRL+V"
+#~ msgstr "Přidat URL ze schránky"
+
+#, fuzzy
+#~ msgid "Add URLs from file\tCtrl+O"
+#~ msgstr "Přidat URL ze souboru"
+
+#, fuzzy
+#~ msgid "Add URLs from HTML file\tCtrl+H"
+#~ msgstr "Přidat URL z HTML souboru"
+
+#, fuzzy
+#~ msgid "Add URLs from HTML page\tCtrl+P"
+#~ msgstr "Přidat URL z HTML stránky"
+
+#, fuzzy
+#~ msgid "Save URL list to file\tCtrl+S"
+#~ msgstr "Uložit seznam URL"
+
+#, fuzzy
+#~ msgid "Start/Pause/Resume\tSpace"
+#~ msgstr "Start/Pauza/Pokračovat"
+
+#, fuzzy
+#~ msgid "Stop\tEsc"
+#~ msgstr "Zastavit"
+
+#, fuzzy
+#~ msgid "Convert\tCtrl+N"
+#~ msgstr "Konvertor:"
+
+#, fuzzy
+#~ msgid "Delete URL\tDel"
+#~ msgstr "Smazat URL"
+
+#, fuzzy
+#~ msgid "Copy URLs to Clipboard\tCtrl+C"
+#~ msgstr "Zkopírovat URL do schránky"
+
+#, fuzzy
+#~ msgid "Select All\tCtrl+A"
+#~ msgstr "Vybrat vše"
+
+#, fuzzy
+#~ msgid "Refresh\tF5"
+#~ msgstr "Obnovit"
+
+#, fuzzy
+#~ msgid "Report a bug\tCtrl+Alt+B"
+#~ msgstr "Nahlásit chybu"
+
+#, fuzzy
+#~ msgid "About\tF1"
+#~ msgstr "O aplikaci"
+
+#, fuzzy
+#~ msgid "LabelPrompt"
+#~ msgstr "LabelVersion"
+
+#, fuzzy
+#~ msgid "OK"
+#~ msgstr "&OK"
+
+#, fuzzy
+#~ msgid "Cancel"
+#~ msgstr "&Storno"
+
+#~ msgid "FormYTD"
+#~ msgstr "FormYTD"
+
+#~ msgid "Autodownload"
+#~ msgstr "Autodownload"
+
+#~ msgid "Choose download directory"
+#~ msgstr "Vyberte cílový adresář pro downloady"
+
+#~ msgid "Automatically overwrite existing files"
+#~ msgstr "Automaticky přepisovat existující soubory"
+
+#~ msgid "Choose a converter"
+#~ msgstr "Vybrat konvertor"
+
+#~ msgid ""
+#~ "Choose a converter which will be automatically applied to all downloaded "
+#~ "movies."
+#~ msgstr ""
+#~ "Vybrat konvertor, který bude automaticky použit na všechny stáhnuté "
+#~ "soubory."
+
+#~ msgid "ToolButton2"
+#~ msgstr "ToolButton2"
+
+#~ msgid "Failed to find embedded object."
+#~ msgstr "Nepodařilo se najít vložený objekt."
+
+#~ msgid "Embedded object is invalid."
+#~ msgstr "Vložený objekt je neplatný."
+
+#~ msgid ""
+#~ "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) "
+#~ "Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
+#~ msgstr ""
+#~ "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) "
+#~ "Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
+
+#~ msgid "<arg> [<arg>] ..."
+#~ msgstr "<arg> [<arg>] ..."

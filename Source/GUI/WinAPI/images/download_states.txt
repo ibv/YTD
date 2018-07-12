@@ -1,0 +1,7 @@
+aborted
+failed
+finished
+downloading
+waiting for conversion
+converted
+converting

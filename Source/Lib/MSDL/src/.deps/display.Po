@@ -1,0 +1,36 @@
+display.o display.o: display.c \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
+  msdl.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h \
+  msdllib.h display.h
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
+
+msdl.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h:
+
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h:
+
+msdllib.h:
+
+display.h:

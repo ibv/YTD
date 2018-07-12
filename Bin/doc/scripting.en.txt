@@ -1,0 +1,997 @@
+______________________________________________________________________________
+
+YTD v1.57+                                                   (c) 2009-16 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
+______________________________________________________________________________
+
+
+1. INTRODUCTION
+---------------
+
+Since version 1.38, YTD supports a specialized scripting language which
+allows to easily add a support for new servers, provided that these servers
+use a simple-enough video encoding. The language is by no means complete,
+it can't handle many common requirements, but that is not its purpose: I
+wanted a language which would be simple enough to understand and use, even
+if it limits its power. After all, "difficult" servers can be handled in
+the native code.
+
+
+
+2. SCRIPTING OVERVIEW
+---------------------
+
+YTD uses the "ytd-defs.xml" file to store everything related to scripts:
+
+ - Version of the file (to facilitate updates of the script file only).
+ - A library of script definitions for individual servers.
+ - A mapping between an URL and a script defition.
+ - A library of common regular expressions.
+
+Note that standard XML conventions apply, particularly the case-sensitivity
+of element and attribute names and element IDs.
+
+In order to add a support for new server, you need to do the following:
+
+1. Create a new script <script> within the script library <scripts>. The
+   <script> element should provide two attributes, "id" and "provider".
+
+   "id" uniquely identifies a script in URL mappings and other places
+   where a script needs to be referenced. The actual content can be anything,
+   as long as it is unique, but I prefer to use a server's domain here.
+
+   "provider" is a user-readable name of the server. YTD uses providers to
+   make sure that for each provider, only one download is running.
+
+2. Create an URL mapping <url> within the URL mappings library <urls>.
+   Each URL mapping must identify a script to be used, by entering its
+   ID into the "script" attribute, and a regular expression as the tag's
+   content. If a user's URL matches the regular expression, the script
+   identified by "script" attribute will get called (and no other).
+   
+   In some cases, it might be useful to send only a part of an URL to the
+   download script, particularly if there are many possible URLs, all of
+   which use the same media ID (as is the case with, for example, 
+   YouTube.com). In that case, you can use attribute "subexpression" to
+   identify a regexp's named subexpression which contains the media ID.
+   The ID, rather than the full URL, is sent to the script.
+
+Both the script library and the URL mappings library contain a sub-library
+<adult>. Elements within this sub-library behave the same as they do in
+the main library, but they get automatically removed in the Lite (non-porn)
+version of YTD. This way we can have a common script file for all versions
+of YTD.
+
+The description of individual scripting language elements, which may be 
+used in the <script> element, follows:
+
+
+
+3. SCRIPT COMMANDS
+------------------
+
+Within individual <script> tags, you may use the following commands. Nothing
+else may appear inside <script> tags - if it does, the script engine will
+raise an exception when it encounters it.
+
+One or more of the commands may be used. The last one should be one of the
+<something_download> commands, otherwise the script engine will raise an
+error.
+
+
+3.1 <regexps>
+-------------
+
+    This command allows you to create a library of regular expressions to
+    be used by a script. The script ignores the content of <regexps> until
+    it is required to find a regular expression. When that happens, the
+    script engine scans the contents of <regexps> element in search of
+    such <regexp> tag, whose attribute "id" matches the requested ID. That
+    element will then determine the parameters of the regular expression.
+
+    If no regular expression is found within the script's <regexps> tags,
+    a search of the global regexp library (<regexps> within <ytd-defs>)
+    is performed, and if still no match is found, then an error is reported.
+
+    Example:
+
+        <regexps>
+          <regexp id="title" match="NAME"><![CDATA[<title>(?P<NAME>.+)</title>]]></regexp>
+          <regexp id="id" match="ID"><![CDATA[\bvideo_id=(?P<ID>\d+)]]></regexp>
+        </regexps>
+
+        This example created a regexp library with two items: a "title" regexp
+        and an "id" regexp. The IDs of these regexps are denoted by the "id"
+        attribute. 
+        
+        The optional "match" attribute tells the scripting engine which named 
+        subexpression to return in case no named subexpression is identified 
+        when calling the regular expression. In this example, these "default"
+        subexpressions are "NAME" and "ID", respectively, and you can see
+        their definition in the regular expression as "(?P<name>regexp)".
+
+        Finally, the content of the tag defines the actual regular expression
+        to use. YTD uses PCRE-compatible regular expressions. Note the use
+        of <![CDATA[...]]> section to avoid the need to XML-escape characters
+        such as "<", ">" or "&".
+
+
+3.2 <debug>
+-----------
+
+    This command lets you output variable contents to a file. It should
+    not be used in a final script, but it can be quite useful when creating
+    a new script.
+
+    Generally, <debug> will read its content as per "content functions"
+    and then output this content to a file. You may provide a filename
+    by using a "filename" attribute (relative to the current working
+    directory), otherwise the first-used "filename" will get used, and in 
+    the absence of that, "ytd-debug.log" in the executable's directory
+    (make sure you have write rights there!!).
+
+    Example:
+
+        <debug>Movie ID = <get_var id="_movie_id"/></debug>
+        <debug filename="page.log"><get_var id="page"/></debug>
+
+        This sequence will first output the content of the "_movie_id"
+        variable (usually contains the URL provided by the user), preceded 
+        by "Movie ID = " string,  to the "ytd-debug.log" file, and then
+        the content of the "page" variable to the "page.log" file.
+
+        Note that the two files lie in different directories (the first one
+        in the executable's directory, the other in current working directory),
+        and that this kind of mixing files is generally not a good idea as
+        the rewrite/append rules are somewhat simplistic.
+
+
+3.3 <set_var>
+-------------
+
+    This command will set a value of a variable to a content as per "content
+    functions" below. If the variable doesn't exist, it gets created, if it
+    does exist, its contents will be overwritten as the last step of 
+    evaluating this command - you can read the variable's content within.
+
+    A required attribute "id" identifies the name of the variable to be set.
+
+    The content of the element will be parsed as per "content functions"
+    below.
+
+    Example:
+
+        <set_var id="URL">http://www.some.server.com/path/<get_var id="ID"/>/</set_var>
+
+        This command will form an URL by concatenating:
+          1. The string "http://www.some.server.com/path/".
+          2. The content of variable "ID" (see <get_var> below).
+          3. The string "/".
+        And then store the URL to the variable "URL".
+        Essentially, it is the same as a Delphi command:
+          URL := 'http://www.some.server.com/path/' + ID + '/';
+        provided that both URL and ID variables are of type string. Except
+        that Delphi variable's names are not case sensitive.
+
+
+3.4 <best_var>
+--------------
+
+    This is a complex element used to choose the "best" variable value
+    from a list of possibles. YTD needs it to handle servers which provide
+    multiple videos with basically the same content but different quality
+    - we want to select the highest-quality video from the list.
+
+    The following attributes may/must be used:
+
+      - "id" (mandatory) - the ID of the variable whose value gets compared.
+      - "type" (mandatory) - the sorting type of the variable's values.
+        Available options are:
+          - "numeric_ascending" - the variable contains numeric data, the
+            highest value is the best.
+          - "numeric" - the same as "numeric_ascending"
+          - "numeric_descending" - dtto, except that the lowest value is best.
+          - "enumeration" - the variable contains string data. The order
+            of the values is defined by the "order" attribute.
+      - "order" (mandatory if "type" contains "enumeration") - contains a
+        comma-separated list of values, ordered from the best to the worst.
+      - "reset" (optional) - contains a comma-separated list of variable
+        IDs which will be set to an empty string at the beginning of the
+        command.
+
+    The <best_var> tag's contents can be anything that could appear within
+    a <script> tag.
+
+    Note that <best_var> usually appears within elements which loop over
+    a set of values, such as <multi_regexp>.
+
+    Example:
+
+      <best_var id="quality" type="numeric_ascending">
+        <set_var id="best_url"><get_var id="url"/></set_var>
+      </best_var>
+
+      Assuming that we are looping over a set of items with "quality"
+      and "url" variables, it will put the "url" with the highest numeric
+      value of "quality" into the "best_url" variable. E.g., if
+      we looped over a set (quality, url) of ((576, "movie1-576p.mp4"),
+      (720, "movie1-720p.mp4"), (360, "movie1.flv")), then the "best_url"
+      would be set to "movie1-720p.mp4".
+
+      <best_var id="quality" type="enumeration" order="HD,HQ,SD">
+        <set_var id="best_url"><get_var id="url"/></set_var>
+      </best_var>
+
+      This example would, from a list of (("SD","movie.flv"), 
+      ("HQ", "movie.mp4")), select "movie.mp4", because "HQ" is highest
+      (earliest) within the "order" attribute.
+
+
+3.5 <http_download>
+-------------------
+
+    This command will instruct YTD to initiate a download over the HTTP
+    protocol. The various options are provided not as attributes, but as
+    sub-elements whose contents will be read according to the "content
+    functions" below. These options are:
+
+    <url> (mandatory) - the URL which should get downloaded.
+    <title> (mandatory) - the name to be used for the downloaded content.
+    <extension> (optional) - the extension (including the dot) to use
+      for the downloaded filename.
+    <referer> (optional) - the referer to use.
+    <user_agent> (options) - the user agent to use for identification.
+
+    Example:
+
+        <http_download>
+          <title>Server - <get_var id="title"/></title>
+          <url>http://www.server.com/secret/<get_var id="media_id"/>.bin</url>
+          <extension>.mp4</extension>
+          <user_agent>Flash 11.0</user_agent>
+        </http_download>
+
+
+3.6 <rtmp_download>
+-------------------
+
+    Similar to <http_download>, but a RTMP protocol is used to download
+    the content.
+
+    <url>, <title> and <extension> elements are the same as above. All
+    other elements are optional and relate to various RTMPDUMP options:
+
+    <rtmp_url> - "-r" option.
+    <rtmp_app> - "-a" option.
+    <playpath> - "-y" option.
+    <swf_url> - "-s" option.
+    <tc_url> - "-t" option.
+    <page_url> - "-p" option.
+    <swf_vfy> - "-W" option.
+    <flashver> - "-f" option.
+    <live> - "-v" option. "1" for enabled, "0" for disabled.
+    <realtime> - "-R" option. "1" for enabled, "0" for disabled.
+
+
+3.7 <ms_download>
+-----------------
+
+    Similar to <http_download>, but a RTSP protocol is used to download
+    the content.
+
+    Uses the <url>, <title> and <extension> elements the same way the HTTP
+    downloader does.
+
+
+3.8 <smoothstream_download>
+---------------------------
+
+    Similar to <http_download>, but a SmoothStream protocol is used to 
+    download the content. Unfortunately, this is not yet supported because
+    the protocol sends content as a sequence of audio and video frames
+    which need to be muxed to form something useful, and I don't know
+    how to do this programmatically.
+
+
+3.9 <hds_download>
+------------------
+
+    Similar to <http_download>, but a HDS protocol is used to download
+    the content.
+
+    Uses the <url>, <title> and <extension> elements the same way the HTTP
+    downloader does.
+
+
+3.10 <hls_download>
+-------------------
+
+    Similar to <http_download>, but a HLS protocol is used to download
+    the content. (HLS protocol downloads a .playlist file, and then a series
+    of .TS chunks.)
+
+    Uses the <url>, <title> and <extension> elements the same way the HTTP
+    downloader does.
+
+
+3.11 <nested_download>
+----------------------
+
+    This command instructs YTD to use a nested downloader, i.e. another 
+    downloader. This is commonly used with servers which just "wrap" a
+    standard YouTube or Vimeo embedded player - the video is streamed
+    from e.g. YouTube servers, but with other server's advertisement
+    attached... Basically, you provide an URL which is known to YTD and
+    it will use that URL's downloader to actually download the file.
+
+    Uses the <url>, <title> and <extension> elements the same way the HTTP
+    downloader does.
+
+    Example:
+
+      <nested_downloader>
+        <title>Some title</title>
+        <url>http://www.youtube.com/?v=<get_var id="youtube_id"/></url>
+      </nested_downloader>
+
+    Note: It's up to you to make sure you don't create an infinite loop.
+
+
+3.12 <multi_regexp>
+-------------------
+
+    This command lets you loop over all matches in a regular expression,
+    possibly choosing the best result from the list (with the help of the
+    <best_var> command).
+
+    The <multi_regexp> tag's contents can be anything that could appear within
+    a <script> tag, particularly a <best_var> or a sequence of <set_var>.
+
+    The attributes are:
+
+      - "content" (mandatory) - the name of the variable which provides 
+        a content which gets searched by the regular expression. Usually,
+        this would be a downloaded page.
+      - "var_prefix" (mandatory) - a prefix which will be used to name
+        the found variables (the actual name will be the content of 
+        "var_prefix" followed by the subexpression's name).
+      - "match" (mandatory, unless provided by <regexp>) - a comma-separated
+        list of subexpression names. For each subexpression, a variable will
+        be formed, by prefixing the subexpression name by the content of the
+        "var_prefix" attribute.
+      - "skip" (optional) - if provided and contains a number X, the first
+        X matches will be skipped (not processed at all).
+      - "count" (optional) - if provided and contains a number X, only the
+        first X matches (which survive the "skip" processing) will be 
+        processed. You can e.g. combine "skip" and "count" to only process the
+        second match by using skip="1" count="1" (the first match will get
+        skipped, then only one match, i.e. the second overall, will get 
+        processed).
+      - "id" (mandatory) and others - regular expression to use; read the
+        description of the <regexp> function in "Content functions".
+
+    Example:
+
+        <regexps>
+          <regexp id="video"><![CDATA[(?P<URL>https?://[^/]/(?P<QUALITY>\d+)p/.+\.mp4)]]></regexp>
+        </regexp>
+        <multi_regexp content="list" id="video" var_prefix="loop_">
+          <debug>Quality=<get_var id="loop_QUALITY"/> - URL=<get_var id="loop_URL"/></debug>
+        </multi_regexp>
+
+        Provided that variable "list" contained a list of URLs such as
+        "http://www.server1.com/360p/video1.mp4" and "http://www.server2.com/720p/video2.mp4",
+        it would output something like "Quality=360 - URL=http://www.server1.com/360p/video1.mp4"
+        to the debug file. Obviously, that wouldn't be too useful, you would
+        generally want to use either a <best_var> (to choose the URL with
+        best quality) or <set_var> (if you only wanted to choose e.g. the
+        last URL in the list).
+
+
+3.13 <if>
+---------
+
+    This command allows you to branch processing according to various
+    conditions. This is useful when a provider uses several alternative
+    processing paths. The structure of the command is always as follows:
+
+        <if>
+          <condition type="..." ...>(script></condition>
+          <condition type="..." ...>(script></condition>
+          ...
+          <condition type="..." ...>(script></condition>
+          <else>(script)</else>
+        </if>
+
+    The <if> command processes the individual conditions in sequence. The
+    first one that is satisfied will be processed and the others will be
+    ignored. The <else> branch will only get processed if none of the
+    conditions succeed, and if there is no <else> branch, the script will
+    fail with an error. Multiple <else> branches are forbidden.
+
+    Inside <condition> and <else>, you can provide anything which is permitted
+    within a <script> tag.
+
+    Values permitted in the "type" attribute of <condition> are:
+
+    3.13.1 "regexp_match" or "regexp"
+
+        The condition tag gets processed as if it were a <regexp> tag (see
+        section 4.4 below). If successful, i.e. if a regular expression 
+        matches a variable, the condition is satisfied.
+
+        Example:
+
+            <condition type="regexp_match" id="title" content="data">
+              <debug>Regexp with id="title" matched the data in variable "data"</debug>
+            </condition>
+
+    3.13.2 "var_exists"
+
+        The condition tag gets processed as if it were a <get_var> tag
+        (see section 4.1 below). If successful, that is, if a variable
+        exists, the condition is satisfied.
+
+        Example:
+
+            <condition type="var_exists" id="title">
+              <debug>Variable "title" exists</debug>
+            </condition>
+
+    3.13.3 "xml_var_exists"
+
+        The condition tag gets processed as if it were a <get_xml_var> tag
+        (see section 4.2 below). If successful, that is, if a XML content
+        identified by the path and/or attribute exists, the condition is 
+        satisfied.
+
+        Example:
+
+            <condition type="xml_var_exists" id="xmlinfo" path="video/url">
+              <debug>Node &lt;video&gt;/&lt;url&gt; exists</debug>
+            </condition>
+
+    3.13.4 "json_var_exists"
+
+        The condition tag gets processed as if it were a <get_json_var> tag
+        (see section 4.17 below). If successful, that is, if a JSON content
+        identified by the path exist, the condition is satisfied.
+
+        Example:
+
+            <condition type="json_var_exists" id="json" path="video/url">
+              <debug>Node "video":{"url":...}} exists</debug>
+            </condition>
+
+
+3.14 <pause>
+------------
+
+    This command is intended to be used only rarely, for servers which measure
+    the amount of time taken between loading a page and requiring a video
+    playback and failing if the delay is too short.
+
+    It can be used in two variants, with a fixed delay or with a random delay:
+      - Fixed delay:  <pause value="12345"/>
+      - Random delay: <pause from="100" to "200"/>
+
+    In either case, the values are in milliseconds.
+
+
+3.15 <multi_xml>
+-------------------
+
+    This command lets you loop over all elements of a XML document, processing
+    each separately (possibly with the help of <best_var> command).
+
+    The <multi_xml> tag's contents can be anything that could appear within
+    a <script> tag, particularly a <best_var> or a sequence of <set_var>.
+
+    The attributes are:
+
+      - "id" (mandatory) - the name of the variable which provides 
+        a XML document which gets looped.
+      - "var" (mandatory) - the name of the variable into which each found
+        node will be stored. In the inner script, you can refer to this
+        variable and process it using e.g. <get_xml_var> function.
+      - "node" (optional) - if non-empty, defines the name of the nodes
+        that you want to process. All others will be skipped automatically.
+
+    Example:
+
+        Assume the following XML document stored in variable "src":
+
+        <items>
+          <item><content>1</content></item>
+          <item><content>2</content></item>
+          <something><content>3</content></something>
+        </items>
+
+        Then the following script:
+
+        <multi_xml id="src" var="x" node="item">
+          <debug><get_xml_var id="x" path="content"/></debug>
+        </multi_xml>
+
+        will output two lines, first "1" and then "2".
+
+
+3.16 <multi_json>
+-------------------
+
+    This command lets you loop over all elements of a JSON document, 
+    processing each separately (possibly with the help of <best_var> command).
+
+    The <multi_json> tag's contents can be anything that could appear within
+    a <script> tag, particularly a <best_var> or a sequence of <set_var>.
+
+    The attributes are:
+
+      - "id" (mandatory) - the name of the variable which provides 
+        a XML document which gets looped.
+      - "var" (mandatory) - the name of the variable into which each found
+        node will be stored. In the inner script, you can refer to this
+        variable and process it using e.g. <get_var> or <get_json_var> 
+        function.
+      - "namevar" (optional) - if non-empty, defined the name of the variable
+        into which the name of the found node will be stored.
+      - "node" (optional) - if non-empty, defines the name of the nodes
+        that you want to process. All others will be skipped automatically.
+
+    Example:
+
+        Assume the following JSON document stored in variable "src":
+
+        {
+          "item" : { "content": 1 },
+          "item" : { "content": 2 }
+        }
+
+        Then the following script:
+
+        <multi_json id="src" var="x" node="item">
+          <debug><get_json_var id="x" path="content"/></debug>
+        </multi_json>
+
+        will output two lines, first "1" and then "2".
+
+
+3.17 <exit>
+------------
+
+    This command will terminate the script and return the content of the
+    element as error message.
+
+    Example:
+
+    	<exit>Address <get_var id="url"/> not recognized.</exit>
+
+
+
+4. CONTENT FUNCTIONS
+--------------------
+
+A number of the commands described above need to read some content. We have
+seen this in <set_var>, which needs to know what to store in a variable,
+or in <http_download>, which needs to know which URL to download. All of these
+use the same content-reading scheme:
+
+ - Start with an empty string (called "result" in further steps).
+ - Sequentially read all XML tokens from the tag's content:
+   - If the token is CDATA or plaintext, append it to "result".
+   - If the token is a comment, skip it.
+   - If the token is a tag, treat it as a function which returns a text
+     to be appended to "result".
+ - The final "result" will be the content to be used by the command.
+
+Example:
+
+    <debug>Movie ID = <get_var id="_movie_id"/></debug>
+
+    We know that debug outputs its content to a log file. So what IS its
+    content?
+
+    We start with an empty result. The first XML token is a plaintext, so
+    it gets appended to result and eventually the result will read
+    "Movie ID = ". The next XML token is a tag, so that the script engine
+    will evaluate it as a function; in this case, it is the <get_var>
+    function which reads and returns the content of a variable. So if
+    variable "_movie_id" contained "1234", then "1234" would get returned
+    by the <get_var> function and the result would now read "Movie ID = 1234".
+    Since there are no more XML tokens, this will be the content of the
+    <debug> tag and "Movie ID = 1234" will be written to the logfile.
+
+
+4.1 <get_var>
+-------------
+
+    This function will read the content of a variable whose name is provided
+    by the "id" attribute and return it. The tag has no content.
+
+    Note: If the variable doesn't exist, this function raises an exception.
+
+    Example:
+
+        <set_var id="test1">1234</set_var>
+        <set_var id="test2">5678</set_var>
+        <debug>test1 = <get_var id="test1"/>, test2 = <get_var id="test2"/>!</debug>
+
+        This will output line "test1 = 1234, test2 = 5678!" to the log file.
+
+
+4.2 <get_xml_var>
+-----------------
+
+    This function will read a value (a tag or attribute content) from a XML
+    document. It uses a drastically simplified query language to identify
+    which value to read.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - the name of the variable which stores the XML.
+      - "path" (optional) - if provided and non-empty, it will split the
+        value by slashes ("/") and search for a node identified by that
+        path. If not provided or empty, it will work with the root element.
+        E.g., if "path" is "some/tag", it will search for an element "<tag>"
+        which must lie inside element "<some>" which lies inside the root
+        of the XML document: "<whatever><some><tag>data</tag></some></whatever>"
+      - "attr", "attr_value" (optional) - if "attr" is provided and non-empty,
+        only those tags which have an attribute named after attr's content,
+        with value the same as that of "attr_value", will be considered.
+        E.g. suppose that we have a XML such as:
+
+            <video_list>
+              <video type="advertisment">http://www.adserver.com/video1.mp4</video>
+              <video type="real_movie">http://www.movies.com/video.mp4</video>
+              <video type="advertisment">http://www.adserver.com/video2.mp4</video>
+            </video_list>
+
+        We want only the "real movie", so we may want to use:
+
+            <set_url id="url"><get_xml_var id="xml" path="video" attr="type" attr_value="real_movie"/></set_var>
+
+      - "result_attr" (optional) - if provided and non-empty, the result will
+        be taken from the attribute identified by "result_attr" rather than
+        from the element's contents. E.g., in the above example, if URLs were
+        instead stored as:
+
+            <video type="real_movie" src="http://www.movies.com/video.mp4"/>
+
+        we would use:
+        
+            <get_xml_var ... result_attr="src"/>
+
+
+4.3 <download_page>
+-------------------
+
+    This function will download a page stored on an external server and
+    return the content of this page. Only HTTP and HTTPS protocols are
+    supported, but various alternatives for download are possible. You 
+    can e.g. provide your own set of HTTP headers or use a POST method
+    rather than the standard GET.
+
+    Attributes:
+
+      - "method" (optional) - HTTP method to use to download the page.
+        The possible values are "GET", "POST" and "HEAD". The default value
+        is usually "GET", but some other attributes or sub-tags may
+        override this default (e.g. "post_data").
+      - "encoding" (optional) - identifies the character encoding used
+        by the page, so that the media title will use a proper diacritics
+        and other special characters. The possible values are "utf8",
+        "utf16", "ansi" (no conversion) and "xml" (read from the XML header).
+        "ansi" is the default.
+
+    Sub-tags:
+
+      - <url> (mandatory) - the content of this element (see "content 
+        functions") will form the URL which should be downloaded.
+      - <post_data> (optional) - if provided, the content of this element
+        will be POSTed to the server. It could be e.g. a username and 
+        password, if the server requires authentication.
+      - <mime_type> (optional) - informs the server of the MIME type of
+        <post_data>. The default value is "application/x-www-form-urlencoded".
+      - <referer> (optional) - the content of this element will be used
+        for the Referer header.
+      - <headers> (optional) - this tag may contain any number of <header>
+        tags which will get sent to the server directly as custom HTTP
+        headers. You can use it to provide e.g. custom cookies or special
+        headers:
+
+        <download_page>
+          <url>http://www.someserver.com/some/page</url>
+          <headers>
+            <header>Set-Cookie: Authenticated=yes</header>
+            <header>X-Some-Special-Header: 12345</header>
+          </headers>
+        </download_page>
+
+      - <xml_path> (optional) - if provided, the page's content will be
+        evaluated as a XML document and only the element identified by
+        the path (which is the content of this tag) will be returned.
+        For the path evaluation, see <get_xml_var path="..."/>
+      - <xml_attr> (optional) - similar to <xml_path>, except that the
+        result will be formed as with <get_xml_var result_attr="..."/>.
+
+    Example:
+
+        <set_var id="page">
+          <download_page encoding="utf8">
+            <url>http://www.some-server.com/get-video</url>
+            <post_data>login=user&pass=12345&video_id=<get_var id="video_id"/></post_data>
+            <referer>http://www.some-server.com/videos/some-video.php</referer>
+          </download_page>
+        </set_var>
+
+        This will download the page "http://www.some-server.com/get-video"
+        with some POST data (e.g. login, password and video ID) and a custom
+        referer string. The downloaded page will be stored in variable "page",
+        to be processed in the following steps of the script.
+
+
+4.4 <regexp>
+------------
+
+    This function will match a variable's content against a regular expression
+    and return a named subexpression of the programmer's choice. This is 
+    usually done in order to extract some interesting data (such as the title
+    of a movie or its URL) from downloaded pages.
+
+    No content is expected. The attributes are:
+    
+      - "id" (mandatory) - identifies the regular expression to be used.
+        First the script's <regexps> are checked for a given ID, and if not
+        found, the global <regexps> are also checked. This follows the usual
+        approach to the scope of local and global variables.
+      - "pattern" (semi-mandatory) - rather than referring to <regexps> using
+        the "id", the search pattern may be provided by the "pattern" attribute.
+        This may be useful in <condition> statements, but is not recommended 
+        because of restrictions on attribute contents in XML.
+      - "options" (optional) - the regexp is by default called with "is"
+        modifiers, but you may want to add or remove the modifiers. You
+        would use a syntax such as "-i+x" to remove the "i" modifier and
+        add the "x" modifier.
+        The modifiers are:
+          "i" ... Make the regexp case-insensitive (default).
+          "m" ... Make the regexp multiline; the ^ and $ symbols may then 
+                  match even inside the content, not just at the beginning 
+                  and end. I never used this.
+          "s" ... When enabled, the regexp will be single-line, that is, the
+                  whole content will be matched at one, not one line at a time
+                  (default).
+          "x" ... Extended regexps (which allow formatting). I don't use this.
+          "A" ... "Anchored regexps"; I never used this.
+          "U" ... Make the regexp ungreedy. You can do the same thing by
+                  using the ungreedy operators such as +? and *?.
+          "N" ... "No auto capture"; I never used this.
+      - "content" (mandatory) - identifies the variable whose content will 
+        be matched against the regular expression.
+      - "match" (optional) - identifies the subexpression which will be
+        returned as the result of this function. If not present, the 
+        subexpression identified by the regexp's "match" attribute will be
+        used. If "match" is not present in either, then the matching part
+        of the expression will be returned. If "match" is a number, the
+        appropriate subexpression will be returned (0 for the whole
+        matching part, 1 for the first subexpression, 2 for the second
+        subexpression etc.).
+
+    Example:
+
+        <regexps>
+          <regexp id="title" match="NAME"><![CDATA[<title>(?P<NAME>.*?)</title>]]></regexp>
+        </regexp>
+        <set_var id="data"><![CDATA[<head><title>Test</title></head><body>...</body>]]></set_var>
+        <set_var id="title"><regexp id="title" content="data"/></set_var>
+        <set_var id="tag1"><regexp pattern="/\w+"/></set_var>
+        <set_var id="tag2"><regexp pattern="/(\w+)" match="1"/></set_var>
+
+        After running this script, variable contents will be as follows:
+          "title" -> "Test"
+          "tag1" -> "/title"
+          "tag2" -> "title"
+        Of course, variable "data" is usually populated using the 
+        <download_page> function, not by directly entering some string...
+
+
+4.5 <copy>
+----------
+
+    This function will return a part of the content, starting at a specified
+    position in the content and having a given length.
+
+    Content of this tag is the source data.
+
+    Attributes:
+
+      - "start" (optional) - A position at which to start copying. The first
+        character's position is zero. If you use a negative position, then
+        the start will be that many characters from the end. E.g., if the
+        content is "12345" and you use start -2, then the first character
+        returned will be "4". Default value is 0.
+      - "length" (optional) - The number of characters to return. By default,
+        everything from "start" to the end of the content will get returned,
+        but you may limit the maximum number of characters by providing
+        a positive length. A negative length will stop copying at the length'th
+        character from the end.
+
+    Example:
+
+      <set_var id="x">123456</set_var>
+      <set_var id="y"><copy start="3"><get_var id="x"/></copy></set_var>
+      <set_var id="z"><copy start="4" length="2"><get_var id="x"/></copy></set_var>
+
+      Variable "y" will contain "3456", "z" will contain "45".
+
+
+4.6 <replace>
+-------------
+
+    This function will replace some fixed string in a content by another
+    string.
+
+    Content of this tag is the source data.
+
+    Attributes:
+
+      - "search" (mandatory) - The value to be searched for and replaced.
+      - "replacement" (optional) - This will be put into the result in place
+        of the searched value.
+      - "start" (optional) - If numeric, the first X matches will get skipped.
+      - "count" (optional) - If numeric, only the first X matches (after the
+        skipped matches, if any) will get replaced. By default, all matches
+        will get replaced.
+      - "case_sensitive" (optional) - If numeric and non-zero, the search will
+        be case-sensitive.
+
+    Example:
+
+        <set_var id="x"><replace search="world" replacement="universe">Hello world!</replace></set_var>
+
+        Variable "x" will contain "Hello universe!".
+
+
+4.7 <decode_html>
+-----------------
+
+    This function will run a HTML decode on the tag's content - that is,
+    it will replace HTML entities such as "&amp;" or "&apos;" with characters
+    such as "&" and "'".
+
+
+4.8 <decode_url>
+----------------
+
+    This function will run a URL decode on the tag's content - that is,
+    it will replace symbols such as "%2f" with "/" and "+" with " ".
+
+
+4.9 <encode_url>
+----------------
+
+    This function will run an inverse of <decode_url> on the tag's content,
+    i.e. it will replace potentially "dangerous" characters in an URL with 
+    their "safe" counterparts. This is particularly useful when forming 
+    "post_data" for <download_page>.
+
+
+4.10 <decode_js>
+----------------
+
+    This function will run a Javascript decode on the tag's content - that is,
+    extra backslashes will get stripped and character entities such as
+    "\u1234" will get replaced. This function is often used on JSON data.
+
+
+4.11 <decode_base64>
+--------------------
+
+    This function will run a BASE64 decode on the tag's content - that is,
+    it will decode BASE64-encoded data to its binary value.
+
+
+4.12 <strip_tags>
+-----------------
+
+    This function will remove all HTML tags from the tag's content.
+
+    Example:
+
+        <set_var id="x"><strip_tags><![CDATA[some <b>bold</b> text]]></strip_tags></set_var>
+
+        Variable "x" will contain "some bold text".
+
+
+4.13 <trim>
+-----------
+
+    This function will remove all blank characters (spaces, TABs, newlines)
+    from the beginning and the end of the tag's content.
+
+
+4.14 <timestamp>
+----------------
+
+    This function will return a current timestamp in a chosen format.
+
+    Attributes:
+
+      - "type" (optional) - The format of the timestamp. Currently only
+        "unix" is supported, which returns the number of seconds from
+        1.1.1970. The default value is "unix".
+
+
+4.15 <relative_url>
+-------------------
+
+    This function will try to form an absolute URL from a given relative
+    URL. This is often useful with servers which provide relative URLs
+    to their videos, because YTD needs an absolute URL to download something.
+
+    The tag's content is the (possibly relative) URL which should be
+    expanded.
+
+    Attributes:
+
+      - "base" (optional) - The full URL which should be used to expand
+        the relative URL. If not provided, the URL from the last
+        <download_page> will be used.
+
+    Example:
+
+        <set_var id="path">/some/path/movie.mp4</set_var>
+        <set_var id="url"><relative_url base="http://www.server.com/abcd/"><get_var id="path"/></relative_url></set_var>
+
+        Variable "url" will contain "http://www.server.com/some/path/movie.mp4".
+
+        <set_var id="path">some/path/movie.mp4</set_var>
+        <set_var id="url"><relative_url base="http://www.server.com/abcd/"><get_var id="path"/></relative_url></set_var>
+
+        Variable "url" will contain "http://www.server.com/abcd/some/path/movie.mp4".
+
+
+4.16 <get_xml_node>
+-------------------
+
+    This function will read the whole content of a XML element as XML (i.e.
+    it will return all tags, attributes etc.). The actual operation is very
+    much similar to <get_xml_var> (4.2), except that a different result 
+    format is used.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - see <get_xml_var> (4.2) for description.
+      - "path" (optional) - see <get_xml_var> (4.2) for description.
+      - "attr", "attr_value" (optional) - see <get_xml_var> (4.2) for 
+        description.
+
+
+4.17 <get_json_var>
+-------------------
+
+    This function will read a value from a JSON document. It uses a 
+    drastically simplified query language to identify which value to read.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - the name of the variable which stores the JSON.
+      - "path" (optional) - if provided and non-empty, it will split the
+        value by slashes ("/") and search for a node identified by that
+        path. If not provided or empty, it will work with the root element.
+        E.g., if "path" is "some/tag", it will search for an element "tag"
+        which must lie inside element "some" which lies inside the root
+        of the JSON document: "{ 'some': { 'tag': 'data' } }"
+
+
+4.18 <get_option>
+-------------------
+
+    This function will read a value from YTD options related to the current
+    provider.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - the name of the option, i.e. the name of the XML
+        node which carries the option's value.
+      - "default" (optional) - if provided, serves as the default value of
+        the option.
