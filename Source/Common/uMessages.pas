@@ -44,7 +44,7 @@ const
   APPLICATION_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} ;
   APPLICATION_VERSION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = {$INCLUDE 'ytd.version'};
   APPLICATION_CAPTION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} + ' v' + {$INCLUDE 'ytd.version'};
-  APPLICATION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.pepak.net/ytd';
+  APPLICATION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'https://ibv.github.io/YTD/';
   APPLICATION_SHORTCUT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD.lnk';
   {$IFDEF SETUP}
   APPLICATION_UNINSTALL_ID {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD_Pepak';
