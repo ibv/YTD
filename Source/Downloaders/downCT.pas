@@ -206,7 +206,7 @@ begin
   if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,
-                           'http://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist',
+                           'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist',
                            {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=flash'),
                            HTTP_FORM_URLENCODING_UTF8,
                            ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
