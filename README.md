@@ -24,4 +24,7 @@ Stabilní funkce:
 - podpora MSDL (mmst,mmsh,real-rtsp,wms-rtsp)
 
 
+## Stránky projektu
+
+> https://ibv.github.io/YTD/
 
