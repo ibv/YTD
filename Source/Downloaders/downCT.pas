@@ -48,11 +48,11 @@ uses
   uPCRE, uXml, HttpSend, SynaUtil,
   uOptions,
   {$IFDEF GUI}
-//    guiDownloaderOptions,
+    guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
-//      guiOptionsWINAPI_CT,
+      ///guiOptionsWINAPI_CT,
     {$ELSE}
-//      guiOptionsVCL_CT,
+      guiOptionsVCL_CT,
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uHLSDownloader;
@@ -83,10 +83,14 @@ type
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       class function Features: TDownloaderFeatures; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       {$IFDEF MULTIDOWNLOADS}
@@ -96,6 +100,11 @@ type
       function Next: boolean; override;
       {$ENDIF}
     end;
+
+
+const
+  OPTION_CT_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
+  OPTION_CT_MAXBITRATE_DEFAULT = 0;
 
 implementation
 
@@ -134,6 +143,16 @@ class function TDownloader_CT.Features: TDownloaderFeatures;
 begin
   Result := inherited Features;
 end;
+
+
+{$IFDEF GUI}
+class function TDownloader_CT.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_CT;
+end;
+{$ENDIF}
+
+
 
 constructor TDownloader_CT.Create(const AMovieID: string);
 begin
@@ -259,6 +278,23 @@ begin
     Result := True;
     end;
 end;
+
+procedure TDownloader_CT.SetOptions(const Value: TYTDOptions);
+var
+  Bitrate: integer;
+begin
+  inherited;
+  Bitrate := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT);
+  case Bitrate of
+       512:  MaxBitRate:=628000;
+       720:  MaxBitRate:=1160000;
+      1024:  MaxBitRate:=2176000;
+      1280:  MaxBitRate:=3712000;
+      1920:  MaxBitRate:=6272000;
+      else   MaxBitRate:=MaxInt;
+  end;
+end;
+
 
 function TDownloader_CT.GetFileNameExt: string;
 begin

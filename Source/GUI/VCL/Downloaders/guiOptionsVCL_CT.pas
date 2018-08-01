@@ -46,6 +46,7 @@ uses
 
 type
   TFrameDownloaderOptionsPage_CT = class(TFrameDownloaderOptionsPageCommon)
+    Label1: TLabel;
     LabelMaximumVideoBitrate: TLabel;
     EditMaximumVideoBitrate: TEdit;
   private
