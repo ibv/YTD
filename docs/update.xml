@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <program>
   <ytd>
-    <verze>1.59.2</verze>
+    <verze>1.59.3</verze>
     <file>ytd.exe</file>
   </ytd>
   <ytd-ansi>
-    <verze>1.59.2</verze>
+    <verze>1.59.3</verze>
     <file>ytd-ansi.exe</file>
   </ytd-ansi>
   <ytd-lite>
-    <verze>1.59.2</verze>
+    <verze>1.59.3</verze>
     <file>ytd-lite.exe</file>
   </ytd-lite>
   <ytd-defs>
