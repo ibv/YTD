@@ -78,6 +78,8 @@ uses
 const
   IDC_LABEL_MAXBITRATE = 1001;
   IDC_EDIT_MAXBITRATE = 1002;
+  IDC_LABEL1 = 1003;
+
 
 { TFrameDownloaderOptionsPage_CT }
 

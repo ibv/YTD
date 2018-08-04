@@ -50,7 +50,7 @@ uses
   {$IFDEF GUI}
     guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
-      ///guiOptionsWINAPI_CT,
+      guiOptionsWINAPI_CT,
     {$ELSE}
       guiOptionsVCL_CT,
     {$ENDIF}
