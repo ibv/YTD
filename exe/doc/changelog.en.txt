@@ -1,6 +1,25 @@
 CHANGELOG
 ---------
 
+  v0.60
+
+    * New provider: DrsnySvet.cz (some sources only).
+
+    * New provider: MojeVideo.sk.
+
+    * New provider: Qip.ru (embedded movies only).
+
+    * New provider: Studio-Plus.tv.
+
+    * GameAnyone.com: Support for videos hosted directly on GameAnyone.com.
+      This fix also works for any other providers which work through 
+      third-party's servers, e.g. VideaCesky.cz or OverStream.net.
+
+    * YouTube.com: Fixed a bug EStreamError which occured on videos without
+      subtitles.
+
+
+
   v0.59
 
     * CeskaTelevize.cz: Support for URLs such as http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/.

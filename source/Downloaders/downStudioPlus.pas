@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMustWatch;
+unit downStudioPlus;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,13 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MustWatch = class(TNestedDownloader)
+  TDownloader_StudioPlus = class(THttpDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
+      TitlePartsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -65,89 +65,79 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mustwatch.cz/film/reel-bad-arabs
+// http://studio-plus.tv/?video_id=270
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.cz/film/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*studio-plus\.tv/.*[?&]video_id=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<a\s[^>]*\bclass="title"[^>]*>(?P<TITLE>.*?)</a>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<div\s+class="video">\s*<a\s+href="(?P<URL>https?://.+?)"',
-       '<div\s+class="video">.*<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"');
-  {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..0] of string
-    = ('<strong>Titulky:</strong>[^\n]*<a\s+href\s*=\s*"(?P<SUBTITLES>https?://.+?)"');
-  {$ENDIF}
+  REGEXP_EXTRACT_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
+  REGEXP_EXTRACT_URL = '<param\s+name="URL"\s+value="(?P<URL>https?://.+?)"';
+  REGEXP_TITLE_PARTS = '<a\s[^>]*>(?P<PART>.*?)</a>';
 
-{ TDownloader_MustWatch }
+{ TDownloader_StudioPlus }
 
-class function TDownloader_MustWatch.Provider: string;
+class function TDownloader_StudioPlus.Provider: string;
 begin
-  Result := 'MustWatch.cz';
+  Result := 'Studio-Plus.tv';
 end;
 
-class function TDownloader_MustWatch.UrlRegExp: string;
+class function TDownloader_StudioPlus.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MustWatch.Create(const AMovieID: string);
-var i: integer;
+constructor TDownloader_StudioPlus.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
+  InfoPageEncoding := peANSI;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$IFDEF SUBTITLES}
-  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$ENDIF}
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
+  TitlePartsRegExp := RegExCreate(REGEXP_TITLE_PARTS, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MustWatch.Destroy;
-var i: integer;
+destructor TDownloader_StudioPlus.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
-  {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
-    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
-  SetLength(fSubtitleUrlRegExps, 0);
-  {$ENDIF}
+  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(TitlePartsRegExp);
   inherited;
 end;
 
-function TDownloader_MustWatch.GetMovieInfoUrl: string;
+function TDownloader_StudioPlus.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mustwatch.cz/film/' + MovieID;
+  Result := 'http://studio-plus.tv/?video_id=' + MovieID;
 end;
 
-function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
+function TDownloader_StudioPlus.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, Part: string;
 begin
-  Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    if TitlePartsRegExp.Match(Name) then
       begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
-        begin
-        Result := True;
-        Break;
-        end;
+      Title := '';
+      repeat
+        Part := Trim(TitlePartsRegExp.SubexpressionByName('PART'));
+        if Part <> '' then
+          if Title = '' then
+            if Part = 'Hlavní stránka' then
+              begin
+              // Skip it
+              end
+            else
+              Title := Part
+          else
+            Title := Title + ' - ' + Part;
+      until not TitlePartsRegExp.MatchAgain;
+      if Title <> '' then
+        SetName(Title);
       end;
-  finally
-    NestedUrlRegExp := nil;
-    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MustWatch);
+  RegisterDownloader(TDownloader_StudioPlus);
 
 end.

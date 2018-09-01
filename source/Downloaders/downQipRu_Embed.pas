@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMustWatch;
+unit downQipRu_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,16 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MustWatch = class(TNestedDownloader)
+  TDownloader_QipRu_Embed = class(THttpDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
+      RealUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
+      function BuildMovieUrl(out Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,89 +66,72 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mustwatch.cz/film/reel-bad-arabs
+// http://file.qip.ru/embed/141785477/17228276
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.cz/film/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*qip\.ru/embed/';
+  URLREGEXP_ID =        '[0-9]+/[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<a\s[^>]*\bclass="title"[^>]*>(?P<TITLE>.*?)</a>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<div\s+class="video">\s*<a\s+href="(?P<URL>https?://.+?)"',
-       '<div\s+class="video">.*<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"');
-  {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..0] of string
-    = ('<strong>Titulky:</strong>[^\n]*<a\s+href\s*=\s*"(?P<SUBTITLES>https?://.+?)"');
-  {$ENDIF}
+  EXTRACT_URL_REGEXP = '[?&]file=(?P<URL>https?://[^&]+)';
 
-{ TDownloader_MustWatch }
+{ TDownloader_QipRu_Embed }
 
-class function TDownloader_MustWatch.Provider: string;
+class function TDownloader_QipRu_Embed.Provider: string;
 begin
-  Result := 'MustWatch.cz';
+  Result := 'Qip.ru';
 end;
 
-class function TDownloader_MustWatch.UrlRegExp: string;
+class function TDownloader_QipRu_Embed.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MustWatch.Create(const AMovieID: string);
-var i: integer;
+constructor TDownloader_QipRu_Embed.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$IFDEF SUBTITLES}
-  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$ENDIF}
+  InfoPageEncoding := peUnknown;
+  RealUrlRegExp := RegExCreate(EXTRACT_URL_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MustWatch.Destroy;
-var i: integer;
+destructor TDownloader_QipRu_Embed.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
-  {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
-    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
-  SetLength(fSubtitleUrlRegExps, 0);
-  {$ENDIF}
+  RegExFreeAndNil(RealUrlRegExp);
   inherited;
 end;
 
-function TDownloader_MustWatch.GetMovieInfoUrl: string;
+function TDownloader_QipRu_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mustwatch.cz/film/' + MovieID;
+  Result := 'dummy';
 end;
 
-function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
+function TDownloader_QipRu_Embed.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+begin
+  // Nothing to do
+  Page := '';
+  Xml := nil;
+  Result := True;
+end;
+
+function TDownloader_QipRu_Embed.BuildMovieUrl(out Url: string): boolean;
+var Http: THttpSend;
 begin
   Result := False;
+  Http := CreateHttp;
   try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
+    if DownloadPage(Http, 'http://file.qip.ru/embed/' + MovieID, hmHEAD) then
+      if GetRegExpVar(RealUrlRegExp, LastUrl, 'URL', Url) then
         begin
+        SetName('Qip-movie-' + MovieID); // no name available
+        Url := UrlDecode(Url);
         Result := True;
-        Break;
         end;
-      end;
   finally
-    NestedUrlRegExp := nil;
+    Http.Free;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MustWatch);
+  RegisterDownloader(TDownloader_QipRu_Embed);
 
 end.

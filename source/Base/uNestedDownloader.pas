@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend, blcksock, 
-  uDownloader, uCommonDownloader,
+  uDownloader, uCommonDownloader, uHttpDirectDownloader,
   uOptions;
 
 type
@@ -55,6 +55,7 @@ type
     protected
       NestedIDRegExp: TRegExp;
       NestedUrlRegExp: TRegExp;
+      DirectUrlRegExp: TRegExp;
     protected
       function GetFileName: string; override;
       function GetThisFileName: string; virtual;
@@ -89,18 +90,23 @@ implementation
 uses
   uMessages,
   uDownloadClassifier;
-  
+
+const
+  REGEXP_EXTRACT_DIRECTURL = '^(?P<URL>https?://[^?&]+\.(?:flv|mp4)).*$';
+
 { TNestedDownloader }
 
 constructor TNestedDownloader.Create(const AMovieID: string);
 begin
   inherited;
   fNestedDownloader := nil;
+  DirectUrlRegExp := RegExCreate(REGEXP_EXTRACT_DIRECTURL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TNestedDownloader.Destroy;
 begin
   FreeAndNil(fNestedDownloader);
+  RegExFreeAndNil(DirectUrlRegExp);
   RegExFreeAndNil(NestedIDRegExp);
   RegExFreeAndNil(NestedUrlRegExp);
   inherited;
@@ -119,6 +125,8 @@ end;
 
 function TNestedDownloader.CreateNestedDownloaderFromURL(var Url: string): boolean;
 var DC: TDownloadClassifier;
+    Downloader: THttpDirectDownloader;
+    Dummy: string;
 begin
   Result := False;
   DC := TDownloadClassifier.Create;
@@ -130,6 +138,15 @@ begin
       Result := CreateNestedDownloaderFromDownloader(DC.Downloader);
       if Result then
         MovieURL := Url;
+      end
+    else if (DirectUrlRegExp <> nil) and GetRegExpVar(DirectUrlRegExp, Url, 'URL', Dummy) then
+      begin
+      Downloader := THttpDirectDownloader.Create(Url, UnpreparedName);
+      Result := CreateNestedDownloaderFromDownloader(Downloader);
+      if Result then
+        MovieURL := Url
+      else
+        Downloader.Free;
       end;
   finally
     DC.Free;

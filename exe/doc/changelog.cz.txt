@@ -1,6 +1,26 @@
 CHANGELOG
 ---------
 
+  v0.60
+
+    * Nový poskytovatel: DrsnySvet.cz (jen nìkteré zdroje).
+
+    * Nový poskytovatel: MojeVideo.sk.
+
+    * Nový poskytovatel: Qip.ru (jen embedded videa).
+
+    * Nový poskytovatel: Studio-Plus.tv.
+
+    * GameAnyone.com: Podpora pro videa hostovaná pøímo na GameAnyone.com.
+      Tato podpora se také týká všech ostatních poskytovatelù, kteøí fungují
+      primárnì pøes servery tøetích stran, napø. VideaCesky.cz nebo 
+      OverStream.net.
+
+    * YouTube.com: Opravena chyba EStreamError z minulé verze, kdy nešlo 
+      stahovat videa, která titulky nemìla.
+
+
+
   v0.59
 
     * CeskaTelevize.cz: Podpora pro videa na stránkách Poøadù (URL ve tvaru

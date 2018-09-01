@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.59                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.60                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -124,6 +124,9 @@ PODPOROVANÉ WEBY
      - http://www.doubleagent.com/agent/tiffany/video-blog/video-28
      - http://www.doubleagent.com/play/are-you-a-tweetbook-twit
 
+ - DrsnySvet.cz:
+     - http://www.drsnysvet.cz/proskoleni-mestske-policie-pri-silnicni-kontrole/
+
  - EbaumsWorld.com:
      - http://www.ebaumsworld.com/video/watch/80973186/
 
@@ -219,6 +222,9 @@ PODPOROVANÉ WEBY
  - MojeVideo.cz:
      - http://mojevideo.cz/view.php?id=5332
 
+ - MojeVideo.sk:
+     - http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+
  - Mpora.com:
      - http://video.mpora.com/watch/xfnGGmZDC/
 
@@ -284,6 +290,9 @@ PODPOROVANÉ WEBY
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
      - http://www.publictv.cz/videoarchiv/535/1718/
 
+ - Qip.ru:
+     - http://file.qip.ru/embed/141785477/17228276
+
  - Raajje.tv:
      - http://www.raajje.tv/video/991/president-anni-diving
 
@@ -329,6 +338,9 @@ PODPOROVANÉ WEBY
 
  - StreetFire.com:
      - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
+
+ - Studio-Plus.tv:
+     - http://studio-plus.tv/?video_id=270
 
  - StupidVideos.com:
      - http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/

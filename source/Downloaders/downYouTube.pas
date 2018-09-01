@@ -267,48 +267,49 @@ begin
           Url := Url + '&lang=' + EncodeUrl(AnsiString(StringToUtf8(BestLanguage)));
         Url := Url + '&v=' + MovieID;
         if DownloadBinary(Http, Url, s) then
-          begin
-          fSubtitles := s;
-          fSubtitlesExt := '.xml';
-          Result := True;
-          {$IFDEF CONVERTSUBTITLES}
-          if ConvertSubtitles then
-            try
-              SrtXml := TXmlDoc.Create;
+          if s <> '' then
+            begin
+            fSubtitles := s;
+            fSubtitlesExt := '.xml';
+            Result := True;
+            {$IFDEF CONVERTSUBTITLES}
+            if ConvertSubtitles then
               try
-                SrtXml.LoadFromStream(Http.Document);
-                Http.Document.Seek(0, 0);
-                n := 0;
-                Srt := '';
-                for i := 0 to Pred(SrtXml.Root.NodeCount) do
-                  if SrtXml.Root.Nodes[i].Name = 'text' then
-                    if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'start', StartStr) then
-                      if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'dur', DurationStr) then
-                        if GetXmlVar(SrtXml.Root.Nodes[i], '', Content) then
-                          begin
-                          Inc(n);
-                          Val(StringReplace(StartStr, ',', '.', []), Start, Code);
-                          if Code <> 0 then
-                            Abort;
-                          Val(StringReplace(DurationStr, ',', '.', []), Duration, Code);
-                          if Code <> 0 then
-                            Abort;
-                          Srt := Srt + Format('%d'#13#10'%s --> %s'#13#10'%s'#13#10#13#10, [n, FormatDateTime('hh":"nn":"ss"."zzz', Start/SECONDS_PER_DAY), FormatDateTime('hh":"nn":"ss"."zzz', (Start + Duration)/SECONDS_PER_DAY), Content]);
-                          end;
-                if Srt <> '' then
-                  begin
-                  fSubtitles := StringToUtf8(Srt, True);
-                  fSubtitlesExt := '.srt';
+                SrtXml := TXmlDoc.Create;
+                try
+                  SrtXml.LoadFromStream(Http.Document);
+                  Http.Document.Seek(0, 0);
+                  n := 0;
+                  Srt := '';
+                  for i := 0 to Pred(SrtXml.Root.NodeCount) do
+                    if SrtXml.Root.Nodes[i].Name = 'text' then
+                      if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'start', StartStr) then
+                        if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'dur', DurationStr) then
+                          if GetXmlVar(SrtXml.Root.Nodes[i], '', Content) then
+                            begin
+                            Inc(n);
+                            Val(StringReplace(StartStr, ',', '.', []), Start, Code);
+                            if Code <> 0 then
+                              Abort;
+                            Val(StringReplace(DurationStr, ',', '.', []), Duration, Code);
+                            if Code <> 0 then
+                              Abort;
+                            Srt := Srt + Format('%d'#13#10'%s --> %s'#13#10'%s'#13#10#13#10, [n, FormatDateTime('hh":"nn":"ss"."zzz', Start/SECONDS_PER_DAY), FormatDateTime('hh":"nn":"ss"."zzz', (Start + Duration)/SECONDS_PER_DAY), Content]);
+                            end;
+                  if Srt <> '' then
+                    begin
+                    fSubtitles := StringToUtf8(Srt, True);
+                    fSubtitlesExt := '.srt';
+                    end;
+                finally
+                  SrtXml.Free;
                   end;
-              finally
-                SrtXml.Free;
+              except
+                on EAbort do
+                  ;
                 end;
-            except
-              on EAbort do
-                ;
-              end;
-          {$ENDIF}
-          end;
+            {$ENDIF}
+            end;
         end;
     finally
       Xml.Free;

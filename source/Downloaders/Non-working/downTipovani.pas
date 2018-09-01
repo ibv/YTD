@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMustWatch;
+unit downTipovani;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,13 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TDownloader_MustWatch = class(TNestedDownloader)
+  TDownloader_Tipovani = class(TMSDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
+      MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -65,89 +65,79 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mustwatch.cz/film/reel-bad-arabs
+// http://www.tipovani.cz/online-live-stream-TV/sla-vs-ceb-24-10-2010.aspx
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.cz/film/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tipovani\.cz/online-live-stream-TV/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<a\s[^>]*\bclass="title"[^>]*>(?P<TITLE>.*?)</a>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<div\s+class="video">\s*<a\s+href="(?P<URL>https?://.+?)"',
-       '<div\s+class="video">.*<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"');
-  {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..0] of string
-    = ('<strong>Titulky:</strong>[^\n]*<a\s+href\s*=\s*"(?P<SUBTITLES>https?://.+?)"');
-  {$ENDIF}
+  REGEXP_MOVIE_ID = '<param\s+name="initParams"\s+value="(?:[^",]*,)*token=(?P<ID>.*?)[",]';
 
-{ TDownloader_MustWatch }
+{ TDownloader_Tipovani }
 
-class function TDownloader_MustWatch.Provider: string;
+class function TDownloader_Tipovani.Provider: string;
 begin
-  Result := 'MustWatch.cz';
+  Result := 'Tipovani.cz';
 end;
 
-class function TDownloader_MustWatch.UrlRegExp: string;
+class function TDownloader_Tipovani.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MustWatch.Create(const AMovieID: string);
-var i: integer;
+constructor TDownloader_Tipovani.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$IFDEF SUBTITLES}
-  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$ENDIF}
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MustWatch.Destroy;
-var i: integer;
+destructor TDownloader_Tipovani.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
-  {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
-    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
-  SetLength(fSubtitleUrlRegExps, 0);
-  {$ENDIF}
+  RegExFreeAndNil(MovieIDRegExp);
   inherited;
 end;
 
-function TDownloader_MustWatch.GetMovieInfoUrl: string;
+function TDownloader_Tipovani.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mustwatch.cz/film/' + MovieID;
+  Result := 'http://www.tipovani.cz/online-live-stream-TV/' + MovieID;
 end;
 
-function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
+function TDownloader_Tipovani.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ID, Url, Title: string;
+    Xml: TXmlDoc;
 begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  // Pozn.: To ID by se melo nejak upravit. Na vstupu jsem mel 'OTQ4NTgxMXw2MzQyNDExODA0ODY5MjY4OTU='
+  // a do playlistu se posilalo 'OTQ4NTgyN3w2MzQyNDExODA2NTExNjQ0MzA=' (tj. po BASE64 decode to bylo
+  // '9485811|634241180486926895' a '9485827|634241180651164430'.
+  // Na druhy pokus to bylo 'OTQ4Njk4OHw2MzQyNDEyMTA1NzE0NDY2NzU=' a 'OTQ4Njk5NHw2MzQyNDEyMTA3NDc1NDg2ODU=',
+  // tj. '9486988|634241210571446675' a '9486994|634241210747548685'.
+  else if not DownloadXml(Http, 'http://sazkadir.kitd.cz/Streaming/Services/ClientPlaylist.aspx?id=' + ID , Xml) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else
+    try
+      if not GetXmlAttr(Xml, 'ENTRY/REF', 'HREF', Url) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      else if not GetXmlVar(Xml, 'ENTRY/TITLE', Title) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+      else
         begin
+        SetName(Title);
+        MovieURL := Url;
+        SetPrepared(True);
         Result := True;
-        Break;
         end;
+    finally
+      Xml.Free;
       end;
-  finally
-    NestedUrlRegExp := nil;
-    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MustWatch);
+  RegisterDownloader(TDownloader_Tipovani);
 
 end.

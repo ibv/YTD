@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMustWatch;
+unit downDrsnySvet;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,16 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_MustWatch = class(TNestedDownloader)
+  TDownloader_DrsnySvet = class(TNestedDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,89 +63,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mustwatch.cz/film/reel-bad-arabs
+// http://www.drsnysvet.cz/proskoleni-mestske-policie-pri-silnicni-kontrole/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.cz/film/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*drsnysvet\.cz/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<a\s[^>]*\bclass="title"[^>]*>(?P<TITLE>.*?)</a>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<div\s+class="video">\s*<a\s+href="(?P<URL>https?://.+?)"',
-       '<div\s+class="video">.*<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"');
-  {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..0] of string
-    = ('<strong>Titulky:</strong>[^\n]*<a\s+href\s*=\s*"(?P<SUBTITLES>https?://.+?)"');
-  {$ENDIF}
+  REGEXP_EXTRACT_TITLE = '<p class="plug-title">\s*<a\s[^>]*>(?P<TITLE>.*?)</a>';
+  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="(?P<URL>.+?)"';
 
-{ TDownloader_MustWatch }
+{ TDownloader_DrsnySvet }
 
-class function TDownloader_MustWatch.Provider: string;
+class function TDownloader_DrsnySvet.Provider: string;
 begin
-  Result := 'MustWatch.cz';
+  Result := 'DrsnySvet.cz';
 end;
 
-class function TDownloader_MustWatch.UrlRegExp: string;
+class function TDownloader_DrsnySvet.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MustWatch.Create(const AMovieID: string);
-var i: integer;
+constructor TDownloader_DrsnySvet.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$IFDEF SUBTITLES}
-  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$ENDIF}
+  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MustWatch.Destroy;
-var i: integer;
+destructor TDownloader_DrsnySvet.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
-  {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
-    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
-  SetLength(fSubtitleUrlRegExps, 0);
-  {$ENDIF}
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
-function TDownloader_MustWatch.GetMovieInfoUrl: string;
+function TDownloader_DrsnySvet.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mustwatch.cz/film/' + MovieID;
-end;
-
-function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
-begin
-  Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
-        begin
-        Result := True;
-        Break;
-        end;
-      end;
-  finally
-    NestedUrlRegExp := nil;
-    end;
+  Result := 'http://www.drsnysvet.cz/' + MovieID + '/';
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MustWatch);
+  RegisterDownloader(TDownloader_DrsnySvet);
 
 end.

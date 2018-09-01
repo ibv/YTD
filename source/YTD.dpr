@@ -78,7 +78,11 @@ uses
   // GUI version
   {$IFDEF GUI}
     guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
+    {$IFDEF GUI_WINAPI}
+    guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas' {FormAbout},
+    {$ELSE}
     guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
+    {$ENDIF}
     {$IFDEF CONVERTERS}
     guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas', {FormSelectConverter}
     {$ENDIF}
@@ -124,6 +128,7 @@ uses
   downDeutscheBahn in 'Downloaders\downDeutscheBahn.pas',
   downDevilDucky in 'Downloaders\downDevilDucky.pas',
   downDoubleAgent in 'Downloaders\downDoubleAgent.pas',
+  downDrsnySvet in 'Downloaders\downDrsnySvet.pas',
   downEbaumsWorld in 'Downloaders\downEbaumsWorld.pas',
   downEHow in 'Downloaders\downEHow.pas',
   downESPN in 'Downloaders\downESPN.pas',
@@ -154,6 +159,7 @@ uses
   downMetaCafe in 'Downloaders\downMetaCafe.pas',
   downMetropolTV in 'Downloaders\downMetropolTV.pas',
   downMojeVideo in 'Downloaders\downMojeVideo.pas',
+  downMojeVideoSk in 'Downloaders\downMojeVideoSk.pas',
   downMpora in 'Downloaders\downMpora.pas',
   downMustWatch in 'Downloaders\downMustWatch.pas',
   downMuzu in 'Downloaders\downMuzu.pas',
@@ -168,6 +174,7 @@ uses
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
+  downQipRu_Embed in 'Downloaders\downQipRu_Embed.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
   downRevver in 'Downloaders\downRevver.pas',
   downRingTV in 'Downloaders\downRingTV.pas',
@@ -179,6 +186,7 @@ uses
   downStickam in 'Downloaders\downStickam.pas',
   downStream in 'Downloaders\downStream.pas',
   downStreetFire in 'Downloaders\downStreetFire.pas',
+  downStudioPlus in 'Downloaders\downStudioPlus.pas',
   downStupidVideos in 'Downloaders\downStupidVideos.pas',
   downSTV in 'Downloaders\downSTV.pas',
   downTangle in 'Downloaders\downTangle.pas',
@@ -235,6 +243,8 @@ uses
     downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
     // RTMPDUMP fails to connect
     downiDnes in 'Downloaders\Non-working\downIDnes.pas',
+    // Some transformation of movie ID is needed
+    downTipovani in 'Downloaders\downTipovani.pas',
     // Download from http://www.wat.tv/get/web/ doesn't work
     downWat in 'Downloaders\Non-working\downWat.pas',
   {$ENDIF}

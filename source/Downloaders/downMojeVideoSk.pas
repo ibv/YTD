@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMustWatch;
+unit downMojeVideoSk;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,13 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MustWatch = class(TNestedDownloader)
+  TDownloader_MojeVideoSk = class(THttpDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
+      VideoIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -65,89 +65,64 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mustwatch.cz/film/reel-bad-arabs
+// http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.cz/film/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mojevideo\.sk/video/';
+  URLREGEXP_ID =        '[0-9]+/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<a\s[^>]*\bclass="title"[^>]*>(?P<TITLE>.*?)</a>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<div\s+class="video">\s*<a\s+href="(?P<URL>https?://.+?)"',
-       '<div\s+class="video">.*<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"');
-  {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..0] of string
-    = ('<strong>Titulky:</strong>[^\n]*<a\s+href\s*=\s*"(?P<SUBTITLES>https?://.+?)"');
-  {$ENDIF}
+  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
+  REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
 
-{ TDownloader_MustWatch }
+{ TDownloader_MojeVideoSk }
 
-class function TDownloader_MustWatch.Provider: string;
+class function TDownloader_MojeVideoSk.Provider: string;
 begin
-  Result := 'MustWatch.cz';
+  Result := 'MojeVideoSk.com';
 end;
 
-class function TDownloader_MustWatch.UrlRegExp: string;
+class function TDownloader_MojeVideoSk.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MustWatch.Create(const AMovieID: string);
-var i: integer;
+constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$IFDEF SUBTITLES}
-  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
-  {$ENDIF}
+  VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MustWatch.Destroy;
-var i: integer;
+destructor TDownloader_MojeVideoSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
-  {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
-    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
-  SetLength(fSubtitleUrlRegExps, 0);
-  {$ENDIF}
+  RegExFreeAndNil(VideoIdRegExp);
   inherited;
 end;
 
-function TDownloader_MustWatch.GetMovieInfoUrl: string;
+function TDownloader_MojeVideoSk.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mustwatch.cz/film/' + MovieID;
+  Result := 'http://www.mojevideo.sk/video/' + MovieID;
 end;
 
-function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
+function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ID: string;
 begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
-        begin
-        Result := True;
-        Break;
-        end;
-      end;
-  finally
-    NestedUrlRegExp := nil;
+  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.flv';
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MustWatch);
+  RegisterDownloader(TDownloader_MojeVideoSk);
 
 end.

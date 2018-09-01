@@ -174,7 +174,7 @@ object FormYTD: TFormYTD
     Left = 0
     Top = 29
     Width = 719
-    Height = 327
+    Height = 328
     Align = alClient
     Columns = <
       item
@@ -219,7 +219,7 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 356
+    Top = 357
     Width = 719
     Height = 19
     AutoHint = True

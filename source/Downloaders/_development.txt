@@ -31,6 +31,7 @@ HTTP	HTML	HTML1	downDailyMotion
 HTTP	HTML	HTML	downDeutscheBahn
 HTTP	HTML	Nested	downDevilDucky
 HTTP	HTML	HTML	downDoubleAgent
+HTTP	HTML	Nested	downDrsnySvet
 HTTP	HTML	HTML	downEbaumsWorld
 HTTP	HTML	HTML	downEHow
 HTTP	HTML	XML	downESPN
@@ -60,6 +61,7 @@ HTTP	XML	XML	downMegaVideo
 HTTP	HTML	HTML	downMetaCafe
 HTTP	HTML	XML	downMetropolTV
 HTTP	HTML	HTML	downMojeVideo
+HTTP	HTML	HTML	downMojeVideoSk
 HTTP	XML	XML	downMpora
 HTTP	HTML	Nested	downMustWatch
 HTTP	XML	XML	downMuzu
@@ -72,6 +74,7 @@ RTMP	XML	XML	downNova
 HTTP	HTML	Nested	downOverStream
 HTTP	XML	XML	downPCPlanets
 MS	HTML	XML	downPrazdninyVTelci
+HTTP	-	HTML	downQipRu_Embed
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)
 HTTP	HTML	HTML	downRozhlas
@@ -82,10 +85,12 @@ HTTP	HTML	HTML	downStagevu
 HTTP	HTML	HTML	downStickam
 HTTP	HTML	HTML	downStream
 HTTP	HTML	HTML	downStreetFire
+HTTP	HTML	HTML	downStudioPlus
 HTTP	HTML	HTML	downStupidVideos (<-downGrindTV)
 MS	HTML	XML	downSTV
 HTTP	XML	XML	downTangle
 HTTP	XML	XML	downTeacherTube
+MS	XML	XML	downTipovani
 HTTP	XML	XML	downTodaysBigThing
 HTTP	HTML	HTML	downTontuyau
 RTMP	HTML	XML	downTotallyCrap

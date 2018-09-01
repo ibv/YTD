@@ -42,19 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader,
-  uHttpDirectDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
   TDownloader_VideaCesky = class(TNestedDownloader)
     private
     protected
       NestedUrlRegExps: array of TRegExp;
-      DirectUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -77,7 +74,6 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
-  REGEXP_EXTRACT_DIRECTURL = '^(?P<URL>https?://[^?&]+\.(?:flv|mp4)).*$';
   REGEXP_EXTRACT_NESTED_URLS: array[0..4] of string
     = ('\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
@@ -109,7 +105,6 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  DirectUrlRegExp := RegExCreate(REGEXP_EXTRACT_DIRECTURL, [rcoIgnoreCase, rcoSingleLine]);
   SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
   for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
     NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
@@ -124,7 +119,6 @@ destructor TDownloader_VideaCesky.Destroy;
 var i: integer;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(DirectUrlRegExp);
   for i := 0 to Pred(Length(NestedUrlRegExps)) do
     RegExFreeAndNil(NestedUrlRegExps[i]);
   {$IFDEF SUBTITLES}
@@ -157,25 +151,6 @@ begin
   finally
     NestedUrlRegExp := nil;
     end;
-end;
-
-function TDownloader_VideaCesky.CreateNestedDownloaderFromURL(var Url: string): boolean;
-var Downloader: THttpDirectDownloader;
-    Dummy: string;
-begin
-  Url := UrlDecode(Url);
-  Result := inherited CreateNestedDownloaderFromURL(Url);
-  if not Result then
-    // "Native" URL
-    if GetRegExpVar(DirectUrlRegExp, Url, 'URL', Dummy) then
-      begin
-      Downloader := THttpDirectDownloader.Create(Url, UnpreparedName);
-      Result := CreateNestedDownloaderFromDownloader(Downloader);
-      if Result then
-        MovieURL := Url
-      else
-        Downloader.Free;
-      end;
 end;
 
 initialization

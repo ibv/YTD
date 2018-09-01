@@ -214,7 +214,7 @@ implementation
 {$R *.DFM}
 
 uses
-  guiConsts, guiAboutVCL, guiConverterVCL;
+  guiConsts, {$IFDEF GUI_WINAPI} guiAboutWINAPI, {$ELSE} guiAboutVCL, {$ENDIF} guiConverterVCL;
 
 {$IFNDEF FPC}
 const

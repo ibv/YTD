@@ -368,7 +368,7 @@ function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Page: s
 begin
   Xml := nil;
   Result := DownloadPage(Http, Url, Page, peXml, Method, Clear);
-  if Result then
+  if Result and (Page <> '') then
     begin
     Xml := TXmlDoc.Create;
     try
