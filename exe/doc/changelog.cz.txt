@@ -1,6 +1,33 @@
 CHANGELOG
 ---------
 
+  v0.53
+
+    * Vladimír Kubala (kubalav@gmail.com) vytvoøil slovenský pøeklad.
+
+    * Nový poskytovatel: OverStream.net
+
+    * Nový poskytovatel: MustWatch.hztz.cz
+
+    * Nový poskytovatel: CSmaTalent.cz, CSmaTalent.sk
+
+    * VideaCesky.cz: Podpora pro další dva zpùsoby odkazování na videa.
+
+      Nìkterá videa jsou bohužel obtížnì dostupná, protože server VideaCesky
+      se pøíliš nezatìžuje úvahami, jestli dodržuje nìjaké standardy, a s
+      klidem dává do URL znaky, které tam nemají co dìlat. Pøíkladem je
+      http://www.videacesky.cz/skece-zabavne-scenky/george-carlin-%E2%80%93-nabozenstvi-je-kravina
+      - takhle už je správnì, ale VideaCesky to naprosto v pohodì odkazují
+      s dlouhou pomlèkou místo aby ji správnì zakódoval do posloupnosti
+      %E2%80%93. No a nìkteré browsery, napøíklad Internet Explorer a Opera,
+      tuhle neplatnou adresu dál šíøí pøes clipboard. Použijte Firefox, ten
+      vadné URL pøijme, ale do clipboardu už ho zapíše správnì zkonvertované.
+      
+      Definitivní oprava nebude k dispozici døíve, než program pøepíšu na
+      plnou kompatibilitu s Delphi 2009.
+
+
+
   v0.52
 
     * Nový poskytovatel: AlternativaTV.cz

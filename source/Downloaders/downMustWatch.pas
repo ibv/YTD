@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVideaCesky;
+unit downMustWatch;
 {$INCLUDE 'ytd.inc'}
 {$DEFINE SUBTITLES}
 
@@ -47,7 +47,7 @@ uses
   uHttpDirectDownloader;
 
 type
-  TDownloader_VideaCesky = class(TNestedDownloader)
+  TDownloader_MustWatch = class(TNestedDownloader)
     private
     protected
       NestedUrlRegExps: array of TRegExp;
@@ -75,41 +75,37 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
-// http://www.videacesky.cz/autori/Jandis/videa/BeerNation.flv
+// http://mustwatch.hztz.cz/film/lecba-rakoviny-zevnitr-healing-cancer-from-inside-out/
+// http://mustwatch.hztz.cz/film/swirled-order-kruhy-v-obili/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*videacesky\.cz/(?!autori/[^/?&]*/videa/)[^/]+/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.hztz\.cz/film/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
+  REGEXP_EXTRACT_TITLE = '<a\s[^>]*\bclass="title"[^>]*>(?P<TITLE>.*?)</a>';
   REGEXP_EXTRACT_DIRECTURL = '^(?P<URL>https?://[^?&]+\.(?:flv|mp4)).*$';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..3] of string
-    = ('\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
-       '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
-       '<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"',
-       '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")');
+  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
+    = ('<div\s+class="video">\s*<a\s+href="(?P<URL>https?://.+?)"',
+       '<div\s+class="video">.*<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"');
   {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..2] of string
-    = ('\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
-       '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
-       '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)');
+  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..0] of string
+    = ('<strong>Titulky:</strong>[^\n]*<a\s+href\s*=\s*"(?P<SUBTITLES>https?://.+?)"');
   {$ENDIF}
 
-{ TDownloader_VideaCesky }
+{ TDownloader_MustWatch }
 
-class function TDownloader_VideaCesky.Provider: string;
+class function TDownloader_MustWatch.Provider: string;
 begin
-  Result := 'VideaCesky.cz';
+  Result := 'MustWatch.hztz.cz';
 end;
 
-class function TDownloader_VideaCesky.UrlRegExp: string;
+class function TDownloader_MustWatch.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_VideaCesky.Create(const AMovieID: string);
+constructor TDownloader_MustWatch.Create(const AMovieID: string);
 var i: integer;
 begin
   inherited Create(AMovieID);
@@ -126,7 +122,7 @@ begin
   {$ENDIF}
 end;
 
-destructor TDownloader_VideaCesky.Destroy;
+destructor TDownloader_MustWatch.Destroy;
 var i: integer;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
@@ -140,12 +136,12 @@ begin
   inherited;
 end;
 
-function TDownloader_VideaCesky.GetMovieInfoUrl: string;
+function TDownloader_MustWatch.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.videacesky.cz/dummy/' + MovieID;
+  Result := 'http://mustwatch.hztz.cz/film/' + MovieID;
 end;
 
-function TDownloader_VideaCesky.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var i: integer;
     {$IFDEF SUBTITLES}
     Url: string;
@@ -179,7 +175,7 @@ begin
     end;
 end;
 
-function TDownloader_VideaCesky.Download: boolean;
+function TDownloader_MustWatch.Download: boolean;
 {$IFDEF SUBTITLES}
 var Overwrite: boolean;
 {$ENDIF}
@@ -203,7 +199,7 @@ begin
   {$ENDIF}
 end;
 
-function TDownloader_VideaCesky.CreateNestedDownloaderFromURL(var Url: string): boolean;
+function TDownloader_MustWatch.CreateNestedDownloaderFromURL(var Url: string): boolean;
 var Downloader: THttpDirectDownloader;
     Dummy: string;
 begin
@@ -223,6 +219,6 @@ begin
 end;
 
 initialization
-  RegisterDownloader(TDownloader_VideaCesky);
+  RegisterDownloader(TDownloader_MustWatch);
 
 end.

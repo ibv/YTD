@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.52                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.53                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -90,6 +90,10 @@ SUPPORTED PROVIDERS
      - http://www.crunchyroll.com/library/Naruto_Shippuden
 
      Note: This provider uses RTMP protocol. See the note below.
+
+ - CSmaTalent.cz, CSmaTalent.sk:
+     - http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
+     - http://www.csmatalent.sk/epizody/detail/divadlo-29-8-2010.html
 
  - CT24.cz:
      - http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
@@ -223,6 +227,9 @@ SUPPORTED PROVIDERS
      Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
            CT24.cz as well.
 
+ - MustWatch.hztz.cz:
+     - http://mustwatch.hztz.cz/film/lecba-rakoviny-zevnitr-healing-cancer-from-inside-out/
+
  - Muzu.tv:
      - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
 
@@ -247,6 +254,10 @@ SUPPORTED PROVIDERS
 
  - Novinky.cz:
      - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+
+ - OverStream.net:
+     - http://www.overstream.net/view.php?oid=uinsn9n7uomx
+     - http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
 
  - PCPlanets.com:
      - http://www.pcplanets.com/videos-225353-Bamboo.shtml
@@ -955,3 +966,6 @@ Used libraries and their licenses:
   - license: custom, freeware
   - description: Support for TCP/IP, HTTP and other common protocols
 
+Translations:
+
+- Slovak: Vladimír Kubala (kubalav@gmail.com), 2010-08-26

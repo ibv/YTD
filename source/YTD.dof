@@ -49,19 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.ceknito.sk/video/451712
+RunParams=http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
 HostApplication=
-[Language]
-ActiveLang=
-ProjectLang=$00000405
-RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=52
+MinorVer=53
 Release=0
-Build=278
+Build=279
 Debug=0
 PreRelease=0
 Special=0
@@ -72,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.52.0.278
+FileVersion=0.53.0.279
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -84,11 +80,12 @@ Comments=http://www.pepak.net/download/youtube-downloader/
 Count=1
 Item0=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 [HistoryLists\hlConditionals]
-Count=4
+Count=5
 Item0=PEPAK;PEPAK_YTD;XXX;
-Item1=XXX;
-Item2=XXX;DEBUG
-Item3=XXX
+Item1=PEPAK;PEPAK_YTD;XXX;DEBUG
+Item2=XXX;
+Item3=XXX;DEBUG
+Item4=XXX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
@@ -114,7 +111,7 @@ Count=2
 Item0=..\Exe
 Item1=Exe
 [Exception Log]
-EurekaLog Version=6023
+EurekaLog Version=6020
 Activate=0
 Activate Handle=1
 Save Log File=1

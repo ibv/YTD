@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.52                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.53                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -92,6 +92,10 @@ PODPOROVAN… WEBY
 
      Pozn.: This provider usesTento poskytovatel pouûÌv· protokol RTMP. Viz
      pozn·mky nÌûe.
+
+ - CSmaTalent.cz, CSmaTalent.sk:
+     - http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
+     - http://www.csmatalent.sk/epizody/detail/divadlo-29-8-2010.html
 
  - CT24.cz:
      - http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
@@ -224,6 +228,9 @@ PODPOROVAN… WEBY
      Pozn.: SkuteËn˝m poskytovatelem je »esk· televize a platÌ proto vöechno,
             co pro CeskaTelevize.cz.
 
+ - MustWatch.hztz.cz:
+     - http://mustwatch.hztz.cz/film/lecba-rakoviny-zevnitr-healing-cancer-from-inside-out/
+
  - Muzu.tv:
      - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
 
@@ -249,6 +256,10 @@ PODPOROVAN… WEBY
 
  - Novinky.cz:
      - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+
+ - OverStream.net:
+     - http://www.overstream.net/view.php?oid=uinsn9n7uomx
+     - http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
 
  - PCPlanets.com:
      - http://www.pcplanets.com/videos-225353-Bamboo.shtml
@@ -956,3 +967,6 @@ Knihovny a jejich licence:
   - licence: vlastnÌ, freeware
   - popis: Pr·ce s TCP/IP, HTTP a dalöÌmi sÌùov˝mi protokoly
 
+JazykovÈ verze:
+
+- Slovenötina: VladimÌr Kubala (kubalav@gmail.com), 26.8.2010

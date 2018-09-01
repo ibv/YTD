@@ -1,6 +1,31 @@
 CHANGELOG
 ---------
 
+  v0.53
+
+    * Vladimir Kubala (kubalav@gmail.com) created a slovakian translation.
+
+    * New provider: OverStream.net
+
+    * New provider: MustWatch.hztz.cz
+
+    * New provider: CSmaTalent.cz, CSmaTalent.sk
+
+    * VideaCesky.cz: Support for two more methods of embedding videos.
+
+      Unfortunately, some of the movies are difficult to access for most users,
+      because the provider happily ignores internet standards and uses invalid
+      URLs with characters which shouldn't be there. Some browsers (such as
+      Internet Explorer and Opera) then copy these invalid URLs to clipboard,
+      preventing YTD from downloading them. Use Firefox, it accepts invalid
+      URLs and encodes them to a proper format (such as http://www.videacesky.cz/skece-zabavne-scenky/george-carlin-%E2%80%93-nabozenstvi-je-kravina)
+      before copying them to clipboard.
+
+    * The definitive fix will have to wait until I manage to rewrite YTD for
+      full compatibility with Delphi 2009.
+
+
+
   v0.52
 
     * New provider: AlternativaTV.cz
