@@ -36,7 +36,7 @@ const
   REGEXP_MOVIE_TITLE = '<title>(?:[^<]*--\s+)?(?P<TITLE>.*?)</title>';
   REGEXP_MOVIE_URL = '<iframe\s+src="ifr_pl\.php[^"]*[?&]url=(?P<URL>http%3A%2F%2F[^&"]+)';
 
-{ TDownloader_PornoTube }
+{ TDownloader_XVideoHost }
 
 class function TDownloader_XVideoHost.Provider: string;
 begin

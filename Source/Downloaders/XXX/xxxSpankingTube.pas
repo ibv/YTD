@@ -39,7 +39,7 @@ const
   REGEXP_MOVIE_TITLE = '<div\s[^>]*\bid="content_head"[^>]*>(?P<TITLE>.+?)</div>';
   REGEXP_MOVIE_FILENAME = '<param\s+name=movie\s+value=[^\s>]*[?&]video=(?P<FILENAME>[^\s&>]+)';
 
-{ TDownloader_PornoTube }
+{ TDownloader_SpankingTube }
 
 class function TDownloader_SpankingTube.Provider: string;
 begin

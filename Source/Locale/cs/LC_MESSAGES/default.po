@@ -1,0 +1,764 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: YouTube Downloader 0.36\n"
+"POT-Creation-Date: 2010-06-10 18:47\n"
+"PO-Revision-Date: 2010-06-10 19:32+0100\n"
+"Last-Translator: Pepak <pepak@pepak.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: dxgettext 1.2.2\n"
+"Language-Team: \n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-Country: CZECH REPUBLIC\n"
+
+#. FormAbout..Caption
+#: GUI/uYTDAbout.dfm:6
+msgid "About YouTube Downloader"
+msgstr "O aplikaci YouTube Downloader"
+
+#. FormAbout..Font.Name
+#. FormAbout..LabelYTD..Font.Name
+#. FormAbout..LabelVersion..Font.Name
+#. FormAbout..LabelNewestVersion..Font.Name
+#. FormAbout..LabelHomepage..Font.Name
+#. FormYTD..Font.Name
+#: GUI/uYTDAbout.dfm:11
+#: GUI/uYTDAbout.dfm:26
+#: GUI/uYTDAbout.dfm:46
+#: GUI/uYTDAbout.dfm:66
+#: GUI/uYTDAbout.dfm:87
+#: GUI/uYTDGUI.dfm:11
+msgid "MS Sans Serif"
+msgstr "MS Sans Serif"
+
+#. FormAbout..LabelYTD..Caption
+#. Programmer's name for it: APPLICATION_TITLE
+#: GUI/uYTDAbout.dfm:22
+#: uMessages.pas:9
+msgid "YouTube Downloader"
+msgstr "YouTube Downloader"
+
+#. FormAbout..LabelVersionLabel..Caption
+#: GUI/uYTDAbout.dfm:35
+msgid "Version:"
+msgstr "Verze:"
+
+#. FormAbout..LabelVersion..Caption
+#: GUI/uYTDAbout.dfm:42
+msgid "LabelVersion"
+msgstr "Verze"
+
+#. FormAbout..LabelNewestVersionLabel..Caption
+#: GUI/uYTDAbout.dfm:55
+msgid "Newest version:"
+msgstr "Nejnovější verze:"
+
+#. FormAbout..LabelNewestVersion..Caption
+#. Show available version
+#: GUI/uYTDAbout.dfm:62
+#: GUI/uYTDAbout.pas:88
+msgid "not found"
+msgstr "nenalezena"
+
+#. FormAbout..LabelHomepageLabel..Caption
+#: GUI/uYTDAbout.dfm:76
+msgid "Homepage:"
+msgstr "Domovská stránka:"
+
+#. FormAbout..LabelHomepage..Caption
+#: GUI/uYTDAbout.dfm:83
+msgid "http://www.pepak.net/download/youtube-downloader"
+msgstr "http://www.pepak.net/download/youtube-downloader"
+
+#. FormAbout..LabelMediaProviders..Caption
+#: GUI/uYTDAbout.dfm:97
+msgid "Media providers:"
+msgstr "Poskytovatelé médií:"
+
+#. FormAbout..ListProviders......Caption
+#. FormYTD..Downloads......Caption
+#: GUI/uYTDAbout.dfm:107
+#: GUI/uYTDGUI.dfm:163
+msgid "Provider"
+msgstr "Poskytovatel"
+
+#. FormAbout..ListProviders......Caption
+#: GUI/uYTDAbout.dfm:111
+msgid "Components"
+msgstr "Komponenty"
+
+#. FormYTD..Caption
+#: GUI/uYTDGUI.dfm:6
+msgid "FormYTD"
+msgstr "FormYTD"
+
+#. FormYTD..PanelMenu..ToolBar1..ToolButton2..Caption
+#: GUI/uYTDGUI.dfm:67
+msgid "ToolButton2"
+msgstr "ToolButton2"
+
+#. FormYTD..Downloads......Caption
+#: GUI/uYTDGUI.dfm:159
+msgid "URL"
+msgstr "URL"
+
+#. FormYTD..Downloads......Caption
+#: GUI/uYTDGUI.dfm:168
+msgid "Status"
+msgstr "Status"
+
+#. FormYTD..Downloads......Caption
+#: GUI/uYTDGUI.dfm:172
+msgid "Title"
+msgstr "Název"
+
+#. FormYTD..Downloads......Caption
+#: GUI/uYTDGUI.dfm:177
+msgid "Size"
+msgstr "Velikost"
+
+#. FormYTD..Downloads......Caption
+#: GUI/uYTDGUI.dfm:182
+msgid "Progress"
+msgstr "Průběh stahování"
+
+#. FormYTD..YTDActions..actAddNewUrl..Caption
+#. FormYTD..YTDActions..actAddNewUrl..Hint
+#: GUI/uYTDGUI.dfm:215
+#: GUI/uYTDGUI.dfm:216
+msgid "Add new URL"
+msgstr "Přidat URL"
+
+#. FormYTD..YTDActions..actDeleteURL..Caption
+#: GUI/uYTDGUI.dfm:222
+msgid "Delete URL"
+msgstr "Smazat URL"
+
+#. FormYTD..YTDActions..actDeleteURL..Hint
+#: GUI/uYTDGUI.dfm:223
+msgid "Delete selected URL(s)"
+msgstr "Smazat vybrané URL"
+
+#. FormYTD..YTDActions..actStart..Caption
+#: GUI/uYTDGUI.dfm:229
+msgid "Start/Pause/Resume"
+msgstr "Start/Pauza/Pokračovat"
+
+#. FormYTD..YTDActions..actStart..Hint
+#: GUI/uYTDGUI.dfm:230
+msgid "Start downloading selected  URL(s)"
+msgstr "Spustit stahování vybraných URL"
+
+#. FormYTD..YTDActions..actStop..Caption
+#: GUI/uYTDGUI.dfm:236
+msgid "Stop"
+msgstr "Zastavit"
+
+#. FormYTD..YTDActions..actStop..Hint
+#: GUI/uYTDGUI.dfm:237
+msgid "Stop downloading selected  URL(s)"
+msgstr "Přerušit stahování vybraných URL"
+
+#. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
+#. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
+#. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
+#. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
+#: GUI/uYTDGUI.dfm:243
+#: GUI/uYTDGUI.dfm:244
+#: GUI/uYTDGUI.dfm:250
+#: GUI/uYTDGUI.dfm:251
+msgid "Add URLs from Clipboard"
+msgstr "Přidat URL ze schránky"
+
+#. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
+#. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
+#. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
+#. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
+#: GUI/uYTDGUI.dfm:257
+#: GUI/uYTDGUI.dfm:258
+#: GUI/uYTDGUI.dfm:264
+#: GUI/uYTDGUI.dfm:265
+msgid "Copy URLs to Clipboard"
+msgstr "Zkopírovat URL do schránky"
+
+#. FormYTD..YTDActions..actSelectAll..Caption
+#: GUI/uYTDGUI.dfm:271
+msgid "Select all"
+msgstr "Vybrat vše"
+
+#. FormYTD..YTDActions..actSelectAll..Hint
+#: GUI/uYTDGUI.dfm:272
+msgid "Select all URLs"
+msgstr "Vybrat všechny URL"
+
+#. FormYTD..YTDActions..actRefresh..Caption
+#: GUI/uYTDGUI.dfm:277
+msgid "Refresh"
+msgstr "Obnovit"
+
+#. FormYTD..YTDActions..actRefresh..Hint
+#: GUI/uYTDGUI.dfm:278
+msgid "Refresh display"
+msgstr "Překreslit formulář"
+
+#. FormYTD..YTDActions..actAutoDownload..Caption
+#: GUI/uYTDGUI.dfm:284
+msgid "Autodownload"
+msgstr "Autodownload"
+
+#. FormYTD..YTDActions..actAutoDownload..Hint
+#: GUI/uYTDGUI.dfm:286
+msgid "Automatically start new downloads"
+msgstr "Automaticky spouštět nové downloady"
+
+#. FormYTD..YTDActions..actDownloadDirectory..Caption
+#: GUI/uYTDGUI.dfm:292
+msgid "Set download directory"
+msgstr "Adresář pro downloady"
+
+#. FormYTD..YTDActions..actDownloadDirectory..Hint
+#: GUI/uYTDGUI.dfm:293
+msgid "Choose download directory"
+msgstr "Vyberte cílový adresář pro downloady"
+
+#. FormYTD..YTDActions..actAutoOverwrite..Caption
+#: GUI/uYTDGUI.dfm:299
+msgid "Auto-Overwrite"
+msgstr "Automaticky přepisovat"
+
+#. FormYTD..YTDActions..actAutoOverwrite..Hint
+#: GUI/uYTDGUI.dfm:300
+msgid "Automatically overwrite existing files"
+msgstr "Automaticky přepisovat existující soubory"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTML..Caption
+#: GUI/uYTDGUI.dfm:306
+msgid "Add URLs from HTML page"
+msgstr "Přidat URL z HTML stránky"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTML..Hint
+#: GUI/uYTDGUI.dfm:307
+msgid "Get a list of URLs from HTML page"
+msgstr "Načíst seznam URL z HTML stránky"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Caption
+#: GUI/uYTDGUI.dfm:313
+msgid "Add URLs from HTML file"
+msgstr "Přidat URL z HTML souboru"
+
+#. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Hint
+#: GUI/uYTDGUI.dfm:314
+msgid "Get a list of URLs from HTML file"
+msgstr "Načíst seznam URL z HTML souboru"
+
+#. FormYTD..YTDActions..actAddUrlsFromFile..Caption
+#: GUI/uYTDGUI.dfm:320
+msgid "Add URLs from file"
+msgstr "Přidat URL ze souboru"
+
+#. FormYTD..YTDActions..actAddUrlsFromFile..Hint
+#: GUI/uYTDGUI.dfm:321
+msgid "Get a list of URLs from file"
+msgstr "Načíst seznam URL ze souboru"
+
+#. FormYTD..YTDActions..actSaveUrlList..Caption
+#: GUI/uYTDGUI.dfm:327
+msgid "Save URL list"
+msgstr "Uložit seznam URL"
+
+#. FormYTD..YTDActions..actSaveUrlList..Hint
+#: GUI/uYTDGUI.dfm:328
+msgid "Save list of unfinished URLs to a list file"
+msgstr "Uložit seznam nedokončených URL do souboru"
+
+#. FormYTD..YTDActions..actAbout..Caption
+#: GUI/uYTDGUI.dfm:334
+msgid "About"
+msgstr "O aplikaci"
+
+#. FormYTD..YTDActions..actAbout..Hint
+#: GUI/uYTDGUI.dfm:335
+msgid "About this program"
+msgstr "O programu YouTube Downloader"
+
+#. FormYTD..DownloadsPopup..N4..Caption
+#. FormYTD..DownloadsPopup..N2..Caption
+#. FormYTD..DownloadsPopup..N1..Caption
+#. FormYTD..DownloadsPopup..N3..Caption
+#. FormYTD..DownloadsPopup..N5..Caption
+#: GUI/uYTDGUI.dfm:1447
+#: GUI/uYTDGUI.dfm:1456
+#: GUI/uYTDGUI.dfm:1468
+#: GUI/uYTDGUI.dfm:1482
+#: GUI/uYTDGUI.dfm:1488
+msgid "-"
+msgstr "-"
+
+#. FormYTD..OpenHtmlFile..Filter
+#: GUI/uYTDGUI.dfm:1495
+msgid "HTML files|*.htm;*.html|All files|*.*"
+msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
+
+#. FormYTD..OpenUrlList..Filter
+#. FormYTD..SaveUrlList..Filter
+#: GUI/uYTDGUI.dfm:1501
+#: GUI/uYTDGUI.dfm:1508
+msgid "List files (*.lst)|*.lst|All files|*.*"
+msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
+
+#. FormYTD..SaveUrlList..DefaultExt
+#: GUI/uYTDGUI.dfm:1507
+msgid "lst"
+msgstr "lst"
+
+#. Programmer's name for it: ERR_EXCEPTION_MESSAGE
+#: uMessages.pas:11
+msgid "Exception %s with message:%s"
+msgstr "Výjimka %s se zprávou: %s"
+
+#. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
+#: uMessages.pas:13
+msgid "Press any key to quit."
+msgstr "Stiskněte klávesu pro ukončení programu."
+
+#. Programmer's name for it: MSG_PLAYLIST_ITEM
+#: uMessages.pas:14
+msgid "Playlist item %d"
+msgstr "%d. položka seznamu"
+
+#. Downloader errors
+#. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
+#: uMessages.pas:17
+msgid "Downloader is not prepared!"
+msgstr "Downloader není připraven!"
+
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
+#: uMessages.pas:18
+msgid "Download of this content is not implemented."
+msgstr "Stahování tohoto obsahu není podporováno."
+
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: uMessages.pas:19
+msgid "Download to file \"%s\" was not allowed."
+msgstr "Stahování do souboru \"%s\" nebylo povoleno."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
+#: uMessages.pas:21
+msgid "Failed to locate media info page."
+msgstr "Nepodařilo se najít stránku informací o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
+#: uMessages.pas:22
+msgid "Failed to download media info page."
+msgstr "Nepodařilo se stáhnout stránku informací o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
+#: uMessages.pas:23
+msgid "Failed to prepare media info page."
+msgstr "Nepodařilo se připravit stránku informací o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
+#: uMessages.pas:24
+msgid "Failed to locate media info."
+msgstr "Nepodařilo se najít informace o médiu."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
+#: uMessages.pas:25
+msgid "Failed to find media title."
+msgstr "Nepodařilo se najít název média."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
+#: uMessages.pas:26
+msgid "Failed to find media URL."
+msgstr "Nepodařilo se najít adresu média."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
+#: uMessages.pas:27
+msgid "Failed to find media server."
+msgstr "Nepodařilo se najít server média."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
+#: uMessages.pas:28
+msgid "Failed to find media stream."
+msgstr "Nepodařilo se najít stream média."
+
+#. Programmer's name for it: ERR_HTTP_RESULT_CODE
+#: uMessages.pas:30
+msgid "HTTP request failed with error code %d."
+msgstr "HTTP požadavek selhal s chybou %d."
+
+#. Programmer's name for it: ERR_NO_DATA_READ
+#: uMessages.pas:31
+msgid "No data read from the connection."
+msgstr "Nepodařilo se přečíst žádná data."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
+#: uMessages.pas:33
+msgid "Failed to find embedded object."
+msgstr "Nepodařilo se najít vložený objekt."
+
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT
+#: uMessages.pas:34
+msgid "Failed to download embedded object."
+msgstr "Nepodařilo se stáhnout vložený objekt."
+
+#. Programmer's name for it: ERR_INVALID_EMBEDDED_OBJECT
+#: uMessages.pas:35
+msgid "Embedded object is invalid."
+msgstr "Vložený objekt je neplatný."
+
+#. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
+#: uMessages.pas:37
+msgid "Variable \"%s\" not found."
+msgstr "Proměnná \"%s\" nebyla nalezena."
+
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
+#: uMessages.pas:39
+msgid "Failed to download server list."
+msgstr "Nepodařilo se stáhnout seznam serverů."
+
+#. Programmer's name for it: ERR_SEE_LOGFILE
+#: uMessages.pas:41
+msgid "Error message listed in file \"%s\"."
+msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
+
+#. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
+#: uMessages.pas:43
+msgid "Failed to load library \"%s\" or its prerequisites."
+msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
+
+#. Programmer's name for it: DEFAULT_USER_AGENT
+#: Base/uDownloader.pas:107
+msgid "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
+msgstr "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
+
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
+#: Base/uHttpDownloader.pas:58
+msgid "Resolving began"
+msgstr "Zahájeno zjišťování adresy"
+
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
+#: Base/uHttpDownloader.pas:59
+msgid "Resolving ended"
+msgstr "Dokončeno zjišťování adresy"
+
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
+#: Base/uHttpDownloader.pas:60
+msgid "Socket created"
+msgstr "Vytvořen socket"
+
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
+#: Base/uHttpDownloader.pas:61
+msgid "Socket closed"
+msgstr "Uzavřen socket"
+
+#. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
+#: Base/uHttpDownloader.pas:62
+msgid "Bound to IP/port"
+msgstr "Napojeno na IP/port"
+
+#. Programmer's name for it: SOCKSTATUS_CONNECTED
+#: Base/uHttpDownloader.pas:63
+msgid "Connected"
+msgstr "Spojeno"
+
+#. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
+#: Base/uHttpDownloader.pas:64
+msgid "Can read data"
+msgstr "Možno číst data"
+
+#. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
+#: Base/uHttpDownloader.pas:65
+msgid "Can write data"
+msgstr "Možno psát data"
+
+#. Programmer's name for it: SOCKSTATUS_LISTENING
+#: Base/uHttpDownloader.pas:66
+msgid "Listening"
+msgstr "Čeká se na požadavek"
+
+#. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
+#: Base/uHttpDownloader.pas:67
+msgid "Accepted connection"
+msgstr "Požadavek přijat"
+
+#. Programmer's name for it: SOCKSTATUS_READ_DATA
+#: Base/uHttpDownloader.pas:68
+msgid "Read data"
+msgstr "Data přečtena"
+
+#. Programmer's name for it: SOCKSTATUS_WROTE_DATA
+#: Base/uHttpDownloader.pas:69
+msgid "Wrote data"
+msgstr "Data zapsána"
+
+#. Programmer's name for it: SOCKSTATUS_WAITING
+#. Programmer's name for it: THREADSTATE_WAITING
+#: Base/uHttpDownloader.pas:70
+#: GUI/uYTDGUI.pas:153
+msgid "Waiting"
+msgstr "Čeká se"
+
+#. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
+#: Base/uHttpDownloader.pas:71
+msgid "Socket error"
+msgstr "Chyba socketu"
+
+#. var i: integer;
+#: CLI/uYTD.pas:88
+msgid "<arg> [<arg>] ..."
+msgstr "<arg> [<arg>] ..."
+
+#: CLI/uYTD.pas:90
+msgid " ...... Show this help screen."
+msgstr " ...... Zobrazit tuto napovedu"
+
+#: CLI/uYTD.pas:91
+msgid " ... Load URL list from <file> (one URL per line)."
+msgstr " ... Nacist seznam URL ze souboru <file> (jeden radek=jedna URL)."
+
+#: CLI/uYTD.pas:92
+msgid " ... Store files to <path> (default is current directory)."
+msgstr " ... Ukladat soubory do adresare <path> (vychozi je aktualni adresar)."
+
+#: CLI/uYTD.pas:93
+msgid " ... Save failed URLs to <file>."
+msgstr " ... Zapsat chybne stahnuta URL do souboru <file>."
+
+#: CLI/uYTD.pas:94
+msgid " .... Load links from a HTML source. <src> can be a file or an URL."
+msgstr " .... Nacist odkazy z HTML zdroje. <src> muze byt soubor nebo URL."
+
+#: CLI/uYTD.pas:95
+msgid " .......... Never overwrite existing files."
+msgstr " .......... Nikdy neprepisovat existujici soubory."
+
+#: CLI/uYTD.pas:96
+msgid " .......... Always overwrite existing files."
+msgstr " .......... Vzdy prepisovat existujici soubory"
+
+#: CLI/uYTD.pas:97
+msgid " .......... Rename files to a new name if they already exist."
+msgstr " .......... Pro existujici soubory vygenerovat nove jmeno."
+
+#: CLI/uYTD.pas:98
+msgid " .......... Ask what to do with existing files (default)."
+msgstr " .......... Zeptat se, co delat s existujicimi soubory (vychozi)."
+
+#: CLI/uYTD.pas:99
+msgid " .......... List all available providers."
+msgstr " .......... Vypsat seznam podporovanych poskytovatelu."
+
+#: CLI/uYTD.pas:101
+msgid " ....... URL to download."
+msgstr " ....... URL ke stazeni."
+
+#: CLI/uYTD.pas:119
+msgid "Available providers:"
+msgstr "Dostupni poskytovatele:"
+
+#: CLI/uYTD.pas:126
+msgid "Total: "
+msgstr "Celkem: "
+
+#: CLI/uYTD.pas:128
+msgid " providers."
+msgstr " poskytovatelu."
+
+#: CLI/uYTD.pas:135
+msgid "Current version: "
+msgstr "Aktualni verze:   "
+
+#: CLI/uYTD.pas:136
+msgid "Newest version:  "
+msgstr "Nejnovejsi verze: "
+
+#: CLI/uYTD.pas:138
+msgid "check failed"
+msgstr "nenalezena"
+
+#: CLI/uYTD.pas:144
+msgid "Download URL:    "
+msgstr "URL ke stahnuti:  "
+
+#: CLI/uYTD.pas:201
+msgid "With -e a filename must be provided."
+msgstr "K parametru -e musi byt uvedeno jmeno souboru."
+
+#: CLI/uYTD.pas:209
+msgid "HTML source \"%s\" doesn't contain any useful links."
+msgstr "HTML zdroj \"%s\" neobsahuje zadne pouzitelne odkazy."
+
+#: CLI/uYTD.pas:211
+msgid "HTML source \"%s\" not found."
+msgstr "HTML zdroj \"%s\" nebyl nalezen."
+
+#: CLI/uYTD.pas:214
+msgid "With -h a filename or an URL must be provided."
+msgstr "K parametru -h musi byt uvedena URL nebo jmeno souboru."
+
+#: CLI/uYTD.pas:223
+msgid "URL list-file \"%s\" not found."
+msgstr "Soubor \"%s\" se seznamem URL nenalezen."
+
+#: CLI/uYTD.pas:225
+msgid "With -i a filename must be provided."
+msgstr "K parametru -i musi byt uvedeno jmeno souboru."
+
+#: CLI/uYTD.pas:231
+msgid "Destination directory \"%s\" not found."
+msgstr "Cilovy adresar \"%s\" nenalezen."
+
+#: CLI/uYTD.pas:233
+msgid "With -o a directory name must be provided."
+msgstr "K parametru -o musi byt uvedeno jmeno adresare."
+
+#: CLI/uYTD.pas:235
+msgid "Unknown parameter \"%s\"."
+msgstr "Neznamy parametr \"%s\"."
+
+#: CLI/uYTD.pas:241
+msgid "No valid URLs found."
+msgstr "Nenalezeny zadne zname URL."
+
+#: CLI/uYTD.pas:286
+msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
+msgstr "  Stahuje se: <%s> %d.%d%% (%s/%s)"
+
+#: CLI/uYTD.pas:295
+msgid "  ERROR: "
+msgstr "  CHYBA: "
+
+#: CLI/uYTD.pas:297
+msgid "FAILED \"%s\": %s"
+msgstr "CHYBA \"%s\": %s"
+
+#: CLI/uYTD.pas:315
+msgid "  Playlist item: "
+msgstr "  Polozka seznamu:"
+
+#: CLI/uYTD.pas:320
+msgid "            URL: "
+msgstr "            URL: "
+
+#: CLI/uYTD.pas:340
+msgid "  Video title: "
+msgstr "  Nazev videa: "
+
+#: CLI/uYTD.pas:341
+#: CLI/uYTD.pas:465
+msgid "    File name: "
+msgstr "Nazev souboru: "
+
+#: CLI/uYTD.pas:343
+msgid "  Content URL: "
+msgstr "   URL obsahu: "
+
+#: CLI/uYTD.pas:349
+msgid "  SUCCESS."
+msgstr "  V PORADKU."
+
+#: CLI/uYTD.pas:365
+msgid "  ABORTED BY USER"
+msgstr "  PRERUSENO UZIVATELEM"
+
+#: CLI/uYTD.pas:370
+msgid "ERROR %s: %s"
+msgstr "CHYBA %s: %s"
+
+#: CLI/uYTD.pas:385
+msgid "Unknown URL."
+msgstr "Neznama URL."
+
+#: CLI/uYTD.pas:471
+msgid "  File "
+msgstr "  Soubor "
+
+#: CLI/uYTD.pas:473
+msgid " already exists."
+msgstr " uz existuje."
+
+#: CLI/uYTD.pas:474
+msgid "  Do you want to: "
+msgstr "Chcete ho:"
+
+#: CLI/uYTD.pas:475
+msgid "kip it, "
+msgstr " preskocit, "
+
+#: CLI/uYTD.pas:476
+msgid "verwrite it, or "
+msgstr " prepsat, nebo "
+
+#: CLI/uYTD.pas:477
+msgid "ename it? "
+msgstr " prejmenovat?"
+
+#: CLI/uYTD.pas:493
+msgid "  New filename: "
+msgstr "  Novy nazev: "
+
+#: CLI/uYTD.pas:504
+msgid "Incorrect answer."
+msgstr "Nespravna odpoved."
+
+#: GUI/uDownloadList.pas:234
+msgid "File already exists."
+msgstr "Soubor už existuje."
+
+#. Programmer's name for it: THREADSTATE_PREPARING
+#: GUI/uYTDGUI.pas:154
+msgid "Preparing"
+msgstr "Připravuje se download"
+
+#. Programmer's name for it: THREADSTATE_DOWNLOADING
+#: GUI/uYTDGUI.pas:155
+msgid "Downloading"
+msgstr "Stahuje se"
+
+#. Programmer's name for it: THREADSTATE_FINISHED
+#: GUI/uYTDGUI.pas:156
+msgid "Finished"
+msgstr "Dokončeno"
+
+#. Programmer's name for it: THREADSTATE_FAILED
+#: GUI/uYTDGUI.pas:157
+msgid "Failed"
+msgstr "Chyba"
+
+#. Programmer's name for it: THREADSTATE_ABORTED
+#: GUI/uYTDGUI.pas:158
+msgid "Aborted"
+msgstr "Přerušeno"
+
+#: GUI/uYTDGUI.pas:219
+msgid "There are downloads in progressDo you really want to quit?"
+msgstr "Jsou aktivní downloady.Opravdu chcete program ukončit?"
+
+#: GUI/uYTDGUI.pas:323
+#: GUI/uYTDGUI.pas:334
+msgid "Paused"
+msgstr "Pozastaveno"
+
+#: GUI/uYTDGUI.pas:378
+msgid "Enter video URL:"
+msgstr "Zadejte URL videa:"
+
+#: GUI/uYTDGUI.pas:387
+msgid "Do you really want to delete selected transfer(s)?"
+msgstr "Opravdu chcete smazat vybrané přenosy?"
+
+#: GUI/uYTDGUI.pas:415
+msgid "Do you really want to stop selected transfer(s)?"
+msgstr "Opravdu chcete zastavit vybrané přenosy?"
+
+#: GUI/uYTDGUI.pas:667
+msgid "Enter page URL:"
+msgstr "Zadejte URL stránky:"
+

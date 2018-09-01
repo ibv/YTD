@@ -27,6 +27,7 @@ call :%compiler% lib\Pepak\*.pas
 call :%compiler% lib\Pepak\uAMF.pas
 call :%compiler% lib\RtmpDump\rtmpdump_dll.pas
 call :%compiler% lib\msdl\src\msdl_dll.pas
+call :%compiler% lib\DxGetText\gnugettext.pas
 call :%compiler% Tools\AmfView.dpr
 call :%compiler% YTD.dpr
 popd

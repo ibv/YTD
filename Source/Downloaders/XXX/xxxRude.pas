@@ -33,7 +33,7 @@ const
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_PornoTube }
+{ TDownloader_Rude }
 
 class function TDownloader_Rude.Provider: string;
 begin

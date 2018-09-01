@@ -41,7 +41,7 @@ const
   REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
   REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[0-9]+:[^'']+)''';
 
-{ TDownloader_PornoTube }
+{ TDownloader_XHamster }
 
 class function TDownloader_XHamster.Provider: string;
 begin

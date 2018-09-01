@@ -8,6 +8,9 @@ shift
 if exist ytd-%version%.zip del ytd-%version%.zip
 if exist ytd-%version%-source.zip del ytd-%version%-source.zip
 if exist ytdlite-%version%.zip del ytdlite-%version%.zip
+rd /s /q exe\locale
+md exe\locale
+xcopy source\locale\*.mo exe\locale /s /i
 call clean.bat
 call build.bat noxxx %*
 del exe\amfview.exe

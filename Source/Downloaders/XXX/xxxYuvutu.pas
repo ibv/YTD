@@ -35,7 +35,7 @@ const
   REGEXP_MOVIE_TITLE = '<title>[^<]+-\s*(?P<TITLE>[^-<]+?)\s*</title>';
   REGEXP_MOVIE_URL = '<param\s+name="flashvars"\s+value="file=(?P<URL>https?://[^&"]+)';
 
-{ TDownloader_PornoTube }
+{ TDownloader_Yuvutu }
 
 class function TDownloader_Yuvutu.Provider: string;
 begin

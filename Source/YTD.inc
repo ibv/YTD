@@ -4,10 +4,11 @@
 {.DEFINE NO_XXX} // Don't compile support for porn providers
 
 // Behavior:
+{.DEFINE DEBUG}          // Include debug code
 {$DEFINE MULTIDOWNLOADS} // Allow multiple downloads per URL (needed for some downloaders)
 {$DEFINE SYSTRAY}        // Minimize to systray
 {$DEFINE INIFILE}        // Use INI file to store default settings
-{.DEFINE DEBUG}          // Include debug code
+{$DEFINE GETTEXT}        // Multilanguage support
 
 
 

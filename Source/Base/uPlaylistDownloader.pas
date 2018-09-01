@@ -93,7 +93,7 @@ end;
 
 function TPlaylistDownloader.GetPlayListItemName(Match: IMatch; Index: integer): string;
 begin
-  Result := 'Playlist Item ' + IntToStr(Index);
+  Result := Format(MSG_PLAYLIST_ITEM, [Index]);
 end;
 
 function TPlaylistDownloader.GetPlayListItemURL(Match: IMatch; Index: integer): string;

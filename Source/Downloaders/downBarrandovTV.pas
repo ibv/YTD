@@ -24,6 +24,7 @@ type
 implementation
 
 uses
+  uMessages,
   uDownloadClassifier,
   janXmlParser2;
 
@@ -71,11 +72,11 @@ begin
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'videotitle', Title) then
-      SetLastErrorMsg('Failed to find video title.')
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
     else if not GetXmlVar(Xml, 'hostname', HostName) then
-      SetLastErrorMsg('Failed to find host name.')
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
     else if not GetXmlVar(Xml, 'streamname', StreamName) then
-      SetLastErrorMsg('Failed to find stream name.')
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
     else
       begin
       SetName(Title);

@@ -35,7 +35,7 @@ const
   REGEXP_MOVIE_TITLE = '<h1>(?P<TITLE>.+?)</h1>';
   REGEXP_MOVIE_URL = '\bembededFlashContainer\.innerHTML\s*=\s*''(?P<URL>https?://media\.shufuni\.com/[^'']+)''';
 
-{ TDownloader_PornoTube }
+{ TDownloader_Shufuni }
 
 class function TDownloader_Shufuni.Provider: string;
 begin

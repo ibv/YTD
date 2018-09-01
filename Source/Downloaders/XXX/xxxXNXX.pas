@@ -36,7 +36,7 @@ const
   REGEXP_MOVIE_TITLE = '<!--\s*TITRE\s*-->\s*<span class="style5">\s*<strong>\s*(?P<TITLE>.*?)\s*</strong>\s*</span>';
   REGEXP_MOVIE_URL = '<embed(?:\s+.*)?\sflashvars="id_video=[^"]*&amp;flv_url=(?P<URL>https?%3A%2F%2F[^&"]+)';
 
-{ TDownloader_PornoTube }
+{ TDownloader_XNXX }
 
 class function TDownloader_XNXX.Provider: string;
 begin

@@ -40,7 +40,7 @@ const
   REGEXP_MOVIE_TITLE = '<h1>\s*(?:<img[^>]*>)?\s*(?P<TITLE>.*?)\s*</h1>';
   REGEXP_MOVIE_INFOURL = '\.addVariable\s*\(\s*\''file''\s*,[^;'']*''(?P<URL>https?://[^'']+)''';
 
-{ TDownloader_PornoTube }
+{ TDownloader_YouPorn }
 
 class function TDownloader_YouPorn.Provider: string;
 begin

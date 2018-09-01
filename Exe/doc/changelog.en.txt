@@ -1,6 +1,26 @@
 CHANGELOG
 ---------
 
+  v0.36
+
+    * Relaxed a too-strict check for valid conversions between UTF8 and
+      Wide: unknown characters used to result in an error message, now they
+      are simply replaced with question marks and conversion continues.
+      (Solves an inconsistent behavior of CeskaTelevize.cz, which sometimes
+      worked and sometimes didn't, even with the same URL.)
+
+    * Localization support.
+
+      - Using existing translations: In its default state, the program will
+        load the language version that matches your Windows' locale. You may
+        force a particular language by changing the Language option in the
+        INI file.
+
+      - Creating your own translations: Please read the documenation for
+        details.
+
+
+
   v0.35
 
     * New providers:

@@ -10,6 +10,7 @@ program YTD;
 {%File 'YTD.inc'}
 
 uses
+  uLanguages in 'uLanguages.pas',
   SysUtils,
   Windows,
   {$IFDEF FPC}
@@ -17,19 +18,6 @@ uses
   {$ENDIF}
   {$IFDEF GUI}
     Forms,
-  {$ENDIF}
-  // Command Line Version
-  {$IFDEF CLI}
-    uYTD in 'CLI\uYTD.pas',
-    uConsoleApp,
-  {$ENDIF}
-  // GUI version
-  {$IFDEF GUI}
-    uYTDGUI in 'GUI\uYTDGUI.pas' {FormYTD},
-    uYTDAbout in 'GUI\uYTDAbout.pas' {FormAbout},
-    uDownloadList in 'GUI\uDownloadList.pas',
-    uDownloadListItem in 'GUI\uDownloadListItem.pas',
-    uDownloadThread in 'GUI\uDownloadThread.pas',
   {$ENDIF}
   // Base objects and units
   uMessages in 'uMessages.pas',
@@ -43,6 +31,19 @@ uses
   uNestedDownloader in 'Base\uNestedDownloader.pas',
   uRtmpDownloader in 'Base\uRtmpDownloader.pas',
   uPlaylistDownloader in 'Base\uPlaylistDownloader.pas',
+  // Command Line Version
+  {$IFDEF CLI}
+    uYTD in 'CLI\uYTD.pas',
+    uConsoleApp,
+  {$ENDIF}
+  // GUI version
+  {$IFDEF GUI}
+    uYTDGUI in 'GUI\uYTDGUI.pas' {FormYTD},
+    uYTDAbout in 'GUI\uYTDAbout.pas' {FormAbout},
+    uDownloadList in 'GUI\uDownloadList.pas',
+    uDownloadListItem in 'GUI\uDownloadListItem.pas',
+    uDownloadThread in 'GUI\uDownloadThread.pas',
+  {$ENDIF}
   // Downloaders
   down5min in 'Downloaders\down5min.pas',
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
@@ -172,7 +173,7 @@ begin
           if DebugHook <> 0 then
             begin
             Writeln;
-            Write('Press any key to quit.');
+            Write(MSG_PRESS_ANY_KEY_TO_QUIT);
             Readln;
             end;
         {$ENDIF}
@@ -181,7 +182,7 @@ begin
   except
     on E: Exception do
       begin
-      ErrorMsg := Format('Exception %s with message:'#13'%s', [E.ClassName, E.Message]);
+      ErrorMsg := Format(ERR_EXCEPTION_MESSAGE, [E.ClassName, E.Message]);
       {$IFDEF FPC}
         Writeln(ErrorMsg);
       {$ELSE}
@@ -190,7 +191,7 @@ begin
           Writeln(ErrorMsg)
         else
         {$ENDIF}
-          MessageBox(0, PChar(ErrorMsg), PChar('YouTube Downloader'), MB_OK or MB_ICONERROR);
+          MessageBox(0, PChar(ErrorMsg), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR);
       {$ENDIF}
       ExitCode := 255;
       end;

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.35                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.36                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -365,6 +365,15 @@ pokud nepouijete nastavení "DontUseRegistry".
 
 V sekci [YTD] jsou následující nastavení:
 
+  Language=cs
+    - Vynutí pouití vybrané jazykové verze.
+    - Obsahem poloky je dvouznakovı ISO kód jazyka, napø. "cs" pro èeštinu
+      nebo "en" pro angliètinu. Pokud zvolenı jazyk nebyl zatím pøeloen,
+      program pouije angliètinu. Seznam monıch kódù na Wikipedii:
+      http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+    - Vıchozí hodnotou je prázdnı øetìzec, kterı znamená, e si program sám
+      zvolí jazyk podle toho, jak je nastavené Locale ve Windows.
+
   OverwriteMode=Ask
     - Vıchozí nastavení zpùsobu, jak má YTD reagovat na existující soubory.
     - Moné hodnoty jsou (bez uvozovek):
@@ -462,6 +471,51 @@ SYNTAXE
 
 
 
+LOKALIZACE
+----------
+
+Pro lokalizaci pouívá YouTube Downloader GNU GetText. Pro pøípadné zájemce
+to znamená, e pokud GetText znáte, mùete se okamitì pustit do tvorby nového
+pøekladu. Pokud zatím GetText neznáte, doporuèuji se s ním seznámit, protoe
+jde o jeden z nejrozšíøenìjších lokalizaèních nástrojù. Jedinı problém je,
+najít nìjakı srozumitelnı návod - ty, co jsem našel, jsou vesmìs dost obtínì
+èitelné, pokud u dopøedu nevíte, o co v GetTextu jde. Ale s vhodnım nástrojem,
+jako je napø. POEdit (http://www.poedit.net/), se to dá zvládnout za pochodu.
+
+Pro pøekládání budete potøebovat soubor "default.po", kterı obsahuje základní
+(nepøeloené) texty. Najdete ho v adresáøi "Source\Locale". Pomocí POEditu nebo
+jiného nástroje (klidnì si vystaèíte i s Notepadem, akorát to bude nepohodlné)
+v nìm jednotlivé texty pøeloíte a hotovı pøeklad pak zkompilujete do souboru
+"default.mo". Tento soubor pak ulote do adresáøe "(exe)\Locale\(jazyk)\LC_MESSAGES",
+kde:
+   - "(exe)" je adresáø, ve kterém je uloenı "ytd.exe"
+   - "(jazyk)" je adresáø pojmenovanı podle dvouznakové ISO zkratky jazyka;
+     pro èeštinu to je "cs", pro angliètinu "en", další si mùete dohledat na
+     Wikipedii: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
+Pokud jde o jazyk, pro kterı jsou nastavena vaše Windows, mìl by se pouít
+automaticky pøi pøíštím spuštìní YTD. Pøípadnì si mùete vynutit pouití
+tohoto jazyka pomocí nastavení "Language" v INI souboru (viz vıše).
+
+Pokud mi svùj pøeklad pošlete (budu potøebovat oba souboru, "default.mo"
+i "default.po"), rád ho zaøadím do budoucích verzí YouTube Downloaderu.
+
+
+
+PODPORA
+-------
+
+Podporu naleznete na následujících stránkách:
+
+- Pepakovo fórum: 
+  http://forum.pepak.net
+- Stránka YouTube Downloader: 
+  http://www.pepak.net/download/youtube-downloader/
+- Stránka YouTube Downloader - podpora: 
+  http://www.pepak.net/download/youtube-downloader-podpora/
+
+
+
 LICENCE
 -------
 
@@ -482,6 +536,11 @@ AUTOØI
 Autorem programu je Pepak (http://www.pepak.net).
 
 YouTube Downloader vyuívá ke své funkci komponenty dalších autorù:
+
+- Lars B. Dybdahl, Peter Thörnqvist
+  - knihova DxGetText (Delphi implementace GNU GetText).
+  - licence: GNU GPL v2, Mozilla Public License
+  - zdroj: http://dxgettext.po.dk/
 
 - Lukáš Gebauer
   - knihovna Synapse pro práci s TCP/IP, HTTP a další síové záleitosti.

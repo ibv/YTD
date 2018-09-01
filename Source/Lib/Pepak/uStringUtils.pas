@@ -73,7 +73,7 @@ begin
     begin
     n := 2*Length;
     SetLength(Result, n);
-    n := MultiByteToWideChar(CodePage, 8 {MB_ERR_INVALID_CHARS}, Value, Length, @(Result[1]), n);
+    n := MultiByteToWideChar(CodePage, 0 (*8 {MB_ERR_INVALID_CHARS}*), Value, Length, @(Result[1]), n);
     if n > 0 then
       SetLength(Result, n)
     else

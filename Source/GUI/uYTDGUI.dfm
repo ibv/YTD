@@ -33,7 +33,6 @@ object FormYTD: TFormYTD
       Top = 0
       Width = 719
       Height = 29
-      Caption = 'ToolBar1'
       Images = ActionImages
       TabOrder = 0
       object ToolAddNew: TToolButton
@@ -83,7 +82,6 @@ object FormYTD: TFormYTD
         Left = 169
         Top = 2
         Width = 8
-        Caption = 'ToolButton1'
         ImageIndex = 9
         Style = tbsSeparator
       end
@@ -101,7 +99,6 @@ object FormYTD: TFormYTD
         Left = 223
         Top = 2
         Width = 8
-        Caption = 'ToolButton5'
         ImageIndex = 4
         Style = tbsSeparator
       end
@@ -114,7 +111,6 @@ object FormYTD: TFormYTD
         Left = 254
         Top = 2
         Width = 8
-        Caption = 'ToolButton9'
         ImageIndex = 7
         Style = tbsSeparator
       end
@@ -142,7 +138,6 @@ object FormYTD: TFormYTD
         Left = 354
         Top = 2
         Width = 8
-        Caption = 'ToolButton3'
         ImageIndex = 9
         Style = tbsSeparator
       end

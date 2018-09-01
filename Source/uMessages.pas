@@ -6,6 +6,14 @@ interface
 resourcestring
   EOLN = #10;
 
+  APPLICATION_TITLE = 'YouTube Downloader';
+
+  ERR_EXCEPTION_MESSAGE = 'Exception %s with message:'#13'%s';
+
+  MSG_PRESS_ANY_KEY_TO_QUIT = 'Press any key to quit.';
+  MSG_PLAYLIST_ITEM = 'Playlist item %d';
+
+  // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!';
   ERR_DOWNLOAD_NOT_IMPLEMENTED = 'Download of this content is not implemented.';
   ERR_VALIDATE_FILENAME_FAILED = 'Download to file "%s" was not allowed.';

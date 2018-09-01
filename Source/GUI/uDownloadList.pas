@@ -8,7 +8,7 @@ uses
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   uDownloadListItem, uDownloadThread,
-  uOptions;
+  uOptions, uLanguages;
 
 type
   TDownloadList = class;
@@ -231,7 +231,7 @@ begin
         if D.InitialDir = '' then
           D.InitialDir := GetCurrentDir;
         D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
-        D.Title := 'File already exists.';
+        D.Title := _('File already exists.');
         Valid := D.Execute;
         if Valid then
           FileName := ExtractFileName(D.FileName);

@@ -6,7 +6,7 @@ interface
 uses
   SysUtils,
   {$IFDEF INIFILE} IniFiles, {$ENDIF}
-  Classes, HttpSend;
+  Classes, HttpSend, uLanguages;
 
 type
   TOverwriteMode = (omNever, omAlways, omRename, omAsk);
@@ -22,6 +22,7 @@ type
       fProxyPort: string;
       fProxyUser: string;
       fProxyPassword: string;
+      fLanguage: string;
     protected
       function IniFileName(out FileName: string): boolean; overload; virtual;
       function IniFileName: string; overload; virtual;
@@ -42,6 +43,7 @@ type
       property ProxyPort: string read fProxyPort write fProxyPort;
       property ProxyUser: string read fProxyUser write fProxyUser;
       property ProxyPassword: string read fProxyPassword write fProxyPassword;
+      property Language: string read fLanguage write fLanguage;
     end;
 
 implementation
@@ -78,6 +80,7 @@ begin
   fProxyPort := '3128';
   fProxyUser := '';
   fProxyPassword := '';
+  fLanguage := '';
   {$IFDEF INIFILE}
   ReadFromIniFile;
   {$ENDIF}
@@ -135,6 +138,7 @@ begin
           fProxyPort := ReadString('YTD', 'ProxyPort', ProxyPort);
           fProxyUser := ReadString('YTD', 'ProxyUser', ProxyUser);
           fProxyPassword := ReadString('YTD', 'ProxyPassword', ProxyPassword);
+          fLanguage := ReadString('YTD', 'Language', Language);
         finally
          Free;
          end;
@@ -162,6 +166,7 @@ begin
         WriteString('YTD', 'ProxyPort', ProxyPort);
         WriteString('YTD', 'ProxyUser', ProxyUser);
         WriteString('YTD', 'ProxyPassword', ProxyPassword);
+        WriteString('YTD', 'Language', Language);
       finally
         Free;
         end;

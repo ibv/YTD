@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.35                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.36                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -358,6 +358,15 @@ registry, unless you use the "DontUseRegistry" setting.
 
 In section [YTD] these settings are available:
 
+  Language=en
+    - Force YouTube Downloader to display messages in a particular language.
+    - The option contains a two-letter ISO code of your preferred language,
+      such as "en" for English or "de" for German. If no translation exists
+      for this language, English will be used instead. List of available
+      codes: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+    - Default value is an empty string, which signifies autodetection based
+      on your Windows' locale.
+
   OverwriteMode=Ask
     - Determine, how will YTD react to already-existing files.
     - Possible values are (without quotes):
@@ -452,6 +461,50 @@ SYNTAX
 
 
 
+LOCALIZATION
+------------
+
+YouTube Downloader uses GNU GetText for its localization needs. If you are
+experienced with GetText, you can start translating right away. If you have
+no experience with GetText, don't worry - it is easy enough to learn it. The
+only problem will be finding a good tutorial - I have yet to find one that
+doesn't require "experience with GetText" as one of its prerequisites... But
+with a good tool such as POEdit (http://www.poedit.net) you can learn GetText
+as you go along.
+
+For translations, you will need the untranslated "default.po" file. It is
+located in "Source\Locale" directory. Using POEdit, or any other tool (even
+Notepad, though that one's use is far from comfortable), you can translate
+all language-specific strings in YouTube Downloader. Then you will need to
+compile the "default.po" file into "default.mo" (POEdit can do it for you).
+Once this is done, simply copy the "default.mo" file into its destination
+directory "(exe)\Locale\(language)\LC_MESSAGES":
+   - "(exe)" is the directory where "ytd.exe" is stored.
+   - "(language)" is a subdirectory named after the two-letter ISO code of
+     your translation's language (e.g. "en" for English or "de" for German).
+
+Unless your Windows' locale is set for that language, you will need to
+override the "Language" option in the INI file (see above).
+
+I would appreciate if you could send me your translation (both "default.mo"
+and "default.po" files) for inclusion in future versions of YouTube Downloader.
+
+
+
+SUPPORT
+-------
+
+Support is provided at:
+
+- Pepak Forum: 
+  http://forum.pepak.net
+- YouTube Downloader page: 
+  http://www.pepak.net/download/youtube-downloader/
+- YouTube Downloader Support page: 
+  http://www.pepak.net/download/youtube-downloader-podpora/
+
+
+
 LICENSE
 -------
 
@@ -465,6 +518,11 @@ AUTHORS
 Program was written by Pepak (http://www.pepak.net).
 
 YouTube Downloader uses following components by other authors:
+
+- Lars B. Dybdahl, Peter Thörnqvist
+  - library DxGetText (Delphi implementation of GNU GetText).
+  - license: GNU GPL v2, Mozilla Public License
+  - source: http://dxgettext.po.dk/
 
 - Lukas Gebauer
   - library Synapse, used for TCP/IP, HTTP and other network operations.

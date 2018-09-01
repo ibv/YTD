@@ -4,8 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, HttpSend, ShellApi, ComCtrls,
-  uDownloadClassifier, uDownloader, uOptions, ExtCtrls;
+  StdCtrls, HttpSend, ShellApi, ComCtrls, ExtCtrls, 
+  uLanguages, uDownloadClassifier, uDownloader, uOptions;
 
 const
   WM_FIRSTSHOW = WM_USER + 1;
@@ -51,6 +51,7 @@ implementation
 constructor TFormAbout.Create(AOwner: TComponent);
 begin
   inherited;
+  TranslateProperties(self);
   fFirstShow := True;
 end;
 
@@ -84,7 +85,7 @@ begin
   // Providers
   LoadProviders;
   // Show available version
-  LabelNewestVersion.Caption := 'not found';
+  LabelNewestVersion.Caption := _('not found');
   Application.ProcessMessages;
   if Options <> nil then
     if Options.GetNewestVersion(Version, Url) then

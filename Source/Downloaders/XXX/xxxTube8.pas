@@ -35,7 +35,7 @@ const
   REGEXP_MOVIE_TITLE = '<h1\s[^>]*\bclass="main-title[\s"][^>]*>(?P<TITLE>.+?)</h1>';
   REGEXP_MOVIE_URL = '\.videoUrl\s*=\s*([''"])(?P<URL>.+?)\1\s*;';
 
-{ TDownloader_ExtremeTube }
+{ TDownloader_Tube8 }
 
 class function TDownloader_Tube8.Provider: string;
 begin

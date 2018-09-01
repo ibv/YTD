@@ -6,11 +6,11 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, ExtCtrls, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList,
-  ActnList, Registry, ToolWin,
+  ActnList, Registry, ToolWin, 
   {$IFDEF SYSTRAY}
   ShellApi,
   {$ENDIF}
-  uOptions,
+  uLanguages, uMessages, uOptions,
   uDownloadList, uDownloadListItem, uDownloadThread,
   uYTDAbout;
 
@@ -149,9 +149,17 @@ implementation
 
 {$R *.DFM}
 
+resourcestring
+  THREADSTATE_WAITING = 'Waiting';
+  THREADSTATE_PREPARING = 'Preparing';
+  THREADSTATE_DOWNLOADING = 'Downloading';
+  THREADSTATE_FINISHED = 'Finished';
+  THREADSTATE_FAILED = 'Failed';
+  THREADSTATE_ABORTED = 'Aborted';
+
 const
   States: array[TDownloadThreadState] of string
-        = ('Waiting', 'Preparing', 'Downloading', 'Finished', 'Failed', 'Aborted');
+        = (THREADSTATE_WAITING, THREADSTATE_PREPARING, THREADSTATE_DOWNLOADING, THREADSTATE_FINISHED, THREADSTATE_FAILED, THREADSTATE_ABORTED);
 
   {$IFNDEF FPC}
   StateImgs: array[TDownloadThreadState] of integer
@@ -162,8 +170,10 @@ const
 
 procedure TFormYTD.FormCreate(Sender: TObject);
 begin
-  Caption := Application.Title + ' v' + {$INCLUDE 'ytd.version'} ;
   Options := TYTDOptions.Create;
+  UseLanguage(Options.Language);
+  TranslateProperties(self);
+  Caption := Application.Title + ' v' + {$INCLUDE 'ytd.version'} ;
   DownloadList := TDownloadList.Create;
   DownloadList.OnListChange := DownloadListChange;
   DownloadList.OnStateChange := DownloadListItemChange;
@@ -206,7 +216,7 @@ begin
   if DownloadList.DownloadingCount <= 0 then
     CanClose := True
   else
-    CanClose := (MessageDlg('There are downloads in progress'#13'Do you really want to quit?', mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes);
+    CanClose := (MessageDlg(_('There are downloads in progress'#13'Do you really want to quit?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes);
 end;
 
 procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -310,7 +320,7 @@ begin
         begin
         if DlItem.Paused then
           begin
-          sState := 'Paused';
+          sState := _('Paused');
           {$IFNDEF FPC}
           iStateImage := 4;
           {$ENDIF}
@@ -321,7 +331,7 @@ begin
         sProgress := GetProgressStr(DlItem);
         if DlItem.Paused then
           begin
-          sState := 'Paused';
+          sState := _('Paused');
           {$IFNDEF FPC}
           iStateImage := 4;
           {$ENDIF}
@@ -351,13 +361,13 @@ begin
   else if Size < 10*1e3 then
     Result := IntToStr(Size) + ' B'
   else if Size < 10*1e6 then
-    Result := IntToStr(Size div (1 shl 10)) + ' KB'
+    Result := IntToStr(Size div (1 shl 10)) + ' KiB'
   else if Size < 10*1e9 then
-    Result := IntToStr(Size div (1 shl 20)) + ' MB'
+    Result := IntToStr(Size div (1 shl 20)) + ' MiB'
   else if Size < 10*1e12 then
-    Result := IntToStr(Size div (1 shl 30)) + ' GB'
+    Result := IntToStr(Size div (1 shl 30)) + ' GiB'
   else
-    Result := IntToStr(Size div (1 shl 40)) + ' TB';
+    Result := IntToStr(Size div (1 shl 40)) + ' TiB';
 end;
 
 procedure TFormYTD.actAddNewUrlExecute(Sender: TObject);
@@ -365,7 +375,7 @@ var Url: string;
 begin
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
-  if InputQuery('YouTube Downloader', 'Enter video URL:', Url) then
+  if InputQuery(APPLICATION_TITLE, _('Enter video URL:'), Url) then
     AddTask(Url);
 end;
 
@@ -374,7 +384,7 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg('Do you really want to delete selected transfer(s)?', mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if MessageDlg(_('Do you really want to delete selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   if Downloads.SelCount = 1 then
     DeleteTask(Downloads.Selected.Index)
@@ -402,7 +412,7 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg('Do you really want to stop selected transfer(s)?', mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if MessageDlg(_('Do you really want to stop selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   if Downloads.SelCount = 1 then
     StopTask(Downloads.Selected.Index)
@@ -654,7 +664,7 @@ var Url: string;
 begin
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
-  if InputQuery('YouTube Downloader', 'Enter page URL:', Url) then
+  if InputQuery(APPLICATION_TITLE, _('Enter page URL:'), Url) then
     AddTaskFromHTML(Url);
 end;
 

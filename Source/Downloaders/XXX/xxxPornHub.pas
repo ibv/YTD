@@ -39,7 +39,7 @@ const
   REGEXP_MOVIE_TITLE = '<div\s+class="video-title-nf"[^>]+>\s*<h1>(?P<TITLE>.+?)</h1>';
   REGEXP_MOVIE_ID = '<input\s+type="hidden"\s+id="video_[0-9+]"\s+value="(?P<ID>[0-9]+)"';
 
-{ TDownloader_PornoTube }
+{ TDownloader_PornHub }
 
 class function TDownloader_PornHub.Provider: string;
 begin

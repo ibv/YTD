@@ -6,7 +6,7 @@ interface
 uses
   SysUtils, Classes, {$IFNDEF FPC} FileCtrl, {$ENDIF}
   PCRE,
-  uConsoleApp, uOptions,
+  uConsoleApp, uOptions, uLanguages, uMessages,
   uDownloader, uCommonDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   uDownloadClassifier;
@@ -54,6 +54,7 @@ constructor TYTD.Create;
 begin
   inherited;
   fOptions := TYTDOptions.Create;
+  UseLanguage(Options.Language);
   fDownloadClassifier := TDownloadClassifier.Create;
   fHtmlPlaylist := TPlaylist_HTML.Create('');
   fHtmlFilePlaylist := TPlaylist_HTMLfile.Create('');
@@ -72,7 +73,7 @@ end;
 
 function TYTD.AppTitle: string;
 begin
-  Result := 'YouTubeDownloader';
+  Result := APPLICATION_TITLE;
 end;
 
 function TYTD.AppVersion: string;
@@ -84,20 +85,20 @@ procedure TYTD.ShowSyntax(const Error: string);
 //var i: integer;
 begin
   inherited;
-  WriteColored(ccWhite, '<arg> [<arg>] ...'); Writeln;
+  WriteColored(ccWhite, _('<arg> [<arg>] ...')); Writeln;
   Writeln;
-  WriteColored(ccWhite, ' -h, -?'); Writeln(' ...... Show this help screen.');
-  WriteColored(ccWhite, ' -i <file>'); Writeln(' ... Load URL list from <file> (one URL per line).');
-  WriteColored(ccWhite, ' -o <path>'); Writeln(' ... Store files to <path> (default is current directory).');
-  WriteColored(ccWhite, ' -e <file>'); Writeln(' ... Save failed URLs to <file>.');
-  WriteColored(ccWhite, ' -s <src>'); Writeln(' .... Load links from a HTML source. <src> can be a file or an URL.');
-  WriteColored(ccWhite, ' -n'); Writeln(' .......... Never overwrite existing files.');
-  WriteColored(ccWhite, ' -a'); Writeln(' .......... Always overwrite existing files.');
-  WriteColored(ccWhite, ' -r'); Writeln(' .......... Rename files to a new name if they already exist.');
-  WriteColored(ccWhite, ' -k'); Writeln(' .......... Ask what to do with existing files (default).');
-  WriteColored(ccWhite, ' -l'); Writeln(' .......... List all available providers.');
+  WriteColored(ccWhite, ' -h, -?'); Writeln(_(' ...... Show this help screen.'));
+  WriteColored(ccWhite, ' -i <file>'); Writeln(_(' ... Load URL list from <file> (one URL per line).'));
+  WriteColored(ccWhite, ' -o <path>'); Writeln(_(' ... Store files to <path> (default is current directory).'));
+  WriteColored(ccWhite, ' -e <file>'); Writeln(_(' ... Save failed URLs to <file>.'));
+  WriteColored(ccWhite, ' -s <src>'); Writeln(_(' .... Load links from a HTML source. <src> can be a file or an URL.'));
+  WriteColored(ccWhite, ' -n'); Writeln(_(' .......... Never overwrite existing files.'));
+  WriteColored(ccWhite, ' -a'); Writeln(_(' .......... Always overwrite existing files.'));
+  WriteColored(ccWhite, ' -r'); Writeln(_(' .......... Rename files to a new name if they already exist.'));
+  WriteColored(ccWhite, ' -k'); Writeln(_(' .......... Ask what to do with existing files (default).'));
+  WriteColored(ccWhite, ' -l'); Writeln(_(' .......... List all available providers.'));
   Writeln;
-  WriteColored(ccWhite, ' <url>'); Writeln(' ....... URL to download.');
+  WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.'));
   {
   Writeln('               Supported:');
   for i := 0 to Pred(DownloadClassifier.ProviderCount) do
@@ -115,32 +116,32 @@ procedure TYTD.ShowProviders;
 var i: integer;
 begin
   Writeln;
-  WriteColored(ccWhite, 'Available providers:'); Writeln;
+  WriteColored(ccWhite, _('Available providers:')); Writeln;
   for i := 0 to Pred({$IFDEF GROUPPED} DownloadClassifier.NameCount {$ELSE} DownloadClassifier.ProviderCount {$ENDIF}) do
     begin
     Write('  - ');
     WriteColored(ccLightCyan, {$IFDEF GROUPPED} DownloadClassifier.Names[i] {$ELSE} DownloadClassifier.Providers[i].Provider {$ENDIF});
     Writeln(' (' + {$IFDEF GROUPPED} DownloadClassifier.NameClasses[i] {$ELSE} DownloadClassifier.Providers[i].ClassName {$ENDIF} + ')');
     end;
-  Write('Total: ');
+  Write(_('Total: '));
   WriteColored(ccWhite, IntToStr({$IFDEF GROUPPED} DownloadClassifier.NameCount {$ELSE} DownloadClassifier.ProviderCount {$ENDIF}));
-  Writeln(' providers.');
+  Writeln(_(' providers.'));
   Writeln;
 end;
 
 procedure TYTD.ShowVersion;
 var Url, Version: string;
 begin
-  Write('Current version: '); WriteColored(ccWhite, AppVersion); Writeln;
-  Write('Newest version:  ');
+  Write(_('Current version: ')); WriteColored(ccWhite, AppVersion); Writeln;
+  Write(_('Newest version:  '));
   if not Options.GetNewestVersion(Version, Url) then
-    WriteColored(ccLightRed, 'check failed')
+    WriteColored(ccLightRed, _('check failed'))
   else if Version <= AppVersion then
     WriteColored(ccWhite, Version)
   else
     begin
     WriteColored(ccLightCyan, Version); Writeln;
-    Write('Download URL:    '); WriteColored(ccWhite, Url);
+    Write(_('Download URL:    ')); WriteColored(ccWhite, Url);
     end;
   Writeln;
   Writeln;
@@ -197,7 +198,7 @@ begin
               DeleteFile(Param);
             end
           else
-            ShowSyntax('With -e a filename must be provided.')
+            ShowSyntax(_('With -e a filename must be provided.'))
         else if (Param = '-s') then
           if ParamGetNext(Param) then
             begin
@@ -205,12 +206,12 @@ begin
             if n > 0 then
               Result := True
             else if n = 0 then
-              ShowSyntax('HTML source "%s" doesn''t contain any useful links.', [Param])
+              ShowSyntax(_('HTML source "%s" doesn''t contain any useful links.'), [Param])
             else
-              ShowSyntax('HTML source "%s" not found.', [Param]);
+              ShowSyntax(_('HTML source "%s" not found.'), [Param]);
             end
           else
-            ShowSyntax('With -h a filename or an URL must be provided.')
+            ShowSyntax(_('With -h a filename or an URL must be provided.'))
         else if (Param = '-i') then
           if ParamGetNext(Param) then
             if FileExists(Param) then
@@ -219,25 +220,25 @@ begin
                 Result := True;
               end
             else
-              ShowSyntax('URL list-file "%s" not found.', [Param])
+              ShowSyntax(_('URL list-file "%s" not found.'), [Param])
           else
-            ShowSyntax('With -i a filename must be provided.')
+            ShowSyntax(_('With -i a filename must be provided.'))
         else if (Param = '-o') then
           if ParamGetNext(Param) then
             if DirectoryExists(Param) then
               Options.DestinationPath := Param
             else
-              ShowSyntax('Destination directory "%s" not found.', [Param])
+              ShowSyntax(_('Destination directory "%s" not found.'), [Param])
           else
-            ShowSyntax('With -o a directory name must be provided.')
+            ShowSyntax(_('With -o a directory name must be provided.'))
         else
-          ShowSyntax('Unknown parameter "%s".', [Param]);
+          ShowSyntax(_('Unknown parameter "%s".'), [Param]);
         end
       else
         if DownloadURL(Param) then
           Result := True;
     if not Result then
-      ShowError('No valid URLs found.');
+      ShowError(_('No valid URLs found.'));
     end;
 end;
 
@@ -282,7 +283,7 @@ begin
       ProgressBar := EmptyProgressBar;
       for i := 1 to n do
         ProgressBar[i] := '#';     
-      Write(Format('  Downloading: <%s> %d.%d%% (%s/%s)'#13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
+      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)'#13), [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
       end;
     end;
 end;
@@ -291,9 +292,9 @@ function TYTD.DoDownload(const Url: string; Downloader: TDownloader): boolean;
 
   procedure ShowDownloadError(const Url, Msg: string);
     begin
-      ShowError('  ERROR: ' + Msg);
+      ShowError(_('  ERROR: ') + Msg);
       if Options.ErrorLog <> '' then
-        Log(Options.ErrorLog, 'FAILED "%s": %s', [Url, Msg]);
+        Log(Options.ErrorLog, _('FAILED "%s": %s'), [Url, Msg]);
     end;
 
 var Playlist: TPlaylistDownloader;
@@ -311,12 +312,12 @@ begin
           begin
           Result := True;
           UrlList.Add(Playlist[i]);
-          Write('  Playlist item: ');
+          Write(_('  Playlist item: '));
           if Playlist.Names[i] <> '' then
             begin
             WriteColored(ccWhite, Playlist.Names[i]);
             Writeln;
-            Write('            URL: ');
+            Write(_('            URL: '));
             end;
           WriteColored(ccWhite, Playlist[i]);
           Writeln;
@@ -336,16 +337,16 @@ begin
         {$IFDEF MULTIDOWNLOADS}
         repeat
         {$ENDIF}
-        Write('  Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
-        Write('    File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
+        Write(_('  Video title: ')); WriteColored(ccWhite, Downloader.Name); Writeln;
+        Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln;
         if Downloader is TCommonDownloader then
-          Write('  Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
+          Write(_('  Content URL: ')); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
         Result := Downloader.ValidateFileName and Downloader.Download;
         if fLastProgressPercentage >= 0 then
           Writeln;
         if Result then
           begin
-          WriteColored(ccWhite, '  SUCCESS.');
+          WriteColored(ccWhite, _('  SUCCESS.'));
           Writeln;
           Writeln;
           end
@@ -361,12 +362,12 @@ begin
   except
     on E: EAbort do
       begin
-      ShowError('  ABORTED BY USER');
+      ShowError(_('  ABORTED BY USER'));
       Raise;
       end;
     on E: Exception do
       begin
-      ShowError('ERROR ' + E.ClassName + ': ' + E.Message);
+      ShowError(_('ERROR %s: %s'), [E.ClassName, E.Message]);
       Result := False;
       end;
     end;
@@ -381,7 +382,7 @@ begin
     Writeln;
     DownloadClassifier.URL := UrlList[0];
     if DownloadClassifier.Downloader = nil then
-      ShowError('Unknown URL.')
+      ShowError(_('Unknown URL.'))
     else
       if DoDownload(DownloadClassifier.URL, DownloadClassifier.Downloader) then
         Inc(Result);
@@ -461,19 +462,19 @@ begin
         Valid := AutoRename(FileName);
         if Valid then
           begin
-          Write('    File name: '); WriteColored(ccWhite, FileName); Writeln;
+          Write(_('    File name: ')); WriteColored(ccWhite, FileName); Writeln;
           end;
         end;
       omAsk:
         begin
         repeat
-          Write('  File ');
+          Write(_('  File '));
           WriteColored(ccWhite, FileName);
-          Writeln(' already exists.');
-          Write('  Do you want to: ');
-          WriteColored(ccLightCyan, '[S]'); Write('kip it, ');
-          WriteColored(ccLightCyan, '[O]'); Write('verwrite it, or ');
-          WriteColored(ccLightCyan, '[R]'); Write('ename it? ');
+          Writeln(_(' already exists.'));
+          Write(_('  Do you want to: '));
+          WriteColored(ccLightCyan, '[S]'); Write(_('kip it, '));
+          WriteColored(ccLightCyan, '[O]'); Write(_('verwrite it, or '));
+          WriteColored(ccLightCyan, '[R]'); Write(_('ename it? '));
           Readln(Answer);
           if Answer <> '' then
             case Upcase(Answer[1]) of
@@ -489,7 +490,7 @@ begin
                 end;
               'R':
                 begin
-                Write('  New filename: ');
+                Write(_('  New filename: '));
                 Readln(Answer);
                 if Answer <> '' then
                   begin
@@ -500,7 +501,7 @@ begin
                   end;
                 end;
               else
-                ShowError('Incorrect answer.');
+                ShowError(_('Incorrect answer.'));
               end;
         until False;
         end;
