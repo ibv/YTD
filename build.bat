@@ -18,6 +18,8 @@ if errorlevel 1 goto konec
 if errorlevel 1 goto konec
 %delphi% lib\Pepak\*.pas
 if errorlevel 1 goto konec
+%delphi% lib\RtmpDump\rtmpdump_dll.pas
+if errorlevel 1 goto konec
 %delphi% YTD.dpr
 if errorlevel 1 goto konec
 popd

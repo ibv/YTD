@@ -4,10 +4,10 @@ interface
 
 uses
   SysUtils,
-  HttpSend, blcksock, synautil;
+  HttpSend, synautil;
 
 type
-  EDownloader = class(Exception);
+  EDownloaderError = class(Exception);
 
   TDownloaderProgressEvent = procedure(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean) of object;
 
@@ -19,17 +19,17 @@ type
       fLastErrorMsg: string;
       fOnProgress: TDownloaderProgressEvent;
       fHttp: THttpSend;
-      fBytesTransferred: int64;
-      fVideoDownloader: THttpSend;
       fDestinationPath: string;
+      fMovieID: string;
     protected
-      procedure SetPrepared(Value: boolean); virtual;
-      procedure SetLastErrorMsg(const Value: string); virtual;
       function GetName: string; virtual;
       procedure SetName(const Value: string); virtual;
+      procedure SetPrepared(Value: boolean); virtual;
+      procedure SetLastErrorMsg(const Value: string); virtual;
+      procedure SetMovieID(const Value: string); virtual;
+    protected
       function GetFileName: string; virtual;
       function GetFileNameExt: string; virtual;
-      function GetProvider: string; virtual; abstract;
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
       procedure DoProgress; virtual;
@@ -37,24 +37,26 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
       function DownloadPage(Http: THttpSend; Url: string): boolean; overload; virtual;
       function DownloadPage(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
-      procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); virtual;
-      property BytesTransferred: int64 read fBytesTransferred write fBytesTransferred;
-      property VideoDownloader: THttpSend read fVideoDownloader write fVideoDownloader;
     public
-      constructor Create; virtual;
+      class function Provider: string; virtual; abstract;
+      class function UrlRegExp: string; virtual; abstract;
+      class function MovieIDParamName: string; virtual; abstract;
+    public
+      constructor Create(const AMovieID: string); virtual;
       destructor Destroy; override;
       function Prepare: boolean; virtual; abstract;
       function Download: boolean; virtual;
       procedure AbortTransfer; virtual;
+    public
       property Prepared: boolean read fPrepared;
       property Name: string read GetName;
       property FileName: string read GetFileName;
       property LastErrorMsg: string read fLastErrorMsg;
-      property Provider: string read GetProvider;
       property TotalSize: int64 read GetTotalSize;
       property DownloadedSize: int64 read GetDownloadedSize;
-    published
       property DefaultHttp: THttpSend read fHttp;
+    published
+      property MovieID: string read fMovieID write SetMovieID;
       property DestinationPath: string read fDestinationPath write fDestinationPath;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
     end;
@@ -66,12 +68,13 @@ uses
   
 { TDownloader }
 
-constructor TDownloader.Create;
+constructor TDownloader.Create(const AMovieID: string);
 begin
   inherited Create;
   SetLastErrorMsg('');
   SetPrepared(False);
   fHttp := THttpSend.Create;
+  MovieID := AMovieID;
 end;
 
 destructor TDownloader.Destroy;
@@ -84,7 +87,6 @@ end;
 procedure TDownloader.SetPrepared(Value: boolean);
 begin
   fPrepared := Value;
-  BytesTransferred := 0;
 end;
 
 procedure TDownloader.SetLastErrorMsg(const Value: string);
@@ -97,7 +99,7 @@ begin
   if Prepared then
     Result := fName
   else
-    Raise EDownloader.Create('Downloader is not prepared!');
+    Raise EDownloaderError.Create('Downloader is not prepared!');
 end;
 
 procedure TDownloader.SetName(const Value: string);
@@ -132,15 +134,12 @@ end;
 
 function TDownloader.GetTotalSize: int64;
 begin
-  if VideoDownloader <> nil then
-    Result := VideoDownloader.DownloadSize
-  else
-    Result := -1;
+  Result := -1;
 end;
 
 function TDownloader.GetDownloadedSize: int64;
 begin
-  Result := BytesTransferred;
+  Result := 0;
 end;
 
 procedure TDownloader.DoProgress;
@@ -158,11 +157,10 @@ end;
 function TDownloader.Download: boolean;
 begin
   SetLastErrorMsg('Can''t download this kind of content.');
-  BytesTransferred := 0;
   if Prepared then
     Result := False
   else
-    Raise EDownloader.Create('Downloader is not prepared!');
+    Raise EDownloaderError.Create('Downloader is not prepared!');
 end;
 
 function TDownloader.CreateHttp: THttpSend;
@@ -242,23 +240,14 @@ begin
     end;
 end;
 
-procedure TDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string);
-const Reasons : array[THookSocketReason] of string
-              = ('Resolving began', 'Resolving ended', 'Socket created', 'Socket closed', 'Bound to IP/port', 'Connected.',
-                 'Can read data', 'Can write data', 'Listening', 'Accepted connection', 'Read data', 'Wrote data',
-                 'Waiting', 'Socket error');
-begin
-  SetLastErrorMsg(Reasons[Reason]);
-  if (Reason = HR_ReadCount) then
-    BytesTransferred := BytesTransferred + StrToInt64(Value);
-  if not (Reason in [HR_SocketClose, HR_Error]) then
-    DoProgress;
-end;
-
 procedure TDownloader.AbortTransfer;
 begin
-  if (VideoDownloader <> nil) and (VideoDownloader.Sock <> nil) then
-    VideoDownloader.Sock.AbortSocket;
+end;
+
+procedure TDownloader.SetMovieID(const Value: string);
+begin
+  fMovieID := Value;
+  SetPrepared(False);
 end;
 
 end.

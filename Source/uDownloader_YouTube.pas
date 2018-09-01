@@ -1,14 +1,14 @@
-unit uYouTubeDownloader;
+unit uDownloader_YouTube;
 
 interface
 
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uCommonDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TYouTubeDownloader = class(TCommonDownloader)
+  TDownloader_YouTube = class(THttpDownloader)
     private
       fCookies: TStringList;
     protected
@@ -18,31 +18,35 @@ type
       YouTubeTimestamp: string;
       HDAvailable: boolean;
       function GetMovieInfoUrl: string; override;
+      function GetInfoPageEncoding: TPageEncoding; override;
       function GetFileNameExt: string; override;
-      function GetProvider: string; override;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function BeforeDownload(Http: THttpSend): boolean; override;
       function GetBestVideoFormat(const FormatList: string): string; virtual;
       property Cookies: TStringList read fCookies;
     public
-      constructor Create(const AMovieID: string); reintroduce; virtual;
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      class function MovieIDParamName: string; override;
+      constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
 
 implementation
 
 uses
-  ulkJSON, SynaCode, uStringUtils;
+  uDownloadClassifier,
+  ulkJSON, SynaCode;
 
 const
   EXTRACT_CONFIG_REGEXP = '\.setConfig\s*\(\s*(?P<JSON>\{.*?\})\s*\)\s*;';
   SIMPLIFY_JSON_REGEXP = '''\s*:\s*\(.*?\),';
   FORMAT_LIST_REGEXP = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
 
-{ TYouTubeDownloader }
+{ TDownloader_YouTube }
 
-constructor TYouTubeDownloader.Create(const AMovieID: string);
+constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   YouTubeConfigRegExp := RegExCreate(EXTRACT_CONFIG_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
@@ -51,7 +55,7 @@ begin
   fCookies := TStringList.Create;
 end;
 
-destructor TYouTubeDownloader.Destroy;
+destructor TDownloader_YouTube.Destroy;
 begin
   FreeAndNil(fCookies);
   YouTubeConfigRegExp := nil;
@@ -60,12 +64,12 @@ begin
   inherited;
 end;
 
-function TYouTubeDownloader.GetMovieInfoUrl: string;
+function TDownloader_YouTube.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.youtube.com/watch?v=' + MovieID;
 end;
 
-function TYouTubeDownloader.GetFileNameExt: string;
+function TDownloader_YouTube.GetFileNameExt: string;
 begin
   if HDAvailable then
     Result := '.mp4'
@@ -73,22 +77,21 @@ begin
     Result := '.flv';
 end;
 
-function TYouTubeDownloader.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_YouTube.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
 begin
   Result := inherited BeforePrepareFromPage(Page, Http);
-  Page := WideToAnsi(Utf8ToWide(Page));
   Cookies.Assign(Http.Cookies);
   YouTubeTimestamp := '';
   HDAvailable := False;
 end;
 
-function TYouTubeDownloader.BeforeDownload(Http: THttpSend): boolean;
+function TDownloader_YouTube.BeforeDownload(Http: THttpSend): boolean;
 begin
   Result := inherited BeforeDownload(Http);
   Http.Cookies.Assign(Cookies);
 end;
 
-function TYouTubeDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var JSONtext, VideoFormat: string;
     Matches: IMatchCollection;
     JSON, JSONobj: TlkJSONObject;
@@ -142,7 +145,7 @@ begin
     end;
 end;
 
-function TYouTubeDownloader.GetBestVideoFormat(const FormatList: string): string;
+function TDownloader_YouTube.GetBestVideoFormat(const FormatList: string): string;
 var Matches: IMatchCollection;
     MaxVideoQuality, MaxAudioQuality: integer;
     VideoQuality, AudioQuality: integer;
@@ -166,9 +169,30 @@ begin
       end;
 end;
 
-function TYouTubeDownloader.GetProvider: string;
+class function TDownloader_YouTube.Provider: string;
 begin
   Result := 'YouTube.com';
 end;
+
+class function TDownloader_YouTube.MovieIDParamName: string;
+begin
+  Result := 'YOUTUBE';
+end;
+
+class function TDownloader_YouTube.UrlRegExp: string;
+begin
+  // http://www.youtube.com/v/HANqEpKDHyk
+  // http://www.youtube.com/watch/v/HANqEpKDHyk
+  // http://www.youtube.com/watch?v=eYSbVcjyVyw
+  Result := '^https?://(?:www\.)?youtube\.com/(?:v/|watch/v/|watch\?v=)(?P<' + MovieIDParamName + '>[^&?]+)';
+end;
+
+function TDownloader_YouTube.GetInfoPageEncoding: TPageEncoding;
+begin
+  Result := peUTF8;
+end;
+
+initialization
+  RegisterDownloader(TDownloader_YouTube);
 
 end.

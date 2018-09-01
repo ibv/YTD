@@ -20,15 +20,17 @@ uses
   uYTDGUI in 'uYTDGUI.pas' {FormYTD},
   uDownloadList in 'uDownloadList.pas',
   uDownloadClassifier in 'uDownloadClassifier.pas',
-  uYTDregexp in 'uYTDregexp.pas',
   uDownloader in 'uDownloader.pas',
   uCommonDownloader in 'uCommonDownloader.pas',
-  uYouTubeDownloader in 'uYouTubeDownloader.pas',
-  uNJoyDownloader in 'uNJoyDownloader.pas',
-  uBlipTvDownloader in 'uBlipTvDownloader.pas',
-  uBlipTvDownloaderV2 in 'uBlipTvDownloaderV2.pas',
-  uStreamDownloader in 'uStreamDownloader.pas',
-  uIPrimaDownloader in 'uIPrimaDownloader.pas';
+  uDownloader_YouTube in 'uDownloader_YouTube.pas',
+  uDownloader_NJoy in 'uDownloader_NJoy.pas',
+  uDownloader_BlipTv in 'uDownloader_BlipTv.pas',
+  uDownloader_BlipTvV2 in 'uDownloader_BlipTvV2.pas',
+  uDownloader_Stream in 'uDownloader_Stream.pas',
+  uDownloader_iPrima in 'uDownloader_iPrima.pas',
+  uRtmpDownloader in 'uRtmpDownloader.pas',
+  uDownloader_BarrandovTV in 'uDownloader_BarrandovTV.pas',
+  uHttpDownloader in 'uHttpDownloader.pas';
 
 begin
   {$IFNDEF NO_GUI}

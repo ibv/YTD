@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.14                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.15                                  (C) 2009, 2010 Pepak
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -11,23 +11,62 @@ HD video, pokud je k dispozici.
 Podporované weby a formáty URL:
 
  - Youtube.com:
+
      - http://www.youtube.com/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch?v=b5AWQ5aBjgE
- - N-joy.cz
+
+ - N-joy.cz:
+
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
- - Blip.tv
+
+ - Blip.tv:
+
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
      - http://thespoonyone.blip.tv/file/1607673/
+
  - Stream.cz:
+
      - http://www.stream.cz/video/437197-meziplyn-30
+
        Pozn.: V obsluze stream.cz je chyba, kvùli které nìkdy video stáhnout
        jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjakı èasovací
        problém v knihovnì Synapse, protoe staèí vloit na vhodné místo 
        breakpoint nebo prodlevu a hned problém zmizí.
+
  - iPrima.cz:
+
      - http://www.iprima.cz/videoarchiv/44524/all/all
+
+ - Barrandov.tv:
+
+     - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+
+       Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
+       Pøehrát jde napøíklad programem The KMPlayer.
+
+
+Od verze 0.15 program zahrnuje podporu pro streamované video podle protokolu
+RTMP. Protokol je implementován pomocí knihovny, vzniklé drobnou úpravou 
+projektu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Tato implementace má øadu
+nedostatkù, se kterımi je tøeba poèítat:
+
+1) Neumí pøesnì urèit celkovou velikost videa. Velikost je odhadována na
+   základì dosud staené velikosti, dosud staeného èasu a celkového èasu
+   videa.
+
+2) Z knihovny nejsou do Downloaderu pøedávány informace o chybách. Místo
+   toho je v TEMP adresáøi uivatele generován klasickı log projektu RTMPDUMP,
+   ve kterém lze pøíèiny pøípadnıch chyb dohledat.
+
+3) Aby šlo stahovat z RTMP streamù, jsou vyadovány následující DLL knihovny:
+   - RTMPDUMP_DLL.DLL - je souèástí YTD.
+   - CRYPTOEAY32-0.9.8.DLL - souèást OpenSSL verze 0.9.8. V OpenSSL mùe bıt
+       pojmenována i CRYPTOEAY32.DLL.
+   - SSLEAY32-0.9.8.DLL - souèást OpenSSL. Alternativní jméno SSLEAY32.DLL.
+
+4) Nelze stoprocentnì detekovat, zda bylo video staeno kompletní.
 
 
 
@@ -48,6 +87,21 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.15:
+  
+    * Restrukturalizován zdrojovı kód, aby umoòoval lépe pøidávat další
+      zdroje médií.
+
+    * Podpora pro stahování streamù pøenášenıch protokolem RTMP. Download
+      je øešen pomocí knihovny RTMPDUMP_DLL.DLL, která vznikla drobnou
+      úpravou programu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Knihovna
+      potøebuje OpenSSL verze 0.9.8, konkrétnì knihovny SSLEAY32-0.9.8.DLL
+      a CRYPTOEAY32-0.9.8.DLL.
+
+    * Podpora pro Barrandov.tv.
+
+
 
   v0.14:
 

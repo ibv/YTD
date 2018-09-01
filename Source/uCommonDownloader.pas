@@ -4,30 +4,28 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
-  uDownloader;
+  PCRE, HttpSend, blcksock,
+  uDownloader, uStringUtils;
 
 type
+  TPageEncoding = (peUnknown, peANSI, peUTF8, peUTF16);
+
   TCommonDownloader = class(TDownloader)
     private
-      fMovieID: string;
       fMovieURL: string;
     protected
       MovieTitleRegExp: IRegEx;
       MovieUrlRegExp: IRegEx;
       function GetFileNameExt: string; override;
-      procedure SetMovieID(const Value: string); virtual;
+      function GetInfoPageEncoding: TPageEncoding; virtual;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
-      function BeforeDownload(Http: THttpSend): boolean; virtual;
       function GetMovieInfoUrl: string; virtual; abstract;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
     public
-      constructor Create(const AMovieID: string); reintroduce; virtual;
+      constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       function Prepare: boolean; override;
-      function Download: boolean; override;
-      property MovieID: string read fMovieID write SetMovieID;
       property ContentUrl: string read fMovieUrl;
     end;
 
@@ -37,8 +35,7 @@ implementation
 
 constructor TCommonDownloader.Create(const AMovieID: string);
 begin
-  inherited Create;
-  MovieID := AMovieID;
+  inherited;
   MovieTitleRegExp := nil;
   MovieUrlRegExp := nil;
 end;
@@ -50,18 +47,12 @@ begin
   inherited;
 end;
 
-procedure TCommonDownloader.SetMovieID(const Value: string);
-begin
-  fMovieID := Value;
-  SetPrepared(False);
-end;
-
 function TCommonDownloader.GetFileNameExt: string;
 begin
   if Prepared then
     Result := ExtractFileExt(MovieURL)
   else
-    Raise EDownloader.Create('Downloader is not prepared!');
+    Raise EDownloaderError.Create('Downloader is not prepared!');
 end;
 
 function TCommonDownloader.Prepare: boolean;
@@ -77,6 +68,16 @@ begin
     if URL <> '' then
       if DownloadPage(Info, URL, Page) then
         begin
+        case GetInfoPageEncoding of
+          peUnknown:
+            ;
+          peANSI:
+            ;
+          peUTF8:
+            Page := WideToAnsi(Utf8ToWide(Page));
+          peUTF16:
+            Page := WideToAnsi(Page);
+          end;
         if BeforePrepareFromPage(Page, Info) then
           begin
           MovieURL := '';
@@ -110,42 +111,6 @@ begin
   Result := Prepared;
 end;
 
-function TCommonDownloader.Download: boolean;
-var Stream: TFileStream;
-begin
-  inherited Download;
-  Result := False;
-  if MovieURL <> '' then
-    begin
-    VideoDownloader := CreateHttp;
-    try
-      if BeforeDownload(VideoDownloader) then
-        begin
-        try
-          VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate);
-          try
-            VideoDownloader.Sock.OnStatus := SockStatusMonitor;
-            BytesTransferred := 0;
-            if DownloadPage(VideoDownloader, MovieURL) then
-              Result := VideoDownloader.OutputStream.Size > 0;
-          finally
-            VideoDownloader.Sock.OnStatus := nil;
-            VideoDownloader.OutputStream.Free;
-            VideoDownloader.OutputStream := nil;
-            end;
-        except
-          if FileExists(FileName) then
-            DeleteFile(FileName);
-          Raise;
-          end;
-        end;
-    finally
-      VideoDownloader.Free;
-      VideoDownloader := nil;
-      end;
-    end;
-end;
-
 function TCommonDownloader.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
 begin
   Result := True;
@@ -156,9 +121,9 @@ begin
   Result := True;
 end;
 
-function TCommonDownloader.BeforeDownload(Http: THttpSend): boolean;
+function TCommonDownloader.GetInfoPageEncoding: TPageEncoding;
 begin
-  Result := True;
+  Result := peUnknown;
 end;
 
 end.

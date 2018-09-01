@@ -1,4 +1,4 @@
-unit uBlipTvDownloaderV2;
+unit uDownloader_BlipTvV2;
 // http://blip.tv/file/108391
 
 interface
@@ -6,38 +6,43 @@ interface
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uBlipTvDownloader;
+  uDownloader, uDownloader_BlipTv;
 
 type
-  TBlipTvDownloaderV2 = class(TBlipTvDownloader)
+  TDownloader_BlipTvV2 = class(TDownloader_BlipTv)
     private
     protected
       MovieIDFromPageRegExp: IRegEx;
       function GetMovieInfoUrl: string; override;
     public
+      class function UrlRegExp: string; override;
+      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
 
 implementation
 
+uses
+  uDownloadClassifier;
+
 const MOVIE_ID_FROM_PAGE_REGEXP = '<link\s+rel="video_src"\s+href="http://(?:www\.)?blip\.tv/play/(?P<MOVIEID>[^"]+)"';
 
-{ TBlipTvDownloaderV2 }
+{ TDownloader_BlipTvV2 }
 
-constructor TBlipTvDownloaderV2.Create(const AMovieID: string);
+constructor TDownloader_BlipTvV2.Create(const AMovieID: string);
 begin
   inherited;
   MovieIDFromPageRegExp := RegExCreate(MOVIE_ID_FROM_PAGE_REGEXP, [rcoIgnoreCase]);
 end;
 
-destructor TBlipTvDownloaderV2.Destroy;
+destructor TDownloader_BlipTvV2.Destroy;
 begin
   MovieIDFromPageRegExp := nil;
   inherited;
 end;
 
-function TBlipTvDownloaderV2.GetMovieInfoUrl: string;
+function TDownloader_BlipTvV2.GetMovieInfoUrl: string;
 var Http: THttpSend;
     Page: string;
     Match: IMatch;
@@ -58,5 +63,19 @@ begin
     Http.Free;
     end;
 end;
+
+class function TDownloader_BlipTvV2.MovieIDParamName: string;
+begin
+  Result := 'BLIPTVV2';
+end;
+
+class function TDownloader_BlipTvV2.UrlRegExp: string;
+begin
+  // http://blip.tv/file/108391
+  Result := '^https?://(?:[a-z0-9-]+\.)?blip\.tv/file/(?P<' + MovieIDParamName + '>[0-9]+)';
+end;
+
+initialization
+  RegisterDownloader(TDownloader_BlipTvV2);
 
 end.

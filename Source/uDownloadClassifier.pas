@@ -26,24 +26,38 @@ type
       property OwnsDownloader: boolean read fOwnsDownloader write fOwnsDownloader;
     end;
 
+procedure RegisterDownloader(Downloader: TDownloaderClass);
+
 implementation
 
-uses
-  uCommonDownloader,
-  uYouTubeDownloader,  // YouTube.com
-  uNJoyDownloader,     // N-joy.cz
-  uBlipTvDownloader,   // Blip.tv
-  uBlipTvDownloaderV2, // Blip.tv
-  uStreamDownloader,   // Stream.cz
-  uIPrimaDownloader,   // iPrima.cz
-  uYTDregexp;
+var RegisteredDownloaders: TList;
+
+procedure RegisterDownloader(Downloader: TDownloaderClass);
+begin
+  RegisteredDownloaders.Add(Downloader);
+end;
 
 { TDownloadClassifier }
 
 constructor TDownloadClassifier.Create;
+var RE, s: string;
+    i: integer;
 begin
   inherited Create;
-  fUrlClassifier := RegExCreate(SUPPORTED_URLS_REGEXP, [rcoIgnoreCase]);
+  RE := '';
+  for i := 0 to Pred(RegisteredDownloaders.Count) do
+    begin
+    s := TDownloaderClass(RegisteredDownloaders[i]).UrlRegExp;
+    if s <> '' then
+      begin
+      s := '(?:' + s + ')';
+      if RE = '' then
+        RE := s
+      else
+        RE := RE + '|' + s;
+      end;
+    end;
+  fUrlClassifier := RegExCreate(RE, [rcoIgnoreCase]);
   Clear;
 end;
 
@@ -65,53 +79,34 @@ end;
 
 procedure TDownloadClassifier.SetUrl(const Value: string);
 var Match: IMatch;
+    DC: TDownloaderClass;
+    i: integer;
 begin
   Clear;
   fUrl := Value;
   Match := UrlClassifier.Match(Value);
   try
     if Match.Matched then
-      repeat
-        with Match.Groups.ItemsByName['YOUTUBE'] do
+      for i := 0 to Pred(RegisteredDownloaders.Count) do
+        begin
+        DC := TDownloaderClass(RegisteredDownloaders[i]);
+        with Match.Groups.ItemsByName[DC.MovieIDParamName] do
           if Value <> '' then
             begin
-            fDownloader := TYouTubeDownloader.Create(Value);
+            fDownloader := DC.Create(Value);
             Break;
             end;
-        with Match.Groups.ItemsByName['NJOY'] do
-          if Value <> '' then
-            begin
-            fDownloader := TNJoyDownloader.Create(Value);
-            Break;
-            end;
-        with Match.Groups.ItemsByName['BLIPTV'] do
-          if Value <> '' then
-            begin
-            fDownloader := TBlipTvDownloader.Create(Value);
-            Break;
-            end;
-        with Match.Groups.ItemsByName['BLIPTVV2'] do
-          if Value <> '' then
-            begin
-            fDownloader := TBlipTvDownloaderV2.Create(Value);
-            Break;
-            end;
-        with Match.Groups.ItemsByName['STREAM'] do
-          if Value <> '' then
-            begin
-            fDownloader := TStreamDownloader.Create(Value);
-            Break;
-            end;
-        with Match.Groups.ItemsByName['IPRIMA'] do
-          if Value <> '' then
-            begin
-            fDownloader := TIPrimaDownloader.Create(Value);
-            Break;
-            end;
-      until True;
+        end;
   finally
     Match := nil;
     end;
 end;
+
+initialization
+  RegisteredDownloaders := TList.Create;
+
+finalization
+  RegisteredDownloaders.Free;
+  RegisteredDownloaders := nil;
 
 end.
