@@ -657,10 +657,11 @@ begin
   Item := FindControlAnchor(Control);
   if Item = nil then
     begin
+    FillChar(ControlPlacement, Sizeof(ControlPlacement), 0);
     ControlPlacement.length := Sizeof(ControlPlacement);
-    ShowApiError(GetWindowPlacement(Control, @ControlPlacement));
-    ShowApiError(GetWindowRect(Control, Rect));
-    ShowApiError(GetClientRect(Self.Handle, OwnerRect));
+    ShowApiError(not GetWindowPlacement(Control, @ControlPlacement));
+    ShowApiError(not GetWindowRect(Control, Rect));
+    ShowApiError(not GetClientRect(Self.Handle, OwnerRect));
     Item := TAnchorDesc.Create;
     Item.Handle := Control;
     Item.Anchors := Anchors;

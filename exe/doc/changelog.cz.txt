@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+  v0.66
+
+    * Opravena chyba pøi spouštìní programu na Windows 7.
+
+
+
   v0.65
 
     * Nový poskytovatel: CD.cz.

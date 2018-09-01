@@ -11,8 +11,8 @@ uses
 type
   EApiError = class(Exception);
 
-procedure ShowApiError(IsError: boolean); overload;
-procedure ShowApiError(LastError: DWORD); overload;
+procedure ShowApiError(IsError: boolean; const Description: string = ''); overload;
+procedure ShowApiError(LastError: DWORD; const Description: string = ''); overload;
 function GetWindowTextAsString(hwnd: HWND): string;
 function MakePoints(lParam: LPARAM): TPoint;
 
@@ -36,13 +36,17 @@ procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boo
 
 implementation
 
-procedure ShowApiError(IsError: boolean);
+resourcestring
+  WINDOWS_ERROR = 'Windows error %u = %08.8x'#13#10'%s'; // error code, error code, error message
+  WINDOWS_ERROR_UNKNOWN = 'Unknown error %u = %08.8x.'; // error code, error code
+
+procedure ShowApiError(IsError: boolean; const Description: string);
 begin
   if IsError then
-    ShowApiError(GetLastError);
+    ShowApiError(GetLastError, Description);
 end;
 
-procedure ShowApiError(LastError: DWORD);
+procedure ShowApiError(LastError: DWORD; const Description: string);
 var Buf: array[0..32768] of char;
     n: DWORD;
     Msg: string;
@@ -51,12 +55,14 @@ begin
     begin
     n := FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, LastError, 0, Buf, Sizeof(Buf), nil);
     if n = 0 then
-      Msg := Format('Unknown error (%u, %08.8x).', [LastError, LastError])
+      Msg := Format(WINDOWS_ERROR_UNKNOWN, [LastError, LastError])
     else
       begin
       Buf[n] := #0;
-      Msg := string(Buf);
+      Msg := Format(WINDOWS_ERROR, [LastError, LastError, string(Buf)]);
       end;
+    if Description <> '' then
+      Msg := Description + #13#10 + Msg;
     Raise EApiError.Create(Msg);
     end;
 end;
