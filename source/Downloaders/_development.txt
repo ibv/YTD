@@ -66,6 +66,7 @@ HTTP	HTML	HTML	downNJoy
 HTTP	HTML	HTML	downNothingToxic
 HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
+HTTP	XML	XML	downPCPlanets
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)
 HTTP	HTML	HTML	downRozhlas

@@ -104,13 +104,10 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   // I couldn't download this page directly because I need the cookie
-  if not DownloadPage(Http, 'http://www.rude.com/v/' + MovieID + '/view_xml', Page, peXml) then
+  if not DownloadXml(Http, 'http://www.rude.com/v/' + MovieID + '/view_xml', Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := Page;
       if not GetXmlVar(Xml, 'video/titleShort', Title) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else if not GetXmlVar(Xml, 'video/streams', Url) then
@@ -125,7 +122,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

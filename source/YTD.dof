@@ -21,7 +21,7 @@ S=0
 T=0
 U=0
 V=1
-W=1
+W=0
 X=1
 Y=1
 Z=1
@@ -45,19 +45,23 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
-Conditionals=XXX;
+Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=http://www.ceknito.sk/video/451712
 HostApplication=
+[Language]
+ActiveLang=
+ProjectLang=$00000405
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=51
+MinorVer=52
 Release=0
-Build=277
+Build=278
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +72,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.51.0.277
+FileVersion=0.52.0.278
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -76,16 +80,15 @@ OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
 ProductVersion=1.0.0.0
 Comments=http://www.pepak.net/download/youtube-downloader/
-[Excluded Packages]
-$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlDebugSourcePath]
 Count=1
 Item0=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 [HistoryLists\hlConditionals]
-Count=3
-Item0=XXX;
-Item1=XXX;DEBUG
-Item2=XXX
+Count=4
+Item0=PEPAK;PEPAK_YTD;XXX;
+Item1=XXX;
+Item2=XXX;DEBUG
+Item3=XXX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

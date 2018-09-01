@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.51                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.52                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -20,6 +20,14 @@ SUPPORTED PROVIDERS
 
  - Aktualne.cz:
      - http://aktualne.centrum.cz/video/?id=316586
+
+ - AlternativaTV.cz:
+    - http://alternativatv.cz/hudba/play/12102/?hiq=1
+    - http://alternativatv.cz/video/play/12225/
+    - http://alternativatv.cz/encyklopedie/play/86
+    - http://alternativatv.cz/magazin/priloha/9319/12292
+    - http://alternativatv.cz/film/play/9911/
+    - http://alternativatv.cz/scena/play/12307/
 
  - AngryAlien.com:
      - http://www.angryalien.com/0605/freddyjasonbuns.asp
@@ -240,6 +248,14 @@ SUPPORTED PROVIDERS
  - Novinky.cz:
      - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
 
+ - PCPlanets.com:
+     - http://www.pcplanets.com/videos-225353-Bamboo.shtml
+
+     Note: The provider should work fine, but it keeps returning a HTTP error
+     403 (forbidden). The same error is produced by the flash player itself,
+     though, which makes it likely that the problem lies not in YTD but rather 
+     some bug or country restriction of PCPlanets.com.
+
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
      - http://www.publictv.cz/videoarchiv/535/1718/
@@ -364,6 +380,7 @@ SUPPORTED PROVIDERS
      - http://www.youtube.com/watch?v=b5AWQ5aBjgE
      - http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
      - http://www.youtube.com/titanicpiano14
+     - http://www.youtube.com/user/titanicpiano14
 
  - ZkoukniTo.cz:
      - http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda

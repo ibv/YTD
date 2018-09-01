@@ -109,7 +109,7 @@ begin
 end;
 
 function TDownloader_Bofunk.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, InfoXml: string;
+var Url: string;
     Xml: TXmlDoc;
     Node: TXmlNode;
 begin
@@ -117,13 +117,10 @@ begin
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://flv.bofunk.com' + Url, InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://flv.bofunk.com' + Url, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not Xml.NodeByPathAndAttr('SETTINGS/PLAYER_SETTINGS', 'Name', 'FLVPath', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlAttr(Node, '', 'Value', Url) then
@@ -137,7 +134,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

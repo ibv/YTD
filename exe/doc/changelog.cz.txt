@@ -1,6 +1,25 @@
 CHANGELOG
 ---------
 
+  v0.52
+
+    * Nový poskytovatel: AlternativaTV.cz
+
+    * Nový poskytovatel: PCPlanets.com
+        - Poskytovatel by mìl fungovat, ale vytrvale vrací HTTP chybu 403
+          (forbidden). Stejnì se ovšem chová i samotný flashový pøehrávaè,
+          zøejmì tedy nejde o chybu v YTD ale buï o chybné video nebo napø.
+          nepodporovaný stát uživatele.
+
+    * Upraven PerlRegEx tak, aby se Unicode kód používal pouze v Delphi 2009
+      a novìjších. Ve starších Delphi se tím ušetøí nìjakých 80 KB na 
+      velikosti .exe souboru.
+
+    * Probíhají postupné úpravy programu pro dosažení kompatibility s
+      Delphi 2009.
+
+
+
   v0.51
 
     * Zmìna licenèních podmínek: YouTube Downloader už není distribuován pod

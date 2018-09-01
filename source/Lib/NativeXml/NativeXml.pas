@@ -27,7 +27,7 @@
   Please visit http://www.simdesign.nl/xml.html for more information.
 }
 
-{$DEFINE USEGRAPHICS} // uncomment if you do not want to include the Graphics unit.
+{.DEFINE USEGRAPHICS} // uncomment if you do not want to include the Graphics unit.
 
 // Delphi and BCB versions
 

@@ -130,8 +130,8 @@ begin
 end;
 
 function TDownloader_Flickr.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, Secret, ID, InfoXml, NodeID, Title, Host, Path: string;
-    Xml: TXmlDoc;
+var Url, Secret, ID, NodeID, Title, Host, Path: string;
+    Xml, ItemXml: TXmlDoc;
     Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, Http);
@@ -142,43 +142,40 @@ begin
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_secret']))
   else if not GetRegExpVar(PhotoIdRegexp, Url, 'VALUE', ID) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_id']))
-  else if not DownloadPage(Http, 'http://www.flickr.com/apps/video/video_mtl_xml.gne?v=x&photo_id=' + ID + '&secret=' + Secret + '&olang=en-us&noBuffer=null&bitrate=700&target=_self', InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://www.flickr.com/apps/video/video_mtl_xml.gne?v=x&photo_id=' + ID + '&secret=' + Secret + '&olang=en-us&noBuffer=null&bitrate=700&target=_self', Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not Xml.NodeByPathAndAttr('Data/Item', 'id', 'id', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlVar(Node, '', NodeId) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if NodeId = '' then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
-      else if not DownloadPage(Http, 'http://www.flickr.com/video_playlist.gne?node_id=' + NodeID + '&tech=flash&mode=playlist&bitrate=700&secret=' + Secret + '&rd=video.yahoo.com&noad=1', InfoXml, peXml) then
+      else if not DownloadXml(Http, 'http://www.flickr.com/video_playlist.gne?node_id=' + NodeID + '&tech=flash&mode=playlist&bitrate=700&secret=' + Secret + '&rd=video.yahoo.com&noad=1', ItemXml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
-        begin
-        Xml.Xml := InfoXml;
-        if not GetXmlVar(Xml, 'SEQUENCE-ITEM/META/TITLE', Title) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-        else if not GetXmlAttr(Xml, 'SEQUENCE-ITEM/STREAM', 'APP', Host) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-        else if not GetXmlAttr(Xml, 'SEQUENCE-ITEM/STREAM', 'FULLPATH', Path) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-        else
-          begin
-          GetRegExpVar(VideoExtensionRegExp, Path, 'EXT', Extension);
-          SetName(Title);
-          MovieUrl := Host + Path;
-          SetPrepared(True);
-          Result := True;
+        try
+          if not GetXmlVar(ItemXml, 'SEQUENCE-ITEM/META/TITLE', Title) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+          else if not GetXmlAttr(ItemXml, 'SEQUENCE-ITEM/STREAM', 'APP', Host) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          else if not GetXmlAttr(ItemXml, 'SEQUENCE-ITEM/STREAM', 'FULLPATH', Path) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          else
+            begin
+            GetRegExpVar(VideoExtensionRegExp, Path, 'EXT', Extension);
+            SetName(Title);
+            MovieUrl := Host + Path;
+            SetPrepared(True);
+            Result := True;
+            end;
+        finally
+          ItemXml.Free;
           end;
-        end;
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

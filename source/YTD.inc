@@ -28,7 +28,14 @@
   // is necessary because a vast majority of users didn't bother to read the
   // documentation and then complained that converters don't work.
 
+{$DEFINE MINIMIZEVIRTUAL}
+  // Use virtual only where necessary. Each virtual method adds four (eight?)
+  // bytes to each descendant of a class, which means that an unnecessary
+  // virtual method in a TDownloader or TCommonDownloader adds an extra 1 KB
+  // (v0.52) to the application size.
 
+{$STACKFRAMES OFF}
+{$BOOLEVAL OFF}
 
 //----Don't change this!-------------------------------------------------------
 {$UNDEF GUI}

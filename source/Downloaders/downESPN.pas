@@ -107,20 +107,17 @@ begin
 end;
 
 function TDownloader_ESPN.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Player, InfoXml, MediaUrl, PlaylistUrl, PlayListXml, Title, FileName: string;
+var Player, MediaUrl, PlaylistUrl, PlayListXml, Title, FileName: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(PlayerIDRegExp, Page, 'PLAYER', Player) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'globalPlayerConfig/mediaUrl', MediaUrl) then
         SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaUrl']))
       else if not GetXmlVar(Xml, 'globalPlayerConfig/playlistURL', PlaylistUrl) then
@@ -145,7 +142,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

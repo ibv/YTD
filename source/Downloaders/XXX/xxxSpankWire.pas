@@ -109,19 +109,16 @@ end;
 
 function TDownloader_SpankWire.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
-    Path, Url, InfoXml: string;
+    Path, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'PATH', Path) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://static.spankwire.com/Controls/UserControls/Players/v3/' + UrlDecode(Path), InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://static.spankwire.com/Controls/UserControls/Players/v3/' + UrlDecode(Path), Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'videos/video/url', Url) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
@@ -133,7 +130,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

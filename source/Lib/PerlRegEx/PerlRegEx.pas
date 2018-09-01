@@ -53,7 +53,7 @@ const
   // Subexpressions are created by placing round brackets in the regex, and are referenced by \1, \2, ...
   // In Perl, they are available as $1, $2, ... after the regex matched; with TPerlRegEx, use the Subexpressions property
   // You can also insert \1, \2, ... in the Replacement PCREString; \0 is the complete matched expression
-  MAX_SUBEXPRESSIONS = 65536;
+  MAX_SUBEXPRESSIONS = {$IFDEF PEPAK} 1024 {$ELSE} 99 {$ENDIF};
 
 {$IFDEF UNICODE}
 // All implicit string casts have been verified to be correct

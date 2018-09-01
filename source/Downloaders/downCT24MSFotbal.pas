@@ -135,7 +135,6 @@ function TDownloader_CT24MSFotbal.GetMovieObjectUrl(Http: THttpSend; const Page:
 var Request: string;
     RequestStream: TStringStream;
     Params, Token, VideoID, Quality: string;
-    Info: string;
     Xml: TXmlDoc;
 begin
   Result := False;
@@ -150,16 +149,12 @@ begin
           Http.Headers.Add('SOAPAction: "' + SOAP_ACTION + '"');
           Http.MimeType := 'text/xml; charset=utf-8';
           Http.InputStream := RequestStream;
-          if DownloadPage(Http, SOAP_URL, Info, peXml, hmPOST, False) then
-            begin
-            Xml := TXmlDoc.Create;
+          if DownloadXml(Http, SOAP_URL, Xml, hmPOST, False) then
             try
-              Xml.Xml := Info;
               Result := GetXmlVar(Xml, 'soap:Body/GetPlaylistUrlResponse/GetPlaylistUrlResult', Url);
             finally
               Xml.Free;
               end;
-            end;
         finally
           Http.InputStream := nil;
           RequestStream.Free;

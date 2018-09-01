@@ -106,7 +106,7 @@ begin
 end;
 
 function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, FileInfo, Description: string;
+var Url, Description: string;
     Xml: TXmlDoc;
     Channel, ContentNode: TXmlNode;
     i: integer;
@@ -115,13 +115,10 @@ begin
   Result := False;
   if not GetRegExpVar(FileInfoRegExp, Page, 'URL', URL) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, URL, FileInfo, peXml) then
+  else if not DownloadXml(Http, URL, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := FileInfo;
       if Xml.NodeByPath('channel', Channel) then
         for i := 0 to Pred(Channel.NodeCount) do
           if Channel.Nodes[i].Name = 'item' then
@@ -156,7 +153,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

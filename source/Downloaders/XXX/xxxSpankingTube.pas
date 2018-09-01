@@ -109,19 +109,16 @@ end;
 
 function TDownloader_SpankingTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
-    FileName, Path, ConfigXml: string;
+    FileName, Path: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Filename']))
-  else if not DownloadPage(Http, 'http://www.spankingtube.com/csplayer_dark.config.php', ConfigXml, peXml) then
+  else if not DownloadXml(Http, 'http://www.spankingtube.com/csplayer_dark.config.php', Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := ConfigXml;
       if not GetXmlVar(Xml, 'VIDEOS_PATH', Path) then
         SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Videos Path']))
       else if Path = '' then
@@ -135,7 +132,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

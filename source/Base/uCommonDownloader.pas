@@ -55,7 +55,7 @@ type
       MovieTitleRegExp: TRegExp;
       MovieUrlRegExp: TRegExp;
       function GetInfoPageEncoding: TPageEncoding; virtual;
-      procedure SetInfoPageEncoding(const Value: TPageEncoding); virtual;
+      procedure SetInfoPageEncoding(const Value: TPageEncoding); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean; overload; virtual;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
@@ -65,12 +65,13 @@ type
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
     protected
-      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; virtual;
-      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; virtual;
-      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; virtual;
-      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; virtual;
-      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; virtual;
-      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; virtual;
+      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -205,6 +206,22 @@ end;
 function TCommonDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
 begin
   Result := RegExp.Match(Text) and RegExp.SubexpressionByName(VarName, VarValue);
+end;
+
+function TCommonDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean;
+var i: integer;
+    VarValue: string;
+begin
+  if InitValues then
+    for i := 0 to High(VarValues) do
+      VarValues[i]^ := '';
+  Result := RegExp.Match(Text);
+  if Result then
+    for i := 0 to High(VarNames) do
+      if not RegExp.SubExpressionByName(VarNames[i], VarValue) then
+        Result := False
+      else
+        VarValues[i]^ := VarValue;
 end;
 
 function TCommonDownloader.GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean; const VarNameSubExprName, VarValueSubExprName: string): boolean;

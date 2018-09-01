@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes,
   HttpSend, SynaUtil, SynaCode,
-  uOptions, uAMF;
+  uOptions, uXML, uAMF;
 
 type
   EDownloaderError = class(Exception);
@@ -73,39 +73,40 @@ type
       fOnFileNameValidate: TDownloaderFileNameValidateEvent;
       fOptions: TYTDOptions;
     protected
-      function GetName: string; virtual;
-      procedure SetName(const Value: string); virtual;
+      function GetName: string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      procedure SetName(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       procedure SetPrepared(Value: boolean); virtual;
-      procedure SetLastErrorMsg(const Value: string); virtual;
-      procedure SetMovieID(const Value: string); virtual;
-      procedure SetLastUrl(const Value: string); virtual;
+      procedure SetLastErrorMsg(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      procedure SetMovieID(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      procedure SetLastUrl(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); virtual;
       property UnpreparedName: string read fName;
       property LastURL: string read fLastUrl;
     protected
       function GetDefaultFileName: string; virtual;
       function GetFileName: string; virtual;
-      procedure SetFileName(const Value: string); virtual;
+      procedure SetFileName(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function GetFileNameExt: string; virtual;
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
-      procedure DoProgress; virtual;
+      procedure DoProgress; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function CreateHttp: THttpSend; virtual;
-      function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
-      function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; virtual;
-      function DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; virtual;
-      function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; virtual;
+      function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function ValidateFileName(var FileName: string): boolean; overload; virtual;
-      function ConvertString(const Text: string; Encoding: TPageEncoding): string; virtual;
-      function HtmlDecode(const Text: string): string; virtual;
-      function UrlDecode(const Text: string): string; virtual;
-      function UrlEncode(const Text: string): string; virtual;
-      function Base64Decode(const Text: string): string; virtual;
-      function StripSlashes(const Text: string): string; virtual;
+      function ConvertString(const Text: string; Encoding: TPageEncoding): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function StripSlashes(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       {$IFDEF DEBUG}
-      procedure Log(const Text: string; Overwrite: boolean = False); virtual;
+      procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       {$ENDIF}
-      procedure NotPreparedError; virtual;
+      procedure NotPreparedError; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
     public
       class function UltimateProvider: string; virtual;
       class function Provider: string; virtual; abstract;
@@ -335,7 +336,7 @@ begin
   until (not Result) or (not CheckRedirect(Http, Url));
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding; Method: THttpMethod; Clear: boolean): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding; Method: THttpMethod; Clear: boolean): boolean;
 begin
   Page := '';
   Result := DownloadPage(Http, Url, Method, Clear);
@@ -345,6 +346,23 @@ begin
     Http.Document.Seek(0, 0);
     Http.Document.ReadBuffer(Page[1], Http.Document.Size);
     Page := ConvertString(Page, Encoding);
+    end;
+end;
+
+function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;
+begin
+  Xml := nil;
+  Result := DownloadPage(Http, Url, Method, Clear);
+  if Result then
+    begin
+    Xml := TXmlDoc.Create;
+    try
+      Http.Document.Seek(0, 0);
+      Xml.LoadFromStream(Http.Document);
+    except
+      FreeAndNil(Xml);
+      Result := False;
+      end;
     end;
 end;
 

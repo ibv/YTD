@@ -133,7 +133,7 @@ end;
 
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var {$IFDEF XMLINFO}
-    Info, Title: string;
+    Title: string;
     Xml: TXmlDoc;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
@@ -156,17 +156,13 @@ begin
     {$IFDEF XMLINFO}
     if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
       try
-        if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info, peXml) then
-          begin
-          Xml := TXmlDoc.create;
+        if DownloadXml(Http, 'http://flash.stream.cz/get_info/' + ID, Xml) then
           try
-            Xml.xml := Info;
             if GetXmlVar(Xml, 'video/title', Title) then
               SetName(Title);
           finally
             Xml.Free;
             end;
-          end;
       except
         ;
         end;

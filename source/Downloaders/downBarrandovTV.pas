@@ -112,7 +112,7 @@ var Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TXmlDoc.create;
+  Xml := TXmlDoc.Create;
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'videotitle', Title) then

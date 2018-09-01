@@ -116,9 +116,9 @@ function TDownloader_Nova.AfterPrepareFromPage(var Page: string; Http: THttpSend
 var i: integer;
     Name, Value: string;
     MediaID, SiteID, SectionID, SessionID, UserAdID: string;
-    ServersUrl, Servers, VideosUrl, Videos: string;
+    ServersUrl, VideosUrl: string;
     FlvServer, FlvStream, FlvName: string;
-    Xml: TXmlDoc;
+    Servers, Videos: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -157,41 +157,41 @@ begin
                  '&fv=WIN 10,0,45,2' +
                  '&session_id=' + SessionID +
                  '&ad_file=noad';
-    if not DownloadPage(Http, ServersUrl, Servers, peXml) then
+    if not DownloadXml(Http, ServersUrl, Servers) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST))
-    else if not DownloadPage(Http, VideosUrl, Videos, peXml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
-      begin
-      Xml := TXmlDoc.Create;
       try
-        Xml.Xml := Servers;
-        GetXmlAttr(Xml, 'flvserver', 'url', FlvServer);
-        Xml.Xml := Videos;
-        GetXmlAttr(Xml, 'item', 'src', FlvStream);
-        GetXmlAttr(Xml, 'item', 'txt', FlvName);
+        if not DownloadXml(Http, VideosUrl, Videos) then
+          SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+        else
+          try
+            GetXmlAttr(Servers, 'flvserver', 'url', FlvServer);
+            GetXmlAttr(Videos, 'item', 'src', FlvStream);
+            GetXmlAttr(Videos, 'item', 'txt', FlvName);
+            if FlvName = '' then
+              FlvName := MediaID;
+            if FlvServer = '' then
+              SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+            else if FlvStream = '' then
+              SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_STREAM))
+            else
+              begin
+              SetName(FlvName);
+              {$IFNDEF LOW_QUALITY}
+              FlvStream := 'mp4:' + FlvStream;
+              {$ENDIF}
+              MovieUrl := FlvServer + '/' + FlvStream;
+              AddRtmpDumpOption('r', MovieURL);
+              AddRtmpDumpOption('y', FlvStream);
+              Result := True;
+              SetPrepared(True);
+              end;
+          finally
+            Videos.Free;
+            end;
       finally
-        Xml.Free;
+        Servers.Free;
         end;
-      if FlvName = '' then
-        FlvName := MediaID;
-      if FlvServer = '' then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
-      else if FlvStream = '' then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_STREAM))
-      else
-        begin
-        SetName(FlvName);
-        {$IFNDEF LOW_QUALITY}
-        FlvStream := 'mp4:' + FlvStream;
-        {$ENDIF}
-        MovieUrl := FlvServer + '/' + FlvStream;
-        AddRtmpDumpOption('r', MovieURL);
-        AddRtmpDumpOption('y', FlvStream);
-        Result := True;
-        SetPrepared(True);
-        end;
-      end;
     end;
 end;
 

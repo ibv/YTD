@@ -63,6 +63,7 @@ uses
   uDownloadClassifier;
 
 // http://www.youtube.com/titanicpiano14
+// http://www.youtube.com/user/titanicpiano14
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/';
   URLREGEXP_ID =        '[^/?&]+';

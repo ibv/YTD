@@ -106,57 +106,54 @@ begin
 end;
 
 function TDownloader_Spike.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
+var TitleXml, Xml: TXmlDoc;
     Node: TXmlNode;
-    Url, InfoXml, Title, BitrateStr, BestUrl: string;
+    Url, Title, BitrateStr, BestUrl: string;
     i, Bitrate, BestBitrate: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.spike.com' + UrlDecode(Url), InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://www.spike.com' + UrlDecode(Url), TitleXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
-      if not GetXmlVar(Xml, 'gui/share/embed/title', Title) then
+      if not GetXmlVar(TitleXml, 'gui/share/embed/title', Title) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-      else if not DownloadPage(Http, 'http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId=' + MovieID + '&royaltyReport=true&duration=152&width=640&height=391&impressiontype=18', InfoXml, peXml) then
+      else if not DownloadXml(Http, 'http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId=' + MovieID + '&royaltyReport=true&duration=152&width=640&height=391&impressiontype=18', Xml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
-        begin
-        Xml.Xml := InfoXml;
-        BestUrl := '';
-        BestBitrate := 0;
-        if Xml.NodeByPath('video/item', Node) then
-          for i := 0 to Pred(Node.NodeCount) do
-            if (Node.Nodes[i].Name = 'rendition') and GetXmlAttr(Node.Nodes[i], '', 'bitrate', BitrateStr) then
-              begin
-              Bitrate := StrToIntDef(BitrateStr, 0);
-              if Bitrate > BestBitrate then
-                if GetXmlVar(Node.Nodes[i], 'src', Url) then
-                  begin
-                  BestUrl := Url;
-                  BestBitrate := Bitrate;
-                  end;
-              end;
-        if BestUrl = '' then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-        else
-          begin
-          SetName(Title);
-          MovieUrl := BestUrl;
-          SetPrepared(True);
-          Result := True;
+        try
+          BestUrl := '';
+          BestBitrate := 0;
+          if Xml.NodeByPath('video/item', Node) then
+            for i := 0 to Pred(Node.NodeCount) do
+              if (Node.Nodes[i].Name = 'rendition') and GetXmlAttr(Node.Nodes[i], '', 'bitrate', BitrateStr) then
+                begin
+                Bitrate := StrToIntDef(BitrateStr, 0);
+                if Bitrate > BestBitrate then
+                  if GetXmlVar(Node.Nodes[i], 'src', Url) then
+                    begin
+                    BestUrl := Url;
+                    BestBitrate := Bitrate;
+                    end;
+                end;
+          if BestUrl = '' then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          else
+            begin
+            SetName(Title);
+            MovieUrl := BestUrl;
+            SetPrepared(True);
+            Result := True;
+            end;
+        finally
+          Xml.Free;
           end;
-        end;
     finally
-      Xml.Free;
+      TitleXml.Free;
       end;
-    end;
 end;
 
 initialization

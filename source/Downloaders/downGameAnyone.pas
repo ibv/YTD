@@ -111,14 +111,13 @@ end;
 
 function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
-    Info, Url: string;
+    Url: string;
 begin
   Result := False;
-  if DownloadPage(Http, 'http://www.gameanyone.com/gameanyone.xml?id=' + MovieID, Info, peXml) then
-    begin
-    Xml := TXmlDoc.Create;
+  if not DownloadXml(Http, 'http://www.gameanyone.com/gameanyone.xml?id=' + MovieID, Xml) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else
     try
-      Xml.Xml := Info;
       if GetXmlVar(Xml, 'file', Url) then
         if CreateNestedDownloaderFromURL(Url) then
           begin
@@ -128,7 +127,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

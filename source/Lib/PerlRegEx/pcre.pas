@@ -61,9 +61,11 @@ interface
     {$DEFINE PCRE_LINKDLL}
 {$ENDIF}
 
-{$IFNDEF FPC}
-  {$UNDEF PCRE_LINKDLL}
-  {$DEFINE PCRE_STATICLINK}
+{$IFDEF PEPAK}
+  {$IFNDEF FPC}
+    {$UNDEF PCRE_LINKDLL}
+    {$DEFINE PCRE_STATICLINK}
+  {$ENDIF}
 {$ENDIF}
 
 // The supplied pcrelib.dll compiled PCRE 7.9 using the C calling convention
@@ -607,6 +609,51 @@ uses
   {$ENDIF UNIX}
 
 {$IFDEF PCRE_STATICLINK}
+{$IFDEF PEPAK}
+  {$IFDEF UNICODE}
+    {$LINK pcre\pcre_compile.obj}
+    {$LINK pcre\pcre_config.obj}
+    {$LINK pcre\pcre_dfa_exec.obj}
+    {$LINK pcre\pcre_exec.obj}
+    {$LINK pcre\pcre_fullinfo.obj}
+    {$LINK pcre\pcre_get.obj}
+    {$LINK pcre\pcre_globals.obj}
+    {$LINK pcre\pcre_info.obj}
+    {$LINK pcre\pcre_maketables.obj}
+    {$LINK pcre\pcre_newline.obj}
+    {$LINK pcre\pcre_ord2utf8.obj}
+    {$LINK pcre\pcre_refcount.obj}
+    {$LINK pcre\pcre_study.obj}
+    {$LINK pcre\pcre_tables.obj}
+    {$LINK pcre\pcre_try_flipped.obj}
+    {$LINK pcre\pcre_ucd.obj}
+    {$LINK pcre\pcre_valid_utf8.obj}
+    {$LINK pcre\pcre_version.obj}
+    {$LINK pcre\pcre_xclass.obj}
+    {$LINK pcre\pcre_default_tables.obj}
+  {$ELSE ~UNICODE}
+    {$LINK pcre\ascii\pcre_compile.obj}
+    {$LINK pcre\ascii\pcre_config.obj}
+    {$LINK pcre\ascii\pcre_dfa_exec.obj}
+    {$LINK pcre\ascii\pcre_exec.obj}
+    {$LINK pcre\ascii\pcre_fullinfo.obj}
+    {$LINK pcre\ascii\pcre_get.obj}
+    {$LINK pcre\ascii\pcre_globals.obj}
+    {$LINK pcre\ascii\pcre_info.obj}
+    {$LINK pcre\ascii\pcre_maketables.obj}
+    {$LINK pcre\ascii\pcre_newline.obj}
+    {$LINK pcre\ascii\pcre_ord2utf8.obj}
+    {$LINK pcre\ascii\pcre_refcount.obj}
+    {$LINK pcre\ascii\pcre_study.obj}
+    {$LINK pcre\ascii\pcre_tables.obj}
+    {$LINK pcre\ascii\pcre_try_flipped.obj}
+    {$LINK pcre\ascii\pcre_ucd.obj}
+    {$LINK pcre\ascii\pcre_valid_utf8.obj}
+    {$LINK pcre\ascii\pcre_version.obj}
+    {$LINK pcre\ascii\pcre_xclass.obj}
+    {$LINK pcre\ascii\pcre_default_tables.obj}
+  {$ENDIF UNICODE}
+{$ELSE ~PEPAK}
 {$LINK pcre\pcre_compile.obj}
 {$LINK pcre\pcre_config.obj}
 {$LINK pcre\pcre_dfa_exec.obj}
@@ -627,6 +674,7 @@ uses
 {$LINK pcre\pcre_version.obj}
 {$LINK pcre\pcre_xclass.obj}
 {$LINK pcre\pcre_default_tables.obj}
+{$ENDIF PEPAK}
 
 // user's defined callbacks
 var
@@ -666,6 +714,9 @@ const
 function _memcpy(dest, src: Pointer; count: size_t): Pointer; cdecl; external szMSVCRT name 'memcpy';
 function _memmove(dest, src: Pointer; count: size_t): Pointer; cdecl; external szMSVCRT name 'memmove';
 function _memset(dest: Pointer; val: Integer; count: size_t): Pointer; cdecl; external szMSVCRT name 'memset';
+{$IFDEF PEPAK}
+function _strcmp(s1: PAnsiChar; s2: PAnsiChar; n: size_t): Integer; cdecl; external szMSVCRT name 'strcmp';
+{$ENDIF}
 function _strncmp(s1: PAnsiChar; s2: PAnsiChar; n: size_t): Integer; cdecl; external szMSVCRT name 'strncmp';
 function _memcmp(s1: Pointer; s2: Pointer; n: size_t): Integer; cdecl; external szMSVCRT name 'memcmp';
 function _strlen(s: PAnsiChar): size_t; cdecl; external szMSVCRT name 'strlen';

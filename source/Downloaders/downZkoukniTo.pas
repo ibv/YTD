@@ -110,20 +110,17 @@ begin
 end;
 
 function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var ID, Url, InfoXml: string;
+var ID, Url: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'file', Url) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
@@ -135,7 +132,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 function TDownloader_ZkoukniTo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;

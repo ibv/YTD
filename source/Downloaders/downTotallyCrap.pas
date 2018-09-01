@@ -109,20 +109,17 @@ begin
 end;
 
 function TDownloader_TotallyCrap.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, InfoXml, BasePath, PlayPath: string;
+var Url, BasePath, PlayPath: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, Url, InfoXml, peXml) then
+  else if not DownloadXml(Http, Url, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'streamer', BasePath) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlVar(Xml, 'file', PlayPath) then
@@ -138,7 +135,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

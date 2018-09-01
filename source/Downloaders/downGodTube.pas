@@ -106,7 +106,7 @@ begin
 end;
 
 function TDownloader_GodTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, PlayList, Title: string;
+var Url, Title: string;
     Xml: TXmlDoc;
     Node: TXmlNode;
     i: integer;
@@ -115,13 +115,10 @@ begin
   Result := False;
   if not GetRegExpVar(PlayListRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, Url, PlayList, peXml) then
+  else if not DownloadXml(Http, Url, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := PlayList;
       if not Xml.NodeByPath('playlist', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else
@@ -156,7 +153,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

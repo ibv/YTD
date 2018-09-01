@@ -110,20 +110,17 @@ begin
 end;
 
 function TDownloader_FreeRide.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, InfoXml: string;
+var Url: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.freeride.cz' + UrlDecode(Url), InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://www.freeride.cz' + UrlDecode(Url), Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'video_url', Url) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
@@ -135,7 +132,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

@@ -39,7 +39,7 @@ goto :params
 
 :paramend
 
-set defs=
+set defs=-dPEPAK -dPEPAK_YTD
 if not "%cli%"=="1" set defs=%defs% -dNO_CLI
 if not "%gui%"=="1" set defs=%defs% -dNO_GUI
 if not "%xxx%"=="1" set defs=%defs% -dNO_XXX

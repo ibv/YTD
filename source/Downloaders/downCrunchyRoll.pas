@@ -117,20 +117,17 @@ begin
 end;
 
 function TDownloader_CrunchyRoll.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var InfoXml, Url, FlvHost, FlvStream: string;
+var Url, FlvHost, FlvStream: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, UrlDecode(Url), InfoXml, peXml) then
+  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'default:preload/stream_info/host', FlvHost) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else if not GetXmlVar(Xml, 'default:preload/stream_info/file', FlvStream) then
@@ -147,7 +144,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

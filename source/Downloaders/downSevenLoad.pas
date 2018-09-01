@@ -106,7 +106,7 @@ begin
 end;
 
 function TDownloader_SevenLoad.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, InfoXml, Title, BestUrl, StreamWidth, StreamHeight: string;
+var Url, Title, BestUrl, StreamWidth, StreamHeight: string;
     i, BestQuality, Quality: integer;
     Xml: TXmlDoc;
     Node, Streams: TXmlNode;
@@ -115,13 +115,10 @@ begin
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, UrlDecode(Url), InfoXml, peXml) then
+  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not Xml.NodeByPath('playlists/playlist/items/item', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlVar(Node, 'title', Title) then
@@ -156,7 +153,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

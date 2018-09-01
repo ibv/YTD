@@ -114,18 +114,14 @@ begin
 end;
 
 function TDownloader_Joj.ProcessCalendar(Http: THttpSend; const CalendarUrl, RelationID: string; Day, Month, Year: integer): boolean;
-var CalendarXml: string;
-    Xml: TXmlDoc;
+var Xml: TXmlDoc;
     Node, MonthNode, DayNode, FileNode: TXmlNode;
     i: integer;
     WantedDay, WantedMonth, Title, Path: string;
 begin
   Result := False;
-  if DownloadPage(Http, CalendarUrl, CalendarXml, peXml) then
-    begin
-    Xml := TXmlDoc.Create;
+  if DownloadXml(Http, CalendarUrl, Xml) then
     try
-      Xml.Xml := CalendarXml;
       WantedMonth := Format('%04.4d-%02.2d', [Year, Month]);
       WantedDay := IntToStr(Day); //Format('%02.2d', [Day]);
       if Xml.NodeByPathAndAttr('month', 'date', WantedMonth, MonthNode) then
@@ -157,7 +153,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 function TDownloader_Joj.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;

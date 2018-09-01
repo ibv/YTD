@@ -92,6 +92,7 @@ uses
   // Downloaders
   down5min in 'Downloaders\down5min.pas',
   downAktualne in 'Downloaders\downAktualne.pas',
+  downAlternativaTV in 'Downloaders\downAlternativaTV.pas',
   downAngryAlien in 'Downloaders\downAngryAlien.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
@@ -161,6 +162,7 @@ uses
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
   downNova in 'Downloaders\downNova.pas',
   downNovinky in 'Downloaders\downNovinky.pas',
+  downPCPlanets in 'Downloaders\downPCPlanets.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
   downRevver in 'Downloaders\downRevver.pas',

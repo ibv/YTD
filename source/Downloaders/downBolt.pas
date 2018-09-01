@@ -110,19 +110,16 @@ end;
 
 function TDownloader_Bolt.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
-    Url, InfoXml: string;
+    Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, UrlDecode(UrlDecode(Url)), InfoXml, peXml) then
+  else if not DownloadXml(Http, UrlDecode(UrlDecode(Url)), Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'video_url', Url) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
@@ -134,7 +131,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

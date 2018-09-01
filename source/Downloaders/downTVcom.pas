@@ -119,20 +119,17 @@ begin
 end;
 
 function TDownloader_TVcom.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, ConfigXml, VideoUrl: string;
+var Url, VideoUrl: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigXmlRegExp, Page, 'URL', URL) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, URL, ConfigXml, peXml) then
+  else if not DownloadXml(Http, URL, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.xml := ConfigXml;
       if not GetXmlVar(Xml, 'Video', VideoUrl) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else if not GetRegExpVar(MMSUrlRegExp, VideoUrl, 'URL', Url) then
@@ -146,7 +143,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

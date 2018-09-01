@@ -106,7 +106,7 @@ begin
 end;
 
 function TDownloader_FreeCaster.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var StreamID, InfoXml, MaxUrl, Url, UrlBase, Title, Bitrate: string;
+var StreamID, MaxUrl, Url, UrlBase, Title, Bitrate: string;
     MaxBitRate, i: integer;
     Xml: TXmlDoc;
     Node: TXmlNode;
@@ -115,13 +115,10 @@ begin
   Result := False;
   if not GetRegExpVar(StreamIdRegExp, Page, 'ID', StreamID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://freecaster.tv/player/info/' + StreamID, InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://freecaster.tv/player/info/' + StreamID, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Xml := TXmlDoc.Create;
     try
-      Xml.Xml := InfoXml;
       if not Xml.NodeByPath('streams', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlAttr(Node, '', 'server', UrlBase) then
@@ -157,7 +154,6 @@ begin
     finally
       Xml.Free;
       end;
-    end;
 end;
 
 initialization

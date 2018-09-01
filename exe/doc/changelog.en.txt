@@ -1,6 +1,25 @@
 CHANGELOG
 ---------
 
+  v0.52
+
+    * New provider: AlternativaTV.cz
+
+    * New provider: PCPlanets.com
+        - The provider should work fine, but it keeps returning a HTTP error
+          403 (forbidden). The same error is produced by the flash player
+          itself, though, which makes it likely that the problem lies not in
+          YTD but rather some bug or country restriction of PCPlanets.com.
+
+    * Modified PerlRegEx to only contain Unicode support if compiled under
+      Delphi 2009 and newer. In older Delphi this results in about 80 KB
+      reduction of .exe file size.
+
+    * Some under-the-hood modifications that will eventually result in
+      compatibility with Delphi 2009+.
+
+
+
   v0.51
     
     * License terms change: YouTube Downloader is no longer distributed under
