@@ -43,7 +43,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,11 +51,11 @@ type
     private
     protected
       function MasterDomain: string; virtual;
-      function LocateMegaVideoParams(const Page: string; Http: THttpSend; out Title, Server: string; out Key1, Key2: integer; out EncryptedFileID: string): boolean; virtual;
+      function LocateMegaVideoParams(const Page: string; PageXml: TXmlDoc; Http: THttpSend; out Title, Server: string; out Key1, Key2: integer; out EncryptedFileID: string): boolean; virtual;
       function DecryptFileID(const FileID: string; Key1, Key2: integer): string; virtual;
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -66,7 +66,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -91,7 +90,8 @@ end;
 constructor TDownloader_MegaVideo.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_MegaVideo.Destroy;
@@ -109,37 +109,30 @@ begin
   Result := 'http://www.' + MasterDomain + '/xml/videolink.php?v=' + MovieID;
 end;
 
-function TDownloader_MegaVideo.LocateMegaVideoParams(const Page: string; Http: THttpSend; out Title, Server: string; out Key1, Key2: integer; out EncryptedFileID: string): boolean;
-var Xml: TXmlDoc;
-    Node: TXmlNode;
+function TDownloader_MegaVideo.LocateMegaVideoParams(const Page: string; PageXml: TXmlDoc; Http: THttpSend; out Title, Server: string; out Key1, Key2: integer; out EncryptedFileID: string): boolean;
+var Node: TXmlNode;
     sKey1, sKey2: string;
 begin
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not Xml.NodeByPath('ROW', Node) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
-    else if not GetXmlAttr(Node, '', 'title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlAttr(Node, '', 's', Server) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Server']))
-    else if not GetXmlAttr(Node, '', 'k1', sKey1) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Key1']))
-    else if not GetXmlAttr(Node, '', 'k2', sKey2) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Key2']))
-    else if not GetXmlAttr(Node, '', 'un', EncryptedFileID) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['EncryptedFileID']))
-    else
-      begin
-      Key1 := StrToIntDef(sKey1, -1);
-      Key2 := StrToIntDef(sKey2, -1);
-      Result := (Key1 > 0) and (Key2 > 0) and (Server <> '') and (EncryptedFileID <> '');
-      if not Result then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
-      end;
-  finally
-    Xml.Free;
+  if not PageXml.NodeByPath('ROW', Node) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+  else if not GetXmlAttr(Node, '', 'title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlAttr(Node, '', 's', Server) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Server']))
+  else if not GetXmlAttr(Node, '', 'k1', sKey1) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Key1']))
+  else if not GetXmlAttr(Node, '', 'k2', sKey2) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Key2']))
+  else if not GetXmlAttr(Node, '', 'un', EncryptedFileID) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['EncryptedFileID']))
+  else
+    begin
+    Key1 := StrToIntDef(sKey1, -1);
+    Key2 := StrToIntDef(sKey2, -1);
+    Result := (Key1 > 0) and (Key2 > 0) and (Server <> '') and (EncryptedFileID <> '');
+    if not Result then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
     end;
 end;
 
@@ -197,13 +190,13 @@ begin
     end;
 end;
 
-function TDownloader_MegaVideo.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_MegaVideo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Title, Server, FileID: string;
     Key1, Key2: integer;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if LocateMegaVideoParams(Page, Http, Title, Server, Key1, Key2, FileID) then
+  if LocateMegaVideoParams(Page, PageXml, Http, Title, Server, Key1, Key2, FileID) then
     begin
     SetName(UrlDecode(Title));
     MovieUrl := 'http://www' + Server + '.' + MasterDomain + '/files/' + DecryptFileID(FileID, Key1, Key2) + '/';

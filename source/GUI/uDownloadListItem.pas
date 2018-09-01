@@ -117,7 +117,7 @@ type
       function Convert(Force: boolean = False; const ForceConverter: string = ''): boolean; virtual;
       property ConvertState: TConvertThreadState read fConvertState;
       {$ENDIF}
-    published
+    public
       property Tag: integer read fTag write fTag;
       property Options: TYTDOptions read fOptions write fOptions;
       property DownloaderOwned: boolean read fDownloaderOwned write fDownloaderOwned;

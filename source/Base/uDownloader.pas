@@ -40,7 +40,7 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, 
   HttpSend, SynaUtil, SynaCode,
   uOptions, uXML, uAMF;
 
@@ -94,10 +94,12 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function ValidateFileName(var FileName: string): boolean; overload; virtual;
-      function ConvertString(const Text: string; Encoding: TPageEncoding): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function ConvertString(const Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
@@ -131,7 +133,7 @@ type
       property TotalSize: int64 read GetTotalSize;
       property DownloadedSize: int64 read GetDownloadedSize;
       property DefaultHttp: THttpSend read fHttp;
-    published
+    public
       property MovieID: string read fMovieID write SetMovieID;
       property Options: TYTDOptions read fOptions write SetOptions;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
@@ -334,6 +336,7 @@ begin
       end;
     Result := Http.HttpMethod(MethodStr, Url);
   until (not Result) or (not CheckRedirect(Http, Url));
+  Http.Document.Seek(0, 0);
 end;
 
 function TDownloader.DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding; Method: THttpMethod; Clear: boolean): boolean;
@@ -342,28 +345,32 @@ begin
   Result := DownloadPage(Http, Url, Method, Clear);
   if Result then
     begin
-    SetLength(Page, Http.Document.Size);
+    Page := ConvertString(Http.Document, Encoding);
     Http.Document.Seek(0, 0);
-    Http.Document.ReadBuffer(Page[1], Http.Document.Size);
-    Page := ConvertString(Page, Encoding);
     end;
 end;
 
-function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;
+function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;
 begin
   Xml := nil;
-  Result := DownloadPage(Http, Url, Method, Clear);
+  Result := DownloadPage(Http, Url, Page, peXml, Method, Clear);
   if Result then
     begin
     Xml := TXmlDoc.Create;
     try
-      Http.Document.Seek(0, 0);
       Xml.LoadFromStream(Http.Document);
+      Http.Document.Seek(0, 0);
     except
       FreeAndNil(Xml);
       Result := False;
       end;
     end;
+end;
+
+function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;
+var Page: string;
+begin
+  Result := DownloadXml(Http, Url, Page, Xml, Method, Clear);
 end;
 
 function TDownloader.DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean;
@@ -384,8 +391,9 @@ begin
           begin
           Response := TAMFPacket.Create;
           try
-            Http.Document.Position := 0;
+            Http.Document.Seek(0, 0);
             Response.LoadFromStream(Http.Document);
+            Http.Document.Seek(0, 0);
             Result := True;
           except
             Response.Free;
@@ -502,34 +510,51 @@ end;
 
 function TDownloader.UrlDecode(const Text: string): string;
 begin
-  Result := DecodeUrl(StringReplace(Text, '+', ' ', [rfReplaceAll]));
+  Result := string(DecodeUrl(AnsiString(StringReplace(Text, '+', ' ', [rfReplaceAll]))));
 end;
 
 function TDownloader.UrlEncode(const Text: string): string;
 begin
-  Result := EncodeUrl(Text);
+  Result := string(EncodeUrl(AnsiString(Text)));
 end;
 
 function TDownloader.Base64Decode(const Text: string): string;
 begin
-  Result := DecodeBase64(Text);
+  Result := string(DecodeBase64(AnsiString(Text)));
 end;
 
-function TDownloader.ConvertString(const Text: string; Encoding: TPageEncoding): string;
+function TDownloader.ConvertString(const Text: TStream; Encoding: TPageEncoding): string;
+var s: AnsiString;
+begin
+  SetLength(s, Text.Size);
+  Text.Seek(0, 0);
+  Text.ReadBuffer(s[1], Text.Size);
+  Result := ConvertString(s, Encoding);
+end;
+
+function TDownloader.ConvertString(const Text: AnsiString; Encoding: TPageEncoding): string;
+var n: integer;
 begin
   case Encoding of
     peNone:
-      Result := Text;
+      Result := string(Text);
     peUnknown:
-      Result := Text;
+      Result := string(Text);
     peANSI:
-      Result := Text;
+      Result := string(Text);
     peUTF8:
-      Result := WideToAnsi(Utf8ToWide(Text));
+      Result := Utf8ToString(Text);
     peUTF16:
-      Result := WideToAnsi(Text);
+      begin
+      n := Length(Text) shr 1;
+      SetLength(Result, n);
+      Move(Text[1], Result[1], n shl 1);
+      {$IFNDEF UNICODE}
+      Result := WideToAnsi(Result);
+      {$ENDIF}
+      end
     else
-      Result := Text;
+      Result := string(Text);
     end;
 end;
 

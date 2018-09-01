@@ -1,6 +1,18 @@
 CHANGELOG
 ---------
 
+  v0.54
+
+    * iPrima.cz: Opìt funguje. Navíc je podporován další formát URL.
+
+    * Markiza.sk: Podpora pro TalentManii.
+
+    * Další úpravy kódu pro dosažení kompatibility s Delphi 2009. Program jde
+      nyní zkompilovat, ale nebude fungovat, protože nìkolik klíèových èástí
+      ještì není pøepsáno.
+
+
+
   v0.53
 
     * Vladimír Kubala (kubalav@gmail.com) vytvoøil slovenský pøeklad.

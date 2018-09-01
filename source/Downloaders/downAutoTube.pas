@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       VideoIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  uXml,
   uDownloadClassifier,
   uMessages;
 
@@ -91,7 +90,7 @@ end;
 constructor TDownloader_AutoTube.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID, [rcoIgnoreCase]);
 end;
@@ -108,11 +107,11 @@ begin
   Result := 'http://www.autotube.cz/' + MovieID;
 end;
 
-function TDownloader_AutoTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_AutoTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var ID, Url: string;
     Xml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoIdRegExp, MovieID, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))

@@ -42,7 +42,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uNestedDownloader,
   uHttpDirectDownloader;
 
@@ -59,7 +59,7 @@ type
       {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
@@ -109,7 +109,7 @@ constructor TDownloader_MustWatch.Create(const AMovieID: string);
 var i: integer;
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   DirectUrlRegExp := RegExCreate(REGEXP_EXTRACT_DIRECTURL, [rcoIgnoreCase, rcoSingleLine]);
   SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
@@ -141,7 +141,7 @@ begin
   Result := 'http://mustwatch.hztz.cz/film/' + MovieID;
 end;
 
-function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var i: integer;
     {$IFDEF SUBTITLES}
     Url: string;
@@ -152,7 +152,7 @@ begin
     for i := 0 to Pred(Length(NestedUrlRegExps)) do
       begin
       NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, Http) then
+      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
         begin
         Result := True;
         Break;

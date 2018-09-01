@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, SynaCode,
+  uPCRE, uXml, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uMSDownloader, downCT;
 
 type
@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -111,7 +110,7 @@ end;
 constructor TDownloader_CT24MSFotbal.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   RegExFreeAndNil(MovieTitleRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);

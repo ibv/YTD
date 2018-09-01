@@ -74,7 +74,7 @@ type
 
 var
   KernelDll: THandle;
-  RegisterWaitForSingleObjectFn: TRegisterWaitForSingleObjectFn;
+  RegisterWaitForSingleObject: TRegisterWaitForSingleObjectFn;
   UnregisterWaitFn: TUnregisterWaitFn;
 
 function UnregisterWait(WaitHandle: THandle): BOOL;
@@ -182,7 +182,9 @@ begin
   if Result then
     begin
     {$IFDEF REGISTERWAITFORSINGLEOBJECT}
-    if Assigned(RegisterWaitForSingleObjectFn) then
+    {$IFNDEF DELPHI6_UP}
+    if Assigned(RegisterWaitForSingleObject) then
+    {$ENDIF}
       begin
       GetMem(ProcInfo, Sizeof(TRegisteredProcessInfo));
       ProcInfo^.hProcess := lpProcessInformation.hProcess;
@@ -191,7 +193,7 @@ begin
       ProcInfo^.dwThreadId := lpProcessInformation.dwThreadId;
       ProcInfo^.WaitHandle := 0;
       ProcInfo^.RealCallback := OnProcessFinished;
-      if RegisterWaitForSingleObjectFn(WaitHandle, lpProcessInformation.hProcess, @RegisterWaitForSingleObjectCallback, ProcInfo, INFINITE, WT_EXECUTEONLYONCE) then
+      if RegisterWaitForSingleObject(WaitHandle, lpProcessInformation.hProcess, @RegisterWaitForSingleObjectCallback, ProcInfo, INFINITE, WT_EXECUTEONLYONCE) then
         begin
         ProcInfo^.WaitHandle := WaitHandle;
         Exit;
@@ -207,25 +209,29 @@ begin
 end;
 
 initialization
+  {$IFNDEF DELPHI6_UP}
   KernelDll := LoadLibrary('kernel32.dll');
   if KernelDll <> 0 then
     begin
-    RegisterWaitForSingleObjectFn := GetProcAddress(KernelDll, 'RegisterWaitForSingleObject');
+    RegisterWaitForSingleObject := GetProcAddress(KernelDll, 'RegisterWaitForSingleObject');
     UnregisterWaitFn := GetProcAddress(KernelDll, 'UnregisterWait');
     end
   else
     begin
-    RegisterWaitForSingleObjectFn := nil;
+    RegisterWaitForSingleObject := nil;
     UnregisterWaitFn := nil;
     end;
+  {$ENDIF}
 
 finalization
+  {$IFNDEF DELPHI6_UP}
   if KernelDll <> 0 then
     begin
     FreeLibrary(KernelDll);
     KernelDll := 0;
-    RegisterWaitForSingleObjectFn := nil;
+    RegisterWaitForSingleObject := nil;
     UnregisterWaitFn := nil;
     end;
+  {$ENDIF}
 
 end.

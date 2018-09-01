@@ -1123,10 +1123,11 @@ begin
 end;
 
 procedure TAMFPacket.LoadFromString(const Data: AnsiString);
-var Stream: TStringStream;
+var Stream: TMemoryStream;
 begin
-  Stream := TStringStream.Create(Data);
+  Stream := TMemoryStream.Create;
   try
+    Stream.ReadBuffer((@(Data[1]))^, Length(Data));
     LoadFromStream(Stream);
   finally
     Stream.Free;
@@ -1202,12 +1203,14 @@ begin
 end;
 
 procedure TAMFPacket.SaveToString(out Data: AnsiString);
-var Stream: TStringStream;
+var Stream: TMemoryStream;
 begin
-  Stream := TStringStream.Create('');
+  Stream := TMemoryStream.Create;
   try
     SaveToStream(Stream);
-    Data := Stream.DataString;
+    SetLength(Data, Stream.Size);
+    Stream.Seek(0, 0);
+    Stream.WriteBuffer(Data[1], Stream.Size);
   finally
     Stream.Free;
     end;

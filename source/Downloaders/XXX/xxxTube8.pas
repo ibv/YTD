@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -86,7 +86,7 @@ end;
 constructor TDownloader_Tube8.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;

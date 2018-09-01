@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -56,7 +56,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -67,7 +67,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -98,7 +97,7 @@ end;
 constructor TDownloader_Flickr.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   VideoSrcRegExp := RegExCreate(REGEXP_VIDEO_SRC, [rcoIgnoreCase, rcoSingleLine]);
   PhotoSecretRegexp := RegExCreate(REGEXP_PHOTOSECRET, [rcoIgnoreCase, rcoSingleLine]);
   PhotoIdRegexp := RegExCreate(REGEXP_PHOTOID, [rcoIgnoreCase, rcoSingleLine]);
@@ -129,12 +128,12 @@ begin
     Result := '.' + Extension;
 end;
 
-function TDownloader_Flickr.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Flickr.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, Secret, ID, NodeID, Title, Host, Path: string;
     Xml, ItemXml: TXmlDoc;
     Node: TXmlNode;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoSrcRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))

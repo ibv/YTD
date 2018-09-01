@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader,
   downGrindTV;
 
@@ -89,7 +89,7 @@ end;
 constructor TDownloader_RingTV.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peANSI);
+  InfoPageEncoding := peANSI;
   RegExFreeAndNil(MovieTitleRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   RegExFreeAndNil(MovieIdRegExp);

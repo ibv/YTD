@@ -93,7 +93,7 @@ type
     public
       constructor Create(ADownloader: TDownloader; CreateSuspended: Boolean); virtual;
       destructor Destroy; override;
-    published
+    public
       property OnStateChange: TDTStateChangeEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDTDownloadProgressEvent read fOnDownloadProgress write fOnDownloadProgress;
       property OnFileNameValidate: TDTDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;

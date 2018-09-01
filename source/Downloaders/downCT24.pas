@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, SynaCode,
+  uPCRE, uXml, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uMSDownloader, downCT;
 
 type
@@ -52,7 +52,7 @@ type
       PortTitleRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -101,7 +101,7 @@ begin
   Result := 'http://www.ct24.cz/' + MovieID;
 end;
 
-function TDownloader_CT24.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_CT24.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Path, Url, EmbeddedPlayer, Title: string;
 begin
   Result := False;
@@ -114,7 +114,7 @@ begin
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin
-      Result := inherited AfterPrepareFromPage(EmbeddedPlayer, Http);
+      Result := inherited AfterPrepareFromPage(EmbeddedPlayer, nil, Http);
       if Result then
         if GetRegExpVar(PortTitleRegExp, Page, 'TITLE', Title) then
           SetName(Title);

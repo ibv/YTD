@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -52,7 +52,7 @@ type
       FlashVarsRegExp: TRegExp;
       FlashVarSrcRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -93,7 +93,7 @@ end;
 constructor TDownloader_DailyHaha.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   FlashObjectRegExp := RegExCreate(REGEXP_FLASHOBJECT, [rcoIgnoreCase, rcoSingleLine]);
   FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
@@ -114,10 +114,10 @@ begin
   Result := 'http://www.dailyhaha.com/_vids/' + MovieID;
 end;
 
-function TDownloader_DailyHaha.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_DailyHaha.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var FlashObject, FlashVars, UrlBase, FileName: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashObjectRegExp, Page, 'OBJECT', FlashObject) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))

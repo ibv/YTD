@@ -40,7 +40,7 @@ unit uRtmpDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes, 
   uDownloader, uCommonDownloader, uExternalDownloader,
   RtmpDump_DLL;
 
@@ -94,8 +94,8 @@ var n: integer;
 begin
   n := Length(fRtmpDumpOptions);
   SetLength(fRtmpDumpOptions, Succ(n));
-  fRtmpDumpOptions[n].ShortOption := ShortOption;
-  fRtmpDumpOptions[n].Argument := Argument;
+  fRtmpDumpOptions[n].ShortOption := AnsiChar(ShortOption);
+  fRtmpDumpOptions[n].Argument := AnsiString(Argument);
 end;
 
 procedure TRtmpDownloader.OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer);
@@ -141,7 +141,7 @@ begin
   SetLastErrorMsg(Format(_(ERR_SEE_LOGFILE), [LogFileName]));
   if not RtmpDump_Init then
     Raise ERTMPDownloaderError.CreateFmt(_(ERR_FAILED_TO_LOAD_DLL), ['rtmpdump_dll.dll']);
-  RetCode := RtmpDump_Download(Integer(Self), RtmpDumpDownloadProgressCallback, PChar(LogFileName), RtmpDumpOptions);
+  RetCode := RtmpDump_Download(Integer(Self), RtmpDumpDownloadProgressCallback, PAnsiChar(AnsiString(LogFileName)), RtmpDumpOptions);
   case RetCode of
     0: // Download complete
          Result := True;

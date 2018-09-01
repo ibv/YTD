@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       SwitchVideoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -90,7 +90,7 @@ end;
 constructor TDownloader_EHow.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUtf8);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   SwitchVideoRegExp := RegExCreate(REGEXP_SWITCH_VIDEO_FUNCTION, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -107,11 +107,11 @@ begin
   Result := 'http://www.ehow.com/video_' + MovieID;
 end;
 
-function TDownloader_EHow.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_EHow.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, s: string;
     UrlQuality, Quality: integer;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   Url := '';
   UrlQuality := 0;

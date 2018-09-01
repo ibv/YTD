@@ -41,17 +41,17 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_BlipTv = class(THttpDownloader)
     private
     protected
-      MovieIdFromUrlRegExp: TRegExp; 
+      MovieIdFromUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  uXml,
   uDownloadClassifier,
   uMessages;
 
@@ -90,7 +89,8 @@ end;
 constructor TDownloader_BlipTv.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUtf8;
+  InfoPageIsXml := True;
   MovieIdFromUrlRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_URL, [rcoIgnoreCase]);
 end;
 
@@ -117,28 +117,21 @@ begin
     end;
 end;
 
-function TDownloader_BlipTv.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Title, Url: string;
+function TDownloader_BlipTv.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.xml := Page;
-    if not GetXmlVar(Xml, 'channel/item/media:title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlAttr(Xml, 'channel/item/media:group/media:content', 'url', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      SetName(Title);
-      MovieURL := Url;
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'channel/item/media:title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlAttr(PageXml, 'channel/item/media:group/media:content', 'url', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    SetName(Title);
+    MovieURL := Url;
+    Result := True;
+    SetPrepared(True);
     end;
 end;
 

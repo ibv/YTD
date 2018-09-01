@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -88,7 +88,7 @@ end;
 constructor TDownloader_5min.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -105,9 +105,9 @@ begin
   Result := 'http://www.5min.com/Video/-' + MovieID;
 end;
 
-function TDownloader_5min.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_5min.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   MovieUrl := UrlDecode(MovieUrl);
   SetPrepared(True);
   Result := True;

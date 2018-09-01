@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -50,7 +50,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -61,7 +61,7 @@ type
 implementation
 
 uses
-  uXML,
+  uCompatibility,
   uDownloadClassifier,
   uMessages;
 
@@ -86,7 +86,8 @@ end;
 constructor TDownloader_Mpora.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_Mpora.Destroy;
@@ -99,23 +100,19 @@ begin
   Result := 'http://api.mpora.com/tv/player/load/vid/' + MovieID + '/';
 end;
 
-function TDownloader_Mpora.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, Title, InfoXml: string;
-    Xml: TXmlDoc;
+function TDownloader_Mpora.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Url, Title, Info: string;
+    InfoXml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not GetXmlVar(Xml, 'configuration/title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not DownloadPage(Http, 'http://api.mpora.com/tv/player/playlist/vid/' + MovieID + '/', InfoXml, peXml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-    else
-      begin
-      Xml.Xml := InfoXml;
-      if not GetXmlAttr(Xml, 'channel/item/enclosure', 'url', Url) then
+  if not GetXmlVar(PageXml, 'configuration/title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not DownloadXml(Http, 'http://api.mpora.com/tv/player/playlist/vid/' + MovieID + '/', Info, InfoXml) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else
+    try
+      if not GetXmlAttr(InfoXml, 'channel/item/enclosure', 'url', Url) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
@@ -124,17 +121,16 @@ begin
         SetPrepared(True);
         Result := True;
         end;
+    finally
+      FreeAndNil(InfoXml);
       end;
-  finally
-    Xml.Free;
-    end;
 end;
 
 function TDownloader_Mpora.GetFileNameExt: string;
 begin
   // MovieURL: 'http://cdn2.video.mporatrons.com/play/video/xfnGGmZDC/mp4/'
   if Prepared then
-    Result := '.' + ExtractFileName(ExcludeTrailingBackslash(StringReplace(MovieURL, '/', '\', [rfReplaceAll])))
+    Result := '.' + ExtractFileName(ExcludeTrailingPathDelimiter(StringReplace(MovieURL, '/', '\', [rfReplaceAll])))
   else
     Result := inherited GetFileNameExt;
 end;

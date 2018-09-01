@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,7 +60,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -88,7 +87,7 @@ end;
 constructor TDownloader_VideoAlbumyAzet.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peANSI);
+  InfoPageEncoding := peANSI;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
@@ -103,11 +102,11 @@ begin
   Result := 'http://videoalbumy.azet.sk/dummy/' + MovieID + '/';
 end;
 
-function TDownloader_VideoAlbumyAzet.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_VideoAlbumyAzet.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
     Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not DownloadXml(Http, 'http://videoalbumy.azet.sk/players/jw/plConf.phtml?&h=' + MovieID, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))

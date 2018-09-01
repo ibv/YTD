@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       InfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -91,7 +90,7 @@ end;
 constructor TDownloader_Bofunk.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
 end;
@@ -108,12 +107,12 @@ begin
   Result := 'http://www.bofunk.com/video/' + MovieID;
 end;
 
-function TDownloader_Bofunk.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Bofunk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url: string;
     Xml: TXmlDoc;
     Node: TXmlNode;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))

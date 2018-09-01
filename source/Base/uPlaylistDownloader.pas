@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader;
 
 type
@@ -52,7 +52,7 @@ type
     protected
       PlayListItemRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; virtual;
       function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; virtual;
       function GetItemCount: integer; virtual;
@@ -137,11 +137,11 @@ begin
   Result := Match.SubexpressionByName('URL');
 end;
 
-function TPlayListDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TPlayListDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url: string;
     i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if PlayListItemRegExp <> nil then
     if not PlayListItemRegExp.Match(Page) then

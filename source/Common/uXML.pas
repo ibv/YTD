@@ -95,8 +95,8 @@ function XmlNodeByPathAndAttr(Node: TXmlNode; const Path, AttributeName, Attribu
         if AttributeName = '' then
           Result := True
         else
-          if Node.HasAttribute(AttributeName) then
-            if Node.AttributeByNameWide[AttributeName] = AttributeValue then
+          if Node.HasAttribute(UTF8String(AttributeName)) then
+            if Node.AttributeByNameWide[UTF8String(AttributeName)] = AttributeValue then
               Result := True;
     end;
 
@@ -123,7 +123,7 @@ begin
         if i <= 0 then
           begin
           for i := 0 to Pred(Node.NodeCount) do
-            if Node.Nodes[i].Name = NodePath then
+            if string(Node.Nodes[i].Name) = NodePath then
               if TestNodeForAttr(Node.Nodes[i], AttributeName, AttributeValue) then
                 begin
                 FoundNode := Node.Nodes[i];
@@ -136,7 +136,7 @@ begin
           begin
           NodeName := Copy(NodePath, 1, Pred(i));
           System.Delete(NodePath, 1, i);
-          Node := Node.NodeByName(NodeName);
+          Node := Node.NodeByName(UTF8String(NodeName));
           end;
         end;
       end;
@@ -181,7 +181,7 @@ begin
       Result := ExistingNode
     else
       begin
-      NewNode := TXmlNode.CreateName(Result.Document, NodeName);
+      NewNode := TXmlNode.CreateName(Result.Document, UTF8String(NodeName));
       Result.NodeAdd(NewNode);
       Result := NewNode;
       end;
@@ -257,7 +257,7 @@ end;
 
 procedure TXmlDoc.SetIndentation(const Value: string);
 begin
-  IndentString := Value;
+  IndentString := UTF8String(Value);
   XmlFormat := xfReadable;
 end;
 

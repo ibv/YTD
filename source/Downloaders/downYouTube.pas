@@ -50,7 +50,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -80,7 +80,7 @@ type
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -140,7 +140,7 @@ end;
 constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   YouTubeConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG, [rcoIgnoreCase, rcoSingleLine]);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   {$IFDEF GET_VIDEO_INFO}
@@ -192,7 +192,7 @@ begin
   Result := 'http://www.youtube.com/watch?v=' + MovieID;
 end;
 
-function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 {$IFDEF GET_VIDEO_INFO}
 const GetVideoInfoDoesNotExist = 'status=fail&errorcode=150&';
       GetVideoInfoDoesNotExistLength = Length(GetVideoInfoDoesNotExist);
@@ -204,7 +204,7 @@ var FlashVars, FormatList, Title, VideoId, VideoFormat: string;
     Token, Token1, Token2: string;
     {$ENDIF}
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   {$IFDEF GET_VIDEO_INFO}
   if not GetVideoInfoFailed then
@@ -245,7 +245,7 @@ begin
       {$ENDIF}
     {$ENDIF}
     if Title <> '' then
-      SetName(WideToAnsi(Utf8ToWide(UrlDecode(Title))));
+      SetName(Utf8ToString(UrlDecode(Title)));
     if FormatList = '' then
       SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
     {$IFDEF FMT_URL_MAP}

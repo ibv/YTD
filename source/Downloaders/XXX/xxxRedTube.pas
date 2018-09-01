@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, 
+  uPCRE, uXml, HttpSend, 
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -52,7 +52,7 @@ type
       FlashMovieUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -91,7 +91,7 @@ end;
 constructor TDownloader_RedTube.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
   FlashMovieUrlRegExp := RegExCreate(REGEXP_FLASHMOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
@@ -110,10 +110,10 @@ begin
   Result := 'http://www.redtube.com/' + MovieID;
 end;
 
-function TDownloader_RedTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_RedTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var FlashVars, Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'VARS', FlashVars) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))

@@ -42,7 +42,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, {$IFDEF MYSPACE_USES_RTMP} uRtmpDownloader {$ELSE} uHttpDownloader {$ENDIF} ;
 
 type
@@ -50,7 +50,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -61,7 +61,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -86,7 +85,8 @@ end;
 constructor TDownloader_MySpace.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_MySpace.Destroy;
@@ -99,35 +99,28 @@ begin
   Result := 'http://mediaservices.myspace.com/services/rss.ashx?type=video&videoID=' + MovieID;
 end;
 
-function TDownloader_MySpace.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_MySpace.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Title, Url: string;
-    Xml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not GetXmlVar(Xml, 'channel/item/title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlAttr(Xml, {$IFDEF MYSPACE_USES_RTMP} 'channel/item/myspace:RTMPE' {$ELSE} 'channel/item/media:content' {$ENDIF} , 'url', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      SetName(Title);
-      {$IFDEF MYSPACE_USES_RTMP}
-        // Note: Url is somewhat incorrect, MySpace uses protocol "rtmp" while in fact it should be "rtmpe"
-        MovieURL := StringReplace(Url, 'rtmp://', 'rtmpe://', [rfIgnoreCase]);
-        // Download
-        AddRtmpDumpOption('r', MovieURL);
-      {$ELSE}
-        MovieURL := Url;
-      {$ENDIF}
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'channel/item/title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlAttr(PageXml, {$IFDEF MYSPACE_USES_RTMP} 'channel/item/myspace:RTMPE' {$ELSE} 'channel/item/media:content' {$ENDIF} , 'url', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    SetName(Title);
+    {$IFDEF MYSPACE_USES_RTMP}
+      // Note: Url is somewhat incorrect, MySpace uses protocol "rtmp" while in fact it should be "rtmpe"
+      MovieURL := StringReplace(Url, 'rtmp://', 'rtmpe://', [rfIgnoreCase]);
+      // Download
+      AddRtmpDumpOption('r', MovieURL);
+    {$ELSE}
+      MovieURL := Url;
+    {$ENDIF}
+    Result := True;
+    SetPrepared(True);
     end;
 end;
 

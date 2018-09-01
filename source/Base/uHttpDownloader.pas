@@ -40,8 +40,8 @@ unit uHttpDownloader;
 interface
 
 uses
-  SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
+  SysUtils, Classes, 
+  uPCRE, uXml, HttpSend, blcksock,
   uDownloader, uCommonDownloader;
 
 type
@@ -61,7 +61,7 @@ type
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
       procedure SetPrepared(Value: boolean); override;
-      function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); virtual;
       function BeforeDownload(Http: THttpSend): boolean; virtual;
       property VideoDownloader: THttpSend read fVideoDownloader write fVideoDownloader;
@@ -149,9 +149,9 @@ begin
   Result := inherited Prepare;
 end;
 
-function THttpDownloader.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function THttpDownloader.BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := inherited BeforePrepareFromPage(Page, Http);
+  Result := inherited BeforePrepareFromPage(Page, PageXml, Http);
   Cookies.Assign(Http.Cookies);
 end;
 
@@ -209,11 +209,11 @@ begin
             VideoDownloader.OutputStream := nil;
             if not Result then
               if FileExists(FileName) and (Size <= 1024) then
-                DeleteFile(FileName);
+                DeleteFile(PChar(FileName));
             end;
         except
           if FileExists(FileName) then
-            DeleteFile(FileName);
+            DeleteFile(PChar(FileName));
           Raise;
           end;
         end;

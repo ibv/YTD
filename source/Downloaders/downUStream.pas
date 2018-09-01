@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -95,7 +95,7 @@ end;
 constructor TDownloader_UStream.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
 end;
 
@@ -110,13 +110,13 @@ begin
   Result := 'http://www.ustream.tv/recorded/' + MovieID;
 end;
 
-function TDownloader_UStream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_UStream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var AMFRequest, AMFResponse: TAMFPacket;
     Item: TAMFItem;
     ItemArr: TAMFCommonArray;
     Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   AMFRequest := TAMFPacket.Create;
   try

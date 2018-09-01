@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,7 +60,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -85,7 +84,8 @@ end;
 constructor TDownloader_TeacherTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_TeacherTube.Destroy;
@@ -98,28 +98,21 @@ begin
   Result := 'http://teachertube.com/embedFLV.php?pg=video_' + MovieID;
 end;
 
-function TDownloader_TeacherTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Title, Url: string;
+function TDownloader_TeacherTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.create;
-  try
-    Xml.xml := Page;
-    if not GetXmlVar(Xml, 'channel/item/title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlAttr(Xml, 'channel/item/media:content', 'url', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      SetName(Title);
-      MovieURL := Url;
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'channel/item/title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlAttr(PageXml, 'channel/item/media:content', 'url', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    SetName(Title);
+    MovieURL := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

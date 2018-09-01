@@ -116,6 +116,15 @@ const
       'or by entering the About window.'#10#10 +
       'Should YTD automatically check for new versions?'
       ;
+  DEFAULT_CONVERTER_TO_AVI = 
+      'Change container to .AVI'
+      ;
+  DEFAULT_CONVERTER_TO_XVID =
+      'Convert movie to AVI/XVID'
+      ;
+  DEFAULT_CONVERTER_TO_H264 =
+      'Convert movie to AVI/H264'
+      ;
 
 {gnugettext: reset}
 
@@ -127,7 +136,7 @@ begin
     begin
     MessageDlg(_(INITIALRUN_WELCOMEMSG), mtWarning, [mbOK], 0);
     {$IFDEF CONVERTERS}
-    Xml.LoadFromBinaryString(Format(DEFAULT_OPTIONS_XML, [_('Change container to .AVI'), _('Convert movie to AVI/XVID'), _('Convert movie to AVI/H264')]));
+    Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
     {$ENDIF}
     PortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     if PortableMode then

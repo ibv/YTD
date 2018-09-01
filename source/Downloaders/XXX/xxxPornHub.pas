@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, 
+  uPCRE, uXml, HttpSend, 
   uDownloader, uCommonDownloader, uHttpDownloader, xxxPornHubEmbed;
 
 type
@@ -51,7 +51,7 @@ type
       MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -83,7 +83,8 @@ end;
 constructor TDownloader_PornHub.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := False;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -100,20 +101,23 @@ begin
   Result := 'http://www.pornhub.com/view_video.php?viewkey=' + MovieID;
 end;
 
-function TDownloader_PornHub.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var ID, Title, InfoXml: string;
+function TDownloader_PornHub.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ID, Title, Info: string;
+    InfoXml: TXmlDoc;
 begin
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.pornhub.com/embed_player.php?id=' + ID, InfoXml, peXml) then
+  else if not DownloadXml(Http, 'http://www.pornhub.com/embed_player.php?id=' + ID, Info, InfoXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    Result := inherited AfterPrepareFromPage(InfoXml, Http);
-    if Result and GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
-      SetName(Title);
-    end;
+    try
+      Result := inherited AfterPrepareFromPage(Info, InfoXml, Http);
+      if Result and GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
+        SetName(Title);
+    finally
+      FreeAndNil(InfoXml);
+      end;
 end;
 
 initialization

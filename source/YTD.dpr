@@ -261,12 +261,18 @@ begin
       {$IFDEF CLI}
         ExitCode := ExecuteConsoleApp(TYTD);
         {$IFNDEF FPC}
+          {$IFDEF DELPHI2009_UP}
+            {$WARN SYMBOL_PLATFORM OFF}
+          {$ENDIF}
           if DebugHook <> 0 then
             begin
             Writeln;
             Write(_(MSG_PRESS_ANY_KEY_TO_QUIT));
             Readln;
             end;
+          {$IFDEF DELPHI2009_UP}
+            {$WARN SYMBOL_PLATFORM ON}
+          {$ENDIF}
         {$ENDIF}
       {$ENDIF}
       end;

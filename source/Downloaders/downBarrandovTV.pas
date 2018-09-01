@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
@@ -50,7 +50,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -61,9 +61,9 @@ type
 implementation
 
 uses
+  uStringUtils,
   uMessages,
-  uDownloadClassifier,
-  uXml;
+  uDownloadClassifier;
 
 // http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 const
@@ -86,7 +86,8 @@ end;
 constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peANSI;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_BarrandovTV.Destroy;
@@ -106,32 +107,26 @@ begin
     Result := '.flv';
 end;
 
-function TDownloader_BarrandovTV.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Title, HostName, StreamName: string;
+function TDownloader_BarrandovTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, HostName, StreamName: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.xml := Page;
-    if not GetXmlVar(Xml, 'videotitle', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlVar(Xml, 'hostname', HostName) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['hostname']))
-    else if not GetXmlVar(Xml, 'streamname', StreamName) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['streamname']))
-    else
-      begin
-      SetName(Title);
-      MovieUrl := 'rtmp://' + HostName + '/' + StreamName;
-      AddRtmpDumpOption('r', MovieURL);
-      AddRtmpDumpOption('y', StreamName);
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'videotitle', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlVar(PageXml, 'hostname', HostName) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['hostname']))
+  else if not GetXmlVar(PageXml, 'streamname', StreamName) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['streamname']))
+  else
+    begin
+    Title := Utf8ToString(Title); // Barrandov ma vadna XML
+    SetName(Title);
+    MovieUrl := 'rtmp://' + HostName + '/' + StreamName;
+    AddRtmpDumpOption('r', MovieURL);
+    AddRtmpDumpOption('y', StreamName);
+    Result := True;
+    SetPrepared(True);
     end;
 end;
 

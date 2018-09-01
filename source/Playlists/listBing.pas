@@ -88,7 +88,7 @@ end;
 constructor TPlaylist_Bing.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
 end;
 
 destructor TPlaylist_Bing.Destroy;

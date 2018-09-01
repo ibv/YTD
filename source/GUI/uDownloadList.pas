@@ -41,9 +41,9 @@ interface
 
 uses
   SysUtils, Classes, Dialogs,
+  uCompatibility, uDownloadListItem, uDownloadThread,
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
-  uDownloadListItem, uDownloadThread,
   uOptions, uLanguages;
 
 type
@@ -110,7 +110,7 @@ type
       property DownloadingCount: integer read GetDownloadingCount;
       property DownloadingItems[Index: integer]: TDownloadListItem read GetDownloadingItem;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
-    published
+    public
       property Options: TYTDOptions read fOptions write fOptions;
       property OnStateChange: TDownloadListNotifyEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDownloadListNotifyEvent read fOnDownloadProgress write fOnDownloadProgress;
@@ -281,7 +281,7 @@ begin
         try
           D.DefaultExt := Copy(ExtractFileExt(FileName), 2, MaxInt);
           D.FileName := FileName;
-          D.InitialDir := ExcludeTrailingBackslash(Options.DestinationPath);
+          D.InitialDir := ExcludeTrailingPathDelimiter(Options.DestinationPath);
           if D.InitialDir = '' then
             D.InitialDir := GetCurrentDir;
           D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];

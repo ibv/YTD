@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       MovieUrlPartsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -91,7 +91,7 @@ end;
 constructor TDownloader_Wrzuta.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlPartsRegExp := RegExCreate(REGEXP_MOVIE_URL_PARTS, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -108,10 +108,10 @@ begin
   Result := MovieID;
 end;
 
-function TDownloader_Wrzuta.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Wrzuta.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not MovieUrlPartsRegExp.Match(MovieID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))

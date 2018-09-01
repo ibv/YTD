@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       VideoIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -91,7 +90,7 @@ end;
 constructor TDownloader_CSmaTalent.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
@@ -106,12 +105,12 @@ begin
   Result := 'http://www.csmatalent.' + MovieID;
 end;
 
-function TDownloader_CSmaTalent.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_CSmaTalent.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var ID, Title, Path: string;
     InfoXml: TXmlDoc;
     Node: TXmlNode;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['videoId']))

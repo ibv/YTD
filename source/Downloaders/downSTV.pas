@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uMSDownloader;
 
@@ -53,7 +53,7 @@ type
       IVysilaniUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,7 +64,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -89,7 +88,8 @@ end;
 constructor TDownloader_STV.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_STV.Destroy;
@@ -102,37 +102,30 @@ begin
   Result := 'http://stv.livetv.sk/tvarchive/video/playlist/playlist.wvx?video=' + MovieID;
 end;
 
-function TDownloader_STV.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_STV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url: string;
     i: integer;
-    Xml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      SetName('STV-video' + MovieID); // No title is provided by the server
-      i := Length(Url);
-      while i > 0 do
-        if Url[i] = '/' then
-          begin
-          if i < Length(Url) then
-            SetName(ChangeFileExt(Copy(Url, Succ(i), MaxInt), ''));
-          Break;
-          end
-        else
-          Dec(i);
-      MovieURL := Url;
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlAttr(PageXml, 'entry/ref', 'href', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    SetName('STV-video' + MovieID); // No title is provided by the server
+    i := Length(Url);
+    while i > 0 do
+      if Url[i] = '/' then
+        begin
+        if i < Length(Url) then
+          SetName(ChangeFileExt(Copy(Url, Succ(i), MaxInt), ''));
+        Break;
+        end
+      else
+        Dec(i);
+    MovieURL := Url;
+    Result := True;
+    SetPrepared(True);
     end;
 end;
 

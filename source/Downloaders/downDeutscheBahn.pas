@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -52,7 +52,7 @@ type
       SwfObjectRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -92,7 +92,7 @@ end;
 constructor TDownloader_DeutscheBahn.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peANSI);
+  InfoPageEncoding := peANSI;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   BaseNameRegExp := RegExCreate(REGEXP_BASENAME, [rcoIgnoreCase, rcoSingleLine]);
   SwfObjectRegExp := RegExCreate(REGEXP_SWFOBJECT, [rcoIgnoreCase, rcoSingleLine]);
@@ -111,10 +111,10 @@ begin
   Result := 'http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=' + MovieID;
 end;
 
-function TDownloader_DeutscheBahn.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_DeutscheBahn.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var BaseName, BaseUrl: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(BaseNameRegExp, Page, 'BASENAME', BaseName) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['basename']))

@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -88,7 +88,7 @@ end;
 constructor TDownloader_NothingToxic.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -105,10 +105,10 @@ begin
   Result := 'http://www.nothingtoxic.com/media/' + MovieID;
 end;
 
-function TDownloader_NothingToxic.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_NothingToxic.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   Result := False;
-  if inherited AfterPrepareFromPage(Page, Http) then
+  if inherited AfterPrepareFromPage(Page, PageXml, Http) then
     if not DownloadPage(Http, MovieUrl, hmHEAD) then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else

@@ -42,7 +42,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uMSDownloader;
 
@@ -56,7 +56,7 @@ type
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
       procedure SetOptions(const Value: TYTDOptions); override;
     public
@@ -70,7 +70,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -101,7 +100,7 @@ end;
 constructor TDownloader_CT.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT, [rcoIgnoreCase, rcoSingleLine]);
   IVysilaniUrlRegExp := RegExCreate(REGEXP_IVYSILANI_URL, [rcoIgnoreCase]);
@@ -146,18 +145,18 @@ begin
   Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', Url);
 end;
 
-function TDownloader_CT.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const REKLAMA = 'Reklama:';
       REKLAMA_LENGTH = Length(REKLAMA);
 var HREF, URL, ObjectDef, Title: string;
     Xml: TXmlDoc;
     i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetMovieObjectUrl(Http, Page, Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, URL, ObjectDef, peXml) then
+  else if not DownloadPage(Http, URL, ObjectDef) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
@@ -169,7 +168,8 @@ begin
       begin
       Xml := TXmlDoc.Create;
       try
-        Xml.xml := ObjectDef;
+        Xml.LoadFromStream(Http.Document);
+        Http.Document.Seek(0, 0);
         for i := 0 to Pred(Xml.Root.NodeCount) do
           if Xml.Root.Nodes[i].Name = 'ENTRY' then
             if GetXmlAttr(Xml.Root.Nodes[i], 'REF', 'HREF', HREF) then

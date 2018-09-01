@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -52,7 +52,7 @@ type
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,7 +63,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -88,7 +87,8 @@ end;
 constructor TDownloader_Vimeo.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_Vimeo.Destroy;
@@ -106,30 +106,23 @@ begin
   Result := 'http://www.vimeo.com/moogaloop/load/clip:' + MovieID + '/';
 end;
 
-function TDownloader_Vimeo.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Caption, Signature, Expires: string;
+function TDownloader_Vimeo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Caption, Signature, Expires: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.create;
-  try
-    Xml.xml := Page;
-    if not GetXmlVar(Xml, 'video/caption', Caption) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlVar(Xml, 'request_signature', Signature) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature.']))
-    else if not GetXmlVar(Xml, 'request_signature_expires', Expires) then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature_expires.']))
-    else
-      begin
-      SetName(HtmlDecode(Caption));
-      MovieUrl := 'http://www.vimeo.com/moogaloop/play/clip:' + MovieID + '/' + Signature + '/' + Expires + '/';
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'video/caption', Caption) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlVar(PageXml, 'request_signature', Signature) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature.']))
+  else if not GetXmlVar(PageXml, 'request_signature_expires', Expires) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature_expires.']))
+  else
+    begin
+    SetName(HtmlDecode(Caption));
+    MovieUrl := 'http://www.vimeo.com/moogaloop/play/clip:' + MovieID + '/' + Signature + '/' + Expires + '/';
+    Result := True;
+    SetPrepared(True);
     end;
 end;
 

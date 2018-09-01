@@ -1,6 +1,18 @@
 CHANGELOG
 ---------
 
+  v0.54
+
+    * iPrima.cz: Works again. New URL format supported.
+
+    * Markiza.sk: Support for TalentMania.
+
+    * More code changes that will eventually make YTD compatible with Delphi
+      2009. Program can now be compiled by it, but don't bother, since it
+      won't work - several key parts need to be rewritten first.
+
+
+
   v0.53
 
     * Vladimir Kubala (kubalav@gmail.com) created a slovakian translation.

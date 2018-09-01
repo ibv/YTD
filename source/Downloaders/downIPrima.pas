@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, downStream;
 
 type
@@ -67,12 +67,12 @@ uses
 
 // http://www.iprima.cz/videoarchiv/44524/all/all
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima.cz/videoarchiv/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima.cz/(?:videoarchiv|videoplayer)/';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_STREAM_ID = '<param\s+name="movie"\s+value="http://(?:www\.)?stream\.cz/object/(?P<STREAMID>[0-9]+)';
+  REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
 
 { TDownloader_iPrima }
 
@@ -94,7 +94,7 @@ end;
 constructor TDownloader_iPrima.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   StreamIDRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
 end;
 

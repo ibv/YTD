@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -93,7 +93,7 @@ end;
 constructor TDownloader_AlternativaTV.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUtf8);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -110,10 +110,10 @@ begin
   Result := 'http://www.alternativatv.cz/' + MovieID + '?hiq=1';
 end;
 
-function TDownloader_AlternativaTV.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_AlternativaTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var UrlStart, UrlEnd: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVars(MovieUrlRegExp, Page, ['URLSTART', 'URLEND'], [@UrlStart, @UrlEnd]) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))

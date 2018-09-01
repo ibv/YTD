@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, xxxTnaFlix;
 
 type
@@ -82,7 +82,7 @@ end;
 constructor TDownloader_EmpFlix.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUtf8);
+  InfoPageEncoding := peUtf8;
 end;
 
 destructor TDownloader_EmpFlix.Destroy;

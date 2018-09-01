@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -52,7 +52,7 @@ type
       JSONVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -91,7 +91,7 @@ end;
 constructor TDownloader_DailyMotion.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
   JSONVarsRegExp := RegExCreate(REGEXP_JSON_VARS, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -108,11 +108,11 @@ begin
   Result := 'http://www.dailymotion.com/video/' + MovieID;
 end;
 
-function TDownloader_DailyMotion.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_DailyMotion.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   Params, Title, Url, HDUrl, HQUrl, SDUrl: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAMS', Params) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))

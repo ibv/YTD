@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.53                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.54                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -180,6 +180,7 @@ PODPOROVANÉ WEBY
 
  - iPrima.cz:
      - http://www.iprima.cz/videoarchiv/44524/all/all
+     - http://www.iprima.cz/videoplayer/85680
 
  - Joj.sk:
      - http://televizia.joj.sk/tv-archiv/krimi-noviny/22-05-2010.html

@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       StreamIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -90,7 +89,7 @@ end;
 constructor TDownloader_FreeCaster.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
@@ -105,13 +104,13 @@ begin
   Result := 'http://freecaster.tv/' + MovieID;
 end;
 
-function TDownloader_FreeCaster.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_FreeCaster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var StreamID, MaxUrl, Url, UrlBase, Title, Bitrate: string;
     MaxBitRate, i: integer;
     Xml: TXmlDoc;
     Node: TXmlNode;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(StreamIdRegExp, Page, 'ID', StreamID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))

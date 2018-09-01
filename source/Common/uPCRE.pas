@@ -47,7 +47,12 @@ type
     public
       function Match(const Subject: PCREString): boolean; overload; virtual;
       function SubexpressionByName(const Name: PCREString): PCREString; overload; virtual;
-      function SubexpressionByName(const Name: PCREString; out Value: string): boolean; overload; virtual;
+      function SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean; overload; virtual;
+      {$IFDEF UNICODE}
+      function Match(const Subject: string): boolean; overload; virtual;
+      function SubexpressionByName(const Name: string): string; overload; virtual;
+      function SubexpressionByName(const Name: string; out Value: string): boolean; overload; virtual;
+      {$ENDIF}
     end;
 
   TRegExpMatch = TRegExp;
@@ -55,6 +60,9 @@ type
   TRegExpOptions = set of (rcoIgnoreCase, rcoMultiLine, rcoSingleLine, rcoIgnorePatternWhitespace, rcoAnchored, rcoUngreedy, rcoNoAutoCapture);
 
 function RegExCreate(const Pattern: PCREString; Options: TRegExpOptions = []): TRegExp; overload;
+{$IFDEF UNICODE}
+function RegExCreate(const Pattern: string; Options: TRegExpOptions = []): TRegExp; overload;
+{$ENDIF}
 procedure RegExFree(RegExp: TRegExp);
 procedure RegExFreeAndNil(var RegExp: TRegExp);
 
@@ -84,6 +92,13 @@ begin
 end;
 {$HINTS ON}
 
+{$IFDEF UNICODE}
+function RegExCreate(const Pattern: string; Options: TRegExpOptions): TRegExp;
+begin
+  Result := RegExCreate(PCREString(Pattern), Options);
+end;
+{$ENDIF}
+
 procedure RegExFree(RegExp: TRegExp);
 begin
   if RegExp <> nil then
@@ -109,7 +124,7 @@ begin
   Self.SubexpressionByName(Name, Result);
 end;
 
-function TRegExp.SubexpressionByName(const Name: PCREString; out Value: string): boolean;
+function TRegExp.SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean;
 var ix: integer;
 begin
   ix := Self.NamedSubExpression(Name);
@@ -119,5 +134,24 @@ begin
   else
     Value := '';
 end;
+
+{$IFDEF UNICODE}
+function TRegExp.Match(const Subject: string): boolean;
+begin
+  Result := Self.Match(PCREString(Subject));
+end;
+
+function TRegExp.SubexpressionByName(const Name: string): string;
+begin
+  Self.SubexpressionByName(Name, Result);
+end;
+
+function TRegExp.SubexpressionByName(const Name: string; out Value: string): boolean;
+var s: PCREString;
+begin
+  Result := Self.SubexpressionByName(PCREString(Name), s);
+  Value := string(s);
+end;
+{$ENDIF}
 
 end.

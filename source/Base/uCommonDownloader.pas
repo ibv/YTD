@@ -49,21 +49,22 @@ type
     private
       fMovieURL: string;
       fInfoPageEncoding: TPageEncoding;
+      fInfoPageIsXml: boolean;
     protected
       function GetMovieInfoUrl: string; virtual; abstract;
     protected
       MovieTitleRegExp: TRegExp;
       MovieUrlRegExp: TRegExp;
-      function GetInfoPageEncoding: TPageEncoding; virtual;
-      procedure SetInfoPageEncoding(const Value: TPageEncoding); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean; overload; virtual;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
+      property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
+      property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
     protected
       function GetFileNameExt: string; override;
       function BuildMovieUrl(out Url: string): boolean; virtual;
-      function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
+      function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
     protected
       function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
@@ -82,14 +83,16 @@ type
 implementation
 
 uses
-  uMessages;
-  
+  uCompatibility, uMessages;
+
 { TCommonDownloader }
 
 constructor TCommonDownloader.Create(const AMovieID: string);
 begin
   inherited;
+  fMovieUrl := '';
   fInfoPageEncoding := peUnknown;
+  fInfoPageIsXml := False;
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
 end;
@@ -127,16 +130,19 @@ end;
 
 function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
 begin
-  Result := DownloadPage(Http, Url, Page, GetInfoPageEncoding, Method);
+  Result := DownloadPage(Http, Url, Page, InfoPageEncoding, Method);
 end;
 
 function TCommonDownloader.Prepare: boolean;
 var Info: THttpSend;
     URL, Page, s: string;
+    PageXml: TXmlDoc;
+    PageXmlOK: boolean;
 begin
   SetLastErrorMsg('');
   Result := False;
   SetPrepared(False);
+  PageXml := nil;
   Info := CreateHttp;
   try
     // Download the media info page.
@@ -145,34 +151,52 @@ begin
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
     else if not GetMovieInfoContent(Info, URL, Page) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-    else if not BeforePrepareFromPage(Page, Info) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE))
     else
-      begin
-      SetName('');
-      MovieURL := '';
-      // If regular expression for TITLE is set, use it to get title.
-      if MovieTitleRegExp <> nil then
-        if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
-          SetName(s);
-      // If a function for building URL is provided, use it.
-      if BuildMovieURL(s) then
-        MovieURL := s
-      // Otherwise if regular expression for URL is set, use it.
-      else
-        if MovieUrlRegExp <> nil then
-          if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
-            MovieURL := s;
-      // If URL was set, Prepare was successful.
-      if MovieUrl <> '' then
-        SetPrepared(True);
-      // Try additional processing of page data
-      if not AfterPrepareFromPage(Page, Info) then
-        SetPrepared(False);
-      if (not Prepared) and (LastErrorMsg = '') then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
-      Result := Prepared;
-      end;
+      try
+        PageXmlOK := True;
+        if InfoPageIsXml then
+          begin
+          PageXml := TXmlDoc.Create;
+          try
+            PageXml.LoadFromStream(Info.Document);
+          except
+            PageXmlOK := False;
+            end;
+          Info.Document.Seek(0, 0);
+          end;
+        if not PageXmlOK then
+          SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        else if not BeforePrepareFromPage(Page, PageXml, Info) then
+          SetLastErrorMsg(_(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE))
+        else
+          begin
+          SetName('');
+          MovieURL := '';
+          // If regular expression for TITLE is set, use it to get title.
+          if MovieTitleRegExp <> nil then
+            if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
+              SetName(s);
+          // If a function for building URL is provided, use it.
+          if BuildMovieURL(s) then
+            MovieURL := s
+          // Otherwise if regular expression for URL is set, use it.
+          else
+            if MovieUrlRegExp <> nil then
+              if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
+                MovieURL := s;
+          // If URL was set, Prepare was successful.
+          if MovieUrl <> '' then
+            SetPrepared(True);
+          // Try additional processing of page data
+          if not AfterPrepareFromPage(Page, PageXml, Info) then
+            SetPrepared(False);
+          if (not Prepared) and (LastErrorMsg = '') then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
+          Result := Prepared;
+          end;
+      finally
+        FreeAndNil(PageXml);
+        end;
   finally
     Info.Free;
     end;
@@ -183,24 +207,14 @@ begin
   Result := False;
 end;
 
-function TCommonDownloader.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TCommonDownloader.BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   Result := True;
 end;
 
-function TCommonDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TCommonDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   Result := True;
-end;
-
-function TCommonDownloader.GetInfoPageEncoding: TPageEncoding;
-begin
-  Result := fInfoPageEncoding;
-end;
-
-procedure TCommonDownloader.SetInfoPageEncoding(const Value: TPageEncoding);
-begin
-  fInfoPageEncoding := Value;
 end;
 
 function TCommonDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
@@ -262,9 +276,9 @@ end;
 function TCommonDownloader.GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean;
 var Node: TXmlNode;
 begin
-  if XmlNodeByPath(Xml, Path, Node) and Node.HasAttribute(Attribute) then
+  if XmlNodeByPath(Xml, Path, Node) and Node.HasAttribute(Utf8String(Attribute)) then
     begin
-    VarValue := Node.AttributeByNameWide[Attribute];
+    VarValue := Node.AttributeByNameWide[Utf8String(Attribute)];
     Result := True;
     end
   else

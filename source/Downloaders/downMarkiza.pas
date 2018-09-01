@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,9 +49,10 @@ type
     private
     protected
       FileInfoRegExp: TRegExp;
+      FileInfo2RegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +63,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -74,6 +74,7 @@ const
 
 const
   REGEXP_FILEINFO = '"(?P<URL>https?://(?:[a-z0-9-]+\.)?markiza\.sk/xml/video/parts\.rss\?ID_entity=[0-9]+&page=.+?)"';
+  REGEXP_FILEINFO2 = '''(?P<URL>/xml/video/parts_flowplayer\.rss\?ID_entity=[0-9]+.*?)''';
 
 { TDownloader_Markiza }
 
@@ -90,13 +91,15 @@ end;
 constructor TDownloader_Markiza.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   FileInfoRegExp := RegExCreate(REGEXP_FILEINFO, [rcoIgnoreCase]);
+  FileInfo2RegExp := RegExCreate(REGEXP_FILEINFO2, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_Markiza.Destroy;
 begin
   RegExFreeAndNil(FileInfoRegExp);
+  RegExFreeAndNil(FileInfo2RegExp);
   inherited;
 end;
 
@@ -105,15 +108,20 @@ begin
   Result := 'http://video.markiza.sk/archiv-tv-markiza/' + MovieID;
 end;
 
-function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, Description: string;
     Xml: TXmlDoc;
     Channel, ContentNode: TXmlNode;
     i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(FileInfoRegExp, Page, 'URL', URL) then
+  if not GetRegExpVar(FileInfoRegExp, Page, 'URL', Url) then
+    if not GetRegExpVar(FileInfo2RegExp, Page, 'URL', Url) then
+      Url := ''
+    else
+      Url := 'http://video.markiza.sk' + Url;
+  if Url = '' then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadXml(Http, URL, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))

@@ -42,7 +42,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
@@ -53,7 +53,7 @@ type
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,7 +64,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -92,7 +91,7 @@ end;
 constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES, [rcoIgnoreCase, rcoSingleLine])
 end;
 
@@ -112,7 +111,7 @@ begin
   Result := 'http://archiv.nova.cz/multimedia/' + MovieID + '.html';
 end;
 
-function TDownloader_Nova.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Nova.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var i: integer;
     Name, Value: string;
     MediaID, SiteID, SectionID, SessionID, UserAdID: string;
@@ -120,7 +119,7 @@ var i: integer;
     FlvServer, FlvStream, FlvName: string;
     Servers, Videos: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   SessionID := '';
   UserAdID := '';

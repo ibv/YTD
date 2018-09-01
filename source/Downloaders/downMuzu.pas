@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -53,7 +53,7 @@ type
       NetworkID, VideoID, ChannelID: string;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetMuzuMediaUrl(out Url: string): boolean; virtual;
     public
       class function Provider: string; override;
@@ -66,7 +66,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -96,7 +95,7 @@ end;
 constructor TDownloader_Muzu.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
   FlashVarsVariablesRegExp := RegExCreate(REGEXP_FLASHVARS_VARIABLES, [rcoIgnoreCase, rcoSingleLine]);
@@ -115,11 +114,11 @@ begin
   Result := 'http://www.muzu.tv/' + MovieID;
 end;
 
-function TDownloader_Muzu.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Muzu.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var FlashVarsInfo, CountryID, NetworkVersion, Url: string;
     Xml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVarsInfo) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))

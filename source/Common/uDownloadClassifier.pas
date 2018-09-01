@@ -40,7 +40,7 @@ unit uDownloadClassifier;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE,
   uDownloader;
 

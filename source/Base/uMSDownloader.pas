@@ -40,7 +40,7 @@ unit uMSDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes, 
   uDownloader, uCommonDownloader, uExternalDownloader,
   Msdl_Dll;
 
@@ -94,8 +94,8 @@ var n: integer;
 begin
   n := Length(fMsdlOptions);
   SetLength(fMsdlOptions, Succ(n));
-  fMsdlOptions[n].ShortOption := ShortOption;
-  fMsdlOptions[n].Argument := Argument;
+  fMsdlOptions[n].ShortOption := AnsiChar(ShortOption);
+  fMsdlOptions[n].Argument := AnsiString(Argument);
 end;
 
 procedure TMSDownloader.OnMsdlDownloadProgress(DownloadedSize, TotalSize: integer; var DoAbort: integer);

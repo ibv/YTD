@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, 
+  uPCRE, uXml, HttpSend, 
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,7 +60,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -84,7 +83,8 @@ end;
 constructor TDownloader_PornHubEmbed.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peXml);
+  InfoPageEncoding := peUtf8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_PornHubEmbed.Destroy;
@@ -97,27 +97,20 @@ begin
   Result := 'http://www.pornhub.com/embed_player.php?id=' + MovieID;
 end;
 
-function TDownloader_PornHubEmbed.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Url, Title: string;
+function TDownloader_PornHubEmbed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Url, Title: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not GetXmlVar(Xml, 'flv_url', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      if GetXmlVar(Xml, 'post_roll/embed/a', Title) then
-        SetName(Title);
-      MovieUrl := HtmlDecode(Url);
-      SetPrepared(True);
-      Result := True;
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'flv_url', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    if GetXmlVar(PageXml, 'post_roll/embed/a', Title) then
+      SetName(Title);
+    MovieUrl := HtmlDecode(Url);
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

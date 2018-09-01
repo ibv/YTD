@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock, 
+  uPCRE, uXml, HttpSend, blcksock, 
   uDownloader, uCommonDownloader,
   uOptions;
 
@@ -62,7 +62,7 @@ type
       function CreateNestedDownloaderFromID(const MovieID: string): boolean; virtual;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; virtual;
       function CreateNestedDownloaderFromDownloader(Downloader: TDownloader): boolean; virtual;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
       {$IFDEF MULTIDOWNLOADS}
@@ -203,10 +203,10 @@ begin
 end;
 {$ENDIF}
 
-function TNestedDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TNestedDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var ID, Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
   if (NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) and (ID <> '') and CreateNestedDownloaderFromID(ID) then

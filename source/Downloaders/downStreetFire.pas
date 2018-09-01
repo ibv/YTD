@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -50,7 +50,7 @@ type
     protected
       VideoIDRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -89,7 +89,7 @@ end;
 constructor TDownloader_StreetFire.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   VideoIDRegExp := RegExCreate(REGEXP_EXTRACT_VIDEOID, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -106,10 +106,10 @@ begin
   Result := 'http://www.streetfire.net/video/' + MovieID;
 end;
 
-function TDownloader_StreetFire.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_StreetFire.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var VideoID: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoIDRegExp, Page, 'VIDEOID', VideoID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))

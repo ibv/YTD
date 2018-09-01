@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,7 +60,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -85,7 +84,8 @@ end;
 constructor TDownloader_Tangle.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_Tangle.Destroy;
@@ -98,29 +98,21 @@ begin
   Result := 'http://www.tangle.com/playlist/media/video/' + MovieID;
 end;
 
-function TDownloader_Tangle.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Tangle.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, Title: string;
-    Xml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not GetXmlVar(Xml, 'playlist/item/title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not GetXmlVar(Xml, 'playlist/item/filelocation', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      SetName(Title);
-      MovieUrl := Url;
-      Result := True;
-      SetPrepared(True);
-      Exit;
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlVar(PageXml, 'playlist/item/title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else if not GetXmlVar(PageXml, 'playlist/item/filelocation', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    SetName(Title);
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

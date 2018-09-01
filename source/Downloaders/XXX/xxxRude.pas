@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,7 +60,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -84,7 +83,7 @@ end;
 constructor TDownloader_Rude.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
 end;
 
 destructor TDownloader_Rude.Destroy;
@@ -97,11 +96,11 @@ begin
   Result := 'http://www.rude.com/v/' + MovieID + '/';
 end;
 
-function TDownloader_Rude.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Rude.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
     Title, Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   // I couldn't download this page directly because I need the cookie
   if not DownloadXml(Http, 'http://www.rude.com/v/' + MovieID + '/view_xml', Xml) then

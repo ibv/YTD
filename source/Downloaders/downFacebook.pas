@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -52,7 +52,7 @@ type
       MovieUrlLQRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -92,7 +92,7 @@ end;
 constructor TDownloader_Facebook.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   MovieUrlHQRegExp := RegExCreate(REGEXP_MOVIE_URL_HQ, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlLQRegExp := RegExCreate(REGEXP_MOVIE_URL_LQ, [rcoIgnoreCase, rcoSingleLine]);
@@ -111,10 +111,10 @@ begin
   Result := 'http://www.facebook.com/video/video.php?v=' + MovieID;
 end;
 
-function TDownloader_Facebook.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Facebook.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not (GetRegExpVar(MovieUrlHQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlLQRegExp, Page, 'URL', Url)) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))

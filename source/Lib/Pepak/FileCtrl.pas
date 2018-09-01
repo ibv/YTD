@@ -9,7 +9,8 @@ function ForceDirectories(Dir: string): Boolean;
 implementation
 
 uses
-  SysUtils, Windows;
+  SysUtils, Windows,
+  uCompatibility;
 
 function DirectoryExists(const Name: string): boolean;
 var
@@ -24,7 +25,7 @@ begin
   Result := True;
   if Length(Dir) = 0 then
     raise Exception.Create('Can''t create directory');
-  Dir := ExcludeTrailingBackslash(Dir);
+  Dir := ExcludeTrailingPathDelimiter(Dir);
   if (Length(Dir) < 3) or DirectoryExists(Dir)
     or (ExtractFilePath(Dir) = Dir) then Exit; // avoid 'xyz:\' problem.
   Result := ForceDirectories(ExtractFilePath(Dir)) and CreateDir(Dir);

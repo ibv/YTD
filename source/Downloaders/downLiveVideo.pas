@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, 
+  uPCRE, uXml, HttpSend, 
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,11 +60,10 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
-// http://www.livevideo.com/liveshow/TakeOffMyLipGloss
+// http://www.livevideo.com/liveshow/StarBuck16
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*livevideo\.com/liveshow/';
   URLREGEXP_ID =        '[^/?&]+';
@@ -85,7 +84,8 @@ end;
 constructor TDownloader_LiveVideo.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peXml);
+  InfoPageEncoding := peUtf8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_LiveVideo.Destroy;
@@ -98,51 +98,44 @@ begin
   Result := 'http://www.livevideo.com/livetv/schedule.ashx?uname=' + MovieID;
 end;
 
-function TDownloader_LiveVideo.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Archives: TXmlNode;
+function TDownloader_LiveVideo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Archives: TXmlNode;
     Title, Url: string;
     i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if Xml.NodeByPath('archives', Archives) then
-      for i := 0 to Pred(Archives.NodeCount) do
-        if Archives.Nodes[i].Name = 'archive' then
-          if GetXmlVar(Archives.Nodes[i], 'url', Url) and GetXmlVar(Archives.Nodes[i], 'title', Title) then
-            begin
-            Title := MovieID + ' - ' + Title;
-            Url := HtmlDecode(Url);
-            if DownloadPage(Http, Url, hmHEAD) then
-              Url := LastUrl;
-            {$IFDEF MULTIDOWNLOADS}
-            NameList.Add(Title);
-            UrlList.Add(Url);
-            {$ELSE}
-            SetName(Title);
-            MovieURL := Url;
-            Result := True;
-            SetPrepared(True);
-            Exit;
-            {$ENDIF}
-            end;
-    {$IFDEF MULTIDOWNLOADS}
-    if UrlList.Count <= 0 then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      SetPrepared(True);
-      Result := First;
-      end;
-    {$ELSE}
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
-    {$ENDIF}
-  finally
-    Xml.Free;
+  if PageXml.NodeByPath('archives', Archives) then
+    for i := 0 to Pred(Archives.NodeCount) do
+      if Archives.Nodes[i].Name = 'archive' then
+        if GetXmlVar(Archives.Nodes[i], 'url', Url) and GetXmlVar(Archives.Nodes[i], 'title', Title) then
+          begin
+          Title := MovieID + ' - ' + Title;
+          Url := HtmlDecode(Url);
+          if DownloadPage(Http, Url, hmHEAD) then
+            Url := LastUrl;
+          {$IFDEF MULTIDOWNLOADS}
+          NameList.Add(Title);
+          UrlList.Add(Url);
+          {$ELSE}
+          SetName(Title);
+          MovieURL := Url;
+          Result := True;
+          SetPrepared(True);
+          Exit;
+          {$ENDIF}
+          end;
+  {$IFDEF MULTIDOWNLOADS}
+  if UrlList.Count <= 0 then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    SetPrepared(True);
+    Result := First;
     end;
+  {$ELSE}
+  SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+  {$ENDIF}
 end;
 
 initialization

@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
 
 type
@@ -52,7 +52,7 @@ type
       function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
       function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -116,7 +116,7 @@ begin
   Result := 'http://www.youtube.com/watch?v=' + Match.SubexpressionByName('ID');
 end;
 
-function TPlaylist_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TPlaylist_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Again: boolean;
     Url: string;
     PageNumber, FoundPageNumber: integer;
@@ -124,7 +124,7 @@ begin
   PageNumber := 1;
   repeat
     Again := False;
-    Result := inherited AfterPrepareFromPage(Page, Http);
+    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
     if NextPageRegExp.Match(Page) then
       repeat
         FoundPageNumber := StrToIntDef(NextPageRegExp.SubexpressionByName('PAGE'), 0);

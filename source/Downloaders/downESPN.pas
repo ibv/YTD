@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       PlayerIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,11 +62,10 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
-// http://espn.go.com/video/clip?id=5163631
+// http://espn.go.com/video/clip?id=5570038
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*espn\.go\.com/video/clip\?id=';
   URLREGEXP_ID =        '[0-9]+';
@@ -91,7 +90,7 @@ end;
 constructor TDownloader_ESPN.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   PlayerIDRegExp := RegExCreate(REGEXP_PLAYERID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
@@ -106,41 +105,42 @@ begin
   Result := 'http://espn.go.com/video/clip?id=' + MovieID;
 end;
 
-function TDownloader_ESPN.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Player, MediaUrl, PlaylistUrl, PlayListXml, Title, FileName: string;
-    Xml: TXmlDoc;
+function TDownloader_ESPN.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Player, MediaUrl, PlaylistUrl, Title, FileName: string;
+    InfoXml, PlaylistXml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(PlayerIDRegExp, Page, 'PLAYER', Player) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', Xml) then
+  else if not DownloadXml(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', InfoXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     try
-      if not GetXmlVar(Xml, 'globalPlayerConfig/mediaUrl', MediaUrl) then
+      if not GetXmlVar(InfoXml, 'globalPlayerConfig/mediaUrl', MediaUrl) then
         SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaUrl']))
-      else if not GetXmlVar(Xml, 'globalPlayerConfig/playlistURL', PlaylistUrl) then
+      else if not GetXmlVar(InfoXml, 'globalPlayerConfig/playlistURL', PlaylistUrl) then
         SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['playlistURL']))
-      else if not DownloadPage(Http, PlaylistUrl + '?id=' + MovieID + '&player=' + Player, PlaylistXml, peXml) then
+      else if not DownloadXml(Http, PlaylistUrl + '?id=' + MovieID + '&player=' + Player, PlaylistXml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
-        begin
-        Xml.Xml := PlaylistXml;
-        if not GetXmlVar(Xml, 'channel/item/headline', Title) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-        else if not GetXmlVar(Xml, 'channel/item/asseturl', FileName) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-        else
-          begin
-          SetName(Title);
-          MovieURL := MediaUrl + FileName;
-          SetPrepared(True);
-          Result := True;
+        try
+          if not GetXmlVar(PlaylistXml, 'channel/item/headline', Title) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+          else if not GetXmlVar(PlaylistXml, 'channel/item/asseturl', FileName) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          else
+            begin
+            SetName(Title);
+            MovieURL := MediaUrl + FileName;
+            SetPrepared(True);
+            Result := True;
+            end;
+        finally
+          PlaylistXml.Free;
           end;
-        end;
     finally
-      Xml.Free;
+      InfoXml.Free;
       end;
 end;
 

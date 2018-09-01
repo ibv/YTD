@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
@@ -51,7 +51,7 @@ type
       NestedUrl1RegExp, NestedUrl2RegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -92,7 +92,7 @@ end;
 constructor TDownloader_CasSk.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   NestedUrl1RegExp := RegExCreate(REGEXP_EXTRACT_URL1, [rcoIgnoreCase, rcoSingleLine]);
   NestedUrl2RegExp := RegExCreate(REGEXP_EXTRACT_URL2, [rcoIgnoreCase, rcoSingleLine]);
@@ -111,15 +111,15 @@ begin
   Result := MovieID;
 end;
 
-function TDownloader_CasSk.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_CasSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   try
     NestedUrlRegExp := NestedUrl1RegExp;
-    Result := inherited AfterPrepareFromPage(Page, Http);
+    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
     if not Result then
       begin
       NestedUrlRegExp := NestedUrl2RegExp;
-      Result := inherited AfterPrepareFromPage(Page, Http);
+      Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
       end;
   finally
     NestedUrlRegExp := nil;

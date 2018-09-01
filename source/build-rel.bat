@@ -23,7 +23,7 @@ shift
 
 if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
 if exist ..\ytd-%version%-source.%packext% del ..\ytd-%version%-source.%packext%
-if exist ..\ytdlite-%version%.%packext% del ..\ytdlite-%version%.%packext%
+if exist ..\ytd-%version%-lite.%packext% del ..\ytd-%version%-lite.%packext%
 rd /s /q ..\exe\locale
 md ..\exe\locale
 xcopy locale\*.mo ..\exe\locale /s /i
@@ -31,7 +31,7 @@ call clean.bat
 call build.bat noxxx %build% %*
 call clean.bat
 pushd ..\exe
-%pack% ..\ytdlite-%version%.%packext%
+%pack% ..\ytd-%version%-lite.%packext%
 popd
 call clean.bat
 call build.bat %build% %*

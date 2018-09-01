@@ -129,7 +129,7 @@ type
       procedure GetNewestVersionInBackground(OnDone: TGetNewestVersionEvent); virtual;
       {$ENDIF}
       property FileName: string read fXmlFileName;
-    published
+    public
       property PortableMode: boolean read GetPortableMode write SetPortableMode;
       property ProxyActive: boolean read GetProxyActive write SetProxyActive;
       property ProxyHost: string read GetProxyHost write SetProxyHost;
@@ -154,7 +154,7 @@ type
 implementation
 
 uses
-  HttpSend;
+  uCompatibility, HttpSend;
 
 const
   OverwriteModeStrings: array[TOverwriteMode] of string
@@ -278,7 +278,7 @@ begin
   try
     Dir := ExtractFilePath(XmlFileName);
     if Dir <> '' then
-      ForceDirectories(ExcludeTrailingBackslash(Dir));
+      ForceDirectories(ExcludeTrailingPathDelimiter(Dir));
     Xml.SetIndentation(#9);
     Xml.SaveToFile(XmlFileName);
   except
@@ -292,7 +292,7 @@ var i: integer;
 begin
   Result := Name;
   for i := 1 to Length(Result) do
-    if not (Result[i] in ['A'..'Z', 'a'..'z', '0'..'9', '_']) then
+    if not CharInSet(Result[i], ['A'..'Z', 'a'..'z', '0'..'9', '_']) then
       Result[i] := '_';
 end;
 
@@ -448,7 +448,7 @@ function TYTDOptions.GetDestinationPath: string;
 begin
   Result := GetOption(XML_PATH_DESTINATIONPATH, XML_DEFAULT_DESTINATIONPATH);
   if Result <> '' then
-    Result := IncludeTrailingBackslash(Result);
+    Result := IncludeTrailingPathDelimiter(Result);
 end;
 
 procedure TYTDOptions.SetDestinationPath(const Value: string);
@@ -690,7 +690,7 @@ begin
           Ver := ChangeFileExt(Url, '');
           n := Length(Ver);
           if n >= 4 then
-            if (Ver[n-3] in ['0'..'9']) and (Ver[n-2] = '.') and (Ver[n-1] in ['0'..'9']) and (Ver[n] in ['0'..'9']) then
+            if CharInSet(Ver[n-3], ['0'..'9']) and (Ver[n-2] = '.') and CharInSet(Ver[n-1], ['0'..'9']) and CharInSet(Ver[n], ['0'..'9']) then
               begin
               Version := Copy(Ver, n-3, 4);
               Result := True;

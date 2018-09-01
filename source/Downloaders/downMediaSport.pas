@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, SynaUtil,
+  uPCRE, uXml, HttpSend, SynaUtil,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -87,7 +87,7 @@ end;
 constructor TDownloader_MediaSport.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
@@ -102,11 +102,11 @@ begin
   Result := 'http://www.mediasport.cz/' + MovieID;
 end;
 
-function TDownloader_MediaSport.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_MediaSport.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Protocol, User, Password, Host, Port, Path, Params: string;
     i: integer;
 begin
-  Result := inherited AfterPrepareFromPage(Page, Http);
+  Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
   if Result then
     begin
     ParseURL(MovieURL, Protocol, User, Password, Host, Port, Path, Params);

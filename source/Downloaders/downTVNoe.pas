@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,7 +60,6 @@ type
 implementation
 
 uses
-  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -88,7 +87,8 @@ end;
 constructor TDownloader_TVNoe.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peXml);
+  InfoPageEncoding := peUtf8;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_TVNoe.Destroy;
@@ -101,28 +101,21 @@ begin
   Result := 'http://tvnoe.tbsystem.cz/asx/' + MovieID + '-high.asx';
 end;
 
-function TDownloader_TVNoe.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_TVNoe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, Title: string;
-    Xml: TXmlDoc;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Xml := TXmlDoc.Create;
-  try
-    Xml.Xml := Page;
-    if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else if not GetXmlVar(Xml, 'entry/Title', Title) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else
-      begin
-      SetName(Trim(Title));
-      MovieUrl := Url;
-      Result := True;
-      SetPrepared(True);
-      end;
-  finally
-    Xml.Free;
+  if not GetXmlAttr(PageXml, 'entry/ref', 'href', Url) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else if not GetXmlVar(PageXml, 'entry/Title', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+  else
+    begin
+    SetName(Trim(Title));
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

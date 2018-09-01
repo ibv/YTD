@@ -25,6 +25,9 @@ function WideToUtf8(const Value: WideString): Utf8String; overload;
 function Utf8ToWide(Value: Pointer; Length: integer): WideString; overload;
 function Utf8ToWide(const Value: Utf8String): WideString; overload;
 
+function Utf8ToString(const Value: Utf8String): string;
+function StringToUtf8(const Value: string): Utf8String;
+
 function StrTr(const Kde, Co, Cim: string): string;
 
 implementation
@@ -138,6 +141,24 @@ end;
 function Utf8ToWide(const Value: Utf8String): WideString;
 begin
   Result := Utf8ToWide(@(Value[1]), Length(Value));
+end;
+
+function Utf8ToString(const Value: Utf8String): string;
+begin
+  {$IFDEF UNICODE}
+  Result := Utf8ToWide(Value);
+  {$ELSE}
+  Result := WideToAnsi(Utf8ToWide(Value));
+  {$ENDIF}
+end;
+
+function StringToUtf8(const Value: string): Utf8String;
+begin
+  {$IFDEF UNICODE}
+  Result := WideToUtf8(Value);
+  {$ELSE}
+  Result := WideToUtf8(WideToUtf8(Value));
+  {$ENDIF}
 end;
 
 function StrTr(const Kde, Co, Cim: string): string;

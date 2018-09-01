@@ -67,6 +67,9 @@ type
 
 implementation
 
+uses
+  uCompatibility;
+
 constructor TExternalDownloader.Create(const AMovieID: string);
 begin
   inherited;
@@ -106,7 +109,7 @@ begin
   SetLength(Result, MAX_TEMP_PATH);
   SetLength(Result, GetTempPath(MAX_TEMP_PATH, @(Result[1])));
   if Result <> '' then
-    Result := IncludeTrailingBackslash(Result);
+    Result := IncludeTrailingPathDelimiter(Result);
 end;
 
 end.

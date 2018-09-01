@@ -42,7 +42,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -56,7 +56,7 @@ type
       function GetMovieInfoUrlForID(const ID: string): string; virtual;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -103,7 +103,7 @@ end;
 constructor TDownloader_Stream.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUTF8);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
   MovieIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PARAMS, [rcoIgnoreCase]);
@@ -131,7 +131,7 @@ begin
   Result := 'http://www.stream.cz/video/' + ID;
 end;
 
-function TDownloader_Stream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var {$IFDEF XMLINFO}
     Title: string;
     Xml: TXmlDoc;
@@ -139,7 +139,7 @@ var {$IFDEF XMLINFO}
     {$ENDIF}
     Params, CdnID, ID: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   Params := '';
   if MovieParamsRegExp.Match(Page) then

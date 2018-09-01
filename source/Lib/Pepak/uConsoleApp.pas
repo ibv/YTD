@@ -314,7 +314,7 @@ begin
   if FindFirst(WildCard, faAnyFile, SR) = 0 then
     try
       repeat
-        if not LongBool(SR.Attr and (faVolumeID or faDirectory)) then
+        if not LongBool(SR.Attr and faDirectory) then
           if ProcessWildCardFile(Path + SR.Name, SR) then
             Inc(Result);
       until FindNext(SR) <> 0;

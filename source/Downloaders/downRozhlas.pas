@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -54,7 +54,7 @@ type
       StreamTitleRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -95,7 +95,7 @@ end;
 constructor TDownloader_Rozhlas.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  InfoPageEncoding := peUnknown;
   TableRowsRegExp := RegExCreate(REGEXP_TABLE_ROWS, [rcoSingleLine, rcoIgnoreCase]);
   StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
   StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE, [rcoIgnoreCase]);
@@ -114,12 +114,12 @@ begin
   Result := 'http://www.rozhlas.cz/vltava/porady/_zprava/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const
   MediaUrl = 'http://media.rozhlas.cz/_audio/%s.mp3';
 var Row, Title, ID: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if TableRowsRegExp.Match(Page) then
     begin

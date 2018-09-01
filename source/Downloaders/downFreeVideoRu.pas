@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -53,7 +53,7 @@ type
       VidUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -94,7 +94,7 @@ end;
 constructor TDownloader_FreeVideoRu.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetInfoPageEncoding(peUtf8);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   VideoContextRegExp := RegExCreate(REGEXP_VIDEO_CONTEXT, [rcoIgnoreCase, rcoSingleLine]);
   HQVidUrlRegExp := RegExCreate(REGEXP_VIDEO_URL_HQ, [rcoIgnoreCase, rcoSingleLine]);
@@ -115,10 +115,10 @@ begin
   Result := 'http://freevideo.ru/video/view/?id=' + MovieID + '&highquality=1';
 end;
 
-function TDownloader_FreeVideoRu.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TDownloader_FreeVideoRu.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Context, Request, Info, Url: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoContextRegExp, Page, 'CONTEXT', Context) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
