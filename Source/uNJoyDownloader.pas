@@ -13,6 +13,7 @@ type
     protected
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function GetMovieInfoUrl: string; override;
+      function GetProvider: string; override;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -49,6 +50,11 @@ end;
 function TNJoyDownloader.GetMovieInfoUrl: string;
 begin
   Result := 'http://n-joy.cz/video/dummy/' + MovieID;
+end;
+
+function TNJoyDownloader.GetProvider: string;
+begin
+  Result := 'N-joy.cz';
 end;
 
 end.

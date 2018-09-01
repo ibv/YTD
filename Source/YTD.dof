@@ -46,18 +46,18 @@ PackageDCPOutputDir=
 SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
 Conditionals=
-DebugSourceDirs=
+DebugSourceDirs=D:\Tmp\ytd\Source\Lib\dpcre67\
 UsePackages=0
 [Parameters]
-RunParams=http://www.youtube.com/watch?v=L-B0qlijMTM
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
 MinorVer=1
-Release=1
-Build=144
+Release=2
+Build=149
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +68,13 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.1.1.144
+FileVersion=0.1.2.149
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
-ProductVersion=0.11
+ProductVersion=0.12
 Comments=http://www.pepak.net/download/youtube-downloader/
 [HistoryLists\hlUnitAliases]
 Count=1

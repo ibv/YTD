@@ -19,6 +19,7 @@ type
       HDAvailable: boolean;
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
+      function GetProvider: string; override;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function AfterPrepareFromPage(var Page: string): boolean; override;
       function BeforeDownload(Http: THttpSend): boolean; override;
@@ -115,14 +116,14 @@ begin
                 YouTubeTimeStamp := DecodeUrl(Trim(JSONobj.getString('t')));
                 if YouTubeTimeStamp <> '' then
                   begin
-                  if HDAvailable then
-                    begin
+                  //if HDAvailable then
+                  //  begin
                     VideoFormat := GetBestVideoFormat(DecodeUrl(Trim(JSONobj.getString('fmt_list'))));
                     if VideoFormat = '' then
                       VideoFormat := '22';
-                    end
-                  else
-                    VideoFormat := '18';
+                  //  end
+                  //else
+                  //  VideoFormat := '18';
                   MovieURL := 'http://www.youtube.com/get_video.php?fmt=' + VideoFormat + '&video_id=' + MovieID + '&t=' + YouTubeTimeStamp;
                   Result := True;
                   SetPrepared(True);
@@ -163,6 +164,11 @@ begin
         MaxAudioQuality := AudioQuality;
         end;
       end;
+end;
+
+function TYouTubeDownloader.GetProvider: string;
+begin
+  Result := 'YouTube.com';
 end;
 
 end.

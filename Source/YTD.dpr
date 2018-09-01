@@ -17,16 +17,19 @@ uses
   uCommonDownloader in 'uCommonDownloader.pas',
   uBlipTvDownloaderV2 in 'uBlipTvDownloaderV2.pas',
   uDownloadClassifier in 'uDownloadClassifier.pas',
-  uYTDGUI in 'Lib\Pepak\uYTDGUI.pas' {FormYTD};
+  uDownloadListItem in 'uDownloadListItem.pas',
+  uDownloadThread in 'uDownloadThread.pas',
+  uYTDGUI in 'uYTDGUI.pas' {FormYTD},
+  uDownloadList in 'uDownloadList.pas';
 
 begin
-  if (ParamCount = 0) then
+  if (ParamCount <= 0) then
     begin
     FreeConsole;
     Application.Initialize;
     Application.Title := 'YouTube Downloader';
     Application.CreateForm(TFormYTD, FormYTD);
-  Application.Run;
+    Application.Run;
     end
   else
     begin

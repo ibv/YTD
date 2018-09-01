@@ -14,6 +14,7 @@ type
     protected
       MovieIdFromUrlRegExp: IRegEx;
       function GetMovieInfoUrl: string; override;
+      function GetProvider: string; override;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function AfterPrepareFromPage(var Page: string): boolean; override;
     public
@@ -97,6 +98,11 @@ begin
   finally
     Xml.Free;
     end;
+end;
+
+function TBlipTvDownloader.GetProvider: string;
+begin
+  Result := 'Blip.tv';
 end;
 
 end.

@@ -29,7 +29,10 @@ type
       procedure SetName(const Value: string); virtual;
       function GetFileName: string; virtual;
       function GetFileNameExt: string; virtual;
-      procedure DoProgress(TotalSize, DownloadedSize: int64); virtual;
+      function GetProvider: string; virtual; abstract;
+      function GetTotalSize: int64; virtual;
+      function GetDownloadedSize: int64; virtual;
+      procedure DoProgress; virtual;
       function CreateHttp: THttpSend; virtual;
       function CheckRedirect(Http: THttpSend; out Url: string): boolean; virtual;
       function DownloadPage(Http: THttpSend; Url: string): boolean; overload; virtual;
@@ -42,12 +45,17 @@ type
       destructor Destroy; override;
       function Prepare: boolean; virtual; abstract;
       function Download: boolean; virtual;
-      property DestinationPath: string read fDestinationPath write fDestinationPath;
+      procedure AbortTransfer; virtual;
       property Prepared: boolean read fPrepared;
       property Name: string read GetName;
       property FileName: string read GetFileName;
       property LastErrorMsg: string read fLastErrorMsg;
+      property Provider: string read GetProvider;
+      property TotalSize: int64 read GetTotalSize;
+      property DownloadedSize: int64 read GetDownloadedSize;
+    published
       property DefaultHttp: THttpSend read fHttp;
+      property DestinationPath: string read fDestinationPath write fDestinationPath;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
     end;
 
@@ -76,6 +84,7 @@ end;
 procedure TDownloader.SetPrepared(Value: boolean);
 begin
   fPrepared := Value;
+  BytesTransferred := 0;
 end;
 
 procedure TDownloader.SetLastErrorMsg(const Value: string);
@@ -121,7 +130,20 @@ begin
   Result := '';
 end;
 
-procedure TDownloader.DoProgress(TotalSize, DownloadedSize: int64);
+function TDownloader.GetTotalSize: int64;
+begin
+  if VideoDownloader <> nil then
+    Result := VideoDownloader.DownloadSize
+  else
+    Result := -1;
+end;
+
+function TDownloader.GetDownloadedSize: int64;
+begin
+  Result := BytesTransferred;
+end;
+
+procedure TDownloader.DoProgress;
 var DoAbort: boolean;
 begin
   if Assigned(OnProgress) then
@@ -129,13 +151,14 @@ begin
     DoAbort := False;
     OnProgress(Self, TotalSize, DownloadedSize, DoAbort);
     if DoAbort then
-      Abort;
+      AbortTransfer;
     end;
 end;
 
 function TDownloader.Download: boolean;
 begin
   SetLastErrorMsg('Can''t download this kind of content.');
+  BytesTransferred := 0;
   if Prepared then
     Result := False
   else
@@ -195,12 +218,15 @@ const Reasons : array[THookSocketReason] of string
 begin
   SetLastErrorMsg(Reasons[Reason]);
   if (Reason = HR_ReadCount) then
-    begin
     BytesTransferred := BytesTransferred + StrToInt64(Value);
-    DoProgress(fVideoDownloader.DownloadSize, BytesTransferred);
-    end
-  else
-    DoProgress(0, 0);
+  if not (Reason in [HR_SocketClose, HR_Error]) then
+    DoProgress;
+end;
+
+procedure TDownloader.AbortTransfer;
+begin
+  if (VideoDownloader <> nil) and (VideoDownloader.Sock <> nil) then
+    VideoDownloader.Sock.AbortSocket;
 end;
 
 end.

@@ -13,6 +13,7 @@ type
       fUrlClassifier: IRegEx;
       fUrl: string;
       fDownloader: TDownloader;
+      fOwnsDownloader: boolean;
     protected
       procedure SetUrl(const Value: string); virtual;
       property UrlClassifier: IRegEx read fUrlClassifier write fUrlClassifier;
@@ -22,6 +23,7 @@ type
       procedure Clear; virtual;
       property Url: string read fUrl write SetUrl;
       property Downloader: TDownloader read fDownloader;
+      property OwnsDownloader: boolean read fOwnsDownloader write fOwnsDownloader;
     end;
 
 implementation
@@ -53,7 +55,10 @@ end;
 procedure TDownloadClassifier.Clear;
 begin
   fUrl := '';
-  FreeAndNil(fDownloader);
+  if OwnsDownloader then
+    FreeAndNil(fDownloader)
+  else
+    fDownloader := nil;
 end;
 
 procedure TDownloadClassifier.SetUrl(const Value: string);

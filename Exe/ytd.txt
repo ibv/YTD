@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.11                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.12                                  (C) 2009, 2010 Pepak
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -36,6 +36,16 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.12:
+
+    * Nefungovalo stahování filmù, které na YouTube nemìly nìkterou
+      HD verzi.
+
+    * Kompletnì pøepracovaná GUI verze. Nyní zobrazuje seznam URL ke
+      staení, umí stahovat víc odkazù najednou atd. 
+
+
 
   v0.11:
 
