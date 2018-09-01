@@ -50,9 +50,12 @@ type
     private
     protected
       MovieParamsRegExp: TRegExp;
+      FlashVarsParserRegExp: TRegExp;
+      {
       MovieIdFromParamsRegExp: TRegExp;
       MovieHDIdFromParamsRegExp: TRegExp;
       MovieCdnIdFromParamsRegExp: TRegExp;
+      }
       function GetMovieInfoUrlForID(const ID: string): string; virtual;
     protected
       function GetMovieInfoUrl: string; override;
@@ -84,10 +87,13 @@ const
 const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)\s+-[^<-]+</title>';
   REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.*?)"|\swriteSWF\s*\((?P<PARAM2>.*?)\)\s*;';
+  REGEXP_FLASHVARS_PARSER = '(?:^|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
+  {
   REGEXP_MOVIE_ID_FROM_PARAMS = '[&'']id=(?P<ID>[0-9]+)';
   REGEXP_MOVIE_HDID_FROM_PARAMS = '[&'']hdID=(?P<ID>[0-9]+)';
   REGEXP_MOVIE_CDNID_FROM_PARAMS = '[&'']cdnID=(?P<ID>[0-9]+)';
-
+  }
+  
 { TDownloader_Stream }
 
 class function TDownloader_Stream.Provider: string;
@@ -106,18 +112,24 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER, [rcoIgnoreCase, rcoSingleLine]);
+  {
   MovieIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PARAMS, [rcoIgnoreCase]);
   MovieHDIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_HDID_FROM_PARAMS, [rcoIgnoreCase]);
   MovieCdnIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_CDNID_FROM_PARAMS, [rcoIgnoreCase]);
+  }
 end;
 
 destructor TDownloader_Stream.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(FlashVarsParserRegExp);
+  {
   RegExFreeAndNil(MovieIdFromParamsRegExp);
   RegExFreeAndNil(MovieHDIdFromParamsRegExp);
   RegExFreeAndNil(MovieCdnIdFromParamsRegExp);
+  }
   inherited;
 end;
 
@@ -137,7 +149,7 @@ var {$IFDEF XMLINFO}
     Xml: TXmlDoc;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
-    Params, CdnID, ID: string;
+    Params, CdnID, CdnLQ, CdnHQ, CdnHD, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -147,12 +159,25 @@ begin
       Params := MovieParamsRegExp.SubexpressionByName('PARAM2');
   if Params = '' then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
-  else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
+  else if not GetRegExpVarPairs(FlashVarsParserRegExp, Params,
+                 ['id', 'cdnLQ', 'cdnHQ', 'cdnHD'],
+                 [@ID,  @CdnLQ,  @CdnHQ,  @CdnHD ])
+  then
+  //else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
-    if GetRegExpVar(MovieHDIdFromParamsRegExp, Params, 'ID', ID) then
-      CdnID := ID;
+    if CdnHD <> '' then
+      CdnID := CdnHD
+    else if CdnHQ <> '' then
+      CdnID := CdnHQ
+    else if CdnLQ <> '' then
+      CdnID := CdnLQ
+    else
+      CdnID := '';
+    if CdnID = '' then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else
     {$IFDEF XMLINFO}
     if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
       try

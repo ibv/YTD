@@ -1,6 +1,22 @@
 CHANGELOG
 ---------
 
+  v0.68
+
+    * FreeCaster.tv: Upraveno na novou podobu stránek.
+
+    * Novinky.cz: Podpora pro videa uvnitø èlánkù.
+
+    * Stream.cz: Upraveno na novou podobu stránek. To také opravuje všechny
+      servery, které Stream využívají, napø. iPrima.cz nebo N-Joy.cz.
+
+    * YouTube.com: Titulky opìt fungují.
+      Pøidána podpora pro embedded tvar URL.
+
+    * CLI: Èastejší informace o stažených datech, zejména u dlouhých videí.
+
+
+
   v0.67
 
     * Opraveno nepøekreslování seznamu downloadù pod Windows 7.

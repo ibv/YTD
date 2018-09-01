@@ -49,19 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=http://tn.nova.cz/bin/search_adv_media_desc.php?media_id=690225
 HostApplication=
-[Language]
-ActiveLang=
-ProjectLang=$00000405
-RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=67
+MinorVer=68
 Release=0
-Build=462
+Build=465
 Debug=0
 PreRelease=0
 Special=0
@@ -72,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.67.0.462
+FileVersion=0.68.0.465
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -80,6 +76,8 @@ OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
 ProductVersion=1.0.0.0
 Comments=http://www.pepak.net/download/youtube-downloader/
+[Excluded Packages]
+$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlDebugSourcePath]
 Count=2
 Item0=C:\Tmp\ytd\Source\Lib\NativeXml\
@@ -119,7 +117,7 @@ Count=2
 Item0=..\Exe
 Item1=Exe
 [Exception Log]
-EurekaLog Version=6023
+EurekaLog Version=6020
 Activate=0
 Activate Handle=1
 Save Log File=1

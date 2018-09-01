@@ -411,7 +411,7 @@ begin
     AMFCommonArrayDump(Name, TAMFCommonArray(Item), Indent)
   else
     begin
-    if Item.Value = TAMFNullValue then
+    if Item.Value = AMFNullValue then
       s := ''
     else
       s := Item.Value;

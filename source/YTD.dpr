@@ -195,6 +195,7 @@ uses
   downNovaTN in 'Downloaders\downNovaTN.pas',
   {$ENDIF}
   downNovinky in 'Downloaders\downNovinky.pas',
+  downNovinkyV2 in 'Downloaders\downNovinkyV2.pas',
   downOverStream in 'Downloaders\downOverStream.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',

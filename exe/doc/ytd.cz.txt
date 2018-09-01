@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.67                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.68                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -308,6 +308,7 @@ PODPOROVANÉ WEBY
 
  - Novinky.cz:
      - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+     - http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
 
  - OverStream.net:
      - http://www.overstream.net/view.php?oid=uinsn9n7uomx
@@ -494,6 +495,7 @@ PODPOROVANÉ WEBY
      - http://www.youtube.com/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch?v=b5AWQ5aBjgE
+     - http://www.youtube.com/embedded/b5AWQ5aBjgE
      - http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
      - http://www.youtube.com/titanicpiano14
      - http://www.youtube.com/user/titanicpiano14

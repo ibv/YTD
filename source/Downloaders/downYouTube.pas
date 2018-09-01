@@ -119,7 +119,7 @@ uses
 // http://www.youtube.com/watch/v/b5AWQ5aBjgE
 // http://www.youtube.com/watch?v=b5AWQ5aBjgE
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?(?:.*&)*v=)';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?(?:.*&)*v=|embedded/)';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -230,7 +230,7 @@ var Xml: TXmlDoc;
     {$ENDIF}
 begin
   Result := False;
-  if DownloadXml(Http, 'http://video.google.com/timedtext?type=list&v=' + MovieID, Xml) then
+  if DownloadXml(Http, 'http://video.google.com/timedtext?v=' + MovieID + '&type=list', Xml) then
     try
       WantedLanguages := ',' + PreferredLanguages + ',';
       BestLanguage := '';
@@ -356,7 +356,10 @@ begin
   {$IFDEF FLASHVARS_PARSER}
   else
     begin
-    GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['fmt_list', 'title', 'video_id', {$IFDEF FMT_URL_MAP} 'fmt_url_map' {$ELSE} 'token', 't' {$ENDIF} ], [@FormatList, @Title, @VideoID, {$IFDEF FMT_URL_MAP} @FmtUrlMap {$ELSE} @Token1, @Token2 {$ENDIF} ]);
+    GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars,
+      ['fmt_list',  'title', 'video_id', {$IFDEF FMT_URL_MAP} 'fmt_url_map' {$ELSE} 'token', 't'     {$ENDIF} ],
+      [@FormatList, @Title,  @VideoID,   {$IFDEF FMT_URL_MAP} @FmtUrlMap    {$ELSE} @Token1, @Token2 {$ENDIF} ]
+      );
     {$IFDEF FMT_URL_MAP}
     FmtUrlMap := UrlDecode(FmtUrlMap);
     {$ELSE}

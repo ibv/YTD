@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downNovinky;
+unit downNovinkyV2;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,15 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, downNovinky;
 
 type
-  TDownloader_Novinky = class(THttpDownloader)
+  TDownloader_NovinkyV2 = class(TDownloader_Novinky)
     private
     protected
       function GetMovieInfoUrl: string; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -62,49 +61,41 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+// http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.novinky\.cz/video/';
-  URLREGEXP_ID =        '[^/?&]+/\?videoId=[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)novinky\.cz/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_URL = '<param\s+name="FlashVars"\s+value="(?:[^"]*&amp;)*video_src=(?P<URL>https?://.+?)(?:&amp|")';
+  REGEXP_EXTRACT_TITLE = '<title>\s*(?P<TITLE>.*?)(?:&nbsp;|&ndash;|\s*Novinky.cz|</title>)';
 
-{ TDownloader_Novinky }
+{ TDownloader_NovinkyV2 }
 
-class function TDownloader_Novinky.Provider: string;
-begin
-  Result := 'Novinky.cz';
-end;
-
-class function TDownloader_Novinky.UrlRegExp: string;
+class function TDownloader_NovinkyV2.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_Novinky.Create(const AMovieID: string);
+constructor TDownloader_NovinkyV2.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_Novinky.Destroy;
+destructor TDownloader_NovinkyV2.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Novinky.GetMovieInfoUrl: string;
+function TDownloader_NovinkyV2.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.novinky.cz/video/' + MovieID;
+  Result := 'http://www.novinky.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Novinky);
+  RegisterDownloader(TDownloader_NovinkyV2);
 
 end.

@@ -1,6 +1,24 @@
 CHANGELOG
 ---------
 
+  v0.68
+
+    * FreeCaster.tv: Fixed to support the new page layout.
+
+    * Novinky.cz: Support for movies within articles.
+
+    * Stream.cz: Fixed to support the new page layout. This also fixes all
+      servers which use Stream.cz as their provider, e.g. iPrima.cz or 
+      N-Joy.cz.
+
+    * YouTube.com: Subtitles work again.
+      Added support for embedded URLs.
+
+    * CLI: More frequent update of the download progress, especially with
+      large videos.
+
+
+
   v0.67
 
     * Fixed non-refreshing download list under Windows 7.

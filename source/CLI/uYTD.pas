@@ -40,7 +40,7 @@ unit uYTD;
 interface
 
 uses
-  SysUtils, Classes, {$IFNDEF FPC} FileCtrl, {$ENDIF} {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows, {$IFNDEF FPC} FileCtrl, {$ENDIF}
   PCRE,
   uConsoleApp, uOptions, uLanguages, uMessages, uFunctions,
   uDownloader, uCommonDownloader,
@@ -50,7 +50,7 @@ uses
 type
   TYTD = class(TConsoleApp)
     private
-      fLastProgressPercentage: int64;
+      fNextProgressUpdate: DWORD;
       fDownloadClassifier: TDownloadClassifier;
       fHtmlPlaylist: TPlaylist_HTML;
       fHtmlFilePlaylist: TPlaylist_HTMLfile;
@@ -335,13 +335,15 @@ const EmptyProgressBar = '                             ';
 var Proc: int64;
     i, n: integer;
     ProgressBar: string;
+    Ticks: DWORD;
 begin
-  if TotalSize >= 1 then
+  if (not StdOutRedirected) and (TotalSize >= 1) then
     begin
-    Proc := 1000 * DownloadedSize div TotalSize;
-    if (not StdOutRedirected) and (Proc <> fLastProgressPercentage) then
+    Ticks := GetTickCount;
+    if (fNextProgressUpdate = 0) or (Ticks > fNextProgressUpdate) or ((fNextProgressUpdate > $f0000000) and (Ticks < $10000000)) then
       begin
-      fLastProgressPercentage := Proc;
+      fNextProgressUpdate := Ticks + 250; // 0.25 sec.
+      Proc := 1000 * DownloadedSize div TotalSize;
       n := Proc div (1000 div ProgressBarLength);
       ProgressBar := EmptyProgressBar;
       for i := 1 to n do
@@ -391,7 +393,7 @@ begin
       end
     else
       begin
-      fLastProgressPercentage := -1;
+      fNextProgressUpdate := 0;
       Downloader.OnProgress := DownloaderProgress;
       Downloader.OnFileNameValidate := DownloaderFileNameValidate;
       if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
@@ -404,7 +406,7 @@ begin
         if Downloader is TCommonDownloader then
           Write(_('  Content URL: ')); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
         Result := Downloader.ValidateFileName and Downloader.Download;
-        if fLastProgressPercentage >= 0 then
+        if fNextProgressUpdate <> 0 then
           Writeln;
         if Result then
           begin

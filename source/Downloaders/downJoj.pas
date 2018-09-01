@@ -141,10 +141,12 @@ begin
                       if (Title <> '') and (Path <> '') then
                         begin
                         SetName(Format('%s (%04.4d-%02.2d-%02.2d)', [Title, Year, Month, Day]));
-                        // Note: This is a VERY DIRTY HACK! I don't really know whether the domain is fixed or not!
+                        {$IFDEF DIRTYHACKS}
+                        // Note: I don't really know whether the domain is fixed or not! It seems to be, though
                         MovieURL := 'http://n03.joj.sk' + Base64Decode(Path);
                         SetPrepared(True);
                         Result := True;
+                        {$ENDIF}
                         Exit;
                         end;
                       end;
