@@ -49,6 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -69,7 +70,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_MOVIE_URL = '\bflashvars\.video_url\s*=\s*''(?P<URL>https?://.+?)''\s*;';
+  REGEXP_MOVIE_URL = '\bflashvars\.video_url\s*=\s*''(?P<URL>https?(?::|%3A)(?:/|%2F){2}.+?)''';
 
 { TDownloader_KeezMovies }
 
@@ -101,6 +102,12 @@ end;
 function TDownloader_KeezMovies.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.keezmovies.com/video/' + MovieID;
+end;
+
+function TDownloader_KeezMovies.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  Result := Prepared;
+  MovieUrl := UrlDecode(MovieUrl);
 end;
 
 initialization

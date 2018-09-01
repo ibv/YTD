@@ -1,6 +1,33 @@
 CHANGELOG
 ---------
 
+  v0.64
+
+    * Nový poskytovatel: MTV.com.
+
+    * GameAnyone.com: Opraveno na aktuální stav webu.
+
+    * KeezMovies.com: Opraveno na aktuální stav webu.
+
+    * Nova.cz: Kapituloval jsem a povolil i URL se dvìma lomítky za Nova.cz.
+
+    * SpankWire.com: Opraveno na aktuální stav webu.
+
+    * Aktualizována slovenská jazyková verze na stav z verze 0.63.
+
+    * Opravena chyba, kdy se pøi vkládání nové adresy pomocí INS vždy použila
+      pùvodní adresa z clipboardu, i když ji uživatel ve vkládacím formuláøi
+      zmìnil.
+
+    * Opravena chyba ve výchozím konfiguraèním souboru (vytvoøí se v pøípadì, 
+      že neexistuje soubor ytd.xml): konverze do AVI/H264 byla nadefinována,
+      ale nebyla dostupná uživateli.
+
+    * Pokud je jméno souboru (vèetne cesty) pøíliš dlouhé, bude oøíznuto tak,
+      aby mìlo maximálnì 255 znakù standardnì povolených ve Windows.
+
+
+
   v0.63
 
     * Nový poskytovatel: Beeg.com (porno).

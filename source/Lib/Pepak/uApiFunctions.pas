@@ -28,6 +28,10 @@ function ListViewIsItemSelected(ListView: THandle; Index: integer): boolean;
 function ListViewSelectItem(ListView: THandle; Index: integer; Selected: boolean): boolean;
 function ListViewGetSelectedItems(ListView: THandle; out Indexes: TList; MaxCount: integer = 0): boolean;
 function ListViewGetSelectedItem(ListView: THandle): integer;
+
+//----- Toolbar ----------------------------------------------------------------
+procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);
+
 //------------------------------------------------------------------------------
 
 implementation
@@ -79,16 +83,18 @@ begin
   Result.y := lParam shr 16;
 end;
 
+const CLIPBOARD_TEXT_FORMAT = {$IFDEF UNICODE} CF_UNICODETEXT {$ELSE} CF_TEXT {$ENDIF} ;
+
 function GetClipboardAsText(Owner: THandle; out Text: string): boolean;
 var Data: THandle;
     P: PChar;
 begin
   Result := False;
   Text := '';
-  if IsClipboardFormatAvailable(CF_TEXT) then
+  if IsClipboardFormatAvailable(CLIPBOARD_TEXT_FORMAT) then
     if OpenClipboard(Owner) then
       try
-        Data := GetClipboardData(CF_TEXT);
+        Data := GetClipboardData(CLIPBOARD_TEXT_FORMAT);
         if Data <> 0 then
           begin
           P := GlobalLock(Data);
@@ -129,7 +135,7 @@ begin
         finally
           GlobalUnlock(Data);
           end;
-        Result := SetClipboardData(CF_TEXT, Data);
+        Result := SetClipboardData(CLIPBOARD_TEXT_FORMAT, Data);
         end;
     finally
       CloseClipboard;
@@ -198,6 +204,22 @@ end;
 function ListViewGetSelectedItem(ListView: THandle): integer;
 begin
   Result := SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_FOCUSED or LVNI_SELECTED);
+end;
+
+procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);
+var Info: TTBButtonInfo;
+begin
+  FillChar(Info, Sizeof(Info), 0);
+  Info.cbSize := Sizeof(Info);
+  Info.dwMask := TBIF_STATE;
+  if SendMessage(Toolbar, TB_GETBUTTONINFO, Button, LPARAM(@Info)) >= 0 then
+    begin
+    if Enabled then
+      Info.fsState := Info.fsState or TBSTATE_ENABLED
+    else
+      Info.fsState := Info.fsState and (not TBSTATE_ENABLED);
+    SendMessage(Toolbar, TB_SETBUTTONINFO, Button, LPARAM(@Info));
+    end;
 end;
 
 end.

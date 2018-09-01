@@ -79,7 +79,7 @@ const
             '<command_line>-oac mp3lame -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200 -ffourcc xvid -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>' +
             '<visibility>minimized</visibility>' +
           '</converter>' +
-          '<converter id="convert-to-xvid">' +
+          '<converter id="convert-to-h264">' +
             '<title>%s</title>' +
             '<exe_path>mencoder.exe</exe_path>' +
             '<command_line>-oac mp3lame -ovc x264 -x264encopts bitrate=1200 -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>' +
@@ -136,7 +136,7 @@ begin
   if not fLoadSuccessful then
     begin
     {$IFDEF GUI_WINAPI}
-    MessageBox(0, PChar(_(INITIALRUN_WELCOMEMSG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_APPLMODAL);
+    MessageBox(0, PChar(_(INITIALRUN_WELCOMEMSG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_TASKMODAL);
     {$ELSE}
     MessageDlg(_(INITIALRUN_WELCOMEMSG), mtWarning, [mbOK], 0);
     {$ENDIF}
@@ -144,14 +144,14 @@ begin
     Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
     {$ENDIF}
     {$IFDEF GUI_WINAPI}
-    PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_APPLMODAL) = idYes;
+    PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}
     PortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}
     if PortableMode then
       XmlFileName := ChangeFileExt(ParamStr(0), '.xml');
     {$IFDEF GUI_WINAPI}
-    CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_APPLMODAL) = idYes;
+    CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}
     CheckForNewVersionOnStartup := MessageDlg(_(INITIALRUN_WANTNEWVERSIONCHECK), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}

@@ -41,7 +41,7 @@ unit downCT;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uMSDownloader;

@@ -67,6 +67,27 @@ implementation
 
 {$R *.DFM}
 
+function SelectConverter(Options: TYTDOptions; var SelectedID: string; Owner: TComponent = nil; const Caption: string = ''): boolean;
+var F: TFormSelectConverter;
+    NewID: string;
+begin
+  Result := False;
+  F := TFormSelectConverter.Create(Owner);
+  try
+    if Caption <> '' then
+      F.Caption := Caption;
+    PrepareConverterComboBox(F.comboConverter, Options, SelectedID);
+    if F.ShowModal = mrOK then
+      if DecodeConverterComboBox(F.comboConverter, Options, NewID) then
+        begin
+        SelectedID := NewID;
+        Result := True;
+        end;
+  finally
+    F.Free;
+    end;
+end;
+
 procedure PrepareConverterComboBox(Combo: TCustomComboBox; Options: TYTDOptions; const SelectedID: string);
 var L: TStringList;
     i, Index: integer;
@@ -76,7 +97,7 @@ begin
   try
     Options.ReadConverterIDList(L);
     Combo.Items.Clear;
-    Combo.Items.AddObject(CONVERTERS_NOCONVERTER, TObject(-1));
+    Combo.Items.AddObject(_(CONVERTERS_NOCONVERTER), TObject(-1));
     Index := 0;
     for i := 0 to Pred(L.Count) do
       if Options.ReadConverter(L[i], Converter) then
@@ -108,27 +129,6 @@ begin
     finally
       L.Free;
       end;
-    end;
-end;
-
-function SelectConverter(Options: TYTDOptions; var SelectedID: string; Owner: TComponent = nil; const Caption: string = ''): boolean;
-var F: TFormSelectConverter;
-    NewID: string;
-begin
-  Result := False;
-  F := TFormSelectConverter.Create(Owner);
-  try
-    if Caption <> '' then
-      F.Caption := Caption;
-    PrepareConverterComboBox(F.comboConverter, Options, SelectedID);
-    if F.ShowModal = mrOK then
-      if DecodeConverterComboBox(F.comboConverter, Options, NewID) then
-        begin
-        SelectedID := NewID;
-        Result := True;
-        end;
-  finally
-    F.Free;
     end;
 end;
 

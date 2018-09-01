@@ -1,0 +1,284 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{4CE0417E-A3A8-4D70-A505-A8F3EBB1045B}</ProjectGuid>
+			<MainSource>YTD.dpr</MainSource>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+			<ProjectVersion>12.0</ProjectVersion>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_ExeOutput>..\Exe</DCC_ExeOutput>
+			<DCC_UnitSearchPath>lib\pepak;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi2009;lib\NativeXml;Units;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_Define>PEPAK;PEPAK_YTD;XXX;$(DCC_Define)</DCC_Define>
+			<DCC_DcuOutput>units</DCC_DcuOutput>
+			<DCC_DependencyCheckOutputName>..\Exe\YTD.exe</DCC_DependencyCheckOutputName>
+			<DCC_ImageBase>00400000</DCC_ImageBase>
+			<DCC_Platform>x86</DCC_Platform>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+			<DCC_DebugInformation>false</DCC_DebugInformation>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="YTD.dpr">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="Common\uLanguages.pas"/>
+			<DCCReference Include="Common\uMessages.pas"/>
+			<DCCReference Include="Common\uOptions.pas"/>
+			<DCCReference Include="Common\uXML.pas"/>
+			<DCCReference Include="Common\uDownloadClassifier.pas"/>
+			<DCCReference Include="Base\uDownloader.pas"/>
+			<DCCReference Include="Base\uCommonDownloader.pas"/>
+			<DCCReference Include="Base\uHttpDownloader.pas"/>
+			<DCCReference Include="Base\uHttpDirectDownloader.pas"/>
+			<DCCReference Include="Base\uExternalDownloader.pas"/>
+			<DCCReference Include="Base\uMSDownloader.pas"/>
+			<DCCReference Include="Base\uNestedDownloader.pas"/>
+			<DCCReference Include="Base\uRtmpDownloader.pas"/>
+			<DCCReference Include="Base\uPlaylistDownloader.pas"/>
+			<DCCReference Include="Downloaders\down5min.pas"/>
+			<DCCReference Include="Downloaders\downAktualne.pas"/>
+			<DCCReference Include="Downloaders\downAlternativaTV.pas"/>
+			<DCCReference Include="Downloaders\downAngryAlien.pas"/>
+			<DCCReference Include="Downloaders\downAutoTube.pas"/>
+			<DCCReference Include="Downloaders\downBarrandovTV.pas"/>
+			<DCCReference Include="Downloaders\downBlennus.pas"/>
+			<DCCReference Include="Downloaders\downBlipTv.pas"/>
+			<DCCReference Include="Downloaders\downBlipTvV2.pas"/>
+			<DCCReference Include="Downloaders\downBofunk.pas"/>
+			<DCCReference Include="Downloaders\downBolt.pas"/>
+			<DCCReference Include="Downloaders\downBomba.pas"/>
+			<DCCReference Include="Downloaders\downBreak.pas"/>
+			<DCCReference Include="Downloaders\downBreakEmbed.pas"/>
+			<DCCReference Include="Downloaders\downBreakEmbedV2.pas"/>
+			<DCCReference Include="Downloaders\downCasSk.pas"/>
+			<DCCReference Include="Downloaders\downCekniTo.pas"/>
+			<DCCReference Include="Downloaders\downCestyKSobe.pas"/>
+			<DCCReference Include="Downloaders\downClipfish.pas"/>
+			<DCCReference Include="Downloaders\downClipfishV2.pas"/>
+			<DCCReference Include="Downloaders\downCollegeHumor.pas"/>
+			<DCCReference Include="Downloaders\downCrunchyRoll.pas"/>
+			<DCCReference Include="Downloaders\downCSmaTalent.pas"/>
+			<DCCReference Include="Downloaders\downCT.pas"/>
+			<DCCReference Include="Downloaders\downCT_Port.pas"/>
+			<DCCReference Include="Downloaders\downCT_Program.pas"/>
+			<DCCReference Include="Downloaders\downCT24.pas"/>
+			<DCCReference Include="Downloaders\downCT24MSFotbal.pas"/>
+			<DCCReference Include="Downloaders\downCT24MSFotbal_V2.pas"/>
+			<DCCReference Include="Downloaders\downCurrent.pas"/>
+			<DCCReference Include="Downloaders\downDailyHaha.pas"/>
+			<DCCReference Include="Downloaders\downDailyMotion.pas"/>
+			<DCCReference Include="Downloaders\downDeutscheBahn.pas"/>
+			<DCCReference Include="Downloaders\downDevilDucky.pas"/>
+			<DCCReference Include="Downloaders\downDoubleAgent.pas"/>
+			<DCCReference Include="Downloaders\downDrsnySvet.pas"/>
+			<DCCReference Include="Downloaders\downEbaumsWorld.pas"/>
+			<DCCReference Include="Downloaders\downEHow.pas"/>
+			<DCCReference Include="Downloaders\downESPN.pas"/>
+			<DCCReference Include="Downloaders\downEVTV1.pas"/>
+			<DCCReference Include="Downloaders\downFacebook.pas"/>
+			<DCCReference Include="Downloaders\downFileCabi.pas"/>
+			<DCCReference Include="Downloaders\downFishki.pas"/>
+			<DCCReference Include="Downloaders\downFlickr.pas"/>
+			<DCCReference Include="Downloaders\downFreeCaster.pas"/>
+			<DCCReference Include="Downloaders\downFreeSk.pas"/>
+			<DCCReference Include="Downloaders\downFreeRide.pas"/>
+			<DCCReference Include="Downloaders\downFreeVideoRu.pas"/>
+			<DCCReference Include="Downloaders\downGameAnyone.pas"/>
+			<DCCReference Include="Downloaders\downGodTube.pas"/>
+			<DCCReference Include="Downloaders\downGuba.pas"/>
+			<DCCReference Include="Downloaders\downGrindTV.pas"/>
+			<DCCReference Include="Downloaders\downHasici150.pas"/>
+			<DCCReference Include="Downloaders\downIHned.pas"/>
+			<DCCReference Include="Downloaders\downIPrima.pas"/>
+			<DCCReference Include="Downloaders\downJoj.pas"/>
+			<DCCReference Include="Downloaders\downKontraband.pas"/>
+			<DCCReference Include="Downloaders\downKukaj.pas"/>
+			<DCCReference Include="Downloaders\downLibimSeTi.pas"/>
+			<DCCReference Include="Downloaders\downLiveLeak.pas"/>
+			<DCCReference Include="Downloaders\downLiveLeakEmbedded.pas"/>
+			<DCCReference Include="Downloaders\downLiveVideo.pas"/>
+			<DCCReference Include="Downloaders\downLoupak.pas"/>
+			<DCCReference Include="Downloaders\downMarkiza.pas"/>
+			<DCCReference Include="Downloaders\downMediaSport.pas"/>
+			<DCCReference Include="Downloaders\downMegaVideo.pas"/>
+			<DCCReference Include="Downloaders\downMetaCafe.pas"/>
+			<DCCReference Include="Downloaders\downMetropolTV.pas"/>
+			<DCCReference Include="Downloaders\downMojeVideo.pas"/>
+			<DCCReference Include="Downloaders\downMojeVideoSk.pas"/>
+			<DCCReference Include="Downloaders\downMpora.pas"/>
+			<DCCReference Include="Downloaders\downMustWatch.pas"/>
+			<DCCReference Include="Downloaders\downMuzu.pas"/>
+			<DCCReference Include="Downloaders\downMySpace.pas"/>
+			<DCCReference Include="Downloaders\downMyUbo.pas"/>
+			<DCCReference Include="Downloaders\downNaStojaka.pas"/>
+			<DCCReference Include="Downloaders\downNBC.pas"/>
+			<DCCReference Include="Downloaders\downNavratDoReality.pas"/>
+			<DCCReference Include="Downloaders\downNJoy.pas"/>
+			<DCCReference Include="Downloaders\downNothingToxic.pas"/>
+			<DCCReference Include="Downloaders\downNova.pas"/>
+			<DCCReference Include="Downloaders\downNovinky.pas"/>
+			<DCCReference Include="Downloaders\downOverStream.pas"/>
+			<DCCReference Include="Downloaders\downPCPlanets.pas"/>
+			<DCCReference Include="Downloaders\downPrazdninyVTelci.pas"/>
+			<DCCReference Include="Downloaders\downPrimaCool.pas"/>
+			<DCCReference Include="Downloaders\downPublicTV.pas"/>
+			<DCCReference Include="Downloaders\downQipRu_Embed.pas"/>
+			<DCCReference Include="Downloaders\downRaajje.pas"/>
+			<DCCReference Include="Downloaders\downRevver.pas"/>
+			<DCCReference Include="Downloaders\downRingTV.pas"/>
+			<DCCReference Include="Downloaders\downRozhlas.pas"/>
+			<DCCReference Include="Downloaders\downRTA.pas"/>
+			<DCCReference Include="Downloaders\downRTA_Embed.pas"/>
+			<DCCReference Include="Downloaders\downSevenLoad.pas"/>
+			<DCCReference Include="Downloaders\downSnotr.pas"/>
+			<DCCReference Include="Downloaders\downSpike.pas"/>
+			<DCCReference Include="Downloaders\downStagevu.pas"/>
+			<DCCReference Include="Downloaders\downStickam.pas"/>
+			<DCCReference Include="Downloaders\downStream.pas"/>
+			<DCCReference Include="Downloaders\downStreetFire.pas"/>
+			<DCCReference Include="Downloaders\downStudioPlus.pas"/>
+			<DCCReference Include="Downloaders\downStupidVideos.pas"/>
+			<DCCReference Include="Downloaders\downSTV.pas"/>
+			<DCCReference Include="Downloaders\downTangle.pas"/>
+			<DCCReference Include="Downloaders\downTeacherTube.pas"/>
+			<DCCReference Include="Downloaders\downTodaysBigThing.pas"/>
+			<DCCReference Include="Downloaders\downTontuyau.pas"/>
+			<DCCReference Include="Downloaders\downTotallyCrap.pas"/>
+			<DCCReference Include="Downloaders\downTV7.pas"/>
+			<DCCReference Include="Downloaders\downTVcom.pas"/>
+			<DCCReference Include="Downloaders\downTVNoe.pas"/>
+			<DCCReference Include="Downloaders\downUniMinnesota.pas"/>
+			<DCCReference Include="Downloaders\downUStream.pas"/>
+			<DCCReference Include="Downloaders\downVideaCesky.pas"/>
+			<DCCReference Include="Downloaders\downVideoAlbumyAzet.pas"/>
+			<DCCReference Include="Downloaders\downVideoClipsDump.pas"/>
+			<DCCReference Include="Downloaders\downVideu.pas"/>
+			<DCCReference Include="Downloaders\downVimeo.pas"/>
+			<DCCReference Include="Downloaders\downVitalMtb.pas"/>
+			<DCCReference Include="Downloaders\downWimp.pas"/>
+			<DCCReference Include="Downloaders\downWrzuta.pas"/>
+			<DCCReference Include="Downloaders\downYouTube.pas"/>
+			<DCCReference Include="Downloaders\downZ1TV.pas"/>
+			<DCCReference Include="Downloaders\downZkoukniTo.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxBeeg.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxBrazzers.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxDachix.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxEmpFlix.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxExtremeTube.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxGrinvi.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxKeezMovies.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxMegaPorn.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxPornHost.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxPornHub.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxPornHubEmbed.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxPornoTube.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxRedTube.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxRozzlobeniMuzi.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxRude.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxSexDoma.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxShufuni.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxSlutLoad.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxSpankingTube.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxSpankWire.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxTnaFlix.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxTube8.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxTubeSSS.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxXHamster.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxXNXX.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxXTube.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxXVideoHost.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxXVideos.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxYouJizz.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxYouPorn.pas"/>
+			<DCCReference Include="Downloaders\XXX\xxxYuvutu.pas"/>
+			<DCCReference Include="Playlists\listCT24.pas"/>
+			<DCCReference Include="Playlists\listGameAnyone.pas"/>
+			<DCCReference Include="Playlists\listHTML.pas"/>
+			<DCCReference Include="Playlists\listHTMLfile.pas"/>
+			<DCCReference Include="Playlists\listBing.pas"/>
+			<DCCReference Include="Playlists\listYouTube.pas"/>
+			<DCCReference Include="Playlists\listYouTubePage.pas"/>
+			<None Include="YTD.version">
+				<ContainerId>File</ContainerId>
+			</None>
+			<None Include="YTD.inc">
+				<ContainerId>File</ContainerId>
+			</None>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Source>
+						<Source Name="MainSource">YTD.dpr</Source>
+					</Source>
+					<Parameters>
+						<Parameters Name="UseLauncher">False</Parameters>
+						<Parameters Name="LoadAllSymbols">True</Parameters>
+						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+					</Parameters>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
+						<VersionInfo Name="MajorVer">0</VersionInfo>
+						<VersionInfo Name="MinorVer">64</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">444</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1029</VersionInfo>
+						<VersionInfo Name="CodePage">1250</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName">Pepak</VersionInfoKeys>
+						<VersionInfoKeys Name="FileDescription">YouTube Downloader</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">0.64.0.444</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName">YouTube Downloader</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalCopyright">(c) 2010 Pepak</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename">ytd.exe</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductName">YouTube Downloader</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments">http://www.pepak.net/download/youtube-downloader/</VersionInfoKeys>
+					</VersionInfoKeys>
+				</Delphi.Personality>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>

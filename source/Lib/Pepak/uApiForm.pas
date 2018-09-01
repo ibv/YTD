@@ -28,6 +28,7 @@ type
       fOwner: TApiForm;
       fMenu: HMENU;
       fPopupMenu: HMENU;
+      fIcon: THandle;
       procedure SetMenu(Value: HMENU);
     protected // Message handlers
       // Message handler for all messages
@@ -75,6 +76,7 @@ type
       {$ENDIF}
       property Menu: HMENU read fMenu write SetMenu;
       property PopupMenu: HMENU read fPopupMenu write fPopupMenu;
+      property Icon: THandle read fIcon write fIcon;
       class function DefaultResourceName: string; virtual;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); overload; virtual;
@@ -271,6 +273,7 @@ begin
   {$IFDEF APIFORM_ANCHORS}
   fAnchorList := TObjectList.Create(True);
   {$ENDIF}
+  fIcon := LoadIcon(hInstance, 'MAINICON');
 end;
 
 constructor TApiForm.Create(AOwner: TApiForm);
@@ -285,6 +288,7 @@ end;
 
 destructor TApiForm.Destroy;
 begin
+  FreeGDIObject(fIcon);
   if fHandle <> 0 then
     SendMessage(Handle, WM_CLOSE, 0, 0);
   fHandle := 0;
@@ -328,6 +332,9 @@ end;
 function TApiForm.DoInitDialog: boolean;
 begin
   Result := True;
+  // Ikona
+  if Icon <> 0 then
+    SendMessage(Self.Handle, WM_SETICON, 0, Icon);
 end;
 
 function TApiForm.AfterInitDialog: boolean;
@@ -578,7 +585,7 @@ end;
 
 function TApiForm.Close: boolean;
 begin
-  Result := EndDialog(Self.Handle, ModalResult);
+  Result := SendMessage(Self.Handle, WM_CLOSE, 0, 0) <> 0;
 end;
 
 function TApiForm.Close(ModalResult: integer): boolean;

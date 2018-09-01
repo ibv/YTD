@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.63                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.64                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -205,6 +205,8 @@ PODPOROVAN… WEBY
      - http://www.iprima.cz/videoarchiv/44524/all/all
      - http://www.iprima.cz/videoplayer/85680
 
+     Pozn.: Show Jana Krause nenÌ a asi ani nebude podporovan·.
+
  - Joj.sk:
      - http://televizia.joj.sk/tv-archiv/krimi-noviny/22-05-2010.html
 
@@ -257,6 +259,12 @@ PODPOROVAN… WEBY
 
      Pozn.: SkuteËn˝m poskytovatelem je »esk· televize a platÌ proto vöechno,
             co pro CeskaTelevize.cz.
+
+ - MTV.com:
+     - http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
+     - http://media.mtvnservices.com/mgid:uma:video:mtv.com:602324
+
+     Pozn.: Jde o streamovan˝ form·t podle protokolu RTMP. Viz nÌûe.
 
  - MustWatch.cz:
      - http://www.mustwatch.cz/film/reel-bad-arabs
@@ -1111,6 +1119,13 @@ Knihovny a jejich licence:
   - zdroj: http://dxgettext.po.dk/
   - licence: vlastnÌ, freeware
   - popis: Podpora pro lokalizace (dalöÌ jazyky) programu
+
+- FastMM
+  - autor: Pierre le Riche
+  - zdroj: http://fastmm.sourceforge.net/
+  - licence: GNU LGPL 2.1 / Mozilla Public License 1.1
+  - popis: RychlejöÌ pamÏùov˝ manaûer (pouûÌv· se jen v DEBUG reûimu kv˘li
+           schopnosti odhalit chybnÈ alokace a dealokace pamÏti).
 
 - MSDL
   - autor: Jun "metro" Oyama (me_t_ro@yahoo.com)

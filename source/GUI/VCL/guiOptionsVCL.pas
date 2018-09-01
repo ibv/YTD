@@ -43,8 +43,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ActnList,
-  uLanguages, uMessages, uOptions, uDialogs,
-  guiConverterVCL, guiConsts;
+  uLanguages, uMessages, uOptions, uDialogs, guiConsts;
 
 type
   TFormOptions = class(TForm)
@@ -70,7 +69,9 @@ type
   private
     fLoading: boolean;
     fOptions: TYTDOptions;
+    {$IFDEF CONVERTERS}
     fConverterIndex: integer;
+    {$ENDIF}
   protected
   public
     property Options: TYTDOptions read fOptions write fOptions;
@@ -79,6 +80,11 @@ type
 implementation
 
 {$R *.DFM}
+
+{$IFDEF CONVERTERS}
+uses
+  guiConverterVCL;
+{$ENDIF}
 
 procedure TFormOptions.FormShow(Sender: TObject);
 const OverwriteMode: array [TOverwriteMode] of integer = (2, 1, 3, 0);
@@ -102,7 +108,9 @@ end;
 
 procedure TFormOptions.actOKExecute(Sender: TObject);
 const OverwriteMode: array[0..3] of TOverwriteMode = (omAsk, omAlways, omNever, omRename);
+{$IFDEF CONVERTERS}
 var NewID: string;
+{$ENDIF}
 begin
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
   Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];

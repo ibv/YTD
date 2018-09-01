@@ -51,22 +51,22 @@ type
       fInfoPageEncoding: TPageEncoding;
       fInfoPageIsXml: boolean;
     protected
-      function GetMovieInfoUrl: string; virtual; abstract;
+      function GetMovieInfoUrl: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
     protected
       MovieTitleRegExp: TRegExp;
       MovieUrlRegExp: TRegExp;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; virtual;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; virtual;
-      function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property MovieUrl: string read fMovieUrl write fMovieUrl;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
     protected
       function GetFileNameExt: string; override;
-      function BuildMovieUrl(out Url: string): boolean; virtual;
-      function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
+      function BuildMovieUrl(out Url: string): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); override;
       {$IFDEF SUBTITLES}
     protected
@@ -79,18 +79,18 @@ type
       property SubtitlesEnabled: boolean read fSubtitlesEnabled {write fSubtitlesEnabled};
       property Subtitles: AnsiString read fSubtitles {write fSubtitles};
       property SubtitlesExt: string read fSubtitlesExt {write fSubtitlesExt};
-      function GetSubtitlesFileName: string; virtual;
-      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
-      function WriteSubtitles: boolean; virtual;
+      function GetSubtitlesFileName: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function WriteSubtitles: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$ENDIF}
     protected
-      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -102,7 +102,7 @@ type
 implementation
 
 uses
-  uCompatibility, uMessages;
+  uCompatibility, uMessages, uStringUtils;
 
 { TCommonDownloader }
 
@@ -218,7 +218,7 @@ begin
       for i := 0 to Pred(Length(fSubtitleRegExps)) do
         if GetRegExpVar(fSubtitleRegExps[i], Page, 'SUBTITLES', Subs) then
           begin
-          fSubtitles := Subs;
+          fSubtitles := AnsiString(StringToUtf8(Subs));
           //fSubtitlesExt := '.txt';
           Result := True;
           Break;

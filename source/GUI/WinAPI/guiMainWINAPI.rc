@@ -9,12 +9,15 @@
 
 
 
-
 //
 // Bitmap resources
 //
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 IMAGELIST_DOWNLOADSTATES BITMAP         ".\\images\\download_states.bmp"
+
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+MAIN_TOOLBAR       BITMAP         ".\\images\\toolbar_main.bmp"
 
 
 
@@ -26,28 +29,29 @@ MAIN_POPUPMENU MENU
 {
     POPUP "Popup"
     {
-        MENUITEM "Add new URL\tIns", IDM_ADD_NEW_URL1
-        MENUITEM "Add URLs from Clipboard\tCTRL+V", IDM_ADD_URLS_FROM_CLIPBOARD1
-        MENUITEM "Add URLs from file\tCtrl+O", IDM_ADD_URLS_FROM_FILE1
-        MENUITEM "Add URLs from HTML file\tCtrl+H", IDM_ADD_URLS_FROM_HTML_FILE1
-        MENUITEM "Add URLs from HTML page\tCtrl+P", IDM_ADD_URLS_FROM_HTML_PAGE1
-        MENUITEM "Save URL list to file\tCtrl+S", IDM_SAVE_URL_LIST_TO_FILE1
+        MENUITEM "Add new URL\tIns", ACTION_ADDNEWURL
+        MENUITEM "Add URLs from file\tCtrl+O", ACTION_ADDFROMFILE
+        MENUITEM "Add URLs from HTML file\tCtrl+H", ACTION_ADDFROMHTML
+        MENUITEM "Add URLs from HTML page\tCtrl+P", ACTION_ADDFROMWEBPAGE
+        MENUITEM "Add URLs from Clipboard\tCTRL+V", ACTION_ADDFROMCLIPBOARD2
         MENUITEM SEPARATOR
-        MENUITEM "Start/Pause/Resume\tSpace", IDM_START_PAUSE_RESUME1
-        MENUITEM "Stop\tEsc", IDM_STOP1
-        MENUITEM "Convert\tCtrl+N", IDM_CONVERT1
+        MENUITEM "Copy URLs to Clipboard\tCtrl+C", ACTION_COPYTOCLIPBOARD2
+        MENUITEM "Save URL list to file\tCtrl+S", ACTION_SAVETOFILE
         MENUITEM SEPARATOR
-        MENUITEM "Delete URL\tDel", IDM_DELETE_URL1
-        MENUITEM "Copy URLs to Clipboard\tCtrl+C", IDM_COPY_URLS_TO_CLIPBOARD1
-        MENUITEM "Select All\tCtrl+A", IDM_SELECT_ALL1
+        MENUITEM "Start/Pause/Resume\tSpace", ACTION_START
+        MENUITEM "Stop\tEsc", ACTION_STOP
+        MENUITEM "Convert\tCtrl+N", ACTION_CONVERT
         MENUITEM SEPARATOR
-        MENUITEM "Refresh\tF5", IDM_REFRESH_1
+        MENUITEM "Delete URL\tDel", ACTION_DELETEURL
+        MENUITEM "Select All\tCtrl+A", ACTION_SELECTALL
         MENUITEM SEPARATOR
-        MENUITEM "Options\tF9", IDM_OPTIONS1
-        MENUITEM "Edit config file", IDM_EDIT_CONFIG_FILE1
-        MENUITEM "Report a bug\tCtrl+Alt+B", IDM_REPORT_A_BUG1
-        MENUITEM "Donate\tCtrl+Alt+D", IDM_DONATE1
-        MENUITEM "About\tF1", IDM_ABOUT1
+        MENUITEM "Refresh\tF5", ACTION_REFRESH
+        MENUITEM SEPARATOR
+        MENUITEM "Options\tF9", ACTION_OPTIONS
+        MENUITEM "Edit config file", ACTION_EDITCONFIG
+        MENUITEM "Report a bug\tCtrl+Alt+B", ACTION_BUGREPORT
+        MENUITEM "Donate\tCtrl+Alt+D", ACTION_DONATE
+        MENUITEM "About\tF1", ACTION_ABOUT
     }
 }
 
@@ -63,7 +67,7 @@ EXSTYLE WS_EX_WINDOWEDGE
 CAPTION "YouTube Downloader"
 FONT 8, "Ms Shell Dlg"
 {
-    CONTROL         "", IDC_LIST_DOWNLOADS, WC_LISTVIEW, WS_TABSTOP | WS_BORDER | LVS_NOSORTHEADER | LVS_OWNERDATA | LVS_SHAREIMAGELISTS | LVS_REPORT, 0, 24, 512, 143
+    CONTROL         "", IDC_LIST_DOWNLOADS, WC_LISTVIEW, WS_TABSTOP | WS_BORDER | LVS_NOSORTHEADER | LVS_OWNERDATA | LVS_SHAREIMAGELISTS | LVS_REPORT, 0, 18, 512, 149
 }
 
 

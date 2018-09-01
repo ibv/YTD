@@ -176,12 +176,12 @@ end;
 
 procedure TFormAbout.DestroyObjects;
 begin
-  FreeGDIObject(Cursor_Hand); Cursor_Hand := 0;
-  FreeGDIObject(Brush_Form); Brush_Form := 0;
-  FreeGDIObject(Font_Default); Font_Default := 0;
-  FreeGDIObject(Font_Title); Font_Title := 0;
-  FreeGDIObject(Font_Info); Font_Info := 0;
-  FreeGDIObject(Font_Link); Font_Link := 0;
+  FreeGDIObject(Cursor_Hand);
+  FreeGDIObject(Brush_Form);
+  FreeGDIObject(Font_Default);
+  FreeGDIObject(Font_Title);
+  FreeGDIObject(Font_Info);
+  FreeGDIObject(Font_Link); 
 end;
 
 function TFormAbout.DialogProc(var Msg: TMessage): boolean;
@@ -260,7 +260,7 @@ function TFormAbout.DoCommand(NotificationCode, Identifier: word; WindowHandle: 
 begin
   Result := False;
   case NotificationCode of
-    1:
+    1: // Accelerators
       case Identifier of
         ACTION_CLOSE:
           Close;

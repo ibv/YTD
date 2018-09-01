@@ -188,13 +188,8 @@ var
 begin
   Reset(Input);
   Rewrite(Output);
-  {$IFDEF LVCL}
-  fStdIn := GetStdHandle(STD_INPUT_HANDLE);
-  fStdOut := GetStdHandle(STD_OUTPUT_HANDLE);
-  {$ELSE}
-  fStdIn := TTextRec(Input).Handle;
-  fStdOut := TTextRec(Output).Handle;
-  {$ENDIF}
+  fStdIn := TTextRec(Input).Handle; //fStdIn := GetStdHandle(STD_INPUT_HANDLE);
+  fStdOut := TTextRec(Output).Handle; //fStdOut := GetStdHandle(STD_OUTPUT_HANDLE);
   if GetConsoleScreenBufferInfo(fStdOut, BufferInfo) then
     fTextAttr := BufferInfo.wAttributes
   else

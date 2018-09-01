@@ -40,7 +40,7 @@ unit uRtmpDownloader;
 interface
 
 uses
-  SysUtils, Classes, 
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uDownloader, uCommonDownloader, uExternalDownloader,
   RtmpDump_DLL;
 

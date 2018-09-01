@@ -28,13 +28,13 @@ rd /s /q ..\exe\locale
 md ..\exe\locale
 xcopy locale\*.mo ..\exe\locale /s /i
 call clean.bat
-call build.bat noxxx %build% %*
+call build.bat release noxxx %build% %*
 call clean.bat
 pushd ..\exe
 %pack% ..\ytd-%version%-lite.%packext%
 popd
 call clean.bat
-call build.bat %build% %*
+call build.bat release %build% %*
 call clean.bat
 pushd ..\exe
 %pack% ..\ytd-%version%.%packext%

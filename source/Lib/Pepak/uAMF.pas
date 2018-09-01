@@ -1,6 +1,7 @@
 unit uAMF;
 {.DEFINE DEBUG}
 {.DEFINE NONSEEKABLESTREAMS}
+{$DEFINE MINIMIZE_SIZE}
 
 {$INCLUDE 'jedi.inc'}
 
@@ -20,22 +21,22 @@ type
     protected
       function GetValue: Variant; virtual; abstract;
       procedure SetValue(const AValue: Variant); virtual; abstract;
-      function DataType: byte; virtual; abstract;
-      procedure LoadFromStream(Stream: TStream); virtual; abstract;
+      function DataType: byte; {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
+      procedure LoadFromStream(Stream: TStream); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
     public
-      class function ReadInt16(Stream: TStream): integer; virtual;
-      class procedure WriteInt16(Stream: TStream; const AValue: integer); virtual;
-      class function ReadInt32(Stream: TStream): LongWord; virtual;
-      class procedure WriteInt32(Stream: TStream; const AValue: LongWord); virtual;
-      class function ReadUtf(Stream: TStream): WideString; virtual;
-      class procedure WriteUtf(Stream: TStream; const AValue: WideString); virtual;
-      class function ReadLongUtf(Stream: TStream): WideString; virtual;
-      class procedure WriteLongUtf(Stream: TStream; const AValue: WideString); virtual;
+      class function ReadInt16(Stream: TStream): integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class procedure WriteInt16(Stream: TStream; const AValue: integer); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class function ReadInt32(Stream: TStream): LongWord; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class procedure WriteInt32(Stream: TStream; const AValue: LongWord); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class function ReadUtf(Stream: TStream): WideString; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class procedure WriteUtf(Stream: TStream; const AValue: WideString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class function ReadLongUtf(Stream: TStream): WideString; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class procedure WriteLongUtf(Stream: TStream; const AValue: WideString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
     public
-      class function CreateFromStream(Stream: TStream): TAMFItem; virtual;
+      class function CreateFromStream(Stream: TStream): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
       constructor Create; overload; virtual;
       destructor Destroy; override;
-      procedure SaveToStream(Stream: TStream); virtual;
+      procedure SaveToStream(Stream: TStream); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       property Value: Variant read GetValue write SetValue;
     end;
 
@@ -46,26 +47,26 @@ type
     protected
       function GetValue: Variant; override;
       procedure SetValue(const AValue: Variant); override;
-      function GetCount: integer; virtual;
-      function GetItems(Index: integer): TAMFItem; virtual;
-      procedure SetItems(Index: integer; const AValue: TAMFItem); virtual;
-      function GetNames(Index: integer): WideString; virtual;
-      procedure SetNames(Index: integer; const AValue: WideString); virtual;
-      function GetNamedItems(const Index: WideString): TAMFItem; virtual;
-      procedure SetNamedItems(const Index: WideString; const AValue: TAMFItem); virtual;
-      procedure SaveHeaderToStream(Stream: TStream); virtual;
-      procedure SaveItemNameToStream(Stream: TStream; Index: integer); virtual;
-      procedure SaveItemValueToStream(Stream: TStream; Index: integer); virtual;
-      procedure SaveFooterToStream(Stream: TStream); virtual;
+      function GetCount: integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function GetItems(Index: integer): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SetItems(Index: integer; const AValue: TAMFItem); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function GetNames(Index: integer): WideString; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SetNames(Index: integer; const AValue: WideString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function GetNamedItems(const Index: WideString): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SetNamedItems(const Index: WideString; const AValue: TAMFItem); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SaveHeaderToStream(Stream: TStream); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SaveItemNameToStream(Stream: TStream; Index: integer); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SaveItemValueToStream(Stream: TStream; Index: integer); {$IFNDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SaveFooterToStream(Stream: TStream); {$IFNDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       property List: TStringList read fList;
     public
       constructor Create; override;
       destructor Destroy; override;
       procedure SaveToStream(Stream: TStream); override;
-      procedure Clear; virtual;
-      function Add(const AName: WideString; AItem: TAMFItem): integer; virtual;
-      function Find(const AName: WideString): integer; virtual;
-      function FindByPath(const APath: WideString): TAMFItem; virtual;
+      procedure Clear; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function Add(const AName: WideString; AItem: TAMFItem): integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function Find(const AName: WideString): integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function FindByPath(const APath: WideString): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
       property OwnsItems: boolean read fOwnsItems write fOwnsItems;
       property Count: integer read GetCount;
       property Items[Index: integer]: TAMFItem read GetItems write SetItems;
@@ -81,7 +82,7 @@ type
       procedure SetValue(const AValue: Variant); override;
       function DataType: byte; override;
       procedure LoadFromStream(Stream: TStream); override;
-      function Swap(V: Double): Double; virtual;
+      function Swap(V: Double): Double; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
     public
       constructor Create; override;
       constructor Create(const AValue: Double); overload; virtual;
@@ -108,10 +109,10 @@ type
     private
       fNative: WideString;
       fLong: boolean;
+      procedure SetNative(const AValue: WideString); 
     protected
       function GetValue: Variant; override;
       procedure SetValue(const AValue: Variant); override;
-      procedure SetNative(const AValue: WideString); virtual;
       function DataType: byte; override;
       procedure LoadFromStream(Stream: TStream); override;
       property Long: boolean read fLong;
@@ -238,12 +239,12 @@ type
     public
       constructor Create; virtual;
       destructor Destroy; override;
-      procedure LoadFromStream(Stream: TStream); virtual;
-      procedure SaveToStream(Stream: TStream); virtual;
-      procedure LoadFromFile(const FileName: string); virtual;
-      procedure SaveToFile(const FileName: string); virtual;
-      procedure LoadFromString(const Data: AnsiString); virtual;
-      procedure SaveToString(out Data: AnsiString); virtual;
+      procedure LoadFromStream(Stream: TStream); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SaveToStream(Stream: TStream); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure LoadFromFile(const FileName: string); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SaveToFile(const FileName: string); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure LoadFromString(const Data: AnsiString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure SaveToString(out Data: AnsiString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
       property Version: byte read fVersion write fVersion;
       property Flags: byte read fFlags write fFlags;
       property Header: TAMFPacketHeaderArray read fHeader write fHeader;

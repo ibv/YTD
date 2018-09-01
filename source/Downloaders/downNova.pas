@@ -41,7 +41,7 @@ unit downNova;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
@@ -69,7 +69,7 @@ uses
 
 // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*archiv\.nova\.cz/multimedia/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*archiv\.nova\.cz/+multimedia/';
   URLREGEXP_ID =        '.+?';
   URLREGEXP_AFTER_ID =  '\.html?';
 

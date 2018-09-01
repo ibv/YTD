@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.63                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.64                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -202,6 +202,8 @@ SUPPORTED PROVIDERS
      - http://www.iprima.cz/videoarchiv/44524/all/all
      - http://www.iprima.cz/videoplayer/85680
 
+     Note: "Show Jana Krause" isn't supported (and likely won't ever be).
+
  - Joj.sk:
      - http://televizia.joj.sk/tv-archiv/krimi-noviny/22-05-2010.html
 
@@ -255,6 +257,12 @@ SUPPORTED PROVIDERS
 
      Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
            CT24.cz as well.
+
+ - MTV.com:
+     - http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
+     - http://media.mtvnservices.com/mgid:uma:video:mtv.com:602324
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - MustWatch.cz:
      - http://www.mustwatch.cz/film/reel-bad-arabs
@@ -1111,6 +1119,13 @@ Used libraries and their licenses:
   - source: http://dxgettext.po.dk/
   - license: custom, freeware
   - description: Support for internationalization
+
+- FastMM
+  - author: Pierre le Riche
+  - source: http://fastmm.sourceforge.net/
+  - license: GNU LGPL 2.1 / Mozilla Public License 1.1
+  - description: A fast memory manager (used only in the DEBUG mode because it
+                 can detect memory leaks)
 
 - MSDL
   - author: Jun "metro" Oyama (me_t_ro@yahoo.com)

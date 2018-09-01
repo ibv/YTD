@@ -40,7 +40,7 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, 
+  SysUtils, Classes, Windows, 
   HttpSend, SynaUtil, SynaCode,
   uOptions, uXML, uAMF, uCompatibility;
 
@@ -73,57 +73,57 @@ type
       fOnFileNameValidate: TDownloaderFileNameValidateEvent;
       fOptions: TYTDOptions;
     protected
-      function GetName: string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      procedure SetName(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      procedure SetPrepared(Value: boolean); virtual;
-      procedure SetLastErrorMsg(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      procedure SetMovieID(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      procedure SetLastUrl(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function GetName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetPrepared(Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetLastErrorMsg(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMovieID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetLastUrl(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); virtual;
       property UnpreparedName: string read fName;
       property LastURL: string read fLastUrl;
     protected
-      function GetDefaultFileName: string; virtual;
+      function GetDefaultFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetFileName: string; virtual;
-      procedure SetFileName(const Value: string); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function GetFileNameExt: string; virtual;
+      procedure SetFileName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetFileNameExt: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
-      procedure DoProgress; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function CreateHttp: THttpSend; virtual;
-      function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function ValidateFileName(var FileName: string): boolean; overload; virtual;
-      function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function StripSlashes(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      procedure DoProgress; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function CreateHttp: THttpSend; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function StripSlashes(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF DEBUG}
-      procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
-      procedure NotPreparedError; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      procedure NotPreparedError; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       class function Provider: string; virtual; abstract;
       class function UrlRegExp: string; virtual; abstract;
-      class function MovieIDParamName: string; virtual;
+      class function MovieIDParamName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create(const AMovieID: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; virtual; abstract;
-      function ValidateFileName: boolean; overload; virtual;
-      function Download: boolean; virtual;
-      procedure AbortTransfer; virtual;
+      function Prepare: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
+      function ValidateFileName: boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Download: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure AbortTransfer; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$IFDEF MULTIDOWNLOADS}
-      function First: boolean; virtual;
-      function Next: boolean; virtual;
+      function First: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function Next: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$ENDIF}
     public
       property Prepared: boolean read fPrepared;
@@ -202,8 +202,29 @@ begin
 end;
 
 function TDownloader.GetDefaultFileName: string;
+var Ext: string;
+{$IFDEF MAXFILENAMELENGTH}
+var MaxLength, i, n: integer;
+{$ENDIF}
 begin
-  Result := {AnsiToOem}(StrTr(Trim(Name), '\/:*?"<>|', '--;..''--!') + GetFileNameExt);
+  Result := StrTr(Trim(Name), '\/:*?"<>|', '--;..''--!');
+  Ext := GetFileNameExt;
+  {$IFDEF MAXFILENAMELENGTH}
+  MaxLength := MAX_PATH - 5 - Length(Ext);
+  if Options.DestinationPath <> '' then
+    MaxLength := MaxLength - Length(ExpandFileName(Options.DestinationPath));
+  if MaxLength > 0 then
+    begin
+    n := Length(Result);
+    if n > MaxLength then
+      begin
+      i := (n - MaxLength) div 2;
+      System.Delete(Result, i, n - MaxLength);
+      System.Insert('...', Result, i);
+      end;
+    end;
+  {$ENDIF}
+  Result := {AnsiToOem}(Result + Ext);
   if Options.DestinationPath <> '' then
     Result := Options.DestinationPath + Result;
 end;

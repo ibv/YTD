@@ -72,7 +72,6 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<div\s+style="font-weight:bold;padding-left:25px;width:910px;text-align:left;font-size:15px;padding-bottom:3px;float:left;">\s*(?P<TITLE>.*?)\s*</div>';
-  REGEXP_EXTRACT_YOUTUBE_ID = '\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/watch\?v=(?P<ID>[^"]+?))&amp;';
 
 { TDownloader_GameAnyone }
 
@@ -91,15 +90,11 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peANSI;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  NestedIDRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
-  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_GameAnyone.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(NestedIDRegExp);
-  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
@@ -110,19 +105,30 @@ end;
 
 function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
-    Url: string;
+    Tracklist: TXmlNode;
+    ID, Url: string;
+    i: integer;
 begin
   Result := False;
-  if not DownloadXml(Http, 'http://www.gameanyone.com/gameanyone.xml?id=' + MovieID, Xml) then
+  if not DownloadXml(Http, 'http://www.gameanyone.com/pl.php?id=' + MovieID + '&l=1' + MovieID, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     try
-      if GetXmlVar(Xml, 'file', Url) then
-        if CreateNestedDownloaderFromURL(Url) then
-          begin
-          SetPrepared(True);
-          Result := True;
-          end;
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+      if XmlNodeByPath(Xml, 'tracklist', Tracklist) then
+        for i := 0 to Pred(Tracklist.NodeCount) do
+          if Tracklist.Nodes[i].Name = 'track' then
+            if GetXmlVar(Tracklist.Nodes[i], 'jwplayer:mediaid', ID) then
+              if ID = MovieID then
+                begin
+                if GetXmlVar(Tracklist.Nodes[i], 'location', Url) then
+                  if CreateNestedDownloaderFromURL(Url) then
+                    begin
+                    SetPrepared(True);
+                    Result := True;
+                    end;
+                Break;
+                end;
     finally
       Xml.Free;
       end;

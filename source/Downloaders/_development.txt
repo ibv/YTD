@@ -66,6 +66,8 @@ HTTP	HTML	XML	downMetropolTV
 HTTP	HTML	HTML	downMojeVideo
 HTTP	HTML	HTML	downMojeVideoSk
 HTTP	XML	XML	downMpora
+RTMP	XML	XML	downMTV
+RTMP	XML	XML	downMTVEmbed
 HTTP	HTML	Nested	downMustWatch
 HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace

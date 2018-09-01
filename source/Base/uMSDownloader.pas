@@ -40,7 +40,7 @@ unit uMSDownloader;
 interface
 
 uses
-  SysUtils, Classes, 
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uDownloader, uCommonDownloader, uExternalDownloader,
   Msdl_Dll;
 

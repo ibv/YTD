@@ -144,18 +144,14 @@ type
     procedure actAddUrlsFromClipboard2Execute(Sender: TObject);
     procedure actCopyUrlsToClipboard2Execute(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
-    procedure actAutoDownloadExecute(Sender: TObject);
     procedure actSelectAllExecute(Sender: TObject);
-    procedure actDownloadDirectoryExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure actAutoOverwriteExecute(Sender: TObject);
     procedure actAddUrlsFromHTMLExecute(Sender: TObject);
     procedure actAddUrlsFromHTMLfileExecute(Sender: TObject);
     procedure actAddUrlsFromFileExecute(Sender: TObject);
     procedure actSaveUrlListExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure actConvertExecute(Sender: TObject);
-    procedure actSelectConverterExecute(Sender: TObject);
     procedure actReportBugExecute(Sender: TObject);
     procedure actDonateExecute(Sender: TObject);
     procedure actEditConfigFileExecute(Sender: TObject);
@@ -202,7 +198,7 @@ implementation
 {$R *.DFM}
 
 uses
-  guiConsts, guiAboutVCL, guiConverterVCL, guiOptionsVCL;
+  guiConsts, guiAboutVCL, {$IFDEF CONVERTERS} guiConverterVCL, {$ENDIF} guiOptionsVCL;
 
 { TFormYTD }
 
@@ -227,8 +223,6 @@ begin
     {$ELSE}
     actConvert.Visible := False;
     actConvert.Enabled := False;
-    actSelectConverter.Visible := False;
-    actSelectConverter.Enabled := False;
     {$ENDIF}
     DownloadList.Options := Options;
     LoadSettings;
@@ -521,28 +515,6 @@ begin
   {$ENDIF}
 end;
 
-procedure TFormYTD.actSelectConverterExecute(Sender: TObject);
-{$IFDEF CONVERTERS}
-var ConverterID: string;
-{$ENDIF}
-begin
-  {$IFDEF CONVERTERS}
-  {$IFDEF CONVERTERSMUSTBEACTIVATED}
-  if not Options.ConvertersActivated then
-    begin
-    MessageDlg(_(CONVERTERS_INACTIVE_WARNING), mtError, [mbOK], 0);
-    Exit;
-    end;
-  {$ENDIF}
-  ConverterID := Options.SelectedConverterID;
-  if SelectConverter(Options, ConverterID, Self, _(MAINFORM_AUTOCONVERT_WITH)) then
-    begin
-    LastConverterID := ConverterID;
-    Options.SelectedConverterID := ConverterID;
-    end;
-  {$ENDIF}
-end;
-
 procedure TFormYTD.actAddUrlsFromClipboardExecute(Sender: TObject);
 var L: TStringList;
     i, n: integer;
@@ -598,17 +570,6 @@ end;
 procedure TFormYTD.actRefreshExecute(Sender: TObject);
 begin
   Refresh;
-end;
-
-procedure TFormYTD.actDownloadDirectoryExecute(Sender: TObject);
-var Dir: string;
-begin
-  Dir := DownloadList.Options.DestinationPath;
-  if SelectDirectory(Dir, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
-    begin
-    DownloadList.Options.DestinationPath := Dir;
-    SaveSettings;
-    end;
 end;
 
 procedure TFormYTD.Refresh;
@@ -676,14 +637,6 @@ begin
   DownloadList.Items[Index].PlayMedia;
 end;
 
-procedure TFormYTD.actAutoDownloadExecute(Sender: TObject);
-begin
-  DownloadList.Options.AutoStartDownloads := not DownloadList.Options.AutoStartDownloads;
-  SaveSettings;
-  if DownloadList.Options.AutoStartDownloads then
-    DownloadList.StartAll;
-end;
-
 procedure TFormYTD.actSelectAllExecute(Sender: TObject);
 var i: integer;
 begin
@@ -703,15 +656,6 @@ begin
     DownloadList.SaveToOptions;
     Options.Save;
     end;
-end;
-
-procedure TFormYTD.actAutoOverwriteExecute(Sender: TObject);
-begin
-  if DownloadList.Options.OverwriteMode = omAlways then
-    DownloadList.Options.OverwriteMode := omAsk
-  else
-    DownloadList.Options.OverwriteMode := omAlways;
-  SaveSettings;
 end;
 
 procedure TFormYTD.actAddUrlsFromFileExecute(Sender: TObject);
@@ -808,7 +752,7 @@ begin
     if F.ShowModal = mrOK then
       begin
       SaveSettings;
-      if DownloadList.Options.AutoStartDownloads then
+      if Options.AutoStartDownloads then
         DownloadList.StartAll;
       end;
   finally

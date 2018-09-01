@@ -71,7 +71,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
+  REGEXP_MOVIE_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
   REGEXP_MOVIE_INFOURL = '\bvideoPath\s*:\s*"\.\./(?P<PATH>.+?)"';
 
 { TDownloader_SpankWire }
@@ -114,7 +114,7 @@ begin
   Result := False;
   if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'PATH', Path) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://static.spankwire.com/Controls/UserControls/Players/v3/' + UrlDecode(Path), Xml) then
+  else if not DownloadXml(Http, 'http://www.spankwire.com/dummy/' + UrlDecode(Path), Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     try

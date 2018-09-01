@@ -1143,7 +1143,7 @@ msgstr "Zkonvertovat film do AVI/XVID"
 #: GUI/guiOptions.pas:147
 #: GUI/guiOptions.pas:149
 msgid "Convert movie to AVI/H264"
-msgstr "Zkonvertovat film do AVIPH264"
+msgstr "Zkonvertovat film do AVI/H264"
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.

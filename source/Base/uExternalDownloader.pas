@@ -54,7 +54,6 @@ type
     protected
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
-      procedure SetPrepared(Value: boolean); override;
       function GetTempDir: string; virtual;
       property DownloadedBytes: int64 read fDownloadedBytes write fDownloadedBytes;
       property TotalBytes: int64 read fTotalBytes write fTotalBytes;
@@ -62,6 +61,7 @@ type
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      function Prepare: boolean; override;
       procedure AbortTransfer; override;
     end;
 
@@ -96,13 +96,6 @@ begin
   Result := TotalBytes;
 end;
 
-procedure TExternalDownloader.SetPrepared(Value: boolean);
-begin
-  inherited;
-  DownloadedBytes := 0;
-  TotalBytes := -1;
-end;
-
 function TExternalDownloader.GetTempDir: string;
 const MAX_TEMP_PATH = MAX_PATH + 16;
 begin
@@ -110,6 +103,13 @@ begin
   SetLength(Result, GetTempPath(MAX_TEMP_PATH, @(Result[1])));
   if Result <> '' then
     Result := IncludeTrailingPathDelimiter(Result);
+end;
+
+function TExternalDownloader.Prepare: boolean;
+begin
+  DownloadedBytes := 0;
+  TotalBytes := -1;
+  Result := inherited Prepare;
 end;
 
 end.

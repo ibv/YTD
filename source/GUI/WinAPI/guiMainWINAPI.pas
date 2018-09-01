@@ -36,9 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit guiMainWINAPI;
 {$INCLUDE 'ytd.inc'}
-
-
-                              {$DEFINE TODO}
+{$DEFINE PREPARETRANSLATIONS}
 
 interface
 
@@ -47,7 +45,7 @@ uses
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
   SynaCode,
   uLanguages, uMessages, uOptions, uStringUtils, uCompatibility,
-  guiOptions, guiConsts, guiFunctions, uDialogs,
+  guiOptions, guiFunctions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
 {$IFDEF SYSTRAY}
@@ -67,20 +65,26 @@ type
       function CanClose: boolean; override;
     private
       // Moje rucne vytvarene objekty
-      Icon_Main: THandle;
       Bitmap_DownloadStates: THandle;
       ImageList_DownloadStates: THandle;
+      Bitmap_MainToolbar: THandle;
+      ImageList_MainToolbar: THandle;
+      MainToolbar: THandle;
       procedure CreateObjects;
       procedure DestroyObjects;
     private
       // Moje soukroma data
       fLoading: boolean;
+      fBugReportDisabled: boolean;
     protected
       // Moje properties a pomocne funkce
       Options: TYTDOptions;
       DownloadList: TDownloadList;
       DownloadListHandle: THandle;
       NextProgressUpdate: DWORD;
+      {$IFDEF CONVERTERS}
+      LastConverterID: string;
+      {$ENDIF}
       function NotifyIconClick(Buttons: DWORD): boolean;
       function ActionAddNewUrl: boolean;
       function ActionDeleteUrl: boolean;
@@ -109,6 +113,9 @@ type
       procedure AddTaskFromHTML(const Source: string); virtual;
       procedure DeleteTask(Index: integer); virtual;
       procedure StartPauseResumeTask(Index: integer); virtual;
+      {$IFDEF CONVERTERS}
+      procedure ConvertTask(Index: integer; const ConverterID: string); virtual;
+      {$ENDIF}
       procedure RefreshItem(Index: integer); virtual;
       procedure RefreshAllItems; virtual;
       procedure DownloadListChange(Sender: TObject); virtual;
@@ -131,7 +138,7 @@ implementation
 {$RESOURCE guiMainWINAPI.res}
 
 uses
-  guiAboutWINAPI;
+  guiConsts, guiAboutWINAPI, {$IFDEF CONVERTERS} guiConverterWINAPI, {$ENDIF} guiOptionsWINAPI;
 
 // from resource.h
 const
@@ -159,25 +166,6 @@ const
   ACTION_EDITCONFIG = 40022;
   ACTION_OPTIONS = 40023;
 
-  IDM_ADD_NEW_URL1 = 50000;
-  IDM_ADD_URLS_FROM_CLIPBOARD1 = 50001;
-  IDM_ADD_URLS_FROM_FILE1 = 50002;
-  IDM_ADD_URLS_FROM_HTML_FILE1 = 50003;
-  IDM_ADD_URLS_FROM_HTML_PAGE1 = 50004;
-  IDM_SAVE_URL_LIST_TO_FILE1 = 50005;
-  IDM_START_PAUSE_RESUME1 = 50007;
-  IDM_STOP1 = 50008;
-  IDM_CONVERT1 = 50009;
-  IDM_DELETE_URL1 = 50010;
-  IDM_COPY_URLS_TO_CLIPBOARD1 = 50011;
-  IDM_SELECT_ALL1 = 50012;
-  IDM_REFRESH_1 = 50015;
-  IDM_OPTIONS1 = 50016;
-  IDM_EDIT_CONFIG_FILE1 = 50017;
-  IDM_REPORT_A_BUG1 = 50018;
-  IDM_DONATE1 = 50019;
-  IDM_ABOUT1 = 50020;
-
 //
 const
   LISTVIEW_SUBITEM_URL = 0;
@@ -186,6 +174,24 @@ const
   LISTVIEW_SUBITEM_TITLE = 3;
   LISTVIEW_SUBITEM_SIZE = 4;
   LISTVIEW_SUBITEM_PROGRESS = 5;
+
+{$IFDEF PREPARETRANSLATIONS}
+var
+  TranslatedThreadStates: array[TDownloadThreadState] of string;
+  TranslatedConvertThreadStates: array[TConvertThreadState] of string;
+  TranslatedThreadStatePaused: string;
+
+procedure PrepareTranslations;
+var i: TDownloadThreadState;
+    j: TConvertThreadState;
+begin
+  for i := Low(TDownloadThreadState) to High(TDownloadThreadState) do
+    TranslatedThreadStates[i] := _(ThreadStates[i]);
+  for j := Low(TConvertThreadState) to High(TConvertThreadState) do
+    TranslatedConvertThreadStates[j] := _(ConvertThreadStates[j]);
+  TranslatedThreadStatePaused := _(THREADSTATE_PAUSED);
+end;
+{$ENDIF}
 
 { TFormMain }
 
@@ -229,11 +235,71 @@ begin
 end;
 
 procedure TFormMain.CreateObjects;
+const ToolbarButtonHints: array[0..16] of string
+  // Translation is not needed, because these strings are copied from the VCL version's resources
+        = (
+            'Add new URL',
+            'Add URLs from file',
+            'Add URLs from HTML file',
+            'Add URLs from HTML page',
+            'Add URLs from Clipboard',
+            'Copy URLs to Clipboard',
+            'Save URL list',
+            'Start/Pause/Resume',
+            'Stop',
+            'Convert',
+            'Delete URL',
+            'Options',
+            'Edit config file',
+            'Refresh',
+            'Report a bug',
+            'Donate',
+            'About'
+          );
+const ToolbarButtons: array[0..22] of TTBButton
+        = (
+            (iBitmap:  0; idCommand: ACTION_ADDNEWURL;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  0),
+            (iBitmap:  1; idCommand: ACTION_ADDFROMFILE;          fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  1),
+            (iBitmap:  2; idCommand: ACTION_ADDFROMHTML;          fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  2),
+            (iBitmap:  3; idCommand: ACTION_ADDFROMWEBPAGE;       fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  3),
+            (iBitmap:  4; idCommand: ACTION_ADDFROMCLIPBOARD1;    fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  4),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
+            (iBitmap:  5; idCommand: ACTION_COPYTOCLIPBOARD1;     fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  5),
+            (iBitmap:  6; idCommand: ACTION_SAVETOFILE;           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  6),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
+            (iBitmap:  7; idCommand: ACTION_START;                fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  7),
+            (iBitmap:  8; idCommand: ACTION_STOP;                 fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  8),
+            (iBitmap:  9; idCommand: ACTION_CONVERT;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  9),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
+            (iBitmap: 10; idCommand: ACTION_DELETEURL;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 10),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
+            (iBitmap: 11; idCommand: ACTION_OPTIONS;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 11),
+            (iBitmap: 12; idCommand: ACTION_EDITCONFIG;           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 12),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
+            (iBitmap: 13; idCommand: ACTION_REFRESH;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 13),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
+            (iBitmap: 14; idCommand: ACTION_BUGREPORT;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 14),
+            (iBitmap: 15; idCommand: ACTION_DONATE;               fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 15),
+            (iBitmap: 16; idCommand: ACTION_ABOUT;                fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 16)
+          );
+var i: integer;
+    Hints: string;
 begin
-  Icon_Main := LoadIcon(hInstance, 'MAINICON');
   Bitmap_DownloadStates := LoadBitmap(hInstance, 'IMAGELIST_DOWNLOADSTATES');
   ImageList_DownloadStates := ImageList_Create(16, 16, ILC_COLOR8, 8, 8);
   ImageList_AddMasked(ImageList_DownloadStates, Bitmap_DownloadStates, clPurple);
+  Bitmap_MainToolbar := LoadBitmap(hInstance, 'MAIN_TOOLBAR');
+  ImageList_MainToolbar := ImageList_Create(16, 16, ILC_COLOR8, 8, 8);
+  ImageList_AddMasked(ImageList_MainToolbar, Bitmap_MainToolbar, clPurple);
+  MainToolbar := CreateWindowEx(0, TOOLBARCLASSNAME, nil, WS_CHILD or TBSTYLE_WRAPABLE or TBSTYLE_TOOLTIPS, 0, 0, 0, 0, Self.Handle, 0, hInstance, nil);
+  SendMessage(MainToolbar, TB_SETIMAGELIST, 0, ImageList_MainToolbar);
+  SendMessage(MainToolbar, TB_SETMAXTEXTROWS, 0, 0); // Needed to that the texts appear as hints rather than captions
+  Hints := '';
+  for i := 0 to Pred(Length(ToolbarButtonHints)) do
+    Hints := Hints + _(ToolbarButtonHints[i]) + #0;
+  SendMessage(MainToolbar, TB_ADDSTRING, 0, LPARAM(PChar(Hints)));
+  SendMessage(MainToolbar, TB_BUTTONSTRUCTSIZE, Sizeof(ToolbarButtons[0]), 0);
+  SendMessage(MainToolbar, TB_ADDBUTTONS, Length(ToolbarButtons), LPARAM(@ToolbarButtons[0]));
   PopupMenu := LoadMenu(hInstance, 'MAIN_POPUPMENU');
 end;
 
@@ -241,8 +307,10 @@ procedure TFormMain.DestroyObjects;
 begin
   DestroyMenu(PopupMenu); PopupMenu := 0;
   ImageList_Destroy(ImageList_DownloadStates); ImageList_DownloadStates := 0;
-  FreeGDIObject(Bitmap_DownloadStates); Bitmap_DownloadStates := 0;
-  FreeGDIObject(Icon_Main); Icon_Main := 0;
+  FreeGDIObject(Bitmap_DownloadStates);
+  DestroyWindow(MainToolbar); MainToolbar := 0;
+  ImageList_Destroy(ImageList_MainToolbar); ImageList_MainToolbar := 0;
+  FreeGDIObject(Bitmap_MainToolbar);
 end;
 
 function TFormMain.DialogProc(var Msg: TMessage): boolean;
@@ -260,12 +328,13 @@ begin
   Result := inherited DoInitDialog;
   CreateObjects;
   Self.Translate;
-  // Ikona
-  SendMessage(Self.Handle, WM_SETICON, 0, Icon_Main);
   // Caption
   SetWindowText(Self.Handle, APPLICATION_CAPTION);
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'MAIN_ACTIONS');
+  // Toolbar
+  SendMessage(MainToolbar, TB_AUTOSIZE, 0, 0);
+  ShowWindow(MainToolbar, 1);
   // Download list
   DownloadListHandle := GetDlgItem(Self.Handle, IDC_LIST_DOWNLOADS);
   SendMessage(DownloadListHandle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(DownloadListHandle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_FULLROWSELECT or LVS_EX_GRIDLINES or LVS_EX_DOUBLEBUFFER or LVS_EX_LABELTIP);
@@ -284,7 +353,7 @@ begin
     fNotifyIconData.uID := Integer(Self);
     fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
     fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
-    fNotifyIconData.hIcon := Icon_Main;
+    fNotifyIconData.hIcon := Icon;
     StrPCopy(fNotifyIconData.szTip, Copy(APPLICATION_CAPTION, 1, Pred(Length(fNotifyIconData.szTip))));
     Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
   {$ENDIF}
@@ -314,52 +383,14 @@ begin
   if DownloadList.DownloadingCount <= 0 then
     Result := True
   else
-    Result := (MessageBox(Self.Handle, PChar(_(MAINFORM_CAN_CLOSE)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_APPLMODAL) = idYes);
+    Result := (MessageBox(0, PChar(_(MAINFORM_CAN_CLOSE)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes);
 end;
 
 function TFormMain.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
 begin
   Result := False;
   case NotificationCode of
-    0: // Menu
-      case Identifier of
-        IDM_ADD_NEW_URL1:
-          Result := ActionAddNewUrl;
-        IDM_ADD_URLS_FROM_CLIPBOARD1:
-          Result := ActionAddFromClipboard;
-        IDM_ADD_URLS_FROM_FILE1:
-          Result := ActionAddFromFile;
-        IDM_ADD_URLS_FROM_HTML_FILE1:
-          Result := ActionAddFromHtml;
-        IDM_ADD_URLS_FROM_HTML_PAGE1:
-          Result := ActionAddFromWebPage;
-        IDM_SAVE_URL_LIST_TO_FILE1:
-          Result := ActionSaveToFile;
-        IDM_START_PAUSE_RESUME1:
-          Result := ActionStart;
-        IDM_STOP1:
-          Result := ActionStop;
-        IDM_CONVERT1:
-          Result := ActionConvert;
-        IDM_DELETE_URL1:
-          Result := ActionDeleteUrl;
-        IDM_COPY_URLS_TO_CLIPBOARD1:
-          Result := ActionCopyToClipboard;
-        IDM_SELECT_ALL1:
-          Result := ActionSelectAll;
-        IDM_REFRESH_1:
-          Result := ActionRefresh;
-        IDM_OPTIONS1:
-          Result := ActionOptions;
-        IDM_EDIT_CONFIG_FILE1:
-          Result := ActionEditConfig;
-        IDM_REPORT_A_BUG1:
-          Result := ActionBugreport;
-        IDM_DONATE1:
-          Result := ActionDonate;
-        IDM_ABOUT1:
-          Result := ActionAbout;
-      end;
+    0, // Menu
     1: // Accelerators
       case Identifier of
         ACTION_ADDNEWURL:
@@ -393,7 +424,7 @@ begin
         ACTION_CONVERT:
           Result := ActionConvert;
         ACTION_BUGREPORT:
-          Result := ActionBugreport;
+          Result := (not fBugReportDisabled) and ActionBugreport;
         ACTION_DONATE:
           Result := ActionDonate;
         ACTION_EDITCONFIG:
@@ -401,6 +432,104 @@ begin
         ACTION_OPTIONS:
           Result := ActionOptions;
         end;
+    end;
+end;
+
+function TFormMain.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean;
+begin
+  if (ControlID = IDC_LIST_DOWNLOADS) and (Code = LVN_GETDISPINFO) then
+    Result := DownloadListGetDisplayInfo(PLVDispInfo(LParam))
+  else
+    Result := inherited DoNotify(Control, ControlID, Code, WParam, LParam, NotifyResult);
+end;
+
+var StaticDisplayInfoText: string;
+
+function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
+
+  function ShowStatic(const Text: string): boolean;
+    begin
+      StaticDisplayInfoText := Text;
+      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
+      DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
+      Result := True;
+    end;
+
+  function GetStateImageIndex(Item: TDownloadListItem): integer;
+    begin
+      Result := ThreadStateImgs[Item.State];
+      case Item.State of
+        dtsPreparing:
+          if Item.Paused then
+            Result := 4;
+        dtsDownloading:
+          if Item.Paused then
+            Result := 4;
+        {$IFDEF CONVERTERS}
+        dtsFinished:
+            if (Item.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
+              Result := ConvertThreadStateImgs[Item.ConvertState];
+        {$ENDIF}
+        end;
+    end;
+
+  function GetStateText(Item: TDownloadListItem): string;
+    begin
+      Result := {$IFDEF PREPARETRANSLATIONS} TranslatedThreadStates[Item.State] {$ELSE} _(ThreadStates[Item.State]) {$ENDIF} ;
+      case Item.State of
+        dtsPreparing,
+        dtsDownloading:
+          if Item.Paused then
+            Result := {$IFDEF PREPARETRANSLATIONS} TranslatedThreadStatePaused {$ELSE} _(THREADSTATE_PAUSED) {$ENDIF} ; // Download thread state: Paused
+        {$IFDEF CONVERTERS}
+        dtsFinished:
+            if (Item.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
+              Result := {$IFDEF PREPARETRANSLATIONS} TranslatedConvertThreadStates[Item.ConvertState] {$ELSE} _(ConvertThreadStates[Item.ConvertState]) {$ENDIF} ;
+        {$ENDIF}
+        end;
+    end;
+
+  function GetProgress(Item: TDownloadListItem): string;
+    begin
+      Result := '';
+      case Item.State of
+        dtsDownloading:
+          Result := GetProgressStr(Item.DownloadedSize, Item.TotalSize);
+        dtsFailed:
+          Result := Item.ErrorMessage + ' (' + Item.ErrorClass + ')';
+        dtsAborted:
+          Result := GetProgressStr(Item.DownloadedSize, Item.TotalSize);
+        end;
+    end;
+
+var DlItem: TDownloadListItem;
+begin
+  Result := False;
+  DlItem := DownloadList[DispInfo^.item.iItem];
+  case DispInfo^.item.iSubItem of
+    LISTVIEW_SUBITEM_URL:
+      begin
+      Result := ShowStatic(DownloadList.Urls[DispInfo^.item.iItem]);
+      DispInfo^.item.iImage := GetStateImageIndex(DlItem);
+      if DispInfo^.item.iImage >= 0 then
+        DispInfo^.item.mask := DispInfo^.item.mask or LVIF_IMAGE;
+      end;
+    LISTVIEW_SUBITEM_PROVIDER:
+      Result := ShowStatic(DlItem.Downloader.Provider);
+    LISTVIEW_SUBITEM_STATUS:
+      Result := ShowStatic(GetStateText(DlItem));
+    LISTVIEW_SUBITEM_TITLE:
+      if DlItem.Downloader.Prepared then
+        Result := ShowStatic(DlItem.Downloader.Name)
+      else
+        Result := ShowStatic('');
+    LISTVIEW_SUBITEM_SIZE:
+      if DlItem.Downloader.Prepared and (DlItem.TotalSize >= 0) then
+        Result := ShowStatic(PrettySize(DlItem.TotalSize))
+      else
+        Result := ShowStatic('');
+    LISTVIEW_SUBITEM_PROGRESS:
+      Result := ShowStatic(GetProgress(DlItem));
     end;
 end;
 
@@ -508,13 +637,43 @@ begin
   Result := True;
   Index := ListViewGetSelectedItem(DownloadListHandle);
   if Index >= 0 then
-    if MessageBox(Self.Handle, PChar(_(MAINFORM_REPORT_BUG)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_APPLMODAL) = idYes then
+    if MessageBox(0, PChar(_(MAINFORM_REPORT_BUG)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
       ReportBug(DownloadList, Index);
 end;
 
 function TFormMain.ActionConvert: boolean;
+{$IFDEF CONVERTERS}
+var L: TList;
+    i: integer;
+    ConverterID: string;
+{$ENDIF}
 begin
-  {$IFNDEF TODO}
+  {$IFDEF CONVERTERS}
+  Result := True;
+  {$IFDEF CONVERTERSMUSTBEACTIVATED}
+  if not Options.ConvertersActivated then
+    begin
+    ErrorMessageBox(_(CONVERTERS_INACTIVE_WARNING), APPLICATION_TITLE);
+    Exit;
+    end;
+  {$ENDIF}
+  if ListViewGetSelectedItems(DownloadListHandle, L) then
+    try
+      if LastConverterID = '' then
+        ConverterID := Options.SelectedConverterID
+      else
+        ConverterID := LastConverterID;
+      if SelectConverter(Options, ConverterID, Self, _(MAINFORM_CONVERT_WITH)) then
+        begin
+        LastConverterID := ConverterID;
+        for i := 0 to Pred(L.Count) do
+          ConvertTask(Integer(L[i]), ConverterID);
+        end;
+    finally
+      L.Free;
+      end;
+  {$ELSE}
+  Result := False;
   {$ENDIF}
 end;
 
@@ -546,7 +705,7 @@ begin
   Result := True;
   if ListViewGetSelectedItems(DownloadListHandle, L) then
     try
-      if MessageBox(Self.Handle, PChar(_(MAINFORM_DELETE_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_APPLMODAL) = idYes then
+      if MessageBox(0, PChar(_(MAINFORM_DELETE_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
         for i := Pred(L.Count) downto 0 do
           DeleteTask(Integer(L[i]));
     finally
@@ -564,14 +723,26 @@ function TFormMain.ActionEditConfig: boolean;
 begin
   Result := True;
   Options.Save;
-  MessageBox(Self.Handle, PChar(_(MAINFORM_EDIT_CONFIG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_APPLMODAL);
+  MessageBox(0, PChar(_(MAINFORM_EDIT_CONFIG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_TASKMODAL);
   ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL);
 end;
 
 function TFormMain.ActionOptions: boolean;
+var F: TFormOptions;
 begin
-  {$IFNDEF TODO}
-  {$ENDIF}
+  Result := True;
+  F := TFormOptions.Create(Self);
+  try
+    F.Options := Options;
+    if F.ShowModal = idOK then
+      begin
+      SaveSettings;
+      if Options.AutoStartDownloads then
+        DownloadList.StartAll;
+      end;
+  finally
+    F.Free;
+    end;
 end;
 
 function TFormMain.ActionRefresh: boolean;
@@ -631,7 +802,7 @@ begin
   Result := True;
   if ListViewGetSelectedItems(DownloadListHandle, L) then
     try
-      if MessageBox(Self.Handle, PChar(_(MAINFORM_STOP_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_APPLMODAL) = idYes then
+      if MessageBox(0, PChar(_(MAINFORM_STOP_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
         for i := 0 to Pred(L.Count) do
           StartPauseResumeTask(Integer(L[i]));
     finally
@@ -644,10 +815,10 @@ procedure TFormMain.NewVersionEvent(Sender: TObject; const Version, Url: string)
 begin
   if Version > {$INCLUDE 'YTD.version'} then
     begin
-{$IFNDEF TODO}
-    actReportBug.Enabled := False;
-{$ENDIF}
-    if MessageBox(Self.Handle, PChar(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version])), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONQUESTION or MB_APPLMODAL) = idYes then
+    fBugReportDisabled := True;
+    EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
+    ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, False);
+    if MessageBox(0, PChar(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version])), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
       ShellExecute(Handle, 'open', PChar(Url), nil, nil, SW_SHOWNORMAL);
     end;
 end;
@@ -714,6 +885,13 @@ begin
     Item.Start;
 end;
 
+{$IFDEF CONVERTERS}
+procedure TFormMain.ConvertTask(Index: integer; const ConverterID: string);
+begin
+  DownloadList.Items[Index].Convert(True, ConverterID);
+end;
+{$ENDIF}
+
 procedure TFormMain.DownloadListChange(Sender: TObject);
 begin
   RefreshAllItems;
@@ -746,106 +924,6 @@ begin
     end;
 end;
 
-function TFormMain.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean;
-begin
-  if (ControlID = IDC_LIST_DOWNLOADS) and (Code = LVN_GETDISPINFO) then
-    Result := DownloadListGetDisplayInfo(PLVDispInfo(LParam))
-  else
-    Result := inherited DoNotify(Control, ControlID, Code, WParam, LParam, NotifyResult);
-end;
-
-var StaticDisplayInfoText: string;
-
-function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
-
-  function ShowStatic(const Text: string): boolean;
-    begin
-      StaticDisplayInfoText := Text;
-      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
-      DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
-      Result := True;
-    end;
-
-  function GetStateImageIndex(Item: TDownloadListItem): integer;
-    begin
-      Result := ThreadStateImgs[Item.State];
-      case Item.State of
-        dtsPreparing:
-          if Item.Paused then
-            Result := 4;
-        dtsDownloading:
-          if Item.Paused then
-            Result := 4;
-        {$IFDEF CONVERTERS}
-        dtsFinished:
-            if (Item.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
-              Result := ConvertThreadStateImgs[Item.ConvertState];
-        {$ENDIF}
-        end;
-    end;
-
-  function GetStateText(Item: TDownloadListItem): string;
-    begin
-      Result := _(ThreadStates[Item.State]);
-      case Item.State of
-        dtsPreparing:
-          if Item.Paused then
-            Result := _(THREADSTATE_PAUSED); // Download thread state: Paused
-        dtsDownloading:
-          if Item.Paused then
-            Result := _(THREADSTATE_PAUSED); // Download thread state: Paused
-        {$IFDEF CONVERTERS}
-        dtsFinished:
-            if (Item.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
-              Result := _(ConvertThreadStates[Item.ConvertState]);
-        {$ENDIF}
-        end;
-    end;
-
-  function GetProgress(Item: TDownloadListItem): string;
-    begin
-      Result := '';
-      case Item.State of
-        dtsDownloading:
-          Result := GetProgressStr(Item.DownloadedSize, Item.TotalSize);
-        dtsFailed:
-          Result := Item.ErrorMessage + ' (' + Item.ErrorClass + ')';
-        dtsAborted:
-          Result := GetProgressStr(Item.DownloadedSize, Item.TotalSize);
-        end;
-    end;
-
-var DlItem: TDownloadListItem;
-begin
-  Result := False;
-  DlItem := DownloadList[DispInfo^.item.iItem];
-  case DispInfo^.item.iSubItem of
-    LISTVIEW_SUBITEM_URL:
-      begin
-      Result := ShowStatic(DownloadList.Urls[DispInfo^.item.iItem]);
-      DispInfo^.item.iImage := GetStateImageIndex(DlItem);
-      if DispInfo^.item.iImage >= 0 then
-        DispInfo^.item.mask := DispInfo^.item.mask or LVIF_IMAGE;
-      end;
-    LISTVIEW_SUBITEM_PROVIDER:
-      Result := ShowStatic(DlItem.Downloader.Provider);
-    LISTVIEW_SUBITEM_STATUS:
-      Result := ShowStatic(GetStateText(DlItem));
-    LISTVIEW_SUBITEM_TITLE:
-      if DlItem.Downloader.Prepared then
-        Result := ShowStatic(DlItem.Downloader.Name)
-      else
-        Result := ShowStatic('');
-    LISTVIEW_SUBITEM_SIZE:
-      if DlItem.Downloader.Prepared and (DlItem.TotalSize >= 0) then
-        Result := ShowStatic(PrettySize(DlItem.TotalSize))
-      else
-        Result := ShowStatic('');
-    LISTVIEW_SUBITEM_PROGRESS:
-      Result := ShowStatic(GetProgress(DlItem));
-    end;
-end;
-
 procedure TFormMain.RefreshItem(Index: integer);
 begin
   if Self.Handle <> 0 then
@@ -867,5 +945,8 @@ end;
 initialization
   InitCommonControls;
   uApiForm.ApiFormTranslateFunction := @uLanguages._;
+  {$IFDEF PREPARETRANSLATIONS}
+  PrepareTranslations;
+  {$ENDIF}
 
 end.

@@ -40,7 +40,7 @@ unit downBarrandovTV;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 

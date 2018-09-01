@@ -1,6 +1,34 @@
 CHANGELOG
 ---------
 
+  v0.64
+
+    * New provider: MTV.com.
+
+    * GameAnyone.com: Works again with the updated website.
+
+    * KeezMovies.com: Works again with the updated website.
+
+    * Nova.cz: I gave up and allowed URLs with two slashes after nova.cz.
+
+    * SpankWire.com: Works again with the updated website.
+
+    * Slovak language files updated.
+
+    * Fixed a bug with adding a new URL using INS: The URL from clipboard was
+      always used, regardless of changes the user may have made in the input
+      dialog.
+
+    * Fixed a bug in the default configuration file (which gets created if
+      file ytd.xml doesn't exist): conversion to AVI/H264 was defined but not
+      user-accessible.
+
+    * Added a check for long filenames. If a filename (including destination
+      path) is too long, it will be trimmed to about 250 characters, a size
+      commonly supported by Windows in default configuration.
+
+
+
   v0.63
 
     * New provider: Beeg.com (porn).

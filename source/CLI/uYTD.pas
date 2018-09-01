@@ -40,7 +40,7 @@ unit uYTD;
 interface
 
 uses
-  SysUtils, Classes, {$IFNDEF FPC} FileCtrl, {$ENDIF}
+  SysUtils, Classes, {$IFNDEF FPC} FileCtrl, {$ENDIF} {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   PCRE,
   uConsoleApp, uOptions, uLanguages, uMessages,
   uDownloader, uCommonDownloader,
@@ -247,7 +247,7 @@ begin
             begin
             Options.ErrorLog := Param;
             if FileExists(Param) then
-              DeleteFile(Param);
+              SysUtils.DeleteFile(Param);
             end
           else
             begin
@@ -601,7 +601,7 @@ begin
         end;
       end;
   if Valid and FileExists(FileName) then
-    DeleteFile(FileName);
+    SysUtils.DeleteFile(FileName);
 end;
 
 end.

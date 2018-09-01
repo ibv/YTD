@@ -28,22 +28,3 @@
 #define ACTION_DONATE                           40021
 #define ACTION_EDITCONFIG                       40022
 #define ACTION_OPTIONS                          40023
-
-#define IDM_ADD_NEW_URL1                        50000
-#define IDM_ADD_URLS_FROM_CLIPBOARD1            50001
-#define IDM_ADD_URLS_FROM_FILE1                 50002
-#define IDM_ADD_URLS_FROM_HTML_FILE1            50003
-#define IDM_ADD_URLS_FROM_HTML_PAGE1            50004
-#define IDM_SAVE_URL_LIST_TO_FILE1              50005
-#define IDM_START_PAUSE_RESUME1                 50007
-#define IDM_STOP1                               50008
-#define IDM_CONVERT1                            50009
-#define IDM_DELETE_URL1                         50010
-#define IDM_COPY_URLS_TO_CLIPBOARD1             50011
-#define IDM_SELECT_ALL1                         50012
-#define IDM_REFRESH_1                           50015
-#define IDM_OPTIONS1                            50016
-#define IDM_EDIT_CONFIG_FILE1                   50017
-#define IDM_REPORT_A_BUG1                       50018
-#define IDM_DONATE1                             50019
-#define IDM_ABOUT1                              50020

@@ -40,7 +40,7 @@ unit uHttpDownloader;
 interface
 
 uses
-  SysUtils, Classes, 
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend, blcksock,
   uDownloader, uCommonDownloader;
 
@@ -60,10 +60,9 @@ type
     protected
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
-      procedure SetPrepared(Value: boolean); override;
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); virtual;
-      function BeforeDownload(Http: THttpSend): boolean; virtual;
+      procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function BeforeDownload(Http: THttpSend): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property VideoDownloader: THttpSend read fVideoDownloader write fVideoDownloader;
       property BytesTransferred: int64 read fBytesTransferred write fBytesTransferred;
       property Cookies: TStringList read fCookies;
@@ -146,6 +145,7 @@ begin
   DownloadIndex := 0;
   {$ENDIF}
   Referer := '';
+  BytesTransferred := 0;
   Result := inherited Prepare;
 end;
 
@@ -276,12 +276,6 @@ begin
     Result := VideoDownloader.DownloadSize
   else
     Result := -1;
-end;
-
-procedure THttpDownloader.SetPrepared(Value: boolean);
-begin
-  inherited;
-  BytesTransferred := 0;
 end;
 
 procedure THttpDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string);

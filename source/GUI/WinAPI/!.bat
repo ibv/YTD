@@ -1,6 +1,8 @@
 @echo off
 call :build guiAboutWINAPI.rc
 call :build guiMainWINAPI.rc
+call :build guiOptionsWINAPI.rc
+call :build guiConverterWINAPI.rc
 goto konec
 
 :build

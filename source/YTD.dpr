@@ -47,6 +47,9 @@ program YTD;
 {%File 'YTD.inc'}
 
 uses
+  {$IFDEF FASTMM}
+  FastMM4,
+  {$ENDIF}
   uLanguages in 'Common\uLanguages.pas',
   SysUtils,
   Windows,
@@ -83,6 +86,10 @@ uses
     {$IFDEF GUI_WINAPI}
       guiMainWINAPI in 'GUI\WinAPI\guiMainWINAPI.pas',
       guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas',
+      guiOptionsWINAPI in 'GUI\WinAPI\guiOptionsWINAPI.pas',
+      {$IFDEF CONVERTERS}
+      guiConverterWINAPI in 'GUI\WinAPI\guiConverterWINAPI.pas',
+      {$ENDIF}
     {$ELSE}
       guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
       guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
@@ -170,6 +177,8 @@ uses
   downMojeVideo in 'Downloaders\downMojeVideo.pas',
   downMojeVideoSk in 'Downloaders\downMojeVideoSk.pas',
   downMpora in 'Downloaders\downMpora.pas',
+  downMTV in 'Downloaders\downMTV.pas',
+  downMTVEmbed in 'Downloaders\downMTVEmbed.pas',
   downMustWatch in 'Downloaders\downMustWatch.pas',
   downMuzu in 'Downloaders\downMuzu.pas',
   downMySpace in 'Downloaders\downMySpace.pas',
@@ -342,7 +351,7 @@ begin
           Writeln(ErrorMsg)
         else
         {$ENDIF}
-          MessageBox(0, PChar(ErrorMsg), APPLICATION_TITLE, MB_OK or MB_ICONERROR or MB_APPLMODAL);
+          MessageBox(0, PChar(ErrorMsg), APPLICATION_TITLE, MB_OK or MB_ICONERROR or MB_TASKMODAL);
       {$ENDIF}
       ExitCode := 255;
       end;

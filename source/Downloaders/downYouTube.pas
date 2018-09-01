@@ -50,7 +50,7 @@ unit downYouTube;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
   uOptions,
   uDownloader, uCommonDownloader, uHttpDownloader;
@@ -262,9 +262,9 @@ begin
         begin
         Url := 'http://video.google.com/timedtext?type=track';
         if BestLanguageName <> '' then
-          Url := Url + '&name=' + EncodeUrl(AnsiString(StringToUtf8(BestLanguageName)));
+          Url := Url + '&name=' + string(EncodeUrl(AnsiString(StringToUtf8(BestLanguageName))));
         if BestLanguage <> '' then
-          Url := Url + '&lang=' + EncodeUrl(AnsiString(StringToUtf8(BestLanguage)));
+          Url := Url + '&lang=' + string(EncodeUrl(AnsiString(StringToUtf8(BestLanguage))));
         Url := Url + '&v=' + MovieID;
         if DownloadBinary(Http, Url, s) then
           if s <> '' then
@@ -298,7 +298,7 @@ begin
                             end;
                   if Srt <> '' then
                     begin
-                    fSubtitles := StringToUtf8(Srt, True);
+                    fSubtitles := AnsiString(StringToUtf8(Srt, True));
                     fSubtitlesExt := '.srt';
                     end;
                 finally
