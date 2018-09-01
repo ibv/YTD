@@ -7,7 +7,7 @@
 {$DEFINE MULTIDOWNLOADS} // Allow multiple downloads per URL (needed for some downloaders)
 {$DEFINE SYSTRAY}        // Minimize to systray
 {$DEFINE INIFILE}        // Use INI file to store default settings
-{$DEFINE DEBUG}          // Include debug code
+{.DEFINE DEBUG}          // Include debug code
 
 
 
@@ -17,7 +17,11 @@
 {$UNDEF XXX}
 
 {$IFNDEF NO_GUI}
-  {$DEFINE GUI}
+  {$IFNDEF FPC}
+    {$DEFINE GUI}
+  {$ELSE}
+    {$MESSAGE WARN 'GUI cannot be built with FPC (yet).'}
+  {$ENDIF}
 {$ENDIF}
 
 {$IFNDEF NO_CLI}
@@ -32,4 +36,8 @@
 
 {$IFNDEF NO_XXX}
   {$DEFINE XXX}
+{$ENDIF}
+
+{$IFDEF FPC}
+  {$UNDEF SYSTRAY}
 {$ENDIF}

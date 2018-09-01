@@ -32,7 +32,7 @@ type
     procedure WMFirstShow(var Msg: TMessage); message WM_FIRSTSHOW;
   protected
     procedure DoShow; override;
-    procedure DoFirstShow; virtual;
+    procedure DoFirstShow; {$IFDEF FPC} override; {$ELSE} virtual; {$ENDIF}
     procedure SetUrlStyle(ALabel: TLabel); virtual;
     procedure LoadProviders; virtual;
     property NewVersionUrl: string read fNewVersionUrl write fNewVersionUrl;
@@ -66,12 +66,17 @@ end;
 
 procedure TFormAbout.WMFirstShow(var Msg: TMessage);
 begin
+  {$IFNDEF FPC}
   DoFirstShow;
+  {$ENDIF}
 end;
 
 procedure TFormAbout.DoFirstShow;
 var Version, Url: string;
 begin
+  {$IFDEF FPC}
+  inherited;
+  {$ENDIF}
   // Show current version
   LabelVersion.Caption := {$INCLUDE 'YTD.version'};
   // Homepage
@@ -110,12 +115,22 @@ begin
 end;
 
 procedure TFormAbout.LoadProviders;
+{$IFDEF FPC}
+var i: integer;
+{$ENDIF}
 begin
   ListProviders.Items.BeginUpdate;
+  {$IFDEF FPC}
+  ListProviders.Items.Clear;
+  if DownloadClassifier <> nil then
+    for i := 0 to Pred(DownloadClassifier.NameCount) do
+      ListProviders.Items.Add;
+  {$ELSE}
   if DownloadClassifier = nil then
     ListProviders.Items.Count := 0
   else
     ListProviders.Items.Count := DownloadClassifier.NameCount;
+  {$ENDIF}
   ListProviders.Items.EndUpdate;
 end;
 

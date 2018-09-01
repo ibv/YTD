@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.27                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.28                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -64,6 +64,9 @@ PODPOROVANÉ WEBY
  - ESPN.go.com:
      - http://espn.go.com/video/clip?id=5163631
 
+ - Facebook.com:
+     - http://www.facebook.com/video/video.php?v=1131482863478
+
  - FileCabi.net:
      - http://www.filecabi.net/video/hiddendogstopsrobbery.html
 
@@ -83,6 +86,12 @@ PODPOROVANÉ WEBY
  - iPrima.cz:
      - http://www.iprima.cz/videoarchiv/44524/all/all
 
+ - Kukaj.sk:
+     - http://www.kukaj.sk/videa/5860/
+
+ - LibimSeTi.cz:
+     - http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
+
  - LiveLeak.com:
      - http://www.liveleak.com/view?i=6f4_1272904024
 
@@ -97,10 +106,16 @@ PODPOROVANÉ WEBY
  - MetaCafe.com:
      - http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
 
+ - MojeVideo.cz:
+     - http://mojevideo.cz/view.php?id=5332
+
  - MySpace.com
      - http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
+
+ - Myubo.sk:
+     - http://www.myubo.sk/page/media_detail.html?movieid=deac5b36-9efe-4176-a1e9-01088aa24696
 
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
@@ -157,6 +172,9 @@ PODPOROVANÉ WEBY
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
      níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
+ - VideoAlbumy.azet.sk:
+     - http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
+
  - VideoClipsDump.com:
      - http://www.videoclipsdump.com/media/1951/Karate_Fail/
 
@@ -165,6 +183,10 @@ PODPOROVANÉ WEBY
 
  - Vimeo.com:
      - http://www.vimeo.com/10777111
+
+ - Wrzuta.pl:
+     - http://w772.wrzuta.pl/film/7KI3ZUDHrUK/
+     - http://goovnoh.wrzuta.pl/audio/8U1t8UQ4f8W/
 
  - Youtube.com:
      - http://www.youtube.com/v/b5AWQ5aBjgE

@@ -1,6 +1,31 @@
 CHANGELOG
 ---------
 
+  v0.28
+
+    * Support for more media providers:
+       - Facebook.com
+       - Kukaj.sk
+       - LibimSeTi.cz
+       - MojeVideo.cz
+       - Myubo.sk
+       - Videoalbumy.azet.sk
+       - Wrzuta.pl
+
+    * Movies from Nova.cz now download in high quality (.mp4).
+
+    * RTMPDUMP_DLL.DLL was built with library PolarSSL rather than OpenSSL,
+      which removes the dependency on CRYPTOEAY32-0.9.8.DLL and
+      SSLEAY32-0.9.8.DLL. It means that RTMPDUMP_DLL grew by some 180 KB,
+      though.
+
+    * Program can now be built with FreePascal (http://www.freepascal.org),
+      tested with version 2.4.0. Only command-line version is supported for
+      now, though - GUI version (using project Lazarus) can be built, but
+      won't run in GUI mode.
+
+
+
   v0.27
 
     * Support for more media providers:

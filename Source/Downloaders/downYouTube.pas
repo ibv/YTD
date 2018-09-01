@@ -221,7 +221,7 @@ begin
       Extension := '.flv'
     else
       Extension := '.mp4';
-    MovieURL := 'http://www.youtube.com/get_video.php?fmt=' + VideoFormat + '&video_id=' + MovieID + '&t=' + Token;
+    MovieURL := 'http://www.youtube.com/get_video.php?fmt=' + VideoFormat + '&video_id=' + VideoID + '&t=' + Token;
     Result := True;
     SetPrepared(True);
     end;

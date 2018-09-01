@@ -1710,7 +1710,12 @@ end;
 function TRegex.Replace(const Input: string; Evaluator: TRegexMatchEvaluator): string;
 
 begin
+  {$IFDEF FPC}
+  Result := Input;
+  Raise Exception.Create('TRegEx.Replace is not compatible with FreePascal.');
+  {$ELSE}
   Result := Replace(Input, Evaluator, []);
+  {$ENDIF}
 end;
 
 //===========================================================================

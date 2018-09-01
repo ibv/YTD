@@ -1,6 +1,30 @@
 CHANGELOG
 ---------
 
+  v0.28
+
+    * Podpora pro nové poskytovatele médií:
+       - Facebook.com
+       - Kukaj.sk
+       - LibimSeTi.cz
+       - MojeVideo.cz
+       - Myubo.sk
+       - Videoalbumy.azet.sk
+       - Wrzuta.pl
+
+    * Videa z Nova.cz se nyní stahují ve vyšší kvalitì (.mp4).
+
+    * RTMPDUMP_DLL.DLL sestaven s knihovnou PolarSSL místo OpenSSL. Díky tomu
+      je odstranìna závislost na OpenSSL knihovnách (CRYPTOEAY32-0.9.8.DLL,
+      SSLEAY32-0.9.8.DLL) za cenu prodloužení RTMPDUMP_DLL o nìjakých 180 KB.
+
+    * Program lze nyní zkompilovat FreePascalem (http://www.freepascal.org/),
+      ovìøeno na verzi 2.4.0. Podporována je ale zatím jen command-line verze,
+      GUI verzi sice jde pøeložit (s využitím projektu Lazarus), ale nebude
+      fungovat.
+
+
+
   v0.27
 
     * Podpora pro nové poskytovatele médií:

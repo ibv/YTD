@@ -1,5 +1,6 @@
 unit downNova;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE LOW_QUALITY}
 
 interface
 
@@ -67,7 +68,7 @@ end;
 
 function TDownloader_Nova.GetFileNameExt: string;
 begin
-  Result := '.flv';
+  Result := {$IFDEF LOW_QUALITY} '.flv' {$ELSE} '.mp4' {$ENDIF};
 end;
 
 function TDownloader_Nova.GetMovieInfoUrl: string;
@@ -164,6 +165,9 @@ begin
       else
         begin
         SetName(FlvName);
+        {$IFNDEF LOW_QUALITY}
+        FlvStream := 'mp4:' + FlvStream;
+        {$ENDIF}
         MovieUrl := FlvServer + '/' + FlvStream;
         AddRtmpDumpOption('r', MovieURL);
         AddRtmpDumpOption('y', FlvStream);

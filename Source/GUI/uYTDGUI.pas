@@ -153,8 +153,10 @@ const
   States: array[TDownloadThreadState] of string
         = ('Waiting', 'Preparing', 'Downloading', 'Finished', 'Failed', 'Aborted');
 
+  {$IFNDEF FPC}
   StateImgs: array[TDownloadThreadState] of integer
         = (-1, 3, 3, 2, 1, 0);
+  {$ENDIF}
 
 { TFormYTD }
 
@@ -232,12 +234,18 @@ begin
 end;
 
 procedure TFormYTD.DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem);
+{$IFNDEF FPC}
 var Idx: integer;
+{$ENDIF}
 begin
+  {$IFDEF FPC}
+  Refresh;
+  {$ELSE}
   Idx := Sender.IndexOf(Item);
   Downloads.Items.Count := Sender.Count;
   if Idx >= 0 then
     Downloads.UpdateItems(Idx, Idx);
+  {$ENDIF}
 end;
 
 procedure TFormYTD.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);
@@ -269,16 +277,22 @@ procedure TFormYTD.DownloadsData(Sender: TObject; Item: TListItem);
 
 var DlItem: TDownloadListItem;
     sState, sTitle, sSize, sProgress: string;
+    {$IFNDEF FPC}
     iStateImage: integer;
+    {$ENDIF}
 begin
   if Item.Index < DownloadList.Count then
     begin
     DlItem := DownloadList[Item.Index];
     Item.Caption := DownloadList.Urls[Item.Index];
+    {$IFNDEF FPC}
     Item.StateIndex := Integer(DlItem.State);
+    {$ENDIF}
     Item.SubItems.Add(DlItem.Downloader.Provider);
     sState := States[DlItem.State];
+    {$IFNDEF FPC}
     iStateImage := StateImgs[DlItem.State];
+    {$ENDIF}
     sTitle := '';
     sSize := '';
     sProgress := '';
@@ -296,7 +310,9 @@ begin
         if DlItem.Paused then
           begin
           sState := 'Paused';
+          {$IFNDEF FPC}
           iStateImage := 4;
+          {$ENDIF}
           end;
         end;
       dtsDownloading:
@@ -305,7 +321,9 @@ begin
         if DlItem.Paused then
           begin
           sState := 'Paused';
+          {$IFNDEF FPC}
           iStateImage := 4;
+          {$ENDIF}
           end;
         end;
       dtsFinished:
@@ -315,7 +333,9 @@ begin
       dtsAborted:
         sProgress := GetProgressStr(DlItem);
       end;
+    {$IFNDEF FPC}
     Item.StateIndex := iStateImage;
+    {$ENDIF}
     Item.SubItems.Add(sState);
     Item.SubItems.Add(sTitle);
     Item.SubItems.Add(sSize);
@@ -457,7 +477,17 @@ end;
 
 procedure TFormYTD.Refresh;
 begin
+  {$IFDEF FPC}
+  if Downloads.Items.Count <> DownloadList.Count then
+    begin
+    if Downloads.Items.Count > DownloadList.Count then
+      Downloads.Items.Clear;
+    while Downloads.Items.Count < DownloadList.Count do
+      Downloads.Items.Add;
+    end;
+  {$ELSE}
   Downloads.Items.Count := DownloadList.Count;
+  {$ENDIF}
   Downloads.Invalidate;
 end;
 

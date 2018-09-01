@@ -4,7 +4,7 @@ unit uYTD;
 interface
 
 uses
-  SysUtils, Classes, FileCtrl,
+  SysUtils, Classes, {$IFNDEF FPC} FileCtrl, {$ENDIF}
   PCRE,
   uConsoleApp, uOptions,
   uDownloader, uCommonDownloader,
@@ -167,11 +167,20 @@ begin
       if Param[1] = '-' then
         begin
         if (Param = '-?') or (Param = '-h') then
-          ShowSyntax
+          begin
+          ShowSyntax;
+          Result := True;
+          end
         else if (Param = '-l') then
-          ShowProviders
+          begin
+          ShowProviders;
+          Result := True;
+          end
         else if (Param = '-v') then
-          ShowVersion
+          begin
+          ShowVersion;
+          Result := True;
+          end
         else if (Param = '-n') then
           Options.OverwriteMode := omNever
         else if (Param = '-a') then
@@ -252,7 +261,7 @@ begin
       Result := Format('%s%03.3d%s', [ThousandSeparator, Value mod 1000, Result]);
       Value := Value div 1000;
       end;
-    Result := IntToStr(Value) + Result;
+    Result := Sign + IntToStr(Value) + Result;
     end;
 end;
 
