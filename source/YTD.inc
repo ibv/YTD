@@ -36,7 +36,8 @@
   // Use the FastMM memory manager. By default it is only used in debug mode.
 
 {$DEFINE DIRTYHACKS}
-  // Allow providers which only work due to dirty hacks
+  // Allow providers which only work due to dirty hacks. The DEFINE also
+  // marks parts of the code which should be rewritten if I only knew how.
 
 {$DEFINE SHAREABLEFILES}
   // By default, the files being downloaded are opened in an exclusive mode
@@ -45,7 +46,11 @@
   // files being played while they are still downloading.
 
 {$DEFINE GUI_WINAPI} 
-  // GUI is created with WinAPI. Otherwise GUI is created with VCL.
+  // GUI is created with WinAPI. Otherwise GUI is created with VCL. The WinAPI
+  // GUI has several advantages, such as a double-buffered download list or
+  // a compatibility with FreePascal, not mentioning a seriously reduced
+  // executable size, but it is much more difficult to write (and understand, 
+  // if the programmer has little or no experience with Windows API).
 
 {$DEFINE DELPHITHREADS}
   // Use Delphi's implementation of TThread. This implementation seems to
@@ -55,7 +60,7 @@
   // What doesn't work:
   //   - Synchronize hangs until the application finishes. Obviously, since
   //     thread messages appear in TApiForm's message loop rather than 
-  //     the application's. "Fixed" by removing all Synchronize's.
+  //     the TApplication's. "Fixed" by removing all Synchronize's.
   //   - WaitFor fails with an error. No idea why.
   //   - OnTerminate doesn't get called. No idea why. So I call it manually.
 
@@ -65,11 +70,17 @@
   // use regular expressions: One, it is shorter, and two, it turns out LkJSON
   // has bugs which may prevent the parsing.
 
+{.DEFINE NONWORKING}
+  // Build the non-working providers in. By default they are only available
+  // in the debug mode.
+
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
 
 //----Build options------------------------------------------------------------
-// These options are intended to be set in the BUILD.BAT or Project Options
+// These options are intended to be set in the BUILD.BAT or Project Options.
+// They are only listed here for reference and documentation. DO NOT define
+// them here.
 
 {.DEFINE DEBUG}
   // Include debug code
@@ -78,10 +89,10 @@
   // Remove unnecessary debug information
 
 {.DEFINE NO_GUI}  
-  // Don't compile GUI version
+  // Don't compile the GUI version
 
 {.DEFINE NO_CLI}  
-  // Don't compile command-line version
+  // Don't compile the command-line version
 
 {.DEFINE NO_XXX}  
   // Don't compile support for porn providers
@@ -128,7 +139,6 @@
 // I can't get the systray icon to work under FreePascal.
 
 {$IFDEF FPC}
-  {$UNDEF GETTEXT}
   {$UNDEF SYSTRAY}
 {$ENDIF}
 
@@ -142,10 +152,13 @@
 
 
 
-// In the debug mode, FASTMM is used to detect memory leaks.
+// In the debug mode:
+//  - FASTMM is used to detect memory leaks.
+//  - non-working providers are built in for testing
 
 {$IFDEF DEBUG}
   {.$DEFINE FASTMM}
+  {$DEFINE NONWORKING}
 {$ENDIF}
 
 

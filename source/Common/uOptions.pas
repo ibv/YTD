@@ -103,6 +103,8 @@ type
       procedure SetAutoStartDownloads(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetCheckForNewVersionOnStartup: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetCheckForNewVersionOnStartup(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetMonitorClipboard: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMonitorClipboard(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
         procedure SetSelectedConverterID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -148,6 +150,7 @@ type
       property ErrorLog: string read GetErrorLog write SetErrorLog;
       property AutoStartDownloads: boolean read GetAutoStartDownloads write SetAutoStartDownloads;
       property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
+      property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
       {$IFDEF CONVERTERS}
         property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
         property MaxConversionThreads: integer read GetMaxConversionThreads write SetMaxConversionThreads;
@@ -201,6 +204,7 @@ const
   XML_PATH_ERRORLOG = 'config/error_log';
   XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
   XML_PATH_CHECKFORNEWVERSIONONSTARTUP = 'gui/check_for_new_version';
+  XML_PATH_MONITORCLIPBOARD = 'gui/monitor_clipboard';
   XML_PATH_URLLIST = 'download_list';
   XML_PATH_CONVERTERLIST = 'converters';
   XML_PATH_SELECTEDCONVERTER = XML_PATH_CONVERTERLIST + '/selected';
@@ -225,6 +229,7 @@ const
   XML_DEFAULT_ERRORLOG = '';
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
   XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
+  XML_DEFAULT_MONITORCLIPBOARD = False;
   XML_DEFAULT_SELECTEDCONVERTER = '';
   {$IFDEF CONVERTERSMUSTBEACTIVATED}
   XML_DEFAULT_CONVERTERSACTIVATED = False;
@@ -506,6 +511,16 @@ end;
 procedure TYTDOptions.SetCheckForNewVersionOnStartup(const Value: boolean);
 begin
   SetOption(XML_PATH_CHECKFORNEWVERSIONONSTARTUP, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetMonitorClipboard: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_MONITORCLIPBOARD), XML_DEFAULT_MONITORCLIPBOARD);
+end;
+
+procedure TYTDOptions.SetMonitorClipboard(const Value: boolean);
+begin
+  SetOption(XML_PATH_MONITORCLIPBOARD, BooleanToXml(Value));
 end;
 
 {$IFDEF SUBTITLES}

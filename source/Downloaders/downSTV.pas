@@ -43,14 +43,13 @@ uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
   uOptions,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_STV = class(TMSDownloader)
+  TDownloader_STV = class(TRtmpDownloader)
     private
     protected
-      MovieObjectRegExp: TRegExp;
-      IVysilaniUrlRegExp: TRegExp;
+      PlayListRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -67,17 +66,21 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://stv.livetv.sk/tvarchive//video/video.html?video=52655
+// http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*stv\.livetv\.sk/tvarchive/+video/video\.html\?video=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*stv\.sk/online/archiv/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
+
+const
+  MOVIE_TITLE_REGEXP = '<h2>(?P<TITLE>.*?)<';
+  PLAYLIST_REGEXP = '\.addParam\s*\(\s*''flashvars''\s*,\s*''(?:[^''&]*&)*playlistfile=(?P<PLAYLIST>https?://[^''&]+)';
 
 { TDownloader_STV }
 
 class function TDownloader_STV.Provider: string;
 begin
-  Result := 'STV.livetv.sk';
+  Result := 'STV.sk';
 end;
 
 class function TDownloader_STV.UrlRegExp: string;
@@ -88,45 +91,58 @@ end;
 constructor TDownloader_STV.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUnknown;
-  InfoPageIsXml := True;
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  PlayListRegExp := RegExCreate(PLAYLIST_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_STV.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(PlayListRegExp);
   inherited;
 end;
 
 function TDownloader_STV.GetMovieInfoUrl: string;
 begin
-  Result := 'http://stv.livetv.sk/tvarchive/video/playlist/playlist.wvx?video=' + MovieID;
+  Result := 'http://www.stv.sk/online/archiv/' + MovieID;
 end;
 
 function TDownloader_STV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-    i: integer;
+var Playlist, Streamer, Location: string;
+    Xml: TXmlDoc;
+    Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlAttr(PageXml, 'entry/ref', 'href', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  if not GetRegExpVar(PlayListRegExp, Page, 'PLAYLIST', Playlist) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  else if not DownloadXml(Http, UrlDecode(Playlist), Xml) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    SetName('STV-video' + MovieID); // No title is provided by the server
-    i := Length(Url);
-    while i > 0 do
-      if Url[i] = '/' then
-        begin
-        if i < Length(Url) then
-          SetName(ChangeFileExt(Copy(Url, Succ(i), MaxInt), ''));
-        Break;
-        end
+    try
+      if not Xml.NodeByPath('tracklist/track', Node) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      else if not GetXmlVar(Node, 'location', Location) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      else if not XmlNodeByPathAndAttr(Node, 'meta', 'rel', 'streamer', Node) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      else if not GetXmlVar(Node, '', Streamer) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
-        Dec(i);
-    MovieURL := Url;
-    Result := True;
-    SetPrepared(True);
-    end;
+        begin
+        MovieUrl := Streamer + '/mp4:' + Location;
+        AddRtmpDumpOption('r', Streamer);
+        AddRtmpDumpOption('y', 'mp4:' + Location);
+        AddRtmpDumpOption('f', 'WIN 10,1,82,76');
+        AddRtmpDumpOption('W', 'http://www.streamhosting.cz/flash/recent/player-licensed.swf');
+        AddRtmpDumpOption('p', GetMovieInfoUrl);
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      Xml.Free;
+      end;
 end;
 
 initialization

@@ -4,3 +4,5 @@
 #define IDC_EDIT_LANGUAGE                       1003
 #define IDC_BUTTON_SHORTCUTONDESKTOP            1004
 #define IDC_BUTTON_SHORTCUTINSTARTMENU          1005
+#define IDC_CHECKBOX_MONITORCLIPBOARD           1006
+

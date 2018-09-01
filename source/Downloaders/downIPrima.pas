@@ -71,6 +71,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
+  REGEXP_MOVIE_TITLE = '<h1\s+id="video_header">(?P<TITLE>.*?)</h1>';
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
 
 { TDownloader_iPrima }
@@ -89,11 +90,14 @@ constructor TDownloader_iPrima.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
+  RegExFreeAndNil(MovieTitleRegExp);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   StreamIDRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_iPrima.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(StreamIDRegExp);
   inherited;
 end;

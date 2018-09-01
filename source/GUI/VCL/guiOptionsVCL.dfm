@@ -51,7 +51,7 @@ object FormOptions: TFormOptions
       Caption = 'Main settings'
       object LabelLanguage: TLabel
         Left = 8
-        Top = 68
+        Top = 92
         Width = 51
         Height = 13
         Caption = '&Language:'
@@ -77,10 +77,10 @@ object FormOptions: TFormOptions
       end
       object EditLanguage: TEdit
         Left = 112
-        Top = 64
+        Top = 88
         Width = 177
         Height = 21
-        TabOrder = 2
+        TabOrder = 3
       end
       object BtnDesktopShortcut: TButton
         Left = 8
@@ -89,7 +89,7 @@ object FormOptions: TFormOptions
         Height = 25
         Action = actDesktopShortcut
         Anchors = [akLeft, akRight, akBottom]
-        TabOrder = 3
+        TabOrder = 4
       end
       object BtnStartMenuShortcut: TButton
         Left = 8
@@ -98,8 +98,16 @@ object FormOptions: TFormOptions
         Height = 25
         Action = actStartMenuShortcut
         Anchors = [akLeft, akRight, akBottom]
-        Caption = 'Create shortcut in &Start menu'
-        TabOrder = 4
+        TabOrder = 5
+      end
+      object CheckMonitorClipboard: TCheckBox
+        Left = 7
+        Top = 56
+        Width = 289
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = '&Monitor clipboard for downloadable URLs'
+        TabOrder = 2
       end
     end
     object TabDownloadOptions: TTabSheet
@@ -177,7 +185,7 @@ object FormOptions: TFormOptions
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 5
         OnChange = ComboConverterChange
       end

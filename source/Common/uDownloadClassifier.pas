@@ -146,6 +146,8 @@ begin
     fUrl := Value
   else
     fUrl := Copy(Value, 1, Pred(i));
+  if not UrlClassifier.Match(fUrl) then
+    fUrl := Value;
   if UrlClassifier.Match(fUrl) then
     for i := 0 to Pred(ProviderCount) do
       begin

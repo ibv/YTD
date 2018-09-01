@@ -163,6 +163,10 @@ type
     procedure WMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
     procedure ApplicationMinimize(Sender: TObject);
     {$ENDIF}
+    procedure StartClipboardMonitor;
+    procedure StopClipboardMonitor;
+    procedure WMDrawClipboard(var msg: TMessage); message WM_DRAWCLIPBOARD;
+    procedure WMChangeCbChain(var msg: TMessage); message WM_CHANGECBCHAIN;
     {$IFDEF THREADEDVERSION}
     procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
     {$ENDIF}
@@ -170,6 +174,8 @@ type
     DownloadList: TDownloadList;
     NextProgressUpdate: DWORD;
     Options: TYTDOptions;
+    NextClipboardViewer: integer;
+    LastClipboardText: string;
     {$IFDEF CONVERTERS}
     LastConverterID: string;
     {$ENDIF}
@@ -177,6 +183,7 @@ type
     procedure DownloadListChange(Sender: TObject); virtual;
     procedure DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem); virtual;
     procedure DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem); virtual;
+    function AddFromClipboard(IgnoreUnchangedText: boolean = False): integer; virtual;
     function AddTask(const Url: string): boolean; virtual;
     procedure AddTaskFromHTML(const Source: string); virtual;
     procedure DeleteTask(Index: integer); virtual;
@@ -226,6 +233,8 @@ begin
     {$ENDIF}
     DownloadList.Options := Options;
     LoadSettings;
+    NextClipboardViewer := 0;
+    StartClipboardMonitor;
     {$IFDEF SYSTRAY}
     Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
     fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
@@ -252,6 +261,7 @@ end;
 procedure TFormYTD.FormDestroy(Sender: TObject);
 begin
   DownloadList.StopAll;
+  StopClipboardMonitor;
   {$IFDEF SYSTRAY}
   Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
@@ -287,6 +297,39 @@ begin
   Hide;
 end;
 {$ENDIF}
+
+procedure TFormYTD.StartClipboardMonitor;
+begin
+  if Clipboard.HasFormat(CF_TEXT) then
+    LastClipboardText := Clipboard.AsText
+  else
+    LastClipboardText := '';
+  if Options.MonitorClipboard then
+    NextClipboardViewer := SetClipboardViewer(Self.Handle)
+  else
+    NextClipboardViewer := 0;
+end;
+
+procedure TFormYTD.StopClipboardMonitor;
+begin
+  ChangeClipboardChain(Self.Handle, NextClipboardViewer);
+  NextClipboardViewer := 0;
+end;
+
+procedure TFormYTD.WMDrawClipboard(var msg: TMessage);
+begin
+  if NextClipboardViewer <> 0 then
+    SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
+  AddFromClipboard(True);
+  msg.Result := 0;
+end;
+
+procedure TFormYTD.WMChangeCbChain(var msg: TMessage);
+begin
+  if Msg.wParam = NextClipboardViewer then
+    NextClipboardViewer := Msg.lParam;
+  msg.Result := 0;
+end;
 
 {$IFDEF THREADEDVERSION}
 procedure TFormYTD.NewVersionEvent(Sender: TObject; const Version, Url: string);
@@ -516,24 +559,9 @@ begin
 end;
 
 procedure TFormYTD.actAddUrlsFromClipboardExecute(Sender: TObject);
-var L: TStringList;
-    i, n: integer;
 begin
-  if Clipboard.HasFormat(CF_TEXT) then
-    begin
-    L := TStringList.Create;
-    try
-      n := 0;
-      L.Text := Clipboard.AsText;
-      for i := 0 to Pred(L.Count) do
-        if AddTask(L[i]) then
-          Inc(n);
-      if n = 0 then
-        MessageDlg(_(MAINFORM_NO_SUPPORTED_URL), mtError, [mbOK], 0);
-    finally
-      L.Free;
-      end;
-    end;
+  if AddFromClipboard = 0 then
+    MessageDlg(_(MAINFORM_NO_SUPPORTED_URL), mtError, [mbOK], 0);
 end;
 
 procedure TFormYTD.actAddUrlsFromClipboard2Execute(Sender: TObject);
@@ -586,6 +614,30 @@ begin
   Downloads.Items.Count := DownloadList.Count;
   {$ENDIF}
   Downloads.Invalidate;
+end;
+
+function TFormYTD.AddFromClipboard(IgnoreUnchangedText: boolean): integer;
+var L: TStringList;
+    i: integer;
+    s: string;
+begin
+  Result := 0;
+  if Clipboard.HasFormat(CF_TEXT) then
+    begin
+    s := Clipboard.AsText;
+    if (not IgnoreUnchangedText) or (s <> LastClipboardText) then
+      begin
+      L := TStringList.Create;
+      try
+        L.Text := s;
+        for i := 0 to Pred(L.Count) do
+          if AddTask(L[i]) then
+            Inc(Result);
+      finally
+        L.Free;
+        end;
+      end;
+    end;
 end;
 
 function TFormYTD.AddTask(const Url: string): boolean;
@@ -740,7 +792,8 @@ procedure TFormYTD.actEditConfigFileExecute(Sender: TObject);
 begin
   Options.Save;
   MessageDlg(_(MAINFORM_EDIT_CONFIG), mtWarning, [mbOK], 0);
-  ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL);
+  if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL) <= 32 then
+    ShellExecute(Handle, 'open', 'notepad', PChar('"' + Options.FileName + '"'), nil, SW_SHOWNORMAL);
 end;
 
 procedure TFormYTD.actOptionsExecute(Sender: TObject);
@@ -754,6 +807,8 @@ begin
       SaveSettings;
       if Options.AutoStartDownloads then
         DownloadList.StartAll;
+      StopClipboardMonitor;
+      StartClipboardMonitor;
       end;
   finally
     F.Free;

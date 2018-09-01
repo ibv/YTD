@@ -42,7 +42,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, HttpSend, ShellApi, ComCtrls, 
-  uLanguages, uDownloadClassifier, uDownloader, uOptions;
+  uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions;
 
 const
   WM_FIRSTSHOW = WM_USER + 1;

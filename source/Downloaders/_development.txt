@@ -5,6 +5,7 @@ HTTP	HTML	HTML	downAktualne
 HTTP	HTML	HTML	downAngryAlien
 MS	HTML	HTML	downAutoSalonTV
 HTTP	HTML	XML	downAutoTube
+HTTP	HTML	Nested	downBandZone
 RTMP	XML	XML	downBarrandov
 HTTP	HTML	Nested	downBlennus
 HTTP	XML	XML	downBlipTv
@@ -34,6 +35,7 @@ HTTP	HTML	HTML	downDeutscheBahn
 HTTP	HTML	Nested	downDevilDucky
 HTTP	HTML	HTML	downDoubleAgent
 HTTP	HTML	Nested	downDrsnySvet
+HTTP	HTML	HTML	downDub
 HTTP	HTML	HTML	downEbaumsWorld
 HTTP	HTML	HTML	downEHow
 HTTP	HTML	XML	downESPN
@@ -82,6 +84,7 @@ HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
 HTTP	HTML	Nested	downOverStream
 HTTP	XML	XML	downPCPlanets
+RTMP	-	HTML	downPrahovaHD
 MS	HTML	XML	downPrazdninyVTelci
 HTTP	HTML	Nested	downPrimaCool
 HTTP	-	HTML	downQipRu_Embed
@@ -90,16 +93,19 @@ HTTP	HTML	HTML	downRingTV (<-downGrindTV)
 HTTP	HTML	HTML	downRozhlas
 MS	XML	XML	downRTA (<-downRTA_Embed)
 MS	XML	XML	downRTA_Embed
+MS	XML	XML	downRtlNl
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
 HTTP	XML	XML	downSpike
 HTTP	HTML	HTML	downStagevu
+HTTP	HTML	Nested	downStastneVdovy
 HTTP	HTML	HTML	downStickam
 HTTP	HTML	HTML	downStream
 HTTP	HTML	HTML	downStreetFire
 HTTP	HTML	HTML	downStudioPlus
 HTTP	HTML	HTML	downStupidVideos (<-downGrindTV)
-MS	HTML	XML	downSTV
+RTMP	HTML	XML	downSTV
+HTTP	HTML	HTML	downSuper
 HTTP	XML	XML	downTangle
 HTTP	XML	XML	downTeacherTube
 MS	XML	XML	downTipovani
@@ -109,6 +115,7 @@ RTMP	HTML	XML	downTotallyCrap
 HTTP	HTML	HTML	downTV7
 MS	HTML	XML	downTVcom
 HTTP	XML	XML	downTVNoe
+RTMP	XML	XML	downTVSpl
 RTMP	HTML	XML	downUniMinnesota
 HTTP	HTML	HTML+AMF	downUStream
 HTTP	HTML	Nested	downVideaCesky
@@ -117,6 +124,7 @@ HTTP	HTML	HTML	downVideoClipsDump
 HTTP	HTML	XML	downVideu
 HTTP	XML	XML	downVimeo
 HTTP	XML	XML	downVitalMtb
+HTTP	HTML	HTML	downWeGame
 HTTP	HTML	HTML	downWimp
 HTTP	AMF	AMF	downWordPressTV
 HTTP	HTML	HTML	downWrzuta

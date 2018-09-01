@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-12-31 15:55\n"
-"PO-Revision-Date: 2010-12-31 15:55\n"
+"POT-Creation-Date: 2011-01-09 15:10\n"
+"PO-Revision-Date: 2011-01-09 15:10\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -88,7 +88,7 @@ msgstr ""
 #: GUI/VCL/guiMainVCL.dfm:170
 #. Create columns
 #: GUI/WinAPI/guiAboutWINAPI.pas:366
-#: GUI/WinAPI/guiMainWINAPI.pas:342
+#: GUI/WinAPI/guiMainWINAPI.pas:353
 msgid "Provider"
 msgstr ""
 
@@ -106,52 +106,52 @@ msgstr ""
 #. FormSelectConverter..LabelConverter..Caption
 #: GUI/VCL/guiConverterVCL.dfm:24
 #. FormOptions..PageOptions..TabDownloadOptions..LabelConverter..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:129
+#: GUI/VCL/guiOptionsVCL.dfm:137
 msgid "&Converter:"
 msgstr ""
 
 #. FormSelectConverter..ActionList..actOK..Caption
 #: GUI/VCL/guiConverterVCL.dfm:60
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:272
+#: GUI/VCL/guiOptionsVCL.dfm:280
 msgid "&OK"
 msgstr ""
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #: GUI/VCL/guiConverterVCL.dfm:64
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:277
+#: GUI/VCL/guiOptionsVCL.dfm:285
 msgid "&Cancel"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:166
 #. Download list
-#: GUI/WinAPI/guiMainWINAPI.pas:341
+#: GUI/WinAPI/guiMainWINAPI.pas:352
 msgid "URL"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:175
-#: GUI/WinAPI/guiMainWINAPI.pas:343
+#: GUI/WinAPI/guiMainWINAPI.pas:354
 msgid "Status"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:179
-#: GUI/WinAPI/guiMainWINAPI.pas:344
+#: GUI/WinAPI/guiMainWINAPI.pas:355
 msgid "Title"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:184
-#: GUI/WinAPI/guiMainWINAPI.pas:345
+#: GUI/WinAPI/guiMainWINAPI.pas:356
 msgid "Size"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:189
-#: GUI/WinAPI/guiMainWINAPI.pas:346
+#: GUI/WinAPI/guiMainWINAPI.pas:357
 msgid "Progress"
 msgstr ""
 
@@ -360,7 +360,7 @@ msgstr ""
 
 #. FormYTD..OpenHtmlFile..Filter
 #: GUI/VCL/guiMainVCL.dfm:1507
-#: GUI/WinAPI/guiMainWINAPI.pas:603
+#: GUI/WinAPI/guiMainWINAPI.pas:607
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgstr ""
 #: GUI/VCL/guiMainVCL.dfm:1513
 #. FormYTD..SaveUrlList..Filter
 #: GUI/VCL/guiMainVCL.dfm:1520
-#: GUI/WinAPI/guiMainWINAPI.pas:580
+#: GUI/WinAPI/guiMainWINAPI.pas:584
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr ""
 
@@ -398,103 +398,107 @@ msgstr ""
 msgid "&Check for new versions on startup"
 msgstr ""
 
-#. FormOptions..PageOptions..TabMain..BtnStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:101
-#. FormOptions..ActionList..actStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:290
-msgid "Create shortcut in &Start menu"
+#. FormOptions..PageOptions..TabMain..CheckMonitorClipboard..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:109
+msgid "&Monitor clipboard for downloadable "
+"URLs"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:106
+#: GUI/VCL/guiOptionsVCL.dfm:114
 #: GUI/WinAPI/guiOptionsWINAPI.pas:128
 msgid "Download settings"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelOverwriteMode..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:113
+#: GUI/VCL/guiOptionsVCL.dfm:121
 msgid "&Existing files:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:121
+#: GUI/VCL/guiOptionsVCL.dfm:129
 msgid "&Download directory:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:138
+#: GUI/VCL/guiOptionsVCL.dfm:146
 msgid "&Automatically start downloads"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:151
+#: GUI/VCL/guiOptionsVCL.dfm:159
 #. Overwrite Mode
 #: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:216
 msgid "Ask user"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:152
+#: GUI/VCL/guiOptionsVCL.dfm:160
 #: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:217
 msgid "Overwrite"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:153
+#: GUI/VCL/guiOptionsVCL.dfm:161
 #: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:218
 msgid "Skip"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:154
+#: GUI/VCL/guiOptionsVCL.dfm:162
 #: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:219
 msgid "Rename automatically"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:190
+#: GUI/VCL/guiOptionsVCL.dfm:198
 msgid "Download &subtitles if available"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:195
+#: GUI/VCL/guiOptionsVCL.dfm:203
 #: GUI/WinAPI/guiOptionsWINAPI.pas:129
 msgid "Network settings"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:202
+#: GUI/VCL/guiOptionsVCL.dfm:210
 msgid "Proxy &host:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:210
+#: GUI/VCL/guiOptionsVCL.dfm:218
 msgid "Proxy &port:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:218
+#: GUI/VCL/guiOptionsVCL.dfm:226
 msgid "Proxy &username:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:226
+#: GUI/VCL/guiOptionsVCL.dfm:234
 msgid "Proxy pass&word:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:235
+#: GUI/VCL/guiOptionsVCL.dfm:243
 msgid "U&se proxy server"
 msgstr ""
 
 #. FormOptions..ActionList..actDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:281
+#: GUI/VCL/guiOptionsVCL.dfm:289
 msgid "..."
 msgstr ""
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:286
+#: GUI/VCL/guiOptionsVCL.dfm:294
 msgid "Create shortcut on &desktop"
+msgstr ""
+
+#. FormOptions..ActionList..actStartMenuShortcut..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:298
+msgid "Create shortcut in &Start menu"
 msgstr ""
 
 #. HTTP socket status: resolving began

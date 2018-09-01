@@ -83,6 +83,7 @@ type
     BtnStartMenuShortcut: TButton;
     actDesktopShortcut: TAction;
     actStartMenuShortcut: TAction;
+    CheckMonitorClipboard: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
     procedure actDownloadDirExecute(Sender: TObject);
@@ -118,6 +119,7 @@ begin
     // Main options
     CheckPortableMode.Checked := Options.PortableMode;
     CheckCheckNewVersions.Checked := Options.CheckForNewVersionOnStartup;
+    CheckMonitorClipboard.Checked := Options.MonitorClipboard;
     EditLanguage.Text := Options.Language;
     // Download options
     CheckAutoDownload.Checked := Options.AutoStartDownloads;
@@ -152,6 +154,7 @@ begin
   Options.PortableMode := CheckPortableMode.Checked;
   Options.CheckForNewVersionOnStartup := CheckCheckNewVersions.Checked;
   Options.Language := EditLanguage.Text;
+  Options.MonitorClipboard := CheckMonitorClipboard.Checked;
   // Download options
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
   Options.SubtitlesEnabled := CheckSubtitlesEnabled.Checked;

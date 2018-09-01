@@ -14,6 +14,7 @@ type
 function GuessFileEncoding(Data: Pointer; DataLength: Integer; out BomLength: integer): TFileEncoding;
 function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding): TMemoryStream;
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);
+function LoadFileIntoStringW(const FileName: string; Encoding: TFileEncoding): WideString;
 function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
 function FileGetSize(const FileName: string): int64;
 function FileGetDateTime(const FileName: string): TDateTime;
@@ -116,9 +117,8 @@ begin
     end;
 end;
 
-function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+function LoadFileIntoStringW(const FileName: string; Encoding: TFileEncoding): WideString;
 var MS: TMemoryStream;
-    s: WideString;
 begin
   MS := LoadFileIntoMemoryW(FileName, Encoding);
   if MS = nil then
@@ -129,13 +129,17 @@ begin
         Result := ''
       else
         begin
-        SetLength(s, MS.Size div Sizeof(WideChar));
-        Move(MS.Memory^, s[1], MS.Size);
-        Result := string(s);
+        SetLength(Result, MS.Size div Sizeof(WideChar));
+        Move(MS.Memory^, Result[1], MS.Size);
         end;
     finally
       FreeAndNil(MS);
       end;
+end;
+
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+begin
+  Result := string(LoadFileIntoStringW(FileName, Encoding));
 end;
 
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);

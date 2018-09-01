@@ -4,7 +4,8 @@ interface
 
 function MemoryToWideString(Data: PWideChar; DataChars: integer): WideString;
 function CompareWideCharPtrs(Ptr1, Ptr2: PWideChar; Ptr1Chars, Ptr2Chars: integer; MaxChars: integer = MaxInt): integer;
-function ReadlnWide(var Data: PWideChar; var DataChars: integer; out Line: PWideChar; out LineChars: integer): boolean;
+function ReadlnWide(var Data: PWideChar; var DataChars: integer; out Line: PWideChar; out LineChars: integer): boolean; overload;
+function ReadlnWide(var Data: PWideChar; var DataChars: integer; out Line: WideString): boolean; overload;
 function TrimWide(var Data: PWideChar; var DataChars: integer): boolean;
 function SplitNameValueWide(Data: PWideChar; DataChars: integer; Separator: PWideChar; SeparatorChars: integer; out Name: PWideChar; out NameChars: integer; out Value: PWideChar; out ValueChars: integer): boolean;
 
@@ -89,6 +90,17 @@ begin
         end;
       end;
     end;
+end;
+
+function ReadlnWide(var Data: PWideChar; var DataChars: integer; out Line: WideString): boolean; overload;
+var PLine: PWideChar;
+    Len: integer;
+begin
+  Result := ReadlnWide(Data, DataChars, PLine, Len);
+  if not Result then
+    Line := ''
+  else
+    Line := MemoryToWideString(PLine, Len);
 end;
 
 function TrimWide(var Data: PWideChar; var DataChars: integer): boolean;

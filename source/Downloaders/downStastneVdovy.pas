@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCrunchyRoll;
+unit downStastneVdovy;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,19 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_CrunchyRoll = class(TRtmpDownloader)
+  TDownloader_StastneVdovy = class(TNestedDownloader)
     private
-      fFileNameExt: string;
-    protected
-      InfoUrlRegExp: TRegExp;
-      property FileNameExt: string read fFileNameExt write fFileNameExt; 
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,84 +63,58 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.crunchyroll.com/naruto/episode-193-the-man-who-died-twice-567104
+// http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html?allowaccess=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*crunchyroll\.com/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*stastnevdovy\.cz/videa/';
+  URLREGEXP_ID =        '[^?]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+property="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_INFO_URL = '"config_url"\s*:\s*"(?P<URL>.*?)"';
+  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)</title>';
+  REGEXP_EXTRACT_URL = '<iframe\b[^>]*\ssrc="(?P<URL>https?://[^"]+)"';
 
-{ TDownloader_CrunchyRoll }
+{ TDownloader_StastneVdovy }
 
-class function TDownloader_CrunchyRoll.Provider: string;
+class function TDownloader_StastneVdovy.Provider: string;
 begin
-  Result := 'CrunchyRoll.com';
+  Result := 'StastneVdovy.cz';
 end;
 
-class function TDownloader_CrunchyRoll.UrlRegExp: string;
+class function TDownloader_StastneVdovy.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CrunchyRoll.Create(const AMovieID: string);
+constructor TDownloader_StastneVdovy.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CrunchyRoll.Destroy;
+destructor TDownloader_StastneVdovy.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(InfoUrlRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
-function TDownloader_CrunchyRoll.GetMovieInfoUrl: string;
+function TDownloader_StastneVdovy.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.crunchyroll.com/' + MovieID;
+  Result := 'http://www.stastnevdovy.cz/videa/' + MovieID + '?allowaccess=1';
 end;
 
-function TDownloader_CrunchyRoll.GetFileNameExt: string;
+{
+function TDownloader_StastneVdovy.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
-  Result := FileNameExt;
+  // There is some problem with the info page's XML
+  Xml := nil;
+  Result := DownloadPage(Http, Url, Page, InfoPageEncoding, Method);
 end;
-
-function TDownloader_CrunchyRoll.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, FlvHost, FlvStream: string;
-    Xml: TXmlDoc;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else
-    try
-      if not GetXmlVar(Xml, 'default:preload/stream_info/host', FlvHost) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else if not GetXmlVar(Xml, 'default:preload/stream_info/file', FlvStream) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := FlvHost;
-        AddRtmpDumpOption('r', FlvHost);
-        AddRtmpDumpOption('y', FlvStream);
-        FileNameExt := ExtractFileExt(FlvStream);
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
-      end;
-end;
+}
 
 initialization
-  RegisterDownloader(TDownloader_CrunchyRoll);
+  RegisterDownloader(TDownloader_StastneVdovy);
 
 end.

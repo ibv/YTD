@@ -82,9 +82,15 @@ type
       DownloadList: TDownloadList;
       DownloadListHandle: THandle;
       NextProgressUpdate: DWORD;
+      NextClipboardViewer: THandle;
+      LastClipboardText: string;
       {$IFDEF CONVERTERS}
       LastConverterID: string;
       {$ENDIF}
+      procedure StartClipboardMonitor;
+      procedure StopClipboardMonitor;
+      function ClipboardChanged: boolean;
+      function ClipboardChainChange(Removing, NewNext: THandle): boolean;
       {$IFDEF SYSTRAY}
       function NotifyIconClick(Buttons: DWORD): boolean;
       {$ENDIF}
@@ -111,6 +117,7 @@ type
       {$ENDIF}
       procedure LoadSettings;
       procedure SaveSettings;
+      function AddFromClipboard(IgnoreUnchangedText: boolean = False): integer; virtual;
       function AddTask(const Url: string): boolean; virtual;
       procedure AddTaskFromHTML(const Source: string); virtual;
       procedure DeleteTask(Index: integer); virtual;
@@ -317,6 +324,10 @@ begin
     case Msg.Msg of
       WM_NOTIFYICON:
         Result := NotifyIconClick(Msg.lParam);
+      WM_DRAWCLIPBOARD:
+        Result := ClipboardChanged;
+      WM_CHANGECBCHAIN:
+        Result := ClipboardChainChange(Msg.wParam, Msg.lParam);
       end;
   {$ENDIF}
 end;
@@ -344,6 +355,9 @@ begin
   ListViewInsertColumn(DownloadListHandle, 3, LISTVIEW_SUBITEM_TITLE,    alLeft,   200, _('Title'));
   ListViewInsertColumn(DownloadListHandle, 4, LISTVIEW_SUBITEM_SIZE,     alRight,   64, _('Size'));
   ListViewInsertColumn(DownloadListHandle, 5, LISTVIEW_SUBITEM_PROGRESS, alCenter, 120, _('Progress'));
+  // Clipboard monitor
+  NextClipboardViewer := 0;
+  StartClipboardMonitor;
   // Tray icon
   {$IFDEF SYSTRAY}
     Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
@@ -369,6 +383,7 @@ begin
     begin
     DownloadList.StopAll;
     SaveSettings;
+    StopClipboardMonitor;
     {$IFDEF SYSTRAY}
     Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
     {$ENDIF}
@@ -553,26 +568,10 @@ begin
 end;
 
 function TFormMain.ActionAddFromClipboard: boolean;
-var L: TStringList;
-    s: string;
-    i, n: integer;
 begin
   Result := True;
-  if GetClipboardAsText(Self.Handle, s) then
-    begin
-    L := TStringList.Create;
-    try
-      n := 0;
-      L.Text := s;
-      for i := 0 to Pred(L.Count) do
-        if AddTask(L[i]) then
-          Inc(n);
-      if n = 0 then
-        ErrorMessageBox(_(MAINFORM_NO_SUPPORTED_URL), APPLICATION_TITLE);
-    finally
-      L.Free;
-      end;
-    end;
+  if AddFromClipboard = 0 then
+    ErrorMessageBox(_(MAINFORM_NO_SUPPORTED_URL), APPLICATION_TITLE);
 end;
 
 function TFormMain.ActionAddFromFile: boolean;
@@ -721,7 +720,8 @@ begin
   Result := True;
   Options.Save;
   MessageBox(0, PChar(_(MAINFORM_EDIT_CONFIG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_TASKMODAL);
-  ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL);
+  if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL) <= 32 then
+    ShellExecute(Handle, 'open', 'notepad', PChar('"' + Options.FileName + '"'), nil, SW_SHOWNORMAL);
 end;
 
 function TFormMain.ActionOptions: boolean;
@@ -736,6 +736,8 @@ begin
       SaveSettings;
       if Options.AutoStartDownloads then
         DownloadList.StartAll;
+      StopClipboardMonitor;
+      StartClipboardMonitor;
       end;
   finally
     F.Free;
@@ -807,6 +809,40 @@ begin
       end;
 end;
 
+procedure TFormMain.StartClipboardMonitor;
+var s: string;
+begin
+  if GetClipboardAsText(Self.Handle, s) then
+    LastClipboardText := s
+  else
+    LastClipboardText := '';
+  if Options.MonitorClipboard then
+    NextClipboardViewer := SetClipboardViewer(Self.Handle)
+  else
+    NextClipboardViewer := 0;
+end;
+
+procedure TFormMain.StopClipboardMonitor;
+begin
+  ChangeClipboardChain(Self.Handle, NextClipboardViewer);
+  NextClipboardViewer := 0;
+end;
+
+function TFormMain.ClipboardChanged: boolean;
+begin
+  if NextClipboardViewer <> 0 then
+    SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
+  AddFromClipboard(True);
+  Result := True;
+end;
+
+function TFormMain.ClipboardChainChange(Removing, NewNext: THandle): boolean;
+begin
+  if Removing = NextClipboardViewer then
+    NextClipboardViewer := NewNext;
+  Result := True;
+end;
+
 {$IFDEF THREADEDVERSION}
 procedure TFormMain.NewVersionEvent(Sender: TObject; const Version, Url: string);
 begin
@@ -848,6 +884,27 @@ begin
     DownloadList.SaveToOptions;
     Options.Save;
     end;
+end;
+
+function TFormMain.AddFromClipboard(IgnoreUnchangedText: boolean): integer;
+var L: TStringList;
+    s: string;
+    i: integer;
+begin
+  Result := 0;
+  if GetClipboardAsText(Self.Handle, s) then
+    if (not IgnoreUnchangedText) or (s <> LastClipboardText) then
+      begin
+      L := TStringList.Create;
+      try
+        L.Text := s;
+        for i := 0 to Pred(L.Count) do
+          if AddTask(L[i]) then
+            Inc(Result);
+      finally
+        L.Free;
+        end;
+      end;
 end;
 
 function TFormMain.AddTask(const Url: string): boolean;

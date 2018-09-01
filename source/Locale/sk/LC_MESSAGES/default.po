@@ -65,7 +65,7 @@ msgstr "Najnovšia verzia:"
 #: GUI/VCL/guiAboutVCL.dfm:65
 #: GUI/VCL/guiAboutVCL.pas:128
 msgid "not found"
-msgstr "nenašlo sa"
+msgstr "nenašla sa"
 
 #. FormAbout..LabelHomepageLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:79
@@ -362,7 +362,7 @@ msgstr "-"
 #: GUI/VCL/guiMainVCL.dfm:1507
 #: GUI/WinAPI/guiMainWINAPI.pas:603
 msgid "HTML files|*.htm;*.html|All files|*.*"
-msgstr "HTML súbory|*.htm;*.html|All files|*.*"
+msgstr "HTML súbory|*.htm;*.html|Všetky súbory|*.*"
 
 #. FormYTD..OpenUrlList..Filter
 #: GUI/VCL/guiMainVCL.dfm:1513
@@ -370,7 +370,7 @@ msgstr "HTML súbory|*.htm;*.html|All files|*.*"
 #: GUI/VCL/guiMainVCL.dfm:1520
 #: GUI/WinAPI/guiMainWINAPI.pas:580
 msgid "List files (*.lst)|*.lst|All files|*.*"
-msgstr "Zoznamy adries (*.lst)|*.lst|All files|*.*"
+msgstr "Zoznamy adries (*.lst)|*.lst|Všetky súbory|*.*"
 
 #. FormYTD..SaveUrlList..DefaultExt
 #: GUI/VCL/guiMainVCL.dfm:1519
@@ -414,7 +414,7 @@ msgstr "Nastavenia sťahovania"
 #. FormOptions..PageOptions..TabDownloadOptions..LabelOverwriteMode..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:113
 msgid "&Existing files:"
-msgstr "&Extistujúce súbory:"
+msgstr "&Existujúce súbory:"
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelDownloadDir..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:121
@@ -449,12 +449,12 @@ msgstr "Preskočiť"
 #: GUI/VCL/guiOptionsVCL.dfm:154
 #: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:219
 msgid "Rename automatically"
-msgstr "Premenovať automaticky..."
+msgstr "Premenovať automaticky"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:190
 msgid "Download &subtitles if available"
-msgstr "Stiahnuť &titulky ak sú dostupné"
+msgstr "Stiahnuť &titulky, ak sú dostupné"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:195
@@ -465,22 +465,22 @@ msgstr "Nastavenia siete"
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:202
 msgid "Proxy &host:"
-msgstr "Proxy &adresa"
+msgstr "Proxy &adresa:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:210
 msgid "Proxy &port:"
-msgstr "Proxy &port"
+msgstr "Proxy &port:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:218
 msgid "Proxy &username:"
-msgstr "Proxy &užívateľské meno"
+msgstr "Proxy &užívateľ:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:226
 msgid "Proxy pass&word:"
-msgstr "Proxy &heslo"
+msgstr "Proxy &heslo:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:235
@@ -660,32 +660,32 @@ msgstr "Dostupné servery:"
 #. CLI: The "Total: " part of "Total: 123 providers." Note the ending space
 #: CLI/uYTD.pas:160
 msgid "Total: "
-msgstr "Spolu:"
+msgstr "Spolu: "
 
 #. CLI: The " providers" part of "Total: 123 providers." Note the starting space
 #: CLI/uYTD.pas:162
 msgid " providers."
-msgstr "serverov."
+msgstr " serverov."
 
 #. CLI: Note: pad with spaces to the same length as "Newest version:"
 #: CLI/uYTD.pas:169
 msgid "Current version: "
-msgstr "Aktuálna verzia:"
+msgstr "Aktuálna verzia: "
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
 #: CLI/uYTD.pas:170
 msgid "Newest version:  "
-msgstr "Najnovšia verzia."
+msgstr "Najnovšia verzia.  "
 
 #. CLI: Couldn't check for a newer version
 #: CLI/uYTD.pas:172
 msgid "check failed"
-msgstr "Kontrola zlyhala."
+msgstr "kontrola zlyhala"
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
 #: CLI/uYTD.pas:176
 msgid "Download URL:    "
-msgstr "Stiahnuť URL:"
+msgstr "Stiahnuť URL:    "
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:245
@@ -803,7 +803,7 @@ msgstr "Neznáma URL."
 #. CLI: "File ... already exists. What do you want me to do?"
 #: CLI/uYTD.pas:534
 msgid "  File "
-msgstr "  Súbor  "
+msgstr "  Súbor "
 
 #: CLI/uYTD.pas:536
 msgid " already exists."
@@ -816,17 +816,17 @@ msgstr "  Chcete: "
 #. CLI: File already exists. [S]kip it
 #: CLI/uYTD.pas:538
 msgid "kip it, "
-msgstr "ponechať,"
+msgstr "preskočiť, "
 
 #. CLI: File already exists. [O]verwrite it
 #: CLI/uYTD.pas:539
 msgid "verwrite it, or "
-msgstr "prepísať, alebo"
+msgstr "prepísať, alebo "
 
 #. CLI: File already exists. [R]ename it
 #: CLI/uYTD.pas:540
 msgid "ename it? "
-msgstr "premenovať?"
+msgstr "premenovať? "
 
 #. CLI: File already exists. Asking user to provide a new filename.
 #: CLI/uYTD.pas:556
@@ -881,7 +881,7 @@ msgstr "Nepodarilo sa nájsť vložený objekt."
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:68
 msgid "Failed to locate media info page."
-msgstr "Nepodarilo sa násjť stránku s informáciami o médiu."
+msgstr "Nepodarilo sa nájsť stránku s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:69
@@ -926,7 +926,7 @@ msgstr "Nepodarilo sa nájsť stream média."
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
 #: Common/uMessages.pas:78
 msgid "Failed to find media stream."
-msgstr "Nepodarilo sa násjť ."
+msgstr "Nepodarilo sa nájsť ."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
 #: Common/uMessages.pas:80
@@ -957,7 +957,7 @@ msgstr "Súbor bol zo servera vymazaný."
 #. Programmer's name for it: ERR_SERVER_ERROR
 #: Common/uMessages.pas:86
 msgid "Server returned an error: %s"
-msgstr "Server hlási chybu: %s!"
+msgstr "Server hlási chybu: %s"
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #: Common/uMessages.pas:88
@@ -1022,13 +1022,13 @@ msgstr "Prekonvertované"
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILED
 #: GUI/guiConsts.pas:60
 msgid "Conversion failed"
-msgstr "Konvertovanie zlyhalo."
+msgstr "Konvertovanie zlyhalo"
 
 #. GUI: Convert thread state: Failed to start the converter
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
 #: GUI/guiConsts.pas:61
 msgid "Converter not found"
-msgstr "Konvertor nebol nájdený."
+msgstr "Konvertor nebol nájdený"
 
 #. GUI: description of a "no converter"
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
@@ -1056,13 +1056,13 @@ msgid "Config file will open now, but please do not edit\n"
 "the file before it quits, so any changes made would\n"
 "be lost. First quit YTD and only then start editing\n"
 "the file."
-msgstr "Teraz sa otvorí konfiguračný súbor, ale prosím\nneupravujte ho zatiaľ: YouTube Downloader ho prepíše\npred svojim ukončením, tažke všetky vaše zmeny by sa\nstratili. Najprv ukončite YTD a až potom začnite editovať\nkonfiguračný súbor."
+msgstr "Teraz sa otvorí konfiguračný súbor, ale prosím\nneupravujte ho zatiaľ: YouTube Downloader ho prepíše\npred svojim ukončením, takže všetky vaše zmeny by sa\nstratili. Najprv ukončite YTD a až potom začnite editovať\nkonfiguračný súbor."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:89
 msgid "There are downloads in progress\n"
 "Do you really want to quit?"
-msgstr "Práve prebieha sťahovanie.\nNoazaj chcete program ukončiť?"
+msgstr "Práve prebieha sťahovanie.\nNaozaj chcete program ukončiť?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:92
@@ -1187,7 +1187,7 @@ msgstr "Súbor už existuje."
 #. Label "Newest version:"
 #: GUI/WinAPI/guiAboutWINAPI.pas:222
 msgid "checking..."
-msgstr "kontroluje sa..."
+msgstr "zisťuje sa..."
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR

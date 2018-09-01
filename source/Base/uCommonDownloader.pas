@@ -45,6 +45,8 @@ uses
   uDownloader, uOptions;
 
 type
+  TStringArray = array of string;
+
   TCommonDownloader = class(TDownloader)
     private
       fMovieURL: string;
@@ -85,6 +87,7 @@ type
       {$ENDIF}
     protected
       function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -343,6 +346,29 @@ end;
 function TCommonDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
 begin
   Result := RegExp.Match(Text) and RegExp.SubexpressionByName(VarName, VarValue);
+end;
+
+function TCommonDownloader.GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean;
+var n: integer;
+    b: boolean;
+    Value: string;
+begin
+  SetLength(VarValue, 0);
+  n := 0;
+  b := RegExp.Match(Text);
+  while b do
+    begin
+    if RegExp.SubexpressionByName(VarName, Value) then
+      begin
+      if Length(VarValue) <= n then
+        SetLength(VarValue, Length(VarValue)+16);
+      VarValue[n] := Value;
+      Inc(n);
+      end;
+    b := RegExp.MatchAgain;
+    end;
+  SetLength(VarValue, n);
+  Result := n > 0;
 end;
 
 function TCommonDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean;

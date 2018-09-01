@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCrunchyRoll;
+unit downSuper;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,18 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_CrunchyRoll = class(TRtmpDownloader)
+  TDownloader_Super = class(THttpDownloader)
     private
-      fFileNameExt: string;
-    protected
-      InfoUrlRegExp: TRegExp;
-      property FileNameExt: string read fFileNameExt write fFileNameExt; 
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -68,84 +63,56 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.crunchyroll.com/naruto/episode-193-the-man-who-died-twice-567104
+// http://video.super.cz/supervidea/supervidea-doporucujeme/?videoId=3950&page=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*crunchyroll\.com/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.super\.cz/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+property="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_INFO_URL = '"config_url"\s*:\s*"(?P<URL>.*?)"';
+  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_EXTRACT_URL = '<param\s+name="FlashVars"\s+value="(?:[^"]*?&amp;)*video_src=(?P<URL>https?://[^"&]+)';
 
-{ TDownloader_CrunchyRoll }
+{ TDownloader_Super }
 
-class function TDownloader_CrunchyRoll.Provider: string;
+class function TDownloader_Super.Provider: string;
 begin
-  Result := 'CrunchyRoll.com';
+  Result := 'Super.cz';
 end;
 
-class function TDownloader_CrunchyRoll.UrlRegExp: string;
+class function TDownloader_Super.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CrunchyRoll.Create(const AMovieID: string);
+constructor TDownloader_Super.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CrunchyRoll.Destroy;
+destructor TDownloader_Super.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(InfoUrlRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_CrunchyRoll.GetMovieInfoUrl: string;
+function TDownloader_Super.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.crunchyroll.com/' + MovieID;
+  Result := 'http://video.super.cz/' + MovieID;
 end;
 
-function TDownloader_CrunchyRoll.GetFileNameExt: string;
-begin
-  Result := FileNameExt;
-end;
-
-function TDownloader_CrunchyRoll.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, FlvHost, FlvStream: string;
-    Xml: TXmlDoc;
+function TDownloader_Super.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else
-    try
-      if not GetXmlVar(Xml, 'default:preload/stream_info/host', FlvHost) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else if not GetXmlVar(Xml, 'default:preload/stream_info/file', FlvStream) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := FlvHost;
-        AddRtmpDumpOption('r', FlvHost);
-        AddRtmpDumpOption('y', FlvStream);
-        FileNameExt := ExtractFileExt(FlvStream);
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
-      end;
+  MovieUrl := UrlDecode(MovieUrl);
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CrunchyRoll);
+  RegisterDownloader(TDownloader_Super);
 
 end.

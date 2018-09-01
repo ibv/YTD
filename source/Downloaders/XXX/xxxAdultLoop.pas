@@ -34,27 +34,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCrunchyRoll;
+unit xxxAdultLoop;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uPCRE, uXml, HttpSend, 
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_CrunchyRoll = class(TRtmpDownloader)
+  TDownloader_AdultLoop = class(THttpDownloader)
     private
-      fFileNameExt: string;
     protected
-      InfoUrlRegExp: TRegExp;
-      property FileNameExt: string read fFileNameExt write fFileNameExt; 
+      MovieUrlsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function IsBetterUrl(const BestUrl, Url: string): boolean;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,84 +66,82 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.crunchyroll.com/naruto/episode-193-the-man-who-died-twice-567104
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*crunchyroll\.com/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*adultloop\.com/v2/video/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+property="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_INFO_URL = '"config_url"\s*:\s*"(?P<URL>.*?)"';
+  REGEXP_MOVIE_TITLE = '<div\s+class="video_title">(?P<TITLE>.*?)</div>';
+  REGEXP_MOVIE_URLS = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>https?://[^'']+)''';
 
-{ TDownloader_CrunchyRoll }
+{ TDownloader_AdultLoop }
 
-class function TDownloader_CrunchyRoll.Provider: string;
+class function TDownloader_AdultLoop.Provider: string;
 begin
-  Result := 'CrunchyRoll.com';
+  Result := 'AdultLoop.com';
 end;
 
-class function TDownloader_CrunchyRoll.UrlRegExp: string;
+class function TDownloader_AdultLoop.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CrunchyRoll.Create(const AMovieID: string);
+constructor TDownloader_AdultLoop.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlsRegExp := RegExCreate(REGEXP_MOVIE_URLS, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CrunchyRoll.Destroy;
+destructor TDownloader_AdultLoop.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(InfoUrlRegExp);
+  RegExFreeAndNil(MovieUrlsRegExp);
   inherited;
 end;
 
-function TDownloader_CrunchyRoll.GetMovieInfoUrl: string;
+function TDownloader_AdultLoop.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.crunchyroll.com/' + MovieID;
+  Result := 'http://www.adultloop.com/v2/video/' + MovieID;
 end;
 
-function TDownloader_CrunchyRoll.GetFileNameExt: string;
-begin
-  Result := FileNameExt;
-end;
-
-function TDownloader_CrunchyRoll.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, FlvHost, FlvStream: string;
-    Xml: TXmlDoc;
+function TDownloader_AdultLoop.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Urls: TStringArray;
+    BestUrl: string;
+    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  BestUrl := '';
+  if GetRegExpAllVar(MovieUrlsRegExp, Page, 'URL', Urls) then
+    begin
+    BestUrl := '';
+    for i := 0 to Pred(Length(Urls)) do
+      if BestUrl = '' then
+        BestUrl := Urls[i]
+      else if IsBetterUrl(BestUrl, Urls[i]) then
+        BestUrl := Urls[i];
+    end;
+  if BestUrl = '' then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
-    try
-      if not GetXmlVar(Xml, 'default:preload/stream_info/host', FlvHost) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else if not GetXmlVar(Xml, 'default:preload/stream_info/file', FlvStream) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := FlvHost;
-        AddRtmpDumpOption('r', FlvHost);
-        AddRtmpDumpOption('y', FlvStream);
-        FileNameExt := ExtractFileExt(FlvStream);
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    MovieUrl := BestUrl;
+    SetPrepared(True);
+    Result := True;
+    end;
+end;
+
+function TDownloader_AdultLoop.IsBetterUrl(const BestUrl, Url: string): boolean;
+begin
+  Result := AnsiCompareText(ExtractUrlExt(Url), '.mp4') = 0;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CrunchyRoll);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_AdultLoop);
+  {$ENDIF}
 
 end.

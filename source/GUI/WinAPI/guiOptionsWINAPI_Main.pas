@@ -79,6 +79,7 @@ const
   IDC_EDIT_LANGUAGE = 1003;
   IDC_BUTTON_SHORTCUTONDESKTOP = 1004;
   IDC_BUTTON_SHORTCUTINSTARTMENU = 1005;
+  IDC_CHECKBOX_MONITORCLIPBOARD = 1006;
 
 { TFrameMainOptions }
 
@@ -111,6 +112,7 @@ begin
   // Make sure everything can be resized easily
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_PORTABLEMODE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_LANGUAGE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTONDESKTOP), [akBottom, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTINSTARTMENU), [akBottom, akLeft, akRight]);
@@ -163,6 +165,8 @@ begin
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_PORTABLEMODE, CheckboxConsts[Options.PortableMode]);
   // Check for new version automatically
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION, CheckboxConsts[Options.CheckForNewVersionOnStartup]);
+  // Monitor clipboard
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD, CheckboxConsts[Options.MonitorClipboard]);
   // Language
   SendMessage(EditLanguage, WM_SETTEXT, 0, LPARAM(PChar(Options.Language)));
 end;
@@ -182,6 +186,13 @@ begin
       Options.CheckForNewVersionOnStartup := True;
     BST_UNCHECKED:
       Options.CheckForNewVersionOnStartup := False;
+    end;
+  // Monitor clipboard
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD) of
+    BST_CHECKED:
+      Options.MonitorClipboard := True;
+    BST_UNCHECKED:
+      Options.MonitorClipboard := False;
     end;
   // Language
   Options.Language := GetWindowTextAsString(EditLanguage);

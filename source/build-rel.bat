@@ -43,7 +43,7 @@ pushd ..\bin
 %pack% ..\ytd-%version%.%packext%
 popd
 pushd ..
-%pack% ytd-%version%-source.%packext% exe\* source\*
+%pack% ytd-%version%-source.%packext% bin\* source\*
 popd
 goto konec
 
