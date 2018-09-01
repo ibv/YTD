@@ -1,1 +1,4 @@
-UNDEF USEGRAPHICS
+see IFDEF/IFNDEF PEPAK:
+
+- UNDEF USEGRAPHICS
+- compatibility with Delphi 5

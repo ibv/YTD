@@ -120,7 +120,7 @@ begin
   Result := False;
   AMFRequest := TAMFPacket.Create;
   try
-    AMFRequest.LoadFromString(Base64Decode(AMF_REQUEST_PACKET));
+    AMFRequest.LoadFromString(AnsiString(Base64Decode(AMF_REQUEST_PACKET)));
     // Note: I don't need to check types (or make sure pointers are not null)
     // because I use a pre-made packet which has all required properties. That
     // is not true while parsing response packets!

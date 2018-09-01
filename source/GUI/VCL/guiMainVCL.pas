@@ -728,8 +728,8 @@ var BugReportUrl: string;
 begin
   BugReportUrl := Format(BUGREPORT_URL,
                        [ {$INCLUDE 'YTD.version'} ,
-                         EncodeUrl(StringToUtf8(DownloadList.Urls[Index])),
-                         EncodeUrl(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg))
+                         EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
+                         EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
                        ]);
   ShellExecute(0, 'open', PChar(BugReportUrl), nil, nil, SW_SHOWNORMAL);
 end;

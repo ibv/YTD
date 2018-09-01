@@ -109,7 +109,7 @@ begin
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else
     begin
-    Url := EncodeUrl(HtmlDecode(Url));
+    Url := string(EncodeUrl(AnsiString(HtmlDecode(Url))));
     if not DownloadPage(Http, Url, EmbeddedPlayer, peXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else

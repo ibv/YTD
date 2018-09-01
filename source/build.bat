@@ -74,17 +74,17 @@ goto konec
 
 :delphi
 if "%~1"=="" goto konec
-for %%i in (%1) do (
+for %%i in (%~1) do (
   echo.
   echo Compiling: %%i
-  call dcc32 -E%exedir% -N%srcdir%Units -U%srcdir%\Units %defs% %params% %*
+  call dcc32 -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% "%%i"
   if errorlevel 1 pause
 )
 goto konec
 
 :fpc
 if "%~1"=="" goto konec
-for %%i in (%1) do (
+for %%i in (%~1) do (
   echo.
   call fpc -B -Mdelphi -FE%exedir% -Fu%srcdir%Units -FU%srcdir%Units %defs% %params% "%%i"
   if errorlevel 1 pause

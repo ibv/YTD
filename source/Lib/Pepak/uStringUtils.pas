@@ -3,11 +3,10 @@ unit uStringUtils;
 interface
 
 uses
-  SysUtils;
+  SysUtils,
+  uCompatibility;
 
 type
-  Utf8String = AnsiString;
-
   EStringError = class(Exception);
 
 function OemToAnsi(Value: Pointer; Length: integer): AnsiString; overload;
@@ -125,7 +124,7 @@ end;
 
 function WideToUtf8(Value: Pointer; Length: integer): Utf8String;
 begin
-  Result := WideToAnything(CP_UTF8, Value, Length);
+  Result := Utf8String(WideToAnything(CP_UTF8, Value, Length));
 end;
 
 function WideToUtf8(const Value: WideString): Utf8String;

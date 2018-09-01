@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downZkoukniTo;
+unit downWat;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,13 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_ZkoukniTo = class(THttpDownloader)
+  TDownloader_Wat = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: TRegExp;
+      JSONTitleRegExp: TRegExp;
+      MovieIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -66,82 +66,77 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
+// http://www.wat.tv/video/jacque-yves-cousteau-jungle-e83m_2g1eh_.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*zkouknito\.cz/';
-  URLREGEXP_ID =        'video_[0-9]+.*';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*wat\.tv/video/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>[^"]+)"';
-  REGEXP_EXTRACT_ID = '<param\s+name="movie"\s+value="[^"]*[?&]vid=(?P<ID>[0-9]+)"';
+  REGEXP_EXTRACT_JSONTITLE = '"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_EXTRACT_MOVIEID = '<input\s+type="hidden"\s+id="media"\s+value="(?P<ID>[0-9]+)"';
 
-{ TDownloader_ZkoukniTo }
+{ TDownloader_Wat }
 
-class function TDownloader_ZkoukniTo.Provider: string;
+class function TDownloader_Wat.Provider: string;
 begin
-  Result := 'ZkoukniTo.cz';
+  Result := 'Wat.com';
 end;
 
-class function TDownloader_ZkoukniTo.UrlRegExp: string;
+class function TDownloader_Wat.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_ZkoukniTo.Create(const AMovieID: string);
+constructor TDownloader_Wat.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  JSONTitleRegExp := RegExCreate(REGEXP_EXTRACT_JSONTITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieIdRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEID, [rcoIgnoreCase, rcoSingleLine]);
+end;
+
+destructor TDownloader_Wat.Destroy;
+begin
+  RegExFreeAndNil(JSONTitleRegExp);
+  RegExFreeAndNil(MovieIdRegExp);
   inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_ZkoukniTo.Destroy;
+function TDownloader_Wat.GetMovieInfoUrl: string;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
-  inherited;
+  Result := 'http://www.wat.tv/video/' + MovieID;
 end;
 
-function TDownloader_ZkoukniTo.GetMovieInfoUrl: string;
-begin
-  Result := 'http://www.zkouknito.cz/' + MovieID;
-end;
-
-function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Url: string;
-    Xml: TXmlDoc;
+function TDownloader_Wat.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ID, Url, Title, MovieInfo: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, Xml) then
+  else if not DownloadPage(Http, 'http://www.wat.tv/interface/contentv2/' + ID, MovieInfo, InfoPageEncoding) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else if not GetRegExpVar(JSONTitleRegExp, MovieInfo, 'TITLE', Title) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
   else
-    try
-      if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieUrl := Url;
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
+    begin
+    Url := 'http://www.wat.tv/get/web/' + ID + '?context=swf2&getURL=1&version=WIN%2010,0,45,2';
+    if not DownloadPage(Http, Url, hmHEAD) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else if not DownloadPage(Http, Url, Url, peAnsi, hmGET) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else
+      begin
+      SetName(Title);
+      MovieUrl := Url;
+      SetPrepared(True);
+      Result := True;
       end;
-end;
-
-function TDownloader_ZkoukniTo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
-begin
-  {$IFDEF XXX}
-  Http.Cookies.Add('confirmed=1');
-  {$ENDIF}
-  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_ZkoukniTo);
+  RegisterDownloader(TDownloader_Wat);
 
 end.

@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uPlaylistDownloader, listHTML,
   uDownloadClassifier;
 
@@ -49,7 +49,7 @@ type
   TPlaylist_HTMLfile = class(TPlaylist_HTML)
     private
     protected
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -72,27 +72,12 @@ begin
   inherited;
 end;
 
-function TPlaylist_HTMLfile.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
-var MS: TMemoryStream;
-    s: AnsiString;
+function TPlaylist_HTMLfile.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
+  Xml := nil;
   Result := FileExists(Url);
   if Result then
-    begin
-    MS := LoadFileIntoMemory(Url);
-    try
-      if MS.Size = 0 then
-        Page := ''
-      else
-        begin
-        SetLength(s, MS.Size);
-        Move(MS.Memory^, s[1], MS.Size);
-        Page := s;
-        end;
-    finally
-      MS.Free;
-      end;
-    end;
+    Page := LoadFileIntoString(Url, feAuto);
 end;
 
 end.

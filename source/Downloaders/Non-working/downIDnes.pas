@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downBarrandovTV;
+unit downIDnes;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,7 +45,7 @@ uses
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_BarrandovTV = class(TRtmpDownloader)
+  TDownloader_IDnes = class(TRtmpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -65,71 +65,90 @@ uses
   uMessages,
   uDownloadClassifier;
 
-// http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+// http://video.idnes.cz/webtv.asp?c=A100921_133647_domaci_hv&idvideo=V100921_125853_tv-zpravy_nep
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*barrandov\.tv/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.idnes\.cz/webtv\.asp\?';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_BarrandovTV }
+{ TDownloader_IDnes }
 
-class function TDownloader_BarrandovTV.Provider: string;
+class function TDownloader_IDnes.Provider: string;
 begin
-  Result := 'Barrandov.tv';
+  Result := 'iDnes.cz';
 end;
 
-class function TDownloader_BarrandovTV.UrlRegExp: string;
+class function TDownloader_IDnes.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
+constructor TDownloader_IDnes.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUTF8;
+  InfoPageEncoding := peXml;
   InfoPageIsXml := True;
 end;
 
-destructor TDownloader_BarrandovTV.Destroy;
+destructor TDownloader_IDnes.Destroy;
 begin
   inherited;
 end;
 
-function TDownloader_BarrandovTV.GetMovieInfoUrl: string;
+function TDownloader_IDnes.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.barrandov.tv/special/videoplayerdata/' + MovieID;
+  Result := 'http://servis.idnes.cz/stream/flv/data.asp?' + MovieID;
 end;
 
-function TDownloader_BarrandovTV.GetFileNameExt: string;
+function TDownloader_IDnes.GetFileNameExt: string;
 begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.f4v') = 0 then
-    Result := '.flv';
+  Result := '.mp4';
 end;
 
-function TDownloader_BarrandovTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Title, HostName, StreamName: string;
+function TDownloader_IDnes.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ItemType, Server, Path, VideoFile, Title, Stream: string;
+    Items: TXmlNode;
+    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlVar(PageXml, 'videotitle', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-  else if not GetXmlVar(PageXml, 'hostname', HostName) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['hostname']))
-  else if not GetXmlVar(PageXml, 'streamname', StreamName) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['streamname']))
+  if not XmlNodeByPath(PageXml, 'items', Items) then
+    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
   else
     begin
-    SetName(Title);
-    MovieUrl := 'rtmp://' + HostName + '/' + StreamName;
-    AddRtmpDumpOption('r', MovieURL);
-    AddRtmpDumpOption('y', StreamName);
-    Result := True;
-    SetPrepared(True);
+    for i := 0 to Pred(Items.NodeCount) do
+      if string(Items.Nodes[i].Name) = 'item' then
+        if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
+          if ItemType = 'video' then
+            begin
+            if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
+              SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['server']))
+            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
+              SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['path']))
+            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
+              SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['file']))
+            else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
+              SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+            else
+              begin
+              SetName(Title);
+              Stream := 'mp4:' + Path + VideoFile;
+              MovieUrl := 'rtmp://' + Server + Stream;
+              AddRtmpDumpOption('r', MovieURL);
+              AddRtmpDumpOption('y', Stream);
+              AddRtmpDumpOption('s', 'http://g.idnes.cz/swf/flv/test/playerE.swf');
+              AddRtmpDumpOption('t', 'rtmp://' + Server);
+              AddRtmpDumpOption('p', 'http://video.idnes.cz/webtv.asp?' + MovieID);
+              Result := True;
+              SetPrepared(True);
+              end;
+            Exit;
+            end;
+    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_BarrandovTV);
+  RegisterDownloader(TDownloader_IDnes);
 
 end.

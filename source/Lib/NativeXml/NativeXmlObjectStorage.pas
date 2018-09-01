@@ -29,91 +29,14 @@
 
   Please visit http://www.simdesign.nl/xml.html for more information.
 }
-
-// Delphi and BCB versions
-
-// Delphi 5
-{$IFDEF VER130}
-  {$DEFINE D5UP}
-{$ENDIF}
-//Delphi 6
-{$IFDEF VER140}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-{$ENDIF}
-//Delphi 7
-{$IFDEF VER150}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-{$ENDIF}
-//Delphi 8
-{$IFDEF VER160}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-{$ENDIF}
-// Delphi 2005
-{$IFDEF VER170}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-{$ENDIF}
-// Delphi 2006
-{$IFDEF VER180}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-{$ENDIF}
-// Delphi 2007 - NET
-{$IFDEF VER190}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-{$ENDIF}
-// Delphi 2009
-{$IFDEF VER200}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-  {$DEFINE D11UP}
-  {$DEFINE D12UP}
-{$ENDIF}
-// Delphi 2010
-{$IFDEF VER210}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-  {$DEFINE D11UP}
-  {$DEFINE D12UP}
-  {$DEFINE D14UP}
-{$ENDIF}
-
-
 unit NativeXmlObjectStorage;
+
+{$i NativeXml.inc}
 
 interface
 
 uses
-  Classes, Forms, SysUtils, Controls, NativeXml, TypInfo
-  {$IFDEF D6UP}
-  , Variants
-  {$ENDIF};
+  Classes, Forms, SysUtils, Controls, NativeXml, TypInfo, Variants;
 
 type
 
@@ -299,31 +222,26 @@ procedure FormSaveToXmlStream(AForm: TForm; S: TStream);
 // as a form-storage method.
 function FormSaveToXmlString(AForm: TForm): string;
 
-const
+resourcestring
 
   sxwIllegalVarType        = 'Illegal variant type';
-  sxrUnregisteredClassType = 'Unregistered classtype encountered';
+  sxrUnregisteredClassType = 'Unregistered classtype encountered in ';
   sxrInvalidPropertyValue  = 'Invalid property value';
   sxwInvalidMethodName     = 'Invalid method name';
 
 implementation
 
-{$IFDEF TRIALXML}
-uses
-  Dialogs;
-{$ENDIF}
-
 type
 
-  THackPersistent = class(TPersistent);
-  THackComponent = class(TComponent)
+  TPersistentAccess = class(TPersistent);
+  TComponentAccess = class(TComponent)
   public
     procedure SetComponentState(const AState: TComponentState);
   published
     property ComponentState;
   end;
 
-  THackReader = class(TReader);
+  TReaderAccess = class(TReader);
 
 function ComponentCreateFromXmlFile(const FileName: string; Owner: TComponent;
   const Name: string): TComponent;
@@ -344,7 +262,8 @@ var
   AReader: TsdXmlObjectReader;
 begin
   Result := nil;
-  if not assigned(ANode) then exit;
+  if not assigned(ANode) then
+    exit;
   // Create reader
   AReader := TsdXmlObjectReader.Create;
   try
@@ -361,7 +280,8 @@ var
   ADoc: TNativeXml;
 begin
   Result := nil;
-  if not assigned(S) then exit;
+  if not assigned(S) then
+    exit;
   // Create XML document
   ADoc := TNativeXml.Create;
   try
@@ -450,7 +370,8 @@ procedure ObjectLoadFromXmlNode(AObject: TObject; ANode: TXmlNode; AParent: TCom
 var
   AReader: TsdXmlObjectReader;
 begin
-  if not assigned(AObject) or not assigned(ANode) then exit;
+  if not assigned(AObject) or not assigned(ANode) then
+    exit;
   // Create writer
   AReader := TsdXmlObjectReader.Create;
   try
@@ -468,7 +389,8 @@ procedure ObjectLoadFromXmlStream(AObject: TObject; S: TStream; AParent: TCompon
 var
   ADoc: TNativeXml;
 begin
-  if not assigned(S) then exit;
+  if not assigned(S) then
+    exit;
   // Create XML document
   ADoc := TNativeXml.Create;
   try
@@ -510,7 +432,8 @@ procedure ObjectSaveToXmlNode(AObject: TObject; ANode: TXmlNode; AParent: TCompo
 var
   AWriter: TsdXmlObjectWriter;
 begin
-  if not assigned(AObject) or not assigned(ANode) then exit;
+  if not assigned(AObject) or not assigned(ANode) then
+    exit;
   // Create writer
   AWriter := TsdXmlObjectWriter.Create;
   try
@@ -530,7 +453,8 @@ procedure ObjectSaveToXmlStream(AObject: TObject; S: TStream; AParent: TComponen
 var
   ADoc: TNativeXml;
 begin
-  if not assigned(S) then exit;
+  if not assigned(S) then
+    exit;
   // Create XML document
   ADoc := TNativeXml.Create;
   try
@@ -595,13 +519,13 @@ begin
   Result := ComponentSaveToXmlString(AForm, AForm);
 end;
 
-
 { TsdXmlObjectWriter }
 
 procedure TsdXmlObjectWriter.WriteComponent(ANode: TXmlNode; AComponent,
   AParent: TComponent);
 begin
-  if not assigned(ANode) or not assigned(AComponent) then exit;
+  if not assigned(ANode) or not assigned(AComponent) then
+    exit;
   ANode.Name := UTF8String(AComponent.ClassName);
   if length(AComponent.Name) > 0 then
     ANode.AttributeAdd('Name', UTF8String(AComponent.Name));
@@ -619,13 +543,17 @@ var
   AChildNode: TXmlNode;
   AComponentNode: TXmlNode;
 begin
-  if not assigned(ANode) or not assigned(AObject) then exit;
+  if not assigned(ANode) or not assigned(AObject) then
+    exit;
 
   // If this is a component, store child components
-  if AObject is TComponent then with TComponent(AObject) do begin
-    if ComponentCount > 0 then begin
+  if AObject is TComponent then with TComponent(AObject) do
+  begin
+    if ComponentCount > 0 then
+    begin
       AChildNode := ANode.NodeNew('Components');
-      for i := 0 to ComponentCount - 1 do begin
+      for i := 0 to ComponentCount - 1 do
+      begin
         AComponentNode := AChildNode.NodeNew(UTF8String(Components[i].ClassName));
         if length(Components[i].Name) > 0 then
           AComponentNode.AttributeAdd('Name', UTF8String(Components[i].Name));
@@ -636,13 +564,16 @@ begin
 
   // Save all regular properties that need storing
   Count := GetTypeData(AObject.ClassInfo)^.PropCount;
-  if Count > 0 then begin
+  if Count > 0 then
+  begin
     GetMem(PropList, Count * SizeOf(Pointer));
     try
       GetPropInfos(AObject.ClassInfo, PropList);
-      for i := 0 to Count - 1 do begin
+      for i := 0 to Count - 1 do
+      begin
         PropInfo := PropList^[i];
-        if PropInfo = nil then continue;
+        if PropInfo = nil then
+          continue;
         if IsStoredProp(AObject, PropInfo) then
           WriteProperty(ANode, AObject, AParent, PropInfo);
       end;
@@ -652,19 +583,21 @@ begin
   end;
 
   // Save defined properties
-  if AObject is TPersistent then begin
+  if AObject is TPersistent then
+  begin
     S := TStringStream.Create('');
     try
       AWriter := TWriter.Create(S, 4096);
       try
-        THackPersistent(AObject).DefineProperties(AWriter);
+        TPersistentAccess(AObject).DefineProperties(AWriter);
       finally
         AWriter.Free;
       end;
       // Do we have data from DefineProperties?
-      if S.Size > 0 then begin
+      if S.Size > 0 then
+      begin
         // Yes, add a node with binary data
-        ANode.NodeNew('DefinedProperties').BinaryString := UTF8String(S.DataString);
+        ANode.NodeNew('DefinedProperties').BinaryString := RawByteString(S.DataString);
       end;
     finally
       S.Free;
@@ -678,22 +611,22 @@ var
   PropType: PTypeInfo;
   AChildNode: TXmlNode;
   ACollectionNode: TXmlNode;
-
+  //local
   procedure WritePropName;
   begin
     AChildNode := ANode.NodeNew(PPropInfo(PropInfo)^.Name);
   end;
-
+  //local
   procedure WriteInteger(Value: Int64);
   begin
     AChildNode.ValueAsString := UTF8String(IntToStr(Value));
   end;
-
+  //local
   procedure WriteString(Value: string);
   begin
     AChildNode.ValueAsUnicodeString := Value;
   end;
-
+  //local
   procedure WriteSet(Value: Longint);
   var
     I: Integer;
@@ -701,8 +634,10 @@ var
     S, Enum: string;
   begin
     BaseType := GetTypeData(PropType)^.CompType^;
-    for i := 0 to SizeOf(TIntegerSet) * 8 - 1 do begin
-      if i in TIntegerSet(Value) then begin
+    for i := 0 to SizeOf(TIntegerSet) * 8 - 1 do
+    begin
+      if i in TIntegerSet(Value) then
+      begin
         Enum := GetEnumName(BaseType, i);
         if i > 0 then
           S := S + ',' + Enum
@@ -712,7 +647,7 @@ var
     end;
     AChildNode.ValueAsString := UTF8String(Format('[%s]', [S]));
   end;
-
+  //local
   procedure WriteIntProp(IntType: PTypeInfo; Value: Longint);
   var
     Ident: string;
@@ -724,12 +659,13 @@ var
     else
       WriteInteger(Value);
   end;
-
+  //local
   procedure WriteCollectionProp(Collection: TCollection);
   var
     i: integer;
   begin
-    if assigned(Collection) then begin
+    if assigned(Collection) then
+    begin
       for i := 0 to Collection.Count - 1 do
       begin
         ACollectionNode := AChildNode.NodeNew(UTF8String(Collection.Items[i].ClassName));
@@ -737,13 +673,14 @@ var
       end;
     end;
   end;
-
+  //local
   procedure WriteOrdProp;
   var
     Value: Longint;
   begin
     Value := GetOrdProp(AObject, PropInfo);
-    if not (Value = PPropInfo(PropInfo)^.Default) then begin
+    if not (Value = PPropInfo(PropInfo)^.Default) then
+    begin
       WritePropName;
       case PropType^.Kind of
       tkInteger:     WriteIntProp(PPropInfo(PropInfo)^.PropType^, Value);
@@ -753,7 +690,7 @@ var
       end;
     end;
   end;
-
+  //local
   procedure WriteFloatProp;
   var
     Value: Extended;
@@ -762,7 +699,7 @@ var
     if not (Value = 0) then
       ANode.WriteFloat(PPropInfo(PropInfo)^.Name, Value);
   end;
-
+  //local
   procedure WriteInt64Prop;
   var
     Value: Int64;
@@ -771,7 +708,7 @@ var
     if not (Value = 0) then
       ANode.WriteInt64(PPropInfo(PropInfo)^.Name, Value);
   end;
-
+  //local
   procedure WriteStrProp;
   var
     Value: string;
@@ -780,8 +717,7 @@ var
     if not (length(Value) = 0) then
       ANode.WriteUnicodeString(PPropInfo(PropInfo)^.Name, Value);
   end;
-
-  {$IFDEF D6UP}
+  //local
   procedure WriteWideStrProp;
   var
     Value: WideString;
@@ -790,8 +726,18 @@ var
     if not (length(Value) = 0) then
       ANode.WriteUnicodeString(PPropInfo(PropInfo)^.Name, Value);
   end;
+  {$IFDEF D12UP}
+  //local
+  procedure WriteUnicodeStrProp;
+  var
+    Value: UnicodeString;
+  begin
+    Value := GetUnicodeStrProp(AObject, PropInfo);
+    if not (length(Value) = 0) then
+      ANode.WriteUnicodeString(PPropInfo(PropInfo)^.Name, Value);
+  end;
   {$ENDIF}
-
+  //local
   procedure WriteObjectProp;
   var
     Value: TObject;
@@ -809,20 +755,23 @@ var
         Result := Component.Name + '.Owner'
       else Result := '';
     end;
-
   begin
     Value := TObject(GetOrdProp(AObject, PropInfo));
-    if not assigned(Value) then exit;
+    if not assigned(Value) then
+      exit;
     WritePropName;
-    if Value is TComponent then begin
+    if Value is TComponent then
+    begin
       ComponentName := GetComponentName(TComponent(Value));
       if length(ComponentName) > 0 then
         WriteString(ComponentName);
-    end else begin
+    end else
+    begin
       WriteString(Format('(%s)', [Value.ClassName]));
       if Value is TCollection then
         WriteCollectionProp(TCollection(Value))
-      else begin
+      else
+      begin
         if AObject is TComponent then
           WriteObject(AChildNode, Value, TComponent(AObject))
         else
@@ -833,7 +782,7 @@ var
         ANode.NodeRemove(AChildNode);
     end;
   end;
-
+  //local
   procedure WriteMethodProp;
   var
     Value: TMethod;
@@ -844,8 +793,10 @@ var
     end;
   begin
     Value := GetMethodProp(AObject, PropInfo);
-    if not IsDefaultValue then begin
-      if assigned(Value.Code) then begin
+    if not IsDefaultValue then
+    begin
+      if assigned(Value.Code) then
+      begin
         WritePropName;
         if assigned(AParent) then
           WriteString(AParent.MethodName(Value.Code))
@@ -854,7 +805,7 @@ var
       end;
     end;
   end;
-
+  //local
   procedure WriteVariantProp;
   var
     AValue: Variant;
@@ -863,13 +814,15 @@ var
     VType: Integer;
   begin
     AValue := GetVariantProp(AObject, PropInfo);
-    if not VarIsEmpty(AValue) then begin
+    if not VarIsEmpty(AValue) or VarIsNull(AValue) then
+    begin
       if VarIsArray(AValue) then
         raise Exception.Create(sxwIllegalVarType);
       WritePropName;
       VType := VarType(AValue);
       AChildNode.AttributeAdd('VarType', UTF8String(IntToHex(VType, 4)));
       case VType and varTypeMask of
+      varNull:    AChildNode.ValueAsUnicodeString := '';
       varOleStr:  AChildNode.ValueAsUnicodeString := AValue;
       varString:  AChildNode.ValueAsUnicodeString := AValue;
       varByte,
@@ -893,7 +846,7 @@ var
       end;//case
     end;
   end;
-
+//main
 begin
   if (PPropInfo(PropInfo)^.SetProc <> nil) and
     (PPropInfo(PropInfo)^.GetProc <> nil) then
@@ -905,6 +858,9 @@ begin
     tkString, tkLString:                     WriteStrProp;
     {$IFDEF D6UP}
     tkWString:                               WriteWideStrProp;
+    {$ENDIF}
+    {$IFDEF D12UP}
+    tkUString:                               WriteUnicodeStrProp;
     {$ENDIF}
     tkClass:                                 WriteObjectProp;
     tkMethod:                                WriteMethodProp;
@@ -923,7 +879,7 @@ var
 begin
   AClass := TComponentClass(GetClass(string(ANode.Name)));
   if not assigned(AClass) then
-    raise Exception.Create(sxrUnregisteredClassType);
+    raise Exception.CreateFmt(sxrUnregisteredClassType, [ANode.Name]);
   Result := AClass.Create(AOwner);
   if length(AName) = 0 then
     Result.Name := string(ANode.AttributeByName['Name'])
@@ -943,6 +899,7 @@ end;
 procedure TsdXmlObjectReader.ReadObject(ANode: TXmlNode; AObject: TObject; AParent: TComponent);
 var
   i, Count: Integer;
+  Item: TCollectionItem;
   PropInfo: PPropInfo;
   PropList: PPropList;
   S: TStringStream;
@@ -952,23 +909,30 @@ var
   AClass: TComponentClass;
   AComponent: TComponent;
 begin
-  if not assigned(ANode) or not assigned(AObject) then exit;
+  if not assigned(ANode) or not assigned(AObject) then
+    exit;
 
   // Start loading
-  if AObject is TComponent then with THackComponent(AObject) do begin
-    THackComponent(AObject).Updating;
-    SetComponentState(ComponentState + [csLoading, csReading]);
-  end;
+  if AObject is TComponent then
+    with TComponentAccess(AObject) do
+    begin
+      TComponentAccess(AObject).Updating;
+      SetComponentState(ComponentState + [csLoading, csReading]);
+    end;
   try
 
     // If this is a component, load child components
-    if AObject is TComponent then with TComponent(AObject) do begin
+    if AObject is TComponent then with TComponent(AObject) do
+    begin
       AChildNode := ANode.NodeByName('Components');
-      if assigned(AChildNode) then begin
-        for i := 0 to AChildNode.NodeCount - 1 do begin
+      if assigned(AChildNode) then
+      begin
+        for i := 0 to AChildNode.NodeCount - 1 do
+        begin
           AComponentNode := AChildNode.Nodes[i];
           AComponent := FindComponent(string(AComponentNode.AttributeByName['Name']));
-          if not assigned(AComponent) then begin
+          if not assigned(AComponent) then
+          begin
             AClass := TComponentClass(GetClass(string(AComponentNode.Name)));
             if not assigned(AClass) then
               raise Exception.Create(sxrUnregisteredClassType);
@@ -983,15 +947,35 @@ begin
       end;
     end;
 
+    // If this is a collection, load collections items
+    if AObject is TCollection then
+      with TCollection(AObject) do
+      begin
+        BeginUpdate;
+        try
+          Clear;
+          for i := 0 to ANode.NodeCount - 1 do
+          begin
+            item := Add;
+            ReadObject(ANode.Nodes[i], item, AParent);
+          end;
+        finally
+          EndUpdate;
+        end;
+      end;
+
     // Load all loadable regular properties
     Count := GetTypeData(AObject.ClassInfo)^.PropCount;
-    if Count > 0 then begin
+    if Count > 0 then
+    begin
       GetMem(PropList, Count * SizeOf(Pointer));
       try
         GetPropInfos(AObject.ClassInfo, PropList);
-        for i := 0 to Count - 1 do begin
+        for i := 0 to Count - 1 do
+        begin
           PropInfo := PropList^[i];
-          if PropInfo = nil then continue;
+          if PropInfo = nil then
+            continue;
           if IsStoredProp(AObject, PropInfo) then
             ReadProperty(ANode, AObject, AParent, PropInfo);
         end;
@@ -1001,14 +985,18 @@ begin
     end;
 
     // Load defined properties
-    if AObject is TPersistent then begin
+    if AObject is TPersistent then
+    begin
       AChildNode := ANode.NodeByName('DefinedProperties');
-      if assigned(AChildNode) then begin
+      if assigned(AChildNode) then
+      begin
         S := TStringStream.Create(AChildNode.BinaryString);
         try
           AReader := TReader.Create(S, 4096);
           try
-            THackReader(AReader).ReadProperty(TPersistent(AObject));
+            with TReaderAccess(AReader) do
+              while Position < S.Size do
+                ReadProperty(TPersistent(AObject));
           finally
             AReader.Free;
           end;
@@ -1020,10 +1008,11 @@ begin
 
   finally
     // End loading
-    if AObject is TComponent then with THackComponent(AObject) do begin
+    if AObject is TComponent then with TComponentAccess(AObject) do
+    begin
       SetComponentState(ComponentState - [csReading]);
-      THackComponent(AObject).Loaded;
-      THackComponent(AObject).Updated;
+      TComponentAccess(AObject).Loaded;
+      TComponentAccess(AObject).Updated;
     end;
   end;
 end;
@@ -1035,19 +1024,19 @@ var
   AChildNode: TXmlNode;
   Method: TMethod;
   PropObject: TObject;
-
+  //local
   procedure SetSetProp(const AValue: string);
   var
     S: string;
     P: integer;
     ASet: integer;
     EnumType: PTypeInfo;
-
     procedure AddToEnum(const EnumName: string);
     var
       V: integer;
     begin
-      if length(EnumName) = 0 then exit;
+      if length(EnumName) = 0 then
+        exit;
       V := GetEnumValue(EnumType, EnumName);
       if V = -1 then
         raise Exception.Create(sxrInvalidPropertyValue);
@@ -1107,7 +1096,8 @@ var
     ACollection.BeginUpdate;
     try
       ACollection.Clear;
-      for i := 0 to AChildNode.NodeCount - 1 do begin
+      for i := 0 to AChildNode.NodeCount - 1 do
+      begin
         Item := ACollection.Add;
         ReadObject(AChildNode.Nodes[i], Item, AParent);
       end;
@@ -1122,15 +1112,19 @@ var
     PropObject: TObject;
     Reference: TComponent;
   begin
-    if length(AValue) = 0 then exit;
-    if AValue[1] = '(' then begin
+    if length(AValue) = 0 then
+      exit;
+    if AValue[1] = '(' then
+    begin
       // Persistent class
       AClassName := Copy(AValue, 2, length(AValue) - 2);
       PropObject := TObject(GetOrdProp(AObject, PropInfo));
-      if assigned(PropObject) and (PropObject.ClassName = AClassName) then begin
+      if assigned(PropObject) and (PropObject.ClassName = AClassName) then
+      begin
         if PropObject is TCollection then
           ReadCollectionProp(TCollection(PropObject))
-        else begin
+        else
+        begin
           if AObject is TComponent then
             ReadObject(AChildNode, PropObject, TComponent(AObject))
           else
@@ -1138,9 +1132,11 @@ var
         end;
       end else
         raise Exception.Create(sxrUnregisteredClassType);
-    end else begin
+    end else
+    begin
       // Component reference
-      if assigned(AParent) then begin
+      if assigned(AParent) then
+      begin
         Reference := FindNestedComponent(AParent, AValue);
         SetOrdProp(AObject, PropInfo, Longint(Reference));
       end;
@@ -1152,7 +1148,8 @@ var
     Method: TMethod;
   begin
     // to do: add OnFindMethod
-    if not assigned(AParent) then exit;
+    if not assigned(AParent) then
+      exit;
     Method.Code := AParent.MethodAddress(AValue);
     if not assigned(Method.Code) then
       raise Exception.Create(sxwInvalidMethodName);
@@ -1166,9 +1163,10 @@ var
     Value: Variant;
     ACurrency: Currency;
   begin
-    VType := StrToInt(AChildNode.AttributeByName['VarType']);
+    VType := StrToInt('$' + AChildNode.AttributeByName['VarType']);
 
     case VType and varTypeMask of
+    varNull:    Value := Null;
     varOleStr:  Value := AChildNode.ValueAsUnicodeString;
     varString:  Value := AChildNode.ValueAsString;
     varByte,
@@ -1178,7 +1176,7 @@ var
     varDouble:  Value := AChildNode.ValueAsFloat;
     varCurrency:
       begin
-        AChildNode.BufferWrite(ACurrency, SizeOf(ACurrency));
+        AChildNode.BufferRead(ACurrency, SizeOf(ACurrency));
         Value := ACurrency;
       end;
     varDate:    Value := AChildNode.ValueAsDateTime;
@@ -1201,7 +1199,8 @@ begin
   begin
     PropType := PPropInfo(PropInfo)^.PropType^;
     AChildNode := ANode.NodeByName(PPropInfo(PropInfo)^.Name);
-    if assigned(AChildNode) then begin
+    if assigned(AChildNode) then
+    begin
       // Non-default values from XML
       case PropType^.Kind of
       tkInteger:     SetIntProp(AChildNode.ValueAsString);
@@ -1211,15 +1210,17 @@ begin
       tkFloat:       SetFloatProp(AObject, PropInfo, AChildNode.ValueAsFloat);
       tkString,
       tkLString:     SetStrProp(AObject, PropInfo, AChildNode.ValueAsString);
-      {$IFDEF D6UP}
-      tkWString:     SetWideStrProp(AObject, PropInfo, AChildNode.ValueAsUnicodeString);
+      tkWString:     SetWideStrProp(AObject, PropInfo, UTF8Decode(AChildNode.ValueAsUnicodeString));
+      {$IFDEF D12UP}
+      tkUString:     SetUnicodeStrProp(AObject, PropInfo, AChildNode.ValueAsUnicodeString);
       {$ENDIF}
       tkClass:       SetObjectProp(AChildNode.ValueAsString);
       tkMethod:      SetMethodProp(AChildNode.ValueAsString);
       tkVariant:     SetVariantProp(AChildNode.ValueAsString);
       tkInt64:       SetInt64Prop(AObject, PropInfo, AChildNode.ValueAsInt64);
       end;//case
-    end else begin
+    end else
+    begin
       // Set Default value
       case PropType^.Kind of
       tkInteger:     SetOrdProp(AObject, PropInfo, PPropInfo(PropInfo)^.Default);
@@ -1230,6 +1231,9 @@ begin
       tkString,
       tkLString,
       tkWString:     SetStrProp(AObject, PropInfo, '');
+      {$IFDEF D12UP}
+      tkUString:     SetStrProp(AObject, PropInfo, '');
+      {$ENDIF}
       tkClass:
         begin
           PropObject := TObject(GetOrdProp(AObject, PropInfo));
@@ -1248,9 +1252,9 @@ begin
   end;
 end;
 
-{ THackComponent }
+{ TComponentAccess }
 
-procedure THackComponent.SetComponentState(const AState: TComponentState);
+procedure TComponentAccess.SetComponentState(const AState: TComponentState);
 type
   PInteger = ^integer;
 var
@@ -1260,17 +1264,10 @@ begin
   // This is a "severe" hack in order to set a non-writable property value,
   // also using RTTI
   PSet := PInteger(@AState);
-  AInfo := GetPropInfo(THackComponent, 'ComponentState');
+  AInfo := GetPropInfo(TComponentAccess, 'ComponentState');
   if assigned(AInfo.GetProc) then
     PInteger(Integer(Self) + Integer(AInfo.GetProc) and $00FFFFFF)^ := PSet^;
 end;
-
-initialization
-
-  {$IFDEF TRIALXML}
-  ShowMessage('ObjectToXml demo.'#13#10'For more information please visit:'#13#10 +
-    'http://www.simdesign.nl/xml.html');
-  {$ENDIF}
 
 end.
 

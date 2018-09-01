@@ -51,7 +51,7 @@ type
       MovieInfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -132,10 +132,10 @@ begin
       end;
 end;
 
-function TDownloader_YouPorn.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
+function TDownloader_YouPorn.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
   Http.Cookies.Add('age_check=1');
-  Result := inherited GetMovieInfoContent(Http, Url, Page, Method);
+  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
 end;
 
 initialization

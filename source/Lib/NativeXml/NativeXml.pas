@@ -15,7 +15,8 @@
   Original Author: Nils Haeck M.Sc. (n.haeck@simdesign.nl)
   Original Date: 01 Apr 2003
   Version: see below
-  Copyright (c) 2003-2009 Simdesign BV
+  Copyright (c) 2003-2010 Simdesign BV
+  Contributor(s): Stefan Glienke
 
   It is NOT allowed under ANY circumstances to publish or copy this code
   without accepting the license conditions in accompanying LICENSE.txt
@@ -26,92 +27,14 @@
 
   Please visit http://www.simdesign.nl/xml.html for more information.
 }
-
-{.DEFINE USEGRAPHICS} // uncomment if you do not want to include the Graphics unit.
-
-// Delphi and BCB versions
-
-// Delphi 5
-{$IFDEF VER130}
-  {$DEFINE D5UP}
-{$ENDIF}
-//Delphi 6
-{$IFDEF VER140}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-{$ENDIF}
-//Delphi 7
-{$IFDEF VER150}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-{$ENDIF}
-//Delphi 8
-{$IFDEF VER160}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-{$ENDIF}
-// Delphi 2005
-{$IFDEF VER170}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-{$ENDIF}
-// Delphi 2006
-{$IFDEF VER180}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-{$ENDIF}
-// Delphi 2007 - NET
-{$IFDEF VER190}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-{$ENDIF}
-// Delphi 2009
-{$IFDEF VER200}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-  {$DEFINE D11UP}
-  {$DEFINE D12UP}
-{$ENDIF}
-// Delphi 2010
-{$IFDEF VER210}
-  {$DEFINE D5UP}
-  {$DEFINE D6UP}
-  {$DEFINE D7UP}
-  {$DEFINE D8UP}
-  {$DEFINE D9UP}
-  {$DEFINE D10UP}
-  {$DEFINE D11UP}
-  {$DEFINE D12UP}
-  {$DEFINE D14UP}
-{$ENDIF}
-
-
 unit NativeXml;
 
 interface
 
+{$i nativexml.inc}
+
 uses
-  {$IFNDEF FPC}
   Windows,
-  {$ENDIF}
   {$IFDEF CLR}
   System.Text,
   {$ENDIF}
@@ -122,13 +45,16 @@ uses
   Graphics,
   {$ENDIF}
   {$ENDIF}
+  {$IFDEF PEPAK}
+  uCompatibility,
+  {$ENDIF}
   Classes,
   SysUtils;
 
 const
 
   // Current version of the NativeXml unit
-  cNativeXmlVersion = '3.06';
+  cNativeXmlVersion = '3.10';
 
 // cross-platform pointer type
 type
@@ -138,28 +64,18 @@ type
   TPointer = Pointer;
   {$ENDIF}
 
-// Delphi 5 stubs
-{$IFNDEF D6UP}
+{$IFDEF D12UP}
+// Delphi 2009 and up
 type
-  TSeekOrigin = Word;
-  UTF8String = AnsiString;
-const
-  soBeginning = soFromBeginning;
-  soCurrent = soFromCurrent;
-  soEnd = soFromEnd;
-{$ENDIF}
-
-{$IFNDEF D12UP}
+  UnicodeChar = Char;
+  PUnicodeChar = PChar;
+{$ELSE}
 // Delphi 2007 and below
 type
   UnicodeString = WideString;
   UnicodeChar = WideChar;
   PUnicodeChar = PWideChar;
   RawByteString = AnsiString;
-{$ELSE}
-type
-  UnicodeChar = Char;
-  PUnicodeChar = PChar;
 {$ENDIF}
 
 type
@@ -249,6 +165,7 @@ var
   cDefaultIndentString:            UTF8String          = '  ';
   cDefaultDropCommentsOnParse:     boolean             = False;
   cDefaultUseFullNodes:            boolean             = False;
+  cDefaultUseLocalBias:            boolean             = False;
   cDefaultFloatAllowScientific:    boolean             = True;
   cDefaultFloatSignificantDigits:  integer             = 6;
 
@@ -332,6 +249,7 @@ type
     function GetBinaryString: RawByteString;
     procedure SetBinaryString(const Value: RawByteString);
     function UseFullNodes: boolean;
+    function UseLocalBias: Boolean;
     function GetValueAsUnicodeString: UnicodeString;
     procedure SetValueAsUnicodeString(const Value: UnicodeString);
     function GetAttributeByName(const AName: UTF8String): UTF8String;
@@ -833,6 +751,7 @@ type
     FRootNodes: TXmlNode;           // Root nodes in the document (which contains one normal element that is the root)
     FIndentString: UTF8String;      // The indent string used to indent content (default is two spaces)
     FUseFullNodes: boolean;         // If true, nodes are never written in short notation.
+    FUseLocalBias: Boolean;         // If true, datetime values are written with timezone offset and converted to local time when read
     FWriteOnDefault: boolean;       // Set this option to "False" to only write values <> default value (default = true)
     FXmlFormat: TXmlFormatType;     // xfReadable, xfCompact
     FOnNodeCompare: TXmlNodeCompareEvent; // Compare two nodes
@@ -1012,6 +931,9 @@ type
     // nodes are represented by <Node>...</Node> instead of the short version
     // <Node/>. UseFullNodes is False by default.
     property UseFullNodes: boolean read FUseFullNodes write FUseFullNodes;
+    // Set UseLocalBias to True if you want to consider the local timezone bias
+    // when writing and reading datetime values. UseLocalBias is False by default.
+    property UseLocalBias: Boolean read FUseLocalBias write FUseLocalBias;
     // This property is here for backwards compat: all strings inside NativeXml
     // are UTF8Strings, the internal encoding is always UTF8.
     property Utf8Encoded: boolean read GetUtf8Encoded;
@@ -1274,16 +1196,17 @@ function sdRemoveControlChars(const AValue: UTF8String): UTF8String;
 // Convert the UTF8String ADate to a TDateTime according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
 // If there is a conversion error, an exception will be raised.
-function sdDateTimeFromString(const ADate: UTF8String): TDateTime;
+function sdDateTimeFromString(const ADate: UTF8String; UseLocalBias: Boolean = False): TDateTime;
 
 // Convert the UTF8String ADate to a TDateTime according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
 // If there is a conversion error, the default value ADefault is returned.
-function sdDateTimeFromStringDefault(const ADate: UTF8String; ADefault: TDateTime): TDateTime;
+function sdDateTimeFromStringDefault(const ADate: UTF8String; ADefault: TDateTime;
+  UseLocalBias: Boolean = False): TDateTime;
 
 // Convert the TDateTime ADate to a UTF8String according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
-function sdDateTimeToString(ADate: TDateTime): UTF8String;
+function sdDateTimeToString(ADate: TDateTime; UseLocalBias: Boolean = False): UTF8String;
 
 // Convert a number to a UTF8String, using SignificantDigits to indicate the number of
 // significant digits, and AllowScientific to allow for scientific notation if that
@@ -1354,7 +1277,7 @@ function EncodeBinHex(const Source: RawByteString): UTF8String;
 // UTF8String may contain linebreaks and control characters, these will be stripped.
 function DecodeBinHex(const Source: UTF8String): RawByteString;
 
-const
+resourcestring
 
   sxeErrorCalcStreamLength       = 'Error while calculating streamlength';
   sxeMissingDataInBinaryStream   = 'Missing data in binary stream';
@@ -1388,11 +1311,6 @@ const
   sxeSignificantDigitsOutOfRange = 'Significant digits out of range';
 
 implementation
-
-{$IFDEF TRIALXML}
-uses
-  Dialogs;
-{$ENDIF}
 
 type
 
@@ -1449,10 +1367,8 @@ const
     // direct tags are derived from Normal tags by checking for the />
 
   // These constant are used when generating hexchars from buffer data
-  {$IFDEF UNNEEDED}
   cHexChar:       array[0..15] of AnsiChar = '0123456789ABCDEF';
   cHexCharLoCase: array[0..15] of AnsiChar = '0123456789abcdef';
-  {$ENDIF}
 
   // These AnsiCharacters are used when generating BASE64 AnsiChars from buffer data
   cBase64Char: array[0..63] of AnsiChar =
@@ -1764,11 +1680,7 @@ begin
         if (Code >= 0) and (Code < $FFFF) then
         begin
           W := Code;
-          {$IFDEF D5UP}
           Replace := sdUnicodeToUtf8(UnicodeChar(W));
-          {$ELSE}
-          Replace := AnsiChar(W and $FF);
-          {$ENDIF}
         end;
       end;
     end else
@@ -1913,6 +1825,11 @@ begin
 end;
 
 function IntToUTF8Str(Value: integer): UTF8String;
+begin
+  Result := UTF8String(IntToStr(Value));
+end;
+
+function Int64ToUTF8Str(Value: int64): UTF8String;
 begin
   Result := UTF8String(IntToStr(Value));
 end;
@@ -2212,11 +2129,27 @@ begin
   end;
 end;
 
-function sdDateTimeFromString(const ADate: UTF8String): TDateTime;
+function GetTimeZoneBias: Integer;
+// uses windows unit, func GetTimeZoneInformation
+var
+  TimeZoneInfo: TTimeZoneInformation;
+begin
+  case GetTimeZoneInformation(TimeZoneInfo) of
+    TIME_ZONE_ID_UNKNOWN: Result := TimeZoneInfo.Bias;
+    TIME_ZONE_ID_STANDARD: Result := TimeZoneInfo.Bias + TimeZoneInfo.StandardBias;
+    TIME_ZONE_ID_DAYLIGHT: Result := TimeZoneInfo.Bias + TimeZoneInfo.DaylightBias;
+  else
+    Result := 0;
+  end;
+end;
+
+function sdDateTimeFromString(const ADate: UTF8String; UseLocalBias: Boolean): TDateTime;
 // Convert the string ADate to a TDateTime according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
+// contributor: Stefan Glienke
 var
   AYear, AMonth, ADay, AHour, AMin, ASec, AMSec: word;
+  ALocalBias, ABias: Integer;
 begin
   AYear  := StrToInt(string(copy(ADate, 1, 4)));
   AMonth := StrToInt(string(copy(ADate, 6, 2)));
@@ -2237,33 +2170,58 @@ begin
   Result :=
     EncodeDate(AYear, AMonth, ADay) +
     EncodeTime(AHour, AMin, ASec, AMSec);
+  ALocalBias := GetTimeZoneBias;
+  if UseLocalBias then
+  begin
+    if (Length(ADate) > 24) then
+    begin
+      ABias := StrToInt(string(Copy(ADate, 25, 2))) * MinsPerHour +
+        StrToInt(string(Copy(ADate, 28, 2)));
+      if ADate[24] = '+' then
+        ABias := ABias * -1;
+      Result := Result + ABias / MinsPerDay;
+    end;
+    Result := Result - ALocalBias / MinsPerDay;
+  end;
 end;
 
-function sdDateTimeFromStringDefault(const ADate: UTF8String; ADefault: TDateTime): TDateTime;
+function sdDateTimeFromStringDefault(const ADate: UTF8String; ADefault: TDateTime; UseLocalBias: Boolean): TDateTime;
 // Convert the string ADate to a TDateTime according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
 // If there is a conversion error, the default value ADefault is returned.
 begin
   try
-    Result := sdDateTimeFromString(ADate);
+    Result := sdDateTimeFromString(ADate, UseLocalBias);
   except
     Result := ADefault;
   end;
 end;
 
-function sdDateTimeToString(ADate: TDateTime): UTF8String;
+function sdDateTimeToString(ADate: TDateTime; UseLocalBias: Boolean): UTF8String;
 // Convert the TDateTime ADate to a string according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
+// contributor: Stefan Glienke
 var
   AYear, AMonth, ADay, AHour, AMin, ASec, AMSec: word;
+  ABias: Integer;
+const
+  Neg: array[Boolean] of string = ('+', '-');
 begin
   DecodeDate(ADate, AYear, AMonth, ADay);
   DecodeTime(ADate, AHour, AMin, ASec, AMSec);
   if frac(ADate) = 0 then
     Result := UTF8String(Format('%.4d-%.2d-%.2d', [AYear, AMonth, ADay]))
   else
-    Result := UTF8String(Format('%.4d-%.2d-%.2dT%.2d:%.2d:%.2d.%.3dZ',
-      [AYear, AMonth, ADay, AHour, AMin, ASec, AMSec]));
+  begin
+    ABias := GetTimeZoneBias;
+    if UseLocalBias and (ABias <> 0) then
+      Result := UTF8String(Format('%.4d-%.2d-%.2dT%.2d:%.2d:%.2d.%.3d%s%.2d:%.2d',
+        [AYear, AMonth, ADay, AHour, AMin, ASec, AMSec,
+        Neg[ABias > 0], Abs(ABias) div MinsPerHour, Abs(ABias) mod MinsPerHour]))
+    else
+      Result := UTF8String(Format('%.4d-%.2d-%.2dT%.2d:%.2d:%.2d.%.3dZ',
+        [AYear, AMonth, ADay, AHour, AMin, ASec, AMSec]));
+  end;
 end;
 
 function sdWriteNumber(Value: double; SignificantDigits: integer; AllowScientific: boolean): UTF8String;
@@ -2625,7 +2583,7 @@ begin
     for j := 2 downto 0 do
     begin
       // Check overshoot
-      if integer(DWORD(D) - DWORD(@Buffer)) >= Count then
+      if integer(D) - integer(@Buffer) >= Count then
         exit;
       D^ := LongVal shr (j * 8) and $FF;
       inc(D);
@@ -3455,7 +3413,7 @@ end;
 
 function TXmlNode.GetValueAsDateTime: TDateTime;
 begin
-  Result := sdDateTimeFromString(ValueAsString);
+  Result := sdDateTimeFromString(ValueAsString, UseLocalBias);
 end;
 
 function TXmlNode.GetValueAsFloat: double;
@@ -3479,7 +3437,10 @@ end;
 
 function TXmlNode.GetValueAsString: UTF8String;
 begin
-  Result := UnEscapeString(FValue);
+  if FElementType = xeNormal then
+    Result := UnEscapeString(sdUTF8Trim(FValue))
+  else
+    Result := UnEscapeString(FValue);
 end;
 
 function TXmlNode.GetValueAsUnicodeString: UnicodeString;
@@ -3881,7 +3842,11 @@ function TXmlNode.ReadAttributeBool(const AName: UTF8String; ADefault: boolean):
 var
   V: UTF8String;
 begin
+  Result := ADefault;
   V := AttributeByName[AName];
+  if Length(V) = 0 then
+    exit;
+
   try
     Result := sdStringToBool(V);
   except
@@ -3893,9 +3858,13 @@ function TXmlNode.ReadAttributeDateTime(const AName: UTF8String; ADefault: TDate
 var
   V: UTF8String;
 begin
+  Result := ADefault;
   V := AttributeByName[AName];
+  if Length(V) = 0 then
+    exit;
+
   try
-    Result := sdDateTimeFromStringDefault(V, ADefault);
+    Result := sdDateTimeFromStringDefault(V, ADefault, UseLocalBias);
   except
     Result := ADefault;
   end;
@@ -3981,7 +3950,7 @@ function TXmlNode.ReadDateTime(const AName: UTF8String; ADefault: TDateTime): TD
 // This format is compatible with the W3C date/time specification as found here:
 // http://www.w3.org/TR/NOTE-datetime
 begin
-  Result := sdDateTimeFromStringDefault(ReadString(AName, ''), ADefault);
+  Result := sdDateTimeFromStringDefault(ReadString(AName, ''), ADefault, UseLocalBias);
 end;
 
 function TXmlNode.ReadFloat(const AName: UTF8String; ADefault: double): double;
@@ -4599,7 +4568,7 @@ end;
 
 procedure TXmlNode.SetValueAsDateTime(const Value: TDateTime);
 begin
-  ValueAsString := sdDateTimeToString(Value);
+  ValueAsString := sdDateTimeToString(Value, UseLocalBias);
 end;
 
 procedure TXmlNode.SetValueAsFloat(const Value: double);
@@ -4609,7 +4578,7 @@ end;
 
 procedure TXmlNode.SetValueAsInt64(const Value: int64);
 begin
-  FValue := IntToUTF8Str(Value);
+  FValue := Int64ToUTF8Str(Value);
 end;
 
 procedure TXmlNode.SetValueAsInteger(const Value: integer);
@@ -4694,6 +4663,13 @@ begin
     Result := Document.UseFullNodes;
 end;
 
+function TXmlNode.UseLocalBias: Boolean;
+begin
+  Result := False;
+  if Assigned(Document) then
+    Result := Document.UseLocalBias;
+end;
+
 function TXmlNode.ValueAsBoolDef(ADefault: boolean): boolean;
 var
   Ch: AnsiChar;
@@ -4716,7 +4692,7 @@ end;
 
 function TXmlNode.ValueAsDateTimeDef(ADefault: TDateTime): TDateTime;
 begin
-  Result := sdDateTimeFromStringDefault(ValueAsString, ADefault);
+  Result := sdDateTimeFromStringDefault(ValueAsString, ADefault, UseLocalBias);
 end;
 
 function TXmlNode.ValueAsFloatDef(ADefault: double): double;
@@ -4764,9 +4740,9 @@ begin
   begin
     Index := AttributeIndexByName(AName);
     if Index >= 0 then
-      AttributeValue[Index] := sdDateTimeToString(AValue)
+      AttributeValue[Index] := sdDateTimeToString(AValue, UseLocalBias)
     else
-      AttributeAdd(AName, sdDateTimeToString(AValue));
+      AttributeAdd(AName, sdDateTimeToString(AValue, UseLocalBias));
   end;
 end;
 
@@ -4866,7 +4842,7 @@ procedure TXmlNode.WriteDateTime(const AName: UTF8String; AValue, ADefault: TDat
 // http://www.w3.org/TR/NOTE-datetime
 begin
   if WriteOnDefault or (AValue <> ADefault) then
-    WriteString(AName, sdDateTimeToString(AValue), '');
+    WriteString(AName, sdDateTimeToString(AValue, UseLocalBias), '');
 end;
 
 procedure TXmlNode.WriteFloat(const AName: UTF8String; AValue: double; ADefault: double);
@@ -5129,6 +5105,7 @@ begin
     FParserWarnings := TNativeXml(Source).FParserWarnings;
     FIndentString := TNativeXml(Source).FIndentString;
     FUseFullNodes := TNativeXml(Source).FUseFullNodes;
+    FUseLocalBias := TNativeXml(Source).FUseLocalBias;
     FWriteOnDefault := TNativeXml(Source).FWriteOnDefault;
     FXmlFormat := TNativeXml(Source).FXmlFormat;
     // Assign root
@@ -5434,9 +5411,11 @@ begin
       if Node.ElementType = xeDeclaration then
       begin
         if Node.HasAttribute('encoding') then
-          Enc := Node.AttributeByName['encoding'];
+          Enc := Node.AttributeByName['encoding']
+        else
+          FCodecStream.Encoding := seUTF8;
         // Check encoding
-        if assigned(FCodecStream) and (Enc = 'UTF-8') then
+        if assigned(FCodecStream) and (AnsiUpperCase(string(Enc)) = 'UTF-8') then
           FCodecStream.Encoding := seUTF8;
       end;
       // Skip clear nodes
@@ -5585,6 +5564,7 @@ begin
   FIndentString           := cDefaultIndentString;
   FDropCommentsOnParse    := cDefaultDropCommentsOnParse;
   FUseFullNodes           := cDefaultUseFullNodes;
+  FUseLocalBias           := cDefaultUseLocalBias;
   FFloatAllowScientific   := cDefaultFloatAllowScientific;
   FFloatSignificantDigits := cDefaultFloatSignificantDigits;
   FOnNodeNew              := nil;
@@ -5683,7 +5663,7 @@ begin
       raise EStreamError.Create(sxeCodecStreamNotAssigned);
 
     // Determine encoding
-    FEncoding := {$IFDEF PEPAK} seUTF8 {$ELSE} seAnsi {$ENDIF};
+    FEncoding := seAnsi;
     BytesRead := FStream.Read(BOM, 4);
     for i := 0 to cBomInfoCount - 1 do
     begin
@@ -5706,7 +5686,7 @@ begin
     end else
     begin
       // Unknown.. default to this
-      FEncoding := {$IFDEF PEPAK} seUTF8 {$ELSE} seAnsi {$ENDIF};
+      FEncoding := seAnsi;
       FWriteBom := False;
     end;
 
@@ -5836,7 +5816,8 @@ begin
     for i := 0 to cBomInfoCount - 1 do
       if cBomInfo[i].Encoding = FEncoding then
       begin
-        FWriteBom := cBomInfo[i].HasBOM;
+        // we do not write BOM if UTF8 since UTF8 is default
+        FWriteBom := cBomInfo[i].HasBOM and (FEncoding <>  seUTF8);
         break;
       end;
 
@@ -5953,11 +5934,7 @@ begin
         if FSwapByteOrder then
           W := swap(W);
         // Convert to UTF8 in buffer
-        {$IFDEF D5UP}
         FBuffer := sdUnicodeToUtf8(UnicodeChar(W));
-        {$ELSE}
-        FBuffer := sdUnicodeToUtf8(char(W and $FF));
-        {$ENDIF}
       end;
     else
       raise EStreamError.Create(sxeUnsupportedEncoding);
@@ -6190,9 +6167,6 @@ end;
 
 function TsdBufferedReadStream.Write(const Buffer; Count: longint): Longint;
 begin
-  {$IFDEF FPC}
-  Result := -1;
-  {$ENDIF}
   raise EStreamError.Create(sxeCannotWriteCodecForReading);
 end;
 
@@ -6227,9 +6201,6 @@ end;
 
 function TsdBufferedWriteStream.Read(var Buffer; Count: longint): Longint;
 begin
-  {$IFDEF FPC}
-  Result := -1;
-  {$ENDIF}
   raise EStreamError.Create(sxeCannotReadCodecForWriting);
 end;
 
@@ -6400,14 +6371,5 @@ function TsdStringBuilder.Value: UTF8String;
 begin
   Result := Copy(FData, 1, FCurrentIdx);
 end;
-
-initialization
-
-  {$IFDEF TRIALXML}
-  ShowMessage(
-    'This is the unregistered version of NativeXml.pas'#13#13 +
-    'Please visit http://www.simdesign.nl/xml.html to buy the'#13 +
-    'registered version for Eur 29.95 (source included).');
-  {$ENDIF}
 
 end.

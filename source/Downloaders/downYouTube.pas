@@ -50,7 +50,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -245,7 +245,7 @@ begin
       {$ENDIF}
     {$ENDIF}
     if Title <> '' then
-      SetName(Utf8ToString(UrlDecode(Title)));
+      SetName(Utf8ToString(Utf8String(UrlDecode(Title))));
     if FormatList = '' then
       SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
     {$IFDEF FMT_URL_MAP}

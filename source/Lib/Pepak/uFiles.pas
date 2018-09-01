@@ -11,9 +11,10 @@ procedure SaveMemoryToFile(const FileName: string; Data: Pointer; DataLength: in
 type
   TFileEncoding = (feAuto, feANSI, feOEM, feUnicode, feUTF8);
 
-function GuessFileEncoding(Data: Pointer; DataLength: Integer): TFileEncoding;
+function GuessFileEncoding(Data: Pointer; DataLength: Integer; out BomLength: integer): TFileEncoding;
 function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding): TMemoryStream;
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
 
 implementation
 
@@ -65,26 +66,40 @@ end;
 
 function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding): TMemoryStream;
 var Source: TMemoryStream;
-    CodePage, Size: integer;
+    CodePage, Size, BomLength: integer;
+    P: Pointer;
 begin
   Source := LoadFileIntoMemory(FileName);
   try
     if Encoding = feAuto then
-      Encoding := GuessFileEncoding(Source.Memory, Source.Size);
+      Encoding := GuessFileEncoding(Source.Memory, Source.Size, BomLength);
     if Source.Size = 0 then
       Result := Source
     else if Encoding = feUnicode then
-      Result := Source
+      if BomLength = 0 then
+        Result := Source
+      else
+        begin
+        Result := TMemoryStream.Create;
+        try
+          Source.Position := BomLength;
+          Result.CopyFrom(Source, Source.Size - BomLength);
+        except
+          FreeAndNil(Result);
+          Raise;
+          end;
+        end
     else
       begin
+      P := PChar(LongWord(Source.Memory) + LongWord(BomLength));
       CodePage := EncodingToCodePage(Encoding);
-      Size := MultiByteToWideChar(CodePage, MB_ERR_INVALID_CHARS, Source.Memory, Source.Size, nil, 0);
+      Size := MultiByteToWideChar(CodePage, MB_ERR_INVALID_CHARS, P, Source.Size, nil, 0);
       if Size = 0 then
         Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
       Result := TMemoryStream.Create;
       try
         Result.Size := Size * Sizeof(WideChar);
-        if MultiByteToWideChar(CodePage, MB_ERR_INVALID_CHARS, Source.Memory, Source.Size, Result.Memory, Size) <> Size then
+        if MultiByteToWideChar(CodePage, MB_ERR_INVALID_CHARS, P, Source.Size, Result.Memory, Size) <> Size then
           Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
         Result.Position := 0;
         FreeAndNil(Source);
@@ -97,6 +112,28 @@ begin
     FreeAndNil(Source);
     Raise;
     end;
+end;
+
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+var MS: TMemoryStream;
+    s: WideString;
+begin
+  MS := LoadFileIntoMemoryW(FileName, Encoding);
+  if MS = nil then
+    Result := ''
+  else
+    try
+      if MS.Size = 0 then
+        Result := ''
+      else
+        begin
+        SetLength(s, MS.Size div Sizeof(WideChar));
+        Move(MS.Memory^, s[1], MS.Size);
+        Result := string(s);
+        end;
+    finally
+      FreeAndNil(MS);
+      end;
 end;
 
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);
@@ -129,7 +166,7 @@ begin
     SaveMemoryToFile(FileName, Data, DataLength)
 end;
 
-function GuessFileEncoding(Data: Pointer; DataLength: Integer): TFileEncoding;
+function GuessFileEncoding(Data: Pointer; DataLength: Integer; out BomLength: integer): TFileEncoding;
 
   procedure SwitchByteOrder;
     var i: integer;
@@ -148,6 +185,7 @@ function GuessFileEncoding(Data: Pointer; DataLength: Integer): TFileEncoding;
 var i: integer;
     OddZeroCount, EvenZeroCount: integer;
 begin
+  BomLength := 0;
   // Unicode must have at least two bytes
   if DataLength <= 1 then
     begin
@@ -159,6 +197,7 @@ begin
     if (PWordArray(Data)^[0] = $feff) or (PWordArray(Data)^[0] = $fffe) then
       begin
       Result := feUnicode;
+      BomLength := 2;
       // If it is big-endian, convert it to little-endian
       if PWordArray(Data)^[0] = $fffe then
         SwitchByteOrder;
@@ -168,6 +207,7 @@ begin
     if (PByteArray(Data)^[0] = $ef) and (PByteArray(Data)^[1] = $bb) and (PByteArray(Data)^[2] = $bf) then
       begin
       Result := feUtf8;
+      BomLength := 3;
       Exit;
       end;
   // Try to convert the string as UTF8. If it succeeds, assume UTF8

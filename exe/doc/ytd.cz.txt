@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.55                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.57                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -246,6 +246,9 @@ PODPOROVANÉ WEBY
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
 
+ - NavratDoReality.cz:
+     - http://navratdoreality.cz/?p=view&id=5766
+
  - NothingToxic.com:
      - http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
 
@@ -349,7 +352,10 @@ PODPOROVANÉ WEBY
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
- - TV Noe:
+ - TV7.cz:
+     - http://www.tv7.cz/?vid=1062
+
+ - TVNoe.tbsystem.cz (TV Noe):
      - http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
 
  - TVcom.cz:

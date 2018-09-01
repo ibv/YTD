@@ -160,6 +160,7 @@ uses
   downMuzu in 'Downloaders\downMuzu.pas',
   downMySpace in 'Downloaders\downMySpace.pas',
   downMyUbo in 'Downloaders\downMyUbo.pas',
+  downNavratDoReality in 'Downloaders\downNavratDoReality.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
   downNova in 'Downloaders\downNova.pas',
@@ -185,6 +186,7 @@ uses
   downTodaysBigThing in 'Downloaders\downTodaysBigThing.pas',
   downTontuyau in 'Downloaders\downTontuyau.pas',
   downTotallyCrap in 'Downloaders\downTotallyCrap.pas',
+  downTV7 in 'Downloaders\downTV7.pas',
   downTVcom in 'Downloaders\downTVcom.pas',
   downTVNoe in 'Downloaders\downTVNoe.pas',
   downUniMinnesota in 'Downloaders\downUniMinnesota.pas',
@@ -226,6 +228,14 @@ uses
     xxxYouJizz in 'Downloaders\XXX\xxxYouJizz.pas',
     xxxYouPorn in 'Downloaders\XXX\xxxYouPorn.pas',
     xxxYuvutu in 'Downloaders\XXX\xxxYuvutu.pas',
+  {$ENDIF}
+  {$IFDEF NONWORKING}
+    // Download only works for logged-in users
+    downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
+    // RTMPDUMP fails to connect
+    downiDnes in 'Downloaders\Non-working\downIDnes.pas',
+    // Download from http://www.wat.tv/get/web/ doesn't work
+    downWat in 'Downloaders\Non-working\downWat.pas',
   {$ENDIF}
   // Playlist handlers
   listCT24 in 'Playlists\listCT24.pas',

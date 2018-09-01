@@ -1,6 +1,36 @@
 CHANGELOG
 ---------
 
+  v0.57
+
+    * I forgot the debug code in. It is harmless, but also annoying.
+
+
+
+  v0.56
+
+    * New provider: NavratDoReality.cz
+        - Note: Only movies hosted directly by NavratDoReality.cz are supported.
+          Third-party-hosted videos are not supported.
+
+    * New provider: TV7.cz
+
+    * Another attempt at tackling the occasional baffling error "Download to
+      file XY was not allowed."
+
+    * Source HTML file (-s argument) can now be in UTF-8 and UTF-16 encoding,
+      too.
+
+    * YouTube Downloader is now compatible with Delphi 2009.
+
+    * The NativeXml library updated to version 3.10. This fixes national
+      characters for some providers, e.g. TV Barrandov.
+
+    * Fixed a hidden bug in the build script (wildcards in filenames weren't
+      properly expanded before passing to the compiler).
+
+
+
   v0.55
 
     * Incorrect default value for encoding in TNativeXml caused invalid names 

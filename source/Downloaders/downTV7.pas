@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downZkoukniTo;
+unit downTV7;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,14 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_ZkoukniTo = class(THttpDownloader)
+  TDownloader_TV7 = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -66,82 +62,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
+// http://www.tv7.cz/?vid=1062
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*zkouknito\.cz/';
-  URLREGEXP_ID =        'video_[0-9]+.*';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tv7\.cz/.*[?&]vid=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>[^"]+)"';
-  REGEXP_EXTRACT_ID = '<param\s+name="movie"\s+value="[^"]*[?&]vid=(?P<ID>[0-9]+)"';
+  REGEXP_EXTRACT_TITLE = '<h2[^>]*>(?P<TITLE>.*?)\s*\|';
+  REGEXP_EXTRACT_URL = '\.addVariable\s*\(\s*"file","(?P<URL>https?://.+?)"';
 
-{ TDownloader_ZkoukniTo }
+{ TDownloader_TV7 }
 
-class function TDownloader_ZkoukniTo.Provider: string;
+class function TDownloader_TV7.Provider: string;
 begin
-  Result := 'ZkoukniTo.cz';
+  Result := 'TV7.cz';
 end;
 
-class function TDownloader_ZkoukniTo.UrlRegExp: string;
+class function TDownloader_TV7.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_ZkoukniTo.Create(const AMovieID: string);
+constructor TDownloader_TV7.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_ZkoukniTo.Destroy;
+destructor TDownloader_TV7.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_ZkoukniTo.GetMovieInfoUrl: string;
+function TDownloader_TV7.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.zkouknito.cz/' + MovieID;
-end;
-
-function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Url: string;
-    Xml: TXmlDoc;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else
-    try
-      if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieUrl := Url;
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
-      end;
-end;
-
-function TDownloader_ZkoukniTo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
-begin
-  {$IFDEF XXX}
-  Http.Cookies.Add('confirmed=1');
-  {$ENDIF}
-  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
+  Result := 'http://www.tv7.cz/?vid=' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_ZkoukniTo);
+  RegisterDownloader(TDownloader_TV7);
 
 end.

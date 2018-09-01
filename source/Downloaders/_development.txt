@@ -45,6 +45,7 @@ HTTP	HTML	Nested	downGameAnyone
 HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
 HTTP	HTML	HTML	downGuba
+RTMP	XML	XML	downIDnes
 RTMP	HTML	HTML	downIHned
 HTTP	HTML	HTML	downIPrima
 HTTP	XML	XML	downJoj

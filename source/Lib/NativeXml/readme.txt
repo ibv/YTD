@@ -11,48 +11,37 @@ On this webpage you can select various purchase options and payment processors.
 About NativeXml.pas
 ========================
 
-This is a small-footprint native Delphi implementation to read and write
-XML documents. It provides a fully object-oriented approach to working
-with XML files, with clearly defined and Delphi-focused properties,
-events and methods.
+This is a small-footprint native Delphi implementation to read and write XML documents. It provides a fully object-oriented approach to working with XML files, with clearly defined and Delphi-focused properties, events and methods.
 
-You can use this code to read and write XML documents from/to files, streams
-or strings. The load routine generates events that can be used to display
-load progress on the fly.
+You can use this code to read and write XML documents from/to files, streams or strings. The load routine generates events that can be used to display load progress on the fly.
 
 Author: Nils Haeck M.Sc. (SimDesign B.V.)
 
 Installation
 ============
 
-Simply run the installer. It will copy the files to your harddisk in a location
-you specify. No actual programs are installed or registered.
+Simply run the installer. It will copy the files to your harddisk in a location you specify. No actual programs are installed or registered.
 
-You can uninstall all files by clicking UNINS000.EXE in the root or through
-Start > Control panel > Add/Remove software > NativeXML [Remove]
+You can uninstall all files by clicking UNINS000.EXE in the root or through Start > Control panel > Add/Remove software > NativeXML [Remove]
 
 If you want to use NativeXml in your project, follow these two simple steps:
 
-1) Copy the NativeXml.pas file from the \Source directory into your
-   project folder.
+1) Copy the NativeXml.pas file from the \Source directory into your project folder.
 
-2) Include the clause "uses NativeXml" in your unit
+2) Include the clause "uses NativeXml" in your unit.
 
-If you want to use NativeXml in all your projects, you can also add the 
-\Source folder to your library path.
+If you want to use NativeXml in all your projects, you can also add the NativeXml folder to your library path.
 
 
 Compatibility
 =============
-Full source version is compatible with all flavours of Delphi2
-through Delphi 2010 (so also the personal).
+Full source version is compatible with all flavours of Delphi2 through Delphi 2010 (so also the personal).
 
 
 Help
 ====
 
-You can use the included NativeXml.chm help file and the examples
-to get started.
+You can use the included NativeXml.chm help file and the examples to get started.
 
 
 Why "open-source" and what about support?
@@ -68,22 +57,12 @@ Lets first say that "I Am Not an Anal Lawyer" (IANAL, grin), and more so do not 
 Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the above copyright notice, this list of
-      conditions and the following disclaimer.
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the above copyright notice, this list
-      of conditions and the following disclaimer in the documentation and/or other materials
-      provided with the distribution.
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
-THIS SOFTWARE IS PROVIDED BY SIMDESIGN BV "AS IS" AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SIMDESIGN BV OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+THIS SOFTWARE IS PROVIDED BY SIMDESIGN BV "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SIMDESIGN BV OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 
 
 Some of the misconceptions about Open Source:

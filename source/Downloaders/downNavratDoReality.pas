@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downZkoukniTo;
+unit downNavratDoReality;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,13 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_ZkoukniTo = class(THttpDownloader)
+  TDownloader_NavratDoReality = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: TRegExp;
+      MoviePathRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -66,82 +66,87 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
+// http://navratdoreality.cz/?p=view&id=5766
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*zkouknito\.cz/';
-  URLREGEXP_ID =        'video_[0-9]+.*';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*navratdoreality\.cz/.*[?&]id=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>[^"]+)"';
-  REGEXP_EXTRACT_ID = '<param\s+name="movie"\s+value="[^"]*[?&]vid=(?P<ID>[0-9]+)"';
+  REGEXP_EXTRACT_TITLE = '<h2>(?P<TITLE>[^<]*)</h2>\s*<div id="media_content">';
+  REGEXP_EXTRACT_PATH = '\bso\.addVariable\s*\(\s*"file"\s*,\s*"(?P<PATH>.*?)"';
 
-{ TDownloader_ZkoukniTo }
+{ TDownloader_NavratDoReality }
 
-class function TDownloader_ZkoukniTo.Provider: string;
+class function TDownloader_NavratDoReality.Provider: string;
 begin
-  Result := 'ZkoukniTo.cz';
+  Result := 'NavratDoReality.cz';
 end;
 
-class function TDownloader_ZkoukniTo.UrlRegExp: string;
+class function TDownloader_NavratDoReality.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_ZkoukniTo.Create(const AMovieID: string);
+constructor TDownloader_NavratDoReality.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MoviePathRegExp := RegExCreate(REGEXP_EXTRACT_PATH, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_ZkoukniTo.Destroy;
+destructor TDownloader_NavratDoReality.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(MoviePathRegExp);
   inherited;
 end;
 
-function TDownloader_ZkoukniTo.GetMovieInfoUrl: string;
+function TDownloader_NavratDoReality.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.zkouknito.cz/' + MovieID;
+  Result := 'http://navratdoreality.cz/?p=view&id=' + MovieID;
 end;
 
-function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Url: string;
-    Xml: TXmlDoc;
+function TDownloader_NavratDoReality.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
+var FormData: AnsiString;
+    Buf: TMemoryStream;
+begin
+  Page := '';
+  Xml := nil;
+  FormData := 'ACTION=check_adult&check=18plus';
+  Buf := TMemoryStream.Create;
+  try
+    Buf.WriteBuffer(FormData[1], Length(FormData));
+    Buf.Position := 0;
+    Http.MimeType := 'application/x-www-form-urlencoded';
+    Http.InputStream := Buf;
+    try
+      Result := DownloadPage(Http, Url, Page, InfoPageEncoding, hmPOST, False);
+    finally
+      Http.InputStream := nil;
+      end;
+  finally
+    Buf.Free;
+    end;
+end;
+
+function TDownloader_NavratDoReality.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  if not GetRegExpVar(MoviePathRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
-    try
-      if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieUrl := Url;
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
-      end;
-end;
-
-function TDownloader_ZkoukniTo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
-begin
-  {$IFDEF XXX}
-  Http.Cookies.Add('confirmed=1');
-  {$ENDIF}
-  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
+    begin
+    MovieUrl := 'http://navratdoreality.cz/' + Path;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_ZkoukniTo);
+  RegisterDownloader(TDownloader_NavratDoReality);
 
 end.

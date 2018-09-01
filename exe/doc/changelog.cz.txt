@@ -1,6 +1,36 @@
 CHANGELOG
 ---------
 
+  v0.57
+
+    * Zapomnìl jsem odstranit debugovací kód. Sice je neškodný, ale otravný.
+
+
+
+  v0.56
+
+    * Nový poskytovatel: NavratDoReality.cz
+        - Pozor, podporována jsou pouze videa hostovaná pøímo na serverech
+          NavratDoReality.cz, nikoliv videa pøehrávaná pøes cizí poskytovatele.
+
+    * Nový poskytovatel: TV7.cz
+
+    * Další pokus o odstranìní záhadných chyb "Stahování do souboru XY nebylo
+      povoleno."
+
+    * HTML soubor s odkazy (parametr -s) mùže nyní být i v kódování UTF-8
+      nebo UTF-16.
+
+    * YouTube Downloader je nyní kompatibilní s Delphi 2009.
+
+    * Knihovna NativeXml aktualizována na verzi 3.10. To s sebou nese opravy
+      èeštiny u nìkterých poskytovatelù, napøíklad u TV Barrandov.
+
+    * Opravena skrytá chyba kompilaèního skriptu (nefungovaly wildcards
+      ve jménech kompilovaných souborù).
+
+
+
   v0.55
 
     * Komponenta TNativeXml mìla nesprávnou výchozí hodnotu pro kódování,

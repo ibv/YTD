@@ -121,7 +121,7 @@ begin
     while DataChars > 0 do
       if CompareWideCharPtrs(Data, Separator, DataChars, SeparatorChars, SeparatorChars) = 0 then
         begin
-        NameChars := Integer(DWORD(Data) - DWORD(Name)) div Sizeof(WideChar);
+        NameChars := Integer(LongWord(Data) - LongWord(Name)) div Sizeof(WideChar);
         Value := Data;
         Inc(Value, SeparatorChars);
         ValueChars := DataChars - SeparatorChars;

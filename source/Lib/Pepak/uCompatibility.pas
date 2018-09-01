@@ -9,10 +9,25 @@ uses
 
 type
   TSysCharSet = set of Char;
+
+type
   Utf8String = AnsiString;
+
+type
+  TSeekOrigin = Word;
+
+const
+  soBeginning = 0;
+  soCurrent = 1;
+  soEnd = 2;
 
 const
   FILE_ATTRIBUTE_REPARSE_POINT = $400;
+
+const
+  HoursPerDay = 24;
+  MinsPerHour = 60;
+  MinsPerDay = HoursPerDay * MinsPerHour;
 
 function CharInSet(C: Char; S: TSysCharSet): boolean;
 function IncludeTrailingPathDelimiter(const Path: string): string;

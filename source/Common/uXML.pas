@@ -41,6 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
+  uCompatibility,
   NativeXml;
 
 type

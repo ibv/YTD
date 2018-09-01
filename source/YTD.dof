@@ -45,19 +45,19 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
-Conditionals=PEPAK;PEPAK_YTD;XXX;
-DebugSourceDirs=
+Conditionals=PEPAK;PEPAK_YTD;XXX
+DebugSourceDirs=C:\Tmp\ytd\Source\Lib\NativeXml\
 UsePackages=0
 [Parameters]
-RunParams=http://archiv.nova.cz/multimedia/ulice-1832-dil.html
+RunParams=http://www.tv7.cz/?vid=1062
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=55
+MinorVer=57
 Release=0
-Build=288
+Build=294
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.55.0.288
+FileVersion=0.57.0.294
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -79,15 +79,17 @@ Comments=http://www.pepak.net/download/youtube-downloader/
 [Excluded Packages]
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlDebugSourcePath]
-Count=1
-Item0=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
+Count=2
+Item0=C:\Tmp\ytd\Source\Lib\NativeXml\
+Item1=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 [HistoryLists\hlConditionals]
-Count=5
-Item0=PEPAK;PEPAK_YTD;XXX;
+Count=6
+Item0=PEPAK;PEPAK_YTD;XXX
 Item1=PEPAK;PEPAK_YTD;XXX;DEBUG
-Item2=XXX;
-Item3=XXX;DEBUG
-Item4=XXX
+Item2=PEPAK;PEPAK_YTD;XXX;
+Item3=XXX;
+Item4=XXX;DEBUG
+Item5=XXX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

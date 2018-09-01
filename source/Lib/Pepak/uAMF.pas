@@ -8,7 +8,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
-  uStringUtils;
+  uCompatibility, uStringUtils;
 
 type
   TAMFItem = class;

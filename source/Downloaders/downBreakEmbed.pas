@@ -51,7 +51,7 @@ type
       MovieVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -105,9 +105,10 @@ begin
   Result := 'http://www.break.com'; // No download is needed, but this function must return something
 end;
 
-function TDownloader_BreakEmbed.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
+function TDownloader_BreakEmbed.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
   Page := MovieID;
+  Xml := nil;
   Result := MovieID <> '';
 end;
 

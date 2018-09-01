@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXML, HttpSend, blcksock, 
+  uPCRE, uXML, HttpSend, blcksock,
   uDownloader;
 
 type
@@ -55,8 +55,9 @@ type
     protected
       MovieTitleRegExp: TRegExp;
       MovieUrlRegExp: TRegExp;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean; overload; virtual;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; virtual;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; virtual;
+      function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       property MovieUrl: string read fMovieUrl write fMovieUrl;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
@@ -105,39 +106,51 @@ begin
 end;
 
 function TCommonDownloader.GetFileNameExt: string;
-var Url: string;
-    i: integer;
 begin
   if Prepared then
-    begin
-    i := Pos('?', MovieURL);
-    if i <= 0 then
-      Url := MovieUrl
-    else
-      Url := Copy(MovieUrl, 1, Pred(i));
-    Result := ExtractFileExt(Url);
-    if Pos('/', Result) > 0 then
-      Result := '';
-    end
+    Result := ExtractUrlExt(MovieURL)
   else
     NotPreparedError;
 end;
 
-function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string): boolean;
+function TCommonDownloader.ExtractUrlExt(const Url: string): string;
+var i: integer;
 begin
-  Result := GetMovieInfoContent(Http, Url, Page, hmGET);
+  i := Pos('?', Url);
+  if i <= 0 then
+    Result := Url
+  else
+    Result := Copy(Url, 1, Pred(i));
+  Result := ExtractFileExt(Result);
+  if Pos('/', Result) > 0 then
+    Result := '';
 end;
 
-function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
+function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
 begin
+  Result := GetMovieInfoContent(Http, Url, Page, Xml, hmGET);
+end;
+
+function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+begin
+  Xml := nil;
   Result := DownloadPage(Http, Url, Page, InfoPageEncoding, Method);
+  if Result then
+    begin
+    Xml := TXmlDoc.Create;
+    try
+      Xml.LoadFromStream(Http.Document);
+      Http.Document.Seek(0, 0);
+    except
+      FreeAndNil(Xml);
+      end;
+    end;
 end;
 
 function TCommonDownloader.Prepare: boolean;
 var Info: THttpSend;
     URL, Page, s: string;
     PageXml: TXmlDoc;
-    PageXmlOK: boolean;
 begin
   SetLastErrorMsg('');
   Result := False;
@@ -149,22 +162,11 @@ begin
     URL := GetMovieInfoUrl;
     if URL = '' then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-    else if not GetMovieInfoContent(Info, URL, Page) then
+    else if not GetMovieInfoContent(Info, URL, Page, PageXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       try
-        PageXmlOK := True;
-        if InfoPageIsXml then
-          begin
-          PageXml := TXmlDoc.Create;
-          try
-            PageXml.LoadFromStream(Info.Document);
-          except
-            PageXmlOK := False;
-            end;
-          Info.Document.Seek(0, 0);
-          end;
-        if not PageXmlOK then
+        if InfoPageIsXml and (PageXml = nil) then
           SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
         else if not BeforePrepareFromPage(Page, PageXml, Info) then
           SetLastErrorMsg(_(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE))

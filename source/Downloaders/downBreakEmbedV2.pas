@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
     public
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -93,10 +93,11 @@ begin
   Result := 'http://embed.break.com/' + MovieID;
 end;
 
-function TDownloader_BreakEmbedV2.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
+function TDownloader_BreakEmbedV2.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
   // I don't need to download anything, but do I need to get the redirected URL
   // which contains all required info
+  Xml := nil;
   Result := DownloadPage(Http, Url, hmHEAD);
   if Result then
     Page := LastUrl;

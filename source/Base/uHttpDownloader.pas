@@ -191,6 +191,8 @@ begin
       if BeforeDownload(VideoDownloader) then
         begin
         try
+          if FileExists(FileName) then
+            DeleteFile(PChar(FileName));
           VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate);
           try
             VideoDownloader.Sock.OnStatus := SockStatusMonitor;
