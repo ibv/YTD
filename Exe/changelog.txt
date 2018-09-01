@@ -1,0 +1,217 @@
+CHANGELOG
+---------
+
+  v0.24
+
+    * Nìkterá YouTube videa nelze stahovat zpùsobem, který obchází kontrolu
+      vìku, ale jdou stahovat zpùsobem pùvodním (z verze 0.22). Kód byl upraven
+      tak, aby se v pøípadì selhání nového zpùsobu stahování zkusil ještì
+      zpùsob starý.
+
+      Pøíkladem je video http://www.youtube.com/watch?v=REpXf0cmJ64
+
+
+
+  v0.23
+
+    * Pøepracována práce s playlisty tak, aby výstupy (pro command-line
+      verzi) byly pøehlednìjší a snáze se pøidávaly další formáty playlistù.
+
+    * Podpora pro YouTube videa oznaèená jako "jen pro dospìlé".
+
+    * Parametr -e pro logování nepodaøených downloadù.
+
+    * Parametr -s pro vložení odkazù z HTML zdroje. Podporovány jsou lokální
+      soubory i stránky na webu. Pøíklad:
+
+      ytd.exe -s "http://www.zive.cz"
+      ytd.exe -s "c:\temp\zive.html"
+
+    * Do grafického rozhraní byly doplnìny funkce pro naètení seznamu URL ze
+      souboru (jako -i v CLI verzi), naètení podporovaných URL z HTML souboru 
+      a naètení podporovaných URL z HTML stránky (obojí jako -s v CLI).
+
+    * V grafickém rozhraní lze nyní uložit seznam nestažených odkazù do
+      souboru, který lze pozdìji naèíst pomocí parametru -i.
+
+
+
+  v0.22
+
+    * V grafickém prostøedí se zobrazuje nápovìda pro jednotlivá tlaèítka.
+
+    * Zmìnìna výchozí reakce na existující soubor. Starší verze tento soubor
+      bez ptaní pøepsaly. Verze 0.22 se uživatele zeptá na požadovanou akci,
+      je možné též použít parametry -n (nepøepisovat), -a (pøepisovat),
+      -r (automaticky pøejmenovávat) a -k (ptát se uživatele).
+
+      Grafická verze se ptá pokaždé, když narazí na existující soubor, kromì
+      pøípadu, kdy je zaškrtnuta volba "Auto-overwrite" - pak se automaticky
+      pøepisuje jako v pøedchozích verzích.
+
+    * Grafická verze se minimalizuje do traye.
+
+    * Pro stahování z YouTube jsou podporovány playlisty (ve formátu
+      http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E) - stáhne
+      se vždy celý playlist.
+
+
+
+  v0.21
+
+    * Podpora pro Markízu a spol. znefunkènila YouTube a ostatní providery
+      fungující na bázi protokolu HTTP.
+
+
+
+  v0.20
+
+    * Èeská televize: Podpora pro poøady programu PORT.
+
+
+
+  v0.19
+
+    * Nìkteré vytvoøené regulární výrazy se z pamìti neuvolòovaly, dokud
+      aplikace neskonèila.
+
+    * YouTube: Video "http://www.youtube.com/watch?v=7INIRLe7x0Y" se ukládalo
+      s pøíponou ".mp4", ale správnì je ".flv". Je možné, že jsou i další
+      podobné pøípady, pøíponu pøiøazuji pomocí výètu a zdaleka nemám 
+      kompletní seznam. Když narazíte na video uložené pod špatnou pøíponou,
+      dejte mi prosím vìdìt.
+
+    * Podpora pro http://www.tvcom.cz.
+
+    * Podpora pro http://www.markiza.sk. Pokud je poøad tvoøen nìkolika
+      samostatnými soubory, budou staženy všechny.
+
+    * Podpora pro http://www.rozhlas.cz. Pokud je poøad tvoøen nìkolika
+      samostatnými soubory, budou staženy všechny.
+
+
+
+  v0.18
+
+    * Podpora pro zmìnìný design YouTube.
+
+
+
+  v0.17
+
+    * Podpora pro protokoly MMS, MMSH, RTSP a jejich varianty tunelované
+      pøes FTP a HTTP. Podpora je øešena pomocí knihovny MSDL_DLL.DLL,
+      která vznikla drobnou úpravou programu MSDL (http://msdl.sf.net/).
+
+    * Podpora pro iVysílání Èeské televize.
+
+    * RTMPDUMP aktualizován na nejèerstvìjší verzi.
+
+
+
+  v0.16
+
+    * Zkráceny výpisy v command-line verzi programu, aby se pøi stahování
+      souborù vìtších než 100 MB nemnožily øádky s prùbìhem.
+
+    * Podpora pro videa televize Nova (nova.cz).
+
+
+
+  v0.15:
+  
+    * Restrukturalizován zdrojový kód, aby umožòoval lépe pøidávat další
+      zdroje médií.
+
+    * Podpora pro stahování streamù pøenášených protokolem RTMP. Download
+      je øešen pomocí knihovny RTMPDUMP_DLL.DLL, která vznikla drobnou
+      úpravou programu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Knihovna
+      potøebuje OpenSSL verze 0.9.8, konkrétnì knihovny SSLEAY32-0.9.8.DLL
+      a CRYPTOEAY32-0.9.8.DLL.
+
+    * Podpora pro Barrandov.tv.
+
+
+
+  v0.14:
+
+    * Podpora pro Stream.cz z minulé verze rozhodila ostatní zdroje
+      videa, které kvùli tomu nefungovaly. To je nyní opraveno.
+
+    * Upraveno grafické rozhraní (ikonky, tlaèítka atd.).
+
+    * Pøidána možnost zkompilovat jen CLI nebo jen GUI verzi programu:
+      Pøi spouštìní BUILD.BAT mùžete použít parametr "CLI" (jen command
+      line verze) resp. "GUI" (jen grafická verze) (v obou pøípadech bez
+      uvozovek). "CLI" výraznì zmenší výsledný EXE soubor, "GUI" odstraní
+      okno konzole. Ve výchozím stavu se kompiluje verze s CLI i GUI
+      souèasnì.
+
+    * Knihovna Synapse aktualizována na release 39. Problém se Stream.cz
+      (viz upozornìní výše) ale stále trvá.
+
+    * Podpora pro download z iPrima.cz (používá Stream.cz).
+
+
+
+  v0.13:
+
+    * Pøidána podpora pro Stream.cz. Je v tom ale zatím neodhalená chyba,
+      viz výše v sekci "podporované weby a formáty."
+
+    * Kromì názvu videa a souboru se nyní zobrazuje i adresa, ze které
+      lze video stáhnout "ruènì" (napø. WGETem).
+
+
+
+  v0.12:
+
+    * Nefungovalo stahování filmù, které na YouTube nemìly nìkterou
+      HD verzi.
+
+    * Kompletnì pøepracovaná GUI verze. Nyní zobrazuje seznam URL ke
+      stažení, umí stahovat víc odkazù najednou atd. 
+
+
+
+  v0.11:
+
+    * Experimentální podpora pro vyšší formáty HD videa (720HQ, 1080p).
+      Prosím, pokud narazíte na video, kde to nefunguje, pošlete mi
+      odkaz.
+
+
+
+  v0.10:
+
+    * Kompletnì restrukturalizováno, aby se daly snadno pøidávat další
+      zdroje videa.
+
+    * Zmìnìn tvar všech výstupù, aby byl pøehlednìjší.
+
+    * Podpora pro n-joy.cz.
+
+    * Podpora pro blip.tv.
+
+    * Podpora pro seznam URL v souboru (pomocí parametru -i).
+
+    * Pozor, program nyní potøebuje knihovnu pcre.dll (pøiložena).
+
+    * Pøidány informace o aplikaci pro GetFileVersionEx. Pøidána ikonka.
+
+    * Pøidáno jednoduché grafické rozhraní, které se zobrazí, pokud program
+      spustíte bez parametrù.
+
+
+
+  v0.06:
+
+    * Podpora pro URL ve tvaru http://www.youtube.com/v/(id)
+
+
+
+  v0.05:
+
+    * Pøeuspoøádány zdrojové kódy a buildovací dávka.
+
+    * Podpora pro URL ve tvaru http://www.youtube.com/watch/v/(id)

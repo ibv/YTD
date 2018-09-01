@@ -46,18 +46,22 @@ PackageDCPOutputDir=
 SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
 Conditionals=
-DebugSourceDirs=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
+DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=http://www.youtube.com/v/b5AWQ5aBjgE
 HostApplication=
+[Language]
+ActiveLang=
+ProjectLang=$00000405
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=23
+MinorVer=24
 Release=0
-Build=164
+Build=166
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +72,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.23.0.164
+FileVersion=0.24.0.166
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -99,7 +103,7 @@ Count=2
 Item0=..\Exe
 Item1=Exe
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6023
 Activate=0
 Activate Handle=1
 Save Log File=1

@@ -20,9 +20,10 @@ type
     private
       fCookies: TStringList;
     protected
-      {$IFNDEF GET_VIDEO_INFO}
-      YouTubeConfigRegExp: IRegEx;
+      {$IFDEF GET_VIDEO_INFO}
+      GetVideoInfoFailed: Boolean;
       {$ENDIF}
+      YouTubeConfigRegExp: IRegEx;
       FormatListRegExp: IRegEx;
       {$IFDEF FLASHVARS_PARSER}
       FlashVarsParserRegExp: IRegEx;
@@ -61,10 +62,8 @@ uses
   SynaCode;
 
 const
-  {$IFNDEF GET_VIDEO_INFO}
   EXTRACT_CONFIG_REGEXP = '<param\s+name=((?:\\?["''])?)flashvars\1\s+value=\1(?P<FLASHVARS>.*?)\1';
   MOVIE_TITLE_REGEXP = '<title>(?:\s*YouTube\s*-)?\s*(?P<TITLE>.*?)\s*</title>';
-  {$ENDIF}
   {$IFDEF FLASHVARS_PARSER}
   FLASHVARS_PARSER_REGEXP = '(?:^|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   {$ELSE}
@@ -79,9 +78,10 @@ const
 constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  {$IFNDEF GET_VIDEO_INFO}
   YouTubeConfigRegExp := RegExCreate(EXTRACT_CONFIG_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
   MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  {$IFDEF GET_VIDEO_INFO}
+  GetVideoInfoFailed := False;
   {$ENDIF}
   {$IFDEF FLASHVARS_PARSER}
   FlashVarsParserRegExp := RegExCreate(FLASHVARS_PARSER_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
@@ -97,10 +97,8 @@ end;
 destructor TDownloader_YouTube.Destroy;
 begin
   FreeAndNil(fCookies);
-  {$IFNDEF GET_VIDEO_INFO}
   YouTubeConfigRegExp := nil;
   MovieTitleRegExp := nil;
-  {$ENDIF}
   {$IFDEF FLASHVARS_PARSER}
   FlashVarsParserRegExp := nil;
   {$ELSE}
@@ -115,10 +113,11 @@ end;
 function TDownloader_YouTube.GetMovieInfoUrl: string;
 begin
   {$IFDEF GET_VIDEO_INFO}
-  Result := 'http://www.youtube.com/get_video_info?video_id=' + MovieID;
-  {$ELSE}
-  Result := 'http://www.youtube.com/watch?v=' + MovieID;
+  if not GetVideoInfoFailed then
+    Result := 'http://www.youtube.com/get_video_info?video_id=' + MovieID
+  else
   {$ENDIF}
+  Result := 'http://www.youtube.com/watch?v=' + MovieID;
 end;
 
 function TDownloader_YouTube.GetFileNameExt: string;
@@ -139,6 +138,10 @@ begin
 end;
 
 function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+{$IFDEF GET_VIDEO_INFO}
+const GetVideoInfoDoesNotExist = 'status=fail&errorcode=150&';
+      GetVideoInfoDoesNotExistLength = Length(GetVideoInfoDoesNotExist);
+{$ENDIF}
 var FlashVars, FormatList, Token, VideoId, VideoFormat: string;
     {$IFDEF FLASHVARS_PARSER}
     VarList: IMatchCollection;
@@ -149,11 +152,28 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   {$IFDEF GET_VIDEO_INFO}
-  FlashVars := Page;
-  if FlashVars = '' then
-  {$ELSE}
-  if not GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
+  if not GetVideoInfoFailed then
+    FlashVars := Page
+  else
   {$ENDIF}
+  if not GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
+    FlashVars := '';
+  {$IFDEF GET_VIDEO_INFO}
+  if (not GetVideoInfoFailed) and (AnsiCompareText(Copy(FlashVars, 1, GetVideoInfoDoesNotExistLength), GetVideoInfoDoesNotExist) = 0) then
+    begin
+    GetVideoInfoFailed := True;
+    try
+      if Prepare then
+        begin
+        Result := True;
+        Exit;
+        end;
+    finally
+      GetVideoInfoFailed := False;
+      end;
+    end;
+  {$ENDIF}
+  if FlashVars = '' then
     SetLastErrorMsg('Failed to locate flashvars.')
   {$IFDEF FLASHVARS_PARSER}
   else
@@ -168,11 +188,13 @@ begin
       VarValue := VarList[i].Groups.ItemsByName['VARVALUE'].Value;
       if VarName = 'fmt_list' then
         FormatList := VarValue
-      {$IFDEF GET_VIDEO_INFO}
       else if VarName = 'title' then
         SetName(DecodeUrl(StringReplace(VarValue, '+', ' ', [rfReplaceAll])))
+      {$IFDEF GET_VIDEO_INFO}
+      else if (not GetVideoInfoFailed) and (VarName = 'token') then
+        Token := VarValue
       {$ENDIF}
-      else if VarName = {$IFDEF GET_VIDEO_INFO} 'token' {$ELSE} 't' {$ENDIF} then
+      else if {$IFDEF GET_VIDEO_INFO} GetVideoInfoFailed and {$ENDIF} (VarName = 't') then
         Token := VarValue
       else if VarName = 'video_id' then
         VideoID := VarValue;
