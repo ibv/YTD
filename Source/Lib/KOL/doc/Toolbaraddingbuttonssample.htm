@@ -1,0 +1,25 @@
+<html>
+
+<head>
+<title>KOL Help: Toolbar adding buttons sample.</title>
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+
+<h1 align="center">
+<font face="Arial" color="#FF8080">Toolbar adding buttons sample.</font>
+</h1>
+Code below shows how to call <a href=tcontrol.htm#tbaddbuttons>TBAddButtons</a> method to add two buttons with
+a separator between these buttons. idxNew and idxOld are integer
+expressions assigning image indexes to buttons 'New' and 'Old'. This
+indexes are zero-based and refer to bitmap images, added earlier (either
+in creating toolbar by call of <a href=kol_pas.htm#newtoolbar target="_top">NewToolbar</a> or later in call of <a href=tcontrol.htm#tbaddbitmap>TBAddBitmap</a>).
+<p align=left><font face="Courier" color="008080"><b><pre>
+
+     <a href="tcontrol.htm#tbaddbuttons"><font color="008080">TBAddButtons</font></a>( [ <font color="A08020">'&New'</font>, <font color="A08020">'-'</font>, <font color="A08020">'&Old'</font>, <font color="A08020">''</font> ], [ idxNew, 0, idxOld ] );
+
+</pre></b></font></p>
+<hr>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated  by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

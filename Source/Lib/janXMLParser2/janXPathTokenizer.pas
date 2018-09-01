@@ -35,14 +35,16 @@ History:
 -----------------------------------------------------------------------------}
 
 unit janXPathTokenizer;
+{$DEFINE PEPAK}
 {$IFDEF FPC}
   {$MODE DELPHI}
+  {$DEFINE PEPAK}
 {$ENDIF}
 
 interface
 
 uses
-  Classes,SysUtils,janStrings,dialogs;
+  Classes, SysUtils, {$IFNDEF PEPAK} Dialogs, {$ENDIF} janStrings;
 
 const
   delimiters=['+','-','*',' ','(',')','=','>','<'];

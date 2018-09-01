@@ -1,0 +1,159 @@
+<html>
+<head>
+<title>KOL Help: TIcon object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TIcon( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TIcon = object( <a href=tobj.htm target="_top">TObj</a> )
+</b></p>
+Object type to incapsulate icon or cursor image.
+<h3 align="center"><font color="#FF8080">TIcon properties</font></h3>
+<a name="size"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Size</b></font>: <b>Integer</b>;</font>
+<br>
+Icon dimension (width and/or height, which are equal to each other always).
+</p>
+<a name="handle"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Handle</b></font>: HIcon;</font>
+<br>
+Windows icon object handle.
+</p>
+<a name="empty"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Empty</b></font>: <b>Boolean</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns True if icon is Empty.
+</p>
+<a name="shareicon"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>ShareIcon</b></font>: <b>Boolean</b>;</font>
+<br>
+True, if icon object is shared and can not be deleted when TIcon object
+is destroyed (set this flag is to True, if an icon is obtained from another
+TIcon object, for example).
+</p>
+<a name="hotspot"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>HotSpot</b></font>: TPoint;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Hot spot point - for cursors.
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TIcon methods</font></h3>
+<a name="sethandleex"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>SetHandleEx</b></font>( NewHandle: HIcon );</font>
+<br>
+Set <a href=#handle target="main">Handle</a> without changing <a href=#size target="main">Size</a> (Width/Height).
+</p>
+<a name="clear"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Clear</b></font>;</font>
+<br>
+Clears icon, freeing image and allocated GDI resource (<a href=#handle target="main">Handle</a>).
+</p>
+<a name="draw"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Draw</b></font>( DC: HDC; X, Y: <b>Integer</b> );</font>
+<br>
+Draws icon onto given device context. Icon always is drawn transparently
+using its transparency mask (stored internally in icon object).
+</p>
+<a name="stretchdraw"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>StretchDraw</b></font>( DC: HDC; Dest: TRect );</font>
+<br>
+Draws icon onto given device context with stretching it to fit destination
+rectangle. See also <a href=#draw target="main">Draw</a>.
+</p>
+<a name="loadfromstream"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromStream</b></font>( Strm: PStream );</font>
+<br>
+Loads icon from stream. If stream contains several icons (of
+different dimentions), icon with the most appropriate size is loading.
+</p>
+<a name="loadfromfile"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromFile</b></font>( <b>const</b> FileName: KOLString );</font>
+<br>
+Load icon from file. If file contains several icons (of
+different dimensions), icon with the most appropriate size is loading.
+</p>
+<a name="loadfromresourceid"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromResourceID</b></font>( Inst: <b>Integer</b>; ResID: <b>Integer</b>; DesiredSize: <b>Integer</b> );</font>
+<br>
+Loads icon from resource. To load system default icon, pass 0 as Inst and
+one of followin values as ResID:
+<pre>
+IDI_APPLICATION  Default application icon.
+IDI_ASTERISK     Asterisk (used in informative messages).
+IDI_EXCLAMATION  Exclamation point (used in warning messages).
+IDI_HAND         Hand-shaped icon (used in serious warning messages).
+IDI_QUESTION     Question mark (used in prompting messages).
+IDI_WINLOGO      Windows logo.
+</pre> It is also possible to load icon from resources of another module,
+if pass instance handle of loaded module as Inst parameter.
+</p>
+<a name="loadfromresourcename"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromResourceName</b></font>( Inst: <b>Integer</b>; ResName: PKOLChar; DesiredSize: <b>Integer</b> );</font>
+<br>
+Loads icon from resource. To load own application resource, pass
+hInstance as Inst parameter. It is possible to load resource from
+another module, if pass its instance handle as Inst.
+</p>
+<a name="loadfromexecutable"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromExecutable</b></font>( <b>const</b> FileName: KOLString; IconIdx: <b>Integer</b> );</font>
+<br>
+Loads icon from executable (exe or dll file). Always default sized icon
+is loaded. It is possible also to get know how much icons are contained
+in executable using gloabl function <a href=kol_pas.htm#getfileiconcount target="_top">GetFileIconCount</a>. To obtain icon of
+another size, try to load given executable and use <a href=#loadfromresourceid target="main">LoadFromResourceID</a>
+method.
+</p>
+<a name="savetostream"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>SaveToStream</b></font>( Strm: PStream );</font>
+<br>
+Saves single icon to stream. To save icons with several different
+dimensions, use global procedure <a href=kol_pas.htm#saveicons2stream target="_top">SaveIcons2Stream</a>.
+</p>
+<a name="savetofile"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>SaveToFile</b></font>( <b>const</b> FileName: KOLString );</font>
+<br>
+Saves single icon to file. To save icons with several different
+dimensions, use global procedure <a href=kol_pas.htm#saveicons2file target="_top">SaveIcons2File</a>.
+</p>
+<a name="convert2bitmap"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>Convert2Bitmap</b></font>( TranColor: TColor ): HBitmap;</font>
+<br>
+Converts icon to bitmap, returning Windows GDI bitmap resource as
+a result. It is possible later to assign returned bitmap handle to
+<a href=#handle target="main">Handle</a> property of <a href=tbitmap.htm target="_top">TBitmap</a> object to use features of <a href=tbitmap.htm target="_top">TBitmap</a>.
+Pass TranColor to replace transparent area of icon with given color.
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TIcon events</font></h3>
+<h4 align="center"><font color="black">Events, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TIcon fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

@@ -416,8 +416,20 @@ implementation
 uses
   Classes,
   SyncObjs,
+  {$IFNDEF KOL}
   Math,
+  {$ENDIF}
   pcre_dll;
+
+{$IFDEF KOL}
+function Max(A, B: Integer): Integer;
+begin
+  if (A > B) then
+    Result := A
+  else
+    Result := B;
+end;
+{$ENDIF}
 
 { ********************************************************* }
 { ********************************************************* }

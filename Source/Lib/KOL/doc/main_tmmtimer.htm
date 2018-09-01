@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>KOL Help: TMMTimer object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TMMTimer( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=ttimer.htm>TTimer</a>
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TMMTimer = object( <a href=ttimer.htm target="_top">TTimer</a> )
+</b></p>
+Multimedia timer incapsulation object. Does not require <a href=kol_pas.htm#applet target="_top">Applet</a> or special
+window to handle it. System creates a thread for each high resolution
+timer, so using many such objects can degrade total PC performance.
+<h3 align="center"><font color="#FF8080">TMMTimer properties</font></h3>
+<a name="resolution"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Resolution</b></font>: <b>Integer</b>;</font>
+<br>
+Minimum timer resolution. The less the more accuracy (0 is exactly
+<a href=#interval target="main">Interval</a> milliseconds between timer shots). It is recommended to set
+this property greater to prevent entire system from reducing overhead.
+If you change this value, reset and then set <a href=#enabled target="main">Enabled</a> again to apply
+changes.
+</p>
+<a name="periodic"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Periodic</b></font>: <b>Boolean</b>;</font>
+<br>
+TRUE, if timer is periodic (default). Otherwise, timer is one-shot
+(set it <a href=#enabled target="main">Enabled</a> every time in such case for each shot). If you change
+this property, reset and set <a href=#enabled target="main">Enabled</a> property again to get effect.
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="ttimer.htm" target="_top">TTimer</a></font></h4>
+<h3 align="center"><font color="#FF8080">TMMTimer methods</font></h3>
+<a name="destroy"></a>
+<p>
+<font face="Courier" color="#800080"><b>destructor</b> <font color="#808000"><b>Destroy</b></font>; <b>virtual</b>;</font>
+<br>
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="ttimer.htm" target="_top">TTimer</a></font></h4>
+<h3 align="center"><font color="#FF8080">TMMTimer events</font></h3>
+<h4 align="center"><font color="black">Events, inherited from <a href="ttimer.htm" target="_top">TTimer</a></font></h4>
+<h3 align="center"><font color="#FF8080">TMMTimer fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="ttimer.htm" target="_top">TTimer</a></font></h4>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>KOL Help: _TObj object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>_TObj( unit <a href=kol_pas.htm>KOL.pas</a> )</b></font></p>
+<p><b>
+_TObj = object
+</b></p>
+auxiliary object type. See <a href=tobj.htm target="_top">TObj</a>.
+<h3 align="center"><font color="#FF8080">_TObj methods</font></h3>
+<a name="init"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Init</b></font>; <b>virtual</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#78;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Is called from a constructor to initialize created object instance
+filling its fields with 0. Can be overriden in descendant objects
+to add another initialization code there. (Main reason of intending
+is what constructors can not be virtual in poor objects).
+</p>
+<a name="vmtaddr"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>VmtAddr</b></font>: <b>Pointer</b>;</font>
+<br>
+Returns addres of virtual methods table of object. ?
+</p>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

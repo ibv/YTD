@@ -1,6 +1,28 @@
 CHANGELOG
 ---------
 
+  v0.37
+
+    * Some changes in the code result shortening of the command-line-only 
+      version of YouTube Downloader in half - if you disable GUI, the
+      executable file's size drops by more than a half of the original size.
+
+      Optimizations of the GUI version are also planned.
+
+      (I realize that, given today's disk sizes, no-one is impressed by 
+      saved 100 KBs. But I just happen to like small programs...)
+
+    * New provider: CT24.cz
+
+    * New provider: MSFotbal.CT24.cz
+
+    * New provider: STV.LiveTV.sk
+
+    * Check for new version (CLI: argument -v; GUI: About window) didn't
+      use proxy server even if it was set in the INI file.
+
+
+
   v0.36
 
     * Relaxed a too-strict check for valid conversions between UTF8 and

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.36                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.37                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -56,6 +56,13 @@ PODPOROVANÉ WEBY
 
      Pozn.: This provider usesTento poskytovatel používá protokol RTMP. Viz
      poznámky níže.
+
+ - CT24.cz:
+     - http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
+
+     Pozn.: Jde o videa ve èláncích. Je tøeba zadat URL videa, ne URL èlánku.
+     Pozn.: Skuteèným poskytovatelem je Èeská televize a platí proto všechno,
+            co pro CeskaTelevize.cz.
 
  - DailyHaha.com:
      - http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
@@ -143,6 +150,12 @@ PODPOROVANÉ WEBY
  - Mpora.com:
      - http://video.mpora.com/watch/xfnGGmZDC/
 
+ - MSFotbal.CT24.cz:
+     - http://msfotbal.ct24.cz/article.asp?id=339
+
+     Pozn.: Skuteèným poskytovatelem je Èeská televize a platí proto všechno,
+            co pro CeskaTelevize.cz.
+
  - Muzu.tv:
      - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
 
@@ -209,6 +222,14 @@ PODPOROVANÉ WEBY
  - StupidVideos.com:
      - http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
      - http://www.stupidvideos.com/video/Fliers_Fall_Under_Friendly_Fire/?m=new
+
+ - STV.LiveTV.sk (Slovenská televízia):
+     - http://stv.livetv.sk/tvarchive//video/video.html?video=52655
+
+     Pozn.: Název videa není nikde na stránce dostupný, používá se proto
+            pùvodní název, jak je soubor uložený na serveru.
+     Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
+     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - Tangle.com:
      - http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e

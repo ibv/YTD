@@ -12,6 +12,7 @@ object FormAbout: TFormAbout
   Font.Style = []
   OldCreateOrder = False
   Position = poOwnerFormCenter
+  Scaled = False
   PixelsPerInch = 96
   TextHeight = 13
   object LabelYTD: TLabel
@@ -39,6 +40,7 @@ object FormAbout: TFormAbout
     Top = 40
     Width = 74
     Height = 13
+    Anchors = [akTop, akRight]
     Caption = 'LabelVersion'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -59,6 +61,7 @@ object FormAbout: TFormAbout
     Top = 56
     Width = 55
     Height = 13
+    Anchors = [akTop, akRight]
     Caption = 'not found'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -80,6 +83,7 @@ object FormAbout: TFormAbout
     Top = 72
     Width = 307
     Height = 13
+    Anchors = [akTop, akRight]
     Caption = 'http://www.pepak.net/download/youtube-downloader'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -99,8 +103,8 @@ object FormAbout: TFormAbout
   object ListProviders: TListView
     Left = 8
     Top = 112
-    Width = 401
-    Height = 145
+    Width = 409
+    Height = 153
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
       item

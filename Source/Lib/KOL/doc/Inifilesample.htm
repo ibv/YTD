@@ -1,0 +1,31 @@
+<html>
+
+<head>
+<title>KOL Help: Ini file sample.</title>
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+
+<h1 align="center">
+<font face="Arial" color="#FF8080">Ini file sample.</font>
+</h1>
+This sample shows how the same Pascal operators can be used both
+for read and write for the same variables, when working with TIniFile:
+<p align=left><font face="Courier" color="008080"><b><pre>
+    <font color="800000"><b>procedure</b></font> ReadWriteIni( Write: <font color="800000"><b>Boolean</b></font> );
+    <font color="800000"><b>var</b></font> Ini: PIniFile;
+    <font color="800000"><b>begin</b></font>
+      Ini := <a href="kol_pas.htm#openinifile target="_top""><font color="008080">OpenIniFile</font></a>( <font color="A08020">'MyIniFile.ini'</font> );
+      Ini.<a href="tinifile.htm#section"><font color="008080">Section</font></a> := <font color="A08020">'Main'</font>;
+      <font color="800000"><b>if</b></font> Write <font color="800000"><b>then</b></font>            </b><font color="40A040"><em>// if Write, the same operators will save</em></font><b>
+         Ini.<a href="tinifile.htm#mode"><font color="008080">Mode</font></a> := ifmWrite; </b><font color="40A040"><em>// data rather then load.</em></font><b>
+      MyForm.Left := Ini.<a href="tinifile.htm#valueinteger"><font color="008080">ValueInteger</font></a>( <font color="A08020">'Left'</font>, MyForm.Left );
+      MyForm.Top  := Ini.<a href="tinifile.htm#valueinteger"><font color="008080">ValueInteger</font></a>( <font color="A08020">'Top'</font>,  MyForm.Top );
+      Ini.<a href="tobj.htm#free"><font color="008080">Free</font></a>;
+    <font color="800000"><b>end</b></font>;
+
+</pre></b></font></p>
+<hr>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated  by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

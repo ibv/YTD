@@ -1,0 +1,499 @@
+<html>
+<head>
+<title>KOL Help: TBitmap object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TBitmap( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TBitmap = object( <a href=tobj.htm target="_top">TObj</a> )
+</b></p>
+Bitmap incapsulation object.
+<h3 align="center"><font color="#FF8080">TBitmap properties</font></h3>
+<a name="width"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Width</b></font>: <b>Integer</b>;</font>
+<br>
+Width of bitmap. To make code smaller, avoid changing Width or <a href=#height target="main">Height</a>
+after bitmap is created (using <a href=kol_pas.htm#newbitmap target="_top">NewBitmap</a>) or after it is loaded from
+file, stream of resource.
+</p>
+<a name="height"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Height</b></font>: <b>Integer</b>;</font>
+<br>
+Height of bitmap. To make code smaller, avoid changing <a href=#width target="main">Width</a> or Height
+after bitmap is created (using <a href=kol_pas.htm#newbitmap target="_top">NewBitmap</a>) or after it is loaded from
+file, stream of resource.
+</p>
+<a name="boundsrect"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>BoundsRect</b></font>: TRect;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns rectangle (0,0,<a href=#width target="main">Width</a>,<a href=#height target="main">Height</a>).
+</p>
+<a name="empty"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Empty</b></font>: <b>Boolean</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns True if <a href=#width target="main">Width</a> or <a href=#height target="main">Height</a> is 0.
+</p>
+<a name="handle"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Handle</b></font>: HBitmap;</font>
+<br>
+Handle of bitmap. Created whenever property accessed. To check if handle
+is allocated (without allocating it), use <a href=#handleallocated target="main">HandleAllocated</a> property.
+</p>
+<a name="handleallocated"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>HandleAllocated</b></font>: <b>Boolean</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns True, if <a href=#handle target="main">Handle</a> already allocated.
+</p>
+<a name="handletype"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>HandleType</b></font>: <a href=kol_pas.htm#tbitmaphandletype target="_top">TBitmapHandleType</a>;</font>
+<br>
+bmDIB, if DIB part of image data is filled and stored internally in
+TBitmap object. DIB image therefore can have <a href=#handle target="main">Handle</a> allocated, which
+require resources. Use <a href=#handleallocated target="main">HandleAllocated</a> funtion to determine if handle
+is allocated and <a href=#dormant target="main">Dormant</a> method to remove it, if You want to economy
+GDI resources. (Actually <a href=#handle target="main">Handle</a> needed for DIB bitmap only in case
+when <a href=#canvas target="main">Canvas</a> is used to draw on bitmap surface). Please note also, that
+before saving bitmap to file or stream, it is converted to DIB.
+</p>
+<a name="pixelformat"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>PixelFormat</b></font>: <a href=kol_pas.htm#tpixelformat target="_top">TPixelFormat</a>;</font>
+<br>
+Current pixel format. If format of bitmap is unknown, or bitmap is DDB,
+value is pfDevice. Setting PixelFormat to any other format converts
+bitmap to DIB, back to pfDevice converts bitmap to DDB again. Avoid
+such conversations for large bitmaps or for numerous bitmaps in your
+application to keep good performance.
+</p>
+<a name="canvas"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Canvas</b></font>: <a href=kol_pas.htm#pcanvas target="_top">PCanvas</a>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Canvas can be used to draw onto bitmap. Whenever it is accessed, handle
+is allocated for bitmap, if it is not yet (to make it possible
+to select bitmap to display compatible device context).
+</p>
+<a name="bkcolor"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>BkColor</b></font>: TColor;</font>
+<br>
+Used to fill background for Bitmap, when its width or height is increased.
+Although this value always synchronized with Canvas.Brush.Color, use it
+instead if You do not use <a href=#canvas target="main">Canvas</a> for drawing on bitmap surface.
+</p>
+<a name="pixels"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Pixels</b></font>[ X, Y: <b>Integer</b> ]: TColor;</font>
+<br>
+Allows to obtain or change certain pixels of a bitmap. This method is
+both for DIB and DDB bitmaps, and leads to allocate handle anyway. For
+DIB bitmaps, it is possible to use property <a href=#dibpixels target="main">DIBPixels</a>[ ] instead,
+which is much faster and does not require in <a href=#handle target="main">Handle</a>.
+</p>
+<a name="scanlinesize"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>ScanLineSize</b></font>: <b>Integer</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns size of scan line in bytes. Use it to measure size of a single
+<a href=#scanline target="main">ScanLine</a>. To calculate increment value from first byte of <a href=#scanline target="main">ScanLine</a> to
+first byte of next <a href=#scanline target="main">ScanLine</a>, use difference
+<p align=left><font face="Courier" color="008080"><b><pre>
+  <font color="800000"><b>Integer</b></font>(<a href="tbitmap.htm#scanline"><font color="008080">ScanLine</font></a>[1]-<a href="tbitmap.htm#scanline"><font color="008080">ScanLine</font></a>[0])
+</pre></b></font></p>
+(this is because bitmap can be oriented from bottom to top, so
+step can be negative).
+</p>
+<a name="scanline"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>ScanLine</b></font>[ Y: <b>Integer</b> ]: <b>Pointer</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Use ScanLine to access DIB bitmap pixels in memory to direct access it
+fast. Take in attention, that for different pixel formats, different
+bit counts are used to represent bitmap pixels. Also do not forget, that
+for formats pf4bit and pf8bit, pixels actually are indices to palette
+entries, and for formats pf16bit, pf24bit and pf32bit are actually
+RGB values (for pf16bit B:5-G:6-R:5, for pf15bit B:5-G:5-R:5 (high order
+bit not used), for pf24bit B:8-G:8-R:8, and for pf32bit high order byte
+of TRGBQuad structure is not used).
+</p>
+<a name="dibpixels"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DIBPixels</b></font>[ X, Y: <b>Integer</b> ]: TColor;</font>
+<br>
+Allows direct access to pixels of DIB bitmap, faster then <a href=#pixels target="main">Pixels</a>[ ]
+property. Access to read is slower for pf15bit, pf16bit formats (because
+some conversation needed to translate packed RGB color to TColor). And
+for write, operation performed most slower for pf4bit, pf8bit (searching
+nearest color required) and fastest for pf24bit, pf32bit and pf1bit.
+</p>
+<a name="dibpalentrycount"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DIBPalEntryCount</b></font>: <b>Integer</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns palette entries count for DIB image. Always returns 2 for pf1bit,
+16 for pf4bit, 256 for pf8bit and 0 for other pixel formats.
+</p>
+<a name="dibpalentries"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DIBPalEntries</b></font>[ Idx: <b>Integer</b> ]: TColor;</font>
+<br>
+Provides direct access to DIB palette.
+</p>
+<a name="dibbits"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DIBBits</b></font>: <b>Pointer</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+This property is mainly for internal use.
+</p>
+<a name="dibsize"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DIBSize</b></font>: <b>Integer</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Size of <a href=#dibbits target="main">DIBBits</a> array.
+</p>
+<a name="dibheader"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DIBHeader</b></font>: PBitmapInfo;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+This property is mainly for internal use.
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TBitmap methods</font></h3>
+<a name="clear"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Clear</b></font>;</font>
+<br>
+Makes bitmap empty, setting its <a href=#width target="main">Width</a> and <a href=#height target="main">Height</a> to 0.
+</p>
+<a name="loadfromfile"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromFile</b></font>( <b>const</b> Filename: KOLString );</font>
+<br>
+Loads bitmap from file (<a href=#loadfromstream target="main">LoadFromStream</a> used).
+</p>
+<a name="loadfromfileex"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>LoadFromFileEx</b></font>( <b>const</b> Filename: KOLString ): <b>Boolean</b>;</font>
+<br>
+Loads bitmap from a file. If necessary, bitmap is RLE-decoded. Code given
+by Vyacheslav A. Gavrik.
+</p>
+<a name="savetofile"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>SaveToFile</b></font>( <b>const</b> Filename: KOLString );</font>
+<br>
+Stores bitmap to file (<a href=#savetostream target="main">SaveToStream</a> used).
+</p>
+<a name="loadfromstream"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromStream</b></font>( Strm: PStream );</font>
+<br>
+Loads bitmap from stream. Follow loading, bitmap has DIB format (without
+handle allocated). It is possible to draw DIB bitmap without creating
+handle for it, which can economy GDI resources.
+</p>
+<a name="loadfromstreamex"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>LoadFromStreamEx</b></font>( Strm: PStream ): <b>Boolean</b>;</font>
+<br>
+Loads bitmap from a stream. Difference is that RLE decoding supported.
+Code given by Vyacheslav A. Gavrik.
+</p>
+<a name="savetostream"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>SaveToStream</b></font>( Strm: PStream );</font>
+<br>
+Saves bitmap to stream. If bitmap is not DIB, it is converted to DIB
+before saving.
+</p>
+<a name="loadfromresourceid"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromResourceID</b></font>( Inst: <b>DWORD</b>; ResID: <b>Integer</b> );</font>
+<br>
+Loads bitmap from resource using integer ID of resource. To load by name,
+use LoadFromResurceName. To load resource of application itself, pass
+hInstance as first parameter. This method also can be used to load system
+predefined bitmaps, if 0 is passed as Inst parameter:
+<pre>
+OBM_BTNCORNERS OBM_REDUCE
+OBM_BTSIZE       OBM_REDUCED
+OBM_CHECK        OBM_RESTORE
+OBM_CHECKBOXES   OBM_RESTORED
+OBM_CLOSE        OBM_RGARROW
+OBM_COMBO        OBM_RGARROWD
+OBM_DNARROW      OBM_RGARROWI
+OBM_DNARROWD     OBM_SIZE
+OBM_DNARROWI     OBM_UPARROW
+OBM_LFARROW      OBM_UPARROWD
+OBM_LFARROWD     OBM_UPARROWI
+OBM_LFARROWI     OBM_ZOOM
+OBM_MNARROW      OBM_ZOOMD
+</pre>
+</p>
+<a name="loadfromresourcename"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>LoadFromResourceName</b></font>( Inst: <b>DWORD</b>; ResName: PKOLChar );</font>
+<br>
+Loads bitmap from resurce (using passed name of bitmap resource.
+</p>
+<a name="assign"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>Assign</b></font>( SrcBmp: PBitmap ): <b>Boolean</b>;</font>
+<br>
+Assigns bitmap from another. Returns False if not success.
+Note: remember, that <a href=#canvas target="main">Canvas</a> is not assigned - only bitmap image
+is copied. And for DIB, handle is not allocating due this process.
+</p>
+<a name="releasehandle"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>ReleaseHandle</b></font>: HBitmap;</font>
+<br>
+Returns <a href=#handle target="main">Handle</a> and releases it, so bitmap no more know about handle.
+This method does not destroy bitmap image, but converts it into DIB.
+Returned <a href=#handle target="main">Handle</a> actually is a handle of copy of original bitmap. If
+You need not in keping it up, use <a href=#dormant target="main">Dormant</a> method instead.
+</p>
+<a name="dormant"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Dormant</b></font>;</font>
+<br>
+Releases handle from bitmap and destroys it. But image is not destroyed
+and its data are preserved in DIB format. Please note, that in KOL, DIB
+bitmaps can be drawn onto given device context without allocating of
+handle. So, it is very useful to call Dormant preparing it using
+<a href=#canvas target="main">Canvas</a> drawing operations - to economy GDI resources.
+</p>
+<a name="bitsperpixel"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>BitsPerPixel</b></font>: <b>Integer</b>;</font>
+<br>
+Returns bits per pixel if possible.
+</p>
+<a name="draw"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Draw</b></font>( DC: HDC; X, Y: <b>Integer</b> );</font>
+<br>
+Draws bitmap to given device context. If bitmap is DIB, it is always
+drawing using SetDIBitsToDevice API call, which does not require bitmap
+handle (so, it is very sensible to call <a href=#dormant target="main">Dormant</a> method to free correspondent
+GDI resources).
+</p>
+<a name="stretchdraw"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>StretchDraw</b></font>( DC: HDC; <b>const</b> Rect: TRect );</font>
+<br>
+Draws bitmap onto DC, stretching it to fit given rectangle Rect.
+</p>
+<a name="drawtransparent"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>DrawTransparent</b></font>( DC: HDC; X, Y: <b>Integer</b>; TranspColor: TColor );</font>
+<br>
+Draws bitmap onto DC transparently, using TranspColor as transparent.
+See function <a href=kol_pas.htm#desktoppixelformat target="_top">DesktopPixelFormat</a> also.
+</p>
+<a name="stretchdrawtransparent"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>StretchDrawTransparent</b></font>( DC: HDC; <b>const</b> Rect: TRect; TranspColor: TColor );</font>
+<br>
+Draws bitmap onto given rectangle of destination DC (with stretching it
+to fit Rect) - transparently, using TranspColor as transparent.
+See function <a href=kol_pas.htm#desktoppixelformat target="_top">DesktopPixelFormat</a> also.
+</p>
+<a name="drawmasked"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>DrawMasked</b></font>( DC: HDC; X, Y: <b>Integer</b>; Mask: HBitmap );</font>
+<br>
+Draws bitmap to destination DC transparently by mask. It is possible
+to pass as a mask handle of another TBitmap, previously converted to
+monochrome mask using <a href=#convert2mask target="main">Convert2Mask</a> method.
+</p>
+<a name="stretchdrawmasked"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>StretchDrawMasked</b></font>( DC: HDC; <b>const</b> Rect: TRect; Mask: HBitmap );</font>
+<br>
+Like <a href=#drawmasked target="main">DrawMasked</a>, but with stretching image onto given rectangle.
+</p>
+<a name="convert2mask"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Convert2Mask</b></font>( TranspColor: TColor );</font>
+<br>
+Converts bitmap to monochrome (mask) bitmap with TranspColor replaced
+to clBlack and all other ones to clWhite. Such mask bitmap can be used
+to draw original bitmap transparently, with given TranspColor as
+transparent. (To preserve original bitmap, create new instance of
+TBitmap and assign original bitmap to it). See also <a href=#drawtransparent target="main">DrawTransparent</a> and
+<a href=#stretchdrawtransparent target="main">StretchDrawTransparent</a> methods.
+</p>
+<a name="invert"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Invert</b></font>;</font>
+<br>
+Obvious.
+</p>
+<a name="removecanvas"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RemoveCanvas</b></font>;</font>
+<br>
+Call this method to destroy <a href=#canvas target="main">Canvas</a> and free GDI resources.
+</p>
+<a name="dibpalnearestentry"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>DIBPalNearestEntry</b></font>( Color: TColor ): <b>Integer</b>;</font>
+<br>
+Returns index of entry in DIB palette with color nearest (or matching)
+to given one.
+</p>
+<a name="dibdrawrect"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>DIBDrawRect</b></font>( DC: HDC; X, Y: <b>Integer</b>; <b>const</b> R: TRect );</font>
+<br>
+This procedure copies given rectangle to the target device context,
+but only for DIB bitmap (using SetDIBBitsToDevice API call).
+</p>
+<a name="rotateright"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateRight</b></font>;</font>
+<br>
+Rotates bitmap right (90 degree). Bitmap must be DIB. If You definitevely
+know format of a bitmap, use instead one of methods <a href=#rotaterightmono target="main">RotateRightMono</a>,
+<a href=#rotateright4bit target="main">RotateRight4bit</a>, <a href=#rotateright8bit target="main">RotateRight8bit</a>, <a href=#rotateright16bit target="main">RotateRight16bit</a> or <a href=#rotaterighttruecolor target="main">RotateRightTrueColor</a>
+- this will economy code. But if for most of formats such methods are
+called, this can be more economy just to call always universal method
+RotateRight.
+</p>
+<a name="rotateleft"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateLeft</b></font>;</font>
+<br>
+Rotates bitmap left (90 degree). Bitmap must be DIB. If You definitevely
+know format of a bitmap, use instead one of methods <a href=#rotateleftmono target="main">RotateLeftMono</a>,
+<a href=#rotateleft4bit target="main">RotateLeft4bit</a>, <a href=#rotateleft8bit target="main">RotateLeft8bit</a>, <a href=#rotateleft16bit target="main">RotateLeft16bit</a> or <a href=#rotatelefttruecolor target="main">RotateLeftTrueColor</a>
+- this will economy code. But if for most of formats such methods are
+called, this can be more economy just to call always universal method
+RotateLeft.
+</p>
+<a name="rotaterightmono"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateRightMono</b></font>;</font>
+<br>
+Rotates bitmat right, but only if bitmap is monochrome (pf1bit).
+</p>
+<a name="rotateleftmono"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateLeftMono</b></font>;</font>
+<br>
+Rotates bitmap left, but only if bitmap is monochrome (pf1bit).
+</p>
+<a name="rotateright4bit"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateRight4bit</b></font>;</font>
+<br>
+Rotates bitmap right, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf4bit.
+</p>
+<a name="rotateleft4bit"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateLeft4bit</b></font>;</font>
+<br>
+Rotates bitmap left, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf4bit.
+</p>
+<a name="rotateright8bit"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateRight8bit</b></font>;</font>
+<br>
+Rotates bitmap right, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf8bit.
+</p>
+<a name="rotateleft8bit"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateLeft8bit</b></font>;</font>
+<br>
+Rotates bitmap left, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf8bit.
+</p>
+<a name="rotateright16bit"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateRight16bit</b></font>;</font>
+<br>
+Rotates bitmap right, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf16bit.
+</p>
+<a name="rotateleft16bit"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateLeft16bit</b></font>;</font>
+<br>
+Rotates bitmap left, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf16bit.
+</p>
+<a name="rotaterighttruecolor"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateRightTrueColor</b></font>;</font>
+<br>
+Rotates bitmap right, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf24bit or pf32bit.
+</p>
+<a name="rotatelefttruecolor"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>RotateLeftTrueColor</b></font>;</font>
+<br>
+Rotates bitmap left, but only if <a href=#pixelformat target="main">PixelFormat</a> is pf24bit or pf32bit.
+</p>
+<a name="flipvertical"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>FlipVertical</b></font>;</font>
+<br>
+Flips bitmap vertically
+</p>
+<a name="fliphorizontal"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>FlipHorizontal</b></font>;</font>
+<br>
+Flips bitmap horizontally
+</p>
+<a name="copyrect"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>CopyRect</b></font>( <b>const</b> DstRect: TRect; SrcBmp: PBitmap; <b>const</b> SrcRect: TRect );</font>
+<br>
+It is possible to use Canvas.CopyRect for such purpose, but if You
+do not want use <a href=tcanvas.htm target="_top">TCanvas</a>, it is possible to copy rectangle from one
+bitmap to another using this function.
+</p>
+<a name="copytoclipboard"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>CopyToClipboard</b></font>: <b>Boolean</b>;</font>
+<br>
+Copies bitmap to clipboard.
+</p>
+<a name="pastefromclipboard"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>PasteFromClipboard</b></font>: <b>Boolean</b>;</font>
+<br>
+Takes CF_DIB format bitmap from clipboard and assigns it to the
+TBitmap object.
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TBitmap events</font></h3>
+<h4 align="center"><font color="black">Events, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TBitmap fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

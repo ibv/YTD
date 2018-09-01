@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>KOL Help: TOpenSaveDialog object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TOpenSaveDialog( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TOpenSaveDialog = object( <a href=tobj.htm target="_top">TObj</a> )
+</b></p>
+Object to show standard Open/Save dialog. Initially provided
+for XCL by Carlo Kok.
+<h3 align="center"><font color="#FF8080">TOpenSaveDialog properties</font></h3>
+<a name="filename"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Filename</b></font>: KOLString;</font>
+<br>
+Filename is separated by #13 when multiselect is true and the first
+file, is the path of the files selected.
+<pre>
+  C:\Projects
+  Test1.Dpr
+  Test2.Dpr
+</pre>
+If only one file is selected, it is provided as (e.g.)
+C:\Projects\Test1.dpr
+<br> For case when OSAllowMultiselect option used, after each
+call initial value for a Filename containing several files prevents
+system from opening the dialog. To fix this, assign another initial
+value to Filename property in your code, when you use multiselect.
+</p>
+<a name="initialdir"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>InitialDir</b></font>: KOLString;</font>
+<br>
+Initial directory path. If not set, current directory (usually
+directory when program is started) is used.
+</p>
+<a name="filter"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Filter</b></font>: KOLString;</font>
+<br>
+A list of pairs of filter names and filter masks, separated with '&brvbar;'.
+If a mask contains more than one mask, it should be separated with ';'.
+E.g.:
+<p align=left><font face="Courier" color="008080"><b><pre>
+ <font color="A08020">'All files|*.*|Text files|*.txt;*.1st;*.diz'</font>
+</pre></b></font></p>
+</p>
+<a name="filterindex"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>FilterIndex</b></font>: <b>Integer</b>;</font>
+<br>
+Index of default filter mask (0 by default, which means &quot;first&quot;).
+</p>
+<a name="opendialog"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>OpenDialog</b></font>: <b>Boolean</b>;</font>
+<br>
+True, if &quot;Open&quot; dialog. False, if &quot;Save&quot; dialog. True is default.
+</p>
+<a name="title"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Title</b></font>: KOLString;</font>
+<br>
+Title for dialog.
+</p>
+<a name="options"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Options</b></font>: <a href=kol_pas.htm#topensaveoptions target="_top">TOpenSaveOptions</a>;</font>
+<br>
+Options.
+</p>
+<a name="defextension"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DefExtension</b></font>: KOLString;</font>
+<br>
+Default extention. Set it to desired extension without leading period,
+e.g. 'txt', but not '.txt'.
+</p>
+<a name="wndowner"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>WndOwner</b></font>: THandle;</font>
+<br>
+Owner window handle. If not assigned, <a href=kol_pas.htm#applet#handle>Applet.Handle</a> is used (whenever
+possible). Assign it, if your application has stay-on-top forms, and
+a separate <a href=kol_pas.htm#applet target="_top">Applet</a> object is used.
+</p>
+<a name="openreadonly"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>OpenReadOnly</b></font>: <b>Boolean</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+TRUE after <a href=#execute target="main">Execute</a>, if Read Only check box was checked by the user.
+<a href=#options target="main">Options</a> are not affected anyway.
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TOpenSaveDialog methods</font></h3>
+<a name="destroy"></a>
+<p>
+<font face="Courier" color="#800080"><b>destructor</b> <font color="#808000"><b>Destroy</b></font>; <b>virtual</b>;</font>
+<br>
+destructor
+</p>
+<a name="execute"></a>
+<p>
+<font face="Courier" color="#800080"><b>Function</b> <font color="#808000"><b>Execute</b></font>: <b>Boolean</b>;</font>
+<br>
+Call it after creating to perform selecting of file by user.
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TOpenSaveDialog events</font></h3>
+<h4 align="center"><font color="black">Events, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TOpenSaveDialog fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

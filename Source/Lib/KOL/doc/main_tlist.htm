@@ -1,0 +1,181 @@
+<html>
+<head>
+<title>KOL Help: TList object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TList( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TList = object( <a href=tobj.htm target="_top">TObj</a> )
+</b></p>
+Simple list of pointers. It is used in KOL instead of standard VCL
+TList to store any kind data (or pointers to these ones). Can be created
+calling function <a href=kol_pas.htm#newlist target="_top">NewList</a>.
+<h3 align="center"><font color="#FF8080">TList properties</font></h3>
+<a name="count"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Count</b></font>: <b>Integer</b>;</font>
+<br>
+Returns count of items in the list. It is possible to delete a number
+of items at the end of the list, keeping only first Count items alive,
+assigning new value to Count property (less then Count it is).
+</p>
+<a name="capacity"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Capacity</b></font>: <b>Integer</b>;</font>
+<br>
+Returns number of pointers which could be stored in the list
+without reallocating of memory. It is possible change this value
+for optimize usage of the list (for minimize number of reallocating
+memory operations).
+</p>
+<a name="items"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Items</b></font>[ Idx: <b>Integer</b> ]: <b>Pointer</b>; <b>default</b>;</font>
+<br>
+Provides access (read and write) to items of the list. Please note,
+that TList is not responsible for freeing memory, referenced by stored
+pointers.
+</p>
+<a name="addby"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>AddBy</b></font>: <b>Integer</b>;</font>
+<br>
+Value to increment capacity when new items are added or inserted
+and capacity need to be increased.
+</p>
+<a name="datamemory"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>DataMemory</b></font>: PPointerList;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Raw data memory. Can be used for direct access to items of a list.
+Do not use it for TLIST_FAST !
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TList methods</font></h3>
+<a name="destroy"></a>
+<p>
+<font face="Courier" color="#800080"><b>destructor</b> <font color="#808000"><b>Destroy</b></font>; <b>virtual</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#78;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Destroys list, freeing memory, allocated for pointers. Programmer
+is resposible for destroying of data, referenced by the pointers.
+</p>
+<a name="clear"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Clear</b></font>;</font>
+<br>
+Makes <a href=#count target="main">Count</a> equal to 0. Not responsible for freeing (or destroying)
+data, referenced by released pointers.
+</p>
+<a name="add"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Add</b></font>( Value: <b>Pointer</b> );</font>
+<br>
+Adds pointer to the end of list, increasing <a href=#count target="main">Count</a> by one.
+</p>
+<a name="insert"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Insert</b></font>( Idx: <b>Integer</b>; Value: <b>Pointer</b> );</font>
+<br>
+Inserts pointer before given item. Returns Idx, i.e. index of
+inserted item in the list. Indeces of items, located after insertion
+point, are increasing. To add item to the end of list, pass <a href=#count target="main">Count</a>
+as index parameter. To insert item before first item, pass 0 there.
+</p>
+<a name="indexof"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>IndexOf</b></font>( Value: <b>Pointer</b> ): <b>Integer</b>;</font>
+<br>
+Searches first (from start) item pointer with given value and returns
+its index (zero-based) if found. If not found, returns -1.
+</p>
+<a name="delete"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Delete</b></font>( Idx: <b>Integer</b> );</font>
+<br>
+Deletes given (by index) pointer item from the list, shifting all
+follow item indeces up by one.
+</p>
+<a name="deleterange"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>DeleteRange</b></font>( Idx, Len: <b>Integer</b> );</font>
+<br>
+Deletes Len items starting from Idx.
+</p>
+<a name="remove"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Remove</b></font>( Value: <b>Pointer</b> );</font>
+<br>
+Removes first entry of a Value in the list.
+</p>
+<a name="last"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>Last</b></font>: <b>Pointer</b>;</font>
+<br>
+Returns the last item (or nil, if the list is empty).
+</p>
+<a name="swap"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Swap</b></font>( Idx1, Idx2: <b>Integer</b> );</font>
+<br>
+Swaps two items in list directly (fast, but without testing of
+index bounds).
+</p>
+<a name="moveitem"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>MoveItem</b></font>( OldIdx, NewIdx: <b>Integer</b> );</font>
+<br>
+Moves item to new position. Pass NewIdx &gt;= <a href=#count target="main">Count</a> to move item
+after the last one.
+</p>
+<a name="release"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Release</b></font>;</font>
+<br>
+Especially for lists of pointers to dynamically allocated memory.
+Releases all pointed memory blocks and destroys object itself.
+</p>
+<a name="releaseobjects"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>ReleaseObjects</b></font>;</font>
+<br>
+Especially for a list of objects derived from <a href=tobj.htm target="_top">TObj</a>.
+Calls <a href=#free target="main">Free</a> for every of the object in the list, and then calls
+<a href=#free target="main">Free</a> for the object itself.
+</p>
+<a name="assign"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Assign</b></font>( SrcList: <a href=kol_pas.htm#plist target="_top">PList</a> );</font>
+<br>
+Copies all source list items.
+</p>
+<a name="additems"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>AddItems</b></font>( <b>const</b> AItems: <b>array</b> <b>of</b> <b>Pointer</b> );</font>
+<br>
+Adds a list of items given by a dynamic array.
+</p>
+<a name="itemaddress"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>ItemAddress</b></font>( Idx: <b>Integer</b> ): <b>Pointer</b>;</font>
+<br>
+Returns an address of memory occupying by the item with index Idx.
+(If the item is a pointer, returned value is a pointer to a pointer).
+Item with index requested must exist.
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TList events</font></h3>
+<h4 align="center"><font color="black">Events, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TList fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

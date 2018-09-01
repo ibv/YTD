@@ -1,0 +1,142 @@
+<html>
+<head>
+<title>KOL Help: TTrayIcon object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TTrayIcon( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TTrayIcon = object( <a href=tobj.htm target="_top">TObj</a> )
+</b></p>
+Object to place (and change) a single icon onto taskbar tray.
+<h3 align="center"><font color="#FF8080">TTrayIcon properties</font></h3>
+<a name="icon"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Icon</b></font>: HIcon;</font>
+<br>
+Icon to be shown on taskbar tray. If not set, value of <a href=#active target="main">Active</a>
+property has no effect. It is also possible to assign a value
+to Icon property after assigning True to <a href=#active target="main">Active</a> to install
+icon first time or to replace icon with another one (e.g. to
+get animation effect).
+<br>&nbsp;&nbsp;&nbsp;
+Previously allocated icon (if any) is not deleted using
+DeleteObject. This is normal for icons, loaded from resource
+(e.g., by LoadIcon API call). But if icon was created (e.g.) by
+CreateIconIndirect, your code is responsible for destroying
+of it).
+</p>
+<a name="active"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Active</b></font>: <b>Boolean</b>;</font>
+<br>
+Set it to True to show assigned <a href=#icon target="main">Icon</a> on taskbar tray. Default
+is False. Has no effect if <a href=#icon target="main">Icon</a> property is not assigned.
+TrayIcon is deactivated automatically when <a href=kol_pas.htm#applet target="_top">Applet</a> is finishing
+(but only if <a href=kol_pas.htm#applet target="_top">Applet</a> window is used as a &quot;parent&quot; for tray
+icon object).
+</p>
+<a name="tooltip"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Tooltip</b></font>: KOLString;</font>
+<br>
+Tooltip string, showing automatically when mouse is moving
+over installed icon. Though &quot;huge string&quot; type is used, only
+first 63 characters are considered. Also note, that only in
+most recent versions of Windows multiline tooltips are supported.
+</p>
+<a name="autorecreate"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>AutoRecreate</b></font>: <b>Boolean</b>;</font>
+<br>
+If set to TRUE, auto-recreating of tray icon is proveded in case,
+when Explorer is restarted for some (unpredictable) reasons. Otherwise,
+your tray icon is disappeared forever, and if this is the single way
+to communicate with your application, the user nomore can achieve it.
+</p>
+<a name="noautodeactivate"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>NoAutoDeactivate</b></font>: <b>Boolean</b>;</font>
+<br>
+If set to true, tray icon is not removed from tray automatically on
+WM_CLOSE message receive by owner control. Set <a href=#active target="main">Active</a> := FALSE in
+your code for such case before accepting closing the form.
+</p>
+<a name="wnd"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Wnd</b></font>: HWnd;</font>
+<br>
+A window to use as a base window for tray icon messages. Overrides
+parent Control handle is assigned. Note, that if Wnd property used,
+message handling is not done automatically, and you should do this in
+your code, or at least for one tray icon object, call <a href=#attachproc2wnd target="main">AttachProc2Wnd</a>.
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TTrayIcon methods</font></h3>
+<a name="destroy"></a>
+<p>
+<font face="Courier" color="#800080"><b>destructor</b> <font color="#808000"><b>Destroy</b></font>; <b>virtual</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#78;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Destructor. Use <a href=#free target="main">Free</a> method instead (as usual).
+</p>
+<a name="attachproc2wnd"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>AttachProc2Wnd</b></font>;</font>
+<br>
+Call this method for a tray icon object in case if <a href=#wnd target="main">Wnd</a> used rather then
+control. It is enough to call this method once for each <a href=#wnd target="main">Wnd</a> used, even
+if several other tray icons are also based on the same <a href=#wnd target="main">Wnd</a>. See also
+<a href=#detachproc2wnd target="main">DetachProc2Wnd</a> method.
+</p>
+<a name="detachproc2wnd"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>DetachProc2Wnd</b></font>;</font>
+<br>
+Call this method to detach window procedure attached via <a href=#attachproc2wnd target="main">AttachProc2Wnd</a>.
+Do it once for a <a href=#wnd target="main">Wnd</a>, used as a base to handle tray icon messages.
+Caution! If you do not call this method before destroying <a href=#wnd target="main">Wnd</a>, the
+application will not functioning normally.
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TTrayIcon events</font></h3>
+<a name="onmouse"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>OnMouse</b></font>: <a href=kol_pas.htm#tontrayiconmouse target="_top">TOnTrayIconMouse</a>;</font>
+<br>
+Is called then mouse message is taking place concerning installed
+icon. Only type of message can be obtained (e.g. WM_MOUSEMOVE,
+WM_LBUTTONDOWN etc.)
+</p>
+<h4 align="center"><font color="black">Events, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<h3 align="center"><font color="#FF8080">TTrayIcon fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="tobj.htm" target="_top">TObj</a></font></h4>
+<a name=tasks></a><h3 align="center"><font color="#FF8080">TTrayIcon tasks</font></h3>
+When You create invisible application, which should be represented by
+only the tray icon, prepare a handle for the window, resposible for
+messages handling. Remember, that window handle is created automatically
+only when a window is showing first time. If window's property Visible is
+set to False, You should to call CreateWindow manually.
+&lt;br&gt;
+There is a known bug exist with similar invisible tray-iconized applications.
+When a menu is activated in response to tray mouse event, if there was
+not active window, belonging to the application, the menu is not disappeared
+when mouse is clicked anywhere else. This bug is occure in Windows9x/ME.
+To avoid it, activate first your form window. This last window shoud have
+status visible (but, certainly, there are no needs to place it on visible
+part of screen - change its position, so it will not be visible for user,
+if You wish).
+&lt;br&gt;
+Also, to make your application &quot;invisible&quot; but until special event is occure,
+use <a href=kol_pas.htm#applet target="_top">Applet</a> separate from the main form, and make for both Visible := False.
+This allows for You to make your form visible any time You wish, and without
+making application button visible if You do not wish.
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>

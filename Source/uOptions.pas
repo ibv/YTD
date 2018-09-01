@@ -219,6 +219,10 @@ begin
   Url := 'http://ytd.pepak.net' {$IFNDEF XXX} + '/?lite=1' {$ENDIF};
   Http := THttpSend.Create;
   try
+    Http.ProxyHost := ProxyHost;
+    Http.ProxyPort := ProxyPort;
+    Http.ProxyUser := ProxyUser;
+    Http.ProxyPass := ProxyPassword;
     if Http.HttpMethod('HEAD', Url) then
       if (Http.ResultCode >= 200) and (Http.ResultCode < 400) then
         if FindHeader(Http, 'X-YTD-Version', Version) then

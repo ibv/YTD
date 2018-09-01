@@ -1,10 +1,11 @@
-// What to build into YTD:
+// What to build into YTD. These options are intended to be set in the BUILD.BAT
 {.DEFINE NO_GUI} // Don't compile GUI version
 {.DEFINE NO_CLI} // Don't compile command-line version
 {.DEFINE NO_XXX} // Don't compile support for porn providers
+{.DEFINE DEBUG}  // Include debug code
+{.DEFINE KOL}    // Use Key Objects Library (http://kolmck.net)
 
-// Behavior:
-{.DEFINE DEBUG}          // Include debug code
+// Behavior/functionality
 {$DEFINE MULTIDOWNLOADS} // Allow multiple downloads per URL (needed for some downloaders)
 {$DEFINE SYSTRAY}        // Minimize to systray
 {$DEFINE INIFILE}        // Use INI file to store default settings

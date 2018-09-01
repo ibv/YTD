@@ -21,6 +21,7 @@ type
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -104,14 +105,19 @@ begin
     Result := Result + 'WM3';
 end;
 
+function TDownloader_CT.GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean;
+begin
+  Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', Url);
+end;
+
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var HREF, URL, ObjectDef, Title: string;
+var HREF, URL, ObjectDef{, Title}: string;
     Xml: TjanXmlParser2;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  if not GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', URL) then
+  if not GetMovieObjectUrl(Http, Page, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not DownloadPage(Http, URL, ObjectDef, peUTF8) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
@@ -123,17 +129,20 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
     else if ObjectDef[1] = '<' then
       begin
+      // Pozn.: ObjectDef muze byt neplatnym XML souborem v tom smyslu, ze v nem
+      // mohou byt "neoentitovane" ampersandy - tzn. muze tam byt "a&b", pricemz
+      // spravne je "a&amp;b" JanXmlParseru to je jedno.
       Xml := TjanXmlParser2.Create;
       try
         Xml.xml := ObjectDef;
         for i := 0 to Pred(Xml.childCount) do
           if Xml.childNode[i].name = 'ENTRY' then
             if GetXmlAttr(Xml.childNode[i], 'REF', 'HREF', HREF) then
-              if GetRegExpVar(IVysilaniUrlRegExp, HREF, 'URL', Url) then
+              //if GetRegExpVar(IVysilaniUrlRegExp, HREF, 'URL', Url) then
                 begin
-                if GetXmlVar(Xml.childNode[i], 'TITLE', Title) then
-                  SetName(Title);
-                MovieUrl := Url;
+                //if GetXmlVar(Xml.childNode[i], 'TITLE', Title) then
+                //  SetName(Title);
+                MovieUrl := HREF;
                 Result := True;
                 SetPrepared(True);
                 Exit;

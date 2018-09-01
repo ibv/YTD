@@ -1,6 +1,31 @@
 CHANGELOG
 ---------
 
+  v0.37
+
+    * Nìkolik úprav v kódu výraznì zkracuje command-line verzi YTD - pokud
+      je zakázáno grafické rozhraní, klesne délka programu na necelou
+      polovinu pùvodní velikosti.
+
+      Následovat budou úpravy pro zkrácení GUI verze.
+
+      (Ano, já vím, že dnes jsou tak velké disky, že ušetøených 100 KB
+      nikoho nezajímá. Ale co se dá dìlat, mì se malé programy líbí...)
+
+    * Èeská televize: Podpora pro videa uvnitø èlánkù na ÈT24, jako je napø.
+      http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
+      Je tøeba zadat ne èlánek (URL výše), ale pøímo URL videa, napø.           
+      http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
+
+      Podpora pro msfotbal.ct24.cz.
+
+    * Nový zdroj: Slovenská televize.
+
+    * Pøi testu na novou verzi (CLI: parametrem -v; GUI: v oknì About) se
+      nepoužíval proxy server, i když byl v INI souboru nastaven.
+
+
+
   v0.36
 
     * Uvolnìna kontrola pøi konverzi øetìzcù mezi kódováními - program nebude

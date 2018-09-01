@@ -4,16 +4,18 @@
 
 }
 unit janStrings;
+{$DEFINE PEPAK}
 {$IFDEF FPC}
   {$MODE DELPHI}
   {$R-}
+  {$DEFINE PEPAK}
 {$ENDIF}
 
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, {$IFDEF FPC} Variants, {$ELSE} Graphics,controls, {$ENDIF} dialogs,math;
+  Windows, SysUtils, Classes, {$IFDEF FPC} Variants, {$ENDIF} {$IFNDEF PEPAK} Graphics, Controls, Dialogs, Math, {$ENDIF} Messages;
 
 {$IFDEF FPC}
 type
@@ -116,7 +118,7 @@ var
   function ADOSqlFireBird(base:TjanSQLBaseType;datavalue:string;scripting:string=''):string;
   function ADOSqlMySQL(base:TjanSQLBaseType;datavalue:string;scripting:string=''):string;
   {dialogs}
-  {$IFNDEF FPC}
+  {$IFNDEF PEPAK}
   function confirm(msg:string):boolean;
   function confirmcustom(msg:string):boolean;
   {$ENDIF}
@@ -407,7 +409,7 @@ var
    function StreamToString(aStream:TStream):string;
    procedure SaveAppendString(aFile,aText:string);
    // HTML functions
-   {$IFNDEF FPC}
+   {$IFNDEF PEPAK}
    function  HexToColor(aText:string):Tcolor;
    function  HexToColorDef(aText:string;ADefault:Tcolor):Tcolor;
    function  ColorToHex(aColor:Tcolor):String;
@@ -440,7 +442,7 @@ var
    // retrieves string value from a line like:
    //  name="jan verhoeven" email="jan1.verhoeven@wxs.nl"
    // returns aDefault when not found
-   {$IFNDEF FPC}
+   {$IFNDEF PEPAK}
    function  GetHTMLColorValue(aText,aName:string;aDefault:Tcolor):TColor;
    {$ENDIF}
    // same for a color
@@ -460,7 +462,7 @@ var
 
    procedure GetNames(aText:string;aList:TStringList);
    // get a list of names from a string with name="value" pairs
-   {$IFNDEF FPC}
+   {$IFNDEF PEPAK}
    function  GetHTMLColor(aColor:TColor):string;
    {$ENDIF}
    // converts a color value to the HTML hex value
@@ -486,8 +488,37 @@ var
   //gets a datecode. Returns year and weeknumber in format: YYWW
 
 
+{$IFDEF PEPAK}
+function Max(A, B: integer): integer;
+function Ceil(X: Extended): Integer;
+function Floor(X: Extended): Integer;
+{$ENDIF}
+
 implementation
 
+{$IFDEF PEPAK}
+function Max(A, B: integer): integer;
+begin
+  if A > B then
+    Result := A
+  else
+    Result := B;
+end;
+
+function Ceil(X: Extended): Integer;
+begin
+  Result := Integer(Trunc(X));
+  if Frac(X) > 0 then
+    Inc(Result);
+end;
+
+function Floor(X: Extended): Integer;
+begin
+  Result := Integer(Trunc(X));
+  if Frac(X) < 0 then
+    Dec(Result);
+end;
+{$ENDIF}
 
 const
 
@@ -1291,7 +1322,7 @@ begin
 end;
 
 
-{$IFNDEF FPC}
+{$IFNDEF PEPAK}
 function GetHTMLColorValue(aText,aName:string;aDefault:Tcolor):TColor;
 var s:string;
 begin
@@ -1336,7 +1367,7 @@ begin
   end;
 end;
 
-{$IFNDEF FPC}
+{$IFNDEF PEPAK}
 function GetHTMLColor(aColor:TColor):string;
 begin
   result:=format('%6.6x',[colortorgb(acolor)]);
@@ -1842,7 +1873,7 @@ begin
   end;
 end;
 
-{$IFNDEF FPC}
+{$IFNDEF PEPAK}
 function  HexToColor(aText:string):Tcolor;
 begin
   result:=clblack;
@@ -5508,7 +5539,7 @@ End;
 
 function GetFirstDayofMonthCalendar (const DT: TDateTime;const pWeekDay:integer): TDateTime;
 var
-  bom:TDate;
+  bom:{$IFDEF PEPAK} TDateTime {$ELSE} TDate {$ENDIF};
   dow:integer;
 begin
   bom:=GetFirstDayofMonth(DT);
@@ -5939,7 +5970,7 @@ end;
 
 
 
-{$IFNDEF FPC}
+{$IFNDEF PEPAK}
 function confirm(msg:string):boolean;
 begin
   result:=messagedlg(msg,mtconfirmation,[mbyes,mbno],0)=mryes;

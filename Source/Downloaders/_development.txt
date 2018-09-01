@@ -10,6 +10,9 @@ HTTP	XML	XML	downClipfish
 HTTP	XML	XML	downCollegeHumor
 RTMP	HTML	XML	downCrunchyRoll
 MS	HTML	XML	downCT
+MS	HTML	XML	downCT_Port
+MS	HTML	XML	downCT24
+MS	HTML	XML	downCT24MSFotbal
 HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion
 HTTP	HTML	HTML	downEbaumsWorld
@@ -52,6 +55,7 @@ HTTP	HTML	HTML	downStickam
 HTTP	HTML	HTML	downStream
 HTTP	HTML	HTML	downStreetFire
 HTTP	HTML	HTML	downStupidVideos (<-downGrindTV)
+MS	HTML	XML	downSTV
 HTTP	XML	XML	downTangle
 HTTP	XML	XML	downTeacherTube
 HTTP	XML	XML	downTodaysBigThing

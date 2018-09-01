@@ -10,7 +10,7 @@ uses
   {$IFDEF SYSTRAY}
   ShellApi,
   {$ENDIF}
-  uLanguages, uMessages, uOptions,
+  uLanguages, uMessages, uOptions, FileCtrlGUI,
   uDownloadList, uDownloadListItem, uDownloadThread,
   uYTDAbout;
 

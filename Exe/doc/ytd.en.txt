@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.36                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.37                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -54,6 +54,14 @@ SUPPORTED PROVIDERS
      - http://www.crunchyroll.com/library/Naruto_Shippuden
 
      Note: This provider uses RTMP protocol. See the note below.
+
+ - CT24.cz:
+     - http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
+
+     Note: Movies embedded into articles. Video URL is required, NOT article 
+           URL.
+     Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
+           CT24.cz as well.
 
  - DailyHaha.com:
      - http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
@@ -136,6 +144,12 @@ SUPPORTED PROVIDERS
  - Mpora.com:
      - http://video.mpora.com/watch/xfnGGmZDC/
 
+ - MSFotbal.CT24.cz:
+     - http://msfotbal.ct24.cz/article.asp?id=339
+
+     Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
+           CT24.cz as well.
+
  - Muzu.tv:
      - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
 
@@ -202,6 +216,13 @@ SUPPORTED PROVIDERS
  - StupidVideos.com:
      - http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
      - http://www.stupidvideos.com/video/Fliers_Fall_Under_Friendly_Fire/?m=new
+
+ - STV.LiveTV.sk:
+     - http://stv.livetv.sk/tvarchive//video/video.html?video=52655
+
+     Note: Video title is not listed anywhere in the video page, so the
+           original filename is used instead.
+     Note: This provider uses RTSP over HTTP protocol. See the note below.
 
  - Tangle.com:
      - http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e

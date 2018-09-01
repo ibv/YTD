@@ -283,7 +283,7 @@ begin
       ProgressBar := EmptyProgressBar;
       for i := 1 to n do
         ProgressBar[i] := '#';     
-      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)'#13), [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
+      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)#13') + #13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
       end;
     end;
 end;

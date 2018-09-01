@@ -1,12 +1,14 @@
 unit janXMLParser2;
 
 interface
+{$DEFINE PEPAK}
 {$IFDEF FPC}
   {$MODE DELPHI}
+  {$DEFINE PEPAK}
 {$ENDIF}
 
 uses
-  Windows, ComObj, Contnrs, Messages, SysUtils, Classes, {$IFDEF FPC} Variants, {$ELSE} Graphics, Controls, Forms, Menus, {$ENDIF} Dialogs,janXPathTokenizer, Math, janstrings;
+  Windows, ComObj, Contnrs, Messages, SysUtils, Classes, {$IFDEF FPC} Variants, {$ENDIF} {$IFNDEF PEPAK} Graphics, Controls, Forms, Menus, Dialogs, Math, {$ENDIF} janXPathTokenizer, janstrings;
 
 const
   delimiters=['+','-','*','/',' ','(',')','=','>','<'];
@@ -721,7 +723,7 @@ type
     procedure procName;
     procedure procPosition;
     procedure procFirst;
-    procedure procLast;    
+    procedure procLast;
     procedure procPath;
     procedure procLocation;
     procedure procParentName;
@@ -808,7 +810,7 @@ type
      this event is assigned to an internal method.}
   end;
 
-  {$IFNDEF FPC}
+  {$IFNDEF PEPAK}
   TjanXMLMenuItem2=class(TMenuItem)
   private
     FNode: TJanXMLNode2;
@@ -817,7 +819,7 @@ type
       property Node:TJanXMLNode2 read FNode write SetNode;
   end;
   {$ENDIF}
-  
+
   function HashThis(const s: string): cardinal;
 
 implementation
@@ -3378,7 +3380,7 @@ var
   xpp:TjanXPathParser2;
 begin
   tmp:=node.attribute['name'];
-  {$IFNDEF FPC}
+  {$IFNDEF PEPAK}
 showmessage(tmp);
   {$ENDIF}
   if tmp='' then exit;
@@ -4350,7 +4352,6 @@ begin
   FonGetVariable := Value;
 end;
 
-
 procedure TjanXPathExpression2.procSin;
 var
   v1:variant;
@@ -4537,8 +4538,6 @@ begin
   runpush(sqr(v1));
 end;
 
-
-
 procedure TjanXPathExpression2.procSqrt;
 var
   v1:variant;
@@ -4633,7 +4632,7 @@ var
   v1:variant;
   s1:string;
   i1:integer;
-  adate:TDate;
+  adate:{$IFDEF PEPAK} TDateTime {$ELSE} TDate {$ENDIF};
 begin
   v1:=runpop;
   s1:=v1;
@@ -4652,7 +4651,7 @@ var
   v1:variant;
   s1:string;
   i1:integer;
-  adate:TDate;
+  adate:{$IFDEF PEPAK} TDateTime {$ELSE} TDate {$ENDIF};
 begin
   v1:=runpop;
   s1:=v1;
@@ -4671,7 +4670,7 @@ var
   v1:variant;
   s1:string;
   i1:integer;
-  aDate:Tdate;
+  aDate:{$IFDEF PEPAK} TDateTime {$ELSE} TDate {$ENDIF};
 begin
   v1:=runpop;
   s1:=v1;
@@ -5114,7 +5113,7 @@ begin
 end;
 
 { TjanXMLMenuItem }
-{$IFNDEF FPC}
+{$IFNDEF PEPAK}
 procedure TjanXMLMenuItem2.SetNode(const Value: TJanXMLNode2);
 begin
   FNode := Value;
@@ -5902,7 +5901,7 @@ var
   var
     ivalue, itest:integer;
     fvalue, ftest:extended;
-    dvalue, dtest:TDate;
+    dvalue, dtest:{$IFDEF PEPAK} TDateTime {$ELSE} TDate {$ENDIF};
     stest:string;
   begin
     stest:=xnc['value'];
@@ -5936,7 +5935,7 @@ var
   var
     ivalue, itest:integer;
     fvalue, ftest:extended;
-    dvalue, dtest:TDate;
+    dvalue, dtest:{$IFDEF PEPAK} TDateTime {$ELSE} TDate {$ENDIF};
     stest:string;
   begin
     stest:=xnc['value'];
@@ -6266,3 +6265,4 @@ begin
 end;
 
 end.
+

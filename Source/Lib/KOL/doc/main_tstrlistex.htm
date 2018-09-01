@@ -1,0 +1,141 @@
+<html>
+<head>
+<title>KOL Help: TStrListEx object (main frame)</title>
+<base target="_top">
+</head>
+
+<body bgcolor="#FFFFEF" text="#000000" link="#008080" vlink="#008000" alink="#808000">
+<p><font face="Courier" color="#800080"><b>TStrListEx( unit <a href=kol_pas.htm>KOL.pas</a> )
+ <font face="Wingdings">ï</font> <a href=tstrlist.htm>TStrList</a>
+ <font face="Wingdings">ï</font> <a href=tobj.htm>TObj</a>
+ <font face="Wingdings">ï</font> <a href=_tobj.htm>_TObj</a>
+</b></font></p>
+<p><b>
+TStrListEx = object( <a href=tstrlist.htm target="_top">TStrList</a> )
+</b></p>
+Extended string list object. Has additional capability to associate
+numbers or objects with string list items.
+<h3 align="center"><font color="#FF8080">TStrListEx properties</font></h3>
+<a name="objects"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>Objects</b></font>[ Idx: <b>Integer</b> ]: <b>DWORD</b>;</font>
+<br>
+Objects are just 32-bit values. You can treat and use it as pointers to
+any other data in the memory. But it is your task to free allocated
+memory in such case therefore.
+<br>
+If the last item of a string list is deleted vis <a href=#deletelast target="main">DeleteLast</a> method (but
+not via <a href=#delete target="main">Delete</a> method), it's object still is preserved. As well, it is
+possible to set Objects[idx] for idx &gt;= <a href=#count target="main">Count</a>.
+To get know object's count, rather then strings count, use <a href=#objectcount target="main">ObjectCount</a>
+property.
+</p>
+<a name="objectcount"></a>
+<p>
+<font face="Courier" color="#800080"><b>property</b> <font color="#808000"><b>ObjectCount</b></font>: <b>Integer</b>;</font>
+&nbsp;&nbsp;&nbsp;<font face="Webdings" size=7>&#209;</font>&nbsp;&nbsp;&nbsp;
+<br>
+Returns number of objects available. This value can differ from <a href=#count target="main">Count</a>
+after some operations: objects are stored in the independant list and
+only synchronization is provided while using methods <a href=#delete target="main">Delete</a>, <a href=#insert target="main">Insert</a>,
+<a href=#add target="main">Add</a>, <a href=#addobject target="main">AddObject</a>, <a href=#insertobject target="main">InsertObject</a> while changing the list.
+</p>
+<h4 align="center"><font color="black">Properties, inherited from <a href="tstrlist.htm" target="_top">TStrList</a></font></h4>
+<h3 align="center"><font color="#FF8080">TStrListEx methods</font></h3>
+<a name="destroy"></a>
+<p>
+<font face="Courier" color="#800080"><b>destructor</b> <font color="#808000"><b>Destroy</b></font>; <b>virtual</b>;</font>
+<br>
+</p>
+<a name="addstrings"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>AddStrings</b></font>( Strings: PStrListEx );</font>
+<br>
+Merges string list with given one. Very fast - more preferrable to
+use than any loop with calling <a href=#add target="main">Add</a> method.
+</p>
+<a name="assign"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Assign</b></font>( Strings: PStrListEx );</font>
+<br>
+Fills string list with strings from other one. The same as <a href=#addstrings target="main">AddStrings</a>,
+but <a href=#clear target="main">Clear</a> is called first.
+</p>
+<a name="clear"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Clear</b></font>;</font>
+<br>
+Makes string list empty.
+</p>
+<a name="delete"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Delete</b></font>( Idx: <b>integer</b> );</font>
+<br>
+Deletes string with given index (it *must* exist).
+</p>
+<a name="deletelast"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>DeleteLast</b></font>;</font>
+<br>
+Deletes the last string and correspondent object in the list.
+</p>
+<a name="move"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Move</b></font>( CurIndex, NewIndex: <b>integer</b> );</font>
+<br>
+Moves string to another location.
+</p>
+<a name="swap"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Swap</b></font>( Idx1, Idx2: <b>Integer</b> );</font>
+<br>
+Swaps to strings with given indeces.
+</p>
+<a name="sort"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>Sort</b></font>( CaseSensitive: <b>Boolean</b> );</font>
+<br>
+Call it to sort string list.
+</p>
+<a name="ansisort"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>AnsiSort</b></font>( CaseSensitive: <b>Boolean</b> );</font>
+<br>
+Call it to sort ANSI string list.
+</p>
+<a name="lastobj"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>LastObj</b></font>: <b>DWORD</b>;</font>
+<br>
+Object assotiated with the last string.
+</p>
+<a name="addobject"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>AddObject</b></font>( <b>const</b> S: AnsiString; Obj: <b>DWORD</b> ): <b>Integer</b>;</font>
+<br>
+Adds a string and associates given number with it. Index of the item added
+is returned.
+</p>
+<a name="insertobject"></a>
+<p>
+<font face="Courier" color="#800080"><b>procedure</b> <font color="#808000"><b>InsertObject</b></font>( Before: <b>Integer</b>; <b>const</b> S: AnsiString; Obj: <b>DWORD</b> );</font>
+<br>
+Inserts a string together with object associated.
+</p>
+<a name="indexofobj"></a>
+<p>
+<font face="Courier" color="#800080"><b>function</b> <font color="#808000"><b>IndexOfObj</b></font>( Obj: <b>Pointer</b> ): <b>Integer</b>;</font>
+<br>
+Returns an index of a string associated with the object passed as a
+parameter. If there are no such strings, -1 is returned.
+</p>
+<h4 align="center"><font color="black">Methods, inherited from <a href="tstrlist.htm" target="_top">TStrList</a></font></h4>
+<h3 align="center"><font color="#FF8080">TStrListEx events</font></h3>
+<h4 align="center"><font color="black">Events, inherited from <a href="tstrlist.htm" target="_top">TStrList</a></font></h4>
+<h3 align="center"><font color="#FF8080">TStrListEx fields</font></h3>
+<h4 align="center"><font color="black">Fields, inherited from <a href="tstrlist.htm" target="_top">TStrList</a></font></h4>
+<hr>
+<p align="center">[&nbsp;<a href=index.htm>Index</a>&nbsp;]</p>
+<p align="center"><font face="Comic Sans MS"><small>This help is generated 14-Jun-2010 by KOL Help generator, (C) 2000-2001 by Vladimir Kladov<br>Modified (C) 2003 by Alexander Bartov</small></font></p>
+</body>
+</html>
