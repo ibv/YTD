@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uMessages,
   uDownloadClassifier;
@@ -112,7 +113,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not DownloadXml(Http, 'http://anytime.tv4.se/webtv/metafileFlash.smil?p=' + MovieID + '&bw=1800&emulate=true&sl=true&', Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       BaseUrl := '';
@@ -125,7 +126,7 @@ begin
               Break;
               end;
       if BaseUrl = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['base']))
+        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['base']))
       else
         begin
         BestUrl := '';
@@ -146,7 +147,7 @@ begin
                   end;
                 end;
         if BestUrl = '' then
-          SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['video']))
+          SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['video']))
         else
           begin
           MovieUrl := BaseUrl + '/' + BestUrl;

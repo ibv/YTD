@@ -42,14 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downZkoukniTo;
+  uDownloader, uCommonDownloader, uVarNestedDownloader;
 
 type
-  TDownloader_SerialyCZ = class(TDownloader_ZkoukniTo)
+  TDownloader_SerialyCZ = class(TVarNestedDownloader)
     private
     protected
+      NestedUrlRegExps: array of TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieID(const Page: string; out ID: string): boolean; override;
+      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,10 +62,12 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.serialycz.cz/2011/01/chuck-04x12/
+// http://www.serialycz.cz/2010/08/futurama-06x09/
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*serialycz\.cz/';
   URLREGEXP_ID =        '.+';
@@ -71,7 +75,9 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_EXTRACT_ID = '<param\s+name="movie"\s+value="[^"]*[?&]vid=(?P<ID>[0-9]+)';
+  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
+    = ('<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"',
+       '<iframe\s+src="(?P<URL>https?://.+?)"');
 
 { TDownloader_SerialyCZ }
 
@@ -88,16 +94,15 @@ end;
 constructor TDownloader_SerialyCZ.Create(const AMovieID: string);
 begin
   inherited;
-  RegExFreeAndNil(MovieTitleRegExp);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  RegExFreeAndNil(MovieIDRegExp);
-  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID);
+  AddNestedUrlRegExps(REGEXP_EXTRACT_NESTED_URLS);
 end;
 
 destructor TDownloader_SerialyCZ.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
+  ClearNestedUrlRegExps;
   inherited;
 end;
 
@@ -106,9 +111,10 @@ begin
   Result := 'http://www.serialycz.cz/' + MovieID;
 end;
 
-function TDownloader_SerialyCZ.GetMovieID(const Page: string; out ID: string): boolean;
+function TDownloader_SerialyCZ.CreateNestedDownloaderFromURL(var Url: string): boolean;
 begin
-  Result := GetRegExpVar(MovieIDRegExp, Page, 'ID', ID);
+  Url := HtmlDecode(Url);
+  Result := inherited CreateNestedDownloaderFromURL(Url);
 end;
 
 initialization

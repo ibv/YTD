@@ -64,6 +64,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -121,17 +122,17 @@ begin
     if not GetXmlVar(PageXml, 'player/feed/rss/channel/item/title', Title) then
       if not GetXmlVar(PageXml, 'player/feed/rss/channel/title', Title) then
         begin
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE));
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
         Exit;
         end;
   if not GetXmlAttr(PageXml, 'player/feed/rss/channel/item/media:group/media:content', 'url', InfoUrl) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, StringReplace(InfoUrl, '{ref}', 'www.mtv.com', [rfReplaceAll]), InfoXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not XmlNodeByPath(InfoXml, 'video/item', InfoNode) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
       else
         begin
         BestResolution := -1;
@@ -156,7 +157,7 @@ begin
                 end;
               end;
         if BestUrl = '' then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
           SetName(Title);

@@ -68,6 +68,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   {$IFDEF DIRTYHACKS}
   uFiles,
   {$ENDIF}
@@ -146,15 +147,15 @@ begin
     end;
   Http.Cookies.Values['bit'] := UserAdID;
   if SiteID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['SiteID']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SiteID']))
   else if SectionID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['SectionID']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SectionID']))
   else if MediaID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['MediaID']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['MediaID']))
   else if SessionID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['SessionID']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SessionID']))
   //else if UserAdID = '' then
-  //  SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['UserAdID']))
+  //  SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UserAdID']))
   else
     begin
     ServersUrl := 'http://tn.nova.cz/bin/player/config.php?site_id=' + SiteID + '&';
@@ -168,15 +169,15 @@ begin
                  '&session_id=' + SessionID +
                  '&ad_file=noad';
     if not DownloadXml(Http, ServersUrl, Servers) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
     else
       try
         if not DownloadXml(Http, VideosUrl, Videos) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+          SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
         else
           try
             if Videos.Root.Name = 'error' then
-              SetLastErrorMsg(_(ERR_MEDIA_REMOVED))
+              SetLastErrorMsg(ERR_MEDIA_REMOVED)
             else
               begin
               GetXmlAttr(Servers, 'flvserver', 'url', FlvServer);
@@ -185,9 +186,9 @@ begin
               if FlvName = '' then
                 FlvName := MediaID;
               if FlvServer = '' then
-                SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+                SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
               else if FlvStream = '' then
-                SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_STREAM))
+                SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
               else
                 begin
                 SetName(FlvName);

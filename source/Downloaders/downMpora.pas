@@ -61,6 +61,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uCompatibility,
   uDownloadClassifier,
   uMessages;
@@ -107,13 +108,13 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetXmlVar(PageXml, 'configuration/title', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not DownloadXml(Http, 'http://api.mpora.com/tv/player/playlist/vid/' + MovieID + '/', Info, InfoXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlAttr(InfoXml, 'channel/item/enclosure', 'url', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
         SetName(Title);

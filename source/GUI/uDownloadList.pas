@@ -66,6 +66,7 @@ type
       fOnConverted: TDownloadListNotifyEvent;
       {$ENDIF}
       fOptions: TYTDOptions;
+      fAutoTryHtmlParserTemporarilyDisabled: boolean;
     protected
       function GetCount: integer; virtual;
       function GetItem(Index: integer): TDownloadListItem; virtual;
@@ -83,6 +84,7 @@ type
       procedure DownloadItemConvertThreadFinished(Sender: TObject); virtual;
       {$ENDIF}
       function AddNewItem(const Source: string; Downloader: TDownloader): integer; virtual;
+      function AutoTryHtmlParser: boolean;
       property List: TStringList read fList;
       property DownloadingList: TList read fDownloadingList;
     public
@@ -111,6 +113,7 @@ type
       property DownloadingCount: integer read GetDownloadingCount;
       property DownloadingItems[Index: integer]: TDownloadListItem read GetDownloadingItem;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
+      property AutoTryHtmlParserTemporarilyDisabled: boolean read fAutoTryHtmlParserTemporarilyDisabled write fAutoTryHtmlParserTemporarilyDisabled;
     public
       property Options: TYTDOptions read fOptions write fOptions;
       property OnStateChange: TDownloadListNotifyEvent read fOnStateChange write fOnStateChange;
@@ -211,7 +214,7 @@ begin
   DownloadClassifier.Url := Url;
   if DownloadClassifier.Downloader <> nil then
     Result := AddNewItem(Url, DownloadClassifier.Downloader)
-  else if Options.AutoTryHtmlParser then
+  else if AutoTryHtmlParser then
     Result := AddFromHTML(Url)
   else
     Result := -1;
@@ -485,6 +488,11 @@ begin
   finally
     L.Free;
     end;
+end;
+
+function TDownloadList.AutoTryHtmlParser: boolean;
+begin
+  Result := (not AutoTryHtmlParserTemporarilyDisabled) and Options.AutoTryHtmlParser;
 end;
 
 end.

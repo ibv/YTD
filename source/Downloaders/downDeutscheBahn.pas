@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -117,9 +118,9 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(BaseNameRegExp, Page, 'BASENAME', BaseName) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['basename']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['basename']))
   else if not GetRegExpVar(SwfObjectRegExp, Page, 'BASEURL', BaseUrl) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['swfobject']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['swfobject']))
   else
     begin
     MovieUrl := BaseUrl + BaseName + '_700k.mp4';

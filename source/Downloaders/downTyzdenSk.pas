@@ -64,6 +64,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -119,11 +120,11 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not GetRegExpVarPairs(FlashVarsItemsRegExp, FlashVars, ['node', 'v'], [@Node, @V]) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if (Node = '') or (V = '') then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     begin
     Node := UrlDecode(Node);
@@ -141,7 +142,7 @@ begin
     until Node <> '';
     V := UrlDecode(V);
     if Node = '' then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
     else
       begin
       MovieUrl := Node + V;

@@ -60,18 +60,22 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.123video.nl/playvideos.asp?MovieID=949808
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*123video\.nl/.*[?&]MovieID=';
-  URLREGEXP_ID =        '[0-9]+';
+  URL_BASE = 'http://www.123video.nl';
+  
+const
+  URLREGEXP_BEFORE_ID = '123video\.nl/.*[?&]MovieID=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<div\s+class="top">(?P<TITLE>.*?)</div>';
-
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_DIV_CLASS; // 'top'
+  
 { TDownloader_123VideoNL }
 
 class function TDownloader_123VideoNL.Provider: string;
@@ -81,14 +85,14 @@ end;
 
 class function TDownloader_123VideoNL.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_123VideoNL.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['top']));
 end;
 
 destructor TDownloader_123VideoNL.Destroy;
@@ -99,32 +103,24 @@ end;
 
 function TDownloader_123VideoNL.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.123video.nl/playvideos.asp?MovieID=' + MovieID;
+  Result := Format('%s/playvideos.asp?MovieID=%s', [URL_BASE, MovieID]);
 end;
 
 function TDownloader_123VideoNL.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var MediaIP: string;
-    Xml: TXmlDoc;
     n: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not DownloadXml(Http, 'http://www.123video.nl/initialize_player_v3.asp', AnsiString('<movie><id>' + MovieID + '</id><memberid>0</memberid><cnt>1</cnt><nocache>32</nocache></movie>'), 'application/x-www-form-urlencoded', Xml, True) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  if not DownloadXmlAttr(Http, Format('%s/initialize_player_v3.asp', [URL_BASE]), AnsiString(Format('<movie><id>%s</id><memberid>0</memberid><cnt>1</cnt><nocache>32</nocache></movie>', [MovieID])), HTTP_FORM_URLENCODING, '', 'MediaIP', MediaIP, True) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
-    try
-      if not GetXmlAttr(Xml, '', 'MediaIP', MediaIP) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        n := Length(MovieID);
-        MovieURL := 'http://' + MediaIP + '/' + Copy(MovieID, 1, n-3) + '/' + MovieID + '.flv';
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    n := Length(MovieID);
+    MovieURL := Format('http://%s/%s/%s.flv', [MediaIP, Copy(MovieID, 1, n-3), MovieID]);
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

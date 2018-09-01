@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -116,18 +117,18 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashIdRegExp, Page, 'ID', FlashID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not DownloadPage(Http, 'http://www.pornotube.com/player/player.php?' + FlashID, FlashVars) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     begin
     GetRegExpVarPairs(FlashVarsRegExp, FlashVars, ['mediaId', 'userId', 'mediaDomain'], [@MediaID, @UserID, @MediaDomain]);
     if MediaID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaId']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mediaId']))
     else if UserID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['userId']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['userId']))
     else if MediaDomain = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaDomain']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mediaDomain']))
     else
       begin
       MovieUrl := MediaDomain + '.pornotube.com/' + UserId + '/' + MediaID + '.flv';

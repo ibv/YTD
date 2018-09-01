@@ -66,6 +66,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -121,26 +122,26 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVarsInfo) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else
     begin
     GetRegExpVarPairs(FlashVarsVariablesRegExp, FlashVarsInfo, ['networkId', 'vidId', 'countryIdentity', 'networkVersion'], [@NetworkID, @VideoID, @CountryID, @NetworkVersion]);
     if NetworkID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkId']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['networkId']))
     else if VideoID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['vidId']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['vidId']))
     else if CountryID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['countryIdentity']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['countryIdentity']))
     else if NetworkVersion = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkVersion']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['networkVersion']))
     else if not DownloadXml(Http, 'http://www.muzu.tv/player/networkVideos/' + NetworkID + '?countryIdentity=' + CountryID + '&networkVersion=' + NetworkVersion + '&hostName=http%3A%2F%2Fwww%2Emuzu%2Etv', Xml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
         if not GetXmlAttr(Xml, 'channels/channel', 'id', ChannelID) then
-          SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['channelId']))
+          SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['channelId']))
         else if not GetMuzuMediaUrl(Url) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
           MovieUrl := Url;

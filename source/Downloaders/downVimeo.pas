@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -112,11 +113,11 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetXmlVar(PageXml, 'video/caption', Caption) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not GetXmlVar(PageXml, 'request_signature', Signature) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature.']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['request_signature.']))
   else if not GetXmlVar(PageXml, 'request_signature_expires', Expires) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature_expires.']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['request_signature_expires.']))
   else
     begin
     SetName(HtmlDecode(Caption));

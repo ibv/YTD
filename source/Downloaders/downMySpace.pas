@@ -41,6 +41,7 @@ unit downMySpace;
 interface
 
 uses
+  uStringConsts,
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, {$IFDEF MYSPACE_USES_RTMP} uRtmpDownloader {$ELSE} uHttpDownloader {$ENDIF} ;
@@ -105,9 +106,9 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetXmlVar(PageXml, 'channel/item/title', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not GetXmlAttr(PageXml, {$IFDEF MYSPACE_USES_RTMP} 'channel/item/myspace:RTMPE' {$ELSE} 'channel/item/media:content' {$ENDIF} , 'url', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     SetName(Title);

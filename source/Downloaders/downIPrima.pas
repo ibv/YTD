@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -126,7 +127,7 @@ begin
     Url := GetMovieInfoUrlForID(ID);
     FreeAndNil(PageXml);
     if not GetMovieInfoContent(Http, Url, Page, PageXml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
     end;

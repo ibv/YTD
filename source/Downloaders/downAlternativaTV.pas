@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -70,13 +71,13 @@ uses
 // http://alternativatv.cz/film/play/9911/
 // http://alternativatv.cz/scena/play/12307/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*alternativatv\.cz/';
+  URLREGEXP_BEFORE_ID = 'alternativatv\.cz/';
   URLREGEXP_ID =        '(?:[^/]+/play/[0-9]+|magazin/[^/]+/[0-9]+/[0-9]+)';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\s+class="a"[^>]*><a\s+class=''none''[^>]*>(?P<TITLE>.*?)</a></div>';
-  REGEXP_EXTRACT_URL = '\bso\.addVariable\s*\(\s*''file''\s*,\s*"(?P<URLSTART>https?://[^"]+)"[^"]*"(?P<URLEND>[^"]*\.(?:mp4|flv))"';
+  REGEXP_MOVIE_TITLE =  '<div\s+class="a"[^>]*><a\s+class=''none''[^>]*>(?P<TITLE>.*?)</a></div>';
+  REGEXP_MOVIE_URL =    '\bso\.addVariable\s*\(\s*''file''\s*,\s*"(?P<URLSTART>https?://[^"]+)"[^"]*"(?P<URLEND>[^"]*\.(?:mp4|flv))"';
 
 { TDownloader_AlternativaTV }
 
@@ -87,15 +88,15 @@ end;
 
 class function TDownloader_AlternativaTV.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_AlternativaTV.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_AlternativaTV.Destroy;
@@ -107,7 +108,7 @@ end;
 
 function TDownloader_AlternativaTV.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.alternativatv.cz/' + MovieID + '?hiq=1';
+  Result := Format('http://www.alternativatv.cz/%s?hiq=1', [MovieID]);
 end;
 
 function TDownloader_AlternativaTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -116,7 +117,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVars(MovieUrlRegExp, Page, ['URLSTART', 'URLEND'], [@UrlStart, @UrlEnd]) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     MovieUrl := UrlStart + UrlEnd;

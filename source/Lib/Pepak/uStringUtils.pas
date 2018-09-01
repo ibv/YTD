@@ -64,6 +64,7 @@ function Utf8ToString(const Value: Utf8String): string;
 function StringToUtf8(const Value: string; BOM: boolean = False): Utf8String;
 
 function StrTr(const Kde, Co, Cim: string): string;
+function DeletePrefix(const Kde, Prefix: string): string;
 
 implementation
 
@@ -209,6 +210,16 @@ begin
         if j > 0 then
           Result[j] := Cim[i];
       until j <= 0;
+end;
+
+function DeletePrefix(const Kde, Prefix: string): string;
+var n: integer;
+begin
+  n := Length(Prefix);
+  if AnsiCompareText(Copy(Kde, 1, n), Prefix) = 0 then
+    Result := Copy(Kde, Succ(n), MaxInt)
+  else
+    Result := Kde;
 end;
 
 end.

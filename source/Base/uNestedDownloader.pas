@@ -141,7 +141,7 @@ begin
       end
     else if (DirectUrlRegExp <> nil) and GetRegExpVar(DirectUrlRegExp, Url, 'URL', Dummy) then
       begin
-      Downloader := THttpDirectDownloader.Create(Url, Name);
+      Downloader := THttpDirectDownloader.Create(Url, UnpreparedName);
       Result := CreateNestedDownloaderFromDownloader(Downloader);
       if Result then
         MovieURL := Url
@@ -196,19 +196,18 @@ end;
 
 function TNestedDownloader.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := False;
-  if NestedDownloader <> nil then
-    if NestedDownloader is TCommonDownloader then
-      begin
-      Result := TCommonDownloader(NestedDownloader).ReadSubtitles(Page, PageXml, Http);
-      if Result then
-        begin
-        fSubtitles := TCommonDownloader(NestedDownloader).Subtitles;
-        fSubtitlesExt := TCommonDownloader(NestedDownloader).SubtitlesExt;
-        end;
-      end;
+  Result := inherited ReadSubtitles(Page, PageXml, Http);
   if not Result then
-    Result := inherited ReadSubtitles(Page, PageXml, Http);
+    if NestedDownloader <> nil then
+      if NestedDownloader is TCommonDownloader then
+        begin
+        Result := TCommonDownloader(NestedDownloader).ReadSubtitles(Page, PageXml, Http);
+        if Result then
+          begin
+          fSubtitles := TCommonDownloader(NestedDownloader).Subtitles;
+          fSubtitlesExt := TCommonDownloader(NestedDownloader).SubtitlesExt;
+          end;
+        end;
 end;
 {$ENDIF}
 
@@ -218,7 +217,12 @@ begin
   Result := False;
   if inherited Prepare then
     if NestedDownloader <> nil then
+      begin
       Result := NestedDownloader.Prepare;
+      if Result then
+        if Name = '' then
+          SetName(NestedDownloader.Name);
+      end;
 end;
 
 function TNestedDownloader.Download: boolean;
@@ -262,7 +266,7 @@ var ID, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
+  SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
   if (NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) and (ID <> '') and CreateNestedDownloaderFromID(ID) then
     begin
     if NestedUrlRegExp <> nil then

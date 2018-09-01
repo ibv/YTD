@@ -64,6 +64,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -121,14 +122,14 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoContextRegExp, Page, 'CONTEXT', Context) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else
     begin
     Request := 'video_url=1&context=' + UrlEncode(UrlDecode(Context)) + '&p_id[1]=4&devid=LoadupFlashPlayer&begun=1&p_id[0]=2&ticket=' + MovieID;
     if not DownloadPage(Http, 'http://freevideo.ru/video/view/url/bot/?' + Request, Info) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else if not (GetRegExpVar(HQVidUrlRegExp, Info, 'URL', Url) or GetRegExpVar(VidUrlRegExp, Info, 'URL', Url)) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       MovieUrl := StripSlashes(Url);

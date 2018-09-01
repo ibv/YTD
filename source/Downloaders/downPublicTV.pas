@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -119,7 +120,7 @@ begin
   if AnsiCompareText(ExtractFileExt(MovieUrl), '.asx') = 0 then
     begin
     if not DownloadXml(Http, MovieUrl, Xml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
         for i := 0 to Pred(Xml.Root.NodeCount) do
@@ -140,14 +141,14 @@ begin
                 end;
         {$IFDEF MULTIDOWNLOADS}
         if UrlList.Count <= 0 then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
           SetPrepared(True);
           Result := First;
           end;
         {$ELSE}
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
         {$ENDIF}
       finally
         Xml.Free;

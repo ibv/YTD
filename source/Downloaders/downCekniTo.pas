@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -113,9 +114,9 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not DownloadPage(Http, 'http://vid4.ceknito.sk/v.php?id=' + ID, hmHEAD) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     begin
     MovieURL := LastURL;

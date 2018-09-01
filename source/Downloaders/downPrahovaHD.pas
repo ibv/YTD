@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -113,9 +114,9 @@ begin
   Result := False;
   GetRegExpVarPairs(MovieVariablesRegExp, Page, ['streamer', 'file', 'captions.file'], [@Streamer, @Location, @Captions]);
   if Streamer = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else if Location = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     {$IFDEF SUBTITLES}

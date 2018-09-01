@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -113,13 +114,13 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(PlayListRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, Url, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not Xml.NodeByPath('playlist', Node) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else
         begin
         for i := 0 to Pred(Node.NodeCount) do
@@ -139,14 +140,14 @@ begin
               end;
         {$IFDEF MULTIDOWNLOADS}
         if UrlList.Count <= 0 then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
           SetPrepared(True);
           Result := First;
           end;
         {$ELSE}
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
         {$ENDIF}
         end;
     finally

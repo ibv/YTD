@@ -59,18 +59,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.angryalien.com/0605/freddyjasonbuns.asp
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*angryalien\.com/';
+  URLREGEXP_BEFORE_ID = 'angryalien\.com/';
   URLREGEXP_ID =        '[0-9]+/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_EXTRACT_URL = '<embed\s+src="(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =    REGEXP_URL_EMBED_SRC;
 
 { TDownloader_AngryAlien }
 
@@ -81,15 +82,15 @@ end;
 
 class function TDownloader_AngryAlien.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_AngryAlien.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_AngryAlien.Destroy;

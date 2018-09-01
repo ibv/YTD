@@ -65,6 +65,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -116,22 +117,22 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(StreamIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not DownloadXml(Http, 'http://flash.stream.cz/get_info/' + ID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not Xml.NodeByPath('video', Node) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not (GetXmlAttr(Node, '', 'hdID', CdnID) or GetXmlAttr(Node, '', 'cdnID', CdnID)) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not GetXmlVar(Node, 'title', Title) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else if not DownloadXml(Http, Format(DISPATCHER_URL, [CdnID]), Dispatcher) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST))
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
       else
         try
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
           if Dispatcher.NodeByPath('server', Node) then
             if GetXmlAttr(Node, '', 'baseUrl', BaseUrl) then
               if GetXmlAttr(Node, '', 'service', Service) then

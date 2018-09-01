@@ -66,6 +66,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uAMF,
   uDownloadClassifier,
   uMessages;
@@ -159,11 +160,11 @@ begin
       try
         if AMFResponse.HasBody(0) then
           if AMFResponse.Body[0].Content.FindValueByPath('error', Error) and (Error <> 'none') then
-            SetLastErrorMsg(Format(_(ERR_SERVER_ERROR), [string(Error)]))
+            SetLastErrorMsg(Format(ERR_SERVER_ERROR, [string(Error)]))
           else if not AMFResponse.Body[0].Content.FindValueByPath('metadata/title', VideoTitle, TAMFString) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
           else if not AMFResponse.Body[0].Content.FindValueByPath('clipurl', Url, TAMFString) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
           else
             begin
             AMFResponse.Body[0].Content.FindValueByPath('metadata/subtitle', VideoSubtitle, TAMFString);
@@ -187,11 +188,11 @@ var SmilXml: TXmlDoc;
 begin
   Result := False;
   if not DownloadXml(Http, SmilUrl, SmilXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlAttr(SmilXml, 'body/switch/ref', 'src', VideoPath) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         Result := True;
     finally
@@ -204,19 +205,19 @@ var ConfigXml, IpXml: TXmlDoc;
 begin
   Result := False;
   if not DownloadXml(Http, 'http://videoservices.nbcuni.com/player/config?configId=17010&clear=true', ConfigXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
   else
     try
       if not GetXmlVar(ConfigXml, 'akamaiAppName', VideoApp) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
       else if not GetXmlVar(ConfigXml, 'akamaiHostName', VideoHost) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
       else if not DownloadXml(Http, 'http://' + VideoHost + '/fcs/ident', IpXml) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
       else
         try
           if not GetXmlVar(IpXml, 'ip', VideoServer) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
           else
             begin
             VideoServer := VideoServer + ':1935';

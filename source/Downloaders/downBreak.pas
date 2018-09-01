@@ -64,19 +64,20 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.break.com/index/runaway-truck-crashes-and-flips-over.html
 // http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*break\.com/';
+  URLREGEXP_BEFORE_ID = 'break\.com/';
   URLREGEXP_ID =        '[^?]+\.html';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>[^"]+)"';
-  REGEXP_MOVIE_PLAYER = '<link\s+rel="video_src"\s+href="(?P<URL>https?://[^"]+)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_TITLE;
+  REGEXP_MOVIE_PLAYER = REGEXP_URL_LINK_VIDEOSRC;
   REGEXP_VIDEO_FROM_PLAYER = '[?&]sVidLoc=(?P<URL>http[^&]+)';
   REGEXP_TOKEN_FROM_PLAYER = '[?&]icon=(?P<TOKEN>[0-9A-F]+)';
 
@@ -89,7 +90,7 @@ end;
 
 class function TDownloader_Break.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Break.Create(const AMovieID: string);
@@ -117,34 +118,23 @@ begin
 end;
 
 function TDownloader_Break.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, Url2, Token: string;
-    Request: THttpSend;
+var Url, Token: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MoviePlayerRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, Url, hmHead) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(VideoFromPlayerRegExp, LastUrl, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else if not GetRegExpVar(TokenFromPlayerRegExp, LastUrl, 'TOKEN', Token) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['token']))
   else
     begin
-    Request := CreateHttp;
-    try
-      if not Request.HttpMethod('GET', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-      else if not CheckRedirect(Request, Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-      else if not GetRegExpVar(VideoFromPlayerRegExp, Url, 'URL', Url2) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else if not GetRegExpVar(TokenFromPlayerRegExp, Url, 'TOKEN', Token) then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['token']))
-      else
-        begin
-        MovieURL := UrlDecode(Url2) + '?' + Token;
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Request.Free;
-      end;
+    MovieURL := UrlDecode(Url) + '?' + Token;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

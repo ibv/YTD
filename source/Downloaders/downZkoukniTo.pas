@@ -42,18 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader, downZkoukniToEmbed;
 
 type
-  TDownloader_ZkoukniTo = class(THttpDownloader)
+  TDownloader_ZkoukniTo = class(TNestedDownloader)
     private
     protected
       MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
-      function GetMovieID(const Page: string; out ID: string): boolean; virtual;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function CreateNestedDownloaderFromID(const MovieID: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -94,13 +94,13 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID);
+  NestedIDRegExp := RegExCreate(REGEXP_EXTRACT_ID);
 end;
 
 destructor TDownloader_ZkoukniTo.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(NestedIDRegExp);
   inherited;
 end;
 
@@ -109,42 +109,17 @@ begin
   Result := 'http://www.zkouknito.cz/' + MovieID;
 end;
 
-function TDownloader_ZkoukniTo.GetMovieID(const Page: string; out ID: string): boolean;
-begin
-  Result := GetRegExpVar(MovieIDRegExp, Page, 'ID', ID);
-end;
-
-function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Url: string;
-    Xml: TXmlDoc;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetMovieID(Page, ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else
-    try
-      if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieUrl := Url;
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
-      end;
-end;
-
 function TDownloader_ZkoukniTo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
   {$IFDEF XXX}
   Http.Cookies.Add('confirmed=1');
   {$ENDIF}
   Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
+end;
+
+function TDownloader_ZkoukniTo.CreateNestedDownloaderFromID(const MovieID: string): boolean;
+begin
+  Result := CreateNestedDownloaderFromDownloader(TDownloader_ZkoukniToEmbed.Create(MovieID));
 end;
 
 initialization

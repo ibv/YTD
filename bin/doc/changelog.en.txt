@@ -1,6 +1,45 @@
 CHANGELOG
 ---------
 
+  v0.79:
+
+    * New provider: CKKlic.cz.
+
+    * New provider: Multimedia.vse.cz.
+
+    * New provider: VKontakte.ru.
+
+    * New provider: ZDF.de.
+
+    * CeskaTelevize.cz: Support for multi-part videos (e.g. Sama doma 2011-
+      03-29). Fixed the bug which caused downloads of low-quality streams
+      instead of high-quality (the bug was in YTD, not the server as I
+      previously thought).
+
+    * Markiza.sk: Support for doma.markiza.sk.
+
+    * SerialyCZ.cz: Support for another way of embedding video.
+
+    * VideaCesky.cz: Support for direct-linked videos. Support for videos
+      incorrectly linked with a space at the beginning. Support for converting
+      subtitles to .srt format (enabled by default, but can be turned off
+      in the configuration file - see documentation for details).
+
+    * ZkoukniTo.cz: Added support for embedded URLs.
+
+    * Modified the support for subtitles with servers linking to a third-
+      party content (e.g. VideaCesky.cz): Now the linking server's subtitles
+      are downloaded first and linked server's only if the former don't
+      exist; until this version it used to be the other way around.
+
+    * Changed the way automatic HTML parser (see version 0.77) works in
+      conjunction with clipboard monitoring (version 0.71): Until now it
+      led to unexpected creation of configuration options.
+
+    * Started the clean-up of YTD's code.
+
+
+
   v0.78:
 
     * New provider: CNBC.com.

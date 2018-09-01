@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uHttpDirectDownloader,
   uMSDirectDownloader,
   uDownloadClassifier,

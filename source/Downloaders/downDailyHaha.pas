@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -120,13 +121,13 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashObjectRegExp, Page, 'OBJECT', FlashObject) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else
     begin
     GetRegExpVarPairs(FlashVarsRegExp, FlashObject, ['base', 'FlashVars'], [@UrlBase, @FlashVars]);
     GetRegExpVar(FlashVarSrcRegExp, FlashVars, 'SRC', FileName);
     if (UrlBase = '') or (FileName = '') then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       MovieURL := UrlBase + FileName;

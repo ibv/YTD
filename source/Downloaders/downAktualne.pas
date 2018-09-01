@@ -59,18 +59,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://aktualne.centrum.cz/video/?id=316586
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*aktualne(?:\.centrum)?\.cz/video/?\?id=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'aktualne(?:\.centrum)?\.cz/video/?\?id=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3 class="titulek">(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="[^"]*[?&]adresa[0-9]+=(?P<URL>https?://video\.aktualne.+?)[&"]';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1_CLASS; // 'titulek'
+  REGEXP_MOVIE_URL =    '<param\s+name="movie"\s+value="[^"]*[?&]adresa[0-9]+=(?P<URL>https?://video\.aktualne.+?)[&"]';
 
 { TDownloader_Aktualne }
 
@@ -81,15 +82,15 @@ end;
 
 class function TDownloader_Aktualne.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Aktualne.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['titulek']));
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_Aktualne.Destroy;

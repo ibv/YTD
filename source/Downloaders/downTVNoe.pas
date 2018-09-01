@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -107,9 +108,9 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetXmlAttr(PageXml, 'entry/ref', 'href', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else if not GetXmlVar(PageXml, 'entry/Title', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
     SetName(Trim(Title));

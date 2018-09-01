@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -107,9 +108,9 @@ var Params: string;
 begin
   Result := False;
   if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAMS', Params) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, GetMovieInfoUrlForID(Params), EmbeddedPage, EmbeddedXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       Result := inherited AfterPrepareFromPage(EmbeddedPage, EmbeddedXml, Http);

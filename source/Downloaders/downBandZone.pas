@@ -60,18 +60,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://bandzone.cz/teensjazzbandvelkelosiny?at=video;vi=9556
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*bandzone\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'bandzone\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<span\s+class="description">(?P<TITLE>.*?)</span>';
-  REGEXP_EXTRACT_URL = '<[^>]*\sid="video"[^>]*>.*?<a href="(?P<URL>https?://[^"]+)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_SPAN_CLASS; // 'description'
+  REGEXP_MOVIE_URL =    '<[^>]*\sid="video"[^>]*>.*?<a href="(?P<URL>https?://[^"]+)"';
 
 { TDownloader_BandZone }
 
@@ -82,15 +83,15 @@ end;
 
 class function TDownloader_BandZone.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_BandZone.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['description']));
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_BandZone.Destroy;

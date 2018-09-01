@@ -42,13 +42,18 @@ interface
 uses
   SysUtils, Classes, Windows,
   HttpSend, SynaUtil, SynaCode,
-  uOptions, uXML, uAMF, uCompatibility;
+  uOptions, uPCRE, uXML, uAMF, uCompatibility;
 
 type
   EDownloaderError = class(Exception);
 
+type
   TDownloaderProgressEvent = procedure(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean) of object;
   TDownloaderFileNameValidateEvent = procedure(Sender: TObject; var FileName: string; var Valid: boolean) of object;
+
+type
+  TStringArray = array of string;
+  TPStringArray = array of PString;
 
 type
   TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
@@ -80,16 +85,18 @@ type
       procedure SetMovieID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetLastUrl(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); virtual;
+      function GetFileName: string; virtual;
+      procedure SetFileName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property UnpreparedName: string read fName;
       property LastURL: string read fLastUrl;
     protected
       function GetDefaultFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetFileName: string; virtual;
-      procedure SetFileName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetFileNameExt: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
       procedure DoProgress; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+    protected
       function CreateHttp: THttpSend; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -101,7 +108,7 @@ type
       function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Xml: TXmlDoc; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+    protected
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -109,6 +116,23 @@ type
       function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+    protected
+      function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+    protected
+      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXmlVar(Http: THttpSend; const Url, Path: string; out VarValue: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXmlVar(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXmlAttr(Http: THttpSend; const Url, Path, Attribute: string; out VarValue: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXmlAttr(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path, Attribute: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+    protected
       {$IFDEF DEBUG}
       procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
@@ -178,7 +202,7 @@ end;
 
 procedure TDownloader.NotPreparedError;
 begin
-  Raise EDownloaderError.Create(_(ERR_DOWNLOADER_IS_NOT_PREPARED));
+  Raise EDownloaderError.Create(ERR_DOWNLOADER_IS_NOT_PREPARED);
 end;
 
 procedure TDownloader.SetPrepared(Value: boolean);
@@ -275,7 +299,7 @@ end;
 function TDownloader.Download: boolean;
 begin
   Result := False;
-  SetLastErrorMsg(_(ERR_DOWNLOAD_NOT_IMPLEMENTED));
+  SetLastErrorMsg(ERR_DOWNLOAD_NOT_IMPLEMENTED);
   if not Prepared then
     NotPreparedError;
 end;
@@ -549,7 +573,7 @@ begin
     if Result then
       SetFileName(FN)
     else
-      SetLastErrorMsg(Format(_(ERR_VALIDATE_FILENAME_FAILED), [FN]));
+      SetLastErrorMsg(Format(ERR_VALIDATE_FILENAME_FAILED, [FN]));
     end;
 end;
 
@@ -576,12 +600,48 @@ end;
 {$ENDIF}
 
 function TDownloader.HtmlDecode(const Text: string): string;
+type
+  THtmlDecodeItem = record
+    Html, Txt: string;
+    end;
+const
+  HtmlDecodeItems: array[0..5] of THtmlDecodeItem
+    = (
+        (Html: '&lt;'   ; Txt: '<'),
+        (Html: '&gt;'   ; Txt: '>'),
+        (Html: '&quot;' ; Txt: '"'),
+        (Html: '&apos;' ; Txt: ''''),
+        (Html: '&mdash;'; Txt: '--'),
+        (Html: '&amp;'  ; Txt: '&')
+      );
+var
+  i, Start, Code: integer;
 begin
   Result := Text;
-  Result := StringReplace(Result, '&lt;', '<', [rfReplaceAll]);
-  Result := StringReplace(Result, '&gt;', '>', [rfReplaceAll]);
-  Result := StringReplace(Result, '&quot;', '"', [rfReplaceAll]);
-  Result := StringReplace(Result, '&amp;', '&', [rfReplaceAll]);
+  for i := 0 to Pred(Length(HtmlDecodeItems)) do
+    Result := StringReplace(Result, HtmlDecodeItems[i].Html, HtmlDecodeItems[i].Txt, [rfReplaceAll]);
+  i := 1;
+  while i < Length(Result) do
+    begin
+    if Result[i] = '&' then
+      if Result[Succ(i)] = '#' then
+        begin
+        Start := i;
+        Inc(i, 2);
+        while (i <= Length(Result)) and (Result[i] <> ';') do
+          Inc(i);
+        Code := StrToIntDef(Copy(Result, Start+2, i-Start-2), -1);
+        System.Delete(Result, Start, i-Start+1);
+        i := Start;
+        if (Code >= 0) and (Code <= 255) then
+          begin
+          System.Insert(Chr(Code), Result, i);
+          Inc(i);
+          end;
+        Continue;
+        end;
+    Inc(i);
+    end;
 end;
 
 function TDownloader.UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
@@ -649,6 +709,187 @@ begin
       end;
     Inc(i);
     end;
+end;
+
+function TDownloader.ExtractUrlExt(const Url: string): string;
+begin
+  Result := ExtractFileExt(ExtractUrlFileName(Url));
+end;
+
+function TDownloader.ExtractUrlFileName(const Url: string): string;
+var i: integer;
+begin
+  i := Pos('?', Url);
+  if i <= 0 then
+    Result := Url
+  else
+    Result := Copy(Url, 1, Pred(i));
+  for i := Length(Result) downto 1 do
+    if Result[i] = '/' then
+      begin
+      Result := Copy(Result, Succ(i), MaxInt);
+      Break;
+      end;
+end;
+
+function TDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
+begin
+  Result := RegExp.Match(Text) and RegExp.SubexpressionByName(VarName, VarValue);
+end;
+
+function TDownloader.GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean;
+var n: integer;
+    b: boolean;
+    Value: string;
+begin
+  SetLength(VarValue, 0);
+  n := 0;
+  b := RegExp.Match(Text);
+  while b do
+    begin
+    if RegExp.SubexpressionByName(VarName, Value) then
+      begin
+      if Length(VarValue) <= n then
+        SetLength(VarValue, Length(VarValue)+16);
+      VarValue[n] := Value;
+      Inc(n);
+      end;
+    b := RegExp.MatchAgain;
+    end;
+  SetLength(VarValue, n);
+  Result := n > 0;
+end;
+
+function TDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean): boolean;
+var i: integer;
+    VarValue: string;
+begin
+  if InitValues then
+    for i := 0 to High(VarValues) do
+      VarValues[i]^ := '';
+  Result := RegExp.Match(Text);
+  if Result then
+    for i := 0 to High(VarNames) do
+      if not RegExp.SubExpressionByName(VarNames[i], VarValue) then
+        Result := False
+      else
+        VarValues[i]^ := VarValue;
+end;
+
+function TDownloader.GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean; const VarNameSubExprName, VarValueSubExprName: string): boolean;
+var i, j: integer;
+    VarName: string;
+begin
+  if InitValues then
+    for i := 0 to High(VarValues) do
+      VarValues[i]^ := '';
+  Result := RegExp.Match(Text);
+  if Result then
+    repeat
+      VarName := RegExp.SubexpressionByName(VarNameSubExprName);
+      for j := 0 to High(VarNames) do
+        if VarName = VarNames[j] then
+          begin
+          if j <= High(VarValues) then
+            VarValues[j]^ := RegExp.SubexpressionByName(VarValueSubExprName);
+          end;
+    until not RegExp.MatchAgain;
+end;
+
+function TDownloader.GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean;
+var Node: TXmlNode;
+begin
+  if XmlNodeByPath(Xml, Path, Node) then
+    begin
+    VarValue := XmlValueIncludingCData(Node);
+    Result := True;
+    end
+  else
+    begin
+    VarValue := '';
+    Result := False;
+    end;
+end;
+
+function TDownloader.GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean;
+var Node: TXmlNode;
+begin
+  if XmlNodeByPath(Xml, Path, Node) and Node.HasAttribute(Utf8String(Attribute)) then
+    begin
+    VarValue := Node.AttributeByNameWide[Utf8String(Attribute)];
+    Result := True;
+    end
+  else
+    begin
+    VarValue := '';
+    Result := False;
+    end;
+end;
+
+function TDownloader.GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean;
+begin
+  Result := GetXmlVar(Xml.Root, Path, VarValue);
+end;
+
+function TDownloader.GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean;
+begin
+  Result := GetXmlAttr(Xml.Root, Path, Attribute, VarValue);
+end;
+
+function TDownloader.DownloadXmlVar(Http: THttpSend; const Url, Path: string; out VarValue: string; Method: THttpMethod; Clear: boolean): boolean;
+var Xml: TXmlDoc;
+begin
+  Result := False;
+  VarValue := '';
+  if DownloadXml(Http, Url, Xml, Method, Clear) then
+    try
+      if GetXmlVar(Xml, Path, VarValue) then
+        Result := True;
+    finally
+      FreeAndNil(Xml);
+      end;
+end;
+
+function TDownloader.DownloadXmlVar(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path: string; out VarValue: string; Clear: boolean): boolean;
+var Xml: TXmlDoc;
+begin
+  Result := False;
+  VarValue := '';
+  if DownloadXml(Http, Url, PostData, PostMimeType, Xml, Clear) then
+    try
+      if GetXmlVar(Xml, Path, VarValue) then
+        Result := True;
+    finally
+      FreeAndNil(Xml);
+      end;
+end;
+
+function TDownloader.DownloadXmlAttr(Http: THttpSend; const Url, Path, Attribute: string; out VarValue: string; Method: THttpMethod; Clear: boolean): boolean;
+var Xml: TXmlDoc;
+begin
+  Result := False;
+  VarValue := '';
+  if DownloadXml(Http, Url, Xml, Method, Clear) then
+    try
+      if GetXmlAttr(Xml, Path, Attribute, VarValue) then
+        Result := True;
+    finally
+      FreeAndNil(Xml);
+      end;
+end;
+
+function TDownloader.DownloadXmlAttr(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path, Attribute: string; out VarValue: string; Clear: boolean): boolean;
+var Xml: TXmlDoc;
+begin
+  Result := False;
+  VarValue := '';
+  if DownloadXml(Http, Url, PostData, PostMimeType, Xml, Clear) then
+    try
+      if GetXmlAttr(Xml, Path, Attribute, VarValue) then
+        Result := True;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 end.

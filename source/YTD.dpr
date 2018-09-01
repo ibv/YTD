@@ -66,6 +66,10 @@ uses
   uFunctions in 'Common\uFunctions.pas',
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
+  uStringConsts in 'Common\uStringConsts.pas',
+  {$IFDEF SUBTITLES}
+  uSubtitles in 'Common\uSubtitles.pas',
+  {$ENDIF}
   uXML in 'Common\uXML.pas',
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
@@ -76,6 +80,7 @@ uses
   uMSDownloader in 'Base\uMSDownloader.pas',
   uMSDirectDownloader in 'Base\uMSDirectDownloader.pas',
   uNestedDownloader in 'Base\uNestedDownloader.pas',
+  uVarNestedDownloader in 'Base\uVarNestedDownloader.pas',
   uRtmpDownloader in 'Base\uRtmpDownloader.pas',
   uRtmpDirectDownloader in 'Base\uRtmpDirectDownloader.pas',
   uPlaylistDownloader in 'Base\uPlaylistDownloader.pas',
@@ -135,6 +140,7 @@ uses
   downCekniTo in 'Downloaders\downCekniTo.pas',
   downCeskeDrahy in 'Downloaders\downCeskeDrahy.pas',
   downCestyKSobe in 'Downloaders\downCestyKSobe.pas',
+  downCKKlic in 'Downloaders\downCKKlic.pas',
   downClipfish in 'Downloaders\downClipfish.pas',
   downClipfishV2 in 'Downloaders\downClipfishV2.pas',
   downCNBC in 'Downloaders\downCNBC.pas',
@@ -200,6 +206,7 @@ uses
   downMpora in 'Downloaders\downMpora.pas',
   downMTV in 'Downloaders\downMTV.pas',
   downMTVEmbed in 'Downloaders\downMTVEmbed.pas',
+  downMultimediaVseCz in 'Downloaders\downMultimediaVseCz.pas',
   downMusicStreamCz in 'Downloaders\downMusicStreamCz.pas',
   downMustWatch in 'Downloaders\downMustWatch.pas',
   downMuzu in 'Downloaders\downMuzu.pas',
@@ -273,6 +280,7 @@ uses
   downVideu in 'Downloaders\downVideu.pas',
   downVimeo in 'Downloaders\downVimeo.pas',
   downVitalMtb in 'Downloaders\downVitalMtb.pas',
+  downVKontakteRuEmbed in 'Downloaders\downVKontakteRuEmbed.pas',
   downWeGame in 'Downloaders\downWeGame.pas',
   downWimp in 'Downloaders\downWimp.pas',
   downWordPressTV in 'Downloaders\downWordPressTV.pas',
@@ -280,7 +288,9 @@ uses
   downYikers in 'Downloaders\downYikers.pas',
   downYouTube in 'Downloaders\downYouTube.pas',
   downZ1TV in 'Downloaders\downZ1TV.pas',
+  downZDF in 'Downloaders\downZDF.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',
+  downZkoukniToEmbed in 'Downloaders\downZkoukniToEmbed.pas',
   {$IFDEF XXX}
     xxxAdultLoop in 'Downloaders\XXX\xxxAdultLoop.pas',
     xxxBeeg in 'Downloaders\XXX\xxxBeeg.pas',
@@ -379,7 +389,7 @@ begin
           if DebugHook <> 0 then
             begin
             Writeln;
-            Write(_(MSG_PRESS_ANY_KEY_TO_QUIT));
+            Write(MSG_PRESS_ANY_KEY_TO_QUIT);
             Readln;
             end;
           {$IFDEF DELPHI2009_UP}
@@ -391,7 +401,7 @@ begin
   except
     on E: Exception do
       begin
-      ErrorMsg := Format(_(ERR_EXCEPTION_MESSAGE), [E.ClassName, E.Message]);
+      ErrorMsg := Format(ERR_EXCEPTION_MESSAGE, [E.ClassName, E.Message]);
       {$IFDEF FPC}
         Writeln(ErrorMsg);
       {$ELSE}

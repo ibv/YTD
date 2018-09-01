@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -112,23 +113,23 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(PlayerIDRegExp, Page, 'PLAYER', Player) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', InfoXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlVar(InfoXml, 'globalPlayerConfig/mediaUrl', MediaUrl) then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaUrl']))
+        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mediaUrl']))
       else if not GetXmlVar(InfoXml, 'globalPlayerConfig/playlistURL', PlaylistUrl) then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['playlistURL']))
+        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['playlistURL']))
       else if not DownloadXml(Http, PlaylistUrl + '?id=' + MovieID + '&player=' + Player, PlaylistXml) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
       else
         try
           if not GetXmlVar(PlaylistXml, 'channel/item/headline', Title) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
           else if not GetXmlVar(PlaylistXml, 'channel/item/asseturl', FileName) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
           else
             begin
             SetName(Title);

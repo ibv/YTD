@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -113,15 +114,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, UrlDecode(Url), Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not Xml.NodeByPath('playlists/playlist/items/item', Node) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not GetXmlVar(Node, 'title', Title) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else
         begin
         BestUrl := '';
@@ -140,7 +141,7 @@ begin
                     end;
                 end;
         if BestUrl = '' then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
           SetName(Title);

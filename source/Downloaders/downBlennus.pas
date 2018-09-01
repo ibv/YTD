@@ -60,18 +60,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.blennus.com/index.php?option=content&task=view&id=1027&Itemid=
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*blennus\.com/(?:index\.php)?\?(?:[^&]*&)*id=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'blennus\.com/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<td\s+class="contentheading"[^>]*>\s+(?P<TITLE>.*?)\s*(?:&nbsp;\s*)*</td>';
-  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE =  '<td\s+class="contentheading"[^>]*>\s*(?P<TITLE>.*?)\s*(?:&nbsp;\s*)*</td>';
+  REGEXP_MOVIE_URL =    REGEXP_URL_PARAM_MOVIE;
 
 { TDownloader_Blennus }
 
@@ -82,15 +83,15 @@ end;
 
 class function TDownloader_Blennus.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Blennus.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_Blennus.Destroy;
@@ -102,7 +103,7 @@ end;
 
 function TDownloader_Blennus.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.blennus.com/index.php?option=content&task=view&id=' + MovieID + '&Itemid=';
+  Result := 'http://www.blennus.com/' + MovieID;
 end;
 
 initialization

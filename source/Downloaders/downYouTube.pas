@@ -84,8 +84,12 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uDownloadClassifier,
+  {$IFDEF SUBTITLES}
+  uSubtitles,
+  {$ENDIF}
   uMessages;
 
 // http://www.youtube.com/v/b5AWQ5aBjgE
@@ -228,14 +232,13 @@ begin
                         if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'dur', DurationStr) then
                           if GetXmlVar(SrtXml.Root.Nodes[i], '', Content) then
                             begin
-                            Inc(n);
                             Val(StringReplace(StartStr, ',', '.', []), Start, Code);
                             if Code <> 0 then
                               Abort;
                             Val(StringReplace(DurationStr, ',', '.', []), Duration, Code);
                             if Code <> 0 then
                               Abort;
-                            Srt := Srt + Format('%d'#13#10'%s --> %s'#13#10'%s'#13#10#13#10, [n, FormatDateTime('hh":"nn":"ss","zzz', Start/SECONDS_PER_DAY), FormatDateTime('hh":"nn":"ss","zzz', (Start + Duration)/SECONDS_PER_DAY), Content]);
+                            Srt := Srt + SubtitlesToSrt(n, Start/SECONDS_PER_DAY, (Start + Duration)/SECONDS_PER_DAY, Content);
                             end;
                   if Srt <> '' then
                     begin
@@ -266,11 +269,11 @@ begin
   Url := '';
   if GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'fmt_url_map'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap]) then
     if Status = 'fail' then
-      SetLastErrorMsg(Format(_(ERR_SERVER_ERROR), [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
+      SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
     else if FmtList = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']))
     else if FmtUrlMap = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format-URL Map']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format-URL Map']))
     else
       begin
       VideoFormat := GetBestVideoFormat(UrlDecode(Trim(FmtList)));
@@ -285,7 +288,7 @@ begin
       else
         Extension := '.mp4';
       if not FindUrlForFormat(VideoFormat, UrlDecode(FmtUrlMap), Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
         Title := Utf8ToString(Utf8String(UrlDecode(Title)));
@@ -346,7 +349,7 @@ begin
     InfoFound := ProcessFlashVars(FlashVars, Title, Url);
   if not InfoFound then
     if not GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
     else
       InfoFound := ProcessFlashVars(FlashVars, Title, Url);
   if InfoFound then

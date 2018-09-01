@@ -62,13 +62,14 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*bofunk\.com/video/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'bofunk\.com/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -84,7 +85,7 @@ end;
 
 class function TDownloader_Bofunk.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Bofunk.Create(const AMovieID: string);
@@ -115,23 +116,23 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, 'http://flv.bofunk.com' + Url, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not Xml.NodeByPathAndAttr('SETTINGS/PLAYER_SETTINGS', 'Name', 'FLVPath', Node) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not GetXmlAttr(Node, '', 'Value', Url) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else
         begin
         MovieUrl := Url;
-        Result := True;
         SetPrepared(True);
+        Result := True;
         end;
     finally
-      Xml.Free;
+      FreeAndNil(Xml);
       end;
 end;
 

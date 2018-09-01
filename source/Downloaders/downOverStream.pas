@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   {$IFDEF SUBTITLES}
   uStringUtils,
   uAMF,

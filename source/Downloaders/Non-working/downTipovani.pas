@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -111,20 +112,20 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   // Pozn.: To ID by se melo nejak upravit. Na vstupu jsem mel 'OTQ4NTgxMXw2MzQyNDExODA0ODY5MjY4OTU='
   // a do playlistu se posilalo 'OTQ4NTgyN3w2MzQyNDExODA2NTExNjQ0MzA=' (tj. po BASE64 decode to bylo
   // '9485811|634241180486926895' a '9485827|634241180651164430'.
   // Na druhy pokus to bylo 'OTQ4Njk4OHw2MzQyNDEyMTA1NzE0NDY2NzU=' a 'OTQ4Njk5NHw2MzQyNDEyMTA3NDc1NDg2ODU=',
   // tj. '9486988|634241210571446675' a '9486994|634241210747548685'.
   else if not DownloadXml(Http, 'http://sazkadir.kitd.cz/Streaming/Services/ClientPlaylist.aspx?id=' + ID , Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlAttr(Xml, 'ENTRY/REF', 'HREF', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else if not GetXmlVar(Xml, 'ENTRY/TITLE', Title) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else
         begin
         SetName(Title);

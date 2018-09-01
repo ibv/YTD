@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -120,7 +121,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not (GetRegExpVar(MovieUrlHQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlLQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlRegExp, Page, 'URL', Url)) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     MovieURL := UrlDecode(Url);

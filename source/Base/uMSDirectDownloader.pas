@@ -102,7 +102,7 @@ begin
   inherited Prepare;
   Result := False;
   if MovieID = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     if UnpreparedName = '' then

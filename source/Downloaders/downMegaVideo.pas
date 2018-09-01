@@ -66,6 +66,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -115,24 +116,24 @@ var Node: TXmlNode;
 begin
   Result := False;
   if not PageXml.NodeByPath('ROW', Node) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not GetXmlAttr(Node, '', 'title', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not GetXmlAttr(Node, '', 's', Server) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Server']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Server']))
   else if not GetXmlAttr(Node, '', 'k1', sKey1) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Key1']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Key1']))
   else if not GetXmlAttr(Node, '', 'k2', sKey2) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Key2']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Key2']))
   else if not GetXmlAttr(Node, '', 'un', EncryptedFileID) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['EncryptedFileID']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['EncryptedFileID']))
   else
     begin
     Key1 := StrToIntDef(sKey1, -1);
     Key2 := StrToIntDef(sKey2, -1);
     Result := (Key1 > 0) and (Key2 > 0) and (Server <> '') and (EncryptedFileID <> '');
     if not Result then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
     end;
 end;
 

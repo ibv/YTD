@@ -62,18 +62,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*autotube\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[0-9]+.+?\.html?';
+  URLREGEXP_BEFORE_ID = 'autotube\.cz/';
+  URLREGEXP_ID =        '[^/?&]+/[0-9]+.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_VIDEO_ID = '[^/]+/(?P<ID>[0-9]+)';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_TITLE;
+  REGEXP_VIDEO_ID =     '[^/]+/(?P<ID>[0-9]+)';
 
 { TDownloader_AutoTube }
 
@@ -84,7 +85,7 @@ end;
 
 class function TDownloader_AutoTube.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_AutoTube.Create(const AMovieID: string);
@@ -109,30 +110,23 @@ end;
 
 function TDownloader_AutoTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var ID, Url: string;
-    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoIdRegExp, MovieID, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, 'http://www.autotube.cz/ui/player/video.php?id=' + ID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXmlVar(Http, 'http://www.autotube.cz/ui/player/video.php?id=' + ID, 'file', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
-    try
-      if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := Url;
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    MovieURL := Url;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
   RegisterDownloader(TDownloader_AutoTube);
 
 end.
+

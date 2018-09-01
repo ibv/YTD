@@ -45,9 +45,6 @@ uses
   uDownloader, uOptions;
 
 type
-  TStringArray = array of string;
-  PStringArray = array of string;
-
   TCommonDownloader = class(TDownloader)
     private
       fMovieURL: string;
@@ -60,8 +57,6 @@ type
       MovieUrlRegExp: TRegExp;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property MovieUrl: string read fMovieUrl write fMovieUrl;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
@@ -86,15 +81,6 @@ type
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function WriteSubtitles: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$ENDIF}
-    protected
-      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -146,27 +132,6 @@ end;
 function TCommonDownloader.GetFileNameExt: string;
 begin
   Result := ExtractUrlExt(MovieURL);
-end;
-
-function TCommonDownloader.ExtractUrlExt(const Url: string): string;
-begin
-  Result := ExtractFileExt(ExtractUrlFileName(Url));
-end;
-
-function TCommonDownloader.ExtractUrlFileName(const Url: string): string;
-var i: integer;
-begin
-  i := Pos('?', Url);
-  if i <= 0 then
-    Result := Url
-  else
-    Result := Copy(Url, 1, Pred(i));
-  for i := Length(Result) downto 1 do
-    if Result[i] = '/' then
-      begin
-      Result := Copy(Result, Succ(i), MaxInt);
-      Break;
-      end;
 end;
 
 function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
@@ -267,15 +232,15 @@ begin
     // Download the media info page.
     URL := GetMovieInfoUrl;
     if URL = '' then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
     else if not GetMovieInfoContent(Info, URL, Page, PageXml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
         if InfoPageIsXml and (PageXml = nil) then
-          SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
         else if not BeforePrepareFromPage(Page, PageXml, Info) then
-          SetLastErrorMsg(_(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE))
+          SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
         else
           begin
           SetName('');
@@ -287,7 +252,7 @@ begin
           // If regular expression for TITLE is set, use it to get title.
           if MovieTitleRegExp <> nil then
             if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
-              SetName(s);
+              SetName(HtmlDecode(s));
           // If a function for building URL is provided, use it.
           if BuildMovieURL(s) then
             MovieURL := s
@@ -303,7 +268,7 @@ begin
           if not AfterPrepareFromPage(Page, PageXml, Info) then
             SetPrepared(False);
           if (not Prepared) and (LastErrorMsg = '') then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
           {$IFDEF SUBTITLES}
           if Prepared then
             ReadSubtitles(Page, PageXml, Info);
@@ -339,110 +304,6 @@ end;
 function TCommonDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   Result := True;
-end;
-
-function TCommonDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
-begin
-  Result := RegExp.Match(Text) and RegExp.SubexpressionByName(VarName, VarValue);
-end;
-
-function TCommonDownloader.GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean;
-var n: integer;
-    b: boolean;
-    Value: string;
-begin
-  SetLength(VarValue, 0);
-  n := 0;
-  b := RegExp.Match(Text);
-  while b do
-    begin
-    if RegExp.SubexpressionByName(VarName, Value) then
-      begin
-      if Length(VarValue) <= n then
-        SetLength(VarValue, Length(VarValue)+16);
-      VarValue[n] := Value;
-      Inc(n);
-      end;
-    b := RegExp.MatchAgain;
-    end;
-  SetLength(VarValue, n);
-  Result := n > 0;
-end;
-
-function TCommonDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean): boolean;
-var i: integer;
-    VarValue: string;
-begin
-  if InitValues then
-    for i := 0 to High(VarValues) do
-      VarValues[i]^ := '';
-  Result := RegExp.Match(Text);
-  if Result then
-    for i := 0 to High(VarNames) do
-      if not RegExp.SubExpressionByName(VarNames[i], VarValue) then
-        Result := False
-      else
-        VarValues[i]^ := VarValue;
-end;
-
-function TCommonDownloader.GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean; const VarNameSubExprName, VarValueSubExprName: string): boolean;
-var i, j: integer;
-    VarName: string;
-begin
-  if InitValues then
-    for i := 0 to High(VarValues) do
-      VarValues[i]^ := '';
-  Result := RegExp.Match(Text);
-  if Result then
-    repeat
-      VarName := RegExp.SubexpressionByName(VarNameSubExprName);
-      for j := 0 to High(VarNames) do
-        if VarName = VarNames[j] then
-          begin
-          if j <= High(VarValues) then
-            VarValues[j]^ := RegExp.SubexpressionByName(VarValueSubExprName);
-          end;
-    until not RegExp.MatchAgain;
-end;
-
-function TCommonDownloader.GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean;
-var Node: TXmlNode;
-begin
-  if XmlNodeByPath(Xml, Path, Node) then
-    begin
-    VarValue := XmlValueIncludingCData(Node);
-    Result := True;
-    end
-  else
-    begin
-    VarValue := '';
-    Result := False;
-    end;
-end;
-
-function TCommonDownloader.GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean;
-var Node: TXmlNode;
-begin
-  if XmlNodeByPath(Xml, Path, Node) and Node.HasAttribute(Utf8String(Attribute)) then
-    begin
-    VarValue := Node.AttributeByNameWide[Utf8String(Attribute)];
-    Result := True;
-    end
-  else
-    begin
-    VarValue := '';
-    Result := False;
-    end;
-end;
-
-function TCommonDownloader.GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean;
-begin
-  Result := GetXmlVar(Xml.Root, Path, VarValue);
-end;
-
-function TCommonDownloader.GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean;
-begin
-  Result := GetXmlAttr(Xml.Root, Path, Attribute, VarValue);
 end;
 
 procedure TCommonDownloader.SetOptions(const Value: TYTDOptions);

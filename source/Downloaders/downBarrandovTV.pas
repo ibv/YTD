@@ -61,14 +61,15 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uMessages,
   uDownloadClassifier;
 
 // http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*barrandov\.tv/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'barrandov\.tv/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 { TDownloader_BarrandovTV }
@@ -80,7 +81,7 @@ end;
 
 class function TDownloader_BarrandovTV.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
@@ -113,19 +114,23 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetXmlVar(PageXml, 'videotitle', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not GetXmlVar(PageXml, 'hostname', HostName) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['hostname']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
   else if not GetXmlVar(PageXml, 'streamname', StreamName) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['streamname']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
   else
     begin
     SetName(Title);
     MovieUrl := 'rtmpe://' + HostName + '/' + StreamName;
-    AddRtmpDumpOption('r', MovieURL);
-    AddRtmpDumpOption('y', StreamName);
-    Result := True;
+    SetRtmpDumpOption('r', MovieURL);
+    SetRtmpDumpOption('y', StreamName);
+    //SetRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
+    //SetRtmpDumpOption('s', 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID);
+    //SetRtmpDumpOption('t', MovieUrl);
+    //SetRtmpDumpOption('p', 'http://www.barrandov.tv/' + MovieID);
     SetPrepared(True);
+    Result := True;
     end;
 end;
 

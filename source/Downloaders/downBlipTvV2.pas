@@ -42,16 +42,15 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downBlipTv;
+  uDownloader, uCommonDownloader, uNestedDownloader, downBlipTv;
 
 type
-  TDownloader_BlipTvV2 = class(TDownloader_BlipTv)
+  TDownloader_BlipTvV2 = class(TNestedDownloader)
     private
-    protected
-      MovieIDFromPageRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
     public
+      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -60,52 +59,45 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier;
 
 // http://blip.tv/file/108391
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*blip\.tv/file/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'blip\.tv/file/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_ID_FROM_PAGE = '<link\s+rel="video_src"\s+href="http://(?:www\.)?blip\.tv/play/(?P<MOVIEID>[^"]+)"';
+  REGEXP_MOVIE_URL =    REGEXP_URL_LINK_VIDEOSRC;
 
 { TDownloader_BlipTvV2 }
 
+class function TDownloader_BlipTvV2.Provider: string;
+begin
+  Result := TDownloader_BlipTv.Provider;
+end;
+
 class function TDownloader_BlipTvV2.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_BlipTvV2.Create(const AMovieID: string);
 begin
   inherited;
-  MovieIDFromPageRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PAGE);
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_BlipTvV2.Destroy;
 begin
-  RegExFreeAndNil(MovieIDFromPageRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
 function TDownloader_BlipTvV2.GetMovieInfoUrl: string;
-var Http: THttpSend;
-    Page, ID: string;
 begin
-  Result := '';
-  Http := CreateHttp;
-  try
-    if DownloadPage(Http, 'http://blip.tv/file/' + MovieID, Page) then
-      if GetRegExpVar(MovieIDFromPageRegExp, Page, 'MOVIEID', ID) then
-        begin
-        MovieID := ID;
-        Result := inherited GetMovieInfoUrl;
-        end;
-  finally
-    Http.Free;
-    end;
+  Result := 'http://blip.tv/file/' + MovieID;
 end;
 
 initialization

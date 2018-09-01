@@ -61,6 +61,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uMessages,
   uDownloadClassifier;
@@ -113,7 +114,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not XmlNodeByPath(PageXml, 'items', Items) then
-    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
   else
     begin
     for i := 0 to Pred(Items.NodeCount) do
@@ -123,15 +124,15 @@ begin
             begin
             {$IFNDEF DIRTYHACKS}
             if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
-              SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['server']))
+              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['server']))
             else
             {$ENDIF}
             if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
-              SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['path']))
+              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['path']))
             else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
-              SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['file']))
+              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['file']))
             else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
-              SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+              SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
             else
               begin
               SetName(Title);
@@ -151,7 +152,7 @@ begin
               end;
             Exit;
             end;
-    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
     end;
 end;
 

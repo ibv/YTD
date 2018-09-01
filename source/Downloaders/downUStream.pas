@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uAMF,
   uDownloadClassifier,
   uMessages;
@@ -132,7 +133,7 @@ begin
         AMFResponse.SaveToFile('ustream.amf');
         if AMFResponse.HasBody(0) then
           if AMFResponse.Body[0].Content.FindValueByPath('error/message', ErrorMsg, TAMFString) then
-            SetLastErrorMsg(Format(_(ERR_SERVER_ERROR), [string(ErrorMsg)]))
+            SetLastErrorMsg(Format(ERR_SERVER_ERROR, [string(ErrorMsg)]))
           else if AMFResponse.Body[0].Content.FindValueByPath('flv', Url, TAMFString) then
             begin
             MovieURL := string(Url);

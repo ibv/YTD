@@ -215,9 +215,9 @@ begin
             BytesTransferred := 0;
             if DownloadPage(VideoDownloader, MovieURL) then
               if (VideoDownloader.ResultCode < 200) or (VideoDownloader.ResultCode >= 300) then
-                SetLastErrorMsg(Format(_(ERR_HTTP_RESULT_CODE), [VideoDownloader.ResultCode]))
+                SetLastErrorMsg(Format(ERR_HTTP_RESULT_CODE, [VideoDownloader.ResultCode]))
               else if VideoDownloader.OutputStream.Size <= 0 then
-                SetLastErrorMsg(_(ERR_HTTP_NO_DATA_READ))
+                SetLastErrorMsg(ERR_HTTP_NO_DATA_READ)
               else
                 Result := True;
           finally

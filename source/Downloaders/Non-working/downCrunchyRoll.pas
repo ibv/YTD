@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -136,15 +137,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, UrlDecode(Url), Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlVar(Xml, 'default:preload/media_metadata/media_id', ID) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
       else if not GetXmlParams(Http, 'media_id=' + ID + {'&video_format=102&video_encode_quality=20' +} '&req=RpcApiVideoEncode_GetStreamInfo', ['host', 'file'], [@FlvHost, @FlvStream]) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
         {$IFDEF SUBTITLES}

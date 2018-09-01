@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -116,12 +117,12 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MovieIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
 //  else if not DownloadPage(Http, 'http://www.zakulisi.cz/amfphp/services/gateway.php', AnsiString(UrlEncode('data={"params":["' + ID + '","2"],"action":"media.file"}')), 'application/x-www-form-urlencoded', JSON, peAnsi) then
   else if not DownloadPage(Http, 'http://www.zakulisi.cz/amfphp/services/gateway.php', AnsiString(UrlEncode('data={"params":["25496-2a50r07cxlytk","2"],"action":"media.file"}')), 'application/x-www-form-urlencoded', JSON, peAnsi) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(MovieUrlFromJsonRegExp, JSON, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     MovieURL := StripSlashes(Url);

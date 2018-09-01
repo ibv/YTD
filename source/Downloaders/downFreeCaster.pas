@@ -64,6 +64,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uHttpDirectDownloader,
   uRtmpDirectDownloader,
   uDownloadClassifier,
@@ -120,15 +121,15 @@ var StreamID, BestUrl, Url, sBitrate, sQuality: string;
 begin
   Result := False;
   if not GetRegExpVar(StreamIdRegExp, Page, 'ID', StreamID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, 'http://freecaster.tv/player/info/' + StreamID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not Xml.NodeByPath('streams', Node) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not GetXmlVar(Xml, 'video/title', Title) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else
         begin
         BestUrl := '';
@@ -152,7 +153,7 @@ begin
                 end;
               end;
         if BestUrl = '' then
-          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
         else
           begin
           SmilUrl := BestUrl;

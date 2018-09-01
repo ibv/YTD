@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.ceskatelevize.cz/porady/10116288585-archiv-ct24/210452801350028/video/
+RunParams=http://www.zdf.de/ZDFmediathek//beitrag/video/1308766/
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=76
 Release=0
-Build=591
+Build=596
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.76.0.591
+FileVersion=0.76.0.596
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
@@ -118,7 +118,7 @@ Item0=..\Bin
 Item1=..\Exe
 Item2=Exe
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6101
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -278,6 +278,7 @@ loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
+cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

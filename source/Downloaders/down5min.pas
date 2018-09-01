@@ -60,18 +60,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*5min\.com/Video/[^/]*-';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '5min\.com/Video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_EXTRACT_URL = '<param\s+value="[^"]*&videoUrl=(?P<URL>https?[^"&]+)[^"]*"\s+name="movie"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_TITLE;
+  REGEXP_MOVIE_URL =    '<param\s+value="[^"]*&videoUrl=(?P<URL>https?[^"&]+)[^"]*"\s+name="movie"';
 
 { TDownloader_5min }
 
@@ -82,15 +83,15 @@ end;
 
 class function TDownloader_5min.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_5min.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUnknown;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_5min.Destroy;
@@ -102,15 +103,14 @@ end;
 
 function TDownloader_5min.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.5min.com/Video/-' + MovieID;
+  Result := 'http://www.5min.com/Video/' + MovieID;
 end;
 
 function TDownloader_5min.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   MovieUrl := UrlDecode(MovieUrl);
-  SetPrepared(True);
-  Result := True;
+  Result := Prepared;
 end;
 
 initialization

@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -113,15 +114,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, 'http://www.spike.com' + UrlDecode(Url), TitleXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlVar(TitleXml, 'gui/share/embed/title', Title) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else if not DownloadXml(Http, 'http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId=' + MovieID + '&royaltyReport=true&duration=152&width=640&height=391&impressiontype=18', Xml) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
       else
         try
           BestUrl := '';
@@ -139,7 +140,7 @@ begin
                     end;
                 end;
           if BestUrl = '' then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
           else
             begin
             SetName(Title);

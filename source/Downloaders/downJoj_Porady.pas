@@ -65,6 +65,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -102,17 +103,17 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not GetRegExpVarPairs(VariablesRegExp, HtmlDecode(FlashVars), ['basePath', 'videoId'], [@BasePath, @VideoID]) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, UrlDecode(BasePath) + 'services/Video.php?clip=' + VideoID, InfoXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetXmlAttr(InfoXml, '', 'title', Title) then
-    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
   else if not (XmlNodeByPathAndAttr(InfoXml, 'files/file', 'quality', 'hi', Node) or XmlNodeByPath(InfoXml, 'files/file', Node)) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else if not GetXmlAttr(Node, '', 'path', Path) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     SetName(Title);

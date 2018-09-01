@@ -21,6 +21,7 @@ HTTP	HTML	Nested	downCasSk
 HTTP	HTML	HTML	downCekniTo
 HTTP	HTML	HTML	downCeskeDrahy
 HTTP	HTML	HTML	downCestyKSobe
+HTTP	HTML	HTML	downCKKlic
 HTTP	XML	XML	downClipfish
 RTMP	HTML	XML	downCNBC
 HTTP	XML	XML	downCollegeHumor
@@ -81,6 +82,7 @@ HTTP	HTML	HTML	downMojeVideoSk
 HTTP	XML	XML	downMpora
 RTMP	XML	XML	downMTV
 RTMP	XML	XML	downMTVEmbed
+MS	HTML	HTML	downMultimediaVseCz
 HTTP	HTML	Nested	downMustWatch
 HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace
@@ -108,7 +110,7 @@ MS	XML	XML	downRTA (<-downRTA_Embed)
 MS	XML	XML	downRTA_Embed
 MS	XML	XML	downRtlNl
 HTTP	XML	XML	downSefka (<-downJoj_Porady)
-HTTP	HTML	XML	downSerialyCZ (<-downZkoukniTo)
+HTTP	HTML	Nested	downSerialyCZ
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
 HTTP	XML	XML	downSpike
@@ -144,6 +146,7 @@ HTTP	HTML	HTML	downVideoTiscaliCZ
 HTTP	HTML	XML	downVideu
 HTTP	XML	XML	downVimeo
 HTTP	XML	XML	downVitalMtb
+HTTP	HTML	HTML1	downVKontakteRuEmbed
 HTTP	HTML	HTML	downWeGame
 HTTP	HTML	HTML	downWimp
 HTTP	HTML	HTML	downWordPressTV
@@ -151,6 +154,8 @@ HTTP	HTML	HTML	downWrzuta
 HTTP	HTML	HTML	downYikers
 HTTP	HTML	HTML1	downYouTube
 HTTP	HTML	HTML	downZ1TV
-HTTP	HTML	XML	downZkoukniTo
+MS	HTML	HTML	downZDF
+HTTP	HTML	Nested	downZkoukniTo
+HTTP	-	XML	downZkoukniToEmbed
 
 *HTTP1 ... Multiple vars parsing

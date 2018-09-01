@@ -60,17 +60,15 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*live\.1hd\.ro/playondemand\.php';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'live\.1hd\.ro/playondemand\.php';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
-
-const
-  REGEXP_MOVIE_VARIABLES = '\.addVariable\s*\(\s*''(?P<VARNAME>[^'']+)''\s*,\s*''(?P<VARVALUE>[^'']*)''';
 
 { TDownloader_1hdRo }
 
@@ -81,7 +79,7 @@ end;
 
 class function TDownloader_1hdRo.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_1hdRo.Create(const AMovieID: string);

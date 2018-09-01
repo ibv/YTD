@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -117,17 +118,17 @@ begin
   Result := False;
   GetRegExpVarPairs(FlashVarsRegExp, Page, ['swfURL', 'user_id', 'video_id', 'clip_id'], [@SwfUrl, @UserID, @VideoID, @ClipID]);
   if SwfUrl = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['swfURL']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['swfURL']))
   else if UserID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['user_id']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['user_id']))
   else if VideoID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['video_id']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['video_id']))
   else if ClipID = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['clip_id']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['clip_id']))
   else if not DownloadPage(Http, 'http://video2.xtube.com/find_video.php?user_id=' + UserID + '&clip_id=' + ClipID + '&video_id=' + VideoID, Page) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     MovieUrl := SwfUrl + Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt);

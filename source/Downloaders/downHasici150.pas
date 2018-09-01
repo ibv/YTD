@@ -63,6 +63,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -117,11 +118,11 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVars(ConfigRegExp, Page, ['CONFIG', 'STREAM'], [@ConfigUrl, @Stream]) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http, ConfigUrl, VodProvider) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(RtmpRegExp, VodProvider, 'RTMP', Server) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
   else
     begin
     MovieUrl := Server + '/' + Stream;

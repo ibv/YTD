@@ -60,18 +60,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://www.bomba.cz/video/simpsnovi-vs-cesti-politici/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*bomba\.cz/video/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = 'bomba\.cz/video/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="(?P<URL>https?://[^"]+)';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URL =    REGEXP_URL_PARAM_MOVIE;
 
 { TDownloader_Bomba }
 
@@ -82,15 +83,15 @@ end;
 
 class function TDownloader_Bomba.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Bomba.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, [1]));
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_Bomba.Destroy;
@@ -102,7 +103,7 @@ end;
 
 function TDownloader_Bomba.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.bomba.cz/video/' + MovieID + '/';
+  Result := Format('http://www.bomba.cz/video/%s/', [MovieID]);
 end;
 
 initialization

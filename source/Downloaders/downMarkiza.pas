@@ -68,6 +68,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   {$IFDEF JSON}
   uJSON, uLkJSON,
   {$ENDIF}
@@ -75,8 +76,9 @@ uses
   uMessages;
 
 // http://video.markiza.sk/archiv-tv-markiza/112/8723
+// http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*markiza\.sk/archiv-tv-markiza/[^/]+/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*markiza\.sk/archiv-(?:[^/]*)/[^/]+/';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -151,7 +153,7 @@ begin
         {$MESSAGE WARN 'LkJSON fails on Markiza.sk'}
       {$ENDIF}
     {$ENDIF}
-    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE));
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE);
     if GetRegExpVar(JSONSourceRegExp, Page, 'JSON', JSONsrc) then
       begin
       JSON := JSONCreate(JSONsrc);

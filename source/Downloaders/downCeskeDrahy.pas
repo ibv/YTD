@@ -64,6 +64,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -121,9 +122,9 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(CurrentVideoIdRegExp, Page, 'ID', CurrentID) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['CurrentVideoId']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['CurrentVideoId']))
   else if not GetRegExpVar(MovieListRegExp, Page, 'MOVIES', MovieList) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['toFlash']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['toFlash']))
   else if MovieInfoRegExp.Match(MovieList) then
     repeat
       if MovieInfoRegExp.SubexpressionByName('ID', ID) then

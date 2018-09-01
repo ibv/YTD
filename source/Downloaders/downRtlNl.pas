@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uDownloadClassifier,
   uMessages;
@@ -107,15 +108,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not PageXml.NodeByPathAndAttr('material_list/material', 'key', MovieID, Node) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not GetXmlVar(Node, 'component_uri', Path) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, 'http://www.rtl.nl/system/video/wvx' + Path + '/1500.wvx?utf8=ok', Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not GetXmlAttr(Xml, 'ENTRY/REF', 'HREF', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
         if GetXmlVar(Xml, 'TITLE', Title) then

@@ -67,6 +67,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -136,31 +137,31 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoSrcRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(PhotoSecretRegexp, Url, 'VALUE', Secret) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_secret']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['photo_secret']))
   else if not GetRegExpVar(PhotoIdRegexp, Url, 'VALUE', ID) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_id']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['photo_id']))
   else if not DownloadXml(Http, 'http://www.flickr.com/apps/video/video_mtl_xml.gne?v=x&photo_id=' + ID + '&secret=' + Secret + '&olang=en-us&noBuffer=null&bitrate=700&target=_self', Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if not Xml.NodeByPathAndAttr('Data/Item', 'id', 'id', Node) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not GetXmlVar(Node, '', NodeId) then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if NodeId = '' then
-        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not DownloadXml(Http, 'http://www.flickr.com/video_playlist.gne?node_id=' + NodeID + '&tech=flash&mode=playlist&bitrate=700&secret=' + Secret + '&rd=video.yahoo.com&noad=1', ItemXml) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
       else
         try
           if not GetXmlVar(ItemXml, 'SEQUENCE-ITEM/META/TITLE', Title) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
           else if not GetXmlAttr(ItemXml, 'SEQUENCE-ITEM/STREAM', 'APP', Host) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
           else if not GetXmlAttr(ItemXml, 'SEQUENCE-ITEM/STREAM', 'FULLPATH', Path) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
           else
             begin
             GetRegExpVar(VideoExtensionRegExp, Path, 'EXT', Extension);

@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -110,7 +111,7 @@ begin
   Result := False;
   if inherited AfterPrepareFromPage(Page, PageXml, Http) then
     if not DownloadPage(Http, MovieUrl, hmHEAD) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       MovieUrl := LastUrl;

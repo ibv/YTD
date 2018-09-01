@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -106,12 +107,12 @@ var Path, Url, EmbeddedPlayer, Title: string;
 begin
   Result := False;
   if not GetRegExpVar(PortToIVysilaniRegExp, Page, 'PATH', Path) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else
     begin
     Url := 'http://www.ceskatelevize.cz' + UrlEncode(HtmlDecode(Path));
     if not DownloadPage(Http, Url, EmbeddedPlayer, peXml) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       begin
       Result := inherited AfterPrepareFromPage(EmbeddedPlayer, nil, Http);

@@ -152,9 +152,9 @@ begin
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));
-  SetLastErrorMsg(Format(_(ERR_SEE_LOGFILE), [LogFileName]));
+  SetLastErrorMsg(Format(ERR_SEE_LOGFILE, [LogFileName]));
   if not RtmpDump_Init then
-    Raise ERTMPDownloaderError.CreateFmt(_(ERR_FAILED_TO_LOAD_DLL), ['rtmpdump_dll.dll']);
+    Raise ERTMPDownloaderError.CreateFmt(ERR_FAILED_TO_LOAD_DLL, ['rtmpdump_dll.dll']);
   RetCode := RtmpDump_Download(Integer(Self), RtmpDumpDownloadProgressCallback, PAnsiChar(AnsiString(LogFileName)), RtmpDumpOptions);
   case RetCode of
     0: // Download complete

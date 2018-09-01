@@ -61,6 +61,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -111,10 +112,10 @@ var Xml: TXmlDoc;
 begin
   Result := False;
   if not DownloadXml(Http, 'http://www.gameanyone.com/pl.php?id=' + MovieID + '&l=1' + MovieID, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
       if XmlNodeByPath(Xml, 'tracklist', Tracklist) then
         for i := 0 to Pred(Tracklist.NodeCount) do
           if Tracklist.Nodes[i].Name = 'track' then

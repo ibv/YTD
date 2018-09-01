@@ -72,6 +72,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   {$IFDEF XMLINFO}
   uXML,
   {$ENDIF}
@@ -165,13 +166,13 @@ begin
       if not MovieParamsRegExp.SubexpressionByName('PARAM', Params) then
         Params := MovieParamsRegExp.SubexpressionByName('PARAM2');
     if Params = '' then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
     else if not GetRegExpVarPairs(FlashVarsParserRegExp, Params,
                    ['id', 'cdnLQ', 'cdnHQ', 'cdnHD'],
                    [@ID,  @CdnLQ,  @CdnHQ,  @CdnHD ])
     then
     //else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       if CdnHD <> '' then
@@ -183,7 +184,7 @@ begin
       else
         begin
         CdnID := '';
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
         end;
       end;
     end;

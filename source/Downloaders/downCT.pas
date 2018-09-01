@@ -48,6 +48,12 @@ uses
 type
   TDownloader_CT = class(TRtmpDownloader)
     private
+      {$IFDEF MULTIDOWNLOADS}
+      fBaseUrls: TStringList;
+      fStreams: TStringList;
+      fDownloadIndex: integer;
+      fBaseName: string;
+      {$ENDIF}
     protected
       MovieObjectRegExp: TRegExp;
       IFrameRegExp: TRegExp;
@@ -57,16 +63,27 @@ type
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
       procedure SetOptions(const Value: TYTDOptions); override;
+      {$IFDEF MULTIDOWNLOADS}
+      property BaseUrls: TStringList read fBaseUrls;
+      property Streams: TStringList read fStreams;
+      property DownloadIndex: integer read fDownloadIndex write fDownloadIndex;
+      property BaseName: string read fBaseName write fBaseName;
+      {$ENDIF}
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      {$IFDEF MULTIDOWNLOADS}
+      function First: boolean; override;
+      function Next: boolean; override;
+      {$ENDIF}
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -103,6 +120,10 @@ begin
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT);
   IFrameRegExp := RegExCreate(REGEXP_IFRAME_TO_IVYSILANI);
   LiveStream := True;
+  {$IFDEF MULTIDOWNLOADS}
+  fStreams := TStringList.Create;
+  fBaseUrls := TStringList.Create;
+  {$ENDIF}
 end;
 
 destructor TDownloader_CT.Destroy;
@@ -110,6 +131,10 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
   RegExFreeAndNil(IFrameRegExp);
+  {$IFDEF MULTIDOWNLOADS}
+  FreeAndNil(fStreams);
+  FreeAndNil(fBaseUrls);
+  {$ENDIF}
   inherited;
 end;
 
@@ -140,9 +165,9 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetMovieObjectUrl(Http, Page, Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadXml(Http, URL, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
       if Xml.NodeByPath('smilRoot/body', Body) then
@@ -171,17 +196,24 @@ begin
                           end;
                         end;
                   if BestStream = '' then
-                    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+                    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else
                     begin
                     MovieURL := BestStream;
-                    AddRtmpDumpOption('r', BaseUrl);
-                    AddRtmpDumpOption('y', Stream);
+                    SetRtmpDumpOption('r', BaseUrl);
+                    SetRtmpDumpOption('y', BestStream);
                     if LiveStream then
-                      AddRtmpDumpOption('v', '');
+                      SetRtmpDumpOption('v', '');
+                    {$IFDEF MULTIDOWNLOADS}
+                    BaseUrls.Add(BaseUrl);
+                    Streams.Add(BestStream);
+                    {$ENDIF}
                     SetPrepared(True);
                     Result := True;
                     end;
+                  {$IFNDEF MULTIDOWNLOADS}
+                  Break;
+                  {$ENDIF}
                   end;
             end;
     finally
@@ -196,6 +228,43 @@ begin
   if Value.ReadProviderOption(Provider, 'live_stream', s) then
     LiveStream := StrToIntDef(s, 0) <> 0;
 end;
+
+{$IFDEF MULTIDOWNLOADS}
+function TDownloader_CT.First: boolean;
+begin
+  if Prepared then
+    if BaseUrls.Count <= 0 then
+      Result := MovieURL <> ''
+    else
+      begin
+      DownloadIndex := -1;
+      BaseName := Name;
+      Result := Next;
+      end
+  else
+    Result := False;
+end;
+
+function TDownloader_CT.Next: boolean;
+begin
+  Result := False;
+  if Prepared then
+    begin
+    DownloadIndex := Succ(DownloadIndex);
+    if (DownloadIndex >= 0) and (DownloadIndex < BaseUrls.Count) and (DownloadIndex < Streams.Count) then
+      begin
+      SetName(Format('%s (%d)', [BaseName, Succ(DownloadIndex)]));
+      SetFileName('');
+      MovieURL := Streams[DownloadIndex];
+      SetRtmpDumpOption('r', BaseUrls[DownloadIndex]);
+      SetRtmpDumpOption('y', Streams[DownloadIndex]);
+      if LiveStream then
+        SetRtmpDumpOption('v', '');
+      Result := True;
+      end;
+    end;
+end;
+{$ENDIF}
 
 initialization
   RegisterDownloader(TDownloader_CT);

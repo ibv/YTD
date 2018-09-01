@@ -60,6 +60,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -111,7 +112,6 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   MovieUrl := UrlDecode(MovieUrl);
   SetPrepared(True);
-  SetName(HtmlDecode(Name)); // Must be AFTER SetPrepared, because Name results in an error otherwise
   Result := True;
 end;
 

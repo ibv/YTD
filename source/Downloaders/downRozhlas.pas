@@ -65,6 +65,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -141,14 +142,14 @@ begin
     until not TableRowsRegExp.MatchAgain;
     {$IFDEF MULTIDOWNLOADS}
     if UrlList.Count <= 0 then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       SetPrepared(True);
       Result := First;
       end;
     {$ELSE}
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
     {$ENDIF}
     end;
 end;

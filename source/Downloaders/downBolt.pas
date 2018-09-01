@@ -62,18 +62,19 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://boltagain.ning.com/video/vacation-wellness
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*boltagain\.ning\.com/video/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = 'boltagain\.ning\.com/video/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_INFO = '<embed[^>]*\sFlashVars="config=(?P<URL>http.+?)[&"]';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_INFO =   '<embed[^>]*\sFlashVars="config=(?P<URL>http.+?)[&"]';
 
 { TDownloader_Bolt }
 
@@ -84,15 +85,15 @@ end;
 
 class function TDownloader_Bolt.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Bolt.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieInfoRegExp := RegExCreate(REGEXP_EXTRACT_INFO);
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, [1]));
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
 destructor TDownloader_Bolt.Destroy;
@@ -108,28 +109,20 @@ begin
 end;
 
 function TDownloader_Bolt.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Url: string;
+var InfoUrl, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, UrlDecode(UrlDecode(Url)), Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', InfoUrl) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXmlVar(Http, UrlDecode(UrlDecode(InfoUrl)), 'video_url', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
-    try
-      if not GetXmlVar(Xml, 'video_url', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieUrl := Url;
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

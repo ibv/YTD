@@ -63,13 +63,14 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://autosalontv.cz/?year=2010&week=50
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*autosalontv\.cz/.*\?';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'autosalontv\.cz/.*\?';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -85,7 +86,7 @@ end;
 
 class function TDownloader_AutoSalonTV.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_AutoSalonTV.Create(const AMovieID: string);
@@ -118,14 +119,17 @@ var Year, Week, Title: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  RegExFreeAndNil(MovieTitleRegExp);
   if not GetYearWeek(Year, Week) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     begin
     MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE_PATTERN, [Year, Week]));
-    if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
-      SetName(Title);
+    try
+      if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
+        SetName(Title);
+    finally
+      RegExFreeAndNil(MovieTitleRegExp);
+      end;
     MovieUrl := Format('http://bcastd.livebox.cz/up/as/%s/%s%s.wmv', [Year, Week, Year]);
     SetPrepared(True);
     Result := True;

@@ -1,6 +1,46 @@
 CHANGELOG
 ---------
 
+  v0.79:
+
+    * Nový poskytovatel: CKKlic.cz.
+
+    * Nový poskytovatel: Multimedia.vse.cz.
+
+    * Nový poskytovatel: VKontakte.ru.
+
+    * Nový poskytovatel: ZDF.de.
+
+    * CeskaTelevize.cz: Podpora pro videa tvoøená více èástmi (napø. Sama
+      doma 29.3.2011). Nyní už by mìla být stahována nejkvalitnìjší verze
+      videa (nakonec nebyla chyba na serveru ale u mì - open-source model
+      zjevnì nefunguje, protože i pøes dostupnost zdrojákù na chybu nikdo 
+      nepøišel...).
+
+    * Markiza.sk: Podpora pro doma.markiza.sk.
+
+    * SerialyCZ.cz: Podpora pro další typ vložených videí.
+
+    * VideaCesky.cz: Podpora pro videa pøehrávaná pøes pøímé odkazy. Podpora
+      pro videa chybnì zadaná s mezerou na zaèátku. Podpora pro konverzi
+      titulkù do formátu SRT (standardnì zapnutá, lze ji vypnout nastavením
+      convert_subtitles, viz dokumentace).
+
+    * ZkoukniTo.cz: Pøidána podpora pro embedded adresy.
+
+    * Pøepracována práce s titulky u serverù odkazujících na cizí obsah (napø.
+      VideaCesky.cz): Preferují se titulky z odkazujícího serveru, teprve
+      v pøípadì, že neexistují, se využije titulkù odkazovaného serveru. Dosud
+      to bylo naopak.
+
+    * Zmìna práce s podporou pro automatické použití HTML parseru (viz verze
+      0.77) v pøípadì, že je monitorován clipboard (verze 0.71): Dosud to
+      vedlo k neoèekávanému zakládání konfiguraèního parametru, teï už ne.
+
+    * Zahájeno èištìní kódu na nejnovìjší standardy.
+
+
+
   v0.78:
 
     * Nový poskytovatel: CNBC.com.

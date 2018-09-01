@@ -63,17 +63,19 @@ type
 implementation
 
 uses
+  uStringConsts,
+  uStringUtils,
   uDownloadClassifier,
   uMessages;
 
 // http://media1.break.com/static/app/v1/global/swf/player10.swf?sVidLoc=http%3a%2f%2fvideo1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.flv&sThumbLoc=http%3a%2f%2fmedia1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.jpg&contentURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html&sShareURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html%23TellAFriendhttp%3a%2f%2fstats.break.com%2finvoke.txt&iContentID=359418&autoplay=0&embed=2&contentidencoded=359418&categoryid=4&userid=1620903&mode=embed&linktitle=Funny+Videos&sVidTitle=EMBED-Dude+Blows+Off+Firecracker+In+Teeth&icon=1B608EE7AFCE3765E176F3C6FBB98002B3D18C64572F2307D76FAB7CA970F3B1D7D7
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*break\.com/.*?';
+  URLREGEXP_BEFORE_ID = 'break\.com/.*?';
   URLREGEXP_ID =        '\?(?:.*?&)*(?:sVidLoc|sVidTitle|icon)=.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_VARS = '[?&](?P<VARNAME>[^=]+)=(?P<VARVALUE>[^&]*)';
+  REGEXP_EXTRACT_VARS = URL_QUERY_VARS;
 
 { TDownloader_BreakEmbed }
 
@@ -84,7 +86,7 @@ end;
 
 class function TDownloader_BreakEmbed.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_BreakEmbed.Create(const AMovieID: string);
@@ -102,7 +104,7 @@ end;
 
 function TDownloader_BreakEmbed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.break.com'; // No download is needed, but this function must return something
+  Result := '.'; // No download is needed, but this function must return something
 end;
 
 function TDownloader_BreakEmbed.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
@@ -119,19 +121,17 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVarPairs(MovieVarsRegExp, Page, ['sVidLoc', 'sVidTitle', 'icon'], [@Url, @Title, @Token]) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Url = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['sVidLoc']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['sVidLoc']))
   else if Title = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['sVidTitle']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['sVidTitle']))
   else if Token = '' then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['icon']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['icon']))
   else
     begin
     MovieUrl := UrlDecode(Url) + '?' + Token;
-    if AnsiCompareText(TitlePrefix, Copy(Title, 1, Length(TitlePrefix))) = 0 then
-      System.Delete(Title, 1, Length(TitlePrefix)); 
-    SetName(UrlDecode(Title));
+    SetName(DeletePrefix(UrlDecode(Title), TitlePrefix));
     SetPrepared(True);
     Result := True;
     end;

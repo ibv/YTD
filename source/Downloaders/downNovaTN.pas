@@ -64,6 +64,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uDownloadClassifier,
   uMessages;
@@ -134,7 +135,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVars(ArticleDateRegExp, Page, ['YEAR', 'MONTH', 'DAY'], [@Year, @Month, @Day]) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['article_date']))
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['article_date']))
   else if VideoListRegExp.Match(Page) then
     begin
     repeat
@@ -192,14 +193,14 @@ begin
     until not VideoListRegExp.MatchAgain;
     {$IFDEF MULTIDOWNLOADS}
     if UrlList.Count <= 0 then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       SetPrepared(True);
       Result := First;
       end;
     {$ELSE}
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
     {$ENDIF}
     end;
 end;

@@ -53,7 +53,7 @@ const
 
 
 {gnugettext: scan-all}
-const
+resourcestring
   ERR_EXCEPTION_MESSAGE = 'Exception %s with message:'#10'%s'; // Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 
   MSG_PRESS_ANY_KEY_TO_QUIT = 'Press any key to quit.'; // Shown when running YTD command-line from IDE, right before YTD is terminated
@@ -89,16 +89,7 @@ const
 
 {gnugettext: reset}
 
-function _(const Msg: WideString): string;
-
 implementation
 
-uses
-  uLanguages;
-
-function _(const Msg: WideString): string;
-begin
-  Result := uLanguages._(Msg);
-end;
-
 end.
+

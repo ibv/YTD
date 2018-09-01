@@ -36,33 +36,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downVideaCesky;
 {$INCLUDE 'ytd.inc'}
+{$DEFINE CONVERTSUBTITLES}
+  // Convert subtitles to .srt format
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uOptions,
+  uDownloader, uCommonDownloader, uVarNestedDownloader;
 
 type
-  TDownloader_VideaCesky = class(TNestedDownloader)
+  TDownloader_VideaCesky = class(TVarNestedDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
+      {$IFDEF SUBTITLES}
+        {$IFDEF CONVERTSUBTITLES}
+        ConvertSubtitles: boolean;
+        {$ENDIF}
+      {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      {$IFDEF SUBTITLES}
+      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      {$ENDIF}
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
+  {$IFDEF SUBTITLES}
+  uSubtitles,
+  {$ENDIF}
   uMessages;
 
 // http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
@@ -75,11 +89,11 @@ const
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
   REGEXP_EXTRACT_NESTED_URLS: array[0..4] of string
-    = ('\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
-       '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
-       '<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"',
-       '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")',
-       '<embed\s+[^>]*\ssrc="(?P<URL>https?[^"]+?)"');
+    = ('\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
+       '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
+       '<param\s+name="movie"\s+value="\s*(?P<URL>https?://.+?)"',
+       '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
+       '<embed\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"');
   {$IFDEF SUBTITLES}
   REGEXP_EXTRACT_SUBTITLE_URLS: array[0..2] of string
     = ('\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
@@ -100,27 +114,31 @@ begin
 end;
 
 constructor TDownloader_VideaCesky.Create(const AMovieID: string);
+{$IFDEF SUBTITLES}
 var i: integer;
+{$ENDIF}
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i]);
+  AddNestedUrlRegExps(REGEXP_EXTRACT_NESTED_URLS);
   {$IFDEF SUBTITLES}
   SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
   for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
     fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i]);
+    {$IFDEF CONVERTSUBTITLES}
+    ConvertSubtitles := True;
+    {$ENDIF}
   {$ENDIF}
 end;
 
 destructor TDownloader_VideaCesky.Destroy;
+{$IFDEF SUBTITLES}
 var i: integer;
+{$ENDIF}
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
+  ClearNestedUrlRegExps;
   {$IFDEF SUBTITLES}
   for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
     RegExFreeAndNil(fSubtitleUrlRegExps[i]);
@@ -134,24 +152,65 @@ begin
   Result := 'http://www.videacesky.cz/dummy/' + MovieID;
 end;
 
-function TDownloader_VideaCesky.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
+procedure TDownloader_VideaCesky.SetOptions(const Value: TYTDOptions);
+{$IFDEF SUBTITLES}
+  {$IFDEF CONVERTSUBTITLES}
+var s: string;
+  {$ENDIF}
+{$ENDIF}
 begin
-  Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
-        begin
-        Result := True;
-        Break;
-        end;
-      end;
-  finally
-    NestedUrlRegExp := nil;
-    end;
+  inherited;
+  {$IFDEF SUBTITLES}
+    {$IFDEF CONVERTSUBTITLES}
+    if Value.ReadProviderOption(Provider, 'convert_subtitles', s) then
+      ConvertSubtitles := StrToIntDef(s, 0) <> 0;
+    {$ENDIF}
+  {$ENDIF}
 end;
+
+{$IFDEF SUBTITLES}
+function TDownloader_VideaCesky.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+{$IFDEF CONVERTSUBTITLES}
+var Xml: TXmlDoc;
+    Node: TXmlNode;
+    NewSubs, SubStart, SubEnd, Sub: string;
+    i, n: integer;
+{$ENDIF}
+begin
+  Result := inherited ReadSubtitles(Page, PageXml, Http);
+  {$IFDEF CONVERTSUBTITLES}
+  if Result then
+    if fSubtitles <> '' then
+      if AnsiCompareText(fSubtitlesExt, '.xml') = 0 then
+        try
+          Xml := TXmlDoc.Create;
+          try
+            Xml.LoadFromBinaryString(fSubtitles);
+            if Xml.Root.Name = 'tt' then
+              if XmlNodeByPathAndAttr(Xml, 'body/div', 'xml:id', 'captions', Node) then
+                begin
+                NewSubs := '';
+                n := 0;
+                for i := 0 to Pred(Node.NodeCount) do
+                  if Node.Nodes[i].Name = 'p' then
+                    if GetXmlAttr(Node.Nodes[i], '', 'begin', SubStart) then
+                      if GetXmlAttr(Node.Nodes[i], '', 'end', SubEnd) then
+                        if GetXmlVar(Node.Nodes[i], '', Sub) then
+                          NewSubs := NewSubs + SubtitlesToSrt(n, StringReplace(SubStart, '.', ',', [rfReplaceAll]), StringReplace(SubEnd, '.', ',', [rfReplaceAll]), StringReplace(Sub, '<br />', #13#10, [rfIgnoreCase, rfReplaceAll]));
+                if NewSubs <> '' then
+                  begin
+                  fSubtitles := AnsiString(NewSubs);
+                  fSubtitlesExt := '.srt';
+                  end;
+                end;
+          finally
+            Xml.Free;
+            end;
+        except
+          end;
+  {$ENDIF}
+end;
+{$ENDIF}
 
 initialization
   RegisterDownloader(TDownloader_VideaCesky);

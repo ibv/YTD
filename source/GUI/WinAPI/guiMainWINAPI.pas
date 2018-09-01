@@ -831,16 +831,14 @@ begin
 end;
 
 function TFormMain.ClipboardChanged: boolean;
-var OldAutoTryHtmlParser: boolean;
 begin
   if NextClipboardViewer <> 0 then
     SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
-  OldAutoTryHtmlParser := Options.AutoTryHtmlParser;
   try
-    Options.AutoTryHtmlParser := False;
+    DownloadList.AutoTryHtmlParserTemporarilyDisabled := True;
     AddFromClipboard(True);
   finally
-    Options.AutoTryHtmlParser := OldAutoTryHtmlParser;
+    DownloadList.AutoTryHtmlParserTemporarilyDisabled := False;
     end;
   Result := True;
 end;

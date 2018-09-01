@@ -70,6 +70,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -156,15 +157,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetMovieObjectUrl(Http, Page, Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http, URL, ObjectDef) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     begin
     // Jsou dve varianty. Pro ASF stream prijde XML, pro RM stream textak
     ObjectDef := Trim(ObjectDef);
     if ObjectDef = '' then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else if ObjectDef[1] = '<' then
       begin
       Xml := TXmlDoc.Create;
@@ -190,7 +191,7 @@ begin
         end;
       end
     else if not GetRegExpVar(IVysilaniUrlRegExp, ObjectDef, 'URL', Url) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       MovieURL := Url;

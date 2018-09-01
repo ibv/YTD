@@ -51,6 +51,7 @@ type
       MovieIdFromUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -62,13 +63,14 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://blip.tv/play/hIVV4sNUAg
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*blip\.tv/play/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = 'blip\.tv/play/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -83,7 +85,7 @@ end;
 
 class function TDownloader_BlipTv.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_BlipTv.Create(const AMovieID: string);
@@ -101,20 +103,17 @@ begin
 end;
 
 function TDownloader_BlipTv.GetMovieInfoUrl: string;
-var Http: THttpSend;
-    Url, ID: string;
 begin
-  Result := '';
-  Http := CreateHttp;
-  try
-    Http.Document.Clear;
-    if Http.HttpMethod('GET', 'http://blip.tv/play/' + MovieID) then
-      if CheckRedirect(Http, Url) then
-        if GetRegExpVar(MovieIdFromUrlRegExp, Url, 'ID', ID) then
-          Result := 'http://blip.tv/rss/flash/' + ID;
-  finally
-    Http.Free;
-    end;
+  Result := 'http://blip.tv/play/' + MovieID;
+end;
+
+function TDownloader_BlipTv.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+var ID: string;
+begin
+  Result := False;
+  if DownloadPage(Http, Url, hmHead) then
+    if GetRegExpVar(MovieIdFromUrlRegExp, LastUrl, 'ID', ID) then
+      Result := inherited GetMovieInfoContent(Http, 'http://blip.tv/rss/flash/' + ID, Page, Xml, Method);
 end;
 
 function TDownloader_BlipTv.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -123,15 +122,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetXmlVar(PageXml, 'channel/item/media:title', Title) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not GetXmlAttr(PageXml, 'channel/item/media:group/media:content', 'url', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
     SetName(Title);
     MovieURL := Url;
-    Result := True;
     SetPrepared(True);
+    Result := True;
     end;
 end;
 

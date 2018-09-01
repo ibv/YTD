@@ -62,6 +62,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
   uMessages;
 
@@ -114,12 +115,12 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not MovieUrlPartsRegExp.Match(MovieID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else
     begin
     Url := MovieUrlPartsRegExp.SubexpressionByName('DOMAIN') + 'sr/f/' + MovieUrlPartsRegExp.SubexpressionByName('ID');
     if not DownloadPage(Http, Url, hmHEAD) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       MovieURL := LastURL;
