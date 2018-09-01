@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes, {$IFNDEF FPC} FileCtrl, {$ENDIF} {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   PCRE,
-  uConsoleApp, uOptions, uLanguages, uMessages,
+  uConsoleApp, uOptions, uLanguages, uMessages, uFunctions,
   uDownloader, uCommonDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   uDownloadClassifier;
@@ -64,15 +64,15 @@ type
       procedure ParamInitialize; override;
       property UrlList: TStringList read fUrlList;
     protected
-      function DoDownload(const Url: string; Downloader: TDownloader): boolean; virtual;
-      procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); virtual;
-      procedure DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
-      function DownloadUrlList: integer; virtual;
-      function DownloadURL(const URL: string): boolean; virtual;
-      function DownloadURLsFromFileList(const FileName: string): integer; virtual;
-      function DownloadURLsFromHTML(const Source: string): integer; virtual;
-      procedure ShowProviders; virtual;
-      procedure ShowVersion; virtual;
+      function DoDownload(const Url: string; Downloader: TDownloader): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadUrlList: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadURL(const URL: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadURLsFromFileList(const FileName: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadURLsFromHTML(const Source: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ShowProviders; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ShowVersion; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
       property HtmlPlaylist: TPlaylist_HTML read fHtmlPlaylist;
       property HtmlFilePlaylist: TPlaylist_HTMLfile read fHtmlFilePlaylist;
@@ -124,7 +124,6 @@ begin
 end;
 
 procedure TYTD.ShowSyntax(const Error: string);
-//var i: integer;
 begin
   inherited;
   WriteColored(ccWhite, '<arg> [<arg>] ...'); Writeln; // Intentionally no _(...) - this should not be translated
@@ -142,14 +141,6 @@ begin
   WriteColored(ccWhite, ' -v'); Writeln(_(' .......... Test for updated version of YTD.')); // CLI: Help for -v command line argument
   Writeln;
   WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.')); // CLI: Help for <url> command line argument
-  {
-  Writeln('               Supported:');
-  for i := 0 to Pred(DownloadClassifier.ProviderCount) do
-    begin
-    WriteColored(ccWhite, '                 ' + DownloadClassifier.Providers[i].Provider);
-    Writeln;
-    end;
-  }
   Writeln;
   Writeln;
 end;
@@ -338,30 +329,6 @@ begin
     end;
 end;
 
-function Int64ToStrF(Value: int64): string;
-var Sign: string;
-begin
-  if Value = 0 then
-    Result := '0'
-  else if (PByteArray(@Value)^[0]=$80) and ((Value and $00ffffffffffffff) = 0) then
-    Result := '-9' + ThousandSeparator + '223' + ThousandSeparator + '372' + ThousandSeparator + '036' + ThousandSeparator + '854' + ThousandSeparator + '775' + ThousandSeparator + '808'
-  else
-    begin
-    if Value < 0 then
-      begin
-      Sign := '-';
-      Value := -Value;
-      end;
-    Result := '';
-    while Value >= 1000 do
-      begin
-      Result := Format('%s%03.3d%s', [ThousandSeparator, Value mod 1000, Result]);
-      Value := Value div 1000;
-      end;
-    Result := Sign + IntToStr(Value) + Result;
-    end;
-end;
-
 procedure TYTD.DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean);
 const EmptyProgressBar = '                             ';
       ProgressBarLength = Length(EmptyProgressBar);
@@ -379,7 +346,7 @@ begin
       ProgressBar := EmptyProgressBar;
       for i := 1 to n do
         ProgressBar[i] := '#';
-      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)') + #13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)])); // CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
+      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)') + #13, [ProgressBar, Proc div 10, Proc mod 10, PrettySize(DownloadedSize), PrettySize(TotalSize)])); // CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
       end;
     end;
 end;

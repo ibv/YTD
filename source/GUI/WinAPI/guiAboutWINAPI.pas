@@ -85,8 +85,6 @@ type
       function ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean; virtual;
       {$ENDIF}
       procedure LoadProviders; virtual;
-    protected
-      class function DefaultResourceName: string; override;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -117,11 +115,6 @@ const
   LISTVIEW_SUBITEM_COMPONENTS = 1;
 
 { TFormAbout }
-
-class function TFormAbout.DefaultResourceName: string;
-begin
-  Result := 'guiAboutWinAPI';
-end;
 
 constructor TFormAbout.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin
@@ -297,10 +290,7 @@ function TFormAbout.DoCtlColorStatic(DeviceContext: HDC; Control: THandle; out B
 begin
   Result := False;
   Brush := 0;
-  if False then
-    begin
-    end
-  else if Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTVERSION) then
+  if Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTVERSION) then
     begin
     SetTextColor(DeviceContext, fNewestVersionColor);
     SetBkMode(DeviceContext, TRANSPARENT);
@@ -357,11 +347,13 @@ function TFormAbout.ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
     begin
       StaticDisplayInfoText := Text;
       DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
+      DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
       Result := True;
     end;
 
 begin
   Result := False;
+  DispInfo^.item.mask := 0;
   case DispInfo^.item.iSubItem of
     LISTVIEW_SUBITEM_PROVIDER:
       Result := ShowStatic(DownloadClassifier.Names[DispInfo^.item.iItem]);

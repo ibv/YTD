@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downUStream;
+unit downCeskeDrahy;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,8 +45,12 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_UStream = class(THttpDownloader)
+  TDownloader_CeskeDrahy = class(THttpDownloader)
     private
+    protected
+      CurrentVideoIdRegExp: TRegExp;
+      MovieListRegExp: TRegExp;
+      MovieInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -60,91 +64,83 @@ type
 implementation
 
 uses
-  uAMF,
   uDownloadClassifier,
   uMessages;
 
-// http://www.ustream.tv/recorded/7022540
+// http://www.cd.cz/tv/aktuality/300_rekonstrukce-nadrazi-v-ceskem-brode
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ustream\.tv/recorded/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cd\.cz/tv/';
+  URLREGEXP_ID =        '[^/]+/[0-9]+.*';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2\s+id="videoTitle">\s*(?P<TITLE>.*?)\s*</h2>';
+  REGEXP_EXTRACT_TITLE = '<h1>(?:TV portál\s*-\s*)?(?P<TITLE>.*?)</h1>';
+  REGEXP_CURRENT_VIDEO = '\bCurrentVideoId\s*=\s*(?P<ID>[0-9]+)\s*;';
+  REGEXP_MOVIE_LIST = '\btoFlash\s*=\s*"(?P<MOVIES>.*?)"';
+  REGEXP_MOVIE_INFO = '(?P<ID>[0-9]+)~(?P<PAGE>[^~]*)~(?P<TITLE>[^~]*)~(?P<MOVIE>[^~]*)~(?P<DESCRIPTION>[^~]*)~~';
 
-const
-  AMF_REQUEST_PACKET =
-    'AAAAAAABAA9WaWV3ZXIuZ2V0VmlkZW8AAi8xAAAAhwoAAAABAwAEcnBpbgIAF3JwaW4uMC41' +
-    'NzQ0NTM4MjE2NTU2MjM1AAhhdXRvcGxheQEBAAdicmFuZElkAgABMQAHdmlkZW9JZAIABzcw' +
-    'MjI1NDAAB3BhZ2VVcmwCACZodHRwOi8vd3d3LnVzdHJlYW0udHYvcmVjb3JkZWQvNzAyMjU0' +
-    'MAAACQ==';
+{ TDownloader_CeskeDrahy }
 
-{ TDownloader_UStream }
-
-class function TDownloader_UStream.Provider: string;
+class function TDownloader_CeskeDrahy.Provider: string;
 begin
-  Result := 'UStream.tv';
+  Result := 'CD.cz';
 end;
 
-class function TDownloader_UStream.UrlRegExp: string;
+class function TDownloader_CeskeDrahy.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_UStream.Create(const AMovieID: string);
+constructor TDownloader_CeskeDrahy.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  CurrentVideoIdRegExp := RegExCreate(REGEXP_CURRENT_VIDEO, [rcoIgnoreCase, rcoSingleLine]);
+  MovieListRegExp := RegExCreate(REGEXP_MOVIE_LIST, [rcoIgnoreCase, rcoSingleLine]);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_UStream.Destroy;
+destructor TDownloader_CeskeDrahy.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(CurrentVideoIdRegExp);
+  RegExFreeAndNil(MovieListRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
-function TDownloader_UStream.GetMovieInfoUrl: string;
+function TDownloader_CeskeDrahy.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.ustream.tv/recorded/' + MovieID;
+  Result := 'http://www.cd.cz/tv/' + MovieID;
 end;
 
-function TDownloader_UStream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var AMFRequest, AMFResponse: TAMFPacket;
-    Url: TAMFValue;
+function TDownloader_CeskeDrahy.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var CurrentID, MovieList, ID, Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  AMFRequest := TAMFPacket.Create;
-  try
-    AMFRequest.LoadFromString(AnsiString(Base64Decode(AMF_REQUEST_PACKET)));
-    // Note: I don't need to check types (or make sure pointers are not null)
-    // because I use a pre-made packet which has all required properties. That
-    // is not true while parsing response packets!
-    with TAMFCommonArray(AMFRequest.Body[0].Content).Items[0] do
-      begin
-      SetValueByPath('videoId', MovieID);
-      SetValueByPath('pageUrl', GetMovieInfoUrl);
-      end;
-    if DownloadAMF(Http, 'http://216.52.240.138/gateway.php', AMFRequest, AMFResponse) then
-      try
-        if AMFResponse.HasBody(0) then
-          if AMFResponse.Body[0].Content.FindValueByPath('flv', Url, TAMFString) then
+  if not GetRegExpVar(CurrentVideoIdRegExp, Page, 'ID', CurrentID) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['CurrentVideoId']))
+  else if not GetRegExpVar(MovieListRegExp, Page, 'MOVIES', MovieList) then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['toFlash']))
+  else if MovieInfoRegExp.Match(MovieList) then
+    repeat
+      if MovieInfoRegExp.SubexpressionByName('ID', ID) then
+        if ID = CurrentID then
+          begin
+          if MovieInfoRegExp.SubexpressionByName('MOVIE', Path) then
             begin
-            MovieURL := string(Url);
+            MovieURL := 'http://light.polar.cz/videa/tv.cd.cz/' + Path + '.mp4';
             SetPrepared(True);
             Result := True;
             end;
-      finally
-        AMFResponse.Free;
-        end;
-  finally
-    AMFRequest.Free;
-    end;
+          Break;
+          end;
+    until not MovieInfoRegExp.MatchAgain;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_UStream);
+  RegisterDownloader(TDownloader_CeskeDrahy);
 
 end.

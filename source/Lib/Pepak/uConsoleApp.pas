@@ -39,13 +39,13 @@ type
       function DoExecute: integer; virtual; abstract;
     protected // Parameter handling methods
       procedure ParamInitialize; virtual;
-      function ParamGetNext(out Value: string): boolean; virtual;
+      function ParamGetNext(out Value: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected // Console
-      procedure InitConsole; virtual;
-      procedure DoneConsole; virtual;
-      procedure SetTextAttribute(const Text, Background: TConsoleColor); virtual;
-      procedure WriteColored(Color: TConsoleColor; const Msg: string); virtual;
-      procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); virtual; 
+      procedure InitConsole; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure DoneConsole; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetTextAttribute(const Text, Background: TConsoleColor); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WriteColored(Color: TConsoleColor; const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF} 
       property StdIn: THandle read fStdIn;
       property StdOut: THandle read fStdOut;
       property StdOutRedirected: boolean read fStdOutRedirected;
@@ -53,16 +53,16 @@ type
       property TextColor: TConsoleColor read GetTextColor write SetTextColor;
       property TextBackground: TConsoleColor read GetTextBackground write SetTextBackground;
     protected // Output methods
-      procedure ShowHeader; virtual;
-      procedure ShowError(const Msg: string); overload; virtual;
-      procedure ShowError(const Msg: string; const Params: array of const); overload; virtual;
+      procedure ShowHeader; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ShowError(const Msg: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ShowError(const Msg: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowSyntax(const Error: string = ''); overload; virtual;
-      procedure ShowSyntax(const Error: string; const Params: array of const); overload; virtual;
-      procedure Log(const LogFileName: string; const Msg: string); overload; virtual;
-      procedure Log(const LogFileName: string; const Msg: string; const Params: array of const); overload; virtual;
+      procedure ShowSyntax(const Error: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure Log(const LogFileName: string; const Msg: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure Log(const LogFileName: string; const Msg: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected // Files
       function ProcessWildCardFile(const FileName: string; const SearchRec: TSearchRec): boolean; virtual; abstract;
-      function ProcessWildCard(const WildCard: string; Recursive: boolean): integer; virtual;
+      function ProcessWildCard(const WildCard: string; Recursive: boolean): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create; virtual;
       destructor Destroy; override;

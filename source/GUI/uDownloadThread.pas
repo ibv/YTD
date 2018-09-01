@@ -67,9 +67,10 @@ type
       fOnDownloadProgress: TDTDownloadProgressEvent;
       fOnFileNameValidate: TDTDownloaderFileNameValidateEvent;
       fOnException: TDTExceptionEvent;
+      fActive: boolean;
     protected
       procedure SetState(Value: TDownloadThreadState); virtual;
-      procedure ReportState; virtual;
+      procedure SyncReportState; virtual;
     protected
       CallersDownloaderProgressEvent: TDownloaderProgressEvent;
       CallersDownloaderFileNameValidateEvent: TDownloaderFileNameValidateEvent;
@@ -85,7 +86,7 @@ type
       procedure SyncValidate; virtual;
     protected
       ReportException: Exception;
-      procedure ReportError; virtual;
+      procedure SyncReportError; virtual;
     protected
       procedure Execute; override;
       property Downloader: TDownloader read fDownloader;
@@ -98,6 +99,7 @@ type
       property OnDownloadProgress: TDTDownloadProgressEvent read fOnDownloadProgress write fOnDownloadProgress;
       property OnFileNameValidate: TDTDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
       property OnException: TDTExceptionEvent read fOnException write fOnException;
+      property Active: boolean read fActive;
     end;
 
 implementation
@@ -119,64 +121,81 @@ end;
 
 procedure TDownloadThread.Execute;
 begin
+  fActive := True;
   try
-    CallersDownloaderProgressEvent := Downloader.OnProgress;
-    CallersDownloaderFileNameValidateEvent := Downloader.OnFileNameValidate;
     try
-      Downloader.OnProgress := DownloaderProgress;
-      Downloader.OnFileNameValidate := DownloaderFileNameValidate;
-      repeat
-        if Terminated then
-          Break;
-        State := dtsPreparing;
-        if Downloader is TPlaylistDownloader then
-          begin
-          if Downloader.Prepare then
-            State := dtsFinished
-          else
-            Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
-          end
-        else
-          begin
-          if (not Downloader.Prepare) {$IFDEF MULTIDOWNLOADS} or (not Downloader.First) {$ENDIF} then
-            Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
+      CallersDownloaderProgressEvent := Downloader.OnProgress;
+      CallersDownloaderFileNameValidateEvent := Downloader.OnFileNameValidate;
+      try
+        Downloader.OnProgress := DownloaderProgress;
+        Downloader.OnFileNameValidate := DownloaderFileNameValidate;
+        repeat
           if Terminated then
             Break;
-          State := dtsDownloading;
-          {$IFDEF MULTIDOWNLOADS}
-          repeat
-          {$ENDIF}
-          if (not Downloader.ValidateFileName) or (not Downloader.Download) then
-            if Terminated then
-              Break
+          State := dtsPreparing;
+          if Downloader is TPlaylistDownloader then
+            begin
+            if Downloader.Prepare then
+              State := dtsFinished
             else
               Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
-          if Terminated then
+            end
+          else
+            begin
+            if (not Downloader.Prepare) {$IFDEF MULTIDOWNLOADS} or (not Downloader.First) {$ENDIF} then
+              Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
+            if Terminated then
+              Break;
+            State := dtsDownloading;
+            {$IFDEF MULTIDOWNLOADS}
+            repeat
+            {$ENDIF}
+            if (not Downloader.ValidateFileName) or (not Downloader.Download) then
+              if Terminated then
+                Break
+              else
+                Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
+            if Terminated then
+              Break;
+            {$IFDEF MULTIDOWNLOADS}
+            until not Downloader.Next;
+            {$ENDIF}
+            State := dtsFinished;
             Break;
-          {$IFDEF MULTIDOWNLOADS}
-          until not Downloader.Next;
-          {$ENDIF}
-          State := dtsFinished;
+            end;
+        until True;
+        if Terminated then
+          begin
+          State := dtsAborted;
+          Downloader.AbortTransfer;
           end;
-      until True;
-      if Terminated then
-        begin
-        State := dtsAborted;
-        Downloader.AbortTransfer;
-        end;
-    finally
-      Downloader.OnProgress := CallersDownloaderProgressEvent;
-      Downloader.OnFileNameValidate := CallersDownloaderFileNameValidateEvent;
-      end;
-  except
-    on E: Exception do
-      try
-        ReportException := E;
-        if Assigned(OnException) then
-          Synchronize(ReportError);
       finally
-        State := dtsFailed;
+        Downloader.OnProgress := CallersDownloaderProgressEvent;
+        Downloader.OnFileNameValidate := CallersDownloaderFileNameValidateEvent;
         end;
+    except
+      on E: Exception do
+        try
+          ReportException := E;
+          if Assigned(OnException) then
+            {$IFDEF DELPHITHREADS}
+            Synchronize(SyncReportError);
+            {$ELSE}
+            SyncReportError;
+            {$ENDIF}
+        finally
+          State := dtsFailed;
+          end;
+      end;
+  finally
+    fActive := False;
+    {$IFNDEF DELPHITHREADS}
+    if Assigned(OnTerminate) then
+      begin
+      OnTerminate(Self);
+      OnTerminate := nil;
+      end;
+    {$ENDIF}
     end;
 end;
 
@@ -184,10 +203,14 @@ procedure TDownloadThread.SetState(Value: TDownloadThreadState);
 begin
   fState := Value;
   if Assigned(OnStateChange) then
-    Synchronize(ReportState);
+    {$IFDEF DELPHITHREADS}
+    Synchronize(SyncReportState);
+    {$ELSE}
+    SyncReportState;
+    {$ENDIF}
 end;
 
-procedure TDownloadThread.ReportState;
+procedure TDownloadThread.SyncReportState;
 begin
   if Assigned(OnStateChange) then
     OnStateChange(Self, Self.State);
@@ -200,7 +223,11 @@ begin
     ReportSender := Sender;
     ReportTotalSize := TotalSize;
     ReportDownloadedSize := DownloadedSize;
+    {$IFDEF DELPHITHREADS}
     Synchronize(SyncReportProgress);
+    {$ELSE}
+    SyncReportProgress;
+    {$ENDIF}
     end;
   if Terminated then
     DoAbort := True;
@@ -225,7 +252,11 @@ begin
     ValidateSender := Sender;
     ValidateFileName := FileName;
     ValidateValid := Valid;
+    {$IFDEF DELPHITHREADS}
     Synchronize(SyncValidate);
+    {$ELSE}
+    SyncValidate;
+    {$ENDIF}
     FileName := ValidateFileName;
     Valid := ValidateValid;
     end;
@@ -239,7 +270,7 @@ begin
     OnFileNameValidate(Self, ValidateFileName, ValidateValid);
 end;
 
-procedure TDownloadThread.ReportError;
+procedure TDownloadThread.SyncReportError;
 begin
   if Assigned(OnException) then
     OnException(Self, ReportException);

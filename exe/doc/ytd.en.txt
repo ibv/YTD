@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.64                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.65                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -68,6 +68,9 @@ SUPPORTED PROVIDERS
  - Cas.sk
      - http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
      - http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
+
+ - CD.cz:
+     - http://www.cd.cz/tv/aktuality/300_rekonstrukce-nadrazi-v-ceskem-brode
 
  - CekniTo.cz / CekniTo.sk
      - http://www.ceknito.cz/video/446074
@@ -409,6 +412,9 @@ SUPPORTED PROVIDERS
  - TeacherTube.com:
      - http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
 
+ - ThatVideoSite.com:
+     - http://www.thatvideosite.com/video/penguins_dont_like_water
+
  - TN.Nova.cz:
      - http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 
@@ -468,9 +474,15 @@ SUPPORTED PROVIDERS
  - Wimp.com:
      - http://www.wimp.com/frazilice/
 
+ - WordPress.tv:
+     - http://wordpress.tv/2010/09/18/jane-wells-how-wordpress-decisions-get-made/
+
  - Wrzuta.pl:
      - http://w772.wrzuta.pl/film/7KI3ZUDHrUK/
      - http://goovnoh.wrzuta.pl/audio/8U1t8UQ4f8W/
+
+ - Yikers.com:
+     - http://www.yikers.com/video_dog_and_turtle_eat_cereal_together.html
 
  - Youtube.com:
      - http://www.youtube.com/v/b5AWQ5aBjgE
@@ -585,9 +597,10 @@ is finished. Among other common uses of this function is the possibility to
  convert downloaded content to a desired format, as long as you can find
 a command-line driven converter.
 
-The demo configuration files define three basic conversions, which use the
-application MEncoder (a part of the MPlayer project, http://www.mplayerhq.hu)
-to perform these three tasks:
+If you delete your configuration file and start YouTube Downloader in the
+GUI mode, it will generate a default configuration file with three basic
+conversions, which use the application MEncoder (a part of the MPlayer project, 
+http://www.mplayerhq.hu) to perform these three tasks:
 
 a) Change the video container to AVI. This function is very fast and doesn't
    change the quality of the source movie in any way, but unfortunately only

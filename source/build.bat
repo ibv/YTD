@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 rem --- Default settings ------------------------------------------------------
 set compiler=delphi
-set params=-GD
+set params=
 set debug=0
 set release=0
 set cli=1
@@ -11,6 +11,7 @@ set gui=1
 set xxx=1
 set fastmm=0
 set upx=0
+set map=0
 
 set exedir=..\Exe\
 set srcdir=
@@ -32,6 +33,8 @@ if /i "%~1"=="fastmm" set fastmm=1
 if /i "%~1"=="nofastmm" set nofastmm=0
 if /i "%~1"=="upx" set upx=1
 if /i "%~1"=="noupx" set upx=0
+if /i "%~1"=="map" set map=1
+if /i "%~1"=="nomap" set map=0
 if /i "%~1"=="release" set release=1
 if /i "%~1"=="norelease" set release=0
 if /i "%~1"=="fpc" set compiler=fpc
@@ -69,8 +72,9 @@ if "%debug%"=="1" (
 )
 if not "%cli%"=="1" set defs=%defs% -dNO_CLI
 if not "%gui%"=="1" set defs=%defs% -dNO_GUI
-if "%fastmm%"=="1" set defs=%defs% -dFASTMM
 if not "%xxx%"=="1" set defs=%defs% -dNO_XXX
+if "%fastmm%"=="1" set defs=%defs% -dFASTMM
+if "%map%"=="1" if "%compiler%"=="delphi" set params=%params% -GD
 
 rem --- Delete compiled units -------------------------------------------------
 del /q "%srcdir%Units\*.*"
@@ -79,7 +83,7 @@ rem --- Build YouTube Downloader ----------------------------------------------
 ren "%srcdir%ytd.cfg" ytd.cfg._
 ren "%srcdir%ytd.dof" ytd.dof._
 
-call :%compiler% "%srcdir%lib\FastMM\FastMM4.pas"
+if not "%compiler%"=="fpc" call :%compiler% "%srcdir%lib\FastMM\FastMM4.pas"
 if "%compver%"=="fpc" (
   call :%compiler% "%srcdir%lib\DxGetText\fpc\gnugettext.pas"
 ) else if "%compver%"=="d5" (
@@ -112,9 +116,15 @@ if "%debug%"=="1" (
   if exist "%exedir%FastMM_FullDebugMode.dll" del "%exedir%FastMM_FullDebugMode.dll"
 )
 
+if "%compiler%"=="fpc" (
+  if not exist "%exedir%pcrelib.dll" copy "%srcdir%lib\perlregex\pcrelib.dll" "%exedir%pcrelib.dll"
+) else (
+  if exist "%exedir%pcrelib.dll" del "%exedir%pcrelib.dll"
+)
+
 if "%upx%"=="1" (
   set upx=
-  upx --best --lzma --brute "%exedir%ytd.exe"
+  upx --best --lzma --brute --compress-icons=1 "%exedir%ytd.exe"
   set upx=1
 )
 goto konec

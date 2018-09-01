@@ -1,6 +1,55 @@
 CHANGELOG
 ---------
 
+  v0.65
+
+    * Novı poskytovatel: CD.cz.
+
+    * Novı poskytovatel: ThatVideoSite.com.
+
+    * Novı poskytovatel: WordPress.tv.
+
+    * Novı poskytovatel: Yikers.com.
+
+    * UStream.tv: Aktualizován název videa.
+
+    * Byla doplnìna alternativní verze grafického rozhraní, postavená na èistém
+      Windows API místo na Delphovském VCL. Chování obou je témìø stejné, s
+      vıjimkou pøípadnıch novıch chyb v novém rozhraní, ale API verze má 
+      nìkolik vıznamnıch vıhod:
+
+      - Je o mnoho kratší: Instalátor se zkrátil asi o 125 KB, samotná aplikace
+        pøed kompresí UPX o témìø 400 KB. To byl pro mì hlavní dùvod, proè se
+        do pøepisu pouštìt.
+
+      - Pokud máte knihovnu Common Controls ve verzi aspoò 6.0 (Windows XP ji
+        mají od vırobce, do starších systémù se dá doinstalovat), je odstranìno
+        blikání seznamu downloadù.
+
+      - Jde zkompilovat i FreePascalem, tzn. pokud si chcete program upravit 
+        a nemáte pøímo Delphi, nebudete ochuzeni o grafické prostøedí.
+
+      Naproti tomu má i dva nedostatky:
+
+      - Není zdaleka tak dobøe odladìné jako staré GUI. To je dané mnostvím
+        uivatelù a dobou pouívání a postupnì to bude opraveno.
+
+      - Z neznámıch dùvodù zatím nefunguje pod Delphi 2009, protoe listview
+        zobrazující seznam downloadù velmi rychle zahltí celou pamì. Kdyby
+        nìkdo pøišel na pøíèinu, velice by mì zajímala.
+
+      Pokud chcete nové GUI vypnout, staèí v souboru Source\YTD.inc smazat
+      "{$DEFINE GUI_WINAPI}" a program pøekompilovat.
+
+    * Soubory videí stahovanıch HTTP protokolem jsou nyní otevøeny ve sdíleném
+      reimu. Díky tomu je moné u v prùbìhu downloadu spustit pøehrávání
+      videa.
+
+    * V souvislosti s pøepisem GUI byla provádìna øada optimalizací, na délku
+      kódu i na jeho èistotu.
+
+
+
   v0.64
 
     * Novı poskytovatel: MTV.com.

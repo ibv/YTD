@@ -1,4 +1,4 @@
-﻿{*------------------------------------------------------------------------------
+{*------------------------------------------------------------------------------
   GNU gettext translation system for Delphi, Kylix, C++ Builder and others.
   All parts of the translation system are kept in this unit.
 
@@ -115,9 +115,13 @@ type
 // Main GNU gettext functions. See documentation for instructions on how to use them.
 function _(const szMsgId: MsgIdString): TranslatedUnicodeString;
 function gettext(const szMsgId: MsgIdString): TranslatedUnicodeString;
+function gettext_NoExtract(const szMsgId: MsgIdString): TranslatedUnicodeString;
+function gettext_NoOp(const szMsgId: MsgIdString): TranslatedUnicodeString;
 function dgettext(const szDomain: DomainString; const szMsgId: MsgIdString): TranslatedUnicodeString;
+function dgettext_NoExtract(const szDomain: DomainString; const szMsgId: MsgIdString): TranslatedUnicodeString;
 function dngettext(const szDomain: DomainString; const singular,plural: MsgIdString; Number:longint): TranslatedUnicodeString;
 function ngettext(const singular,plural: MsgIdString; Number:longint): TranslatedUnicodeString;
+function ngettext_NoExtract(const singular,plural: MsgIdString; Number:longint): TranslatedUnicodeString;
 procedure textdomain(const szDomain: DomainString);
 function getcurrenttextdomain: DomainString;
 procedure bindtextdomain(const szDomain: DomainString; const szDirectory: FilenameString);
@@ -167,10 +171,12 @@ const
   DefaultTextDomain = 'default';
 
 var
-  ExecutableFilename:FilenameString;    // This is set to paramstr(0) or the name of the DLL you are creating.
+  ExecutableFilename: FilenameString; // This is set to paramstr(0) or the name of the DLL you are creating.
 
 const
-  PreferExternal=false;       // Set to true, to prefer external *.mo over embedded translation
+  PreferExternal             = False;       // Set to true, to prefer external *.mo over embedded translation
+  UseMemoryMappedFiles       = True;        // Set to False, to use the mo-file as independent copy in memory (you can update the file while it is in use)
+  ReReadMoFileOnSameLanguage = False;       // Set to True, to reread mo-file if the current language is selected again
 
 const
   // Subversion source code version control version information
@@ -211,28 +217,29 @@ type
   TOnDebugLine = Procedure (Sender: TObject; const Line: String; var Discard: Boolean) of Object;  // Set Discard to false if output should still go to ordinary debug log
   TGetPluralForm=function (Number:Longint):Integer;
   TDebugLogger=procedure (line: ansistring) of object;
-  
+
 {*------------------------------------------------------------------------------
   Handles .mo files, in separate files or inside the exe file.
   Don't use this class. It's for internal use.
 -------------------------------------------------------------------------------}
-  TMoFile= 
+  TMoFile=
     class /// Threadsafe. Only constructor and destructor are writing to memory
     private
       doswap: boolean;
     public
       Users:Integer; /// Reference count. If it reaches zero, this object should be destroyed.
-      constructor Create (filename:FilenameString;Offset,Size:int64);
+      constructor Create (const filename: FilenameString;
+                          const Offset: int64; Size: int64;
+                          const xUseMemoryMappedFiles: Boolean);
       destructor Destroy; override;
       function gettext(const msgid: RawUtf8String;var found:boolean): RawUtf8String; // uses mo file and utf-8
       property isSwappedArchitecture:boolean read doswap;
     private
       N, O, T: Cardinal; /// Values defined at http://www.linuxselfhelp.com/gnu/gettext/html_chapter/gettext_6.html
       startindex,startstep:integer;
-      {$ifdef mswindows}
+      FUseMemoryMappedFiles: Boolean;
       mo: THandle;
       momapping: THandle;
-      {$endif}
       momemoryHandle:PAnsiChar;
       momemory: PAnsiChar;
       function autoswap32(i: cardinal): cardinal;
@@ -300,6 +307,7 @@ type
       {$endif}
       function gettext(const szMsgId: MsgIdString): TranslatedUnicodeString; overload; virtual;
       function gettext_NoExtract(const szMsgId: MsgIdString): TranslatedUnicodeString;
+      function gettext_NoOp(const szMsgId: MsgIdString): TranslatedUnicodeString;
       function ngettext(const singular,plural:MsgIdString;Number:longint):TranslatedUnicodeString; overload; virtual;
       function ngettext_NoExtract(const singular,plural:MsgIdString;Number:longint):TranslatedUnicodeString;
       function GetCurrentLanguage:LanguageString;
@@ -570,7 +578,26 @@ end;
 
 function gettext(const szMsgId: MsgIdString): TranslatedUnicodeString;
 begin
-  Result:=DefaultInstance.gettext(szMsgId);
+  Result := DefaultInstance.gettext(szMsgId);
+end;
+
+function gettext_NoExtract(const szMsgId: MsgIdString): TranslatedUnicodeString;
+begin
+  // This one is very useful for translating text in variables.
+  // This can sometimes be necessary, and by using this function,
+  // the source code scanner will not trigger warnings.
+  Result := gettext(szMsgId);
+end;
+
+function gettext_NoOp(const szMsgId: MsgIdString): TranslatedUnicodeString;
+begin
+  //*** With this function Strings can be added to the po-file without beeing
+  //    ResourceStrings (dxgettext will add the string and this function will
+  //    return it without a change)
+  //    see gettext manual
+  //      4.7 - Special Cases of Translatable Strings
+  //      http://www.gnu.org/software/hello/manual/gettext/Special-cases.html#Special-cases
+  Result := DefaultInstance.gettext_NoOp(szMsgId);
 end;
 
 {*------------------------------------------------------------------------------
@@ -597,6 +624,14 @@ begin
   Result:=DefaultInstance.dgettext(szDomain, szMsgId);
 end;
 
+function dgettext_NoExtract(const szDomain: DomainString; const szMsgId: MsgIdString): TranslatedUnicodeString;
+begin
+  // This one is very useful for translating text in variables.
+  // This can sometimes be necessary, and by using this function,
+  // the source code scanner will not trigger warnings.
+  Result := dgettext(szDomain, szMsgId);
+end;
+
 function dngettext(const szDomain: DomainString; const singular,plural: MsgIdString; Number:longint): TranslatedUnicodeString;
 begin
   Result:=DefaultInstance.dngettext(szDomain,singular,plural,Number);
@@ -605,6 +640,14 @@ end;
 function ngettext(const singular,plural: MsgIdString; Number:longint): TranslatedUnicodeString;
 begin
   Result:=DefaultInstance.ngettext(singular,plural,Number);
+end;
+
+function ngettext_NoExtract(const singular,plural: MsgIdString; Number:longint): TranslatedUnicodeString;
+begin
+  // This one is very useful for translating text in variables.
+  // This can sometimes be necessary, and by using this function,
+  // the source code scanner will not trigger warnings.
+  Result := ngettext(singular, plural, Number);
 end;
 
 procedure textdomain(const szDomain: Domainstring);
@@ -1424,6 +1467,17 @@ begin
   Result:=gettext (szMsgId);
 end;
 
+function TGnuGettextInstance.gettext_NoOp(const szMsgId: MsgIdString): TranslatedUnicodeString;
+begin
+  //*** With this function Strings can be added to the po-file without beeing
+  //    ResourceStrings (dxgettext will add the string and this function will
+  //    return it without a change)
+  //    see gettext manual
+  //      4.7 - Special Cases of Translatable Strings
+  //      http://www.gnu.org/software/hello/manual/gettext/Special-cases.html#Special-cases
+  Result := TranslatedUnicodeString(szMsgId);
+end;
+
 procedure TGnuGettextInstance.textdomain(const szDomain: DomainString);
 begin
   {$ifdef DXGETTEXTDEBUG}
@@ -2229,24 +2283,35 @@ begin
   DebugWriteln ('RetranslateComponent() was called for a component with name '+AnObject.Name+'.');
   {$endif}
   comp:=AnObject.FindComponent('GNUgettextMarker') as TGnuGettextComponentMarker;
-  if comp=nil then begin
+  if comp=nil then
+  begin
     {$ifdef DXGETTEXTDEBUG}
     DebugWriteln ('Retranslate was called on an object that has not been translated before. An Exception is being raised.');
     {$endif}
     raise EGGProgrammingError.Create ('Retranslate was called on an object that has not been translated before. Please use TranslateComponent() before RetranslateComponent().');
-  end else begin
-    if comp.LastLanguage<>curlang then begin
+  end
+  else
+  begin
+    //*** if param ReReadMoFileOnSameLanguage is set, use the ReTranslate
+    //    function nevertheless if the current language is the same like the
+    //    new (-> reread the current .mo-file from the file system).
+    if ReReadMoFileOnSameLanguage or
+       (comp.LastLanguage <> curlang) then
+    begin
       {$ifdef DXGETTEXTDEBUG}
       DebugWriteln ('The retranslator is being executed.');
       {$endif}
       comp.Retranslator.Execute;
-    end else begin
+    end
+    else
+    begin
       {$ifdef DXGETTEXTDEBUG}
       DebugWriteln ('The language has not changed. The retranslator is not executed.');
       {$endif}
     end;
   end;
   comp.LastLanguage:=curlang;
+
   {$ifdef DXGETTEXTDEBUG}
   DebugWriteln ('======================================================================');
   {$endif}
@@ -2611,7 +2676,7 @@ begin
     if MoFiles.Find(idxname, idx) then begin
       Result:=MoFiles.Objects[idx] as TMoFile;
     end else begin
-      Result:=TMoFile.Create (realfilename, Offset, Size);
+      Result:=TMoFile.Create (realfilename, Offset, Size, UseMemoryMappedFiles);
       MoFiles.AddObject(idxname, Result);
     end;
     Inc (Result.Users);
@@ -2879,45 +2944,55 @@ begin
     autoswap32(Result);
 end;
 
-constructor TMoFile.Create(filename: FilenameString; Offset,Size:int64);
+constructor TMoFile.Create(const filename: FilenameString;
+                           const Offset: int64; Size: int64;
+                           const xUseMemoryMappedFiles: Boolean);
 var
   i:cardinal;
   nn:integer;
-  {$ifdef linux}
   mofile:TFileStream;
-  {$endif}
 begin
   if sizeof(i) <> 4 then
     raise EGGProgrammingError.Create('TDomain in gnugettext is written for an architecture that has 32 bit integers.');
 
   {$ifdef mswindows}
-  // Map the mo file into memory and let the operating system decide how to cache
-  mo:=createfile (PChar(filename),GENERIC_READ,FILE_SHARE_READ,nil,OPEN_EXISTING,0,0);
-  if mo=INVALID_HANDLE_VALUE then
-    raise EGGIOError.Create ('Cannot open file '+filename);
-  momapping:=CreateFileMapping (mo, nil, PAGE_READONLY, 0, 0, nil);
-  if momapping=0 then
-    raise EGGIOError.Create ('Cannot create memory map on file '+filename);
-  momemoryHandle:=MapViewOfFile (momapping,FILE_MAP_READ,0,0,0);
-  if momemoryHandle=nil then begin
-    raise EGGIOError.Create ('Cannot map file '+filename+' into memory. Reason: '+GetLastWinError);
-  end;
-  momemory:=momemoryHandle+offset;
+  FUseMemoryMappedFiles := xUseMemoryMappedFiles;
   {$endif}
+
   {$ifdef linux}
-  // Read the whole file into memory
-  mofile:=TFileStream.Create (filename, fmOpenRead or fmShareDenyNone);
-  try
-    if size=0 then
-      size:=mofile.Size;
-    Getmem (momemoryHandle,size);
-    momemory:=momemoryHandle;
-    mofile.Seek(offset,soFromBeginning);
-    mofile.ReadBuffer(momemory^,size);
-  finally
-    FreeAndNil (mofile);
-  end;
+  FUseMemoryMappedFiles := False;
   {$endif}
+
+  if FUseMemoryMappedFiles then
+  begin
+    // Map the mo file into memory and let the operating system decide how to cache
+    mo:=createfile (PChar(filename),GENERIC_READ,FILE_SHARE_READ,nil,OPEN_EXISTING,0,0);
+    if mo=INVALID_HANDLE_VALUE then
+      raise EGGIOError.Create ('Cannot open file '+filename);
+    momapping:=CreateFileMapping (mo, nil, PAGE_READONLY, 0, 0, nil);
+    if momapping=0 then
+      raise EGGIOError.Create ('Cannot create memory map on file '+filename);
+    momemoryHandle:=MapViewOfFile (momapping,FILE_MAP_READ,0,0,0);
+    if momemoryHandle=nil then begin
+      raise EGGIOError.Create ('Cannot map file '+filename+' into memory. Reason: '+GetLastWinError);
+    end;
+    momemory:=momemoryHandle+offset;
+  end
+  else
+  begin
+    // Read the whole file into memory
+    mofile:=TFileStream.Create (filename, fmOpenRead or fmShareDenyNone);
+    try
+      if (size = 0) then
+        size := mofile.Size;
+      Getmem (momemoryHandle, size);
+      momemory := momemoryHandle;
+      mofile.Seek(offset, soFromBeginning);
+      mofile.ReadBuffer(momemory^, size);
+    finally
+      FreeAndNil(mofile);
+    end;
+  end;
 
   // Check the magic number
   doswap:=False;
@@ -2946,14 +3021,17 @@ end;
 
 destructor TMoFile.Destroy;
 begin
-  {$ifdef mswindows}
-  UnMapViewOfFile (momemoryHandle);
-  CloseHandle (momapping);
-  CloseHandle (mo);
-  {$endif}
-  {$ifdef linux}
-  FreeMem (momemoryHandle);
-  {$endif}
+  if FUseMemoryMappedFiles then
+  begin
+    UnMapViewOfFile (momemoryHandle);
+    CloseHandle (momapping);
+    CloseHandle (mo);
+  end
+  else
+  begin
+    FreeMem (momemoryHandle);
+  end;
+
   inherited;
 end;
 
@@ -3084,4 +3162,3 @@ finalization
   FreeAndNil (FileLocator);
 
 end.
-

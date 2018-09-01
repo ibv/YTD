@@ -145,8 +145,7 @@ end;
 
 function TDownloader_NBC.ReadMediaInfo(Http: THttpSend; const MovieID: string; out Title, SmilUrl: string): boolean;
 var AMFRequest, AMFResponse: TAMFPacket;
-    Item: TAMFItem;
-    ItemArr, Meta: TAMFCommonArray;
+    Error, VideoTitle, VideoSubtitle, Url: TAMFValue;
 begin
   Result := False;
   AMFRequest := TAMFPacket.Create;
@@ -155,36 +154,25 @@ begin
     // Note: I don't need to check types (or make sure pointers are not null)
     // because I use a pre-made packet which has all required properties. That
     // is not true while parsing response packets!
-    ItemArr := TAMFCommonArray(AMFRequest.Body[0].Content);
-    ItemArr.Items[0].Value := MovieID;
+    TAMFCommonArray(AMFRequest.Body[0].Content).Items[0].Value := MovieID;
     if DownloadAMF(Http, 'http://video.nbcuni.com/amfphp/gateway.php', AMFRequest, AMFResponse) then
       try
-        if Length(AMFResponse.Body) > 0 then
-          if (AMFResponse.Body[0].Content <> nil) and (AMFResponse.Body[0].Content is TAMFCommonArray) then
+        if AMFResponse.HasBody(0) then
+          if AMFResponse.Body[0].Content.FindValueByPath('error', Error) and (Error <> 'none') then
+            SetLastErrorMsg(Format(_(ERR_SERVER_ERROR), [string(Error)]))
+          else if not AMFResponse.Body[0].Content.FindValueByPath('metadata/title', VideoTitle, TAMFString) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+          else if not AMFResponse.Body[0].Content.FindValueByPath('clipurl', Url, TAMFString) then
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+          else
             begin
-            ItemArr := TAMFCommonArray(AMFResponse.Body[0].Content);
-            if (ItemArr <> nil) then
-              begin
-              Item := ItemArr.NamedItems['error'];
-              if (Item <> nil) and (Item.Value <> 'none') then
-                SetLastErrorMsg(Format(_(ERR_SERVER_ERROR), [string(Item.Value)]))
-              else
-                begin
-                Meta := TAMFCommonArray(ItemArr.NamedItems['metadata']);
-                if Meta = nil then
-                  SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
-                else if Meta.NamedItems['title'] = nil then
-                  SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-                else if ItemArr.NamedItems['clipurl'] = nil then
-                  SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-                else
-                  begin
-                  Title := Meta.NamedItems['title'].Value;
-                  SmilUrl := 'http://video.nbcuni.com/' + string(ItemArr.NamedItems['clipurl'].Value);
-                  Result := True;
-                  end;
-                end;
-              end;
+            AMFResponse.Body[0].Content.FindValueByPath('metadata/subtitle', VideoSubtitle, TAMFString);
+            if VideoSubtitle <> '' then
+              Title := Format('%s (%s)', [string(VideoTitle), string(VideoSubtitle)])
+            else
+              Title := string(VideoTitle);
+            SmilUrl := 'http://video.nbcuni.com/' + string(Url);
+            Result := True;
             end;
       finally
         AMFResponse.Free;

@@ -362,7 +362,7 @@ end;
 procedure TDownloadList.Stop(Item: TDownloadListItem);
 var i: integer;
 begin
-  for i := 0 to Pred(DownloadingCount) do
+  for i := Pred(DownloadingCount) downto 0 do
     if DownloadingItems[i] = Item then
       begin
       DownloadingList.Delete(i);

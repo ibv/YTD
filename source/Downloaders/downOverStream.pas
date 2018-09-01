@@ -124,7 +124,7 @@ end;
 {$IFDEF SUBTITLES}
 function TDownloader_OverStream.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var AMFRequest, AMFResponse: TAMFPacket;
-    Res, Oml: TAMFItem;
+    Subtitles: TAMFValue;
 begin
   Result := False;
   AMFRequest := TAMFPacket.Create;
@@ -133,20 +133,12 @@ begin
     TAMFCommonArray(AMFRequest.Body[0].Content).Items[0].Value := MovieID;
     if DownloadAMF(Http, 'http://www.overstream.net/services/gateway.php', AMFRequest, AMFResponse) then
       try
-        if Length(AMFResponse.Body) > 0 then
-          if (AMFResponse.Body[0].Content <> nil) and (AMFResponse.Body[0].Content is TAMFCommonArray) then
+        if AMFResponse.HasBody(0) then
+          if AMFResponse.Body[0].Content.FindValueByPath('res/oml', Subtitles) then
             begin
-            Res := TAMFCommonArray(AMFResponse.Body[0].Content).NamedItems['res'];
-            if (Res <> nil) and (Res is TAMFCommonArray) then
-              begin
-              Oml := TAMFCommonArray(Res).NamedItems['oml'];
-              if Oml <> nil then
-                begin
-                fSubtitles := AnsiString(StringToUtf8(Oml.Value));
-                fSubtitlesExt := '.oml';
-                Result := True;
-                end;
-              end;
+            fSubtitles := AnsiString(StringToUtf8(string(Subtitles)));
+            fSubtitlesExt := '.oml';
+            Result := True;
             end;
       finally
         AMFResponse.Free;

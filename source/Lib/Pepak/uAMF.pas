@@ -1,43 +1,48 @@
 unit uAMF;
 {.DEFINE DEBUG}
 {.DEFINE NONSEEKABLESTREAMS}
-{$DEFINE MINIMIZE_SIZE}
+{$DEFINE MINIMIZESIZE}
+{.DEFINE VARIANTS}
 
 {$INCLUDE 'jedi.inc'}
 
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
+  SysUtils, Classes,
+  {$IFDEF VARIANTS} {$IFDEF DELPHI6_UP} Variants, {$ENDIF} {$ENDIF}
   uCompatibility, uStringUtils;
+
+{$IFNDEF VARIANTS}
+const
+  AMFNullValue = '';
+{$ENDIF}
 
 type
   TAMFItem = class;
+  TAMFItemClass = class of TAMFItem;
 
   EAMFError = class(Exception);
+
+  TAMFValue = {$IFDEF VARIANTS} Variant {$ELSE} string {$ENDIF} ;
 
   TAMFItem = class
     private
     protected
-      function GetValue: Variant; virtual; abstract;
-      procedure SetValue(const AValue: Variant); virtual; abstract;
-      function DataType: byte; {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
-      procedure LoadFromStream(Stream: TStream); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
+      function GetValue: TAMFValue; virtual;
+      procedure SetValue(const AValue: TAMFValue); virtual;
+      function DataType: byte; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
+      procedure LoadFromStream(Stream: TStream); {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
     public
-      class function ReadInt16(Stream: TStream): integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class procedure WriteInt16(Stream: TStream; const AValue: integer); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class function ReadInt32(Stream: TStream): LongWord; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class procedure WriteInt32(Stream: TStream; const AValue: LongWord); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class function ReadUtf(Stream: TStream): WideString; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class procedure WriteUtf(Stream: TStream; const AValue: WideString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class function ReadLongUtf(Stream: TStream): WideString; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      class procedure WriteLongUtf(Stream: TStream; const AValue: WideString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
     public
-      class function CreateFromStream(Stream: TStream): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      class function CreateFromStream(Stream: TStream): TAMFItem; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       constructor Create; overload; virtual;
       destructor Destroy; override;
-      procedure SaveToStream(Stream: TStream); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      property Value: Variant read GetValue write SetValue;
+      procedure SaveToStream(Stream: TStream); {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function FindByPath(const APath: WideString; ItemType: TAMFItemClass = nil): TAMFItem; virtual;
+      function FindValueByPath(const APath: WideString; out Value: TAMFValue; ItemType: TAMFItemClass = nil): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function SetValueByPath(const APath: WideString; const Value: TAMFValue; ItemType: TAMFItemClass = nil): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      property Value: TAMFValue read GetValue write SetValue;
     end;
 
   TAMFCommonArray = class(TAMFItem)
@@ -45,28 +50,27 @@ type
       fList: TStringList;
       fOwnsItems: boolean;
     protected
-      function GetValue: Variant; override;
-      procedure SetValue(const AValue: Variant); override;
-      function GetCount: integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      function GetItems(Index: integer): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SetItems(Index: integer; const AValue: TAMFItem); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      function GetNames(Index: integer): WideString; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SetNames(Index: integer; const AValue: WideString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      function GetNamedItems(const Index: WideString): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SetNamedItems(const Index: WideString; const AValue: TAMFItem); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SaveHeaderToStream(Stream: TStream); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      procedure SaveItemNameToStream(Stream: TStream; Index: integer); {$IFDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      procedure SaveItemValueToStream(Stream: TStream; Index: integer); {$IFNDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      procedure SaveFooterToStream(Stream: TStream); {$IFNDEF MINIMIZE_SIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SetValue(const AValue: TAMFValue); override;
+      function GetCount: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetItems(Index: integer): TAMFItem; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetItems(Index: integer; const AValue: TAMFItem); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetNames(Index: integer): WideString; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetNames(Index: integer; const AValue: WideString); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetNamedItems(const Index: WideString): TAMFItem; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetNamedItems(const Index: WideString; const AValue: TAMFItem); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SaveHeaderToStream(Stream: TStream); {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SaveItemNameToStream(Stream: TStream; Index: integer); {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SaveItemValueToStream(Stream: TStream; Index: integer); {$IFNDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure SaveFooterToStream(Stream: TStream); {$IFNDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       property List: TStringList read fList;
     public
       constructor Create; override;
       destructor Destroy; override;
       procedure SaveToStream(Stream: TStream); override;
-      procedure Clear; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      function Add(const AName: WideString; AItem: TAMFItem): integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      function Find(const AName: WideString): integer; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      function FindByPath(const APath: WideString): TAMFItem; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure Clear; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Add(const AName: WideString; AItem: TAMFItem): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Find(const AName: WideString): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function FindByPath(const APath: WideString; ItemType: TAMFItemClass = nil): TAMFItem; override;
       property OwnsItems: boolean read fOwnsItems write fOwnsItems;
       property Count: integer read GetCount;
       property Items[Index: integer]: TAMFItem read GetItems write SetItems;
@@ -78,11 +82,11 @@ type
     private
       fNative: Double;
     protected
-      function GetValue: Variant; override;
-      procedure SetValue(const AValue: Variant); override;
+      function GetValue: TAMFValue; override;
+      procedure SetValue(const AValue: TAMFValue); override;
       function DataType: byte; override;
       procedure LoadFromStream(Stream: TStream); override;
-      function Swap(V: Double): Double; {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      function Swap(V: Double): Double; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create; override;
       constructor Create(const AValue: Double); overload; virtual;
@@ -94,8 +98,8 @@ type
     private
       fNative: Boolean;
     protected
-      function GetValue: Variant; override;
-      procedure SetValue(const AValue: Variant); override;
+      function GetValue: TAMFValue; override;
+      procedure SetValue(const AValue: TAMFValue); override;
       function DataType: byte; override;
       procedure LoadFromStream(Stream: TStream); override;
     public
@@ -111,8 +115,8 @@ type
       fLong: boolean;
       procedure SetNative(const AValue: WideString); 
     protected
-      function GetValue: Variant; override;
-      procedure SetValue(const AValue: Variant); override;
+      function GetValue: TAMFValue; override;
+      procedure SetValue(const AValue: TAMFValue); override;
       function DataType: byte; override;
       procedure LoadFromStream(Stream: TStream); override;
       property Long: boolean read fLong;
@@ -134,8 +138,6 @@ type
   TAMFNull = class(TAMFItem)
     private
     protected
-      function GetValue: Variant; override;
-      procedure SetValue(const AValue: Variant); override;
       function DataType: byte; override;
       procedure LoadFromStream(Stream: TStream); override;
     public
@@ -239,12 +241,13 @@ type
     public
       constructor Create; virtual;
       destructor Destroy; override;
-      procedure LoadFromStream(Stream: TStream); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SaveToStream(Stream: TStream); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure LoadFromFile(const FileName: string); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SaveToFile(const FileName: string); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure LoadFromString(const Data: AnsiString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
-      procedure SaveToString(out Data: AnsiString); {$IFNDEF MINIMIZE_SIZE} virtual; {$ENDIF}
+      procedure LoadFromStream(Stream: TStream); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SaveToStream(Stream: TStream); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure LoadFromFile(const FileName: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SaveToFile(const FileName: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure LoadFromString(const Data: AnsiString); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SaveToString(out Data: AnsiString); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function HasBody(BodyIndex: integer = -1): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property Version: byte read fVersion write fVersion;
       property Flags: byte read fFlags write fFlags;
       property Header: TAMFPacketHeaderArray read fHeader write fHeader;
@@ -255,6 +258,15 @@ type
 procedure AMFItemDump(const Name: WideString; Item: TAMFItem; const Indent: WideString = '');
 procedure AMFPacketDump(const Name: WideString; Packet: TAMFPacket; const Indent: WideString = '');
 {$ENDIF}
+
+function AMFReadInt16(Stream: TStream): integer;
+procedure AMFWriteInt16(Stream: TStream; const AValue: integer);
+function AMFReadInt32(Stream: TStream): LongWord;
+procedure AMFWriteInt32(Stream: TStream; const AValue: LongWord);
+function AMFReadUtf(Stream: TStream): WideString;
+procedure AMFWriteUtf(Stream: TStream; const AValue: WideString);
+function AMFReadLongUtf(Stream: TStream): WideString;
+procedure AMFWriteLongUtf(Stream: TStream; const AValue: WideString);
 
 implementation
 
@@ -293,6 +305,88 @@ const
   AMF3_XML = 11;
   AMF3_BYTE_ARRAY = 12;
 
+function AMFReadInt16(Stream: TStream): integer;
+var V: array[0..1] of byte;
+begin
+  Stream.ReadBuffer(V, Length(V));
+  Result := (V[0] shl 8) or (V[1]);
+end;
+
+procedure AMFWriteInt16(Stream: TStream; const AValue: integer);
+var V: array[0..1] of byte;
+begin
+  if (AValue < 0) or (AValue > $ffff) then
+    Raise EAMFError.Create('Value out of bounds.');
+  V[0] := (AValue shr 8) and $ff;
+  V[1] := AValue and $ff;
+  Stream.WriteBuffer(V, Length(V));
+end;
+
+function AMFReadInt32(Stream: TStream): LongWord;
+var V: array[0..3] of byte;
+begin
+  Stream.ReadBuffer(V, Length(V));
+  Result := (V[0] shl 24) or (V[1] shl 16) or (V[2] shl 8) or (V[3]);
+end;
+
+procedure AMFWriteInt32(Stream: TStream; const AValue: LongWord);
+var V: array[0..3] of byte;
+begin
+  V[0] := (AValue shr 24) and $ff;
+  V[1] := (AValue shr 16) and $ff;
+  V[2] := (AValue shr 8) and $ff;
+  V[3] := AValue and $ff;
+  Stream.WriteBuffer(V, Length(V));
+end;
+
+function AMFReadUtf(Stream: TStream): WideString;
+var n: integer;
+    V: Utf8String;
+begin
+  n := AMFReadInt16(Stream);
+  if n <= 0 then
+    Result := ''
+  else
+    begin
+    SetLength(V, n);
+    Stream.ReadBuffer(V[1], n);
+    Result := Utf8ToWide(V);
+    end;
+end;
+
+procedure AMFWriteUtf(Stream: TStream; const AValue: WideString);
+var V: Utf8String;
+begin
+  V := WideToUtf8(AValue);
+  AMFWriteInt16(Stream, Length(V));
+  if V <> '' then
+    Stream.WriteBuffer(V[1], Length(V));
+end;
+
+function AMFReadLongUtf(Stream: TStream): WideString;
+var n: integer;
+    V: Utf8String;
+begin
+  n := AMFReadInt32(Stream);
+  if n <= 0 then
+    Result := ''
+  else
+    begin
+    SetLength(V, n);
+    Stream.ReadBuffer(V[1], n);
+    Result := Utf8ToWide(V);
+    end;
+end;
+
+procedure AMFWriteLongUtf(Stream: TStream; const AValue: WideString);
+var V: Utf8String;
+begin
+  V := WideToUtf8(AValue);
+  AMFWriteInt32(Stream, Length(V));
+  if V <> '' then
+    Stream.WriteBuffer(V[1], Length(V));
+end;
+
 {$IFDEF DEBUG}
 procedure AMFCommonArrayDump(const Name: WideString; Item: TAMFCommonArray; const Indent: WideString = '');
 var i: integer;
@@ -317,7 +411,7 @@ begin
     AMFCommonArrayDump(Name, TAMFCommonArray(Item), Indent)
   else
     begin
-    if Item.Value = null then
+    if Item.Value = TAMFNullValue then
       s := ''
     else
       s := Item.Value;
@@ -441,6 +535,35 @@ begin
   inherited;
 end;
 
+function TAMFItem.FindByPath(const APath: WideString; ItemType: TAMFItemClass): TAMFItem;
+begin
+  Result := nil;
+  if APath = '' then
+    if (ItemType = nil) or (Self is ItemType) then
+      Result := Self;
+end;
+
+function TAMFItem.FindValueByPath(const APath: WideString; out Value: TAMFValue; ItemType: TAMFItemClass): boolean;
+var Item: TAMFItem;
+begin
+  Item := FindByPath(APath, ItemType);
+  if Item = nil then
+    begin
+    Value := {$IFDEF VARIANTS} null {$ELSE} AMFNullValue {$ENDIF} ;
+    Result := False;
+    end
+  else
+    begin
+    Value := Item.Value;
+    Result := True;
+    end;
+end;
+
+function TAMFItem.GetValue: TAMFValue;
+begin
+  Result := AMFNullValue;
+end;
+
 procedure TAMFItem.SaveToStream(Stream: TStream);
 var DT: byte;
 begin
@@ -448,86 +571,21 @@ begin
   Stream.WriteBuffer(DT, Sizeof(DT));
 end;
 
-class function TAMFItem.ReadInt16(Stream: TStream): integer;
-var V: array[0..1] of byte;
+procedure TAMFItem.SetValue(const AValue: TAMFValue);
 begin
-  Stream.ReadBuffer(V, Length(V));
-  Result := (V[0] shl 8) or (V[1]);
 end;
 
-class procedure TAMFItem.WriteInt16(Stream: TStream; const AValue: integer);
-var V: array[0..1] of byte;
+function TAMFItem.SetValueByPath(const APath: WideString; const Value: TAMFValue; ItemType: TAMFItemClass): boolean;
+var Item: TAMFItem;
 begin
-  if (AValue < 0) or (AValue > $ffff) then
-    Raise EAMFError.Create('Value out of bounds.');
-  V[0] := (AValue shr 8) and $ff;
-  V[1] := AValue and $ff;
-  Stream.WriteBuffer(V, Length(V));
-end;
-
-class function TAMFItem.ReadInt32(Stream: TStream): LongWord;
-var V: array[0..3] of byte;
-begin
-  Stream.ReadBuffer(V, Length(V));
-  Result := (V[0] shl 24) or (V[1] shl 16) or (V[2] shl 8) or (V[3]);
-end;
-
-class procedure TAMFItem.WriteInt32(Stream: TStream; const AValue: LongWord);
-var V: array[0..3] of byte;
-begin
-  V[0] := (AValue shr 24) and $ff;
-  V[1] := (AValue shr 16) and $ff;
-  V[2] := (AValue shr 8) and $ff;
-  V[3] := AValue and $ff;
-  Stream.WriteBuffer(V, Length(V));
-end;
-
-class function TAMFItem.ReadUtf(Stream: TStream): WideString;
-var n: integer;
-    V: Utf8String;
-begin
-  n := ReadInt16(Stream);
-  if n <= 0 then
-    Result := ''
+  Item := FindByPath(APath, ItemType);
+  if Item = nil then
+    Result := False
   else
     begin
-    SetLength(V, n);
-    Stream.ReadBuffer(V[1], n);
-    Result := Utf8ToWide(V);
+    Item.Value := Value;
+    Result := True;
     end;
-end;
-
-class procedure TAMFItem.WriteUtf(Stream: TStream; const AValue: WideString);
-var V: Utf8String;
-begin
-  V := WideToUtf8(AValue);
-  WriteInt16(Stream, Length(V));
-  if V <> '' then
-    Stream.WriteBuffer(V[1], Length(V));
-end;
-
-class function TAMFItem.ReadLongUtf(Stream: TStream): WideString;
-var n: integer;
-    V: Utf8String;
-begin
-  n := ReadInt32(Stream);
-  if n <= 0 then
-    Result := ''
-  else
-    begin
-    SetLength(V, n);
-    Stream.ReadBuffer(V[1], n);
-    Result := Utf8ToWide(V);
-    end;
-end;
-
-class procedure TAMFItem.WriteLongUtf(Stream: TStream; const AValue: WideString);
-var V: Utf8String;
-begin
-  V := WideToUtf8(AValue);
-  WriteInt32(Stream, Length(V));
-  if V <> '' then
-    Stream.WriteBuffer(V[1], Length(V));
 end;
 
 { TAMFNumber }
@@ -549,9 +607,9 @@ begin
   Result := AMF_NUMBER;
 end;
 
-function TAMFNumber.GetValue: Variant;
+function TAMFNumber.GetValue: TAMFValue;
 begin
-  Result := Native;
+  Result := {$IFNDEF VARIANTS} FloatToStr {$ENDIF} (Native);
 end;
 
 procedure TAMFNumber.LoadFromStream(Stream: TStream);
@@ -569,9 +627,9 @@ begin
   Stream.WriteBuffer(V, Sizeof(V));
 end;
 
-procedure TAMFNumber.SetValue(const AValue: Variant);
+procedure TAMFNumber.SetValue(const AValue: TAMFValue);
 begin
-  Native := AValue;
+  Native := {$IFNDEF VARIANTS} StrToFloat {$ENDIF} (AValue);
 end;
 
 function TAMFNumber.Swap(V: Double): Double;
@@ -608,9 +666,9 @@ begin
   Result := AMF_BOOLEAN;
 end;
 
-function TAMFBoolean.GetValue: Variant;
+function TAMFBoolean.GetValue: TAMFValue;
 begin
-  Result := Native;
+  Result := {$IFNDEF VARIANTS} IntToStr(Integer(Native)) {$ELSE} Native {$ENDIF} ;
 end;
 
 procedure TAMFBoolean.LoadFromStream(Stream: TStream);
@@ -631,9 +689,9 @@ begin
   Stream.WriteBuffer(V, Sizeof(V));
 end;
 
-procedure TAMFBoolean.SetValue(const AValue: Variant);
+procedure TAMFBoolean.SetValue(const AValue: TAMFValue);
 begin
-  Native := AValue;
+  Native := {$IFNDEF VARIANTS} StrToIntDef(AValue, 0) <> 0 {$ELSE} AValue {$ENDIF} ;
 end;
 
 { TAMFString }
@@ -658,23 +716,23 @@ begin
     Result := AMF_STRING;
 end;
 
-function TAMFString.GetValue: Variant;
+function TAMFString.GetValue: TAMFValue;
 begin
   Result := Native;
 end;
 
 procedure TAMFString.LoadFromStream(Stream: TStream);
 begin
-  Native := ReadUtf(Stream);
+  Native := AMFReadUtf(Stream);
 end;
 
 procedure TAMFString.SaveToStream(Stream: TStream);
 begin
   inherited;
   if Long then
-    WriteLongUtf(Stream, Native)
+    AMFWriteLongUtf(Stream, Native)
   else
-    WriteUtf(Stream, Native);
+    AMFWriteUtf(Stream, Native);
 end;
 
 procedure TAMFString.SetNative(const AValue: WideString);
@@ -683,7 +741,7 @@ begin
   fLong := Length(WideToUtf8(AValue)) >= $10000;
 end;
 
-procedure TAMFString.SetValue(const AValue: Variant);
+procedure TAMFString.SetValue(const AValue: TAMFValue);
 begin
   Native := AValue;
 end;
@@ -736,48 +794,34 @@ begin
   {$ENDIF}
 end;
 
-function TAMFCommonArray.FindByPath(const APath: WideString): TAMFItem;
-var Item: TAMFItem;
-    Path, s: WideString;
+function TAMFCommonArray.FindByPath(const APath: WideString; ItemType: TAMFItemClass): TAMFItem;
+var Path, NextItem, NextPath: WideString;
     i: integer;
-    Found: boolean;
 begin
-  Result := nil;
-  Item := Self;
   Path := APath;
-  Found := True;
-  while Found and (Path <> '') and (Item is TAMFCommonArray)do
+  while (Path <> '') and (Path[1] = '/') do
+    System.Delete(Path, 1, 1);
+  if Path = '' then
+    Result := inherited FindByPath(Path, ItemType)
+  else
     begin
-    if Path[1] = '/' then
-      System.Delete(Path, 1, 1)
+    i := Pos('/', Path);
+    if i > 0 then
+      begin
+      NextItem := Copy(Path, 1, Pred(i));
+      NextPath := Copy(Path, Succ(i), MaxInt);
+      end
     else
       begin
-      i := Pos('/', Path);
-      if i <= 0 then
-        begin
-        s := Path;
-        Path := '';
-        end
-      else
-        begin
-        s := Copy(Path, 1, Pred(i));
-        System.Delete(Path, 1, i);
-        end;
-      Found := False;
-      if s = '' then
-        Found := True
-      else
-        for i := 0 to Pred(TAMFCommonArray(Item).Count) do
-          if TAMFCommonArray(Item).Names[i] = s then
-            begin
-            Item := TAMFCommonArray(Item).Items[i];
-            Found := True;
-            Break;
-            end;
+      NextItem := Path;
+      NextPath := '';
       end;
+    i := Find(NextItem);
+    if i >= 0 then
+      Result := Items[i].FindByPath(NextPath, ItemType)
+    else
+      Result := nil;
     end;
-  if Found then
-    Result := Item;
 end;
 
 function TAMFCommonArray.GetCount: integer;
@@ -809,15 +853,10 @@ begin
   {$ENDIF}
 end;
 
-function TAMFCommonArray.GetValue: Variant;
-begin
-  Result := null;
-end;
-
 procedure TAMFCommonArray.SaveFooterToStream(Stream: TStream);
 var Obj: TAMFObjectEnd;
 begin
-  WriteUtf(Stream, '');
+  AMFWriteUtf(Stream, '');
   Obj := TAMFObjectEnd.Create;
   try
     Obj.SaveToStream(Stream);
@@ -833,7 +872,7 @@ end;
 
 procedure TAMFCommonArray.SaveItemNameToStream(Stream: TStream; Index: integer);
 begin
-  WriteUtf(Stream, Names[Index]);
+  AMFWriteUtf(Stream, Names[Index]);
 end;
 
 procedure TAMFCommonArray.SaveItemValueToStream(Stream: TStream; Index: integer);
@@ -880,7 +919,7 @@ begin
   {$ENDIF}
 end;
 
-procedure TAMFCommonArray.SetValue(const AValue: Variant);
+procedure TAMFCommonArray.SetValue(const AValue: TAMFValue);
 begin
   Clear;
 end;
@@ -899,7 +938,7 @@ begin
   Clear;
   OwnsItems := True;
   repeat
-    VName := ReadUtf(Stream);
+    VName := AMFReadUtf(Stream);
     VObj := CreateFromStream(Stream);
     if not (VObj is TAMFObjectEnd) then
       Add(VName, VObj);
@@ -919,11 +958,6 @@ begin
   Result := AMF_NULL;
 end;
 
-function TAMFNull.GetValue: Variant;
-begin
-  Result := null;
-end;
-
 procedure TAMFNull.LoadFromStream(Stream: TStream);
 begin
 end;
@@ -931,10 +965,6 @@ end;
 procedure TAMFNull.SaveToStream(Stream: TStream);
 begin
   inherited;
-end;
-
-procedure TAMFNull.SetValue(const AValue: Variant);
-begin
 end;
 
 { TAMFUndefined }
@@ -953,14 +983,14 @@ end;
 
 procedure TAMFEcmaArray.LoadFromStream(Stream: TStream);
 begin
-  ReadInt32(Stream); // Discard the length of array
+  AMFReadInt32(Stream); // Discard the length of array
   inherited;
 end;
 
 procedure TAMFEcmaArray.SaveHeaderToStream(Stream: TStream);
 begin
   inherited;
-  WriteInt32(Stream, Count);
+  AMFWriteInt32(Stream, Count);
 end;
 
 { TAMFObjectEnd }
@@ -982,7 +1012,7 @@ var i, n: integer;
 begin
   Clear;
   OwnsItems := True;
-  n := ReadInt32(Stream);
+  n := AMFReadInt32(Stream);
   i := 0;
   while n > 0 do
     begin
@@ -999,7 +1029,7 @@ end;
 procedure TAMFStrictArray.SaveHeaderToStream(Stream: TStream);
 begin
   inherited;
-  WriteInt32(Stream, Count);
+  AMFWriteInt32(Stream, Count);
 end;
 
 procedure TAMFStrictArray.SaveItemNameToStream(Stream: TStream; Index: integer);
@@ -1022,13 +1052,13 @@ end;
 procedure TAMFDate.LoadFromStream(Stream: TStream);
 begin
   inherited;
-  TimeZone := ReadInt16(Stream);
+  TimeZone := AMFReadInt16(Stream);
 end;
 
 procedure TAMFDate.SaveToStream(Stream: TStream);
 begin
   inherited;
-  WriteInt16(Stream, TimeZone);
+  AMFWriteInt16(Stream, TimeZone);
 end;
 
 { TAMFLongString }
@@ -1036,7 +1066,7 @@ end;
 procedure TAMFLongString.LoadFromStream(Stream: TStream);
 begin
   inherited;
-  Native := ReadLongUtf(Stream);
+  Native := AMFReadLongUtf(Stream);
 end;
 
 { TAMFTypedObject }
@@ -1048,14 +1078,14 @@ end;
 
 procedure TAMFTypedObject.LoadFromStream(Stream: TStream);
 begin
-  TypeIdentifier := ReadUtf(Stream);
+  TypeIdentifier := AMFReadUtf(Stream);
   inherited;
 end;
 
 procedure TAMFTypedObject.SaveHeaderToStream(Stream: TStream);
 begin
   inherited;
-  WriteUtf(Stream, TypeIdentifier);
+  AMFWriteUtf(Stream, TypeIdentifier);
 end;
 
 { TAMFXML }
@@ -1079,6 +1109,19 @@ begin
   inherited;
 end;
 
+function TAMFPacket.HasBody(BodyIndex: integer): boolean;
+var n: integer;
+begin
+  Result := False;
+  n := Length(Body);
+  if n > 0 then
+    if BodyIndex < 0 then
+      Result := True
+    else if n > BodyIndex then
+      if Body[BodyIndex].Content <> nil then
+        Result := True;
+end;
+
 procedure TAMFPacket.LoadFromFile(const FileName: string);
 var Stream: TFileStream;
 begin
@@ -1100,24 +1143,24 @@ begin
   Stream.ReadBuffer(B2, Sizeof(B2));
   Version := B1;
   Flags := B2;
-  n := TAMFItem.ReadInt16(Stream);
+  n := AMFReadInt16(Stream);
   SetLength(fHeader, n);
   for i := 0 to Pred(n) do
     begin
-    Hdr.Name := TAMFItem.ReadUtf(Stream);
+    Hdr.Name := AMFReadUtf(Stream);
     Stream.ReadBuffer(B1, Sizeof(B1));
     Hdr.Required := B1 <> 0;
-    TAMFItem.ReadInt32(Stream); // Ignore length
+    AMFReadInt32(Stream); // Ignore length
     Hdr.Content := TAMFItem.CreateFromStream(Stream);
     Header[i] := Hdr;
     end;
-  n := TAMFItem.ReadInt16(Stream);
+  n := AMFReadInt16(Stream);
   SetLength(fBody, n);
   for i := 0 to Pred(n) do
     begin
-    Bdy.Target := TAMFItem.ReadUtf(Stream);
-    Bdy.Response := TAMFItem.ReadUtf(Stream);
-    TAMFItem.ReadInt32(Stream); // Ignore length
+    Bdy.Target := AMFReadUtf(Stream);
+    Bdy.Response := AMFReadUtf(Stream);
+    AMFReadInt32(Stream); // Ignore length
     Bdy.Content := TAMFItem.CreateFromStream(Stream);
     Body[i] := Bdy;
     end;
@@ -1160,10 +1203,10 @@ begin
   B2 := Flags;
   Stream.WriteBuffer(B1, Sizeof(B1));
   Stream.WriteBuffer(B2, Sizeof(B2));
-  TAMFItem.WriteInt16(Stream, Length(Header));
+  AMFWriteInt16(Stream, Length(Header));
   for i := 0 to Pred(Length(Header)) do
     begin
-    TAMFItem.WriteUtf(Stream, Header[i].Name);
+    AMFWriteUtf(Stream, Header[i].Name);
     if Header[i].Required then
       B1 := 1
     else
@@ -1172,7 +1215,7 @@ begin
     {$IFNDEF NONSEEKABLESTREAMS}
     LengthPosition := Stream.Position;
     {$ENDIF}
-    TAMFItem.WriteInt32(Stream, 0); // Invalid value
+    AMFWriteInt32(Stream, 0); // Invalid value
     {$IFNDEF NONSEEKABLESTREAMS}
     BodyStartPosition := Stream.Position;
     {$ENDIF}
@@ -1180,19 +1223,19 @@ begin
     {$IFNDEF NONSEEKABLESTREAMS}
     BodyEndPosition := Stream.Position;
     Stream.Position := LengthPosition;
-    TAMFItem.WriteInt32(Stream, BodyEndPosition - BodyStartPosition);
+    AMFWriteInt32(Stream, BodyEndPosition - BodyStartPosition);
     Stream.Position := BodyEndPosition;
     {$ENDIF}
     end;
-  TAMFItem.WriteInt16(Stream, Length(Body));
+  AMFWriteInt16(Stream, Length(Body));
   for i := 0 to Pred(Length(Body)) do
     begin
-    TAMFItem.WriteUtf(Stream, Body[i].Target);
-    TAMFItem.WriteUtf(Stream, Body[i].Response);
+    AMFWriteUtf(Stream, Body[i].Target);
+    AMFWriteUtf(Stream, Body[i].Response);
     {$IFNDEF NONSEEKABLESTREAMS}
     LengthPosition := Stream.Position;
     {$ENDIF}
-    TAMFItem.WriteInt32(Stream, 0); // Invalid value
+    AMFWriteInt32(Stream, 0); // Invalid value
     {$IFNDEF NONSEEKABLESTREAMS}
     BodyStartPosition := Stream.Position;
     {$ENDIF}
@@ -1200,7 +1243,7 @@ begin
     {$IFNDEF NONSEEKABLESTREAMS}
     BodyEndPosition := Stream.Position;
     Stream.Position := LengthPosition;
-    TAMFItem.WriteInt32(Stream, BodyEndPosition - BodyStartPosition);
+    AMFWriteInt32(Stream, BodyEndPosition - BodyStartPosition);
     Stream.Position := BodyEndPosition;
     {$ENDIF}
     end;

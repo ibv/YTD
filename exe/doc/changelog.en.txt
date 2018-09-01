@@ -1,6 +1,56 @@
 CHANGELOG
 ---------
 
+  v0.65
+
+    * New provider: CD.cz.
+
+    * New provider: ThatVideoSite.com.
+
+    * New provider: WordPress.tv.
+
+    * New provider: Yikers.com.
+
+    * UStream.tv: Updated video title detection.
+
+    * Switched to a new version of GUI, based entirely on the Windows API 
+      rather than Delphi's native VCL. Both behave in almost exactly the same
+      way, aside from the new bugs, but there are several advantages to the
+      API version:
+
+      - It's code is a lot shorter. The distribution archive was reduced by
+        about 125 KB, the application itself (before compressing by UPX) by
+        almost 400 KB. This saving was my major reason for attempting the
+        rewrite.
+
+      - If you have the Common Controls library in version 6.0 or higher (which
+        is native to Windows XP, and can be downloaded with the older systems),
+        the downloads list won't flicker anymore.
+
+      - It is compatible with FreePascal. In other words, if you want to change
+        something in the program and want to keep the GUI, you can do it even
+        using only free tools.
+
+      It has several disadvantages, too:
+
+      - It's not nearly as well debugged as the old GUI. As people start using
+        it, this issue will eventually disappear.
+
+      - It's not compatible with Delphi 2009 yet. For an unknown reason, the
+        downloads list will eat up all available memory very quickly and the
+        application will crash afterwards. I wasn't able to find the cause yet.
+
+      If you want to switch to the VCL-based GUI, delete the following line
+      from Source\YTD.inc: "{$DEFINE GUI_WINAPI}".
+
+    * Files are now opened in a shared mode, allowing video playback while
+      a movie is being downloaded. This function only applies to HTTP-based
+      providers.
+
+    * Various optimizations and code cleanup.
+
+
+
   v0.64
 
     * New provider: MTV.com.

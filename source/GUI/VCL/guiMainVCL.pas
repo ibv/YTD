@@ -44,7 +44,7 @@ uses
   StdCtrls, Buttons, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList, ActnList,
   ToolWin, CommDlg, ShellApi, CommCtrl,
   SynaCode,
-  uLanguages, uMessages, uOptions, uStringUtils, uCompatibility,
+  uLanguages, uFunctions, uMessages, uOptions, uStringUtils, uCompatibility,
   guiOptions, guiFunctions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 

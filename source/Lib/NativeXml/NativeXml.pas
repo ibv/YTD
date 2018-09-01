@@ -282,29 +282,29 @@ type
   protected
     function CompareNodeName(const NodeName: UTF8String): integer;
     procedure DeleteEmptyAttributes;
-    function GetNodes(Index: integer): TXmlNode; virtual;
-    function GetNodeCount: integer; virtual;
+    function GetNodes(Index: integer): TXmlNode; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetNodeCount: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     procedure ParseTag(const AValue: UTF8String; TagStart, TagClose: integer);
-    procedure ReadFromStream(S: TStream); virtual;
-    procedure ReadFromString(const AValue: UTF8String); virtual;
+    procedure ReadFromStream(S: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure ReadFromString(const AValue: UTF8String); {$IFNDEF PEPAK} virtual; {$ENDIF}
     procedure ResolveEntityReferences;
-    function UnescapeString(const AValue: UTF8String): UTF8String; virtual;
-    function WriteInnerTag: UTF8String; virtual;
-    procedure WriteToStream(S: TStream); virtual;
+    function UnescapeString(const AValue: UTF8String): UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function WriteInnerTag: UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure WriteToStream(S: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
     procedure ChangeDocument(ADocument: TNativeXml);
   public
     // Create a new TXmlNode object. ADocument must be the TNativeXml that is
     // going to hold this new node.
-    constructor Create(ADocument: TNativeXml); virtual;
+    constructor Create(ADocument: TNativeXml); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Create a new TXmlNode with name AName. ADocument must be the TNativeXml
     // that is going to hold this new node.
-    constructor CreateName(ADocument: TNativeXml; const AName: UTF8String); virtual;
+    constructor CreateName(ADocument: TNativeXml; const AName: UTF8String); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Create a new TXmlNode with name AName and UTF8String value AValue. ADocument
     // must be the TNativeXml that is going to hold this new node.
-    constructor CreateNameValue(ADocument: TNativeXml; const AName, AValue: UTF8String); virtual;
+    constructor CreateNameValue(ADocument: TNativeXml; const AName, AValue: UTF8String); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Create a new TXmlNode with XML element type AType. ADocument must be the
     // TNativeXml that is going to hold this new node.
-    constructor CreateType(ADocument: TNativeXml; AType: TXmlElementType); virtual;
+    constructor CreateType(ADocument: TNativeXml; AType: TXmlElementType); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Use Assign to assign another TXmlNode to this node. This means that all
     // properties and subnodes from the Source TXmlNode are copied to the current
     // node. You can also Assign a TNativeXml document to the node, in that case
@@ -313,7 +313,7 @@ type
     // Call Delete to delete this node completely from the parent node list. This
     // call only succeeds if the node has a parent. It has no effect when called for
     // the root node.
-    procedure Delete; virtual;
+    procedure Delete; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Delete all nodes that are empty (this means, which have no subnodes, no
     // attributes, and no value assigned). This procedure works recursively.
     procedure DeleteEmptyNodes;
@@ -334,9 +334,9 @@ type
     // Use this method to find the index of an attribute with name AName.
     function AttributeIndexByname(const AName: UTF8String): integer;
     // Clear all attributes from the current node.
-    procedure AttributesClear; virtual;
+    procedure AttributesClear; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Use this method to read binary data from the node into Buffer with a length of Count.
-    procedure BufferRead(var Buffer{$IFDEF CLR}: TBytes{$ENDIF}; Count: Integer); virtual;
+    procedure BufferRead(var Buffer{$IFDEF CLR}: TBytes{$ENDIF}; Count: Integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Use this method to write binary data in Buffer with a length of Count to the
     // current node. The data will appear as text using either BinHex or Base64
     // method) in the final XML document.
@@ -345,16 +345,16 @@ type
     // binary data into text) can be selected using property BinaryEncoding.
     // xbeBase64 is most efficient, but slightly slower. Always use identical methods
     // for reading and writing.
-    procedure BufferWrite(const Buffer{$IFDEF CLR}: TBytes{$ENDIF}; Count: Integer); virtual;
+    procedure BufferWrite(const Buffer{$IFDEF CLR}: TBytes{$ENDIF}; Count: Integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Returns the length of the data in the buffer, once it would be decoded by
     // method xbeBinHex or xbeBase64. If BinaryEncoding is xbeSixBits, this function
     // cannot be used. The length of the unencoded data is determined from the
     // length of the encoded data. For xbeBinHex this is trivial (just half the
     // length), for xbeBase64 this is more difficult (must use the padding characters)
-    function BufferLength: integer; virtual;
+    function BufferLength: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Clear all child nodes and attributes, and the name and value of the current
     // XML node. However, the node is not deleted. Call Delete instead for that.
-    procedure Clear; virtual;
+    procedure Clear; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Find the first node which has name NodeName. Contrary to the NodeByName
     // function, this function will search the whole subnode tree, using the
     // DepthFirst method. It is possible to search for a full path too, e.g.
@@ -373,20 +373,20 @@ type
     // attributes).
     function FromUnicodeString(const W: UnicodeString): UTF8String;
     // Use HasAttribute to determine if the node has an attribute with name AName.
-    function HasAttribute(const AName: UTF8String): boolean; virtual;
+    function HasAttribute(const AName: UTF8String): boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // This function returns the index of this node in the parent's node list.
     // If Parent is not assigned, this function returns -1.
     function IndexInParent: integer;
     // This function returns True if the node has no subnodes and no attributes,
     // and if the node Name and value are empty.
-    function IsClear: boolean; virtual;
+    function IsClear: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // This function returns True if the node has no subnodes and no attributes,
     // and if the node value is empty.
-    function IsEmpty: boolean; virtual;
+    function IsEmpty: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
     function IsEqualTo(ANode: TXmlNode; Options: TXmlCompareOptions; MismatchNodes: TList = nil): boolean;
     // Add the node ANode as a new subelement in the nodelist. The node will be
     // added in position NodeCount (which will be returned).
-    function NodeAdd(ANode: TXmlNode): integer; virtual;
+    function NodeAdd(ANode: TXmlNode): integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // This function returns a pointer to the first subnode that has an attribute with
     // name AttribName and value AttribValue. If ShouldRecurse = True (default), the
     // function works recursively, using the depthfirst method.
@@ -397,43 +397,43 @@ type
     function NodeByElementType(ElementType: TXmlElementType): TXmlNode;
     // Return a pointer to the first subnode in the nodelist that has name AName.
     // If no subnodes with AName are found, the function returns nil.
-    function NodeByName(const AName: UTF8String): TXmlNode; virtual;
+    function NodeByName(const AName: UTF8String): TXmlNode; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Delete the subnode at Index. The node will also be freed, so do not free the
     // node in the application.
-    procedure NodeDelete(Index: integer); virtual;
+    procedure NodeDelete(Index: integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Switch position of the nodes at Index1 and Index2.
     procedure NodeExchange(Index1, Index2: integer);
     // Extract the node ANode from the subnode list. The node will no longer appear
     // in the subnodes list, so the application is responsible for freeing ANode later.
-    function NodeExtract(ANode: TXmlNode): TXmlNode; virtual;
+    function NodeExtract(ANode: TXmlNode): TXmlNode; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // This function returns a pointer to the first node with AName. If this node
     // is not found, then it creates a new node with AName and returns its pointer.
-    function NodeFindOrCreate(const AName: UTF8String): TXmlNode; virtual;
+    function NodeFindOrCreate(const AName: UTF8String): TXmlNode; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Find the index of the first subnode with name AName.
-    function NodeIndexByName(const AName: UTF8String): integer; virtual;
+    function NodeIndexByName(const AName: UTF8String): integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Find the index of the first subnode with name AName that appears after or on
     // the index AFrom. This function can be used in a loop to retrieve all nodes
     // with a certain name, without using a helper list. See also NodesByName.
-    function NodeIndexByNameFrom(const AName: UTF8String; AFrom: integer): integer; virtual;
+    function NodeIndexByNameFrom(const AName: UTF8String; AFrom: integer): integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call NodeIndexOf to get the index for ANode in the Nodes array. The first
     // node in the array has index 0, the second item has index 1, and so on. If
     // a node is not in the list, NodeIndexOf returns -1.
     function NodeIndexOf(ANode: TXmlNode): integer;
     // Insert the node ANode at location Index in the list.
-    procedure NodeInsert(Index: integer; ANode: TXmlNode); virtual;
+    procedure NodeInsert(Index: integer; ANode: TXmlNode); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Create a new node with AName, add it to the subnode list, and return a
     // pointer to it.
-    function NodeNew(const AName: UTF8String): TXmlNode; virtual;
+    function NodeNew(const AName: UTF8String): TXmlNode; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // \Create a new node with AName, and insert it into the subnode list at location
     // Index, and return a pointer to it.
-    function NodeNewAtIndex(Index: integer; const AName: UTF8String): TXmlNode; virtual;
+    function NodeNewAtIndex(Index: integer; const AName: UTF8String): TXmlNode; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call NodeRemove to remove a specific node from the Nodes array when its index
     // is unknown. The value returned is the index of the item in the Nodes array
     // before it was removed. After an item is removed, all the items that follow
     // it are moved up in index position and the NodeCount is reduced by one.
     function NodeRemove(ANode: TxmlNode): integer;
     // \Clear (and free) the complete list of subnodes.
-    procedure NodesClear; virtual;
+    procedure NodesClear; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Use this procedure to retrieve all nodes that have name AName. Pointers to
     // these nodes are added to the list in AList. AList must be initialized
     // before calling this procedure. If you use a TXmlNodeList you don't need
@@ -442,57 +442,57 @@ type
     // Find the attribute with AName, and convert its value to a boolean. If the
     // attribute is not found, or cannot be converted, the default ADefault will
     // be returned.
-    function ReadAttributeBool(const AName: UTF8String; ADefault: boolean = False): boolean; virtual;
-    function ReadAttributeDateTime(const AName: UTF8String; ADefault: TDateTime = 0): TDateTime; virtual;
+    function ReadAttributeBool(const AName: UTF8String; ADefault: boolean = False): boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function ReadAttributeDateTime(const AName: UTF8String; ADefault: TDateTime = 0): TDateTime; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Find the attribute with AName, and convert its value to an integer. If the
     // attribute is not found, or cannot be converted, the default ADefault will
     // be returned.
-    function ReadAttributeInteger(const AName: UTF8String; ADefault: integer = 0): integer; virtual;
+    function ReadAttributeInteger(const AName: UTF8String; ADefault: integer = 0): integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Find the attribute with AName, and convert its value to an int64. If the
     // attribute is not found, or cannot be converted, the default ADefault will
     // be returned.
-    function ReadAttributeInt64(const AName: UTF8String; ADefault: int64 = 0): int64; virtual;
+    function ReadAttributeInt64(const AName: UTF8String; ADefault: int64 = 0): int64; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Find the attribute with AName, and convert its value to a float. If the
     // attribute is not found, or cannot be converted, the default ADefault will
     // be returned.
     function ReadAttributeFloat(const AName: UTF8String; ADefault: double = 0): double;
-    function ReadAttributeString(const AName: UTF8String; const ADefault: UTF8String = ''): UTF8String; virtual;
+    function ReadAttributeString(const AName: UTF8String; const ADefault: UTF8String = ''): UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and convert it to a boolean value. If the
     // subnode is not found, or cannot be converted, the boolean ADefault will
     // be returned.
-    function ReadBool(const AName: UTF8String; ADefault: boolean = False): boolean; virtual;
+    function ReadBool(const AName: UTF8String; ADefault: boolean = False): boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
     {$IFDEF USEGRAPHICS}
     // Read the properties Color and Style for the TBrush object ABrush from the
     // subnode with AName.
-    procedure ReadBrush(const AName: UTF8String; ABrush: TBrush); virtual;
+    procedure ReadBrush(const AName: UTF8String; ABrush: TBrush); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and convert its value to TColor. If the
     // subnode is not found, or cannot be converted, ADefault will be returned.
-    function ReadColor(const AName: UTF8String; ADefault: TColor = clBlack): TColor; virtual;
+    function ReadColor(const AName: UTF8String; ADefault: TColor = clBlack): TColor; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the properties \Name, Color, Size and Style for the TFont object AFont
     // from the subnode with AName.
-    procedure ReadFont(const AName: UTF8String; AFont: TFont); virtual;
+    procedure ReadFont(const AName: UTF8String; AFont: TFont); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the properties Color, Mode, Style and Width for the TPen object APen
     // from the subnode with AName.
-    procedure ReadPen(const AName: UTF8String; APen: TPen); virtual;
+    procedure ReadPen(const AName: UTF8String; APen: TPen); {$IFNDEF PEPAK} virtual; {$ENDIF}
     {$ENDIF}
     // Read the subnode with AName and convert its value to TDateTime. If the
     // subnode is not found, or cannot be converted, ADefault will be returned.
-    function ReadDateTime(const AName: UTF8String; ADefault: TDateTime = 0): TDateTime; virtual;
+    function ReadDateTime(const AName: UTF8String; ADefault: TDateTime = 0): TDateTime; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and convert its value to a double. If the
     // subnode is not found, or cannot be converted, ADefault will be returned.
-    function ReadFloat(const AName: UTF8String; ADefault: double = 0.0): double; virtual;
+    function ReadFloat(const AName: UTF8String; ADefault: double = 0.0): double; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and convert its value to an int64. If the
     // subnode is not found, or cannot be converted, ADefault will be returned.
-    function ReadInt64(const AName: UTF8String; ADefault: int64 = 0): int64; virtual;
+    function ReadInt64(const AName: UTF8String; ADefault: int64 = 0): int64; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and convert its value to an integer. If the
     // subnode is not found, or cannot be converted, ADefault will be returned.
-    function ReadInteger(const AName: UTF8String; ADefault: integer = 0): integer; virtual;
+    function ReadInteger(const AName: UTF8String; ADefault: integer = 0): integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and return its UTF8String value. If the subnode is
     // not found, ADefault will be returned.
-    function ReadString(const AName: UTF8String; const ADefault: UTF8String = ''): UTF8String; virtual;
+    function ReadString(const AName: UTF8String; const ADefault: UTF8String = ''): UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read the subnode with AName and return its UnicodeString value. If the subnode is
     // not found, ADefault will be returned.
-    function ReadUnicodeString(const AName: UTF8String; const ADefault: UnicodeString = ''): UnicodeString; virtual;
+    function ReadUnicodeString(const AName: UTF8String; const ADefault: UnicodeString = ''): UnicodeString; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Sort the child nodes of this node. Provide a custom node compare function in Compare,
     // or attach an event handler to the parent documents' OnNodeCompare in order to
     // provide custom sorting. If no compare function is given (nil) and OnNodeCompare
@@ -505,79 +505,79 @@ type
     function ToUnicodeString(const s: UTF8String): UnicodeString;
     // Convert the node's value to boolean and return the result. If this conversion
     // fails, or no value is found, then the function returns ADefault.
-    function ValueAsBoolDef(ADefault: boolean): boolean; virtual;
+    function ValueAsBoolDef(ADefault: boolean): boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Convert the node's value to a TDateTime and return the result. If this conversion
     // fails, or no value is found, then the function returns ADefault.
-    function ValueAsDateTimeDef(ADefault: TDateTime): TDateTime; virtual;
+    function ValueAsDateTimeDef(ADefault: TDateTime): TDateTime; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Convert the node's value to a double and return the result. If this conversion
     // fails, or no value is found, then the function returns ADefault.
-    function ValueAsFloatDef(ADefault: double): double; virtual;
+    function ValueAsFloatDef(ADefault: double): double; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Convert the node's value to int64 and return the result. If this conversion
     // fails, or no value is found, then the function returns ADefault.
-    function ValueAsInt64Def(ADefault: int64): int64; virtual;
+    function ValueAsInt64Def(ADefault: int64): int64; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Convert the node's value to integer and return the result. If this conversion
     // fails, or no value is found, then the function returns ADefault.
-    function ValueAsIntegerDef(ADefault: integer): integer; virtual;
+    function ValueAsIntegerDef(ADefault: integer): integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // If the attribute with name AName exists, then set its value to the boolean
     // AValue. If it does not exist, then create a new attribute AName with the
     // boolean value converted to either "True" or "False". If ADefault = AValue, and
     // WriteOnDefault = False, no attribute will be added.
-    procedure WriteAttributeBool(const AName: UTF8String; AValue: boolean; ADefault: boolean = False); virtual;
-    procedure WriteAttributeDateTime(const AName: UTF8string; AValue: TDateTime; ADefault: TDateTime = 0); virtual;
+    procedure WriteAttributeBool(const AName: UTF8String; AValue: boolean; ADefault: boolean = False); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure WriteAttributeDateTime(const AName: UTF8string; AValue: TDateTime; ADefault: TDateTime = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // If the attribute with name AName exists, then set its value to the integer
     // AValue. If it does not exist, then create a new attribute AName with the
     // integer value converted to a quoted string. If ADefault = AValue, and
     // WriteOnDefault = False, no attribute will be added.
-    procedure WriteAttributeInteger(const AName: UTF8String; AValue: integer; ADefault: integer = 0); virtual;
-    procedure WriteAttributeInt64(const AName: UTF8String; const AValue: int64; ADefault: int64 = 0); virtual;
-    procedure WriteAttributeFloat(const AName: UTF8String; AValue: double; ADefault: double = 0); virtual;
+    procedure WriteAttributeInteger(const AName: UTF8String; AValue: integer; ADefault: integer = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure WriteAttributeInt64(const AName: UTF8String; const AValue: int64; ADefault: int64 = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure WriteAttributeFloat(const AName: UTF8String; AValue: double; ADefault: double = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // If the attribute with name AName exists, then set its value to the UTF8String
     // AValue. If it does not exist, then create a new attribute AName with the
     // value AValue. If ADefault = AValue, and WriteOnDefault = False, no attribute
     // will be added.
-    procedure WriteAttributeString(const AName: UTF8String; const AValue: UTF8String; const ADefault: UTF8String = ''); virtual;
+    procedure WriteAttributeString(const AName: UTF8String; const AValue: UTF8String; const ADefault: UTF8String = ''); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the boolean
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteBool(const AName: UTF8String; AValue: boolean; ADefault: boolean = False); virtual;
+    procedure WriteBool(const AName: UTF8String; AValue: boolean; ADefault: boolean = False); {$IFNDEF PEPAK} virtual; {$ENDIF}
     {$IFDEF USEGRAPHICS}
     // Write properties Color and Style of the TBrush object ABrush to the subnode
     // with AName. If AName does not exist, it will be created.
-    procedure WriteBrush(const AName: UTF8String; ABrush: TBrush); virtual;
+    procedure WriteBrush(const AName: UTF8String; ABrush: TBrush); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the TColor
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteColor(const AName: UTF8String; AValue: TColor; ADefault: TColor = clBlack); virtual;
+    procedure WriteColor(const AName: UTF8String; AValue: TColor; ADefault: TColor = clBlack); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Write properties \Name, Color, Size and Style of the TFont object AFont to
     // the subnode with AName. If AName does not exist, it will be created.
-    procedure WriteFont(const AName: UTF8String; AFont: TFont); virtual;
+    procedure WriteFont(const AName: UTF8String; AFont: TFont); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Write properties Color, Mode, Style and Width of the TPen object APen to
     // the subnode with AName. If AName does not exist, it will be created.
-    procedure WritePen(const AName: UTF8String; APen: TPen); virtual;
+    procedure WritePen(const AName: UTF8String; APen: TPen); {$IFNDEF PEPAK} virtual; {$ENDIF}
     {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the TDateTime
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
     // The XML format used is compliant with W3C's specification of date and time.
-    procedure WriteDateTime(const AName: UTF8String; AValue: TDateTime; ADefault: TDateTime = 0); virtual;
+    procedure WriteDateTime(const AName: UTF8String; AValue: TDateTime; ADefault: TDateTime = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the double
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteFloat(const AName: UTF8String; AValue: double; ADefault: double = 0.0); virtual;
+    procedure WriteFloat(const AName: UTF8String; AValue: double; ADefault: double = 0.0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the hexadecimal representation of
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteHex(const AName: UTF8String; AValue: integer; Digits: integer; ADefault: integer = 0); virtual;
+    procedure WriteHex(const AName: UTF8String; AValue: integer; Digits: integer; ADefault: integer = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the int64
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteInt64(const AName: UTF8String; AValue: int64; ADefault: int64 = 0); virtual;
+    procedure WriteInt64(const AName: UTF8String; AValue: int64; ADefault: int64 = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the integer
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteInteger(const AName: UTF8String; AValue: integer; ADefault: integer = 0); virtual;
+    procedure WriteInteger(const AName: UTF8String; AValue: integer; ADefault: integer = 0); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the UTF8String
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteString(const AName, AValue: UTF8String; const ADefault: UTF8String = ''); virtual;
+    procedure WriteString(const AName, AValue: UTF8String; const ADefault: UTF8String = ''); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call WriteToString to save the XML node to a UTF8String. This method can be used to store
     // individual nodes instead of the complete XML document.
-    function WriteToString: UTF8String; virtual;
+    function WriteToString: UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Add or replace the subnode with AName and set its value to represent the UnicodeString
     // AValue. If AValue = ADefault, and WriteOnDefault = False, no subnode will be added.
-    procedure WriteUnicodeString(const AName: UTF8String; const AValue: UnicodeString; const ADefault: UnicodeString = ''); virtual;
+    procedure WriteUnicodeString(const AName: UTF8String; const AValue: UnicodeString; const ADefault: UnicodeString = ''); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // AttributeByName returns the attribute value for the attribute that has name AName.
     // Set AttributeByName to add an attribute to the attribute list, or replace an
     // existing one.
@@ -773,13 +773,13 @@ type
     function GetStyleSheetNode: TXmlNode;
     function GetUtf8Encoded: boolean;
   protected
-    procedure CopyFrom(Source: TNativeXml); virtual;
+    procedure CopyFrom(Source: TNativeXml); {$IFNDEF PEPAK} virtual; {$ENDIF}
     procedure DoProgress(Size: integer);
-    function LineFeed: UTF8String; virtual;
-    procedure ParseDTD(ANode: TXmlNode; S: TStream); virtual;
-    procedure ReadFromStream(S: TStream); virtual;
-    procedure WriteToStream(S: TStream); virtual;
-    procedure SetDefaults; virtual;
+    function LineFeed: UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure ParseDTD(ANode: TXmlNode; S: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure ReadFromStream(S: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure WriteToStream(S: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure SetDefaults; {$IFNDEF PEPAK} virtual; {$ENDIF}
   public
     // Create a new NativeXml document which can then be used to read or write XML files.
     // A document that is created with Create must later be freed using Free.
@@ -797,10 +797,10 @@ type
     //   end;
     // end;
     // </Code>
-    constructor Create; virtual;
+    constructor Create; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Use CreateName to Create a new Xml document that will automatically
     // contain a root element with name ARootName.
-    constructor CreateName(const ARootName: UTF8String); virtual;
+    constructor CreateName(const ARootName: UTF8String); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Destroy will free all data in the TNativeXml object. This includes the
     // root node and all subnodes under it. Do not call Destroy directly, call
     // Free instead.
@@ -809,23 +809,23 @@ type
     // it to copy all data from Source.
     procedure Assign(Source: TPersistent); override;
     // Call Clear to remove all data from the object, and restore all defaults.
-    procedure Clear; virtual;
+    procedure Clear; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Function IsEmpty returns true if the root is clear, or in other words, the
     // root contains no value, no name, no subnodes and no attributes.
-    function IsEmpty: boolean; virtual;
+    function IsEmpty: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Load an XML document from the TStream object in Stream. The LoadFromStream
     // procedure will raise an exception of type EFilerError when it encounters
     // non-wellformed XML. This method can be used with any TStream descendant.
     // See also LoadFromFile and ReadFromString.
-    procedure LoadFromStream(Stream: TStream); virtual;
+    procedure LoadFromStream(Stream: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call procedure LoadFromFile to load an XML document from the filename
     // specified. See Create for an example. The LoadFromFile procedure will raise
     // an exception of type EFilerError when it encounters non-wellformed XML.
-    procedure LoadFromFile(const AFileName: string); virtual;
+    procedure LoadFromFile(const AFileName: string); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call procedure ReadFromString to load an XML document from the UTF8String AValue.
     // The ReadFromString procedure will raise an exception of type EFilerError
     // when it encounters non-wellformed XML.
-    procedure ReadFromString(const AValue: UTF8String); virtual;
+    procedure ReadFromString(const AValue: UTF8String); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call ResolveEntityReferences after the document has been loaded to resolve
     // any present entity references (&Entity;). When an entity is found in the
     // DTD, it will replace the entity reference. Whenever an entity contains
@@ -839,7 +839,7 @@ type
     // the stream to contain indentations to make the XML more human-readable. This
     // is not the default and also not compliant with the XML specification. See
     // SaveToFile for information on how to save in special encoding.
-    procedure SaveToStream(Stream: TStream); virtual;
+    procedure SaveToStream(Stream: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call SaveToFile to save the XML document to a file with FileName. If the
     // filename exists, it will be overwritten without warning. If the file cannot
     // be created, a standard I/O exception will be generated. Set XmlFormat to
@@ -854,12 +854,12 @@ type
     // (for unicode) or seUtf16BE (unicode big endian).<p> Do not forget to also
     // set the EncodingString (e.g. "UTF-8" or "UTF-16") which matches with your
     // ExternalEncoding.
-    procedure SaveToFile(const AFileName: string); virtual;
+    procedure SaveToFile(const AFileName: string); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Call WriteToString to save the XML document to a UTF8String. Set XmlFormat to
     // xfReadable if you want the UTF8String to contain indentations to make the XML
     // more human-readable. This is not the default and also not compliant with
     // the XML specification.
-    function WriteToString: UTF8String; virtual;
+    function WriteToString: UTF8String; {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Set AbortParsing to True if you use the OnNodeNew and OnNodeLoaded events in
     // a SAX-like manner, and you want to abort the parsing process halfway. Example:
     // <code>
@@ -1076,7 +1076,7 @@ type
     FOnUnicodeLoss: TNotifyEvent;   // This event is called if there is a warning for unicode conversion loss
   protected
     function ReadByte: byte; virtual;
-    procedure StorePrevPositions; virtual;
+    procedure StorePrevPositions; {$IFNDEF PEPAK} virtual; {$ENDIF}
     procedure WriteByte(const B: byte); virtual;
     procedure WriteBuf(const Buffer{$IFDEF CLR}: TBytes{$ENDIF}; Offset, Count: longint); virtual;
     function InternalRead(var Buffer{$IFDEF CLR}: array of Byte{$ENDIF}; Offset, Count: Longint): Longint;
@@ -1091,7 +1091,7 @@ type
     // and the Encoding property will be set accordingly. When using Write to
     // write data to the referenced stream, the Encoding property must be set prior
     // to this, indicating what kind of stream to produce.
-    constructor Create(AStream: TStream); virtual;
+    constructor Create(AStream: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
     // Read Count bytes from the referenced stream, and put them in Buffer. The function
     // returns the actual number of bytes read. The codec stream can only read
     // one byte at the time!

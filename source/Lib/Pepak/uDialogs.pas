@@ -37,17 +37,11 @@ type
       function DoInitDialog: boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
       function DoClose: boolean; override;
-      class function DefaultResourceName: string; override;
     public
       Caption: string;
       Prompt: string;
       Value: string;
     end;
-
-class function TInputQueryForm.DefaultResourceName: string;
-begin
-  Result := 'DIALOG_INPUTQUERY';
-end;
 
 function TInputQueryForm.DoInitDialog: boolean;
 begin

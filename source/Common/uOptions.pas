@@ -68,69 +68,69 @@ type
       fXmlFileName: string;
     protected
       function Load(IgnoreErrors: boolean = True): boolean; virtual;
-      function TranslateNodeName(const Name: string): string; virtual;
-      function GetOption(const Path: string; const Default: string = ''): string; virtual;
-      procedure SetOption(const Path, Value: string); virtual;
-      function XmlToBoolean(const Value: string): boolean; overload; virtual;
-      function XmlToBoolean(const Value: string; Default: boolean): boolean; overload; virtual;
-      function BooleanToXml(const Value: boolean): string; virtual;
+      function TranslateNodeName(const Name: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetOption(const Path: string; const Default: string = ''): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetOption(const Path, Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function XmlToBoolean(const Value: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function XmlToBoolean(const Value: string; Default: boolean): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function BooleanToXml(const Value: boolean): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property Xml: TXmlDoc read fXml;
       property XmlFileName: string read fXmlFileName write fXmlFileName;
     protected
-      function GetPortableMode: boolean; virtual;
-      procedure SetPortableMode(const Value: boolean); virtual;
-      function GetProxyActive: boolean; virtual;
-      procedure SetProxyActive(const Value: boolean); virtual;
-      function GetProxyHost: string; virtual;
-      procedure SetProxyHost(const Value: string); virtual;
-      function GetProxyPort: string; virtual;
-      procedure SetProxyPort(const Value: string); virtual;
-      function GetProxyUser: string; virtual;
-      procedure SetProxyUser(const Value: string); virtual;
-      function GetProxyPassword: string; virtual;
-      procedure SetProxyPassword(const Value: string); virtual;
-      function GetLanguage: string; virtual;
-      procedure SetLanguage(const Value: string); virtual;
-      function GetOverwriteMode: TOverwriteMode; virtual;
-      procedure SetOverwriteMode(const Value: TOverwriteMode); virtual;
-      function GetDestinationPath: string; virtual;
-      procedure SetDestinationPath(const Value: string); virtual;
-      function GetErrorLog: string; virtual;
-      procedure SetErrorLog(const Value: string); virtual;
-      function GetAutoStartDownloads: boolean; virtual;
-      procedure SetAutoStartDownloads(const Value: boolean); virtual;
-      function GetCheckForNewVersionOnStartup: boolean; virtual;
-      procedure SetCheckForNewVersionOnStartup(const Value: boolean); virtual;
+      function GetPortableMode: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetPortableMode(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetProxyActive: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetProxyActive(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetProxyHost: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetProxyHost(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetProxyPort: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetProxyPort(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetProxyUser: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetProxyUser(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetProxyPassword: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetProxyPassword(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetLanguage: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetLanguage(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetOverwriteMode: TOverwriteMode; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetOverwriteMode(const Value: TOverwriteMode); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetDestinationPath: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetDestinationPath(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetErrorLog: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetErrorLog(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetAutoStartDownloads: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetAutoStartDownloads(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetCheckForNewVersionOnStartup: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetCheckForNewVersionOnStartup(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
-        function GetSelectedConverterID: string; virtual;
-        procedure SetSelectedConverterID(const Value: string); virtual;
-        function GetMaxConversionThreads: integer; virtual;
-        procedure SetMaxConversionThreads(const Value: integer); virtual;
+        function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+        procedure SetSelectedConverterID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+        function GetMaxConversionThreads: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+        procedure SetMaxConversionThreads(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
         {$IFDEF CONVERTERSMUSTBEACTIVATED}
-        function GetConvertersActivated: boolean; virtual;
-        procedure SetConvertersActivated(const Value: boolean); virtual;
+        function GetConvertersActivated: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+        procedure SetConvertersActivated(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
         {$ENDIF}
       {$ENDIF}
       {$IFDEF SUBTITLES}
-      function GetSubtitlesEnabled: boolean; virtual;
-      procedure SetSubtitlesEnabled(const Value: boolean); virtual;
+      function GetSubtitlesEnabled: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetSubtitlesEnabled(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
     public
       constructor Create; virtual;
       destructor Destroy; override;
       procedure Init; virtual;
-      procedure Save(IgnoreErrors: boolean = True); virtual;
-      function ReadProviderOption(const Provider, Option: string; out Value: string): boolean; virtual;
-      procedure WriteProviderOption(const Provider, Option, Value: string); virtual;
-      procedure ReadUrlList(List: TStringList); virtual;
-      procedure WriteUrlList(List: TStringList); virtual;
+      procedure Save(IgnoreErrors: boolean = True); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ReadProviderOption(const Provider, Option: string; out Value: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WriteProviderOption(const Provider, Option, Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ReadUrlList(List: TStringList); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WriteUrlList(List: TStringList); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
-      procedure ReadConverterIDList(List: TStrings); virtual;
-      function ReadConverter(const ID: string; out Converter: TConverter): boolean; virtual;
+      procedure ReadConverterIDList(List: TStrings); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ReadConverter(const ID: string; out Converter: TConverter): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
-      function GetNewestVersion(out Version, Url: string): boolean; virtual;
+      function GetNewestVersion(out Version, Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF THREADEDVERSION}
-      procedure GetNewestVersionInBackground(OnDone: TGetNewestVersionEvent); virtual;
+      procedure GetNewestVersionInBackground(OnDone: TGetNewestVersionEvent); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
       property FileName: string read fXmlFileName;
     public

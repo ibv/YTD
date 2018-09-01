@@ -77,7 +77,6 @@ type
       property Menu: HMENU read fMenu write SetMenu;
       property PopupMenu: HMENU read fPopupMenu write fPopupMenu;
       property Icon: THandle read fIcon write fIcon;
-      class function DefaultResourceName: string; virtual;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); overload; virtual;
       constructor Create(AOwner: TApiForm); overload; virtual;
@@ -259,11 +258,6 @@ begin
     end;
 end;
 
-class function TApiForm.DefaultResourceName: string;
-begin
-  Result := ClassName;
-end;
-
 constructor TApiForm.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin
   inherited Create;
@@ -278,7 +272,7 @@ end;
 
 constructor TApiForm.Create(AOwner: TApiForm);
 begin
-  Create(AOwner, DefaultResourceName);
+  Create(AOwner, ClassName);
 end;
 
 constructor TApiForm.Create;

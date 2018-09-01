@@ -34,41 +34,39 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit guiFunctions;
+unit uFunctions;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Windows, ShellApi,
-  SynaCode,
-  uFunctions, uDownloadList, uMessages, uStringUtils;
-
-function GetProgressStr(DoneSize, TotalSize: int64): string;
-procedure ReportBug(DownloadList: TDownloadList; Index: integer);
+  SysUtils;
+  
+function PrettySize(Size: int64): string;
 
 implementation
 
-function GetProgressStr(DoneSize, TotalSize: int64): string;
-var n: int64;
-begin
-  Result := PrettySize(DoneSize);
-  if TotalSize > 0 then
-    begin
-    n := 1000*DoneSize div TotalSize;
-    Result := Format('%s (%d.%d%%)', [Result, n div 10, n mod 10]);
-    end
-end;
+function PrettySize(Size: int64): string;
 
-procedure ReportBug(DownloadList: TDownloadList; Index: integer);
-var BugReportUrl: string;
+  function PrettySizeInternal(Size: int64; Shift: integer; const Prefix: char): string;
+    begin
+      Size := (10 * Size) shr Shift;
+      Result := Format('%d.%d %siB', [Size div 10, Size mod 10, Prefix]);
+    end;
+
 begin
-  BugReportUrl := Format(BUGREPORT_URL,
-                       [ {$INCLUDE 'YTD.version'} ,
-                         EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
-                         EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
-                       ]);
-  ShellExecute(0, 'open', PChar(BugReportUrl), nil, nil, SW_SHOWNORMAL);
+  if Size <= 0 then
+    Result := ''
+  else if Size < 10*1e3 then
+    Result := IntToStr(Size) + ' B'
+  else if Size < 10*1e6 then
+    Result := PrettySizeInternal(Size, 10, 'K')
+  else if Size < 10*1e9 then
+    Result := PrettySizeInternal(Size, 20, 'M')
+  else if Size < 10*1e12 then
+    Result := PrettySizeInternal(Size, 30, 'G')
+  else
+    Result := PrettySizeInternal(Size, 40, 'T')
 end;
 
 end.

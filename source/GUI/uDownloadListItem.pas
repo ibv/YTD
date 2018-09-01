@@ -336,7 +336,13 @@ begin
     if Paused then
       Thread.Resume;
     Thread.Terminate;
-    Thread.WaitFor;
+    if Thread.Active then
+      {$IFDEF DELPHITHREADS}
+        Thread.WaitFor;
+      {$ELSE}
+        while (Thread <> nil) and Thread.Active do
+          Sleep(2);
+      {$ENDIF}
     end;
 end;
 

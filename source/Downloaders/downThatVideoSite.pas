@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downUStream;
+unit downThatVideoSite;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,11 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_UStream = class(THttpDownloader)
+  TDownloader_ThatVideoSite = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,91 +59,52 @@ type
 implementation
 
 uses
-  uAMF,
   uDownloadClassifier,
   uMessages;
 
-// http://www.ustream.tv/recorded/7022540
+// http://www.thatvideosite.com/video/penguins_dont_like_water
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ustream\.tv/recorded/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*thatvideosite\.com/video/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2\s+id="videoTitle">\s*(?P<TITLE>.*?)\s*</h2>';
+  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
+  REGEXP_EXTRACT_URL = '<param\s+name="flashvars"\s+value="(?:[^"&]*&)*file=(?P<URL>https?://[^"&]+)';
 
-const
-  AMF_REQUEST_PACKET =
-    'AAAAAAABAA9WaWV3ZXIuZ2V0VmlkZW8AAi8xAAAAhwoAAAABAwAEcnBpbgIAF3JwaW4uMC41' +
-    'NzQ0NTM4MjE2NTU2MjM1AAhhdXRvcGxheQEBAAdicmFuZElkAgABMQAHdmlkZW9JZAIABzcw' +
-    'MjI1NDAAB3BhZ2VVcmwCACZodHRwOi8vd3d3LnVzdHJlYW0udHYvcmVjb3JkZWQvNzAyMjU0' +
-    'MAAACQ==';
+{ TDownloader_ThatVideoSite }
 
-{ TDownloader_UStream }
-
-class function TDownloader_UStream.Provider: string;
+class function TDownloader_ThatVideoSite.Provider: string;
 begin
-  Result := 'UStream.tv';
+  Result := 'ThatVideoSite.com';
 end;
 
-class function TDownloader_UStream.UrlRegExp: string;
+class function TDownloader_ThatVideoSite.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_UStream.Create(const AMovieID: string);
+constructor TDownloader_ThatVideoSite.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_UStream.Destroy;
+destructor TDownloader_ThatVideoSite.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_UStream.GetMovieInfoUrl: string;
+function TDownloader_ThatVideoSite.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.ustream.tv/recorded/' + MovieID;
-end;
-
-function TDownloader_UStream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var AMFRequest, AMFResponse: TAMFPacket;
-    Url: TAMFValue;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  AMFRequest := TAMFPacket.Create;
-  try
-    AMFRequest.LoadFromString(AnsiString(Base64Decode(AMF_REQUEST_PACKET)));
-    // Note: I don't need to check types (or make sure pointers are not null)
-    // because I use a pre-made packet which has all required properties. That
-    // is not true while parsing response packets!
-    with TAMFCommonArray(AMFRequest.Body[0].Content).Items[0] do
-      begin
-      SetValueByPath('videoId', MovieID);
-      SetValueByPath('pageUrl', GetMovieInfoUrl);
-      end;
-    if DownloadAMF(Http, 'http://216.52.240.138/gateway.php', AMFRequest, AMFResponse) then
-      try
-        if AMFResponse.HasBody(0) then
-          if AMFResponse.Body[0].Content.FindValueByPath('flv', Url, TAMFString) then
-            begin
-            MovieURL := string(Url);
-            SetPrepared(True);
-            Result := True;
-            end;
-      finally
-        AMFResponse.Free;
-        end;
-  finally
-    AMFRequest.Free;
-    end;
+  Result := 'http://www.thatvideosite.com/video/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_UStream);
+  RegisterDownloader(TDownloader_ThatVideoSite);
 
 end.

@@ -72,6 +72,9 @@ end;
 class function THttpDirectDownloader.UrlRegExp: string;
 begin
   Raise EDownloaderError.Create('THttpDirectDownloader.UrlRegExp is not supported.');
+  {$IFDEF FPC}
+  Result := '';
+  {$ENDIF}
 end;
 
 constructor THttpDirectDownloader.Create(const AMovieID, AMovieName: string);

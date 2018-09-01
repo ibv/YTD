@@ -61,8 +61,6 @@ type
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
     protected
       procedure LabelConverterClick;
-    protected
-      class function DefaultResourceName: string; override;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -167,11 +165,6 @@ const
   ACTION_CANCEL = 40001;
 
 { TFormSelectConverter }
-
-class function TFormSelectConverter.DefaultResourceName: string;
-begin
-  Result := 'guiConverterWinAPI';
-end;
 
 constructor TFormSelectConverter.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin

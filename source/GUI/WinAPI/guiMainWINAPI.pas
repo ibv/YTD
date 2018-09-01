@@ -38,13 +38,17 @@ unit guiMainWINAPI;
 {$INCLUDE 'ytd.inc'}
 {$DEFINE PREPARETRANSLATIONS}
 
+{$IFDEF DELPHI2009_UP}
+  {$DEFINE LISTVIEWOVERFLOW}
+{$ENDIF}
+
 interface
 
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
   SynaCode,
-  uLanguages, uMessages, uOptions, uStringUtils, uCompatibility,
+  uLanguages, uFunctions, uMessages, uOptions, uStringUtils, uCompatibility,
   guiOptions, guiFunctions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
@@ -85,7 +89,9 @@ type
       {$IFDEF CONVERTERS}
       LastConverterID: string;
       {$ENDIF}
+      {$IFDEF SYSTRAY}
       function NotifyIconClick(Buttons: DWORD): boolean;
+      {$ENDIF}
       function ActionAddNewUrl: boolean;
       function ActionDeleteUrl: boolean;
       function ActionStart: boolean;
@@ -126,8 +132,6 @@ type
     protected
       fNotifyIconData: TNotifyIconData;
       {$ENDIF}
-    protected
-      class function DefaultResourceName: string; override;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -194,11 +198,6 @@ end;
 {$ENDIF}
 
 { TFormMain }
-
-class function TFormMain.DefaultResourceName: string;
-begin
-  Result := 'guiMainWINAPI';
-end;
 
 constructor TFormMain.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin
@@ -316,11 +315,13 @@ end;
 function TFormMain.DialogProc(var Msg: TMessage): boolean;
 begin
   Result := inherited DialogProc(Msg);
+  {$IFDEF SYSTRAY}
   if not Result then
     case Msg.Msg of
       WM_NOTIFYICON:
         Result := NotifyIconClick(Msg.lParam);
       end;
+  {$ENDIF}
 end;
 
 function TFormMain.DoInitDialog: boolean;
@@ -449,6 +450,10 @@ function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
 
   function ShowStatic(const Text: string): boolean;
     begin
+      {$IFDEF LISTVIEWOVERFLOW}
+        {$MESSAGE WARN 'Showing text in the listview leads to Access Violation. Function disabled.'}
+        Exit;
+      {$ENDIF}
       StaticDisplayInfoText := Text;
       DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
       DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
@@ -505,31 +510,35 @@ function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
 var DlItem: TDownloadListItem;
 begin
   Result := False;
-  DlItem := DownloadList[DispInfo^.item.iItem];
-  case DispInfo^.item.iSubItem of
-    LISTVIEW_SUBITEM_URL:
-      begin
-      Result := ShowStatic(DownloadList.Urls[DispInfo^.item.iItem]);
-      DispInfo^.item.iImage := GetStateImageIndex(DlItem);
-      if DispInfo^.item.iImage >= 0 then
-        DispInfo^.item.mask := DispInfo^.item.mask or LVIF_IMAGE;
+  DispInfo^.item.mask := 0;
+  if DownloadList <> nil then
+    begin
+    DlItem := DownloadList[DispInfo^.item.iItem];
+    case DispInfo^.item.iSubItem of
+      LISTVIEW_SUBITEM_URL:
+        begin
+        Result := ShowStatic(DownloadList.Urls[DispInfo^.item.iItem]);
+        DispInfo^.item.iImage := GetStateImageIndex(DlItem);
+        if DispInfo^.item.iImage >= 0 then
+          DispInfo^.item.mask := DispInfo^.item.mask or LVIF_IMAGE;
+        end;
+      LISTVIEW_SUBITEM_PROVIDER:
+        Result := ShowStatic(DlItem.Downloader.Provider);
+      LISTVIEW_SUBITEM_STATUS:
+        Result := ShowStatic(GetStateText(DlItem));
+      LISTVIEW_SUBITEM_TITLE:
+        if DlItem.Downloader.Prepared then
+          Result := ShowStatic(DlItem.Downloader.Name)
+        else
+          Result := ShowStatic('');
+      LISTVIEW_SUBITEM_SIZE:
+        if DlItem.Downloader.Prepared and (DlItem.TotalSize >= 0) then
+          Result := ShowStatic(PrettySize(DlItem.TotalSize))
+        else
+          Result := ShowStatic('');
+      LISTVIEW_SUBITEM_PROGRESS:
+        Result := ShowStatic(GetProgress(DlItem));
       end;
-    LISTVIEW_SUBITEM_PROVIDER:
-      Result := ShowStatic(DlItem.Downloader.Provider);
-    LISTVIEW_SUBITEM_STATUS:
-      Result := ShowStatic(GetStateText(DlItem));
-    LISTVIEW_SUBITEM_TITLE:
-      if DlItem.Downloader.Prepared then
-        Result := ShowStatic(DlItem.Downloader.Name)
-      else
-        Result := ShowStatic('');
-    LISTVIEW_SUBITEM_SIZE:
-      if DlItem.Downloader.Prepared and (DlItem.TotalSize >= 0) then
-        Result := ShowStatic(PrettySize(DlItem.TotalSize))
-      else
-        Result := ShowStatic('');
-    LISTVIEW_SUBITEM_PROGRESS:
-      Result := ShowStatic(GetProgress(DlItem));
     end;
 end;
 

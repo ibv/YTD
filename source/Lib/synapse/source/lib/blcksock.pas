@@ -301,8 +301,8 @@ type
     procedure SetNonBlockMode(Value: Boolean);
     procedure SetTTL(TTL: integer);
     function GetTTL:integer;
-    procedure SetFamily(Value: TSocketFamily); virtual;
-    procedure SetSocket(Value: TSocket); virtual;
+    procedure SetFamily(Value: TSocketFamily); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure SetSocket(Value: TSocket); {$IFNDEF PEPAK} virtual; {$ENDIF}
     function GetWsaData: TWSAData;
     function FamilyToAF(f: TSocketFamily): TAddrFamily;
   protected
@@ -324,8 +324,8 @@ type
     procedure LimitBandwidth(Length: Integer; MaxB: integer; var Next: LongWord);
     procedure SetBandwidth(Value: Integer);
     function TestStopFlag: Boolean;
-    procedure InternalSendStream(const Stream: TStream; WithSize, Indy: boolean); virtual;
-    function InternalCanRead(Timeout: Integer): Boolean; virtual;
+    procedure InternalSendStream(const Stream: TStream; WithSize, Indy: boolean); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function InternalCanRead(Timeout: Integer): Boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
   public
     constructor Create;
 
@@ -352,7 +352,7 @@ type
     procedure CloseSocket; virtual;
 
     {:Abort any work on Socket and destroy them.}
-    procedure AbortSocket; virtual;
+    procedure AbortSocket; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Connects socket to local IP address and PORT. IP address may be numeric or
      symbolic ('192.168.74.50', 'cosi.nekde.cz', 'ff08::1'). The same for PORT
@@ -388,31 +388,31 @@ type
     function SendBuffer(Buffer: Tmemory; Length: Integer): Integer; virtual;
 
     {:One data BYTE is sent via connected socket.}
-    procedure SendByte(Data: Byte); virtual;
+    procedure SendByte(Data: Byte); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Send data string via connected socket. Any terminator is not added! If you
      need send true string with CR-LF termination, you must add CR-LF characters
      to sended string! Because any termination is not added automaticly, you can
      use this function for sending any binary data in binary string.}
-    procedure SendString(Data: AnsiString); virtual;
+    procedure SendString(Data: AnsiString); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Send integer as four bytes to socket.}
-    procedure SendInteger(Data: integer); virtual;
+    procedure SendInteger(Data: integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Send data as one block to socket. Each block begin with 4 bytes with
      length of data in block. This 4 bytes is added automaticly by this
      function.}
-    procedure SendBlock(const Data: AnsiString); virtual;
+    procedure SendBlock(const Data: AnsiString); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Send data from stream to socket.}
-    procedure SendStreamRaw(const Stream: TStream); virtual;
+    procedure SendStreamRaw(const Stream: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Send content of stream to socket. It using @link(SendBlock) method}
-    procedure SendStream(const Stream: TStream); virtual;
+    procedure SendStream(const Stream: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Send content of stream to socket. It using @link(SendBlock) method and
     this is compatible with streams in Indy library.}
-    procedure SendStreamIndy(const Stream: TStream); virtual;
+    procedure SendStreamIndy(const Stream: TStream); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Note: This is low-level receive function. You must be sure if data is
      waiting for read before call this function for avoid deadlock!
@@ -436,11 +436,11 @@ type
      serves for reading any size of data (i.e. one megabyte...). This method is
      preffered for reading from stream sockets (like TCP).}
     function RecvBufferEx(Buffer: Tmemory; Len: Integer;
-      Timeout: Integer): Integer; virtual;
+      Timeout: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Similar to @link(RecvBufferEx), but readed data is stored in binary
      string, not in memory buffer.}
-    function RecvBufferStr(Len: Integer; Timeout: Integer): AnsiString; virtual;
+    function RecvBufferStr(Len: Integer; Timeout: Integer): AnsiString; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Note: This is high-level receive function. It using internal
      @link(LineBuffer) and you can combine this function freely with other
@@ -449,7 +449,7 @@ type
      Waits until one data byte is received which is also returned as function
      result. If no data is received within TIMEOUT (in milliseconds)period,
      @link(LastError) is set to WSAETIMEDOUT and result have value 0.}
-    function RecvByte(Timeout: Integer): Byte; virtual;
+    function RecvByte(Timeout: Integer): Byte; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Note: This is high-level receive function. It using internal
      @link(LineBuffer) and you can combine this function freely with other
@@ -458,7 +458,7 @@ type
      Waits until one four bytes are received and return it as one Ineger Value.
      If no data is received within TIMEOUT (in milliseconds)period,
      @link(LastError) is set to WSAETIMEDOUT and result have value 0.}
-    function RecvInteger(Timeout: Integer): Integer; virtual;
+    function RecvInteger(Timeout: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Note: This is high-level receive function. It using internal
      @link(LineBuffer) and you can combine this function freely with other
@@ -471,7 +471,7 @@ type
      received within TIMEOUT (in milliseconds) period, @link(LastError) is set
      to WSAETIMEDOUT. You may also specify maximum length of reading data by
      @link(MaxLineLength) property.}
-    function RecvString(Timeout: Integer): AnsiString; virtual;
+    function RecvString(Timeout: Integer): AnsiString; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Note: This is high-level receive function. It using internal
      @link(LineBuffer) and you can combine this function freely with other
@@ -482,7 +482,7 @@ type
      termination. If no data is received within TIMEOUT (in milliseconds)
      period, @link(LastError) is set to WSAETIMEDOUT. You may also specify
      maximum length of reading data by @link(MaxLineLength) property.}
-    function RecvTerminated(Timeout: Integer; const Terminator: AnsiString): AnsiString; virtual;
+    function RecvTerminated(Timeout: Integer; const Terminator: AnsiString): AnsiString; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Note: This is high-level receive function. It using internal
      @link(LineBuffer) and you can combine this function freely with other
@@ -495,35 +495,35 @@ type
      dynamic size binary string. This method is preffered for reading from
      stream sockets (like TCP). It is very goot for receiving datagrams too!
      (UDP protocol)}
-    function RecvPacket(Timeout: Integer): AnsiString; virtual;
+    function RecvPacket(Timeout: Integer): AnsiString; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Read one block of data from socket. Each block begin with 4 bytes with
      length of data in block. This function read first 4 bytes for get lenght,
      then it wait for reported count of bytes.}
-    function RecvBlock(Timeout: Integer): AnsiString; virtual;
+    function RecvBlock(Timeout: Integer): AnsiString; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Read all data from socket to stream until socket is closed (or any error
      occured.)}
-    procedure RecvStreamRaw(const Stream: TStream; Timeout: Integer); virtual;
+    procedure RecvStreamRaw(const Stream: TStream; Timeout: Integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
     {:Read requested count of bytes from socket to stream.}
     procedure RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: Integer);
 
     {:Receive data to stream. It using @link(RecvBlock) method.}
-    procedure RecvStream(const Stream: TStream; Timeout: Integer); virtual;
+    procedure RecvStream(const Stream: TStream; Timeout: Integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Receive data to stream. This function is compatible with similar function
     in Indy library. It using @link(RecvBlock) method.}
-    procedure RecvStreamIndy(const Stream: TStream; Timeout: Integer); virtual;
+    procedure RecvStreamIndy(const Stream: TStream; Timeout: Integer); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Same as @link(RecvBuffer), but readed data stays in system input buffer.
     Warning: this function not respect data in @link(LineBuffer)! Is not
     recommended to use this function!}
-    function PeekBuffer(Buffer: TMemory; Length: Integer): Integer; virtual;
+    function PeekBuffer(Buffer: TMemory; Length: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Same as @link(RecvByte), but readed data stays in input system buffer.
      Warning: this function not respect data in @link(LineBuffer)! Is not
     recommended to use this function!}
-    function PeekByte(Timeout: Integer): Byte; virtual;
+    function PeekByte(Timeout: Integer): Byte; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:On stream sockets it returns number of received bytes waiting for picking.
      0 is returned when there is no such data. On datagram socket it returns
@@ -557,7 +557,7 @@ type
     {:If you "manually" call Socket API functions, forward their return code as
      parameter to this function, which evaluates it, eventually calls
      GetLastError and found error code returns and stores to @link(LastError).}
-    function SockCheck(SockResult: Integer): Integer; virtual;
+    function SockCheck(SockResult: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:If @link(LastError) contains some error code and @link(RaiseExcept)
      property is @true, raise adequate exception.}
@@ -609,11 +609,11 @@ type
      This function is need only on special cases, when you need use
      @link(RecvBuffer) function directly! read functioms what have timeout as
      calling parameter, calling this function internally.}
-    function CanRead(Timeout: Integer): Boolean; virtual;
+    function CanRead(Timeout: Integer): Boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Same as @link(CanRead), but additionally return @TRUE if is some data in
      @link(LineBuffer).}
-    function CanReadEx(Timeout: Integer): Boolean; virtual;
+    function CanReadEx(Timeout: Integer): Boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return @TRUE, if you can to socket write any data (not full sending
      buffer). Status is tested for time Timeout (in milliseconds). If value in
@@ -621,7 +621,7 @@ type
      -1, run is breaked and waiting for write data maybe forever.
 
      This function is need only on special cases!}
-    function CanWrite(Timeout: Integer): Boolean; virtual;
+    function CanWrite(Timeout: Integer): Boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Same as @link(SendBuffer), but send datagram to address from
      @link(RemoteSin). Usefull for sending reply to datagram received by
@@ -667,10 +667,10 @@ type
     procedure SetRecvTimeout(Timeout: Integer);
 
     {:Return value of socket type.}
-    function GetSocketType: integer; Virtual;
+    function GetSocketType: integer; virtual;
 
     {:Return value of protocol type for socket creation.}
-    function GetSocketProtocol: integer; Virtual;
+    function GetSocketProtocol: integer; virtual;
 
     {:Return descriptive string for given error code. This is class function.
      You may call it without created object!}
@@ -939,7 +939,7 @@ type
 
      If you use SOCKS, activate incoming TCP connection by this proxy. (By BIND
      method of SOCKS.)}
-    procedure Listen; virtual;
+    procedure Listen; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Waits until new incoming connection comes. After it comes a new socket is
      automatically created (socket handler is returned by this function as
@@ -1169,14 +1169,14 @@ type
     FSSHChannelArg1: string;
     FSSHChannelArg2: string;
     procedure ReturnError;
-    function CreateSelfSignedCert(Host: string): Boolean; virtual;
+    function CreateSelfSignedCert(Host: string): Boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
   public
     {: Create plugin class. it is called internally from @link(TTCPBlockSocket)}
-    constructor Create(const Value: TTCPBlockSocket); virtual;
+    constructor Create(const Value: TTCPBlockSocket); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Assign settings (certificates and configuration) from another SSL plugin
      class.}
-    procedure Assign(const Value: TCustomSSL); virtual;
+    procedure Assign(const Value: TCustomSSL); {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: return description of used plugin. It usually return name and version
      of used SSL library.}
@@ -1188,76 +1188,76 @@ type
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for start SSL connection.}
-    function Connect: boolean; virtual;
+    function Connect: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for acept new SSL connection.}
-    function Accept: boolean; virtual;
+    function Accept: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for hard shutdown of SSL connection. (for example,
      before socket is closed)}
-    function Shutdown: boolean; virtual;
+    function Shutdown: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for soft shutdown of SSL connection. (for example,
      when you need to continue with unprotected connection.)}
-    function BiShutdown: boolean; virtual;
+    function BiShutdown: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for sending some datas by SSL connection.}
-    function SendBuffer(Buffer: TMemory; Len: Integer): Integer; virtual;
+    function SendBuffer(Buffer: TMemory; Len: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for receiving some datas by SSL connection.}
-    function RecvBuffer(Buffer: TMemory; Len: Integer): Integer; virtual;
+    function RecvBuffer(Buffer: TMemory; Len: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for getting count of datas what waiting for read.
      If SSL plugin not allows this, then it should return 0.}
-    function WaitingData: Integer; virtual;
+    function WaitingData: Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return string with identificator of SSL/TLS version of existing
      connection.}
-    function GetSSLVersion: string; virtual;
+    function GetSSLVersion: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return subject of remote SSL peer.}
-    function GetPeerSubject: string; virtual;
+    function GetPeerSubject: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return issuer certificate of remote SSL peer.}
-    function GetPeerIssuer: string; virtual;
+    function GetPeerIssuer: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return peer name from remote side certificate. This is good for verify,
      if certificate is generated for remote side IP name.}
-    function GetPeerName: string; virtual;
+    function GetPeerName: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return fingerprint of remote SSL peer.}
-    function GetPeerFingerprint: string; virtual;
+    function GetPeerFingerprint: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return all detailed information about certificate from remote side of
      SSL/TLS connection. Result string can be multilined! Each plugin can return
      this informations in different format!}
-    function GetCertInfo: string; virtual;
+    function GetCertInfo: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return currently used Cipher.}
-    function GetCipherName: string; virtual;
+    function GetCipherName: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return currently used number of bits in current Cipher algorythm.}
-    function GetCipherBits: integer; virtual;
+    function GetCipherBits: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return number of bits in current Cipher algorythm.}
-    function GetCipherAlgBits: integer; virtual;
+    function GetCipherAlgBits: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {:Return result value of verify remote side certificate. Look to OpenSSL
      documentation for possible values. For example 0 is successfuly verified
      certificate, or 18 is self-signed certificate.}
-    function GetVerifyCert: integer; virtual;
+    function GetVerifyCert: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
 
     {: Resurn @true if SSL mode is enabled on existing cvonnection.}
     property SSLEnabled: Boolean read FSSLEnabled;

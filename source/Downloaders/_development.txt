@@ -15,6 +15,7 @@ HTTP	Url	Url	downBreakEmbed
 HTTP	Url	Url	downBreakEmbedV2
 HTTP	HTML	Nested	downCasSk
 HTTP	HTML	HTML	downCekniTo
+HTTP	HTML	HTML	downCeskeDrahy
 HTTP	HTML	HTML	downCestyKSobe
 HTTP	XML	XML	downClipfish
 HTTP	XML	XML	downCollegeHumor
@@ -104,6 +105,7 @@ MS	XML	XML	downTipovani
 HTTP	XML	XML	downTodaysBigThing
 HTTP	HTML	HTML	downTontuyau
 RTMP	HTML	XML	downTotallyCrap
+HTTP	HTML	HTML	downTV7
 MS	HTML	XML	downTVcom
 HTTP	XML	XML	downTVNoe
 RTMP	HTML	XML	downUniMinnesota
@@ -115,7 +117,9 @@ HTTP	HTML	XML	downVideu
 HTTP	XML	XML	downVimeo
 HTTP	XML	XML	downVitalMtb
 HTTP	HTML	HTML	downWimp
+HTTP	AMF	AMF	downWordPressTV
 HTTP	HTML	HTML	downWrzuta
+HTTP	HTML	HTML	downYikers
 HTTP	HTML	HTML1	downYouTube
 HTTP	HTML	HTML	downZ1TV
 HTTP	HTML	XML	downZkoukniTo

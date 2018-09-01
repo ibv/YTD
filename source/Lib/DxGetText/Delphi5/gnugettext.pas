@@ -301,14 +301,14 @@ type
       procedure UseLanguage(LanguageCode: string);
       procedure GetListOfLanguages (const domain:string; list:TStrings); // Puts list of language codes, for which there are translations in the specified domain, into list
       {$ifdef DELPHI5OROLDER}
-      function gettext(const szMsgId: widestring): widestring; virtual;
-      function ngettext(const singular,plural:widestring;Number:longint):widestring; virtual;
+      function gettext(const szMsgId: widestring): widestring; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function ngettext(const singular,plural:widestring;Number:longint):widestring; {$IFNDEF PEPAK} virtual; {$ENDIF}
       {$endif}
       {$ifndef DELPHI5OROLDER}
-      function gettext(const szMsgId: ansistring): widestring; overload; virtual;
-      function gettext(const szMsgId: widestring): widestring; overload; virtual;
-      function ngettext(const singular,plural:ansistring;Number:longint):widestring; overload; virtual;
-      function ngettext(const singular,plural:widestring;Number:longint):widestring; overload; virtual;
+      function gettext(const szMsgId: ansistring): widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function gettext(const szMsgId: widestring): widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function ngettext(const singular,plural:ansistring;Number:longint):widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function ngettext(const singular,plural:widestring;Number:longint):widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
       {$endif}
       function GetCurrentLanguage:string;
       function GetTranslationProperty (const Propertyname:string):WideString;
@@ -327,14 +327,14 @@ type
 
       // Multi-domain functions
       {$ifdef DELPHI5OROLDER}
-      function dgettext(const szDomain: string; const szMsgId: widestring): widestring; virtual;
-      function dngettext(const szDomain: string; const singular,plural:widestring;Number:longint):widestring; virtual;
+      function dgettext(const szDomain: string; const szMsgId: widestring): widestring; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function dngettext(const szDomain: string; const singular,plural:widestring;Number:longint):widestring; {$IFNDEF PEPAK} virtual; {$ENDIF}
       {$endif}
       {$ifndef DELPHI5OROLDER}
-      function dgettext(const szDomain: string; const szMsgId: ansistring): widestring; overload; virtual;
-      function dgettext(const szDomain: string; const szMsgId: widestring): widestring; overload; virtual;
-      function dngettext(const szDomain: string; const singular,plural:ansistring;Number:longint):widestring; overload; virtual;
-      function dngettext(const szDomain: string; const singular,plural:widestring;Number:longint):widestring; overload; virtual;
+      function dgettext(const szDomain: string; const szMsgId: ansistring): widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function dgettext(const szDomain: string; const szMsgId: widestring): widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function dngettext(const szDomain: string; const singular,plural:ansistring;Number:longint):widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
+      function dngettext(const szDomain: string; const singular,plural:widestring;Number:longint):widestring; overload; {$IFNDEF PEPAK} virtual; {$ENDIF}
       {$endif}
       procedure textdomain(const szDomain: string);
       function getcurrenttextdomain: string;
@@ -357,9 +357,9 @@ type
       // Override these three, if you want to inherited from this class
       // to create a new class that handles other domain and language dependent
       // issues
-      procedure WhenNewLanguage (const LanguageID:string); virtual;         // Override to know when language changes
-      procedure WhenNewDomain (const TextDomain:string); virtual; // Override to know when text domain changes. Directory is purely informational
-      procedure WhenNewDomainDirectory (const TextDomain,Directory:string); virtual; // Override to know when any text domain's directory changes. It won't be called if a domain is fixed to a specific file.
+      procedure WhenNewLanguage (const LanguageID:string); {$IFNDEF PEPAK} virtual; {$ENDIF}         // Override to know when language changes
+      procedure WhenNewDomain (const TextDomain:string); {$IFNDEF PEPAK} virtual; {$ENDIF} // Override to know when text domain changes. Directory is purely informational
+      procedure WhenNewDomainDirectory (const TextDomain,Directory:string); {$IFNDEF PEPAK} virtual; {$ENDIF} // Override to know when any text domain's directory changes. It won't be called if a domain is fixed to a specific file.
     private
       curlang: string;
       curGetPluralForm:TGetPluralForm;

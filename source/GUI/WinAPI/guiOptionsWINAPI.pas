@@ -70,8 +70,6 @@ type
       procedure ComboConverterChange;
       {$ENDIF}
       procedure ButtonDownloadDirClick;
-    protected
-      class function DefaultResourceName: string; override;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -106,11 +104,6 @@ const
   ACTION_DOWNLOADDIR = 40002;
 
 { TFormOptions }
-
-class function TFormOptions.DefaultResourceName: string;
-begin
-  Result := 'guiOptionsWinAPI';
-end;
 
 constructor TFormOptions.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin

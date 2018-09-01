@@ -193,9 +193,15 @@ begin
         try
           if FileExists(FileName) then
             DeleteFile(PChar(FileName));
-          VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate);
+          VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate or fmShareDenyWrite);
           try
+            // For some reason, Delphi don't allow fmCreate with sharing flags
+            {$IFDEF SHAREABLEFILES}
+            VideoDownloader.OutputStream.Free;
+            VideoDownloader.OutputStream := nil;
+            VideoDownloader.OutputStream := TFileStream.Create(FileName, fmOpenWrite or fmShareDenyWrite);
             VideoDownloader.Sock.OnStatus := SockStatusMonitor;
+            {$ENDIF}
             BytesTransferred := 0;
             if DownloadPage(VideoDownloader, MovieURL) then
               if (VideoDownloader.ResultCode < 200) or (VideoDownloader.ResultCode >= 300) then

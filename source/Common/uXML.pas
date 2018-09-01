@@ -49,14 +49,14 @@ type
 
   TXmlDoc = class(TNativeXml)
     protected
-      procedure LoadFromBinaryData(Data: Pointer; Length: integer); virtual;
+      procedure LoadFromBinaryData(Data: Pointer; Length: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
-      procedure LoadFromBinaryString(const Xml: AnsiString); virtual;
-      function SaveToBinaryString: AnsiString; virtual;
-      function NodeByPath(const Path: string; out Node: TXmlNode): boolean; virtual;
-      function NodeByPathAndAttr(const Path, AttributeName, AttributeValue: string; out Node: TXmlNode): boolean; virtual;
-      function ValueByPath(const Path: string; const Default: string = ''): string; virtual;
-      procedure SetIndentation(const Value: string); virtual;
+      procedure LoadFromBinaryString(const Xml: AnsiString); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function SaveToBinaryString: AnsiString; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function NodeByPath(const Path: string; out Node: TXmlNode): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function NodeByPathAndAttr(const Path, AttributeName, AttributeValue: string; out Node: TXmlNode): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ValueByPath(const Path: string; const Default: string = ''): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetIndentation(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property Xml: AnsiString read SaveToBinaryString write LoadFromBinaryString;
     end;
 

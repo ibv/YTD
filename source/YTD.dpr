@@ -63,6 +63,7 @@ uses
     {$ENDIF}
   {$ENDIF}
   // Base objects and units
+  uFunctions in 'Common\uFunctions.pas',
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
   uXML in 'Common\uXML.pas',
@@ -123,6 +124,7 @@ uses
   downBreakEmbedV2 in 'Downloaders\downBreakEmbedV2.pas',
   downCasSk in 'Downloaders\downCasSk.pas',
   downCekniTo in 'Downloaders\downCekniTo.pas',
+  downCeskeDrahy in 'Downloaders\downCeskeDrahy.pas',
   downCestyKSobe in 'Downloaders\downCestyKSobe.pas',
   downClipfish in 'Downloaders\downClipfish.pas',
   downClipfishV2 in 'Downloaders\downClipfishV2.pas',
@@ -217,6 +219,7 @@ uses
   downSTV in 'Downloaders\downSTV.pas',
   downTangle in 'Downloaders\downTangle.pas',
   downTeacherTube in 'Downloaders\downTeacherTube.pas',
+  downThatVideoSite in 'Downloaders\downThatVideoSite.pas',
   downTodaysBigThing in 'Downloaders\downTodaysBigThing.pas',
   downTontuyau in 'Downloaders\downTontuyau.pas',
   downTotallyCrap in 'Downloaders\downTotallyCrap.pas',
@@ -232,7 +235,9 @@ uses
   downVimeo in 'Downloaders\downVimeo.pas',
   downVitalMtb in 'Downloaders\downVitalMtb.pas',
   downWimp in 'Downloaders\downWimp.pas',
+  downWordPressTV in 'Downloaders\downWordPressTV.pas',
   downWrzuta in 'Downloaders\downWrzuta.pas',
+  downYikers in 'Downloaders\downYikers.pas',
   downYouTube in 'Downloaders\downYouTube.pas',
   downZ1TV in 'Downloaders\downZ1TV.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',

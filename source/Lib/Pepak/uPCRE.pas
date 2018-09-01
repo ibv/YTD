@@ -8,13 +8,13 @@ uses
 type
   TRegExp = class(TPerlRegEx)
     public
-      function Match(const Subject: PCREString): boolean; overload; virtual;
-      function SubexpressionByName(const Name: PCREString): PCREString; overload; virtual;
-      function SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean; overload; virtual;
+      function Match(const Subject: PCREString): boolean; overload;
+      function SubexpressionByName(const Name: PCREString): PCREString; overload;
+      function SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean; overload;
       {$IFDEF UNICODE}
-      function Match(const Subject: string): boolean; overload; virtual;
-      function SubexpressionByName(const Name: string): string; overload; virtual;
-      function SubexpressionByName(const Name: string; out Value: string): boolean; overload; virtual;
+      function Match(const Subject: string): boolean; overload;
+      function SubexpressionByName(const Name: string): string; overload;
+      function SubexpressionByName(const Name: string; out Value: string): boolean; overload; 
       {$ENDIF}
     end;
 
