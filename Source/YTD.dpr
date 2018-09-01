@@ -31,7 +31,10 @@ uses
   uRtmpDownloader in 'uRtmpDownloader.pas',
   uDownloader_BarrandovTV in 'uDownloader_BarrandovTV.pas',
   uHttpDownloader in 'uHttpDownloader.pas',
-  uDownloader_Nova in 'uDownloader_Nova.pas';
+  uDownloader_Nova in 'uDownloader_Nova.pas',
+  uDownloader_CT in 'uDownloader_CT.pas',
+  uMSDownloader in 'uMSDownloader.pas',
+  uExternalDownloader in 'uExternalDownloader.pas';
 
 begin
   {$IFNDEF NO_GUI}

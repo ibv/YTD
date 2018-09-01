@@ -2596,23 +2596,32 @@ end;
 
 
 procedure TjanXMLParser2.parseAttributes(node: TjanXMLNode2; atts: string);
+const BlankChars = [' ',#9,#10,#13,#0];
 var
   s,attname,attvalue:string;
-  p1,p2,ps,pd:integer;
+  p2,ps,pd:integer;
+  IndexEqu, IndexAfterName, IndexValueDelimiter, AttrLen: integer;
   delim:char;
 begin
   s:=trim(atts);
   while s<>'' do begin
-    p1:=posstr('=',s);
-    if p1=0 then
+    IndexEqu:=posstr('=',s);
+    if IndexEqu=0 then
       raise exception.Create('missing = when parsing attributes');
-    delim:=s[p1+1];
+    AttrLen := Length(s);
+    IndexAfterName := IndexEqu;
+    while (IndexAfterName>0) and (s[IndexAfterName] in BlankChars) do
+      Dec(IndexAfterName);
+    IndexValueDelimiter := IndexEqu+1;
+    while (IndexValueDelimiter<AttrLen) and (s[IndexValueDelimiter] in BlankChars) do
+      Inc(IndexValueDelimiter);
+    delim:=s[IndexValueDelimiter];
     if not (delim in ['"','''']) then
       raise exception.Create('missing value delimiter when parsing attributes');
-    p2:=posstr(delim,s,p1+2);
+    p2:=posstr(delim,s,IndexValueDelimiter+1);
     if p2=0 then raise exception.Create('Expected closing '+delim+' when parsing attributes');
-    attvalue:=copy(s,p1+2,p2-(p1+2));
-    attname:=trim(copy(s,1,p1-1));
+    attvalue:=copy(s,IndexValueDelimiter+1,p2-(IndexValueDelimiter+1));
+    attname:=trim(copy(s,1,IndexAfterName-1));
     // unescape entities
     if posstr('&',attvalue)>0 then begin
       attvalue:=q_replacestr(attvalue,'&lt;','<');

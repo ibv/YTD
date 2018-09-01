@@ -4,35 +4,25 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uDownloader, uCommonDownloader,
+  uDownloader, uCommonDownloader, uExternalDownloader,
   RtmpDump_DLL;
 
 type
-  ERtmpDownloaderError = class(EDownloaderError);
-  
-  TRtmpDownloader = class(TCommonDownloader)
+  ERtmpDownloaderError = class(EExternalDownloaderError);
+
+  TRtmpDownloader = class(TExternalDownloader)
     private
       fRtmpUrl: string;
       fRtmpPlayPath: string;
-      fAborted: boolean;
-      fDownloadedBytes: int64;
-      fTotalBytes: int64;
     protected
       procedure OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer); virtual;
-      function GetTotalSize: int64; override;
-      function GetDownloadedSize: int64; override;
-      procedure SetPrepared(Value: boolean); override;
       property RtmpUrl: string read fRtmpUrl write fRtmpUrl;
       property RtmpPlayPath: string read fRtmpPlayPath write fRtmpPlayPath;
-      property DownloadedBytes: int64 read fDownloadedBytes write fDownloadedBytes;
-      property TotalBytes: int64 read fTotalBytes write fTotalBytes;
-      property Aborted: boolean read fAborted write fAborted;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       function Download: boolean; override;
       //function Prepare: boolean; override;
-      procedure AbortTransfer; override;
     end;
 
 implementation
@@ -68,14 +58,14 @@ begin
   else
     TotalBytes := -1;
   DoProgress;
-  if fAborted then
+  if Aborted then
     DoAbort := 1
   else
     DoAbort := 0;
 end;
 
 function TRtmpDownloader.Download: boolean;
-var TempDir, LogFileName, VideoFileName, Url, PlayPath: string;
+var LogFileName, VideoFileName, Url, PlayPath: string;
     RetCode: integer;
 begin
   inherited Download;
@@ -85,11 +75,7 @@ begin
   Result := False;
   if (RtmpUrl <> '') and (RtmpPlayPath <> '') then
     begin
-    SetLength(TempDir, 1024);
-    SetLength(TempDir, GetTempPath(1024, @(TempDir[1])));
-    if TempDir <> '' then
-      TempDir := IncludeTrailingBackslash(TempDir);
-    LogFileName := TempDir + ExtractFileName(FileName) + '.log';
+    LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
     if FileExists(LogFileName) then
       DeleteFile(PChar(LogFileName));
     SetLastErrorMsg('See error log in "' + LogFileName + '"');
@@ -106,29 +92,6 @@ begin
            Result := (100*DownloadedBytes div TotalBytes) > 96; // May report incomplete even though it is not
       end;
     end;
-end;
-
-procedure TRtmpDownloader.AbortTransfer;
-begin
-  inherited;
-  Aborted := True;
-end;
-
-function TRtmpDownloader.GetDownloadedSize: int64;
-begin
-  Result := DownloadedBytes;
-end;
-
-function TRtmpDownloader.GetTotalSize: int64;
-begin
-  Result := TotalBytes;
-end;
-
-procedure TRtmpDownloader.SetPrepared(Value: boolean);
-begin
-  inherited;
-  DownloadedBytes := 0;
-  TotalBytes := -1;
 end;
 
 end.

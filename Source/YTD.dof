@@ -43,13 +43,13 @@ OutputDir=..\Exe
 UnitOutputDir=..\Units
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump
+SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
 Conditionals=
 DebugSourceDirs=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 UsePackages=0
 [Parameters]
-RunParams=http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -83,11 +83,12 @@ Item0=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\li
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=4
-Item0=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump
-Item1=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2
-Item2=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67
-Item3=lib\lkjson;lib\regexpr;lib\synapse\source\lib
+Count=5
+Item0=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src
+Item1=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump
+Item2=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2
+Item3=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67
+Item4=lib\lkjson;lib\regexpr;lib\synapse\source\lib
 [HistoryLists\hlUnitOutputDirectory]
 Count=2
 Item0=..\Units

@@ -74,6 +74,7 @@ begin
   SetLastErrorMsg('');
   SetPrepared(False);
   fHttp := THttpSend.Create;
+  fHttp.UserAgent := 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
   MovieID := AMovieID;
 end;
 

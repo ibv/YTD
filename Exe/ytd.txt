@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.16                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.17                                  (C) 2009, 2010 Pepak
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -22,6 +22,13 @@ Podporované weby a formáty URL:
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
      - http://thespoonyone.blip.tv/file/1607673/
+
+ - CeskaTelevize.cz
+
+     - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTSP over HTTP. Viz
+     níe v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - iPrima.cz:
 
@@ -54,8 +61,9 @@ Podporované weby a formáty URL:
      - http://www.youtube.com/watch?v=b5AWQ5aBjgE
 
 
+
 Od verze 0.15 program zahrnuje podporu pro streamované video podle protokolu
-RTMP. Protokol je implementován pomocí knihovny, vzniklé drobnou úpravou 
+RTMP. Protokol je implementován pomocí knihovny vzniklé drobnou úpravou 
 projektu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Tato implementace má øadu
 nedostatkù, se kterımi je tøeba poèítat:
 
@@ -77,6 +85,21 @@ nedostatkù, se kterımi je tøeba poèítat:
 
 
 
+Od verze 0.17 je podporována rodina protokolù kolem MMS a RTSP (mimo jiné
+Microsoftí streamy, Real streamy a øada dalších). Protokol je implementován
+pomocí knihovny vzniklé drobnou úpravou projektu MSDL (http://msdl.sf.net/).
+Poèítejte s tím, e cílem bylo mít úpravu hotovou rychle a s minimem zmìn
+v pùvodním projektu (podobnì jako u podpory RTMP vıše), take jsem spoustu
+monıch variant prostì ignoroval; a je budu potøebovat, rozšíøím pøíslušnì
+úpravy MSDL.
+
+Pozn.: Celková velikost stahovaného streamu je jen odhad, kterı nemusí bıt
+úplnì pøesnı. Klidnì se mùe stát, e pøenos skonèí v 93 % a pøesto se
+ohlásí jako úspìšnı - a pøehráním skuteènì zjistíte, e stream je staen
+kompletnì.
+
+
+
 SYNTAXE
 -------
 
@@ -94,6 +117,18 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.17
+
+    * Podpora pro protokoly MMS, MMSH, RTSP a jejich varianty tunelované
+      pøes FTP a HTTP. Podpora je øešena pomocí knihovny MSDL_DLL.DLL,
+      která vznikla drobnou úpravou programu MSDL (http://msdl.sf.net/).
+
+    * Podpora pro iVysílání Èeské televize.
+
+    * RTMPDUMP aktualizován na nejèerstvìjší verzi.
+
+
 
   v0.16
 

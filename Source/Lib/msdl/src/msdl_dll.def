@@ -1,0 +1,3 @@
+LIBRARY msdl_dll.dll
+EXPORTS
+	MsdlMain
