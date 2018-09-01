@@ -12,10 +12,10 @@ program YTD;
 uses
   SysUtils,
   Windows,
+  {$IFDEF FPC}
+    Interfaces,
+  {$ENDIF}
   {$IFDEF GUI}
-    {$IFDEF FPC}
-      Interfaces,
-    {$ENDIF}
     Forms,
   {$ENDIF}
   // Command Line Version
@@ -118,31 +118,54 @@ uses
   listYouTube in 'Playlists\listYouTube.pas',
   listYouTubePage in 'Playlists\listYouTubePage.pas';
 
+var
+  ErrorMsg: string;
+
 begin
-  {$IFDEF GUI}
-    if (ParamCount <= 0) then
-      begin
-      {$IFNDEF DEBUG}
-        FreeConsole;
-      {$ENDIF}
-      Application.Initialize;
-      Application.Title := 'YouTube Downloader';
-      Application.CreateForm(TFormYTD, FormYTD);
-      Application.Run;
-      end
-    else
-  {$ENDIF}
-    begin
-    {$IFDEF CLI}
-      ExecuteConsoleApp(TYTD);
-      {$IFNDEF FPC}
-        if DebugHook <> 0 then
-          begin
-          Writeln;
-          Write('Press any key to quit.');
-          Readln;
-          end;
-      {$ENDIF}
+  try
+    {$IFDEF GUI}
+      if (ParamCount <= 0) then
+        begin
+        {$IFNDEF DEBUG}
+          {$IFNDEF FPC}
+            FreeConsole;
+          {$ENDIF}
+        {$ENDIF}
+        Application.Initialize;
+        Application.Title := 'YouTube Downloader';
+        Application.CreateForm(TFormYTD, FormYTD);
+        Application.Run;
+        end
+      else
     {$ENDIF}
+      begin
+      {$IFDEF CLI}
+        ExecuteConsoleApp(TYTD);
+        {$IFNDEF FPC}
+          if DebugHook <> 0 then
+            begin
+            Writeln;
+            Write('Press any key to quit.');
+            Readln;
+            end;
+        {$ENDIF}
+      {$ENDIF}
+      end;
+  except
+    on E: Exception do
+      begin
+      ErrorMsg := Format('Exception %s with message:'#13'%s', [E.ClassName, E.Message]);
+      {$IFDEF FPC}
+        Writeln(ErrorMsg);
+      {$ELSE}
+        {$IFDEF CLI}
+        if TConsoleApp.HasConsole = csOwnConsole then
+          Writeln(ErrorMsg)
+        else
+        {$ENDIF}
+          MessageBox(0, PChar(ErrorMsg), PChar('YouTube Downloader'), MB_OK or MB_ICONERROR);
+      {$ENDIF}
+      ExitCode := 255;
+      end;
     end;
 end.

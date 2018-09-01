@@ -17,10 +17,9 @@
 {$UNDEF XXX}
 
 {$IFNDEF NO_GUI}
-  {$IFNDEF FPC}
-    {$DEFINE GUI}
-  {$ELSE}
-    {$MESSAGE WARN 'GUI cannot be built with FPC (yet).'}
+  {$DEFINE GUI}
+  {$IFDEF FPC}
+    {$MESSAGE ERROR 'GUI cannot be built with FPC (yet).'}
   {$ENDIF}
 {$ENDIF}
 

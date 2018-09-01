@@ -5,7 +5,8 @@ interface
 
 uses
   SysUtils, Classes,
-  uDownloader, uDownloadThread;
+  uDownloader, uDownloadThread,
+  uOptions;
 
 type
   TDownloadListItem = class
@@ -23,6 +24,7 @@ type
       fOnStateChange: TNotifyEvent;
       fOnThreadFinished: TNotifyEvent;
       fTag: integer;
+      fOptions: TYTDOptions;
     protected
       procedure SetState(Value: TDownloadThreadState); virtual;
       procedure SetTotalSize(Value: int64); virtual;
@@ -61,6 +63,7 @@ type
       property Paused: boolean read GetPaused;
     published
       property Tag: integer read fTag write fTag;
+      property Options: TYTDOptions read fOptions write fOptions;
       property DownloaderOwned: boolean read fDownloaderOwned write fDownloaderOwned;
       property OnStateChange: TNotifyEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TNotifyEvent read fOnDownloadProgress write fOnDownloadProgress;
@@ -146,6 +149,7 @@ end;
 
 procedure TDownloadListItem.CreateThread;
 begin
+  Downloader.InitOptions(Options);
   fThread := TDownloadThread.Create(Downloader, True);
   Thread.OnStateChange := ThreadStateChange;
   Thread.OnDownloadProgress := ThreadDownloadProgress;

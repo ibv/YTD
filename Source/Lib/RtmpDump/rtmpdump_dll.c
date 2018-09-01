@@ -542,6 +542,7 @@ Download(RTMP * rtmp,		// connected RTMP object
       //RTMP_LogPrintf("nRead: %d\n", nRead);
       if (nRead > 0)
 	{
+
 	  if (fwrite(buffer, sizeof(unsigned char), nRead, file) !=
 	      (size_t) nRead)
 	    {
@@ -758,6 +759,9 @@ main(int argc, char **argv)
   }
   char *optarg;
   int DllOptionIndex = 0;
+  file = 0;
+  nIgnoredFlvFrameCounter = 0;
+  nIgnoredFrameCounter = 0;
 #else
   extern char *optarg;
 #endif

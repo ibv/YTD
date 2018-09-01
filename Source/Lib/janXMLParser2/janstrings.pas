@@ -6,6 +6,7 @@
 unit janStrings;
 {$IFDEF FPC}
   {$MODE DELPHI}
+  {$R-}
 {$ENDIF}
 
 

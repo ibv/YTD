@@ -60,6 +60,7 @@ type
       {$ENDIF}
       procedure NotPreparedError; virtual;
     public
+      class function UltimateProvider: string; virtual;
       class function Provider: string; virtual; abstract;
       class function UrlRegExp: string; virtual; abstract;
       class function MovieIDParamName: string; virtual;
@@ -100,6 +101,11 @@ resourcestring
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
 
 { TDownloader }
+
+class function TDownloader.UltimateProvider: string; 
+begin
+  Result := Provider;
+end;
 
 class function TDownloader.MovieIDParamName: string;
 begin

@@ -7,7 +7,8 @@ uses
   SysUtils, Classes, Dialogs,
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
-  uDownloadListItem, uDownloadThread;
+  uDownloadListItem, uDownloadThread,
+  uOptions;
 
 type
   TDownloadList = class;
@@ -27,6 +28,7 @@ type
       fAutoStart: boolean;
       fAutoOverwrite: boolean;
       fDestinationPath: string;
+      fOptions: TYTDOptions;
     protected
       function GetCount: integer; virtual;
       function GetItem(Index: integer): TDownloadListItem; virtual;
@@ -41,6 +43,7 @@ type
       procedure DownloadItemFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       procedure DownloadItemError(Sender: TObject); virtual;
       procedure DownloadItemThreadFinished(Sender: TObject); virtual;
+      function AddNewItem(const Source: string; Downloader: TDownloader): integer; virtual;
       property List: TStringList read fList;
       property DownloadingList: TList read fDownloadingList;
     public
@@ -68,6 +71,7 @@ type
       property AutoStart: boolean read fAutoStart write fAutoStart;
       property AutoOverwrite: boolean read fAutoOverwrite write fAutoOverwrite;
       property DestinationPath: string read fDestinationPath write SetDestinationPath;
+      property Options: TYTDOptions read fOptions write fOptions;
       property OnStateChange: TDownloadListNotifyEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDownloadListNotifyEvent read fOnDownloadProgress write fOnDownloadProgress;
       property OnError: TDownloadListNotifyEvent read fOnError write fOnError;
@@ -150,24 +154,28 @@ begin
       Items[i].Downloader.DestinationPath := Value;
 end;
 
-function TDownloadList.Add(const Url: string): integer;
+function TDownloadList.AddNewItem(const Source: string; Downloader: TDownloader): integer; 
 var Item: TDownloadListItem;
+begin
+  Item := TDownloadListItem.Create(Downloader, True);
+  Item.Downloader.DestinationPath := DestinationPath;
+  Item.Options := Options;
+  Item.OnStateChange := DownloadItemStateChange;
+  Item.OnDownloadProgress := DownloadItemDownloadProgress;
+  Item.OnFileNameValidate := DownloadItemFileNameValidate;
+  Item.OnError := DownloadItemError;
+  Item.OnThreadFinished := DownloadItemThreadFinished;
+  Result := List.AddObject(Source, Item);
+  NotifyList;
+  if AutoStart then
+    StartAll;
+end;
+
+function TDownloadList.Add(const Url: string): integer;
 begin
   DownloadClassifier.Url := Url;
   if DownloadClassifier.Downloader <> nil then
-    begin
-    Item := TDownloadListItem.Create(DownloadClassifier.Downloader, True);
-    Item.Downloader.DestinationPath := DestinationPath;
-    Item.OnStateChange := DownloadItemStateChange;
-    Item.OnDownloadProgress := DownloadItemDownloadProgress;
-    Item.OnFileNameValidate := DownloadItemFileNameValidate;
-    Item.OnError := DownloadItemError;
-    Item.OnThreadFinished := DownloadItemThreadFinished;
-    Result := List.AddObject(Url, Item);
-    NotifyList;
-    if AutoStart then
-      StartAll;
-    end
+    Result := AddNewItem(Url, DownloadClassifier.Downloader)
   else
     Result := -1;
 end;
@@ -182,17 +190,7 @@ begin
     Downloader := TPlaylist_HTML.Create(Source)
   else
     Downloader := TPlaylist_HTMLfile.Create(Source);
-  Item := TDownloadListItem.Create(Downloader, True);
-  Item.Downloader.DestinationPath := DestinationPath;
-  Item.OnStateChange := DownloadItemStateChange;
-  Item.OnDownloadProgress := DownloadItemDownloadProgress;
-  Item.OnFileNameValidate := DownloadItemFileNameValidate;
-  Item.OnError := DownloadItemError;
-  Item.OnThreadFinished := DownloadItemThreadFinished;
-  Result := List.AddObject(Source, Item);
-  NotifyList;
-  if AutoStart then
-    StartAll;
+  Result := AddNewItem(Source, Downloader);
 end;
 
 function TDownloadList.IndexOf(Item: TDownloadListItem): integer;
@@ -337,7 +335,7 @@ begin
       begin
       CanStart := True;
       for j := 0 to Pred(DownloadingCount) do
-        if Item.Downloader.Provider = DownloadingItems[j].Downloader.Provider then
+        if Item.Downloader.UltimateProvider = DownloadingItems[j].Downloader.UltimateProvider then
           begin
           CanStart := False;
           Break;

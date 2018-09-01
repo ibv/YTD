@@ -43,7 +43,7 @@ const
 
 class function TDownloader_FreeSk.Provider: string;
 begin
-  Result := 'Zoznam.sk';
+  Result := 'Free.zoznam.sk';
 end;
 
 class function TDownloader_FreeSk.UrlRegExp: string;

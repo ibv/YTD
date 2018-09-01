@@ -173,6 +173,7 @@ begin
   DownloadList.DestinationPath := Options.DestinationPath;
   DownloadList.AutoOverwrite := Options.OverwriteMode = omAlways;
   DownloadList.AutoStart := True;
+  DownloadList.Options := Options;
   LoadSettings;
   actAutoDownload.Checked := DownloadList.AutoStart;
   actAutoOverwrite.Checked := DownloadList.AutoOverwrite;

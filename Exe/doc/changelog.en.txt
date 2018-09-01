@@ -1,6 +1,29 @@
 CHANGELOG
 ---------
 
+  v0.29
+
+    * More compatibility fixes for Free Pascal. GUI version won't work for
+      quite a some time, perhaps forever.
+
+    * Fixed a bug in RTMPDUMP (used by, e.g. TV Nova or Barrandov), which 
+      only allowed one stream to download and failed with all successive
+      streams.
+
+      This bug also meant that if you tried to download two RTMP streams at
+      the same time, they were both written to one file, rendering this file
+      invalid. This behqavior is also fixed.
+
+    * Introduced a concept of "ultimate providers", which allow finer control
+      over simultaneously downloaded stream. For example, if a stream is
+      currently being downloaded from Stream.cz, another request from iPrima.cz
+      (which uses Stream.cz as a content provider) should wait.
+
+    * The graphical version ignored the "PreferRealMedia" setting for Ceska
+      Televize.cz.
+
+
+
   v0.28
 
     * Support for more media providers:

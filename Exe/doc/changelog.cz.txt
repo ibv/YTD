@@ -1,6 +1,30 @@
 CHANGELOG
 ---------
 
+  v0.29
+
+    * Další oprasvy pro kompatibilitu s FreePascalem. GUI verze s ním hned
+      tak fungovat nebude, pokud vùbec nìkdy.
+
+    * Opravena chyba v RTMPDUMP (používá ho napø. TV Nova nebo Barrandov),
+      která dovolila pøi jednom spuštìní programu stáhnout jen jeden RTMP
+      stream.
+
+      Tato chyba také zpùsobovala, že se dva souèasnì stahované RTMP streamy
+      ukládaly do jediného souboru, což tento soubor kompletnì znefunkènilo.
+      I to je nyní opraveno a je možné stahovat dva streamy najednou.
+
+    * Zaveden koncept "koncových poskytovatelù", který dovolí lépe øídit
+      automatické stahování tak, aby se z jednoho skuteèného zdroje stahoval
+      v jednu chvíli jen jeden stream (napø. iPrima.cz využívá Stream.cz,
+      takže je žádoucí, aby v pøípadì, že bìží stahování ze Stream.cz,
+      downloady z iPrima.cz poèkaly).
+
+    * V grafické verzi se nezohledòovalo nastavení "PreferRealMedia" u Èeské
+      televize.
+
+
+
   v0.28
 
     * Podpora pro nové poskytovatele médií:
