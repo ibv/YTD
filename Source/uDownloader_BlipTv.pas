@@ -1,5 +1,5 @@
 unit uDownloader_BlipTv;
-// http://blip.tv/play/hIVV4sNUAg
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -49,22 +49,14 @@ end;
 function TDownloader_BlipTv.GetMovieInfoUrl: string;
 var Http: THttpSend;
     Url, ID: string;
-    Match: IMatch;
 begin
   Result := '';
   Http := CreateHttp;
   try
     if Http.HttpMethod('GET', 'http://blip.tv/play/' + MovieID) then
       if CheckRedirect(Http, Url) then
-        begin
-        Match := MovieIdFromUrlRegExp.Match(Url);
-        if Match.Matched then
-          begin
-          ID := Match.Groups.ItemsByName['ID'].Value;
-          if ID <> '' then
-            Result := 'http://blip.tv/rss/flash/' + ID;
-          end;
-        end;
+        if GetRegExpVar(MovieIdFromUrlRegExp, Url, 'ID', ID) then
+          Result := 'http://blip.tv/rss/flash/' + ID;
   finally
     Http.Free;
     end;

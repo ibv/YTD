@@ -1,4 +1,5 @@
 unit uDownloadClassifier;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -15,6 +16,8 @@ type
       fDownloader: TDownloader;
       fOwnsDownloader: boolean;
     protected
+      function GetProviderCount: integer; virtual;
+      function GetProviders(Index: integer): TDownloaderClass; virtual;
       procedure SetUrl(const Value: string); virtual;
       property UrlClassifier: IRegEx read fUrlClassifier write fUrlClassifier;
     public
@@ -24,6 +27,8 @@ type
       property Url: string read fUrl write SetUrl;
       property Downloader: TDownloader read fDownloader;
       property OwnsDownloader: boolean read fOwnsDownloader write fOwnsDownloader;
+      property ProviderCount: integer read GetProviderCount;
+      property Providers[Index: integer]: TDownloaderClass read GetProviders;
     end;
 
 procedure RegisterDownloader(Downloader: TDownloaderClass);
@@ -64,7 +69,7 @@ end;
 destructor TDownloadClassifier.Destroy;
 begin
   Clear;
-  fUrlClassifier := nil; // No idea how to actually free it
+  fUrlClassifier := nil;
   inherited;
 end;
 
@@ -87,9 +92,9 @@ begin
   Match := UrlClassifier.Match(Value);
   try
     if Match.Matched then
-      for i := 0 to Pred(RegisteredDownloaders.Count) do
+      for i := 0 to Pred(ProviderCount) do
         begin
-        DC := TDownloaderClass(RegisteredDownloaders[i]);
+        DC := Providers[i];
         with Match.Groups.ItemsByName[DC.MovieIDParamName] do
           if Value <> '' then
             begin
@@ -100,6 +105,16 @@ begin
   finally
     Match := nil;
     end;
+end;
+
+function TDownloadClassifier.GetProviderCount: integer;
+begin
+  Result := RegisteredDownloaders.Count;
+end;
+
+function TDownloadClassifier.GetProviders(Index: integer): TDownloaderClass;
+begin
+  Result := TDownloaderClass(RegisteredDownloaders[Index]);
 end;
 
 initialization

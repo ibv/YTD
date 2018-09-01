@@ -1,4 +1,5 @@
 unit uDownloader_Stream;
+{$INCLUDE 'ytd.inc'}
 {.DEFINE XMLINFO}
 
 interface
@@ -78,56 +79,51 @@ end;
 
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var {$IFDEF XMLINFO}
-    IDMatch: IMatch;
     ID, Info: string;
     Xml: TjanXmlParser2;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
-    ParamMatch, CdnIDMatch: IMatch;
+    ParamMatch: IMatch;
     Params, CdnID: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   ParamMatch := MovieParamsRegExp.Match(Page);
-  if ParamMatch.Matched then
-    begin
-    Params := ParamMatch.Groups.ItemsByName['PARAM'].Value;
-    if Params = '' then
-      Params := ParamMatch.Groups.ItemsByName['PARAM2'].Value;
-    CdnIDMatch := MovieCdnIdFromParamsRegExp.Match(Params);
-    if CdnIDMatch.Matched then
+  try
+    if ParamMatch.Matched then
       begin
-      CdnID := CdnIDMatch.Groups.ItemsByName['ID'].Value;
-      if CdnID <> '' then
+      Params := ParamMatch.Groups.ItemsByName['PARAM'].Value;
+      if Params = '' then
+        Params := ParamMatch.Groups.ItemsByName['PARAM2'].Value;
+      if GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
         begin
         {$IFDEF XMLINFO}
-        IDMatch := MovieIdFromParamsRegExp.Match(Params);
-        if IDMatch.Matched then
+        if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
           try
-            ID := IDMatch.Groups.ItemsByName['ID'].Value;
-            if ID <> '' then
-              if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info) then
-                begin
-                Info := WideToAnsi(Utf8ToWide(Info));
-                Xml := TjanXmlParser2.create;
-                try
-                  Xml.xml := Info;
-                  TitleNode := Xml.getChildByPath('video/title');
-                  if TitleNode <> nil then
-                    SetName(WideToAnsi(Utf8ToWide(TitleNode.text)));
-                finally
-                  Xml.Free;
-                  end;
+            if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info) then
+              begin
+              Info := WideToAnsi(Utf8ToWide(Info));
+              Xml := TjanXmlParser2.create;
+              try
+                Xml.xml := Info;
+                TitleNode := Xml.getChildByPath('video/title');
+                if TitleNode <> nil then
+                  SetName(WideToAnsi(Utf8ToWide(TitleNode.text)));
+              finally
+                Xml.Free;
                 end;
+              end;
           except
             ;
-          end;
+            end;
         {$ENDIF}
         MovieURL := 'http://cdn-dispatcher.stream.cz/?id=' + CdnID;
         Result := True;
         SetPrepared(True);
         end;
       end;
+  finally
+    ParamMatch := nil;
     end;
 end;
 

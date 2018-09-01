@@ -1,4 +1,5 @@
 unit uYTDGUI;
+{$INCLUDE 'ytd.inc'}
 
 interface
 

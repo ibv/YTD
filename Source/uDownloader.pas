@@ -1,4 +1,5 @@
 unit uDownloader;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -47,6 +48,10 @@ type
       function Prepare: boolean; virtual; abstract;
       function Download: boolean; virtual;
       procedure AbortTransfer; virtual;
+      {$IFDEF MULTIDOWNLOADS}
+      function First: boolean; virtual;
+      function Next: boolean; virtual;
+      {$ENDIF}
     public
       property Prepared: boolean read fPrepared;
       property Name: string read GetName;
@@ -249,6 +254,18 @@ end;
 procedure TDownloader.AbortTransfer;
 begin
 end;
+
+{$IFDEF MULTIDOWNLOADS}
+function TDownloader.First: boolean;
+begin
+  Result := Prepared;
+end;
+
+function TDownloader.Next: boolean;
+begin
+  Result := False;
+end;
+{$ENDIF}
 
 procedure TDownloader.SetMovieID(const Value: string);
 begin

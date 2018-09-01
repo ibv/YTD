@@ -1,4 +1,5 @@
 unit uYTD;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -59,20 +60,25 @@ begin
 end;
 
 procedure TYTD.ShowSyntax(const Error: string);
+//var i: integer;
 begin
   inherited;
   WriteColored(ccWhite, '<arg> [<arg>] ...');
   Writeln;
   Writeln;
-  WriteColored(ccWhite, ' -h, -?'); Writeln(' ...... show this help screen.');
-  WriteColored(ccWhite, ' -i <file>'); Writeln(' ... load URL list from <file> (one URL per line).');
-  WriteColored(ccWhite, ' -o <path>'); Writeln(' ... store files to <path> (default is current directory).');
+  WriteColored(ccWhite, ' -h, -?'); Writeln(' ...... Show this help screen.');
+  WriteColored(ccWhite, ' -i <file>'); Writeln(' ... Load URL list from <file> (one URL per line).');
+  WriteColored(ccWhite, ' -o <path>'); Writeln(' ... Store files to <path> (default is current directory).');
   Writeln;
   WriteColored(ccWhite, ' <url>'); Writeln(' ....... URL to download.');
-  Write('               Supported:');
-  WriteColored(ccWhite, '  youtube.com');
-  WriteColored(ccWhite, '  blip.tv');
-  WriteColored(ccWhite, '  n-joy.cz');
+  {
+  Writeln('               Supported:');
+  for i := 0 to Pred(DownloadClassifier.ProviderCount) do
+    begin
+    WriteColored(ccWhite, '                 ' + DownloadClassifier.Providers[i].Provider);
+    Writeln;
+    end;
+  }
   Writeln;
   Writeln;
 end;
@@ -201,8 +207,11 @@ begin
     fLastProgressPercentage := -1;
     Downloader.DestinationPath := DestinationPath;
     Downloader.OnProgress := DownloaderProgress;
-    if Downloader.Prepare then
+    if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
       begin
+      {$IFDEF MULTIDOWNLOADS}
+      repeat
+      {$ENDIF}
       Write('  Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
       Write('    File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
       if Downloader is TCommonDownloader then
@@ -218,6 +227,9 @@ begin
         end
       else
         ShowError('  ERROR: ' + Downloader.LastErrorMsg);
+      {$IFDEF MULTIDOWNLOADS}
+      until not Downloader.Next;
+      {$ENDIF}
       end
     else
       ShowError('  ERROR: ' + Downloader.LastErrorMsg);

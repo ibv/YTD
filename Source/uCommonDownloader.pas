@@ -1,4 +1,5 @@
 unit uCommonDownloader;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -57,9 +58,8 @@ begin
 end;
 
 function TCommonDownloader.Prepare: boolean;
-var Match: IMatch;
-    Info: THttpSend;
-    URL, Page: string;
+var Info: THttpSend;
+    URL, Page, s: string;
 begin
   SetLastErrorMsg('');
   SetPrepared(False);
@@ -83,17 +83,11 @@ begin
           begin
           MovieURL := '';
           if MovieTitleRegExp <> nil then
-            begin
-            Match := MovieTitleRegExp.Match(Page);
-            if Match.Matched then
-              SetName(Match.Groups.ItemsByName['TITLE'].Value);
-            end;
+            if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
+              SetName(s);
           if MovieUrlRegExp <> nil then
-            begin
-            Match := MovieURLRegExp.Match(Page);
-            if Match.Matched then
-              MovieURL := Match.Groups.ItemsByName['URL'].Value;
-            end;
+            if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
+              MovieURL := s;
           if (MovieUrl <> '') then
             SetPrepared(True);
           if not AfterPrepareFromPage(Page, Info) then
@@ -131,12 +125,15 @@ function TCommonDownloader.GetRegExpVar(RegExp: IRegEx; const Text, VarName: str
 var Match: IMatch;
 begin
   Match := RegExp.Match(Text);
-  Result := Match.Matched;
-  if Result then
-    VarValue := Match.Groups.ItemsByName[VarName].Value
-  else
-    VarValue := '';
-  Match := nil;
+  try
+    Result := Match.Matched;
+    if Result then
+      VarValue := Match.Groups.ItemsByName[VarName].Value
+    else
+      VarValue := '';
+  finally
+    Match := nil;
+    end;
 end;
 
 end.

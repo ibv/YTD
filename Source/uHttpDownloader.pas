@@ -1,4 +1,5 @@
 unit uHttpDownloader;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -12,6 +13,11 @@ type
     private
       fVideoDownloader: THttpSend;
       fBytesTransferred: int64;
+      {$IFDEF MULTIDOWNLOADS}
+      fNameList: TStringList;
+      fUrlList: TStringList;
+      fDownloadIndex: integer;
+      {$ENDIF}
     protected
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
@@ -20,33 +26,53 @@ type
       function BeforeDownload(Http: THttpSend): boolean; virtual;
       property VideoDownloader: THttpSend read fVideoDownloader write fVideoDownloader;
       property BytesTransferred: int64 read fBytesTransferred write fBytesTransferred;
+      {$IFDEF MULTIDOWNLOADS}
+      property NameList: TStringList read fNameList;
+      property UrlList: TStringList read fUrlList;
+      property DownloadIndex: integer read fDownloadIndex write fDownloadIndex;
+      {$ENDIF}
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      function Prepare: boolean; override;
       function Download: boolean; override;
       procedure AbortTransfer; override;
+      {$IFDEF MULTIDOWNLOADS}
+      function First: boolean; override;
+      function Next: boolean; override;
+      {$ENDIF}
     end;
 
 implementation
 
 { THttpDownloader }
 
-procedure THttpDownloader.AbortTransfer;
-begin
-  inherited;
-  inherited;
-  if (VideoDownloader <> nil) and (VideoDownloader.Sock <> nil) then
-    VideoDownloader.Sock.AbortSocket;
-end;
-
 constructor THttpDownloader.Create(const AMovieID: string);
 begin
   inherited;
+  {$IFDEF MULTIDOWNLOADS}
+  fNameList := TStringList.Create;
+  fUrlList := TStringList.Create;
+  {$ENDIF}
 end;
 
 destructor THttpDownloader.Destroy;
 begin
+  {$IFDEF MULTIDOWNLOADS}
+  FreeAndNil(fNameList);
+  FreeAndNil(fUrlList);
+  {$ENDIF}
   inherited;
+end;
+
+function THttpDownloader.Prepare: boolean;
+begin
+  {$IFDEF MULTIDOWNLOADS}
+  NameList.Clear;
+  UrlList.Clear;
+  DownloadIndex := 0;
+  {$ENDIF}
+  Result := inherited Prepare;
 end;
 
 function THttpDownloader.Download: boolean;
@@ -83,6 +109,41 @@ begin
       VideoDownloader := nil;
       end;
     end;
+end;
+
+{$IFDEF MULTIDOWNLOADS}
+function THttpDownloader.First: boolean;
+begin
+  if Prepared then
+    begin
+    DownloadIndex := -1;
+    Result := Next;
+    end
+  else
+    Result := False;
+end;
+
+function THttpDownloader.Next: boolean;
+begin
+  Result := False;
+  if Prepared then
+    begin
+    DownloadIndex := Succ(DownloadIndex);
+    if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then
+      begin
+      SetName(NameList[DownloadIndex]);
+      MovieURL := UrlList[DownloadIndex];
+      Result := True;
+      end;
+    end;
+end;
+{$ENDIF}
+
+procedure THttpDownloader.AbortTransfer;
+begin
+  inherited;
+  if (VideoDownloader <> nil) and (VideoDownloader.Sock <> nil) then
+    VideoDownloader.Sock.AbortSocket;
 end;
 
 function THttpDownloader.BeforeDownload(Http: THttpSend): boolean;

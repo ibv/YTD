@@ -1,4 +1,5 @@
 unit uDownloadThread;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -76,11 +77,14 @@ begin
         if Terminated then
           Break;
         State := dtsPreparing;
-        if not Downloader.Prepare then
+        if (not Downloader.Prepare) {$IFDEF MULTIDOWNLOADS} or (not Downloader.First) {$ENDIF} then
           Raise EDownloadThreadError.Create('Failed to prepare a download.');
         if Terminated then
           Break;
         State := dtsDownloading;
+        {$IFDEF MULTIDOWNLOADS}
+        repeat
+        {$ENDIF}
         if not Downloader.Download then
           if Terminated then
             Break
@@ -88,6 +92,9 @@ begin
             Raise EDownloadThreadError.Create('Download failed.');
         if Terminated then
           Break;
+        {$IFDEF MULTIDOWNLOADS}
+        until not Downloader.Next;
+        {$ENDIF}  
         State := dtsFinished;
       until True;
       if Terminated then

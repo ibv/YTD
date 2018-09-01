@@ -34,7 +34,10 @@ uses
   uDownloader_Nova in 'uDownloader_Nova.pas',
   uDownloader_CT in 'uDownloader_CT.pas',
   uMSDownloader in 'uMSDownloader.pas',
-  uExternalDownloader in 'uExternalDownloader.pas';
+  uExternalDownloader in 'uExternalDownloader.pas',
+  uDownloader_TVcom in 'uDownloader_TVcom.pas',
+  uDownloader_Markiza in 'uDownloader_Markiza.pas',
+  uDownloader_Rozhlas in 'uDownloader_Rozhlas.pas';
 
 begin
   {$IFNDEF NO_GUI}

@@ -1,6 +1,7 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.18                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.19                                  (C) 2009, 2010 Pepak
+http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -34,6 +35,12 @@ Podporované weby a formáty URL:
 
      - http://www.iprima.cz/videoarchiv/44524/all/all
 
+ - Markiza.sk:
+
+     - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
+
+     Pozn.: Poøady mohou bıt tvoøeny nìkolika rùznımi video soubory.
+
  - N-joy.cz:
 
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
@@ -45,6 +52,12 @@ Podporované weby a formáty URL:
        Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
        Pøehrát jde napøíklad programem The KMPlayer.
 
+ - Rozhlas.cz:
+
+     - http://www.rozhlas.cz/vltava/porady/_zprava/676996
+
+     Pozn.: Poøady mohou bıt tvoøeny nìkolika rùznımi audio soubory.
+
  - Stream.cz:
 
      - http://www.stream.cz/video/437197-meziplyn-30
@@ -53,6 +66,16 @@ Podporované weby a formáty URL:
        jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjakı èasovací
        problém v knihovnì Synapse, protoe staèí vloit na vhodné místo 
        breakpoint nebo prodlevu a hned problém zmizí.
+
+       Pozn.: Stream.cz slouí jako content-delivery-network pro øadu dalších
+       slueb, napøíklad pro televizní stanici Óèko.
+
+ - TVcom.cz:
+
+     - http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTSP over HTTP. Viz
+     níe v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - Youtube.com:
 
@@ -100,6 +123,13 @@ kompletnì.
 
 
 
+Od verze 0.19 jsou podporovány zdroje, ve kterıch je jeden poøad tvoøen
+nìkolika samostatnımi mediálními soubory (napø. Markiza.sk). YouTube
+Downloader momentálnì neumoòuje vybrat, které ze souborù se stáhnou a
+které ne - stahují se vdy všechny.
+
+
+
 SYNTAXE
 -------
 
@@ -117,6 +147,27 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.19
+
+    * Nìkteré vytvoøené regulární vırazy se z pamìti neuvolòovaly, dokud
+      aplikace neskonèila.
+
+    * YouTube: Video "http://www.youtube.com/watch?v=7INIRLe7x0Y" se ukládalo
+      s pøíponou ".mp4", ale správnì je ".flv". Je moné, e jsou i další
+      podobné pøípady, pøíponu pøiøazuji pomocí vıètu a zdaleka nemám 
+      kompletní seznam. Kdy narazíte na video uloené pod špatnou pøíponou,
+      dejte mi prosím vìdìt.
+
+    * Podpora pro http://www.tvcom.cz.
+
+    * Podpora pro http://www.markiza.sk. Pokud je poøad tvoøen nìkolika
+      samostatnımi soubory, budou staeny všechny.
+
+    * Podpora pro http://www.rozhlas.cz. Pokud je poøad tvoøen nìkolika
+      samostatnımi soubory, budou staeny všechny.
+
+
 
   v0.18
 

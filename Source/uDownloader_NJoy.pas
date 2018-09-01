@@ -1,4 +1,5 @@
 unit uDownloader_NJoy;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -41,6 +42,8 @@ end;
 
 destructor TDownloader_NJoy.Destroy;
 begin
+  MovieTitleRegExp := nil;
+  MovieUrlRegExp := nil;
   inherited;
 end;
 
@@ -62,7 +65,7 @@ end;
 class function TDownloader_NJoy.UrlRegExp: string;
 begin
   // http://n-joy.cz/video/supcom-2-zabery-z-hrani-2/oiuhz6e3xgt35e4e
-  Result := '^https?://(?:www\.)?n-joy\.cz/video/[^/]+/(?P<' + MovieIDParamName + '>[^/&?]+)';
+  Result := '^https?://(?:[a-z0-9-]+\.)?n-joy\.cz/video/[^/]+/(?P<' + MovieIDParamName + '>[^/&?]+)';
 end;
 
 function TDownloader_NJoy.GetInfoPageEncoding: TPageEncoding;

@@ -1,5 +1,5 @@
 unit uDownloader_BlipTvV2;
-// http://blip.tv/file/108391
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -44,21 +44,17 @@ end;
 
 function TDownloader_BlipTvV2.GetMovieInfoUrl: string;
 var Http: THttpSend;
-    Page: string;
-    Match: IMatch;
+    Page, ID: string;
 begin
   Result := '';
   Http := CreateHttp;
   try
     if DownloadPage(Http, 'http://blip.tv/file/' + MovieID, Page) then
-      begin
-      Match := MovieIDFromPageRegExp.Match(Page);
-      if Match.Matched then
+      if GetRegExpVar(MovieIDFromPageRegExp, Page, 'MOVIEID', ID) then
         begin
-        MovieID := Match.Groups.ItemsByName['MOVIEID'].Value;
+        MovieID := ID;
         Result := inherited GetMovieInfoUrl;
         end;
-      end;
   finally
     Http.Free;
     end;

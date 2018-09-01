@@ -1,4 +1,5 @@
 unit uDownloader_CT;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -43,6 +44,7 @@ end;
 
 destructor TDownloader_CT.Destroy;
 begin
+  MovieObjectRegExp := nil;
   inherited;
 end;
 
@@ -78,18 +80,16 @@ begin
 end;
 
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var ObjUrl: IMatch;
-    AsxDef: string;
+var URL, AsxDef: string;
     Xml: TjanXmlParser2;
     TitleNode, TitleNode2, EntryNode, RefNode: TjanXmlNode2;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  ObjUrl := MovieObjectRegExp.Match(Page);
-  if not ObjUrl.Matched then
+  if not GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', URL) then
     SetLastErrorMsg('Failed to find ASX object.')
-  else if not DownloadPage(Http, ObjUrl.Groups.ItemsByName['OBJURL'].Value, AsxDef) then
+  else if not DownloadPage(Http, URL, AsxDef) then
     SetLastErrorMsg('Failed to download ASX info.')
   else
     begin

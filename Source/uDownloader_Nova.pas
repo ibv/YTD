@@ -1,8 +1,5 @@
 unit uDownloader_Nova;
-// TODO: Zrejme je bug v RTMPDUMP, protoze to spadne po 128 KB na
-// Access Violation v modulu MCVCRT.DLL. Stane se to i primo v
-// RTMPDUMP.EXE, kdyz ho spustim prikazem:
-// rtmpdump -r "rtmp://flash.nova.nacevi.cz:80/vod" -y "nova/2010/03/2010-03-23_Ulice-1007-dil-D611027" -o pokus.flv
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -47,6 +44,7 @@ end;
 
 destructor TDownloader_Nova.Destroy;
 begin
+  MovieVariablesRegExp := nil;
   inherited;
 end;
 
@@ -94,16 +92,20 @@ begin
   SessionID := '';
   UserAdID := '';
   Variables := MovieVariablesRegExp.Matches(Page);
-  for i := 0 to Pred(Variables.Count) do
-    begin
-    Name := Variables.Items[i].Groups.ItemsByName['VARNAME'].Value;
-    Value := Variables.Items[i].Groups.ItemsByName['VARVALUE'].Value;
-    if AnsiCompareText(Name, 'media_id') = 0 then
-      MediaID := Value
-    else if AnsiCompareText(Name, 'site_id') = 0 then
-      SiteID := Value
-    else if AnsiCompareText(Name, 'section_id') = 0 then
-      SectionID := Value;
+  try
+    for i := 0 to Pred(Variables.Count) do
+      begin
+      Name := Variables.Items[i].Groups.ItemsByName['VARNAME'].Value;
+      Value := Variables.Items[i].Groups.ItemsByName['VARVALUE'].Value;
+      if AnsiCompareText(Name, 'media_id') = 0 then
+        MediaID := Value
+      else if AnsiCompareText(Name, 'site_id') = 0 then
+        SiteID := Value
+      else if AnsiCompareText(Name, 'section_id') = 0 then
+        SectionID := Value;
+      end;
+  finally
+    Variables := nil;
     end;
   for i := 0 to Pred(Http.Cookies.Count) do
     begin

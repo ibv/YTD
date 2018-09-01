@@ -1,4 +1,5 @@
 unit uDownloader_YouTube;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -66,10 +67,11 @@ destructor TDownloader_YouTube.Destroy;
 begin
   FreeAndNil(fCookies);
   YouTubeConfigRegExp := nil;
-  FormatListRegExp := nil;
+  MovieTitleRegExp := nil;
   ExtractFormatListRegExp := nil;
   ExtractTimestampRegExp := nil;
   ExtractVideoIdRegExp := nil;
+  FormatListRegExp := nil;
   inherited;
 end;
 
@@ -114,7 +116,7 @@ begin
     VideoFormat := GetBestVideoFormat(DecodeUrl(Trim(FormatList)));
     if VideoFormat = '' then
       VideoFormat := '22';
-    if VideoFormat = '34' then
+    if (VideoFormat = '34') or (VideoFormat = '35') then
       Extension := '.flv'
     else
       Extension := '.mp4';
@@ -134,18 +136,22 @@ begin
   MaxVideoQuality := 0;
   MaxAudioQuality := 0;
   Matches := FormatListRegExp.Matches(FormatList);
-  for i := 0 to Pred(Matches.Count) do
-    with Matches[i].Groups do
-      begin
-      VideoQuality := StrToIntDef(GetItemByName('VIDEOQUALITY').Value, 0);
-      AudioQuality := StrToIntDef(GetItemByName('AUDIOQUALITY').Value, 0);
-      if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
+  try
+    for i := 0 to Pred(Matches.Count) do
+      with Matches[i].Groups do
         begin
-        Result := GetItemByName('FORMAT').Value;
-        MaxVideoQuality := VideoQuality;
-        MaxAudioQuality := AudioQuality;
+        VideoQuality := StrToIntDef(GetItemByName('VIDEOQUALITY').Value, 0);
+        AudioQuality := StrToIntDef(GetItemByName('AUDIOQUALITY').Value, 0);
+        if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
+          begin
+          Result := GetItemByName('FORMAT').Value;
+          MaxVideoQuality := VideoQuality;
+          MaxAudioQuality := AudioQuality;
+          end;
         end;
-      end;
+  finally
+    Matches := nil;
+    end;
 end;
 
 class function TDownloader_YouTube.Provider: string;
