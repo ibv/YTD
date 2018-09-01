@@ -106,7 +106,7 @@
 #define PACKAGE_NAME "msdl"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "msdl 1.2.7-r2"
+#define PACKAGE_STRING "msdl 1.2.7"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "msdl"
@@ -115,7 +115,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.2.7-r2"
+#define PACKAGE_VERSION "1.2.7"
 
 /* Define to the type of arg 1 for `select'. */
 #define SELECT_TYPE_ARG1 int
@@ -133,7 +133,7 @@
 #define TIME_WITH_SYS_TIME 1
 
 /* Version number of package */
-#define VERSION "1.2.7-r2"
+#define VERSION "1.2.7"
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the

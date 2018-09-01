@@ -1127,7 +1127,10 @@ var Stream: TMemoryStream;
 begin
   Stream := TMemoryStream.Create;
   try
-    Stream.ReadBuffer((@(Data[1]))^, Length(Data));
+    //Stream.ReadBuffer((@(Data[1]))^, Length(Data));
+    Stream.Size := Length(Data);
+    Move(Data[1], Stream.Memory^, Length(Data));
+    Stream.Position := 0;
     LoadFromStream(Stream);
   finally
     Stream.Free;

@@ -34,6 +34,9 @@
   // virtual method in a TDownloader or TCommonDownloader adds an extra 1 KB
   // (v0.52) to the application size.
 
+{$DEFINE SUBTITLES}
+  // Global supportfor subtitles
+
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
 

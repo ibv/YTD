@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCasSk;
+unit downPrazdninyVTelci;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,16 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TDownloader_CasSk = class(TNestedDownloader)
+  TDownloader_PrazdninyVTelci = class(TMSDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,76 +62,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
-// http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
+// http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*cas\.sk/(?:clanok|clanky)/[0-9]+/.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*prazdninyvtelci\.cz/cast/?\?sekce=1&idw=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1 class="article">(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<object[^>]*\sdata="(?P<URL>https?://.+?)"',
-       '\bso\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>https?://.+?)''');
+  REGEXP_MOVIE_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
+  REGEXP_MOVIE_URL = '<param\s+name="src"\s+value="(?P<URL>https?://.+?)"';
 
-{ TDownloader_CasSk }
+{ TDownloader_PrazdninyVTelci }
 
-class function TDownloader_CasSk.Provider: string;
+class function TDownloader_PrazdninyVTelci.Provider: string;
 begin
-  Result := 'Cas.sk';
+  Result := 'PrazdninyVTelci.cz';
 end;
 
-class function TDownloader_CasSk.UrlRegExp: string;
+class function TDownloader_PrazdninyVTelci.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CasSk.Create(const AMovieID: string);
-var i: integer;
+constructor TDownloader_PrazdninyVTelci.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL, [rcoIgnoreCase]);
 end;
 
-destructor TDownloader_CasSk.Destroy;
-var i: integer;
+destructor TDownloader_PrazdninyVTelci.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_CasSk.GetMovieInfoUrl: string;
+function TDownloader_PrazdninyVTelci.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
-end;
-
-function TDownloader_CasSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
-begin
-  Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
-        begin
-        Result := True;
-        Break;
-        end;
-      end;
-  finally
-    NestedUrlRegExp := nil;
-    end;
+  Result := 'http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CasSk);
+  RegisterDownloader(TDownloader_PrazdninyVTelci);
 
 end.

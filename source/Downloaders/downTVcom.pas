@@ -74,7 +74,7 @@ const
   URLREGEXP_AFTER_ID =  '$';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
+  REGEXP_MOVIE_TITLE = '<h2>\s*(?P<TITLE>.*?)\s*</h2>';
   REGEXP_CONFIG_XML = '<param name="initParams" value="config=(?P<URL>https?://[^,"]+)';
   REGEXP_MMSURL = 'playlist\.asx\?video=(?P<URL>[^&]+)';
 
@@ -94,9 +94,9 @@ constructor TDownloader_TVcom.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  ConfigXmlRegExp := RegExCreate(REGEXP_CONFIG_XML, [rcoIgnoreCase]);
-  MMSUrlRegExp := RegExCreate(REGEXP_MMSURL, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  ConfigXmlRegExp := RegExCreate(REGEXP_CONFIG_XML, [rcoIgnoreCase, rcoSingleLine]);
+  MMSUrlRegExp := RegExCreate(REGEXP_MMSURL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_TVcom.Destroy;

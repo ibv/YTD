@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.57                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.58                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -271,6 +271,11 @@ SUPPORTED PROVIDERS
      though, which makes it likely that the problem lies not in YTD but rather 
      some bug or country restriction of PCPlanets.com.
 
+ - PrazdninyVTelci.cz:
+     - http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
+
+     Note: This provider uses  over HTTP protocol. See the note below.
+
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
      - http://www.publictv.cz/videoarchiv/535/1718/
@@ -424,6 +429,7 @@ Supported porn providers:
  - SpankWire.com
  - TnaFlix.com
  - Tube8.com
+ - TubeSSS.com
  - XHamster.com
  - XNXX.com
  - XTube.com

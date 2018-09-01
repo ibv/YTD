@@ -1,4 +1,5 @@
 unit uConsoleApp;
+{$INCLUDE 'jedi.inc'}
 {$INCLUDE 'uConsoleApp.inc'}
 
 interface
@@ -7,11 +8,17 @@ uses
   SysUtils, Classes, Windows;
 
 type
+  TConsoleApp = class;
+  TConsoleAppClass = class of TConsoleApp;
+
+  EConsoleAppError = class(Exception);
+
   TConsoleColor = (ccBlack, ccBlue, ccGreen, ccCyan, ccRed, ccMagenta, ccBrown, ccLightGray,
                    ccDarkGray, ccLightBlue, ccLightGreen, ccLightCyan, ccLightRed, ccLightMagenta, ccYellow, ccWhite);
   TConsoleState = (csNoConsole, csOwnConsole, csParentConsole);
 
-  TConsoleAppClass = class of TConsoleApp;
+  TConsoleCtrlEvent = procedure(Sender: TConsoleApp; CtrlType: DWORD; var Handled: boolean) of object;
+
   TConsoleApp = class
     private
       fCurrentParamIndex: integer;
@@ -19,6 +26,7 @@ type
       fStdOut: THandle;
       fStdOutRedirected: boolean;
       fTextAttr: byte;
+      fOnConsoleCtrl: TConsoleCtrlEvent;
       function GetTextAttr: Byte;
       procedure SetTextAttr(const Value: Byte); overload;
       function GetTextBackground: TConsoleColor;
@@ -34,8 +42,10 @@ type
       function ParamGetNext(out Value: string): boolean; virtual;
     protected // Console
       procedure InitConsole; virtual;
+      procedure DoneConsole; virtual;
       procedure SetTextAttribute(const Text, Background: TConsoleColor); virtual;
       procedure WriteColored(Color: TConsoleColor; const Msg: string); virtual;
+      procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); virtual; 
       property StdIn: THandle read fStdIn;
       property StdOut: THandle read fStdOut;
       property StdOutRedirected: boolean read fStdOutRedirected;
@@ -57,6 +67,7 @@ type
       constructor Create; virtual;
       destructor Destroy; override;
       function Execute: DWORD; virtual;
+      property OnConsoleCtrl: TConsoleCtrlEvent read fOnConsoleCtrl write fOnConsoleCtrl;
     public
       class function HasConsole: TConsoleState; virtual;
       class function ParentHasConsole: boolean; virtual;
@@ -79,6 +90,7 @@ type TGetConsoleWindowFn = function (): THandle; stdcall;
 var KernelDLL: THandle = 0;
     GetConsoleWindow: TGetConsoleWindowFn = nil;
     AttachConsole: TAttachConsoleFn = nil;
+    ConsoleApps: TList = nil;
 
 function ExecuteConsoleApp(AppClass: TConsoleAppClass): integer;
 var App: TConsoleApp;
@@ -132,14 +144,22 @@ end;
 constructor TConsoleApp.Create;
 begin
   inherited;
-  // Parameters
-  ParamInitialize;
+  if ConsoleApps <> nil then
+    ConsoleApps.Add(Self);
   // Console
   InitConsole;
+  // Parameters
+  ParamInitialize;
 end;
 
 destructor TConsoleApp.Destroy;
+var i: integer;
 begin
+  DoneConsole;
+  if ConsoleApps <> nil then
+    for i := Pred(ConsoleApps.Count) downto 0 do
+      if ConsoleApps[i] = Self then
+        ConsoleApps.Delete(i);
   inherited;
 end;
 
@@ -168,13 +188,22 @@ var
 begin
   Reset(Input);
   Rewrite(Output);
+  {$IFDEF LVCL}
+  fStdIn := GetStdHandle(STD_INPUT_HANDLE);
+  fStdOut := GetStdHandle(STD_OUTPUT_HANDLE);
+  {$ELSE}
   fStdIn := TTextRec(Input).Handle;
   fStdOut := TTextRec(Output).Handle;
+  {$ENDIF}
   if GetConsoleScreenBufferInfo(fStdOut, BufferInfo) then
     fTextAttr := BufferInfo.wAttributes
   else
     fTextAttr := (Integer(ccBlack) shl 4) or (Integer(ccLightGray));
   fStdOutRedirected := not WriteConsole(StdOut, @BufferInfo, 0, n, nil);
+end;
+
+procedure TConsoleApp.DoneConsole;
+begin
 end;
 
 procedure TConsoleApp.WriteColored(Color: TConsoleColor; const Msg: string);
@@ -208,15 +237,20 @@ procedure TConsoleApp.Log(const LogFileName: string; const Msg: string);
 var T: TextFile;
 begin
   try
-    AssignFile(T, LogFileName);
-    if FileExists(LogFileName) then
-      Append(T)
+    if LogFileName = '' then
+      Writeln(Msg)
     else
-      Rewrite(T);
-    try
-      Writeln(T, Msg);
-    finally
-      CloseFile(T);
+      begin
+      AssignFile(T, LogFileName);
+      if FileExists(LogFileName) then
+        Append(T)
+      else
+        Rewrite(T);
+      try
+        Writeln(T, Msg);
+      finally
+        CloseFile(T);
+        end;
       end;
   except
     on Exception do
@@ -314,7 +348,7 @@ begin
   if FindFirst(WildCard, faAnyFile, SR) = 0 then
     try
       repeat
-        if not LongBool(SR.Attr and faDirectory) then
+        if not LongBool(SR.Attr and ({$IFNDEF DELPHI2009_UP} faVolumeID or {$ENDIF} faDirectory)) then
           if ProcessWildCardFile(Path + SR.Name, SR) then
             Inc(Result);
       until FindNext(SR) <> 0;
@@ -360,6 +394,24 @@ begin
     end;
 end;
 
+procedure TConsoleApp.DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean);
+begin
+  if Assigned(OnConsoleCtrl) then
+    OnConsoleCtrl(Self, CtrlType, Handled);
+end;
+
+function ConsoleCtrlHandler(dwCtrlType: DWORD): BOOL; stdcall;
+var i: integer;
+    Handled: boolean;
+begin
+  Handled := False;
+  for i := 0 to Pred(ConsoleApps.Count) do
+    if ConsoleApps[i] <> nil then
+      if TObject(ConsoleApps[i]) is TConsoleApp then
+        TConsoleApp(ConsoleApps[i]).DoConsoleCtrl(dwCtrlType, Handled);
+  Result := Handled;
+end;
+
 initialization
   KernelDLL := LoadLibrary('kernel32.dll');
   if KernelDLL <> 0 then
@@ -367,11 +419,15 @@ initialization
     GetConsoleWindow := GetProcAddress(KernelDLL, 'GetConsoleWindow');
     AttachConsole := GetProcAddress(KernelDLL, 'AttachConsole');
     end;
+  ConsoleApps := TList.Create;
+  SetConsoleCtrlHandler(@ConsoleCtrlHandler, True);
 
 finalization
   FreeLibrary(KernelDLL);
   KernelDLL := 0;
   GetConsoleWindow := nil;
   AttachConsole := nil;
+  SetConsoleCtrlHandler(@ConsoleCtrlHandler, False);
+  FreeAndNil(ConsoleApps);
 
 end.

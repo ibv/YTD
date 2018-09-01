@@ -7,6 +7,7 @@ set debug=0
 set cli=1
 set gui=1
 set kol=0
+set lvcl=0
 set xxx=1
 set upx=0
 set extra=
@@ -26,6 +27,8 @@ if /i "%~1"=="gui" set gui=1
 if /i "%~1"=="nogui" set gui=0
 if /i "%~1"=="kol" set kol=1
 if /i "%~1"=="nokol" set kol=0
+if /i "%~1"=="lvcl" set lvcl=1
+if /i "%~1"=="nolvcl" set lvcl=0
 if /i "%~1"=="xxx" set xxx=1
 if /i "%~1"=="noxxx" set xxx=0
 if /i "%~1"=="upx" set upx=1
@@ -43,21 +46,24 @@ set defs=-dPEPAK -dPEPAK_YTD
 if not "%cli%"=="1" set defs=%defs% -dNO_CLI
 if not "%gui%"=="1" set defs=%defs% -dNO_GUI
 if not "%xxx%"=="1" set defs=%defs% -dNO_XXX
-if "%kol%"=="1" set defs=%defs% -dKOL
 if "%debug%"=="1" set defs=%defs% -dDEBUG
 
 del /q "%srcdir%Units\*.*"
 
 if "%kol%"=="1" (
   set defs=%defs% -dKOL
-  call :%compiler% "%srcdir%lib\KOL\kol.pas"
-  rem call :%compiler% ""%srcdir%lib\KOL\sysclasses\Classes.pas"
+  call :%compiler% "%srcdir%lib\KOL\*.pas"
 )
 
+if "%lvcl%"=="1" (
+  set defs=%defs% -dLVCL
+  call :%compiler% "%srcdir%lib\LVCL\*.pas"
+)
+
+call :%compiler% "%srcdir%lib\PerlRegEx\*.pas"
 call :%compiler% "%srcdir%lib\Pepak\*.pas"
 call :%compiler% "%srcdir%lib\Pepak\%extra%*.pas"
 call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"
-call :%compiler% "%srcdir%lib\PerlRegEx\PerlRegEx.pas"
 call :%compiler% "%srcdir%lib\NativeXml\NativeXml.pas"
 call :%compiler% "%srcdir%lib\RtmpDump\rtmpdump_dll.pas"
 call :%compiler% "%srcdir%lib\msdl\src\msdl_dll.pas"

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.57                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.58                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -273,6 +273,12 @@ PODPOROVANÉ WEBY
      tedy nejde o chybu v YTD ale buï o chybné video nebo napø. nepodporovaný
      stát uživatele.
 
+ - PrazdninyVTelci.cz:
+     - http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
+     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
      - http://www.publictv.cz/videoarchiv/535/1718/
@@ -427,6 +433,7 @@ Podporované porno weby:
  - SpankWire.com
  - TnaFlix.com
  - Tube8.com
+ - TubeSSS.com
  - XHamster.com
  - XNXX.com
  - XTube.com

@@ -92,7 +92,7 @@ implementation
 
 {$IFDEF GET_VIDEO_INFO}
 {$IFNDEF FLASHVARS_PARSER}
-  FLASHVARS_PARSER is required for GET_VIDEO_INFO
+  'FLASHVARS_PARSER is required for GET_VIDEO_INFO'
 {$ENDIF}
 {$ENDIF}
 
@@ -105,7 +105,7 @@ uses
 // http://www.youtube.com/watch/v/b5AWQ5aBjgE
 // http://www.youtube.com/watch?v=b5AWQ5aBjgE
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?v=)';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?(?:.*&)*v=)';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 

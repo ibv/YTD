@@ -1,13 +1,3 @@
-2010-8-02 metro <me_t_ro@yahoo.com>
-	* msdl-1.2.7-r2: 15th release
-	* src/msdl.c: fixed bug with stdout output when target url contains no filename. (thanks to many)
-	* msdl.spec:  fixed order of the changelog inside the file.
-
-2010-2-27 metro <me_t_ro@yahoo.com>
-	* msdl-1.2.7-r1: 14th release
-	* src/network.c: send(,,,MSG_NOSIGNAL) doesn't compile in Mac OS, changed to ignore SIGPIPE.
-	* src/main.c: code added to ignore sigpipe. signal(SIGPIPE,SIG_IGN);
-
 2010-2-24 metro <me_t_ro@yahoo.com>
 	* msdl-1.2.7: 13th release
 	* src/main.c: -a inf for infinite download (thanks to Mr. Zidlicky)

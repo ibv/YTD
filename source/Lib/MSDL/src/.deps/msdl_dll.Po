@@ -1,4 +1,4 @@
-main.o main.o: main.c \
+msdl_dll.o msdl_dll.o: msdl_dll.c \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
@@ -6,7 +6,6 @@ main.o main.o: main.c \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
-  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/signal.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h \
   C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h \
@@ -81,8 +80,6 @@ C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
 C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
 
 C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
-
-C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/signal.h:
 
 C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h:
 

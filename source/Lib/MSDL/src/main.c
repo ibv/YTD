@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
 
 #include <ctype.h>
 #include <unistd.h>
@@ -84,10 +83,6 @@ int main(int argc,char **argv)
     init_dispinfo(options);
 
     display(MSDL_DBG,"%s %s\n",PACKAGE,VERSION);
-#ifndef WIN32
-    signal(SIGPIPE,SIG_IGN);            /* Ignore sigpipe, because we don't need it */
-#endif
-
 
     result  = new_dlresult_t();
     for(target = targets; target ; target = target->next) {

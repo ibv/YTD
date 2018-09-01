@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX
 DebugSourceDirs=C:\Tmp\ytd\Source\Lib\NativeXml\
 UsePackages=0
 [Parameters]
-RunParams=http://www.tv7.cz/?vid=1062
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=57
+MinorVer=58
 Release=0
-Build=294
+Build=296
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.57.0.294
+FileVersion=0.58.0.296
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=

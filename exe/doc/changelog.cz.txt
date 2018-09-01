@@ -1,6 +1,32 @@
 CHANGELOG
 ---------
 
+  v0.58
+
+    * Nový poskytovatel: PrazdninyVTelci.cz.
+
+    * Nový poskytovatel: TubeSSS.com (porno).
+
+    * OverStream.net: Pøidána podpora pro titulky.
+
+    * PublicTV.cz: Podpora pro poøady tvoøené nìkolika èástmi (napø.
+      http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-22184-jukebox-s-lenny/1935/)
+
+    * TVcom.cz: Nenaèítal se správnì název obsahu.
+
+    * VideaCesky.cz: Pøidána podpora pro další tvar videa.
+
+    * YouTube.com: Pøidána podpora pro URL, ve kterých není ID videa prvním
+      parametrem.
+
+    * Pøepsána podpora titulkù tak, aby šla snadno implementovat pro libovolný
+      server.
+
+    * MSDL vráceno na verzi 1.2.7, protože se mi nedaøí vzpomenout, jak se dá
+      verze 1.2.7-r2 zkompilovat pod Windows.
+
+
+
   v0.57
 
     * Zapomnìl jsem odstranit debugovací kód. Sice je neškodný, ale otravný.

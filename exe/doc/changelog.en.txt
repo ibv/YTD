@@ -1,6 +1,31 @@
 CHANGELOG
 ---------
 
+  v0.58
+
+    * New provider: PrazdninyVTelci.cz.
+
+    * New provider: TubeSSS.com (porn).
+
+    * OverStream.net: Added support for subtitles.
+
+    * PublicTV.cz: Support for multi-part movies (e.g.
+      http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-22184-jukebox-s-lenny/1935/)
+
+    * TVcom.cz: Fixed incorrect parsing of title.
+
+    * VideaCesky.cz: Yet another content format supported.
+
+    * YouTube.com: Support for URLs which don't have video ID as the first
+      parameter.
+
+    * Subtitle support was rewritten for easy implementation with any provider.
+
+    * MSDL downgraded to version 1.2.7, because I can't remember how I managed
+      to compile the newer 1.2.7-r2 on Windows.
+
+
+
   v0.57
 
     * I forgot the debug code in. It is harmless, but also annoying.

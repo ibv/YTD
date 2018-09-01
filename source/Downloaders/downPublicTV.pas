@@ -65,6 +65,7 @@ uses
 
 // http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
 // http://www.publictv.cz/videoarchiv/535/1718/
+// http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-22184-jukebox-s-lenny/1935/
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*publictv\.cz/';
   URLREGEXP_ID =        '(?:[^/?&]+/)*videoarchiv/.+';
@@ -107,11 +108,56 @@ begin
 end;
 
 function TDownloader_PublicTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Xml: TXmlDoc;
+    i: integer;
+    HREF, Title: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  SetPrepared(False);
   MovieUrl := 'http://www.publictv.cz' + MovieUrl;
-  SetPrepared(True);
-  Result := True;
+  if AnsiCompareText(ExtractFileExt(MovieUrl), '.asx') = 0 then
+    begin
+    if not DownloadXml(Http, MovieUrl, Xml) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    else
+      try
+        for i := 0 to Pred(Xml.Root.NodeCount) do
+          if Xml.Root.Nodes[i].Name = 'ENTRY' then
+            if GetXmlAttr(Xml.Root.Nodes[i], 'REF', 'HREF', HREF) then
+              if GetXmlVar(Xml.Root.Nodes[i], 'TITLE', Title) then
+                begin
+                {$IFDEF MULTIDOWNLOADS}
+                NameList.Add(Title);
+                UrlList.Add('http://www.publictv.cz' + HREF);
+                {$ELSE}
+                SetName(Title);
+                MovieUrl := 'http://www.publictv.cz' + HREF;
+                Result := True;
+                SetPrepared(True);
+                Exit;
+                {$ENDIF}
+                end;
+        {$IFDEF MULTIDOWNLOADS}
+        if UrlList.Count <= 0 then
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        else
+          begin
+          SetPrepared(True);
+          Result := First;
+          end;
+        {$ELSE}
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+        {$ENDIF}
+      finally
+        Xml.Free;
+        end;
+    end
+  else
+    begin
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

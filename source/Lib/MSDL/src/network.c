@@ -50,11 +50,10 @@
 #define MSG_NOSIGNAL 0
 #else
 #include <sys/select.h>
-
-#include <netdb.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #endif
 
 #include "msdl.h"
@@ -874,8 +873,7 @@ int xrecv(int sock,void *buf,size_t count)
 int xsend(int sock,void *buf,size_t count)
 {
     /* ignore SIGPIPE, this means if the server has closed the connection, ignore. ret will be < 0 anyways */
-    /*int ret = send(sock,buf,count,MSG_NOSIGNAL);*/
-    int ret = send(sock,buf,count,0);
+    int ret = send(sock,buf,count,MSG_NOSIGNAL);
     return ret;
 }
 

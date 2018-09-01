@@ -49,6 +49,9 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      {$IFDEF SUBTITLES}
+      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      {$ENDIF}
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -59,6 +62,9 @@ type
 implementation
 
 uses
+  {$IFDEF SUBTITLES}
+  uAMF,
+  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
@@ -72,6 +78,14 @@ const
 const
   REGEXP_EXTRACT_TITLE = '<title>[^<'']*?''(?P<TITLE>.*?)''[^<'']*?</title>';
   REGEXP_EXTRACT_URL = '<td>\s*Original\s+video\s*:\s*<a\s+href="(?P<URL>https?://.+?)"';
+
+{$IFDEF SUBTITLES}
+// http://www.overstream.net/view.php?oid=nxioixihszlz
+const
+  AMF_REQUEST_SUBTITLES_PACKET =
+    'AAAAAAABAB1QbGF5ZXJTdWJ0aXRsZXNTZXJ2aWNlLmdldE9NTAACLzEAAAAUCgAAAAECAAxu' +
+    'eGlvaXhpaHN6bHo=';
+{$ENDIF}
 
 { TDownloader_OverStream }
 
@@ -104,6 +118,42 @@ function TDownloader_OverStream.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.overstream.net/view.php?oid=' + MovieID;
 end;
+
+{$IFDEF SUBTITLES}
+function TDownloader_OverStream.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var AMFRequest, AMFResponse: TAMFPacket;
+    Res, Oml: TAMFItem;
+begin
+  Result := False;
+  AMFRequest := TAMFPacket.Create;
+  try
+    AMFRequest.LoadFromString(AnsiString(Base64Decode(AMF_REQUEST_SUBTITLES_PACKET)));
+    TAMFCommonArray(AMFRequest.Body[0].Content).Items[0].Value := MovieID;
+    if DownloadAMF(Http, 'http://www.overstream.net/services/gateway.php', AMFRequest, AMFResponse) then
+      try
+        if Length(AMFResponse.Body) > 0 then
+          if (AMFResponse.Body[0].Content <> nil) and (AMFResponse.Body[0].Content is TAMFCommonArray) then
+            begin
+            Res := TAMFCommonArray(AMFResponse.Body[0].Content).NamedItems['res'];
+            if (Res <> nil) and (Res is TAMFCommonArray) then
+              begin
+              Oml := TAMFCommonArray(Res).NamedItems['oml'];
+              if Oml <> nil then
+                begin
+                Subtitles := Oml.Value;
+                SubtitlesExt := '.oml';
+                Result := True;
+                end;
+              end;
+            end;
+      finally
+        AMFResponse.Free;
+        end;
+  finally
+    AMFRequest.Free;
+    end;
+end;
+{$ENDIF}
 
 initialization
   RegisterDownloader(TDownloader_OverStream);

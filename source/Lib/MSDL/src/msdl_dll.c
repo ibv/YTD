@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
 
 #include <ctype.h>
 #include <unistd.h>
@@ -46,8 +45,6 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
-
-
 
 static void print_usage(void);
 #ifdef DLL
@@ -104,9 +101,6 @@ int main(int argc,char **argv)
 
 #ifndef DLL
     display(MSDL_DBG,"%s %s\n",PACKAGE,VERSION);
-#ifndef WIN32
-    signal(SIGPIPE,SIG_IGN);            /* Ignore sigpipe, because we don't need it */
-#endif
 #endif
 
     result  = new_dlresult_t();

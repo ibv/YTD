@@ -11,6 +11,9 @@ type
   TSysCharSet = set of Char;
 
 type
+  EOSError = EWin32Error;
+
+type
   Utf8String = AnsiString;
 
 type
@@ -30,6 +33,7 @@ const
   MinsPerDay = HoursPerDay * MinsPerHour;
 
 function CharInSet(C: Char; S: TSysCharSet): boolean;
+
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
 {$ENDIF}

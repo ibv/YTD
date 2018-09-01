@@ -59,7 +59,6 @@ uses
   // Base objects and units
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
-  uPCRE in 'Common\uPCRE.pas',
   uXML in 'Common\uXML.pas',
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
@@ -167,6 +166,7 @@ uses
   downNovinky in 'Downloaders\downNovinky.pas',
   downOverStream in 'Downloaders\downOverStream.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
+  downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
   downRevver in 'Downloaders\downRevver.pas',
@@ -220,6 +220,7 @@ uses
     xxxSpankWire in 'Downloaders\XXX\xxxSpankWire.pas',
     xxxTnaFlix in 'Downloaders\XXX\xxxTnaFlix.pas',
     xxxTube8 in 'Downloaders\XXX\xxxTube8.pas',
+    xxxTubeSSS in 'Downloaders\XXX\xxxTubeSSS.pas',
     xxxXHamster in 'Downloaders\XXX\xxxXHamster.pas',
     xxxXNXX in 'Downloaders\XXX\xxxXNXX.pas',
     xxxXTube in 'Downloaders\XXX\xxxXTube.pas',

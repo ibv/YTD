@@ -30,6 +30,8 @@ unit uCreateProcessAsync;
 
 interface
 
+{$IFNDEF LVCL}
+
 uses
   Classes, Windows;
 
@@ -50,7 +52,11 @@ function CreateProcessAsync(lpApplicationName: PChar; lpCommandLine: PChar;
 function UnregisterWait(WaitHandle: THandle): BOOL; stdcall;
 {$ENDIF}
 
+{$ENDIF ~LVCL}
+
 implementation
+
+{$IFNDEF LVCL}
 
 {$IFNDEF DELPHI6_UP}
 const
@@ -233,5 +239,7 @@ finalization
     UnregisterWaitFn := nil;
     end;
   {$ENDIF}
+
+{$ENDIF ~LVCL}
 
 end.

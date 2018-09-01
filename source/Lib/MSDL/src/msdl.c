@@ -70,7 +70,6 @@ static int get_url_list_from_file(char *filename,struct list_h **ret);
 
 const char default_file_name_for_empty[] = "file";
 
-
 /*
  * meta_f ... 1 --> always metafile
  *            0 --> don't know, judge from name
@@ -481,7 +480,7 @@ int msdl(struct target_t *target,struct options_t *options,struct dlresult_t *re
 
 
 /*
- * now from version 1.2.6 you can set multiple local filename for multiple targets
+ * now from versin 1.2.6 you can set multiple local filename for multiple targets
  * means -o file1 -o file2 -o file3,,, stuff.
  * 
  * now it messes with options->local_filename_list
@@ -491,23 +490,18 @@ static char *create_local_file_name(char *target_str,struct options_t *options)
 {
     char *local_filename = NULL;
     struct list_h *list = options->local_filename_list;
-
+    
     if(list && list->p && strcmp(list->p,"")) { /* NOT the empty filename you want to set */
 	local_filename = strdup(list->p);
 	list_h_free_head(&(options->local_filename_list),free); /* string list */
     }
-    else if(target_str && strcmp(target_str,"")) {
+    else {
 	char *p = strrchr(target_str,'/');
-	if(p && (p[1] != '\0')) { /* do not allow local_filename to be "" (p[0] == '/' now)*/
+	if(p && p[1] != '\0') { /* do not allow local_filename to be "" (p[0] == '/' now)*/
 	    local_filename = strdup(p + 1);
 	}
     }
 
-    /* still no filename --> set default filename */
-    if((!local_filename) || !strcmp(local_filename,"")) {
-	local_filename = strdup(default_file_name_for_empty); /* allocate default file name */
-    }
-    
     return local_filename;
 }
 
@@ -591,9 +585,15 @@ static int prepare_download(char *target_str,struct options_t *options,
     }
     else if(!url->filepath || !strcmp(url->filepath,"")) {
 	display(MSDL_NOR,"warning: \"%s\" (no filepath)\n",target_str);
+	*local_name = NULL;
+    }
+    else { /* normal case */
+	*local_name = create_local_file_name(target_str,options);
     }
     
-    *local_name = create_local_file_name(url->filepath,options);
+    if((!*local_name) || !strcmp(*local_name,"")) {
+	*local_name = strdup(default_file_name_for_empty); /* allocate default file name */
+    }
     
     dlopts = new_download_opts_t();
     set_dlopts_from_options(options,dlopts);
@@ -676,11 +676,11 @@ static int do_download(const char *local_name,struct url_t *url,struct download_
 		display(MSDL_NOR,"*** try downloading again \n",dlopts->auto_retry);
 	    }
 	    else {
-		dlopts->auto_retry--;
 		display(MSDL_NOR,"*** try downloading again (%d more tries) ***\n",dlopts->auto_retry);
 	    }
 
 	    dlopts->resume_download = 1; /* set resume enable when retry */
+	    dlopts->auto_retry--;
 	    retry_again = 1;
 	}
 	

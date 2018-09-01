@@ -71,6 +71,7 @@ HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
 HTTP	HTML	Nested	downOverStream
 HTTP	XML	XML	downPCPlanets
+MS	HTML	XML	downPrazdninyVTelci
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)
 HTTP	HTML	HTML	downRozhlas

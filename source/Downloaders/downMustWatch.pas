@@ -52,11 +52,6 @@ type
     protected
       NestedUrlRegExps: array of TRegExp;
       DirectUrlRegExp: TRegExp;
-      {$IFDEF SUBTITLES}
-      SubtitleUrlRegExps: array of TRegExp;
-      Subtitles: string;
-      SubtitlesName: string;
-      {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,7 +61,6 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Download: boolean; override;
     end;
 
 implementation
@@ -132,6 +126,7 @@ begin
   {$IFDEF SUBTITLES}
   for i := 0 to Pred(Length(SubtitleUrlRegExps)) do
     RegExFreeAndNil(SubtitleUrlRegExps[i]);
+  SetLength(SubtitleUrlRegExps, 0);
   {$ENDIF}
   inherited;
 end;
@@ -143,9 +138,6 @@ end;
 
 function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var i: integer;
-    {$IFDEF SUBTITLES}
-    Url: string;
-    {$ENDIF}
 begin
   Result := False;
   try
@@ -158,45 +150,9 @@ begin
         Break;
         end;
       end;
-    {$IFDEF SUBTITLES}
-    Subtitles := '';
-    SubtitlesName := '';
-    if Result then
-      for i := 0 to Pred(Length(SubtitleUrlRegExps)) do
-        if GetRegExpVar(SubtitleUrlRegExps[i], Page, 'SUBTITLES', Url) then
-          if DownloadPage(Http, Url, Subtitles, peUTF8) then
-            begin
-            SubtitlesName := ChangeFileExt(GetThisFileName, ExtractFileExt(Url));
-            Break;
-            end;
-    {$ENDIF}
   finally
     NestedUrlRegExp := nil;
     end;
-end;
-
-function TDownloader_MustWatch.Download: boolean;
-{$IFDEF SUBTITLES}
-var Overwrite: boolean;
-{$ENDIF}
-begin
-  Result := inherited Download;
-  {$IFDEF SUBTITLES}
-  if (Subtitles <> '') and (SubtitlesName <> '') then
-    begin
-    Overwrite := True;
-    if FileExists(SubtitlesName) then
-      if Assigned(OnFileNameValidate) then
-        OnFileNameValidate(Self, SubtitlesName, Overwrite);
-    if Overwrite then
-      with TFileStream.Create(SubtitlesName, fmCreate) do
-        try
-          WriteBuffer(Subtitles[1], Length(Subtitles));
-        finally
-          Free;
-          end;
-    end;
-  {$ENDIF}
 end;
 
 function TDownloader_MustWatch.CreateNestedDownloaderFromURL(var Url: string): boolean;

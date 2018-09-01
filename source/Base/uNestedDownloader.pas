@@ -64,6 +64,9 @@ type
       function CreateNestedDownloaderFromDownloader(Downloader: TDownloader): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
+      {$IFDEF SUBTITLES}
+      function GetSubtitlesFileName: string; override;
+      {$ENDIF}
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
       {$IFDEF MULTIDOWNLOADS}
       property FirstItem: boolean read fFirstItem write fFirstItem;
@@ -161,6 +164,13 @@ begin
   Result := inherited GetFileName;
 end;
 
+{$IFDEF SUBTITLES}
+function TNestedDownloader.GetSubtitlesFileName: string;
+begin
+  Result := ChangeFileExt(GetThisFileName, SubtitlesExt);
+end;
+{$ENDIF}
+
 function TNestedDownloader.Prepare: boolean;
 begin
   NestedDownloader := nil;
@@ -180,6 +190,10 @@ begin
     NestedDownloader.OnProgress := OnProgress;
     NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
     Result := NestedDownloader.ValidateFileName and NestedDownloader.Download;
+    {$IFDEF SUBTITLES}
+    if Result then
+      WriteSubtitles;
+      {$ENDIF}
     end;
 end;
 

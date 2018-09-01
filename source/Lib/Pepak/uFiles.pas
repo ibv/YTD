@@ -15,6 +15,8 @@ function GuessFileEncoding(Data: Pointer; DataLength: Integer; out BomLength: in
 function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding): TMemoryStream;
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);
 function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+function FileGetSize(const FileName: string): int64;
+function FileGetDateTime(const FileName: string): TDateTime;
 
 implementation
 
@@ -241,6 +243,39 @@ begin
     end;
   // Otherwise it is ANSI
   Result := feAnsi;
+end;
+
+function FileGetSize(const FileName: string): int64;
+var Handle: THandle;
+    FileSizeHigh, FileSizeLow: DWORD;
+begin
+  Result := -1;
+  Handle := CreateFile(PChar(FileName), 0, FILE_SHARE_READ or FILE_SHARE_WRITE, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  if Handle <> INVALID_HANDLE_VALUE then
+    try
+      FileSizeLow := GetFileSize(Handle, @FileSizeHigh);
+      if (FileSizeLow <> $ffffffff) or (GetLastError = NO_ERROR) then
+        Result := int64(FileSizeHigh) shl 32 + int64(FileSizeLow);
+    finally
+      CloseHandle(Handle);
+      end;
+end;
+
+function FileGetDateTime(const FileName: string): TDateTime;
+{$IFNDEF UNICODE}
+var DosTime: integer;
+{$ENDIF}
+begin
+  {$IFDEF UNICODE}
+  if not FileAge(FileName, Result) then
+    Result := 0;
+  {$ELSE}
+  DosTime := FileAge(FileName);
+  if DosTime > 0 then
+    Result := FileDateToDateTime(DosTime)
+  else
+    Result := 0;
+  {$ENDIF}
 end;
 
 end.

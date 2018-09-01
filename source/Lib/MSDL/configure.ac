@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.52)
-AC_INIT(msdl, 1.2.7-r2, me_t_ro@yahoo.com)
+AC_INIT(msdl, 1.2.7, me_t_ro@yahoo.com)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/msdl.c])
 AC_CONFIG_HEADER([config.h])

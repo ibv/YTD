@@ -1,13 +1,3 @@
-Version 1.2.7-r2.
--- msdl
-	* 15th release
-	* bugfix release for stdout "-o -" when target url contains no filename.
-
-Version 1.2.7-r1.
--- msdl
-	* 14th release
-	* bugfix release to delete MSG_NOSIGNAL and added SIGPIPE,SIG_IGN, for more portability.
-
 Version 1.2.7.
 -- msdl
 	* 13th release
