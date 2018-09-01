@@ -1,6 +1,8 @@
 program YTD;
 {$APPTYPE CONSOLE}
 {$R *.res}
+{%File 'ytd.version'}
+
 uses
   SysUtils,
   Windows,
@@ -24,7 +26,7 @@ begin
     Application.Initialize;
     Application.Title := 'YouTube Downloader';
     Application.CreateForm(TFormYTD, FormYTD);
-    Application.Run;
+  Application.Run;
     end
   else
     begin
