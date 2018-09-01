@@ -1,6 +1,35 @@
 CHANGELOG
 ---------
 
+  v0.73
+
+    * CeskaTelevize.cz:
+
+      1) Bad news: While the new web layout is supported, the downloaded
+         movies are worthless, thanks to the completely insane implementation
+         of Czech TV. Basically, I can ask for any stream I like, and the 
+         server will confirm that it will send it to me, but in fact it will
+         send a different stream - and while sending, it will manipulate its
+         parameters as it sees fit. I have seen claims that this behavior is
+         in fact a feature and not a bug, but as far as YTD is concerned, it
+         only means one thing: Until Czech TV fixes it, YTD won't be able to
+         download its streams properly. There's no point in asking me to do
+         anything about it, because the sad fact is that I can't do anything
+         that I didn't do already. Only two better solutions exist: One, CT
+         will fix its servers. Two, someone else who understands the working
+         of CT's servers better than me, will submit an updated source code.
+
+      2) Good news: Fortunately, the old iVysilani is still working, on page
+         http://www.ceskatelevize.cz/ivysilani-jako-driv/ (thanks to Pepa
+         and Pája for informing me). This version of YTD supports these new
+         (old) addresses.
+
+      3) More good news: CT also provides some of its movies to Stream.cz.
+         As that server streams over good old reliable HTTP and is supported
+         by TD, you can download the movies there, too.
+
+
+
   v0.72
 
     * New provider: 1hd.ro.

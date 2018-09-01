@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
+RunParams=http://www.stream.cz/ceskatelevize/516069-vypravej-21-dil-mdz
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -117,7 +117,7 @@ Item0=..\Bin
 Item1=..\Exe
 Item2=Exe
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6101
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -277,6 +277,7 @@ loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
+cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

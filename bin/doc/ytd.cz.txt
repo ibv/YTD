@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.72                                     (c) 2009-11 Pepak
+YouTube Downloader v0.73                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -97,6 +97,7 @@ PODPOROVANÉ WEBY
 
  - CeskaTelevize.cz
      - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+     - http://www.ceskatelevize.cz/ivysilani-jako-driv/407235100091017-pod-poklickou/
      - http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
      - http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
      - http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/

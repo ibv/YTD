@@ -50,7 +50,6 @@ type
     private
     protected
       MovieObjectRegExp: TRegExp;
-      IVysilaniUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -79,7 +78,6 @@ const
   REGEXP_MOVIE_TITLE = '<h2>\s*(?P<TITLE>.*?)\s*</h2>';
   //REGEXP_MOVIE_OBJECT = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="(?:url|src)"\s+value)="(?P<OBJURL>[^"]+)"';
   REGEXP_MOVIE_OBJECT = '\bflashvars\.playlistURL\s*=\s*"(?P<OBJURL>https?://.+?)"';
-  REGEXP_IVYSILANI_URL = '(?P<URL>(?:https?|rtsp)://[^/]+/iVysilani\.(?:hash\?|archive).*)';
 
 { TDownloader_CT }
 
@@ -99,14 +97,12 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT, [rcoIgnoreCase, rcoSingleLine]);
-  IVysilaniUrlRegExp := RegExCreate(REGEXP_IVYSILANI_URL, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_CT.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
-  RegExFreeAndNil(IVysilaniUrlRegExp);
   inherited;
 end;
 

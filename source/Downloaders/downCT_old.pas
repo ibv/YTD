@@ -74,8 +74,9 @@ uses
   uMessages;
 
 // http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/?online=1
+// http://www.ceskatelevize.cz/ivysilani-jako-driv/407235100091017-pod-poklickou/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/porady(?:/[^/]+)?/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/ivysilani-jako-driv/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -133,7 +134,7 @@ end;
 
 function TDownloader_CT_old.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.ceskatelevize.cz/ivysilani/' + MovieID + '/?streamtype=';
+  Result := 'http://www.ceskatelevize.cz/ivysilani-jako-driv/' + MovieID + '/?streamtype=';
   if RealMedia then
     Result := Result + 'RL3'
   else
@@ -200,6 +201,6 @@ begin
 end;
 
 initialization
-  //RegisterDownloader(TDownloader_CT_old);
+  RegisterDownloader(TDownloader_CT_old);
 
 end.

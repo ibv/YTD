@@ -1,9 +1,37 @@
 CHANGELOG
 ---------
 
+  v0.73
+
+    * Èeská televize:
+
+      1) Špatná zpráva: Nový web Èeské televize je sice od minulé verze
+         podporovaný, ale na stáhnuté poøady se nedá dívat, protože bylo
+         streamování ze strany ÈT implementováno naprosto šílenì. Výsledkem
+         je, že sice mohu požádat o libovolný stream a server mi sdìlí, že
+         mi ho rád pošle, ale ve skuteènosti mi pošle úplnì jiný stream a
+         tomu bude bìhem pøehrávání mìnit parametry. Názory na to, nakolik
+         jde o chybu nebo vlastnost, se rùzní, ale výsledek je jeden: dokud
+         si to ÈT neopraví, tak YTD její streamy nebude umìt poøádnì stáhnout.
+         Je zbyteèné mì na to upozoròovat nebo žádat o opravu, já s tím nic
+         udìlat nemùžu. (Vlastnì je ještì jedna možnost: když to implementuje
+         nìkdo jiný, kdo fungování serverù ÈT rozumí lépe než já. Pak to rád
+         do programu zaøadím.)
+
+      2) Dobrá zpráva: Naštìstí ještì funguje staré iVysílání na adrese
+         http://www.ceskatelevize.cz/ivysilani-jako-driv/ (díky Pepovi a
+         Pájovi, kteøí mì na tento fakt upozornili). Tato verze tedy zavádí
+         podporu pro staré iVysílání na této nové URL.
+
+      3) Druhá dobrá zpráva: ÈT èást svých poøadù provozuje i pøes server
+         Stream.cz, který funguje na starém dobrém HTTP protokolu, který YTD
+         zvládá bez nejmenších potíží. Mùžete tedy videa stahovat i odtamtud.
+
+
+
   v0.72
 
-    * Nový poskytovatel. 1hd.ro.
+    * Nový poskytovatel: 1hd.ro.
 
     * Nový poskytovatel: DotSub.com.
 
