@@ -1,5 +1,6 @@
 Prot.	Zdr.naz	Zdr.URL	Nazev
 
+HTTP	HTML	HTML	down5min
 RTMP	XML	XML	downBarrandov
 HTTP	XML	XML	downBlipTv
 HTTP	HTML	XML	downBofunk
@@ -12,13 +13,16 @@ MS	HTML	XML	downCT
 HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion
 HTTP	HTML	HTML	downEbaumsWorld
+HTTP	HTML	HTML	downEHow
 HTTP	HTML	XML	downESPN
 HTTP	HTML	HTML	downFacebook
 HTTP	HTML	HTML	downFileCabi
+HTTP	XML	XML	downFlickr
 HTTP	XML	XML	downFreeCaster
 HTTP	HTML	XML	downFreeRide
-HTTP	HTML	HTML	downFreeSk
+HTTP	HTML	JSON	downFreeVideoRu
 HTTP	XML	XML	downGodTube
+HTTP	HTML	HTML	downGrindTV
 HTTP	HTML	HTML	downGuba
 HTTP	HTML	HTML	downIPrima
 HTTP	XML	XML	downJoj
@@ -32,21 +36,29 @@ HTTP	HTML	HTML	downMetaCafe
 HTTP	HTML	XML	downMetropolTV
 HTTP	HTML	HTML	downMojeVideo
 HTTP	XML	XML	downMpora
+HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace
 HTTP	HTML	HTML	downMyUbo
 HTTP	HTML	HTML	downNJoy
 RTMP	XML	XML	downNova
 HTTP	HTML	HTML+XML	downRaajje
+HTTP	HTML	HTML	downRingTV (<-downGrindTV)
 HTTP	HTML	HTML	downRozhlas
+HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
+HTTP	XML	XML	downSpike
+HTTP	HTML	HTML	downStagevu
 HTTP	HTML	HTML	downStickam
 HTTP	HTML	HTML	downStream
 HTTP	HTML	HTML	downStreetFire
+HTTP	HTML	HTML	downStupidVideos (<-downGrindTV)
 HTTP	XML	XML	downTangle
 HTTP	XML	XML	downTeacherTube
+HTTP	XML	XML	downTodaysBigThing
 HTTP	HTML	HTML	downTontuyau
 MS	HTML	XML	downTVcom
 HTTP	XML	XML	downTVNoe
+RTMP	HTML	XML	downUniMinnesota
 HTTP	HTML	HTML+AMF	downUStream
 HTTP	HTML	Nested	downVideaCesky
 HTTP	HTML	XML	downVideoAlbumyAzet

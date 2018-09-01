@@ -58,6 +58,7 @@ type
       function ConvertString(const Text: string; Encoding: TPageEncoding): string; virtual;
       function HtmlDecode(const Text: string): string; virtual;
       function UrlDecode(const Text: string): string; virtual;
+      function UrlEncode(const Text: string): string; virtual;
       function Base64Decode(const Text: string): string; virtual;
       function StripSlashes(const Text: string): string; virtual;
       {$IFDEF DEBUG}
@@ -434,6 +435,11 @@ end;
 function TDownloader.UrlDecode(const Text: string): string;
 begin
   Result := DecodeUrl(StringReplace(Text, '+', ' ', [rfReplaceAll]));
+end;
+
+function TDownloader.UrlEncode(const Text: string): string;
+begin
+  Result := EncodeUrl(Text);
 end;
 
 function TDownloader.Base64Decode(const Text: string): string;

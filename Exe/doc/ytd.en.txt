@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.28                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.35                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -14,6 +14,9 @@ has several variants, the highest-quality one is downloaded.
 
 SUPPORTED PROVIDERS
 -------------------
+
+ - 5min.com:
+     - http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 
  - Barrandov.tv:
      - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
@@ -61,11 +64,17 @@ SUPPORTED PROVIDERS
  - EbaumsWorld.com:
      - http://www.ebaumsworld.com/video/watch/80973186/
 
+ - eHow.com:
+     - http://www.ehow.com/video_4871930_clean-computer-monitor-glass.html
+
  - ESPN.go.com:
      - http://espn.go.com/video/clip?id=5163631
 
  - FileCabi.net:
      - http://www.filecabi.net/video/hiddendogstopsrobbery.html
+
+ - Flickr.com:
+     - http://www.flickr.com/photos/landersz/2403626167/
 
  - Free.Zoznam.sk:
      - http://free.zoznam.sk/video/Splhajuci-buldozer
@@ -77,11 +86,22 @@ SUPPORTED PROVIDERS
      - http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
      - http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
 
+ - FreeVideo.ru:
+     - http://freevideo.ru/video/view/?id=v14445361101
+
  - GodTube.com:
      - http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
 
+ - GrindTV.com:
+     - http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
+
  - Guba.com:
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
+
+ - ima.umn.edu:
+     - http://www.ima.umn.edu/videos/?id=1187
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - iPrima.cz:
      - http://www.iprima.cz/videoarchiv/44524/all/all
@@ -116,6 +136,9 @@ SUPPORTED PROVIDERS
  - Mpora.com:
      - http://video.mpora.com/watch/xfnGGmZDC/
 
+ - Muzu.tv:
+     - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
+
  - MySpace.com
      - http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
 
@@ -135,6 +158,9 @@ SUPPORTED PROVIDERS
  - Raajje.tv:
      - http://www.raajje.tv/video/991/president-anni-diving
 
+ - RingTV.com:
+     - http://www.ringtv.com/video/frankie_gomez_training/
+
  - Rozhlas.cz:
      - http://www.rozhlas.cz/vltava/porady/_zprava/676996
 
@@ -144,8 +170,17 @@ SUPPORTED PROVIDERS
  - RuTube.ru:
      - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
 
+ - SevenLoad.com:
+     - http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
+
  - Snotr.com:
      - http://www.snotr.com/video/4280
+
+ - Spike.com:
+     - http://www.spike.com/video/prince-of-persia/3355664
+
+ - Stagevu.com:
+     - http://stagevu.com/video/jomxdgbvxnip
 
  - Stickam.com:
      - http://www.stickam.com/viewMedia.do?mId=188284575
@@ -164,11 +199,18 @@ SUPPORTED PROVIDERS
  - StreetFire.com:
      - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 
+ - StupidVideos.com:
+     - http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
+     - http://www.stupidvideos.com/video/Fliers_Fall_Under_Friendly_Fire/?m=new
+
  - Tangle.com:
      - http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
 
  - TeacherTube.com:
      - http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
+
+ - TodaysBigThing.com:
+     - http://www.todaysbigthing.com/2010/06/01
 
  - Tontuyau.com:
      - http://www.tontuyau.com/v.asp?id=21715
@@ -226,6 +268,8 @@ SUPPORTED PROVIDERS
 
 Supported porn providers:
 
+ - ExtremeTube.com
+ - KeezMovies.com
  - MegaPorn.com
  - PornHost.com
  - PornHub.com

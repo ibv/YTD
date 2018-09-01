@@ -1,6 +1,27 @@
 CHANGELOG
 ---------
 
+  v0.35
+
+    * Novì podporované servery:
+        - 5min.com
+        - eHow.com
+        - ExtremeTube.com (porno)
+        - Flickr.com
+        - FreeVideo.ru
+        - GrindTV.com
+        - KeezMovies.com (porno)
+        - Muzu.tv
+        - RingTV.com
+        - SevenLoad.com
+        - Spike.com
+        - Stagevu.com
+        - StupidVideos.com
+        - TodaysBigThing.com
+        - University of Minnesota (ima.umn.edu)
+
+
+
   v0.34
 
     * Odstranìno zapomenuté konzolové okno pøi spouštìní GUI verze.

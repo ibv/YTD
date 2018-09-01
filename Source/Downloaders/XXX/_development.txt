@@ -1,5 +1,7 @@
 Prot.	Zdr.naz	Zdr.URL	Nazev
 
+HTTP	HTML	HTML	xxxExtremeTube
+HTTP	HTML	HTML	xxxKeezMovies
 HTTP	XML	XML	xxxMegaPorn
 HTTP	HTML	HTML	xxxPornHost
 HTTP	HTML	XML	xxxPornHub

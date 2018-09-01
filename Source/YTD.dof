@@ -49,15 +49,15 @@ Conditionals=XXX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://freecaster.tv/freeski/1012253
+RunParams=http://www.todaysbigthing.com/2010/06/01
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=34
+MinorVer=35
 Release=0
-Build=190
+Build=194
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.34.0.190
+FileVersion=0.35.0.194
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
