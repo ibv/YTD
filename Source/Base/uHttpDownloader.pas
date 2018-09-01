@@ -51,30 +51,31 @@ type
 implementation
 
 uses
-  uMessages;
+  uLanguages, uMessages;
 
-resourcestring
-
-  SOCKSTATUS_RESOLVING_BEGAN = 'Resolving began';
-  SOCKSTATUS_RESOLVING_ENDED = 'Resolving ended';
-  SOCKSTATUS_SOCKET_CREATED = 'Socket created';
-  SOCKSTATUS_SOCKET_CLOSED = 'Socket closed';
-  SOCKSTATUS_BOUND_TO_IP_PORT = 'Bound to IP/port';
-  SOCKSTATUS_CONNECTED = 'Connected';
-  SOCKSTATUS_CAN_READ_DATA = 'Can read data';
-  SOCKSTATUS_CAN_WRITE_DATA = 'Can write data';
-  SOCKSTATUS_LISTENING = 'Listening';
-  SOCKSTATUS_ACCEPTED_CONNECTION = 'Accepted connection';
-  SOCKSTATUS_READ_DATA = 'Read data';
-  SOCKSTATUS_WROTE_DATA = 'Wrote data';
-  SOCKSTATUS_WAITING = 'Waiting';
-  SOCKSTATUS_SOCKET_ERROR = 'Socket error';
+{gnugettext: scan-all}
+const
+  SOCKSTATUS_RESOLVING_BEGAN = 'Resolving began'; // HTTP socket status: resolving began
+  SOCKSTATUS_RESOLVING_ENDED = 'Resolving ended'; // HTTP socket status: resolving ended
+  SOCKSTATUS_SOCKET_CREATED = 'Socket created'; // HTTP socket status: socket created
+  SOCKSTATUS_SOCKET_CLOSED = 'Socket closed'; // HTTP socket status: socket closed
+  SOCKSTATUS_BOUND_TO_IP_PORT = 'Bound to IP/port'; // HTTP socket status: bound to IP address and port
+  SOCKSTATUS_CONNECTED = 'Connected'; // HTTP socket status: connected
+  SOCKSTATUS_CAN_READ_DATA = 'Can read data'; // HTTP socket status: can read data
+  SOCKSTATUS_CAN_WRITE_DATA = 'Can write data'; // HTTP socket status: can write data
+  SOCKSTATUS_LISTENING = 'Listening'; // HTTP socket status: listening for connections
+  SOCKSTATUS_ACCEPTED_CONNECTION = 'Accepted connection'; // HTTP socket status: connection accepted
+  SOCKSTATUS_READ_DATA = 'Read data'; // HTTP socket status: data was read
+  SOCKSTATUS_WROTE_DATA = 'Wrote data'; // HTTP socket status: data was written
+  SOCKSTATUS_WAITING = 'Waiting'; // HTTP socket status: data is waiting
+  SOCKSTATUS_SOCKET_ERROR = 'Socket error'; // HTTP socket status: socket error
+{gnugettext: reset}
 
 const SockStatusReasons : array[THookSocketReason] of string
               = (SOCKSTATUS_RESOLVING_BEGAN, SOCKSTATUS_RESOLVING_ENDED, SOCKSTATUS_SOCKET_CREATED, SOCKSTATUS_SOCKET_CLOSED, SOCKSTATUS_BOUND_TO_IP_PORT, SOCKSTATUS_CONNECTED,
                  SOCKSTATUS_CAN_READ_DATA, SOCKSTATUS_CAN_WRITE_DATA, SOCKSTATUS_LISTENING, SOCKSTATUS_ACCEPTED_CONNECTION, SOCKSTATUS_READ_DATA, SOCKSTATUS_WROTE_DATA,
                  SOCKSTATUS_WAITING, SOCKSTATUS_SOCKET_ERROR);
- 
+
 { THttpDownloader }
 
 constructor THttpDownloader.Create(const AMovieID: string);
@@ -141,9 +142,9 @@ begin
             BytesTransferred := 0;
             if DownloadPage(VideoDownloader, MovieURL) then
               if (VideoDownloader.ResultCode < 200) or (VideoDownloader.ResultCode >= 300) then
-                SetLastErrorMsg(Format(ERR_HTTP_RESULT_CODE, [VideoDownloader.ResultCode]))
+                SetLastErrorMsg(Format(_(ERR_HTTP_RESULT_CODE), [VideoDownloader.ResultCode]))
               else if VideoDownloader.OutputStream.Size <= 0 then
-                SetLastErrorMsg(ERR_NO_DATA_READ)
+                SetLastErrorMsg(_(ERR_HTTP_NO_DATA_READ))
               else
                 Result := True;
           finally
@@ -227,7 +228,7 @@ end;
 
 procedure THttpDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string);
 begin
-  SetLastErrorMsg(SockStatusReasons[Reason]);
+  SetLastErrorMsg(_(SockStatusReasons[Reason]));
   if (Reason = HR_ReadCount) then
     BytesTransferred := BytesTransferred + StrToInt64(Value);
   if not (Reason in [HR_SocketClose, HR_Error]) then

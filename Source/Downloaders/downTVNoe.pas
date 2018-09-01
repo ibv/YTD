@@ -75,9 +75,9 @@ begin
   try
     Xml.Xml := Page;
     if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else if not GetXmlVar(Xml, 'entry/Title', Title) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
     else
       begin
       SetName(Trim(Title));

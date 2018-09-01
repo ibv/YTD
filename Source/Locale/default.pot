@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-06-10 18:47\n"
-"PO-Revision-Date: 2010-06-10 18:47\n"
+"POT-Creation-Date: 2010-06-23 18:59\n"
+"PO-Revision-Date: 2010-06-23 18:59\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,71 +23,69 @@ msgstr ""
 #. FormAbout..Font.Name
 #: GUI/uYTDAbout.dfm:11
 #. FormAbout..LabelYTD..Font.Name
-#: GUI/uYTDAbout.dfm:26
+#: GUI/uYTDAbout.dfm:27
 #. FormAbout..LabelVersion..Font.Name
-#: GUI/uYTDAbout.dfm:46
+#: GUI/uYTDAbout.dfm:48
 #. FormAbout..LabelNewestVersion..Font.Name
-#: GUI/uYTDAbout.dfm:66
+#: GUI/uYTDAbout.dfm:69
 #. FormAbout..LabelHomepage..Font.Name
-#: GUI/uYTDAbout.dfm:87
+#: GUI/uYTDAbout.dfm:91
 #. FormYTD..Font.Name
 #: GUI/uYTDGUI.dfm:11
 msgid "MS Sans Serif"
 msgstr ""
 
 #. FormAbout..LabelYTD..Caption
-#: GUI/uYTDAbout.dfm:22
-#. Programmer's name for it: APPLICATION_TITLE
-#: uMessages.pas:9
+#: GUI/uYTDAbout.dfm:23
 msgid "YouTube Downloader"
 msgstr ""
 
 #. FormAbout..LabelVersionLabel..Caption
-#: GUI/uYTDAbout.dfm:35
+#: GUI/uYTDAbout.dfm:36
 msgid "Version:"
 msgstr ""
 
 #. FormAbout..LabelVersion..Caption
-#: GUI/uYTDAbout.dfm:42
+#: GUI/uYTDAbout.dfm:44
 msgid "LabelVersion"
 msgstr ""
 
 #. FormAbout..LabelNewestVersionLabel..Caption
-#: GUI/uYTDAbout.dfm:55
+#: GUI/uYTDAbout.dfm:57
 msgid "Newest version:"
 msgstr ""
 
 #. FormAbout..LabelNewestVersion..Caption
-#: GUI/uYTDAbout.dfm:62
-#. Show available version
+#: GUI/uYTDAbout.dfm:65
+#. GUI: Check for a new version wasn't made yet - or failed.
 #: GUI/uYTDAbout.pas:88
 msgid "not found"
 msgstr ""
 
 #. FormAbout..LabelHomepageLabel..Caption
-#: GUI/uYTDAbout.dfm:76
+#: GUI/uYTDAbout.dfm:79
 msgid "Homepage:"
 msgstr ""
 
 #. FormAbout..LabelHomepage..Caption
-#: GUI/uYTDAbout.dfm:83
+#: GUI/uYTDAbout.dfm:87
 msgid "http://www.pepak.net/download/youtube-downloader"
 msgstr ""
 
 #. FormAbout..LabelMediaProviders..Caption
-#: GUI/uYTDAbout.dfm:97
+#: GUI/uYTDAbout.dfm:101
 msgid "Media providers:"
 msgstr ""
 
 #. FormAbout..ListProviders......Caption
-#: GUI/uYTDAbout.dfm:107
+#: GUI/uYTDAbout.dfm:111
 #. FormYTD..Downloads......Caption
-#: GUI/uYTDGUI.dfm:163
+#: GUI/uYTDGUI.dfm:152
 msgid "Provider"
 msgstr ""
 
 #. FormAbout..ListProviders......Caption
-#: GUI/uYTDAbout.dfm:111
+#: GUI/uYTDAbout.dfm:115
 msgid "Components"
 msgstr ""
 
@@ -96,683 +94,759 @@ msgstr ""
 msgid "FormYTD"
 msgstr ""
 
-#. FormYTD..PanelMenu..ToolBar1..ToolButton2..Caption
-#: GUI/uYTDGUI.dfm:67
-msgid "ToolButton2"
-msgstr ""
-
 #. FormYTD..Downloads......Caption
-#: GUI/uYTDGUI.dfm:159
+#: GUI/uYTDGUI.dfm:148
 msgid "URL"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
-#: GUI/uYTDGUI.dfm:168
+#: GUI/uYTDGUI.dfm:157
 msgid "Status"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
-#: GUI/uYTDGUI.dfm:172
+#: GUI/uYTDGUI.dfm:161
 msgid "Title"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
-#: GUI/uYTDGUI.dfm:177
+#: GUI/uYTDGUI.dfm:166
 msgid "Size"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
-#: GUI/uYTDGUI.dfm:182
+#: GUI/uYTDGUI.dfm:171
 msgid "Progress"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddNewUrl..Caption
-#: GUI/uYTDGUI.dfm:215
-#. FormYTD..YTDActions..actAddNewUrl..Hint
-#: GUI/uYTDGUI.dfm:216
+#: GUI/uYTDGUI.dfm:200
 msgid "Add new URL"
 msgstr ""
 
+#. FormYTD..YTDActions..actAddNewUrl..Hint
+#: GUI/uYTDGUI.dfm:201
+msgid "Add new URL to the list"
+msgstr ""
+
 #. FormYTD..YTDActions..actDeleteURL..Caption
-#: GUI/uYTDGUI.dfm:222
+#: GUI/uYTDGUI.dfm:207
 msgid "Delete URL"
 msgstr ""
 
 #. FormYTD..YTDActions..actDeleteURL..Hint
-#: GUI/uYTDGUI.dfm:223
+#: GUI/uYTDGUI.dfm:208
 msgid "Delete selected URL(s)"
 msgstr ""
 
 #. FormYTD..YTDActions..actStart..Caption
-#: GUI/uYTDGUI.dfm:229
+#: GUI/uYTDGUI.dfm:214
 msgid "Start/Pause/Resume"
 msgstr ""
 
 #. FormYTD..YTDActions..actStart..Hint
-#: GUI/uYTDGUI.dfm:230
+#: GUI/uYTDGUI.dfm:215
 msgid "Start downloading selected  URL(s)"
 msgstr ""
 
 #. FormYTD..YTDActions..actStop..Caption
-#: GUI/uYTDGUI.dfm:236
+#: GUI/uYTDGUI.dfm:221
 msgid "Stop"
 msgstr ""
 
 #. FormYTD..YTDActions..actStop..Hint
-#: GUI/uYTDGUI.dfm:237
+#: GUI/uYTDGUI.dfm:222
 msgid "Stop downloading selected  URL(s)"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
-#: GUI/uYTDGUI.dfm:243
-#. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
-#: GUI/uYTDGUI.dfm:244
+#: GUI/uYTDGUI.dfm:228
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
-#: GUI/uYTDGUI.dfm:250
-#. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
-#: GUI/uYTDGUI.dfm:251
+#: GUI/uYTDGUI.dfm:235
 msgid "Add URLs from Clipboard"
 msgstr ""
 
+#. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
+#: GUI/uYTDGUI.dfm:229
+#. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
+#: GUI/uYTDGUI.dfm:236
+msgid "Add URLs from Clipboard to the list"
+msgstr ""
+
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
-#: GUI/uYTDGUI.dfm:257
-#. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
-#: GUI/uYTDGUI.dfm:258
+#: GUI/uYTDGUI.dfm:242
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
-#: GUI/uYTDGUI.dfm:264
-#. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
-#: GUI/uYTDGUI.dfm:265
+#: GUI/uYTDGUI.dfm:249
 msgid "Copy URLs to Clipboard"
 msgstr ""
 
+#. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
+#: GUI/uYTDGUI.dfm:243
+#. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
+#: GUI/uYTDGUI.dfm:250
+msgid "Copy URLs from the list to Clipboard"
+msgstr ""
+
 #. FormYTD..YTDActions..actSelectAll..Caption
-#: GUI/uYTDGUI.dfm:271
+#: GUI/uYTDGUI.dfm:256
 msgid "Select all"
 msgstr ""
 
 #. FormYTD..YTDActions..actSelectAll..Hint
-#: GUI/uYTDGUI.dfm:272
+#: GUI/uYTDGUI.dfm:257
 msgid "Select all URLs"
 msgstr ""
 
 #. FormYTD..YTDActions..actRefresh..Caption
-#: GUI/uYTDGUI.dfm:277
+#: GUI/uYTDGUI.dfm:262
 msgid "Refresh"
 msgstr ""
 
 #. FormYTD..YTDActions..actRefresh..Hint
-#: GUI/uYTDGUI.dfm:278
+#: GUI/uYTDGUI.dfm:263
 msgid "Refresh display"
 msgstr ""
 
 #. FormYTD..YTDActions..actAutoDownload..Caption
-#: GUI/uYTDGUI.dfm:284
+#: GUI/uYTDGUI.dfm:269
 msgid "Autodownload"
 msgstr ""
 
 #. FormYTD..YTDActions..actAutoDownload..Hint
-#: GUI/uYTDGUI.dfm:286
+#: GUI/uYTDGUI.dfm:271
 msgid "Automatically start new downloads"
 msgstr ""
 
 #. FormYTD..YTDActions..actDownloadDirectory..Caption
-#: GUI/uYTDGUI.dfm:292
+#: GUI/uYTDGUI.dfm:277
 msgid "Set download directory"
 msgstr ""
 
 #. FormYTD..YTDActions..actDownloadDirectory..Hint
-#: GUI/uYTDGUI.dfm:293
+#: GUI/uYTDGUI.dfm:278
 msgid "Choose download directory"
 msgstr ""
 
 #. FormYTD..YTDActions..actAutoOverwrite..Caption
-#: GUI/uYTDGUI.dfm:299
+#: GUI/uYTDGUI.dfm:284
 msgid "Auto-Overwrite"
 msgstr ""
 
 #. FormYTD..YTDActions..actAutoOverwrite..Hint
-#: GUI/uYTDGUI.dfm:300
+#: GUI/uYTDGUI.dfm:285
 msgid "Automatically overwrite existing files"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromHTML..Caption
-#: GUI/uYTDGUI.dfm:306
+#: GUI/uYTDGUI.dfm:291
 msgid "Add URLs from HTML page"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromHTML..Hint
-#: GUI/uYTDGUI.dfm:307
+#: GUI/uYTDGUI.dfm:292
 msgid "Get a list of URLs from HTML page"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Caption
-#: GUI/uYTDGUI.dfm:313
+#: GUI/uYTDGUI.dfm:298
 msgid "Add URLs from HTML file"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Hint
-#: GUI/uYTDGUI.dfm:314
+#: GUI/uYTDGUI.dfm:299
 msgid "Get a list of URLs from HTML file"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromFile..Caption
-#: GUI/uYTDGUI.dfm:320
+#: GUI/uYTDGUI.dfm:305
 msgid "Add URLs from file"
 msgstr ""
 
 #. FormYTD..YTDActions..actAddUrlsFromFile..Hint
-#: GUI/uYTDGUI.dfm:321
+#: GUI/uYTDGUI.dfm:306
 msgid "Get a list of URLs from file"
 msgstr ""
 
 #. FormYTD..YTDActions..actSaveUrlList..Caption
-#: GUI/uYTDGUI.dfm:327
+#: GUI/uYTDGUI.dfm:312
 msgid "Save URL list"
 msgstr ""
 
 #. FormYTD..YTDActions..actSaveUrlList..Hint
-#: GUI/uYTDGUI.dfm:328
+#: GUI/uYTDGUI.dfm:313
 msgid "Save list of unfinished URLs to a list "
 "file"
 msgstr ""
 
 #. FormYTD..YTDActions..actAbout..Caption
-#: GUI/uYTDGUI.dfm:334
+#: GUI/uYTDGUI.dfm:319
 msgid "About"
 msgstr ""
 
 #. FormYTD..YTDActions..actAbout..Hint
-#: GUI/uYTDGUI.dfm:335
+#: GUI/uYTDGUI.dfm:320
 msgid "About this program"
 msgstr ""
 
 #. FormYTD..DownloadsPopup..N4..Caption
-#: GUI/uYTDGUI.dfm:1447
+#: GUI/uYTDGUI.dfm:1427
 #. FormYTD..DownloadsPopup..N2..Caption
-#: GUI/uYTDGUI.dfm:1456
+#: GUI/uYTDGUI.dfm:1436
 #. FormYTD..DownloadsPopup..N1..Caption
-#: GUI/uYTDGUI.dfm:1468
+#: GUI/uYTDGUI.dfm:1448
 #. FormYTD..DownloadsPopup..N3..Caption
-#: GUI/uYTDGUI.dfm:1482
+#: GUI/uYTDGUI.dfm:1462
 #. FormYTD..DownloadsPopup..N5..Caption
-#: GUI/uYTDGUI.dfm:1488
+#: GUI/uYTDGUI.dfm:1468
 msgid "-"
 msgstr ""
 
 #. FormYTD..OpenHtmlFile..Filter
-#: GUI/uYTDGUI.dfm:1495
+#: GUI/uYTDGUI.dfm:1475
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr ""
 
 #. FormYTD..OpenUrlList..Filter
-#: GUI/uYTDGUI.dfm:1501
+#: GUI/uYTDGUI.dfm:1481
 #. FormYTD..SaveUrlList..Filter
-#: GUI/uYTDGUI.dfm:1508
+#: GUI/uYTDGUI.dfm:1488
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr ""
 
 #. FormYTD..SaveUrlList..DefaultExt
-#: GUI/uYTDGUI.dfm:1507
+#: GUI/uYTDGUI.dfm:1487
 msgid "lst"
 msgstr ""
 
+#. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
-#: uMessages.pas:11
-msgid "Exception %s with message:%s"
+#: uMessages.pas:12
+msgid "Exception %s with message:\n"
+"%s"
 msgstr ""
 
+#. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: uMessages.pas:13
+#: uMessages.pas:14
 msgid "Press any key to quit."
 msgstr ""
 
+#. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: uMessages.pas:14
+#: uMessages.pas:15
 msgid "Playlist item %d"
 msgstr ""
 
-#. Downloader errors
+#. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: uMessages.pas:17
+#: uMessages.pas:18
 msgid "Downloader is not prepared!"
 msgstr ""
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: uMessages.pas:18
+#: uMessages.pas:19
 msgid "Download of this content is not implemented."
 msgstr ""
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: uMessages.pas:19
+#: uMessages.pas:20
 msgid "Download to file \"%s\" was not allowed."
 msgstr ""
 
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
+#: uMessages.pas:22
+msgid "Failed to locate embedded object."
+msgstr ""
+
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: uMessages.pas:21
+#: uMessages.pas:23
 msgid "Failed to locate media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: uMessages.pas:22
+#: uMessages.pas:24
 msgid "Failed to download media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: uMessages.pas:23
+#: uMessages.pas:25
 msgid "Failed to prepare media info page."
 msgstr ""
 
+#. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
+#: uMessages.pas:26
+msgid "Invalid media info page."
+msgstr ""
+
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
+#: uMessages.pas:27
+msgid "Failed to download server list."
+msgstr ""
+
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: uMessages.pas:24
+#: uMessages.pas:29
 msgid "Failed to locate media info."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: uMessages.pas:25
+#: uMessages.pas:30
 msgid "Failed to find media title."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: uMessages.pas:26
+#: uMessages.pas:31
 msgid "Failed to find media URL."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: uMessages.pas:27
+#: uMessages.pas:32
 msgid "Failed to find media server."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: uMessages.pas:28
+#: uMessages.pas:33
 msgid "Failed to find media stream."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: uMessages.pas:30
+#: uMessages.pas:35
 msgid "HTTP request failed with error code "
 "%d."
 msgstr ""
 
-#. Programmer's name for it: ERR_NO_DATA_READ
-#: uMessages.pas:31
+#. Programmer's name for it: ERR_HTTP_NO_DATA_READ
+#: uMessages.pas:36
 msgid "No data read from the connection."
 msgstr ""
 
-#. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: uMessages.pas:33
-msgid "Failed to find embedded object."
-msgstr ""
-
-#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT
-#: uMessages.pas:34
-msgid "Failed to download embedded object."
-msgstr ""
-
-#. Programmer's name for it: ERR_INVALID_EMBEDDED_OBJECT
-#: uMessages.pas:35
-msgid "Embedded object is invalid."
-msgstr ""
-
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: uMessages.pas:37
+#: uMessages.pas:38
 msgid "Variable \"%s\" not found."
 msgstr ""
 
-#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: uMessages.pas:39
-msgid "Failed to download server list."
-msgstr ""
-
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: uMessages.pas:41
+#: uMessages.pas:40
 msgid "Error message listed in file \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: uMessages.pas:43
+#: uMessages.pas:42
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr ""
 
-#. Programmer's name for it: DEFAULT_USER_AGENT
-#: Base/uDownloader.pas:107
-msgid "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) "
-"Gecko/20090824 Firefox/3.5.3 (.NET CLR "
-"3.5.30729)"
-msgstr ""
-
+#. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
 #: Base/uHttpDownloader.pas:58
 msgid "Resolving began"
 msgstr ""
 
+#. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
 #: Base/uHttpDownloader.pas:59
 msgid "Resolving ended"
 msgstr ""
 
+#. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
 #: Base/uHttpDownloader.pas:60
 msgid "Socket created"
 msgstr ""
 
+#. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
 #: Base/uHttpDownloader.pas:61
 msgid "Socket closed"
 msgstr ""
 
+#. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
 #: Base/uHttpDownloader.pas:62
 msgid "Bound to IP/port"
 msgstr ""
 
+#. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
 #: Base/uHttpDownloader.pas:63
 msgid "Connected"
 msgstr ""
 
+#. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
 #: Base/uHttpDownloader.pas:64
 msgid "Can read data"
 msgstr ""
 
+#. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
 #: Base/uHttpDownloader.pas:65
 msgid "Can write data"
 msgstr ""
 
+#. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
 #: Base/uHttpDownloader.pas:66
 msgid "Listening"
 msgstr ""
 
+#. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
 #: Base/uHttpDownloader.pas:67
 msgid "Accepted connection"
 msgstr ""
 
+#. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
 #: Base/uHttpDownloader.pas:68
 msgid "Read data"
 msgstr ""
 
+#. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
 #: Base/uHttpDownloader.pas:69
 msgid "Wrote data"
 msgstr ""
 
+#. HTTP socket status: data is waiting
 #. Programmer's name for it: SOCKSTATUS_WAITING
 #: Base/uHttpDownloader.pas:70
+#. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
-#: GUI/uYTDGUI.pas:153
+#: GUI/uYTDGUI.pas:154
 msgid "Waiting"
 msgstr ""
 
+#. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
 #: Base/uHttpDownloader.pas:71
 msgid "Socket error"
 msgstr ""
 
-#. var i: integer;
-#: CLI/uYTD.pas:88
-msgid "<arg> [<arg>] ..."
-msgstr ""
-
+#. CLI: Help for -h/-? command line argument
 #: CLI/uYTD.pas:90
 msgid " ...... Show this help screen."
 msgstr ""
 
+#. CLI: Help for -i command line argument
 #: CLI/uYTD.pas:91
 msgid " ... Load URL list from <file> (one URL per "
 "line)."
 msgstr ""
 
+#. CLI: Help for -o command line argument
 #: CLI/uYTD.pas:92
 msgid " ... Store files to <path> (default is current "
 "directory)."
 msgstr ""
 
+#. CLI: Help for -e command line argument
 #: CLI/uYTD.pas:93
 msgid " ... Save failed URLs to <file>."
 msgstr ""
 
+#. CLI: Help for -s command line argument
 #: CLI/uYTD.pas:94
 msgid " .... Load links from a HTML source. <src> can be a file or an "
 "URL."
 msgstr ""
 
+#. CLI: Help for -n command line argument
 #: CLI/uYTD.pas:95
 msgid " .......... Never overwrite existing "
 "files."
 msgstr ""
 
+#. CLI: Help for -a command line argument
 #: CLI/uYTD.pas:96
 msgid " .......... Always overwrite existing "
 "files."
 msgstr ""
 
+#. CLI: Help for -r command line argument
 #: CLI/uYTD.pas:97
 msgid " .......... Rename files to a new name if they already "
 "exist."
 msgstr ""
 
+#. CLI: Help for -k command line argument
 #: CLI/uYTD.pas:98
 msgid " .......... Ask what to do with existing files "
 "(default)."
 msgstr ""
 
+#. CLI: Help for -l command line argument
 #: CLI/uYTD.pas:99
 msgid " .......... List all available providers."
 msgstr ""
 
-#: CLI/uYTD.pas:101
+#. CLI: Help for -v command line argument
+#: CLI/uYTD.pas:100
+msgid " .......... Test for updated version of "
+"YTD."
+msgstr ""
+
+#. CLI: Help for <url> command line argument
+#: CLI/uYTD.pas:102
 msgid " ....... URL to download."
 msgstr ""
 
-#: CLI/uYTD.pas:119
+#. CLI: Title for the list of providers (-l command line argument)
+#: CLI/uYTD.pas:120
 msgid "Available providers:"
 msgstr ""
 
-#: CLI/uYTD.pas:126
+#. CLI: The "Total: " part of "Total: 123 providers." Note the ending space
+#: CLI/uYTD.pas:127
 msgid "Total: "
 msgstr ""
 
-#: CLI/uYTD.pas:128
+#. CLI: The " providers" part of "Total: 123 providers." Note the starting space
+#: CLI/uYTD.pas:129
 msgid " providers."
 msgstr ""
 
-#: CLI/uYTD.pas:135
+#. CLI: Note: pad with spaces to the same length as "Newest version:"
+#: CLI/uYTD.pas:136
 msgid "Current version: "
 msgstr ""
 
-#: CLI/uYTD.pas:136
+#. CLI: Note: pad with spaces to the same length as "Current version:"
+#: CLI/uYTD.pas:137
 msgid "Newest version:  "
 msgstr ""
 
-#: CLI/uYTD.pas:138
+#. CLI: Couldn't check for a newer version
+#: CLI/uYTD.pas:139
 msgid "check failed"
 msgstr ""
 
-#: CLI/uYTD.pas:144
+#. CLI: Note: pad with spaces to the same length as "Current version:"
+#: CLI/uYTD.pas:145
 msgid "Download URL:    "
 msgstr ""
 
-#: CLI/uYTD.pas:201
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:202
 msgid "With -e a filename must be provided."
 msgstr ""
 
-#: CLI/uYTD.pas:209
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:210
 msgid "HTML source \"%s\" doesn't contain any useful "
 "links."
 msgstr ""
 
-#: CLI/uYTD.pas:211
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:212
 msgid "HTML source \"%s\" not found."
 msgstr ""
 
-#: CLI/uYTD.pas:214
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:215
 msgid "With -h a filename or an URL must be "
 "provided."
 msgstr ""
 
-#: CLI/uYTD.pas:223
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:224
 msgid "URL list-file \"%s\" not found."
 msgstr ""
 
-#: CLI/uYTD.pas:225
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:226
 msgid "With -i a filename must be provided."
 msgstr ""
 
-#: CLI/uYTD.pas:231
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:232
 msgid "Destination directory \"%s\" not found."
 msgstr ""
 
-#: CLI/uYTD.pas:233
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:234
 msgid "With -o a directory name must be provided."
 msgstr ""
 
-#: CLI/uYTD.pas:235
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:236
 msgid "Unknown parameter \"%s\"."
 msgstr ""
 
-#: CLI/uYTD.pas:241
+#. CLI: Error message for invalid command line argument
+#: CLI/uYTD.pas:242
 msgid "No valid URLs found."
 msgstr ""
 
-#: CLI/uYTD.pas:286
+#. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
+#: CLI/uYTD.pas:287
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
 msgstr ""
 
-#: CLI/uYTD.pas:295
+#: CLI/uYTD.pas:296
 msgid "  ERROR: "
 msgstr ""
 
-#: CLI/uYTD.pas:297
+#. CLI: Error message to be written to the log file. %: URL, message
+#: CLI/uYTD.pas:298
 msgid "FAILED \"%s\": %s"
 msgstr ""
 
-#: CLI/uYTD.pas:315
+#. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
+#: CLI/uYTD.pas:316
 msgid "  Playlist item: "
 msgstr ""
 
-#: CLI/uYTD.pas:320
+#. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
+#: CLI/uYTD.pas:321
 msgid "            URL: "
 msgstr ""
 
-#: CLI/uYTD.pas:340
-msgid "  Video title: "
+#. CLI: Title shown before media title. Pad to the same length as "File name:'
+#: CLI/uYTD.pas:341
+msgid "  Media title: "
 msgstr ""
 
-#: CLI/uYTD.pas:341
-#: CLI/uYTD.pas:465
+#. CLI: Title shown before media file name. Pad to the same length as "Media title:'
+#: CLI/uYTD.pas:342
+#. CLI: File already exists, renaming it to a new filename
+#: CLI/uYTD.pas:466
 msgid "    File name: "
 msgstr ""
 
-#: CLI/uYTD.pas:343
+#. CLI: Title shown before media URL. Pad to the same length as "Media title:'
+#: CLI/uYTD.pas:344
 msgid "  Content URL: "
 msgstr ""
 
-#: CLI/uYTD.pas:349
+#. CLI: Media downloaded successfully
+#: CLI/uYTD.pas:350
 msgid "  SUCCESS."
 msgstr ""
 
-#: CLI/uYTD.pas:365
+#. CLI: User aborted the download
+#: CLI/uYTD.pas:366
 msgid "  ABORTED BY USER"
 msgstr ""
 
-#: CLI/uYTD.pas:370
+#. CLI: Error. %: Exception type, Exception message
+#: CLI/uYTD.pas:371
 msgid "ERROR %s: %s"
 msgstr ""
 
-#: CLI/uYTD.pas:385
+#. CLI: URL couldn't be assigned to any available downloader
+#: CLI/uYTD.pas:386
 msgid "Unknown URL."
 msgstr ""
 
-#: CLI/uYTD.pas:471
+#. CLI: "File ... already exists. What do you want me to do?"
+#: CLI/uYTD.pas:472
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:473
+#: CLI/uYTD.pas:474
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:474
+#: CLI/uYTD.pas:475
 msgid "  Do you want to: "
 msgstr ""
 
-#: CLI/uYTD.pas:475
+#. CLI: File already exists. [S]kip it
+#: CLI/uYTD.pas:476
 msgid "kip it, "
 msgstr ""
 
-#: CLI/uYTD.pas:476
+#. CLI: File already exists. [O]verwrite it
+#: CLI/uYTD.pas:477
 msgid "verwrite it, or "
 msgstr ""
 
-#: CLI/uYTD.pas:477
+#. CLI: File already exists. [R]ename it
+#: CLI/uYTD.pas:478
 msgid "ename it? "
 msgstr ""
 
-#: CLI/uYTD.pas:493
+#. CLI: File already exists. Asking user to provide a new filename.
+#: CLI/uYTD.pas:494
 msgid "  New filename: "
 msgstr ""
 
-#: CLI/uYTD.pas:504
+#. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
+#: CLI/uYTD.pas:505
 msgid "Incorrect answer."
 msgstr ""
 
+#. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #: GUI/uDownloadList.pas:234
 msgid "File already exists."
 msgstr ""
 
+#. GUI: Download thread state: Preparing download (getting title, URL...)
 #. Programmer's name for it: THREADSTATE_PREPARING
-#: GUI/uYTDGUI.pas:154
+#: GUI/uYTDGUI.pas:155
 msgid "Preparing"
 msgstr ""
 
+#. GUI: Download thread state: Downloading
 #. Programmer's name for it: THREADSTATE_DOWNLOADING
-#: GUI/uYTDGUI.pas:155
+#: GUI/uYTDGUI.pas:156
 msgid "Downloading"
 msgstr ""
 
+#. GUI: Download thread state: Download finished successfully
 #. Programmer's name for it: THREADSTATE_FINISHED
-#: GUI/uYTDGUI.pas:156
+#: GUI/uYTDGUI.pas:157
 msgid "Finished"
 msgstr ""
 
+#. GUI: Download thread state: Download failed
 #. Programmer's name for it: THREADSTATE_FAILED
-#: GUI/uYTDGUI.pas:157
+#: GUI/uYTDGUI.pas:158
 msgid "Failed"
 msgstr ""
 
+#. GUI: Download thread state: Download was aborted by user
 #. Programmer's name for it: THREADSTATE_ABORTED
-#: GUI/uYTDGUI.pas:158
+#: GUI/uYTDGUI.pas:159
 msgid "Aborted"
 msgstr ""
 
-#: GUI/uYTDGUI.pas:219
-msgid "There are downloads in progressDo you really want to "
-"quit?"
+#. GUI: confirmation before quitting YTD
+#: GUI/uYTDGUI.pas:221
+msgid "There are downloads in progress\n"
+"Do you really want to quit?"
 msgstr ""
 
-#: GUI/uYTDGUI.pas:323
-#: GUI/uYTDGUI.pas:334
+#. Download thread state: Paused
+#: GUI/uYTDGUI.pas:325
+#. Download thread state: Paused
+#: GUI/uYTDGUI.pas:336
 msgid "Paused"
 msgstr ""
 
-#: GUI/uYTDGUI.pas:378
+#. GUI: User wants to add a new URL
+#: GUI/uYTDGUI.pas:380
 msgid "Enter video URL:"
 msgstr ""
 
-#: GUI/uYTDGUI.pas:387
+#. GUI: User wants to delete URL(s)
+#: GUI/uYTDGUI.pas:389
 msgid "Do you really want to delete selected "
 "transfer(s)?"
 msgstr ""
 
-#: GUI/uYTDGUI.pas:415
+#. GUI: User wants to abort transfers
+#: GUI/uYTDGUI.pas:417
 msgid "Do you really want to stop selected "
 "transfer(s)?"
 msgstr ""
 
-#: GUI/uYTDGUI.pas:667
+#. GUI: User wants to add links from a HTML page
+#: GUI/uYTDGUI.pas:757
 msgid "Enter page URL:"
+msgstr ""
+
+#. Programmer's name for it: SSelectDirectory
+#: Lib/Pepak/FileCtrlGUI.pas:17
+msgid "Select a directory"
 msgstr ""
 

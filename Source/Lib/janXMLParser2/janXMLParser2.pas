@@ -2,13 +2,14 @@ unit janXMLParser2;
 
 interface
 {$DEFINE PEPAK}
+{$INCLUDE 'jedi.inc'}
 {$IFDEF FPC}
   {$MODE DELPHI}
   {$DEFINE PEPAK}
 {$ENDIF}
 
 uses
-  Windows, ComObj, Contnrs, Messages, SysUtils, Classes, {$IFDEF FPC} Variants, {$ENDIF} {$IFNDEF PEPAK} Graphics, Controls, Forms, Menus, Dialogs, Math, {$ENDIF} janXPathTokenizer, janstrings;
+  Windows, ComObj, Contnrs, Messages, SysUtils, Classes, {$IFDEF DELPHI_6UP} Variants, {$ENDIF} {$IFDEF FPC} Variants, {$ENDIF} {$IFNDEF PEPAK} Graphics, Controls, Forms, Menus, Dialogs, Math, {$ENDIF} janXPathTokenizer, janstrings;
 
 const
   delimiters=['+','-','*','/',' ','(',')','=','>','<'];

@@ -33,6 +33,8 @@ type
       destructor Destroy; override;
       procedure Init; virtual;
       procedure Save; virtual;
+      procedure SaveUrls(const List: TStrings); virtual;
+      procedure LoadUrls(const List: TStrings); virtual;
       function ReadProviderOption(const Provider, Option: string; out Value: string): boolean; virtual;
       function GetNewestVersion(out Version, Url: string): boolean; virtual;
       property OverwriteMode: TOverwriteMode read fOverwriteMode write fOverwriteMode;
@@ -75,7 +77,7 @@ begin
   fOverwriteMode := omAsk;
   fDestinationPath := '';
   fErrorLog := '';
-  fDontUseRegistry := True;
+  fDontUseRegistry := False;
   fProxyHost := '';
   fProxyPort := '3128';
   fProxyUser := '';
@@ -167,6 +169,55 @@ begin
         WriteString('YTD', 'ProxyUser', ProxyUser);
         WriteString('YTD', 'ProxyPassword', ProxyPassword);
         WriteString('YTD', 'Language', Language);
+      finally
+        Free;
+        end;
+  {$ENDIF}
+end;
+
+const DownloadListSection = 'Download list';
+
+procedure TYTDOptions.LoadUrls(const List: TStrings);
+{$IFDEF INIFILE}
+var FileName: string;
+    i: integer;
+    L: TStringList;
+{$ENDIF}
+begin
+  List.Clear;
+  {$IFDEF INIFILE}
+  IniFileName(FileName);
+  if FileName <> '' then
+    with TIniFile.Create(FileName) do
+      try
+        L := TStringList.Create;
+        try
+          ReadSection(DownloadListSection, L);
+          for i := 0 to Pred(L.Count) do
+            List.Add(ReadString(DownloadListSection, L[i], ''));
+        finally
+          L.Free;
+          end;
+      finally
+        Free;
+        end;
+  {$ENDIF}
+end;
+
+procedure TYTDOptions.SaveUrls(const List: TStrings);
+{$IFDEF INIFILE}
+var FileName: string;
+    i: integer;
+{$ENDIF}
+begin
+  {$IFDEF INIFILE}
+  IniFileName(FileName);
+  if FileName <> '' then
+    with TIniFile.Create(FileName) do
+      try
+        EraseSection(DownloadListSection);
+        for i := 0 to Pred(List.Count) do
+          WriteString(DownloadListSection, IntToStr(i), List[i]);
       finally
         Free;
         end;

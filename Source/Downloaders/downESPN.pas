@@ -77,27 +77,27 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(PlayerIDRegExp, Page, 'PLAYER', Player) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'globalPlayerConfig/mediaUrl', MediaUrl) then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mediaUrl']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaUrl']))
       else if not GetXmlVar(Xml, 'globalPlayerConfig/playlistURL', PlaylistUrl) then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['playlistURL']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['playlistURL']))
       else if not DownloadPage(Http, PlaylistUrl + '?id=' + MovieID + '&player=' + Player, PlaylistXml) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin
         Xml.Xml := PlaylistXml;
         if not GetXmlVar(Xml, 'channel/item/headline', Title) then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
         else if not GetXmlVar(Xml, 'channel/item/asseturl', FileName) then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else
           begin
           SetName(Title);

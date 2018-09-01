@@ -1,13 +1,15 @@
 @echo off
 setlocal
 
-set compiler=delphi5
+set compiler=delphi
 set params=
 set debug=0
 set cli=1
 set gui=1
 set kol=0
 set xxx=1
+set upx=1
+set extra=
 
 :params
 if "%~1"=="" goto paramend
@@ -23,8 +25,12 @@ if /i "%~1"=="kol" set kol=1
 if /i "%~1"=="nokol" set kol=0
 if /i "%~1"=="xxx" set xxx=1
 if /i "%~1"=="noxxx" set xxx=0
-if /i "%~1"=="fpc" set compiler=fpc
-if /i "%~1"=="delphi" set compiler=delphi
+if /i "%~1"=="upx" set upx=1
+if /i "%~1"=="noupx" set upx=0
+if /i "%~1"=="fpc" set compiler=fpc & set extra=
+if /i "%~1"=="delphi" set compiler=delphi & set extra=
+if /i "%~1"=="delphi5" set compiler=delphi & set extra=delphi5\
+if /i "%~1"=="delphi2009" set compiler=delphi & set extra=delphi2009\
 shift
 goto :params
 
@@ -54,17 +60,19 @@ call :%compiler% lib\dpcre67\pcre.pas
 call :%compiler% lib\janXmlParser2\janXmlParser2.pas
 call :%compiler% lib\RtmpDump\rtmpdump_dll.pas
 call :%compiler% lib\msdl\src\msdl_dll.pas
-call :%compiler% lib\DxGetText\gnugettext.pas
+call :%compiler% lib\DxGetText\%extra%gnugettext.pas
 rem call :%compiler% Tools\AmfView.dpr
 call :%compiler% YTD.dpr
 popd
-upx --lzma Exe\ytd.exe
+if "%upx%"=="1" set upx= & upx --lzma Exe\ytd.exe & set upx=1
 goto konec
 
-:delphi5
+:delphi
 if "%~1"=="" goto konec
 for %%i in (%1) do (
-  call dcc32 -B -E%root%\Exe -N%root%\Units -U%root%\Units %defs% %params% %*
+  echo.
+  echo Compiling: %%i
+  call dcc32 -E%root%\Exe -N%root%\Units -U%root%\Units %defs% %params% %*
   if errorlevel 1 pause
 )
 goto konec
@@ -72,6 +80,8 @@ goto konec
 :fpc
 if "%~1"=="" goto konec
 for %%i in (%1) do (
+  echo.
+  echo Compiling: %%i
   call fpc -B -Mdelphi -FE%root%\Exe -Fu%root%\Units -FU%root%\Units %defs% %params% "%%i"
   if errorlevel 1 pause
 )

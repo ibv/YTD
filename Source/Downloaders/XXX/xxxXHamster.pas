@@ -81,9 +81,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['file']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['file']))
   else if not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['srv']))
   else
     begin
     MovieUrl := Server + '/flv2/' + FileName;

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.38                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.39                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -18,6 +18,12 @@ SUPPORTED PROVIDERS
  - 5min.com:
      - http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 
+ - Aktualne.cz:
+     - http://aktualne.centrum.cz/video/?id=316586
+
+ - AutoTube.cz:
+     - http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
+
  - Barrandov.tv:
      - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 
@@ -33,6 +39,9 @@ SUPPORTED PROVIDERS
 
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
+
+ - Bomba.cz:
+     - http://www.bomba.cz/video/simpsnovi-vs-cesti-politici/
 
  - Break.com
      - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
@@ -72,6 +81,9 @@ SUPPORTED PROVIDERS
  - DailyMotion.com:
      - http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
 
+ - DeutscheBahn.com:
+     - http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
+
  - EbaumsWorld.com:
      - http://www.ebaumsworld.com/video/watch/80973186/
 
@@ -100,6 +112,10 @@ SUPPORTED PROVIDERS
  - FreeVideo.ru:
      - http://freevideo.ru/video/view/?id=v14445361101
 
+ - GameAnyone.com:
+     - http://www.gameanyone.com/game/PC/936.html
+     - http://www.gameanyone.com/video/88319
+
  - GodTube.com:
      - http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
 
@@ -108,6 +124,9 @@ SUPPORTED PROVIDERS
 
  - Guba.com:
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
+
+ - iHned.cz:
+     - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
 
  - ima.umn.edu:
      - http://www.ima.umn.edu/videos/?id=1187
@@ -173,6 +192,13 @@ SUPPORTED PROVIDERS
      - http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 
      Note: This provider uses RTMP protocol. See the note below.
+
+ - Novinky.cz:
+     - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+
+ - PublicTV.cz:
+     - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
+     - http://www.publictv.cz/videoarchiv/535/1718/
 
  - Raajje.tv:
      - http://www.raajje.tv/video/991/president-anni-diving
@@ -411,7 +437,7 @@ In section [YTD] these settings are available:
     - Name of file, where YTD logs failed downloads (like the -e parameter).
     - Default value is an empty string, which means "no log file".
 
-  DontUseRegistry=1
+  DontUseRegistry=0
     - Determine, whether the GUI version saves its settings in an INI file
       or in Windows registry. Windows registry are available everywhere (the
       settings are stored in the HKEY_CURRENT_USER key) while INI file may
@@ -420,7 +446,7 @@ In section [YTD] these settings are available:
       anything to the host system's configuration.
       application, because it needs write access to YTD.INI.
     - Possible values are "0" (use registry) and "1" (don't use registry).
-    - Default value is "1".
+    - Default value is "0".
 
   ProxyHost=localhost
     - Address of a proxy server. If empty, proxy server won't be used.
@@ -498,7 +524,7 @@ doesn't require "experience with GetText" as one of its prerequisites... But
 with a good tool such as POEdit (http://www.poedit.net) you can learn GetText
 as you go along.
 
-For translations, you will need the untranslated "default.po" file. It is
+For translations, you will need the untranslated "default.pot" file. It is
 located in "Source\Locale" directory. Using POEdit, or any other tool (even
 Notepad, though that one's use is far from comfortable), you can translate
 all language-specific strings in YouTube Downloader. Then you will need to

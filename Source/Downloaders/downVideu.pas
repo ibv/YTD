@@ -78,13 +78,13 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not DownloadPage(Http, 'http://www.videu.de/zgst372zst4u3.php?iid=' + MovieID, Info) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Match := InfoUrlRegExp.Match(Info);
     try
       if not Match.Matched then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         VidType := Match.Groups.ItemsByName['TYPE'].Value;

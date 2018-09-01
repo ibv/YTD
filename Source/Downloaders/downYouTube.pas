@@ -160,7 +160,7 @@ begin
   {$ENDIF}
   GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars);
   if FlashVars = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   {$IFDEF GET_VIDEO_INFO}
   else if (not GetVideoInfoFailed) and (AnsiCompareText(Copy(FlashVars, 1, GetVideoInfoDoesNotExistLength), GetVideoInfoDoesNotExist) = 0) then
     begin
@@ -200,14 +200,14 @@ begin
         VideoID := VarValue;
       end;
     if FormatList = '' then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']))
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
     else if Token = '' then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Token']))
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Token']))
   {$ELSE}
   else if not GetRegExpVar(ExtractFormatListRegExp, FlashVars, 'FORMATLIST', FormatList) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
   else if not GetRegExpVar(ExtractTokenRegExp, FlashVars, 'TOKEN', Token) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Token']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Token']))
   {$ENDIF}
   else
     begin

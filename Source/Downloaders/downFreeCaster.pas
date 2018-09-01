@@ -78,9 +78,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(StreamIdRegExp, Page, 'ID', StreamID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, 'http://freecaster.tv/player/info/' + StreamID, InfoXml, peUTF8) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
@@ -88,11 +88,11 @@ begin
       Xml.Xml := InfoXml;
       Node := Xml.getChildByPath('streams');
       if Node = nil then
-        SetLastErrorMsg(ERR_INVALID_EMBEDDED_OBJECT)
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlAttr(Node, '', 'server', UrlBase) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else if not GetXmlVar(Xml, 'video/title', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else
         begin
         MaxUrl := '';
@@ -110,7 +110,7 @@ begin
                   end;
                 end;
         if MaxUrl = '' then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else
           begin
           SetName(Title);

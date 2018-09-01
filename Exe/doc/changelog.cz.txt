@@ -1,6 +1,43 @@
 CHANGELOG
 ---------
 
+  v0.39
+
+    * GUI verze: Automaticky se ukládá seznam videí ke stažení, a tento seznam
+      se automaticky naèítá pøi startu programu. To znamená, že mùžete YouTube
+      Downloader ukonèit a pozdìji pokraèovat tam, kde skonèil (videa se ovšem
+      budou stahovat opìt od zaèátku, navazování pøerušeného spojení není
+      podporováno).
+
+      Pokud je YouTube Downloader spuštìn v portable režimu (nastavení
+      DontUseRegistry je v INI souboru nastaveno na 1) a tato funkce má 
+      fungovat, musí být INI soubor zapisovatelný.
+
+    * Aby byla zajištìna správná funkce pøedchozí funkènosti na všech Windows,
+      byla zmìnìna výchozí hodnota DontUseRegistry na 0 - "používat registry".
+      Pokud chcete provozovat YouTube Downloader v portable režimu, MUSÍTE
+      vytvoøit INI soubor a zapsat do nìj DontUseRegistry=1 (viz dokumentace).
+
+    * VideaCesky.cz: Nìkterá videa nešla stáhnout.
+
+    * Nový zdroj: Aktualne.cz (Aktualne.Centrum.cz).
+
+    * Nový zdroj: AutoTube.cz.
+
+    * Nový zdroj: Bomba.cz.
+
+    * Nový zdroj: DeutscheBahn.com.
+
+    * Nový zdroj: GameAnyone.com.
+
+    * Nový zdroj: iHned.cz.
+
+    * Nový zdroj: Novinky.cz.
+
+    * Nový zdroj: PublicTV.cz.
+
+
+
   v0.38
 
     * Pøidána podpora pro další varianty URL u msfotbal.ct24.cz.

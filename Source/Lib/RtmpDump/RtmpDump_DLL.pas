@@ -4,8 +4,8 @@ interface
 
 type
   TRtmpDumpOption = record
-    ShortOption: char;
-    Argument: string;
+    ShortOption: AnsiChar;
+    Argument: AnsiString;
     end;
   TRtmpDumpOptions = array of TRtmpDumpOption;
 
@@ -17,7 +17,7 @@ procedure RtmpDump_Done;
 function RtmpDump_Download(
   Tag: integer; 
   Callback: TRtmpDumpDownloadProgressCallback; 
-  LogFileName: PChar;
+  LogFileName: PAnsiChar;
   const Options: TRtmpDumpOptions
   ): integer;
 
@@ -30,11 +30,11 @@ type
   PInternalRtmpDumpOption = ^TInternalRtmpDumpOption;
   TInternalRtmpDumpOption = record
     ShortOption: integer;
-    Argument: PChar;
+    Argument: PAnsiChar;
     end;
 
 type
-  TRtmpDumpMainFn = function(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; OptionCount: integer; Options: PInternalRtmpDumpOption; LogFileName: PChar): integer; cdecl;
+  TRtmpDumpMainFn = function(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; OptionCount: integer; Options: PInternalRtmpDumpOption; LogFileName: PAnsiChar): integer; cdecl;
 
 var LibHandle: THandle;
     RtmpDumpMain: TRtmpDumpMainFn;
@@ -60,7 +60,7 @@ begin
   RtmpDumpMain := nil;
 end;
 
-function RtmpDump_Download(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; LogFileName: PChar; const Options: TRtmpDumpOptions): integer;
+function RtmpDump_Download(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; LogFileName: PAnsiChar; const Options: TRtmpDumpOptions): integer;
 var i, n: integer;
     RealOptionsPtr: PInternalRtmpDumpOption;
     RealOptions: array of TInternalRtmpDumpOption;
@@ -79,7 +79,7 @@ begin
       if Options[i].Argument = '' then
         RealOptions[i].Argument := nil
       else
-        RealOptions[i].Argument := PChar(Options[i].Argument);
+        RealOptions[i].Argument := PAnsiChar(Options[i].Argument);
       end;
     end;
   Result := RtmpDumpMain(Tag, Callback, Length(Options), RealOptionsPtr, LogFileName);

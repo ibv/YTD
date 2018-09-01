@@ -78,9 +78,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, UrlDecode(Url), InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
@@ -88,9 +88,9 @@ begin
       Xml.Xml := InfoXml;
       Node := Xml.getChildByPath('playlists/playlist/items/item');
       if Node = nil then
-        SetLastErrorMsg(ERR_INVALID_EMBEDDED_OBJECT)
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlVar(Node, 'title', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else
         begin
         BestUrl := '';
@@ -110,7 +110,7 @@ begin
                     end;
                 end;
         if BestUrl = '' then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else
           begin
           SetName(Title);

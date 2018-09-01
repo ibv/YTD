@@ -147,7 +147,7 @@ begin
   Match := FlashVarsRegExp.Match(Page);
   try
     if not Match.Matched then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
     else
       begin
       RelationId := Match.Groups.ItemsByName['RELATIONID'].Value;

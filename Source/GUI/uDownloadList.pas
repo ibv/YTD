@@ -231,7 +231,7 @@ begin
         if D.InitialDir = '' then
           D.InitialDir := GetCurrentDir;
         D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
-        D.Title := _('File already exists.');
+        D.Title := _('File already exists.'); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
         Valid := D.Execute;
         if Valid then
           FileName := ExtractFileName(D.FileName);

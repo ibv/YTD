@@ -78,9 +78,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not DownloadPage(Http, 'http://www.guba.com/playerConfig?bid=' + MovieID, Page) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else if not GetRegExpVar(VideoFromPlayerRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
     MovieURL := Url;

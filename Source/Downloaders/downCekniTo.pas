@@ -77,9 +77,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else if not DownloadPage(Http, 'http://vid4.ceknito.sk/v.php?id=' + ID, hmHEAD) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     MovieURL := LastURL;

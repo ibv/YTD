@@ -102,13 +102,13 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(VideoSrcRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not GetRegExpVar(PhotoSecretRegexp, Url, 'VALUE', Secret) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['photo_secret']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_secret']))
   else if not GetRegExpVar(PhotoIdRegexp, Url, 'VALUE', ID) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['photo_id']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_id']))
   else if not DownloadPage(Http, 'http://www.flickr.com/apps/video/video_mtl_xml.gne?v=x&photo_id=' + ID + '&secret=' + Secret + '&olang=en-us&noBuffer=null&bitrate=700&target=_self', InfoXml, peUTF8) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;      
@@ -124,18 +124,18 @@ begin
             Break;
             end;
       if NodeId = '' then
-        SetLastErrorMsg(ERR_INVALID_EMBEDDED_OBJECT)
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not DownloadPage(Http, 'http://www.flickr.com/video_playlist.gne?node_id=' + NodeID + '&tech=flash&mode=playlist&bitrate=700&secret=' + Secret + '&rd=video.yahoo.com&noad=1', InfoXml, peUTF8) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin
         Xml.Xml := InfoXml;
         if not GetXmlVar(Xml, 'SEQUENCE-ITEM/META/TITLE', Title) then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
         else if not GetXmlAttr(Xml, 'SEQUENCE-ITEM/STREAM', 'APP', Host) then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else if not GetXmlAttr(Xml, 'SEQUENCE-ITEM/STREAM', 'FULLPATH', Path) then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else
           begin
           GetRegExpVar(VideoExtensionRegExp, Path, 'EXT', Extension);

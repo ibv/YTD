@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, HttpSend, ShellApi, ComCtrls, ExtCtrls, 
+  StdCtrls, HttpSend, ShellApi, ComCtrls, 
   uLanguages, uDownloadClassifier, uDownloader, uOptions;
 
 const
@@ -85,7 +85,7 @@ begin
   // Providers
   LoadProviders;
   // Show available version
-  LabelNewestVersion.Caption := _('not found');
+  LabelNewestVersion.Caption := _('not found'); // GUI: Check for a new version wasn't made yet - or failed.
   Application.ProcessMessages;
   if Options <> nil then
     if Options.GetNewestVersion(Version, Url) then

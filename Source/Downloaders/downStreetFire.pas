@@ -76,7 +76,7 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(VideoIDRegExp, Page, 'VIDEOID', VideoID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
     MovieURL := 'http://px5.streetfire.net/flv/' + Copy(VideoID, 1, 3) + '/' + VideoID + '-.flv';

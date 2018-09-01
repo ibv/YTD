@@ -7,129 +7,83 @@
   produced executable.
 */
 
-#define uHttpDownloader_SOCKSTATUS_WROTE_DATA 65280
-#define uHttpDownloader_SOCKSTATUS_WAITING 65281
-#define uHttpDownloader_SOCKSTATUS_SOCKET_ERROR 65282
-#define ComStrs_sInvalidOwner 65283
-#define FileCtrlGUI_SSelectDirectory 65284
-#define uYTDGUI_THREADSTATE_WAITING 65285
-#define uYTDGUI_THREADSTATE_PREPARING 65286
-#define uYTDGUI_THREADSTATE_DOWNLOADING 65287
-#define uYTDGUI_THREADSTATE_FINISHED 65288
-#define uYTDGUI_THREADSTATE_FAILED 65289
-#define uYTDGUI_THREADSTATE_ABORTED 65290
-#define uMessages_ERR_FAILED_TO_LOAD_DLL 65296
-#define uDownloader_DEFAULT_USER_AGENT 65297
-#define ComConst_SOleError 65298
-#define ComConst_SNoMethod 65299
-#define ComConst_SVarNotObject 65300
-#define uHttpDownloader_SOCKSTATUS_RESOLVING_BEGAN 65301
-#define uHttpDownloader_SOCKSTATUS_RESOLVING_ENDED 65302
-#define uHttpDownloader_SOCKSTATUS_SOCKET_CREATED 65303
-#define uHttpDownloader_SOCKSTATUS_SOCKET_CLOSED 65304
-#define uHttpDownloader_SOCKSTATUS_BOUND_TO_IP_PORT 65305
-#define uHttpDownloader_SOCKSTATUS_CONNECTED 65306
-#define uHttpDownloader_SOCKSTATUS_CAN_READ_DATA 65307
-#define uHttpDownloader_SOCKSTATUS_CAN_WRITE_DATA 65308
-#define uHttpDownloader_SOCKSTATUS_LISTENING 65309
-#define uHttpDownloader_SOCKSTATUS_ACCEPTED_CONNECTION 65310
-#define uHttpDownloader_SOCKSTATUS_READ_DATA 65311
-#define uMessages_ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE 65312
-#define uMessages_ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE 65313
-#define uMessages_ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE 65314
-#define uMessages_ERR_FAILED_TO_LOCATE_MEDIA_INFO 65315
-#define uMessages_ERR_FAILED_TO_LOCATE_MEDIA_TITLE 65316
-#define uMessages_ERR_FAILED_TO_LOCATE_MEDIA_URL 65317
-#define uMessages_ERR_FAILED_TO_LOCATE_MEDIA_SERVER 65318
-#define uMessages_ERR_FAILED_TO_LOCATE_MEDIA_STREAM 65319
-#define uMessages_ERR_HTTP_RESULT_CODE 65320
-#define uMessages_ERR_NO_DATA_READ 65321
-#define uMessages_ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT 65322
-#define uMessages_ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT 65323
-#define uMessages_ERR_INVALID_EMBEDDED_OBJECT 65324
-#define uMessages_ERR_VARIABLE_NOT_FOUND 65325
-#define uMessages_ERR_FAILED_TO_DOWNLOAD_SERVER_LIST 65326
-#define uMessages_ERR_SEE_LOGFILE 65327
-#define Consts_SInvalidRegType 65328
-#define Consts_SRegSetDataFailed 65329
-#define Consts_SRegGetDataFailed 65330
-#define Consts_SDuplicateMenus 65331
-#define Consts_SDockedCtlNeedsName 65332
-#define Consts_SDockTreeRemoveError 65333
-#define Consts_SDockZoneNotFound 65334
-#define Consts_SDockZoneHasNoCtl 65335
-#define Consts_SDuplicateItem 65336
-#define uMessages_APPLICATION_TITLE 65337
-#define uMessages_ERR_EXCEPTION_MESSAGE 65338
-#define uMessages_MSG_PRESS_ANY_KEY_TO_QUIT 65339
-#define uMessages_MSG_PLAYLIST_ITEM 65340
-#define uMessages_ERR_DOWNLOADER_IS_NOT_PREPARED 65341
-#define uMessages_ERR_DOWNLOAD_NOT_IMPLEMENTED 65342
-#define uMessages_ERR_VALIDATE_FILENAME_FAILED 65343
-#define Consts_SmkcEnd 65344
-#define Consts_SmkcHome 65345
-#define Consts_SmkcLeft 65346
-#define Consts_SmkcUp 65347
-#define Consts_SmkcRight 65348
-#define Consts_SmkcDown 65349
-#define Consts_SmkcIns 65350
-#define Consts_SmkcDel 65351
-#define Consts_SmkcShift 65352
-#define Consts_SmkcCtrl 65353
-#define Consts_SmkcAlt 65354
-#define Consts_SInvalidClipFmt 65355
-#define Consts_SIconToClipboard 65356
-#define Consts_SCannotOpenClipboard 65357
-#define Consts_SIniFileWriteError 65358
-#define Consts_SBitsIndexError 65359
-#define Consts_SMsgDlgOK 65360
-#define Consts_SMsgDlgCancel 65361
-#define Consts_SMsgDlgHelp 65362
-#define Consts_SMsgDlgAbort 65363
-#define Consts_SMsgDlgRetry 65364
-#define Consts_SMsgDlgIgnore 65365
-#define Consts_SMsgDlgAll 65366
-#define Consts_SMsgDlgNoToAll 65367
-#define Consts_SMsgDlgYesToAll 65368
-#define Consts_SmkcBkSp 65369
-#define Consts_SmkcTab 65370
-#define Consts_SmkcEsc 65371
-#define Consts_SmkcEnter 65372
-#define Consts_SmkcSpace 65373
-#define Consts_SmkcPgUp 65374
-#define Consts_SmkcPgDn 65375
-#define Consts_SIgnoreButton 65376
-#define Consts_SRetryButton 65377
-#define Consts_SAbortButton 65378
-#define Consts_SAllButton 65379
-#define Consts_SCannotDragForm 65380
-#define Consts_SVMetafiles 65381
-#define Consts_SVEnhMetafiles 65382
-#define Consts_SVIcons 65383
-#define Consts_SVBitmaps 65384
-#define Consts_SInvalidProperty 65385
-#define Consts_SMsgDlgWarning 65386
-#define Consts_SMsgDlgError 65387
-#define Consts_SMsgDlgInformation 65388
-#define Consts_SMsgDlgConfirm 65389
-#define Consts_SMsgDlgYes 65390
-#define Consts_SMsgDlgNo 65391
+#define Consts_SRegSetDataFailed 65328
+#define Consts_SRegGetDataFailed 65329
+#define Consts_SDuplicateMenus 65330
+#define Consts_SDockedCtlNeedsName 65331
+#define Consts_SDockTreeRemoveError 65332
+#define Consts_SDockZoneNotFound 65333
+#define Consts_SDockZoneHasNoCtl 65334
+#define Consts_SDuplicateItem 65335
+#define ComConst_SOleError 65336
+#define ComConst_SNoMethod 65337
+#define ComConst_SVarNotObject 65338
+#define ComStrs_sInvalidOwner 65339
+#define FileCtrlGUI_SSelectDirectory 65340
+#define Consts_SmkcHome 65344
+#define Consts_SmkcLeft 65345
+#define Consts_SmkcUp 65346
+#define Consts_SmkcRight 65347
+#define Consts_SmkcDown 65348
+#define Consts_SmkcIns 65349
+#define Consts_SmkcDel 65350
+#define Consts_SmkcShift 65351
+#define Consts_SmkcCtrl 65352
+#define Consts_SmkcAlt 65353
+#define Consts_SInvalidClipFmt 65354
+#define Consts_SIconToClipboard 65355
+#define Consts_SCannotOpenClipboard 65356
+#define Consts_SIniFileWriteError 65357
+#define Consts_SBitsIndexError 65358
+#define Consts_SInvalidRegType 65359
+#define Consts_SMsgDlgCancel 65360
+#define Consts_SMsgDlgHelp 65361
+#define Consts_SMsgDlgAbort 65362
+#define Consts_SMsgDlgRetry 65363
+#define Consts_SMsgDlgIgnore 65364
+#define Consts_SMsgDlgAll 65365
+#define Consts_SMsgDlgNoToAll 65366
+#define Consts_SMsgDlgYesToAll 65367
+#define Consts_SmkcBkSp 65368
+#define Consts_SmkcTab 65369
+#define Consts_SmkcEsc 65370
+#define Consts_SmkcEnter 65371
+#define Consts_SmkcSpace 65372
+#define Consts_SmkcPgUp 65373
+#define Consts_SmkcPgDn 65374
+#define Consts_SmkcEnd 65375
+#define Consts_SRetryButton 65376
+#define Consts_SAbortButton 65377
+#define Consts_SAllButton 65378
+#define Consts_SCannotDragForm 65379
+#define Consts_SVMetafiles 65380
+#define Consts_SVEnhMetafiles 65381
+#define Consts_SVIcons 65382
+#define Consts_SVBitmaps 65383
+#define Consts_SInvalidProperty 65384
+#define Consts_SMsgDlgWarning 65385
+#define Consts_SMsgDlgError 65386
+#define Consts_SMsgDlgInformation 65387
+#define Consts_SMsgDlgConfirm 65388
+#define Consts_SMsgDlgYes 65389
+#define Consts_SMsgDlgNo 65390
+#define Consts_SMsgDlgOK 65391
 #define Consts_SMDIChildNotVisible 65392
 #define Consts_SVisibleChanged 65393
 #define Consts_SCannotShowModal 65394
 #define Consts_SMenuIndexError 65395
 #define Consts_SMenuReinserted 65396
 #define Consts_SMenuNotFound 65397
-#define Consts_SNoTimers 65398
-#define Consts_SGroupIndexTooLow 65399
-#define Consts_SNoMDIForm 65400
-#define Consts_SControlParentSetToSelf 65401
-#define Consts_SOKButton 65402
-#define Consts_SCancelButton 65403
-#define Consts_SYesButton 65404
-#define Consts_SNoButton 65405
-#define Consts_SHelpButton 65406
-#define Consts_SCloseButton 65407
+#define Consts_SGroupIndexTooLow 65398
+#define Consts_SNoMDIForm 65399
+#define Consts_SControlParentSetToSelf 65400
+#define Consts_SOKButton 65401
+#define Consts_SCancelButton 65402
+#define Consts_SYesButton 65403
+#define Consts_SNoButton 65404
+#define Consts_SHelpButton 65405
+#define Consts_SCloseButton 65406
+#define Consts_SIgnoreButton 65407
 #define Consts_SInvalidBitmap 65408
 #define Consts_SInvalidIcon 65409
 #define Consts_SInvalidMetafile 65410
@@ -260,50 +214,6 @@
 #define SysConst_SInvalidInput 65535
 STRINGTABLE
 BEGIN
-	uHttpDownloader_SOCKSTATUS_WROTE_DATA,	"Wrote data"
-	uHttpDownloader_SOCKSTATUS_WAITING,	"Waiting"
-	uHttpDownloader_SOCKSTATUS_SOCKET_ERROR,	"Socket error"
-	ComStrs_sInvalidOwner,	"Invalid owner"
-	FileCtrlGUI_SSelectDirectory,	"Select a directory"
-	uYTDGUI_THREADSTATE_WAITING,	"Waiting"
-	uYTDGUI_THREADSTATE_PREPARING,	"Preparing"
-	uYTDGUI_THREADSTATE_DOWNLOADING,	"Downloading"
-	uYTDGUI_THREADSTATE_FINISHED,	"Finished"
-	uYTDGUI_THREADSTATE_FAILED,	"Failed"
-	uYTDGUI_THREADSTATE_ABORTED,	"Aborted"
-	uMessages_ERR_FAILED_TO_LOAD_DLL,	"Failed to load library \"%s\" or its prerequisites."
-	uDownloader_DEFAULT_USER_AGENT,	"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
-	ComConst_SOleError,	"OLE error %.8x"
-	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
-	ComConst_SVarNotObject,	"Variant does not reference an automation object"
-	uHttpDownloader_SOCKSTATUS_RESOLVING_BEGAN,	"Resolving began"
-	uHttpDownloader_SOCKSTATUS_RESOLVING_ENDED,	"Resolving ended"
-	uHttpDownloader_SOCKSTATUS_SOCKET_CREATED,	"Socket created"
-	uHttpDownloader_SOCKSTATUS_SOCKET_CLOSED,	"Socket closed"
-	uHttpDownloader_SOCKSTATUS_BOUND_TO_IP_PORT,	"Bound to IP/port"
-	uHttpDownloader_SOCKSTATUS_CONNECTED,	"Connected"
-	uHttpDownloader_SOCKSTATUS_CAN_READ_DATA,	"Can read data"
-	uHttpDownloader_SOCKSTATUS_CAN_WRITE_DATA,	"Can write data"
-	uHttpDownloader_SOCKSTATUS_LISTENING,	"Listening"
-	uHttpDownloader_SOCKSTATUS_ACCEPTED_CONNECTION,	"Accepted connection"
-	uHttpDownloader_SOCKSTATUS_READ_DATA,	"Read data"
-	uMessages_ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE,	"Failed to locate media info page."
-	uMessages_ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE,	"Failed to download media info page."
-	uMessages_ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE,	"Failed to prepare media info page."
-	uMessages_ERR_FAILED_TO_LOCATE_MEDIA_INFO,	"Failed to locate media info."
-	uMessages_ERR_FAILED_TO_LOCATE_MEDIA_TITLE,	"Failed to find media title."
-	uMessages_ERR_FAILED_TO_LOCATE_MEDIA_URL,	"Failed to find media URL."
-	uMessages_ERR_FAILED_TO_LOCATE_MEDIA_SERVER,	"Failed to find media server."
-	uMessages_ERR_FAILED_TO_LOCATE_MEDIA_STREAM,	"Failed to find media stream."
-	uMessages_ERR_HTTP_RESULT_CODE,	"HTTP request failed with error code %d."
-	uMessages_ERR_NO_DATA_READ,	"No data read from the connection."
-	uMessages_ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT,	"Failed to find embedded object."
-	uMessages_ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT,	"Failed to download embedded object."
-	uMessages_ERR_INVALID_EMBEDDED_OBJECT,	"Embedded object is invalid."
-	uMessages_ERR_VARIABLE_NOT_FOUND,	"Variable \"%s\" not found."
-	uMessages_ERR_FAILED_TO_DOWNLOAD_SERVER_LIST,	"Failed to download server list."
-	uMessages_ERR_SEE_LOGFILE,	"Error message listed in file \"%s\"."
-	Consts_SInvalidRegType,	"Invalid data type for '%s'"
 	Consts_SRegSetDataFailed,	"Failed to set data for '%s'"
 	Consts_SRegGetDataFailed,	"Failed to get data for '%s'"
 	Consts_SDuplicateMenus,	"Menu '%s' is already being used by another form"
@@ -312,14 +222,11 @@ BEGIN
 	Consts_SDockZoneNotFound,	" - Dock zone not found"
 	Consts_SDockZoneHasNoCtl,	" - Dock zone has no control"
 	Consts_SDuplicateItem,	"List does not allow duplicates ($0%x)"
-	uMessages_APPLICATION_TITLE,	"YouTube Downloader"
-	uMessages_ERR_EXCEPTION_MESSAGE,	"Exception %s with message:\r%s"
-	uMessages_MSG_PRESS_ANY_KEY_TO_QUIT,	"Press any key to quit."
-	uMessages_MSG_PLAYLIST_ITEM,	"Playlist item %d"
-	uMessages_ERR_DOWNLOADER_IS_NOT_PREPARED,	"Downloader is not prepared!"
-	uMessages_ERR_DOWNLOAD_NOT_IMPLEMENTED,	"Download of this content is not implemented."
-	uMessages_ERR_VALIDATE_FILENAME_FAILED,	"Download to file \"%s\" was not allowed."
-	Consts_SmkcEnd,	"End"
+	ComConst_SOleError,	"OLE error %.8x"
+	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
+	ComConst_SVarNotObject,	"Variant does not reference an automation object"
+	ComStrs_sInvalidOwner,	"Invalid owner"
+	FileCtrlGUI_SSelectDirectory,	"Select a directory"
 	Consts_SmkcHome,	"Home"
 	Consts_SmkcLeft,	"Left"
 	Consts_SmkcUp,	"Up"
@@ -335,7 +242,7 @@ BEGIN
 	Consts_SCannotOpenClipboard,	"Cannot open clipboard"
 	Consts_SIniFileWriteError,	"Unable to write to %s"
 	Consts_SBitsIndexError,	"Bits index out of range"
-	Consts_SMsgDlgOK,	"OK"
+	Consts_SInvalidRegType,	"Invalid data type for '%s'"
 	Consts_SMsgDlgCancel,	"Cancel"
 	Consts_SMsgDlgHelp,	"&Help"
 	Consts_SMsgDlgAbort,	"&Abort"
@@ -351,7 +258,7 @@ BEGIN
 	Consts_SmkcSpace,	"Space"
 	Consts_SmkcPgUp,	"PgUp"
 	Consts_SmkcPgDn,	"PgDn"
-	Consts_SIgnoreButton,	"&Ignore"
+	Consts_SmkcEnd,	"End"
 	Consts_SRetryButton,	"&Retry"
 	Consts_SAbortButton,	"Abort"
 	Consts_SAllButton,	"&All"
@@ -367,13 +274,13 @@ BEGIN
 	Consts_SMsgDlgConfirm,	"Confirm"
 	Consts_SMsgDlgYes,	"&Yes"
 	Consts_SMsgDlgNo,	"&No"
+	Consts_SMsgDlgOK,	"OK"
 	Consts_SMDIChildNotVisible,	"Cannot hide an MDI Child Form"
 	Consts_SVisibleChanged,	"Cannot change Visible in OnShow or OnHide"
 	Consts_SCannotShowModal,	"Cannot make a visible window modal"
 	Consts_SMenuIndexError,	"Menu index out of range"
 	Consts_SMenuReinserted,	"Menu inserted twice"
 	Consts_SMenuNotFound,	"Sub-menu is not in menu"
-	Consts_SNoTimers,	"Not enough timers available"
 	Consts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
 	Consts_SNoMDIForm,	"Cannot create form. No MDI forms are currently active"
 	Consts_SControlParentSetToSelf,	"A control cannot have itself as its parent"
@@ -383,6 +290,7 @@ BEGIN
 	Consts_SNoButton,	"&No"
 	Consts_SHelpButton,	"&Help"
 	Consts_SCloseButton,	"&Close"
+	Consts_SIgnoreButton,	"&Ignore"
 	Consts_SInvalidBitmap,	"Bitmap image is not valid"
 	Consts_SInvalidIcon,	"Icon image is not valid"
 	Consts_SInvalidMetafile,	"Metafile is not valid"

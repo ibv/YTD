@@ -87,19 +87,19 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MoviePlayerRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else
     begin
     Request := CreateHttp;
     try
       if not Request.HttpMethod('GET', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else if not CheckRedirect(Request, Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else if not GetRegExpVar(VideoFromPlayerRegExp, Url, 'URL', Url2) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else if not GetRegExpVar(TokenFromPlayerRegExp, Url, 'TOKEN', Token) then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['token']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['token']))
       else
         begin
         MovieURL := UrlDecode(Url2) + '?' + Token;

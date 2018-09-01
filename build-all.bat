@@ -12,14 +12,14 @@ rd /s /q exe\locale
 md exe\locale
 xcopy source\locale\*.mo exe\locale /s /i
 call clean.bat
-call build.bat noxxx %*
+call build.bat noxxx delphi5 %*
 del exe\amfview.exe
 call clean.bat
 pushd exe
 7z a -tzip -r ..\ytdlite-%version%.zip
 popd
 call clean.bat
-call build.bat %*
+call build.bat delphi5 %*
 del exe\amfview.exe
 call clean.bat
 pushd exe

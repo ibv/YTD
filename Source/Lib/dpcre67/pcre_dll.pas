@@ -297,7 +297,7 @@ type
 
 type
   PLongWord   = ^LongWord;
-  PPChar      = ^PChar;
+  PPChar      = ^PAnsiChar;
 
 const
   MAX_CAPTURING_SUBPATTERNS = 65535;
@@ -315,7 +315,7 @@ type
     study_data    : Pointer;
     match_limit   : Cardinal;
     callout_data  : Pointer;
-    tables        : PChar;  // Pointer to character tables
+    tables        : PAnsiChar;  // Pointer to character tables
     match_limit_recursion: Cardinal; // Max recursive calls to match()
   end;
 
@@ -329,7 +329,7 @@ type
     // ------------------------ Version 0 -------------------------------
     callout_number  : Integer;  // Number compiled into pattern
     offset_vector   : PIntArray;// The offset vector
-    subject         : PChar;    // The subject being matched
+    subject         : PAnsiChar;    // The subject being matched
     subject_length  : Integer;  // The length of the subject
     start_match     : Integer;  // Offset to start of this match attempt
     current_position: Integer;  // Where we currently are
@@ -347,10 +347,10 @@ type
 // Version information
 function PCRE_MAJOR : Integer; cdecl;
 function PCRE_MINOR : Integer; cdecl;
-function PCRE_DATE  : PChar; cdecl;
+function PCRE_DATE  : PAnsiChar; cdecl;
 
 //extern const char *pcre_version(void);
-function pcre_version: PChar; cdecl;
+function pcre_version: PAnsiChar; cdecl;
 
 // Memory management
 
@@ -381,44 +381,44 @@ const
   LC_NUMERIC                = 4;
   LC_TIME                   = 5;
 
-function pcre_setlocale(category: Integer; locale: PChar): PChar; cdecl;
+function pcre_setlocale(category: Integer; locale: PAnsiChar): PAnsiChar; cdecl;
 
-function pcre_isalnum(c: Char): Boolean;
-function pcre_isalpha(c: Char): Boolean;
-function pcre_iscntrl(c: Char): Boolean;
-function pcre_isdigit(c: Char): Boolean;
-function pcre_isgraph(c: Char): Boolean;
-function pcre_islower(c: Char): Boolean;
-function pcre_isprint(c: Char): Boolean;
-function pcre_ispunct(c: Char): Boolean;
-function pcre_isspace(c: Char): Boolean;
-function pcre_isupper(c: Char): Boolean;
-function pcre_isxdigit(c: Char): Boolean;
+function pcre_isalnum(c: AnsiChar): Boolean;
+function pcre_isalpha(c: AnsiChar): Boolean;
+function pcre_iscntrl(c: AnsiChar): Boolean;
+function pcre_isdigit(c: AnsiChar): Boolean;
+function pcre_isgraph(c: AnsiChar): Boolean;
+function pcre_islower(c: AnsiChar): Boolean;
+function pcre_isprint(c: AnsiChar): Boolean;
+function pcre_ispunct(c: AnsiChar): Boolean;
+function pcre_isspace(c: AnsiChar): Boolean;
+function pcre_isupper(c: AnsiChar): Boolean;
+function pcre_isxdigit(c: AnsiChar): Boolean;
 
 //extern const unsigned char *pcre_maketables(void);
 function pcre_maketables: TPcre_tableH; cdecl;
 
 //extern pcre *pcre_compile(const char *, int, const char **, int *,
 //              const unsigned char *);
-function pcre_compile( pattern        : PChar;
+function pcre_compile( pattern        : PAnsiChar;
                        options        : LongWord;
-                       out errptr     : PChar;
+                       out errptr     : PAnsiChar;
                        out erroffset  : Integer;
                        tableptr       : TPcre_tableH = nil ): TPcreH; cdecl;
 
 // extern pcre *pcre_compile2(const char *, int, int *, const char **,
 //                  int *, const unsigned char *);
-function pcre_compile2( pattern         : PChar;
+function pcre_compile2( pattern         : PAnsiChar;
                        options          : LongWord;
                        out errorcodeptr : Integer;
-                       out errptr       : PChar;
+                       out errptr       : PAnsiChar;
                        out erroffset    : Integer;
                        tableptr         : TPcre_tableH = nil ): TPcreH; cdecl;
 
 //extern pcre_extra *pcre_study(const pcre *, int, const char **);
 function pcre_study( pcre             : TPcreH;
                      options          : LongWord;  // must be set to 0
-                     out errptr       : PChar ): TPcre_extraH; cdecl;
+                     out errptr       : PAnsiChar ): TPcre_extraH; cdecl;
 
 //extern int  pcre_info(const pcre *, int *, int *);
 function pcre_info( pcre              : TPcreH;
@@ -466,7 +466,7 @@ function pcre_fullinfo( pattern       : TPcreH;
 
 function pcre_exec( pcre              : TPcreH;
                     pcre_extra        : TPcre_extraH;
-                    subject           : PChar;
+                    subject           : PAnsiChar;
                     length            : Integer;
                     startoffset       : Integer;
                     options           : LongWord;
@@ -495,7 +495,7 @@ function pcre_exec( pcre              : TPcreH;
 //
 function pcre_dfa_exec( pcre          : TPcreH;
                         pcre_extra    : TPcre_extraH;
-                        subject       : PChar;
+                        subject       : PAnsiChar;
                         length        : Integer;
                         startoffset   : Integer;
                         options       : LongWord;
@@ -505,28 +505,28 @@ function pcre_dfa_exec( pcre          : TPcreH;
                         wscount       : Cardinal ): Integer; cdecl;
 
 //extern int  pcre_copy_substring(const char *, int *, int, int, char *, int);
-function pcre_copy_substring( subject         : PChar;
+function pcre_copy_substring( subject         : PAnsiChar;
                               ovector         : PIntArray;
                               stringcount     : Integer;
                               stringnumber    : Integer;
-                              buffer          : PChar;
+                              buffer          : PAnsiChar;
                               bufsize         : Integer ): Integer; cdecl;
 
 //extern int  pcre_get_substring(const char *, int *, int, int, const char **);
-function pcre_get_substring( subject          : PChar;
+function pcre_get_substring( subject          : PAnsiChar;
                              ovector          : PIntArray;
                              stringcount      : Integer;
                              stringnumber     : Integer;
-                             out stringptr    : PChar ): Integer; cdecl;
+                             out stringptr    : PAnsiChar ): Integer; cdecl;
 
 //extern int  pcre_get_substring_list(const char *, int *, int, const char ***);
-function pcre_get_substring_list( subject     : PChar;
+function pcre_get_substring_list( subject     : PAnsiChar;
                                   ovector     : PIntArray;
                                   stringcount : Integer;
                                   out listptr : PPChar ): Integer; cdecl;
 
 //void pcre_free_substring(const char *stringptr);
-procedure pcre_free_substring( stringptr: PChar ); cdecl;
+procedure pcre_free_substring( stringptr: PAnsiChar ); cdecl;
 
 //void pcre_free_substring_list(const char **stringptr);
 procedure pcre_free_substring_list( stringptr: PPChar ); cdecl;
@@ -539,31 +539,31 @@ function pcre_config( what            : Integer;
 //      int *ovector, int stringcount, const char *stringname,
 //      char *buffer, int buffersize);
 function pcre_copy_named_substring( code        : TPcreH;
-                                    subject     : PChar;
+                                    subject     : PAnsiChar;
                                     ovector     : PIntArray;
                                     stringcount : Integer;
-                                    stringname  : PChar;
-                                    buffer      : PChar;
+                                    stringname  : PAnsiChar;
+                                    buffer      : PAnsiChar;
                                     buffersize  : Integer  ): Integer; cdecl;
 
 //extern int pcre_get_named_substring(const pcre *code, const char *subject,
 //      int *ovector, int stringcount, const char *stringname,
 //      const char **stringptr);
 function pcre_get_named_substring(  code        : TPcreH;
-                                    subject     : PChar;
+                                    subject     : PAnsiChar;
                                     ovector     : PIntArray;
                                     stringcount : Integer;
-                                    stringname  : PChar;
+                                    stringname  : PAnsiChar;
                                     stringptr   : PPChar ): Integer; cdecl;
 
 //extern int pcre_get_stringnumber(const pcre *code, const char *name);
 function pcre_get_stringnumber(     code        : TPcreH;
-                                    name        : PChar   ): Integer; cdecl;
+                                    name        : PAnsiChar   ): Integer; cdecl;
 
 //extern int  pcre_get_stringtable_entries(const pcre *, const char *,
 //                  char **, char **);
 function pcre_get_stringtable_entries(code      : TPcreH;
-                                      name      : PChar;
+                                      name      : PAnsiChar;
                                       first     : PPChar;
                                       last      : PPChar ): Integer; cdecl;
 
@@ -629,14 +629,14 @@ type
 // The functions
 
 //extern int regcomp(regex_t *, const char *, int);
-function regcomp( out preg: regex_t; pattern: PChar; cflags: Cardinal): Integer; cdecl;
+function regcomp( out preg: regex_t; pattern: PAnsiChar; cflags: Cardinal): Integer; cdecl;
 
 //int
 //regexec(regex_t *preg, const char *string, size_t nmatch,
 //  regmatch_t pmatch[], int eflags)
 
 function regexec( var preg      : regex_t;
-                  str           : PChar;
+                  str           : PAnsiChar;
                   nmatch        : Cardinal;
                   pmatch        : regmatch_ptr;
                   eflags        : Cardinal): Integer; cdecl;
@@ -645,7 +645,7 @@ function regexec( var preg      : regex_t;
 //regerror(int errcode, const regex_t *preg, char *errbuf, size_t errbuf_size)
 function regerror(errcode       : Integer;
                   var preg      : regex_t;
-                  errbuf        : PChar;
+                  errbuf        : PAnsiChar;
                   errbuf_size   : Cardinal): Integer; cdecl;
 
 //extern void regfree(regex_t *);
@@ -718,7 +718,7 @@ function pcre_extra_set_callout_data; external PCRE_DLL_NAME name 'pcre_extra_se
 //
 //===========================================================================
 
-function pcre_isalnum(c: Char): Boolean;
+function pcre_isalnum(c: AnsiChar): Boolean;
 
 begin
   Result := isalnum(Ord(c)) <> 0;
@@ -726,7 +726,7 @@ end;
 
 //===========================================================================
 
-function pcre_isalpha(c: Char): Boolean;
+function pcre_isalpha(c: AnsiChar): Boolean;
 
 begin
   Result := isalnum(Ord(c)) <> 0;
@@ -734,7 +734,7 @@ end;
 
 //===========================================================================
 
-function pcre_iscntrl(c: Char): Boolean;
+function pcre_iscntrl(c: AnsiChar): Boolean;
 
 begin
   Result := iscntrl(Ord(c)) <> 0;
@@ -742,7 +742,7 @@ end;
 
 //===========================================================================
 
-function pcre_isdigit(c: Char): Boolean;
+function pcre_isdigit(c: AnsiChar): Boolean;
 
 begin
   Result := isdigit(Ord(c)) <> 0;
@@ -750,7 +750,7 @@ end;
 
 //===========================================================================
 
-function pcre_isgraph(c: Char): Boolean;
+function pcre_isgraph(c: AnsiChar): Boolean;
 
 begin
   Result := isgraph(Ord(c)) <> 0;
@@ -758,7 +758,7 @@ end;
 
 //===========================================================================
 
-function pcre_islower(c: Char): Boolean;
+function pcre_islower(c: AnsiChar): Boolean;
 
 begin
   Result := islower(Ord(c)) <> 0;
@@ -766,7 +766,7 @@ end;
 
 //===========================================================================
 
-function pcre_isprint(c: Char): Boolean;
+function pcre_isprint(c: AnsiChar): Boolean;
 
 begin
   Result := isprint(Ord(c)) <> 0;
@@ -774,7 +774,7 @@ end;
 
 //===========================================================================
 
-function pcre_ispunct(c: Char): Boolean;
+function pcre_ispunct(c: AnsiChar): Boolean;
 
 begin
   Result := ispunct(Ord(c)) <> 0;
@@ -782,7 +782,7 @@ end;
 
 //===========================================================================
 
-function pcre_isspace(c: Char): Boolean;
+function pcre_isspace(c: AnsiChar): Boolean;
 
 begin
   Result := isspace(Ord(c)) <> 0;
@@ -790,7 +790,7 @@ end;
 
 //===========================================================================
 
-function pcre_isupper(c: Char): Boolean;
+function pcre_isupper(c: AnsiChar): Boolean;
 
 begin
   Result := isupper(Ord(c)) <> 0;
@@ -798,7 +798,7 @@ end;
 
 //===========================================================================
 
-function pcre_isxdigit(c: Char): Boolean;
+function pcre_isxdigit(c: AnsiChar): Boolean;
 
 begin
   Result := isxdigit(Ord(c)) <> 0;

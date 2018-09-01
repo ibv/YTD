@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.38                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.39                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -16,6 +16,12 @@ PODPOROVANÉ WEBY
 
  - 5min.com:
      - http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
+
+ - Aktualne.cz:
+     - http://aktualne.centrum.cz/video/?id=316586
+
+ - AutoTube.cz:
+     - http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 
  - Barrandov.tv:
      - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
@@ -33,6 +39,9 @@ PODPOROVANÉ WEBY
 
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
+
+ - Bomba.cz:
+     - http://www.bomba.cz/video/simpsnovi-vs-cesti-politici/
 
  - Break.com
      - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
@@ -73,6 +82,9 @@ PODPOROVANÉ WEBY
  - DailyMotion.com:
      - http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
 
+ - DeutscheBahn.com:
+     - http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
+
  - EbaumsWorld.com:
      - http://www.ebaumsworld.com/video/watch/80973186/
 
@@ -104,6 +116,10 @@ PODPOROVANÉ WEBY
  - FreeVideo.ru:
      - http://freevideo.ru/video/view/?id=v14445361101
 
+ - GameAnyone.com:
+     - http://www.gameanyone.com/game/PC/936.html
+     - http://www.gameanyone.com/video/88319
+
  - GodTube.com:
      - http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
 
@@ -112,6 +128,9 @@ PODPOROVANÉ WEBY
 
  - Guba.com:
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
+
+ - iHned.cz:
+     - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
 
  - ima.umn.edu:
      - http://www.ima.umn.edu/videos/?id=1187
@@ -180,6 +199,13 @@ PODPOROVANÉ WEBY
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
      Pøehrát jde napøíklad programem The KMPlayer.
+
+ - Novinky.cz:
+     - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+
+ - PublicTV.cz:
+     - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
+     - http://www.publictv.cz/videoarchiv/535/1718/
 
  - Raajje.tv:
      - http://www.raajje.tv/video/991/president-anni-diving
@@ -419,14 +445,14 @@ V sekci [YTD] jsou následující nastavení:
       downloadech (jako parametr -e).
     - Výchozí hodnotou je prázdný øetìzec, záznam nebude vytváøen.
 
-  DontUseRegistry=1
+  DontUseRegistry=0
     - Touto volnou je možné urèit, jestli má grafická verze programu ukládat
       svoje nastavení do registrù nebo do INI souboru. Registry mají výhodu,
       že jsou dostupné všude (ukládá se do vìtve HKEY_CURRENT_USER), zatímco
       INI soubor nemusí být kvùli pøístupovým právùm dostupný; zato se hodí v 
       pøípadì, že chcete aplikaci používat jako portable.
     - Možné hodnoty jsou "0" (používat registry) a "1" (nepoužívat registry).
-    - Výchozí hodnota je "1".
+    - Výchozí hodnota je "0".
 
   ProxyHost=localhost
     - Adresa proxy serveru. Pokud není vyplnìna, proxy server se nebude 
@@ -508,9 +534,10 @@ najít nìjaký srozumitelný návod - ty, co jsem našel, jsou vesmìs dost obtížnì
 èitelné, pokud už dopøedu nevíte, o co v GetTextu jde. Ale s vhodným nástrojem,
 jako je napø. POEdit (http://www.poedit.net/), se to dá zvládnout za pochodu.
 
-Pro pøekládání budete potøebovat soubor "default.po", který obsahuje základní
+Pro pøekládání budete potøebovat soubor "default.pot", který obsahuje základní
 (nepøeložené) texty. Najdete ho v adresáøi "Source\Locale". Pomocí POEditu nebo
 jiného nástroje (klidnì si vystaèíte i s Notepadem, akorát to bude nepohodlné)
+ho uložíte do souboru "default.po" (.pot je vzor, .po je pracovní soubor) ,
 v nìm jednotlivé texty pøeložíte a hotový pøeklad pak zkompilujete do souboru
 "default.mo". Tento soubor pak uložte do adresáøe "(exe)\Locale\(jazyk)\LC_MESSAGES",
 kde:
@@ -523,8 +550,8 @@ Pokud jde o jazyk, pro který jsou nastavena vaše Windows, mìl by se použít
 automaticky pøi pøíštím spuštìní YTD. Pøípadnì si mùžete vynutit použití
 tohoto jazyka pomocí nastavení "Language" v INI souboru (viz výše).
 
-Pokud mi svùj pøeklad pošlete (budu potøebovat oba souboru, "default.mo"
-i "default.po"), rád ho zaøadím do budoucích verzí YouTube Downloaderu.
+Pokud mi svùj pøeklad pošlete (budu potøebovat oba soubory, "default.mo"
+i "default.pot), rád ho zaøadím do budoucích verzí YouTube Downloaderu.
 
 
 

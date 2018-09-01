@@ -73,9 +73,9 @@ begin
   try
     Xml.Xml := Page;
     if not GetXmlVar(Xml, 'channel/item/title', Title) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
     else if not GetXmlAttr(Xml, {$IFDEF MYSPACE_USES_RTMP} 'channel/item/myspace:RTMPE' {$ELSE} 'channel/item/media:content' {$ENDIF} , 'url', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       begin
       SetName(Title);

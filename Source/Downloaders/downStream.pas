@@ -119,9 +119,9 @@ begin
     ParamMatch := nil;
     end;
   if Params = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
     if GetRegExpVar(MovieHDIdFromParamsRegExp, Params, 'ID', ID) then

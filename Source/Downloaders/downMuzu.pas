@@ -91,7 +91,7 @@ begin
   VideoID := '';
   ChannelID := '';
   if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVarsInfo) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
   else
     begin
     FlashVars := FlashVarsVariablesRegExp.Matches(FlashVarsInfo);
@@ -112,24 +112,24 @@ begin
           NetworkVersion := VarValue;
         end;
       if NetworkID = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['networkId']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkId']))
       else if VideoID = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['vidId']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['vidId']))
       else if CountryID = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['countryIdentity']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['countryIdentity']))
       else if NetworkVersion = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['networkVersion']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkVersion']))
       else if not DownloadPage(Http, 'http://www.muzu.tv/player/networkVideos/' + NetworkID + '?countryIdentity=' + CountryID + '&networkVersion=' + NetworkVersion + '&hostName=http%3A%2F%2Fwww%2Emuzu%2Etv', InfoXml, peUtf8) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin
         Xml := TjanXmlParser2.Create;
         try
           Xml.Xml := InfoXml;
           if not GetXmlAttr(Xml, 'channels/channel', 'id', ChannelID) then
-            SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['channelId']))
+            SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['channelId']))
           else if not GetMuzuMediaUrl(Url) then
-            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
           else
             begin
             MovieUrl := Url;

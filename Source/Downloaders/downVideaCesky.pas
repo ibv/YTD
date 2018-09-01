@@ -7,22 +7,21 @@ interface
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader,
-  downYouTube;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
   TDownloader_VideaCesky = class(TNestedDownloader)
     private
     protected
+      YouTubeUrlRegexp1, YouTubeUrlRegExp2: IRegEx;
       {$IFDEF SUBTITLES}
-      SubtitlesRegExp: IRegEx;
+      SubtitlesRegExp1, SubtitlesRegExp2: IRegEx;
       Subtitles: string;
       SubtitlesName: string;
       {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      procedure CreateNestedDownloader(const MovieID: string); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -45,9 +44,11 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
-  REGEXP_EXTRACT_YOUTUBE_ID = '\sflashvars="[^"]*&amp;file=(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/watch\?v=(?P<ID>[^"]+?))&amp;';
+  REGEXP_EXTRACT_YOUTUBE_ID = '\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/watch\?v=(?P<ID>[^"]+?))&amp;';
+  REGEXP_EXTRACT_YOUTUBE_ID2 = '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=(?P<URL>https?%3A//(?:[a-z0-9-]+\.)*youtube\.com/watch%3Fv%3D(?P<ID>[^"]+?))&amp;';
   {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLES = '\sflashvars="[^"]*&amp;captions\.file=(?P<SUBTITLES>https?://[^&"]+)';
+  REGEXP_EXTRACT_SUBTITLES = '\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)';
+  REGEXP_EXTRACT_SUBTITLES2 = '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)';
   {$ENDIF}
 
 { TDownloader_VideaCesky }
@@ -67,20 +68,24 @@ begin
   inherited Create(AMovieID);
   SetInfoPageEncoding(peUTF8);
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  NestedIDRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
-  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  //NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  YouTubeUrlRegExp1 := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  YouTubeUrlRegExp2 := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID2, [rcoIgnoreCase, rcoSingleLine]);
   {$IFDEF SUBTITLES}
-  SubtitlesRegExp := RegExCreate(REGEXP_EXTRACT_SUBTITLES, [rcoIgnoreCase, rcoSingleLine]);
+  SubtitlesRegExp1 := RegExCreate(REGEXP_EXTRACT_SUBTITLES, [rcoIgnoreCase, rcoSingleLine]);
+  SubtitlesRegExp2 := RegExCreate(REGEXP_EXTRACT_SUBTITLES2, [rcoIgnoreCase, rcoSingleLine]);
   {$ENDIF}
 end;
 
 destructor TDownloader_VideaCesky.Destroy;
 begin
   MovieTitleRegExp := nil;
-  NestedIDRegExp := nil;
-  NestedUrlRegExp := nil;
+  //NestedUrlRegExp := nil;
+  YouTubeUrlRegExp1 := nil;
+  YouTubeUrlRegExp2 := nil;
   {$IFDEF SUBTITLES}
-  SubtitlesRegExp := nil;
+  SubtitlesRegExp1 := nil;
+  SubtitlesRegExp2 := nil;
   {$ENDIF}
   inherited;
 end;
@@ -90,26 +95,31 @@ begin
   Result := 'http://www.videacesky.cz/dummy/' + MovieID;
 end;
 
-procedure TDownloader_VideaCesky.CreateNestedDownloader(const MovieID: string);
-begin
-  inherited;
-  NestedDownloader := TDownloader_YouTube.Create(MovieID);
-end;
-
 function TDownloader_VideaCesky.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url: string;
 begin
-  Result := inherited AfterPrepareFromPage(Page, Http);
-  {$IFDEF SUBTITLES}
-  Subtitles := '';
-  SubtitlesName := '';
-  if Result then
-    if GetRegExpVar(SubtitlesRegExp, Page, 'SUBTITLES', Url) then
-      if not DownloadPage(Http, Url, Subtitles, peUTF8) then
-        Subtitles := ''
-      else
-        SubtitlesName := ChangeFileExt(GetThisFileName, ExtractFileExt(Url));
-  {$ENDIF}
+  try
+    NestedUrlRegExp := YouTubeUrlRegExp1;
+    Result := inherited AfterPrepareFromPage(Page, Http);
+    if not Result then
+      begin
+      NestedUrlRegExp := nil;
+      NestedUrlRegExp := YouTubeUrlRegExp2;
+      Result := inherited AfterPrepareFromPage(Page, Http);
+      end;
+    {$IFDEF SUBTITLES}
+    Subtitles := '';
+    SubtitlesName := '';
+    if Result then
+      if GetRegExpVar(SubtitlesRegExp1, Page, 'SUBTITLES', Url) or GetRegExpVar(SubtitlesRegExp2, Page, 'SUBTITLES', Url) then
+        if not DownloadPage(Http, Url, Subtitles, peUTF8) then
+          Subtitles := ''
+        else
+          SubtitlesName := ChangeFileExt(GetThisFileName, ExtractFileExt(Url));
+    {$ENDIF}
+  finally
+    NestedUrlRegExp := nil;
+    end;
 end;
 
 function TDownloader_VideaCesky.Download: boolean;

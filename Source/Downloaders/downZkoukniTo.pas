@@ -80,16 +80,16 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         MovieUrl := Url;

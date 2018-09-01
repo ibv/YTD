@@ -1,4 +1,4 @@
-// What to build into YTD. These options are intended to be set in the BUILD.BAT
+// What to build into YTD. These options are intended to be set in the BUILD.BAT or Project Options
 {.DEFINE NO_GUI} // Don't compile GUI version
 {.DEFINE NO_CLI} // Don't compile command-line version
 {.DEFINE NO_XXX} // Don't compile support for porn providers

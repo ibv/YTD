@@ -5,6 +5,7 @@
 }
 unit janStrings;
 {$DEFINE PEPAK}
+{$INCLUDE 'jedi.inc'}
 {$IFDEF FPC}
   {$MODE DELPHI}
   {$R-}
@@ -15,7 +16,7 @@ unit janStrings;
 interface
 
 uses
-  Windows, SysUtils, Classes, {$IFDEF FPC} Variants, {$ENDIF} {$IFNDEF PEPAK} Graphics, Controls, Dialogs, Math, {$ENDIF} Messages;
+  Windows, SysUtils, Classes, {$IFDEF DELPHI6_UP} Variants, {$ENDIF} {$IFDEF FPC} Variants, {$ENDIF} {$IFNDEF PEPAK} Graphics, Controls, Dialogs, Math, {$ENDIF} Messages;
 
 {$IFDEF FPC}
 type

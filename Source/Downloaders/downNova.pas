@@ -119,15 +119,15 @@ begin
     end;
   Http.Cookies.Values['bit'] := UserAdID;
   if SiteID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SiteID']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['SiteID']))
   else if SectionID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SectionID']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['SectionID']))
   else if MediaID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['MediaID']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['MediaID']))
   else if SessionID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SessionID']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['SessionID']))
   //else if UserAdID = '' then
-  //  SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UserAdID']))
+  //  SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['UserAdID']))
   else
     begin
     ServersUrl := 'http://tn.nova.cz/bin/player/config.php?site_id=' + SiteID + '&';
@@ -141,9 +141,9 @@ begin
                  '&session_id=' + SessionID +
                  '&ad_file=noad';
     if not DownloadPage(Http, ServersUrl, Servers, peUTF8) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST))
     else if not DownloadPage(Http, VideosUrl, Videos, peUTF8) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin
       Xml := TjanXmlParser2.Create;
@@ -159,9 +159,9 @@ begin
       if FlvName = '' then
         FlvName := MediaID;
       if FlvServer = '' then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
       else if FlvStream = '' then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_STREAM))
       else
         begin
         SetName(FlvName);

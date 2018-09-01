@@ -43,21 +43,21 @@ OutputDir=..\Exe
 UnitOutputDir=..\Units
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext
+SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
 Conditionals=XXX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=38
+MinorVer=39
 Release=0
-Build=207
+Build=217
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.38.0.207
+FileVersion=0.39.0.217
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=

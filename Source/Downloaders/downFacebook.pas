@@ -81,7 +81,7 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not (GetRegExpVar(MovieUrlHQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlLQRegExp, Page, 'URL', Url)) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
     MovieURL := UrlDecode(Url);

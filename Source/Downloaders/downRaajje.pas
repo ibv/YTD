@@ -79,18 +79,18 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Filename']))
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Filename']))
   else if not DownloadPage(Http, 'http://www.raajje.tv/csplayer.config.php', ConfigXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
     try
       Xml.Xml := ConfigXml;
       if not GetXmlVar(Xml, 'VIDEOS_PATH', Path) then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Videos Path']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Videos Path']))
       else if Path = '' then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         MovieUrl := Path + FileName;

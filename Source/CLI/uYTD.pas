@@ -85,20 +85,21 @@ procedure TYTD.ShowSyntax(const Error: string);
 //var i: integer;
 begin
   inherited;
-  WriteColored(ccWhite, _('<arg> [<arg>] ...')); Writeln;
+  WriteColored(ccWhite, '<arg> [<arg>] ...'); Writeln; // Intentionally no _(...) - this should not be translated
   Writeln;
-  WriteColored(ccWhite, ' -h, -?'); Writeln(_(' ...... Show this help screen.'));
-  WriteColored(ccWhite, ' -i <file>'); Writeln(_(' ... Load URL list from <file> (one URL per line).'));
-  WriteColored(ccWhite, ' -o <path>'); Writeln(_(' ... Store files to <path> (default is current directory).'));
-  WriteColored(ccWhite, ' -e <file>'); Writeln(_(' ... Save failed URLs to <file>.'));
-  WriteColored(ccWhite, ' -s <src>'); Writeln(_(' .... Load links from a HTML source. <src> can be a file or an URL.'));
-  WriteColored(ccWhite, ' -n'); Writeln(_(' .......... Never overwrite existing files.'));
-  WriteColored(ccWhite, ' -a'); Writeln(_(' .......... Always overwrite existing files.'));
-  WriteColored(ccWhite, ' -r'); Writeln(_(' .......... Rename files to a new name if they already exist.'));
-  WriteColored(ccWhite, ' -k'); Writeln(_(' .......... Ask what to do with existing files (default).'));
-  WriteColored(ccWhite, ' -l'); Writeln(_(' .......... List all available providers.'));
+  WriteColored(ccWhite, ' -h, -?'); Writeln(_(' ...... Show this help screen.')); // CLI: Help for -h/-? command line argument
+  WriteColored(ccWhite, ' -i <file>'); Writeln(_(' ... Load URL list from <file> (one URL per line).')); // CLI: Help for -i command line argument
+  WriteColored(ccWhite, ' -o <path>'); Writeln(_(' ... Store files to <path> (default is current directory).')); // CLI: Help for -o command line argument
+  WriteColored(ccWhite, ' -e <file>'); Writeln(_(' ... Save failed URLs to <file>.')); // CLI: Help for -e command line argument
+  WriteColored(ccWhite, ' -s <src>'); Writeln(_(' .... Load links from a HTML source. <src> can be a file or an URL.')); // CLI: Help for -s command line argument
+  WriteColored(ccWhite, ' -n'); Writeln(_(' .......... Never overwrite existing files.')); // CLI: Help for -n command line argument
+  WriteColored(ccWhite, ' -a'); Writeln(_(' .......... Always overwrite existing files.')); // CLI: Help for -a command line argument
+  WriteColored(ccWhite, ' -r'); Writeln(_(' .......... Rename files to a new name if they already exist.')); // CLI: Help for -r command line argument
+  WriteColored(ccWhite, ' -k'); Writeln(_(' .......... Ask what to do with existing files (default).')); // CLI: Help for -k command line argument
+  WriteColored(ccWhite, ' -l'); Writeln(_(' .......... List all available providers.')); // CLI: Help for -l command line argument
+  WriteColored(ccWhite, ' -v'); Writeln(_(' .......... Test for updated version of YTD.')); // CLI: Help for -v command line argument
   Writeln;
-  WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.'));
+  WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.')); // CLI: Help for <url> command line argument
   {
   Writeln('               Supported:');
   for i := 0 to Pred(DownloadClassifier.ProviderCount) do
@@ -116,32 +117,32 @@ procedure TYTD.ShowProviders;
 var i: integer;
 begin
   Writeln;
-  WriteColored(ccWhite, _('Available providers:')); Writeln;
+  WriteColored(ccWhite, _('Available providers:')); Writeln; // CLI: Title for the list of providers (-l command line argument)
   for i := 0 to Pred({$IFDEF GROUPPED} DownloadClassifier.NameCount {$ELSE} DownloadClassifier.ProviderCount {$ENDIF}) do
     begin
     Write('  - ');
     WriteColored(ccLightCyan, {$IFDEF GROUPPED} DownloadClassifier.Names[i] {$ELSE} DownloadClassifier.Providers[i].Provider {$ENDIF});
     Writeln(' (' + {$IFDEF GROUPPED} DownloadClassifier.NameClasses[i] {$ELSE} DownloadClassifier.Providers[i].ClassName {$ENDIF} + ')');
     end;
-  Write(_('Total: '));
+  Write(_('Total: ')); // CLI: The "Total: " part of "Total: 123 providers." Note the ending space
   WriteColored(ccWhite, IntToStr({$IFDEF GROUPPED} DownloadClassifier.NameCount {$ELSE} DownloadClassifier.ProviderCount {$ENDIF}));
-  Writeln(_(' providers.'));
+  Writeln(_(' providers.')); // CLI: The " providers" part of "Total: 123 providers." Note the starting space
   Writeln;
 end;
 
 procedure TYTD.ShowVersion;
 var Url, Version: string;
 begin
-  Write(_('Current version: ')); WriteColored(ccWhite, AppVersion); Writeln;
-  Write(_('Newest version:  '));
+  Write(_('Current version: ')); WriteColored(ccWhite, AppVersion); Writeln; // CLI: Note: pad with spaces to the same length as "Newest version:"
+  Write(_('Newest version:  ')); // CLI: Note: pad with spaces to the same length as "Current version:"
   if not Options.GetNewestVersion(Version, Url) then
-    WriteColored(ccLightRed, _('check failed'))
+    WriteColored(ccLightRed, _('check failed')) // CLI: Couldn't check for a newer version
   else if Version <= AppVersion then
     WriteColored(ccWhite, Version)
   else
     begin
     WriteColored(ccLightCyan, Version); Writeln;
-    Write(_('Download URL:    ')); WriteColored(ccWhite, Url);
+    Write(_('Download URL:    ')); WriteColored(ccWhite, Url); // CLI: Note: pad with spaces to the same length as "Current version:"
     end;
   Writeln;
   Writeln;
@@ -198,7 +199,7 @@ begin
               DeleteFile(Param);
             end
           else
-            ShowSyntax(_('With -e a filename must be provided.'))
+            ShowSyntax(_('With -e a filename must be provided.')) // CLI: Error message for invalid command line argument
         else if (Param = '-s') then
           if ParamGetNext(Param) then
             begin
@@ -206,12 +207,12 @@ begin
             if n > 0 then
               Result := True
             else if n = 0 then
-              ShowSyntax(_('HTML source "%s" doesn''t contain any useful links.'), [Param])
+              ShowSyntax(_('HTML source "%s" doesn''t contain any useful links.'), [Param]) // CLI: Error message for invalid command line argument
             else
-              ShowSyntax(_('HTML source "%s" not found.'), [Param]);
+              ShowSyntax(_('HTML source "%s" not found.'), [Param]); // CLI: Error message for invalid command line argument
             end
           else
-            ShowSyntax(_('With -h a filename or an URL must be provided.'))
+            ShowSyntax(_('With -h a filename or an URL must be provided.')) // CLI: Error message for invalid command line argument
         else if (Param = '-i') then
           if ParamGetNext(Param) then
             if FileExists(Param) then
@@ -220,25 +221,25 @@ begin
                 Result := True;
               end
             else
-              ShowSyntax(_('URL list-file "%s" not found.'), [Param])
+              ShowSyntax(_('URL list-file "%s" not found.'), [Param]) // CLI: Error message for invalid command line argument
           else
-            ShowSyntax(_('With -i a filename must be provided.'))
+            ShowSyntax(_('With -i a filename must be provided.')) // CLI: Error message for invalid command line argument
         else if (Param = '-o') then
           if ParamGetNext(Param) then
             if DirectoryExists(Param) then
               Options.DestinationPath := Param
             else
-              ShowSyntax(_('Destination directory "%s" not found.'), [Param])
+              ShowSyntax(_('Destination directory "%s" not found.'), [Param]) // CLI: Error message for invalid command line argument
           else
-            ShowSyntax(_('With -o a directory name must be provided.'))
+            ShowSyntax(_('With -o a directory name must be provided.')) // CLI: Error message for invalid command line argument
         else
-          ShowSyntax(_('Unknown parameter "%s".'), [Param]);
+          ShowSyntax(_('Unknown parameter "%s".'), [Param]); // CLI: Error message for invalid command line argument
         end
       else
         if DownloadURL(Param) then
           Result := True;
     if not Result then
-      ShowError(_('No valid URLs found.'));
+      ShowError(_('No valid URLs found.')); // CLI: Error message for invalid command line argument
     end;
 end;
 
@@ -282,8 +283,8 @@ begin
       n := Proc div (1000 div ProgressBarLength);
       ProgressBar := EmptyProgressBar;
       for i := 1 to n do
-        ProgressBar[i] := '#';     
-      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)#13') + #13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
+        ProgressBar[i] := '#';
+      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)') + #13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)])); // CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
       end;
     end;
 end;
@@ -294,7 +295,7 @@ function TYTD.DoDownload(const Url: string; Downloader: TDownloader): boolean;
     begin
       ShowError(_('  ERROR: ') + Msg);
       if Options.ErrorLog <> '' then
-        Log(Options.ErrorLog, _('FAILED "%s": %s'), [Url, Msg]);
+        Log(Options.ErrorLog, _('FAILED "%s": %s'), [Url, Msg]); // CLI: Error message to be written to the log file. %: URL, message
     end;
 
 var Playlist: TPlaylistDownloader;
@@ -312,12 +313,12 @@ begin
           begin
           Result := True;
           UrlList.Add(Playlist[i]);
-          Write(_('  Playlist item: '));
+          Write(_('  Playlist item: ')); // CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
           if Playlist.Names[i] <> '' then
             begin
             WriteColored(ccWhite, Playlist.Names[i]);
             Writeln;
-            Write(_('            URL: '));
+            Write(_('            URL: ')); // CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
             end;
           WriteColored(ccWhite, Playlist[i]);
           Writeln;
@@ -337,16 +338,16 @@ begin
         {$IFDEF MULTIDOWNLOADS}
         repeat
         {$ENDIF}
-        Write(_('  Video title: ')); WriteColored(ccWhite, Downloader.Name); Writeln;
-        Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln;
+        Write(_('  Media title: ')); WriteColored(ccWhite, Downloader.Name); Writeln; // CLI: Title shown before media title. Pad to the same length as "File name:'
+        Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln; // CLI: Title shown before media file name. Pad to the same length as "Media title:'
         if Downloader is TCommonDownloader then
-          Write(_('  Content URL: ')); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
+          Write(_('  Content URL: ')); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
         Result := Downloader.ValidateFileName and Downloader.Download;
         if fLastProgressPercentage >= 0 then
           Writeln;
         if Result then
           begin
-          WriteColored(ccWhite, _('  SUCCESS.'));
+          WriteColored(ccWhite, _('  SUCCESS.')); // CLI: Media downloaded successfully
           Writeln;
           Writeln;
           end
@@ -362,12 +363,12 @@ begin
   except
     on E: EAbort do
       begin
-      ShowError(_('  ABORTED BY USER'));
+      ShowError(_('  ABORTED BY USER')); // CLI: User aborted the download
       Raise;
       end;
     on E: Exception do
       begin
-      ShowError(_('ERROR %s: %s'), [E.ClassName, E.Message]);
+      ShowError(_('ERROR %s: %s'), [E.ClassName, E.Message]); // CLI: Error. %: Exception type, Exception message
       Result := False;
       end;
     end;
@@ -382,7 +383,7 @@ begin
     Writeln;
     DownloadClassifier.URL := UrlList[0];
     if DownloadClassifier.Downloader = nil then
-      ShowError(_('Unknown URL.'))
+      ShowError(_('Unknown URL.')) // CLI: URL couldn't be assigned to any available downloader
     else
       if DoDownload(DownloadClassifier.URL, DownloadClassifier.Downloader) then
         Inc(Result);
@@ -462,19 +463,19 @@ begin
         Valid := AutoRename(FileName);
         if Valid then
           begin
-          Write(_('    File name: ')); WriteColored(ccWhite, FileName); Writeln;
+          Write(_('    File name: ')); WriteColored(ccWhite, FileName); Writeln; // CLI: File already exists, renaming it to a new filename
           end;
         end;
       omAsk:
         begin
         repeat
-          Write(_('  File '));
+          Write(_('  File ')); // CLI: "File ... already exists. What do you want me to do?"
           WriteColored(ccWhite, FileName);
           Writeln(_(' already exists.'));
           Write(_('  Do you want to: '));
-          WriteColored(ccLightCyan, '[S]'); Write(_('kip it, '));
-          WriteColored(ccLightCyan, '[O]'); Write(_('verwrite it, or '));
-          WriteColored(ccLightCyan, '[R]'); Write(_('ename it? '));
+          WriteColored(ccLightCyan, '[S]'); Write(_('kip it, ')); // CLI: File already exists. [S]kip it
+          WriteColored(ccLightCyan, '[O]'); Write(_('verwrite it, or ')); // CLI: File already exists. [O]verwrite it
+          WriteColored(ccLightCyan, '[R]'); Write(_('ename it? ')); // CLI: File already exists. [R]ename it
           Readln(Answer);
           if Answer <> '' then
             case Upcase(Answer[1]) of
@@ -490,7 +491,7 @@ begin
                 end;
               'R':
                 begin
-                Write(_('  New filename: '));
+                Write(_('  New filename: ')); // CLI: File already exists. Asking user to provide a new filename.
                 Readln(Answer);
                 if Answer <> '' then
                   begin
@@ -501,7 +502,7 @@ begin
                   end;
                 end;
               else
-                ShowError(_('Incorrect answer.'));
+                ShowError(_('Incorrect answer.'));  // CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
               end;
         until False;
         end;

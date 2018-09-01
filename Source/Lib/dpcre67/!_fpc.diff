@@ -1,7 +1,0 @@
-1712a1713,1716
->   {$IFDEF FPC}
->   Result := Input;
->   Raise Exception.Create('TRegEx.Replace is not compatible with FreePascal.');
->   {$ELSE}
-1713a1718
->   {$ENDIF}

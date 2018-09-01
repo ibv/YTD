@@ -81,12 +81,12 @@ begin
   Match := MovieUrlPartsRegExp.Match(MovieID);
   try
     if not Match.Matched then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
     else
       begin
       Url := Match.Groups.ItemsByName['DOMAIN'].Value + 'sr/f/' + Match.Groups.ItemsByName['ID'].Value;
       if not DownloadPage(Http, Url, hmHEAD) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         MovieURL := LastURL;

@@ -78,18 +78,18 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, 'http://www.spike.com' + UrlDecode(Url), InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'gui/share/embed/title', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else if not DownloadPage(Http, 'http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId=' + MovieID + '&royaltyReport=true&duration=152&width=640&height=391&impressiontype=18', InfoXml) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin
         Xml.Xml := InfoXml;
@@ -109,7 +109,7 @@ begin
                   end;
               end;
         if BestUrl = '' then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else
           begin
           SetName(Title);

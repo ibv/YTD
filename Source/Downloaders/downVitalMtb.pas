@@ -76,9 +76,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(XmlPathRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, Url, InfoXml, peUTF8) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
@@ -86,13 +86,13 @@ begin
       Xml.Xml := InfoXml;
       Url := '';
       if not GetXmlVar(Xml, 'title', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else if not GetXmlVar(Xml, 'hd_video_url', Url) then
         if not GetXmlVar(Xml, 'standard_video_url', Url) then
           if not GetXmlVar(Xml, 'mobile_video_url', Url) then
             Url := '';
       if Url = '' then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         SetName(Title);

@@ -78,9 +78,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(PlayListRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, Url, PlayList) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
@@ -88,7 +88,7 @@ begin
       Xml.Xml := PlayList;
       Node := Xml.getChildByPath('playlist');
       if Node = nil then
-        SetLastErrorMsg(ERR_INVALID_EMBEDDED_OBJECT)
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else
         begin
         for i := 0 to Pred(Node.childCount) do
@@ -108,14 +108,14 @@ begin
               end;
         {$IFDEF MULTIDOWNLOADS}
         if UrlList.Count <= 0 then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else
           begin
           SetPrepared(True);
           Result := First;
           end;
         {$ELSE}
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
         {$ENDIF}
         end;
     finally

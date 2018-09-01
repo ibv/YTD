@@ -36,6 +36,7 @@ History:
 
 unit janXPathTokenizer;
 {$DEFINE PEPAK}
+{$INCLUDE 'jedi.inc'}
 {$IFDEF FPC}
   {$MODE DELPHI}
   {$DEFINE PEPAK}

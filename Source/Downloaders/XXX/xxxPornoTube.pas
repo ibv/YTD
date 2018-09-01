@@ -82,9 +82,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(FlashIdRegExp, Page, 'ID', FlashID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else if not DownloadPage(Http, 'http://www.pornotube.com/player/player.php?' + FlashID, FlashVars) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     VarList := FlashVarsRegExp.Matches(FlashVars);
@@ -104,11 +104,11 @@ begin
           MediaDomain := VarValue;
         end;
       if MediaID = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mediaId']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaId']))
       else if UserID = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['userId']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['userId']))
       else if MediaDomain = '' then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mediaDomain']))
+        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaDomain']))
       else
         begin
         MovieUrl := MediaDomain + '.pornotube.com/' + UserId + '/' + MediaID + '.flv';

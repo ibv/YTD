@@ -83,7 +83,7 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieIdRegExp, Page, 'VIDEOID', VideoId) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
     VideoId8 := Format('%08.8d', [StrToInt(VideoId)]);

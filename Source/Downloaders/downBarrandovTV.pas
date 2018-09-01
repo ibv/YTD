@@ -72,11 +72,11 @@ begin
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'videotitle', Title) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
     else if not GetXmlVar(Xml, 'hostname', HostName) then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['hostname']))
     else if not GetXmlVar(Xml, 'streamname', StreamName) then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['streamname']))
     else
       begin
       SetName(Title);

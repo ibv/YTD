@@ -103,7 +103,7 @@ uses
   uStringUtils,
   uMessages;
 
-resourcestring
+const
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
 
 { TDownloader }
@@ -137,7 +137,7 @@ end;
 
 procedure TDownloader.NotPreparedError;
 begin
-  Raise EDownloaderError.Create(ERR_DOWNLOADER_IS_NOT_PREPARED);
+  Raise EDownloaderError.Create(_(ERR_DOWNLOADER_IS_NOT_PREPARED));
 end;
 
 procedure TDownloader.SetPrepared(Value: boolean);
@@ -165,7 +165,7 @@ end;
 
 function TDownloader.GetDefaultFileName: string;
 begin
-  Result := {AnsiToOem}(StrTr(Name, '\/:*?"<>|', '--;..''--!') + GetFileNameExt);
+  Result := {AnsiToOem}(StrTr(Trim(Name), '\/:*?"<>|', '--;..''--!') + GetFileNameExt);
   if DestinationPath <> '' then
     Result := IncludeTrailingBackslash(DestinationPath) + Result;
 end;
@@ -213,7 +213,7 @@ end;
 function TDownloader.Download: boolean;
 begin
   Result := False;
-  SetLastErrorMsg(ERR_DOWNLOAD_NOT_IMPLEMENTED);
+  SetLastErrorMsg(_(ERR_DOWNLOAD_NOT_IMPLEMENTED));
   if not Prepared then
     NotPreparedError;
 end;
@@ -397,7 +397,7 @@ begin
     if Result then
       SetFileName(FN)
     else
-      SetLastErrorMsg(Format(ERR_VALIDATE_FILENAME_FAILED, [FN]));
+      SetLastErrorMsg(Format(_(ERR_VALIDATE_FILENAME_FAILED), [FN]));
     end;
 end;
 

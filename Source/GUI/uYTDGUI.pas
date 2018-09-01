@@ -5,8 +5,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, ExtCtrls, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList,
-  ActnList, Registry, ToolWin, 
+  StdCtrls, Buttons, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList, ActnList,
+  Registry, ToolWin, CommDlg,
   {$IFDEF SYSTRAY}
   ShellApi,
   {$ENDIF}
@@ -21,15 +21,12 @@ const
 
 type
   TFormYTD = class(TForm)
-    YTDMainMenu: TMainMenu;
-    PanelMenu: TPanel;
     Downloads: TListView;
     YTDActions: TActionList;
     ActionImages: TImageList;
     actAddNewUrl: TAction;
     actDeleteURL: TAction;
     actAddUrlsFromClipboard: TAction;
-    RedrawDelay: TTimer;
     actAddUrlsFromClipboard2: TAction;
     StateImages: TImageList;
     actStart: TAction;
@@ -97,7 +94,6 @@ type
     procedure actAddNewUrlExecute(Sender: TObject);
     procedure actDeleteURLExecute(Sender: TObject);
     procedure actAddUrlsFromClipboardExecute(Sender: TObject);
-    procedure RedrawDelayTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -126,7 +122,7 @@ type
     {$ENDIF}
   protected
     DownloadList: TDownloadList;
-    ProgressChanged: boolean;
+    NextProgressUpdate: DWORD;
     Options: TYTDOptions;
     procedure Refresh; virtual;
     procedure DownloadListChange(Sender: TObject); virtual;
@@ -141,6 +137,8 @@ type
     procedure PlayMedia(Index: integer); virtual;
     procedure LoadSettings; virtual;
     procedure SaveSettings; virtual;
+    procedure LoadDownloadList; virtual;
+    procedure SaveDownloadList; virtual;
   public
   end;
 
@@ -151,13 +149,15 @@ implementation
 
 {$R *.DFM}
 
-resourcestring
-  THREADSTATE_WAITING = 'Waiting';
-  THREADSTATE_PREPARING = 'Preparing';
-  THREADSTATE_DOWNLOADING = 'Downloading';
-  THREADSTATE_FINISHED = 'Finished';
-  THREADSTATE_FAILED = 'Failed';
-  THREADSTATE_ABORTED = 'Aborted';
+{gnugettext: scan-all}
+const
+  THREADSTATE_WAITING = 'Waiting'; // GUI: Download thread state: Waiting for its turn
+  THREADSTATE_PREPARING = 'Preparing'; // GUI: Download thread state: Preparing download (getting title, URL...)
+  THREADSTATE_DOWNLOADING = 'Downloading'; // GUI: Download thread state: Downloading
+  THREADSTATE_FINISHED = 'Finished'; // GUI: Download thread state: Download finished successfully
+  THREADSTATE_FAILED = 'Failed'; // GUI: Download thread state: Download failed
+  THREADSTATE_ABORTED = 'Aborted'; // GUI: Download thread state: Download was aborted by user
+{gnugettext: reset}
 
 const
   States: array[TDownloadThreadState] of string
@@ -205,7 +205,7 @@ end;
 
 procedure TFormYTD.FormDestroy(Sender: TObject);
 begin
-  RedrawDelay.Enabled := False;
+  DownloadList.StopAll;
   FreeAndNil(Options);
   FreeAndNil(DownloadList);
   {$IFDEF SYSTRAY}
@@ -218,7 +218,7 @@ begin
   if DownloadList.DownloadingCount <= 0 then
     CanClose := True
   else
-    CanClose := (MessageDlg(_('There are downloads in progress'#13'Do you really want to quit?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes);
+    CanClose := (MessageDlg(_('There are downloads in progress'#10'Do you really want to quit?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes); // GUI: confirmation before quitting YTD
 end;
 
 procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -256,22 +256,22 @@ begin
   {$ELSE}
   Idx := Sender.IndexOf(Item);
   Downloads.Items.Count := Sender.Count;
+  if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
+    if DownloadList[Idx].State = dtsFinished then
+    SaveDownloadList;
   if Idx >= 0 then
     Downloads.UpdateItems(Idx, Idx);
   {$ENDIF}
 end;
 
 procedure TFormYTD.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);
+var Ticks: DWORD;
 begin
-  ProgressChanged := True;
-end;
-
-procedure TFormYTD.RedrawDelayTimer(Sender: TObject);
-begin
-  if ProgressChanged then
+  Ticks := GetTickCount;
+  if (Ticks > NextProgressUpdate) or ((NextProgressUpdate > $f0000000) and (Ticks < $10000000)) then
     begin
-    ProgressChanged := False;
-    Refresh;
+    NextProgressUpdate := Ticks + 250; // 0.25 sec.
+    Downloads.Refresh;
     end;
 end;
 
@@ -302,7 +302,7 @@ begin
     Item.StateIndex := Integer(DlItem.State);
     {$ENDIF}
     Item.SubItems.Add(DlItem.Downloader.Provider);
-    sState := States[DlItem.State];
+    sState := _(States[DlItem.State]);
     {$IFNDEF FPC}
     iStateImage := StateImgs[DlItem.State];
     {$ENDIF}
@@ -322,7 +322,7 @@ begin
         begin
         if DlItem.Paused then
           begin
-          sState := _('Paused');
+          sState := _('Paused'); // Download thread state: Paused
           {$IFNDEF FPC}
           iStateImage := 4;
           {$ENDIF}
@@ -333,7 +333,7 @@ begin
         sProgress := GetProgressStr(DlItem);
         if DlItem.Paused then
           begin
-          sState := _('Paused');
+          sState := _('Paused'); // Download thread state: Paused
           {$IFNDEF FPC}
           iStateImage := 4;
           {$ENDIF}
@@ -377,7 +377,7 @@ var Url: string;
 begin
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
-  if InputQuery(APPLICATION_TITLE, _('Enter video URL:'), Url) then
+  if InputQuery(APPLICATION_TITLE, _('Enter video URL:'), Url) then // GUI: User wants to add a new URL
     AddTask(Url);
 end;
 
@@ -386,7 +386,7 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_('Do you really want to delete selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if MessageDlg(_('Do you really want to delete selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then // GUI: User wants to delete URL(s)
     Exit;
   if Downloads.SelCount = 1 then
     DeleteTask(Downloads.Selected.Index)
@@ -414,7 +414,7 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_('Do you really want to stop selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if MessageDlg(_('Do you really want to stop selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then // GUI: User wants to abort transfers
     Exit;
   if Downloads.SelCount = 1 then
     StopTask(Downloads.Selected.Index)
@@ -462,7 +462,7 @@ begin
         if s = '' then
           s := DownloadList.Urls[i]
         else
-          s := s + #13 + DownloadList.Urls[i];
+          s := s + EOLN + DownloadList.Urls[i];
     end;
   Clipboard.AsText := s;
 end;
@@ -507,16 +507,19 @@ end;
 procedure TFormYTD.AddTask(const Url: string);
 begin
   DownloadList.Add(Url);
+  //SaveDownloadList;
 end;
 
 procedure TFormYTD.AddTaskFromHTML(const Source: string);
 begin
   DownloadList.AddFromHTML(Source);
+  //SaveDownloadList;
 end;
 
 procedure TFormYTD.DeleteTask(Index: integer);
 begin
   DownloadList.Delete(Index);
+  SaveDownloadList;
 end;
 
 procedure TFormYTD.StartPauseResumeTask(Index: integer);
@@ -562,6 +565,7 @@ begin
 end;
 
 const REGISTRY_KEY = '\Software\Pepak\YouTube Downloader';
+      REGISTRY_KEY_LIST = REGISTRY_KEY + '\Download list';
       REGISTRY_DOWNLOADDIR = 'Download directory';
       REGISTRY_AUTOSTART = 'Autostart downloads';
       REGISTRY_AUTOOVERWRITE = 'Automatically overwrite existing files';
@@ -592,11 +596,13 @@ begin
       Reg.Free;
       end;
     end;
+  LoadDownloadList;
 end;
 
 procedure TFormYTD.SaveSettings;
 var Reg: TRegistry;
 begin
+  SaveDownloadList;
   if Options.DontUseRegistry then
     begin
     try
@@ -621,6 +627,79 @@ begin
     finally
       Reg.Free;
       end;
+    end;
+end;
+
+procedure TFormYTD.LoadDownloadList;
+var L: TStringList;
+    i: integer;
+    Reg: TRegistry;
+begin
+  L := TStringList.Create;
+  try
+    if Options.DontUseRegistry then
+      begin
+      Options.LoadUrls(L);
+      end
+    else
+      begin
+      Reg := TRegistry.Create;
+      try
+        Reg.RootKey := HKEY_CURRENT_USER;
+        Reg.Access := KEY_READ;
+        if Reg.OpenKey(REGISTRY_KEY_LIST, False) then
+          Reg.GetValueNames(L);
+        for i := 0 to Pred(L.Count) do
+          L[i] := Reg.ReadString(L[i]);
+      finally
+        Reg.Free;
+        end;
+      end;
+    for i := 0 to Pred(L.Count) do
+      if L[i] <> '' then
+        AddTask(L[i]);
+  finally
+    L.Free;
+    end;
+end;
+
+procedure TFormYTD.SaveDownloadList;
+var L: TStringList;
+    i: integer;
+    Reg: TRegistry;
+begin
+  L := TStringList.Create;
+  try
+    for i := 0 to Pred(DownloadList.Count) do
+      if DownloadList[i].State <> dtsFinished then
+        L.Add(DownloadList.Urls[i]);
+    if L.Count > 0 then
+      if Options.DontUseRegistry then
+        begin
+        try
+          Options.SaveUrls(L);
+        except
+          on Exception do
+            ;
+          end;
+        end
+      else
+        begin
+        Reg := TRegistry.Create;
+        try
+          Reg.RootKey := HKEY_CURRENT_USER;
+          Reg.Access := KEY_ALL_ACCESS;
+          if Reg.KeyExists(REGISTRY_KEY_LIST) then
+            Reg.DeleteKey(REGISTRY_KEY_LIST);
+          if Reg.OpenKey(REGISTRY_KEY_LIST, True) then
+            for i := 0 to Pred(L.Count) do
+              Reg.WriteString(IntToStr(i), L[i]);
+        finally
+          Reg.Free;
+          end;
+        end;
+  finally
+    L.Free;
     end;
 end;
 
@@ -675,7 +754,7 @@ var Url: string;
 begin
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
-  if InputQuery(APPLICATION_TITLE, _('Enter page URL:'), Url) then
+  if InputQuery(APPLICATION_TITLE, _('Enter page URL:'), Url) then // GUI: User wants to add links from a HTML page
     AddTaskFromHTML(Url);
 end;
 

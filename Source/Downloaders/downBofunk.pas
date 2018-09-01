@@ -81,9 +81,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, 'http://flv.bofunk.com' + Url, InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     // Note: Bofunk's XML is malformed in several ways. This one is critical
@@ -93,14 +93,14 @@ begin
       Xml.Xml := InfoXml;
       Node := Xml.getChildByPath('SETTINGS');
       if Node = nil then
-        SetLastErrorMsg(ERR_INVALID_EMBEDDED_OBJECT)
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else
         for i := 0 to Pred(Node.childCount) do
           if Node.childNode[i].name = 'PLAYER_SETTINGS' then
             if Node.childNode[i].attribute['Name'] = 'FLVPath' then
               begin
               if not Node.childNode[i].hasAttribute('Value') then
-                SetLastErrorMsg(ERR_INVALID_EMBEDDED_OBJECT)
+                SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
               else
                 begin
                 MovieUrl := Node.childNode[i].attribute['Value'];

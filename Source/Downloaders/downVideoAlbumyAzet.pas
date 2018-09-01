@@ -74,14 +74,14 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not DownloadPage(Http, 'http://videoalbumy.azet.sk/players/jw/plConf.phtml?&h=' + MovieID, InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXmlParser2.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         MovieURL := Url;

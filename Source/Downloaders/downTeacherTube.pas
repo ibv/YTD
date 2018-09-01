@@ -72,9 +72,9 @@ begin
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'channel/item/title', Title) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
     else if not GetXmlAttr(Xml, 'channel/item/media:content', 'url', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       begin
       SetName(Title);

@@ -69,16 +69,16 @@ begin
   Result := False;
   // I couldn't download this page directly because I need the cookie
   if not DownloadPage(Http, 'http://www.rude.com/v/' + MovieID + '/view_xml', Page, peUTF8) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     Xml := TjanXMlParser2.Create;
     try
       Xml.Xml := Page;
       if not GetXmlVar(Xml, 'video/titleShort', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else if not GetXmlVar(Xml, 'video/streams', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         SetName(Title);

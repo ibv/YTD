@@ -11,7 +11,7 @@ function SelectDirectory(var Directory: string; Options: TSelectDirOpts; HelpCtx
 implementation
 
 uses
-  Forms, Windows, ShlObj, ActiveX;
+  Windows, ShlObj, ActiveX;
 
 resourcestring
   SSelectDirectory = 'Select a directory';

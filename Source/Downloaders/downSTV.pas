@@ -77,7 +77,7 @@ begin
   try
     Xml.Xml := Page;
     if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       begin
       SetName('STV-video' + MovieID); // No title is provided by the server

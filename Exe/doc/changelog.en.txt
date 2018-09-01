@@ -1,6 +1,40 @@
 CHANGELOG
 ---------
 
+  v0.39
+
+    * GUI version: The list of unfinished URLs is automatically saved on change
+      and loaded when the program starts. In effect, you can now quit YouTube
+      Downloader and later continue with downloads where they finished. 
+      
+      If YTD is used in portable mode (DontUseRegistry=1), the INI file must be 
+      writable for this function to work.
+
+    * To facilitate the previous feature, default value for DontUseRegistry
+      was changed to 0 - "use registry". If you want to run YouTube Downloader
+      in portable mode, you MUST create the INI file and put DontUseRegistry=1
+      into it.
+
+    * VideaCesky.cz: Some movies couldn't be downloaded.
+
+    * New provider: Aktualne.cz (Aktualne.Centrum.cz).
+
+    * New provider: AutoTube.cz.
+
+    * New provider: Bomba.cz.
+
+    * New provider: DeutscheBahn.com.
+
+    * New provider: GameAnyone.com.
+
+    * New provider: iHned.cz.
+
+    * New provider: Novinky.cz.
+
+    * New provider: PublicTV.cz.
+
+
+
   v0.38
 
     * Support for alternate form of URLs for msfotbal.ct24.cz.

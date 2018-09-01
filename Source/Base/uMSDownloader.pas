@@ -96,11 +96,11 @@ begin
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));
-  SetLastErrorMsg(Format(ERR_SEE_LOGFILE, [LogFileName]));
+  SetLastErrorMsg(Format(_(ERR_SEE_LOGFILE), [LogFileName]));
   AddMsdlOption('l', LogFileName);
   AddMsdlOption(MSDL_OPTION_URL, MovieURL);
   if not Msdl_Init then
-    Raise EMSDownloaderError.CreateFmt(ERR_FAILED_TO_LOAD_DLL, ['msdl_dll.dll']);
+    Raise EMSDownloaderError.CreateFmt(_(ERR_FAILED_TO_LOAD_DLL), ['msdl_dll.dll']);
   RetCode := Msdl_Download(Integer(Self), MsdlDownloadProgressCallback, MsdlOptions);
   if RetCode >= 0 then
     Result := True;

@@ -85,7 +85,7 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAMS', Params) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else
     begin
     Params := UrlDecode(Params);
@@ -126,9 +126,9 @@ begin
           end;
         end;
       if Title = '' then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else if Url = '' then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         SetName(Title);

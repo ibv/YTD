@@ -80,11 +80,11 @@ begin
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'video/caption', Caption) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
     else if not GetXmlVar(Xml, 'request_signature', Signature) then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['request_signature.']))
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature.']))
     else if not GetXmlVar(Xml, 'request_signature_expires', Expires) then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['request_signature_expires.']))
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['request_signature_expires.']))
     else
       begin
       SetName(HtmlDecode(Caption));

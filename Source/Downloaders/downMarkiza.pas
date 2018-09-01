@@ -78,9 +78,9 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(FileInfoRegExp, Page, 'URL', URL) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, URL, FileInfo, peUTF8) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     // TjanXmlParser2 requires spaces within attributes, not whitespace :-(
@@ -117,14 +117,14 @@ begin
               end;
       {$IFDEF MULTIDOWNLOADS}
       if UrlList.Count <= 0 then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         SetPrepared(True);
         Result := First;
         end;
       {$ELSE}
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
       {$ENDIF}
     finally
       Xml.Free;

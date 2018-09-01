@@ -93,7 +93,7 @@ end;
 
 function TPlaylistDownloader.GetPlayListItemName(Match: IMatch; Index: integer): string;
 begin
-  Result := Format(MSG_PLAYLIST_ITEM, [Index]);
+  Result := Format(_(MSG_PLAYLIST_ITEM), [Index]);
 end;
 
 function TPlaylistDownloader.GetPlayListItemURL(Match: IMatch; Index: integer): string;
@@ -112,7 +112,7 @@ begin
     begin
     Urls := PlayListItemRegExp.Matches(Page);
     if Urls.Count <= 0 then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       for i := 0 to Pred(Urls.Count) do
         begin
@@ -125,7 +125,7 @@ begin
         end;
     end;
   if UrlList.Count <= 0 then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
     Result := True;

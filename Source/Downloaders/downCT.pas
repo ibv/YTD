@@ -118,15 +118,15 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetMovieObjectUrl(Http, Page, Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadPage(Http, URL, ObjectDef, peUTF8) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
     // Jsou dve varianty. Pro ASF stream prijde XML, pro RM stream textak
     ObjectDef := Trim(ObjectDef);
     if ObjectDef = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else if ObjectDef[1] = '<' then
       begin
       // Pozn.: ObjectDef muze byt neplatnym XML souborem v tom smyslu, ze v nem
@@ -152,7 +152,7 @@ begin
         end;
       end
     else if not GetRegExpVar(IVysilaniUrlRegExp, ObjectDef, 'URL', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       begin
       MovieURL := Url;

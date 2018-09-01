@@ -10,7 +10,6 @@ object FormYTD: TFormYTD
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  Menu = YTDMainMenu
   OldCreateOrder = False
   Position = poDefaultPosOnly
   ShowHint = True
@@ -20,139 +19,129 @@ object FormYTD: TFormYTD
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object PanelMenu: TPanel
+  object ToolBar1: TToolBar
     Left = 0
     Top = 0
     Width = 719
-    Height = 33
-    Align = alTop
-    BevelOuter = bvNone
+    Height = 29
+    Images = ActionImages
     TabOrder = 0
-    object ToolBar1: TToolBar
+    object ToolAddNew: TToolButton
       Left = 0
-      Top = 0
-      Width = 719
-      Height = 29
-      Images = ActionImages
-      TabOrder = 0
-      object ToolAddNew: TToolButton
-        Left = 0
-        Top = 2
-        Action = actAddNewUrl
-      end
-      object ToolAddFromFile: TToolButton
-        Left = 23
-        Top = 2
-        Action = actAddUrlsFromFile
-      end
-      object ToolAddFromHTMLfile: TToolButton
-        Left = 46
-        Top = 2
-        Action = actAddUrlsFromHTMLfile
-      end
-      object ToolAddFromHTML: TToolButton
-        Left = 69
-        Top = 2
-        Action = actAddUrlsFromHTML
-      end
-      object ToolAddClipboard: TToolButton
-        Left = 92
-        Top = 2
-        Action = actAddUrlsFromClipboard
-      end
-      object ToolButton2: TToolButton
-        Left = 115
-        Top = 2
-        Width = 8
-        Caption = 'ToolButton2'
-        ImageIndex = 9
-        Style = tbsSeparator
-      end
-      object ToolCopy: TToolButton
-        Left = 123
-        Top = 2
-        Action = actCopyUrlsToClipboard
-      end
-      object ToolSave: TToolButton
-        Left = 146
-        Top = 2
-        Action = actSaveUrlList
-      end
-      object ToolButton1: TToolButton
-        Left = 169
-        Top = 2
-        Width = 8
-        ImageIndex = 9
-        Style = tbsSeparator
-      end
-      object ToolStart: TToolButton
-        Left = 177
-        Top = 2
-        Action = actStart
-      end
-      object ToolStop: TToolButton
-        Left = 200
-        Top = 2
-        Action = actStop
-      end
-      object ToolButton5: TToolButton
-        Left = 223
-        Top = 2
-        Width = 8
-        ImageIndex = 4
-        Style = tbsSeparator
-      end
-      object ToolDelete: TToolButton
-        Left = 231
-        Top = 2
-        Action = actDeleteURL
-      end
-      object ToolButton9: TToolButton
-        Left = 254
-        Top = 2
-        Width = 8
-        ImageIndex = 7
-        Style = tbsSeparator
-      end
-      object ToolAutodownload: TToolButton
-        Left = 262
-        Top = 2
-        Action = actAutoDownload
-      end
-      object ToolAutooverwrite: TToolButton
-        Left = 285
-        Top = 2
-        Action = actAutoOverwrite
-      end
-      object ToolRefresh: TToolButton
-        Left = 308
-        Top = 2
-        Action = actRefresh
-      end
-      object ToolDownloadDir: TToolButton
-        Left = 331
-        Top = 2
-        Action = actDownloadDirectory
-      end
-      object ToolButton3: TToolButton
-        Left = 354
-        Top = 2
-        Width = 8
-        ImageIndex = 9
-        Style = tbsSeparator
-      end
-      object ToolAbout: TToolButton
-        Left = 362
-        Top = 2
-        Action = actAbout
-      end
+      Top = 2
+      Action = actAddNewUrl
+    end
+    object ToolAddFromFile: TToolButton
+      Left = 23
+      Top = 2
+      Action = actAddUrlsFromFile
+    end
+    object ToolAddFromHTMLfile: TToolButton
+      Left = 46
+      Top = 2
+      Action = actAddUrlsFromHTMLfile
+    end
+    object ToolAddFromHTML: TToolButton
+      Left = 69
+      Top = 2
+      Action = actAddUrlsFromHTML
+    end
+    object ToolAddClipboard: TToolButton
+      Left = 92
+      Top = 2
+      Action = actAddUrlsFromClipboard
+    end
+    object ToolButton2: TToolButton
+      Left = 115
+      Top = 2
+      Width = 8
+      ImageIndex = 9
+      Style = tbsSeparator
+    end
+    object ToolCopy: TToolButton
+      Left = 123
+      Top = 2
+      Action = actCopyUrlsToClipboard
+    end
+    object ToolSave: TToolButton
+      Left = 146
+      Top = 2
+      Action = actSaveUrlList
+    end
+    object ToolButton1: TToolButton
+      Left = 169
+      Top = 2
+      Width = 8
+      ImageIndex = 9
+      Style = tbsSeparator
+    end
+    object ToolStart: TToolButton
+      Left = 177
+      Top = 2
+      Action = actStart
+    end
+    object ToolStop: TToolButton
+      Left = 200
+      Top = 2
+      Action = actStop
+    end
+    object ToolButton5: TToolButton
+      Left = 223
+      Top = 2
+      Width = 8
+      ImageIndex = 4
+      Style = tbsSeparator
+    end
+    object ToolDelete: TToolButton
+      Left = 231
+      Top = 2
+      Action = actDeleteURL
+    end
+    object ToolButton9: TToolButton
+      Left = 254
+      Top = 2
+      Width = 8
+      ImageIndex = 7
+      Style = tbsSeparator
+    end
+    object ToolAutodownload: TToolButton
+      Left = 262
+      Top = 2
+      Action = actAutoDownload
+    end
+    object ToolAutooverwrite: TToolButton
+      Left = 285
+      Top = 2
+      Action = actAutoOverwrite
+    end
+    object ToolRefresh: TToolButton
+      Left = 308
+      Top = 2
+      Action = actRefresh
+    end
+    object ToolDownloadDir: TToolButton
+      Left = 331
+      Top = 2
+      Action = actDownloadDirectory
+    end
+    object ToolButton3: TToolButton
+      Left = 354
+      Top = 2
+      Width = 8
+      ImageIndex = 9
+      Style = tbsSeparator
+    end
+    object ToolAbout: TToolButton
+      Left = 362
+      Top = 2
+      Action = actAbout
     end
   end
   object Downloads: TListView
     Left = 0
-    Top = 33
+    Top = 29
     Width = 719
-    Height = 323
+    Height = 328
     Align = alClient
     Columns = <
       item
@@ -197,24 +186,19 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 356
+    Top = 357
     Width = 719
     Height = 19
     AutoHint = True
     Panels = <>
     SimplePanel = True
   end
-  object YTDMainMenu: TMainMenu
-    Images = ActionImages
-    Left = 280
-    Top = 144
-  end
   object YTDActions: TActionList
     Left = 56
     Top = 144
     object actAddNewUrl: TAction
       Caption = 'Add new URL'
-      Hint = 'Add new URL'
+      Hint = 'Add new URL to the list'
       ImageIndex = 0
       ShortCut = 45
       OnExecute = actAddNewUrlExecute
@@ -242,28 +226,28 @@ object FormYTD: TFormYTD
     end
     object actAddUrlsFromClipboard: TAction
       Caption = 'Add URLs from Clipboard'
-      Hint = 'Add URLs from Clipboard'
+      Hint = 'Add URLs from Clipboard to the list'
       ImageIndex = 4
       ShortCut = 16470
       OnExecute = actAddUrlsFromClipboardExecute
     end
     object actAddUrlsFromClipboard2: TAction
       Caption = 'Add URLs from Clipboard'
-      Hint = 'Add URLs from Clipboard'
+      Hint = 'Add URLs from Clipboard to the list'
       ImageIndex = 4
       ShortCut = 8237
       OnExecute = actAddUrlsFromClipboard2Execute
     end
     object actCopyUrlsToClipboard: TAction
       Caption = 'Copy URLs to Clipboard'
-      Hint = 'Copy URLs to Clipboard'
+      Hint = 'Copy URLs from the list to Clipboard'
       ImageIndex = 5
       ShortCut = 16451
       OnExecute = actCopyUrlsToClipboardExecute
     end
     object actCopyUrlsToClipboard2: TAction
       Caption = 'Copy URLs to Clipboard'
-      Hint = 'Copy URLs to Clipboard'
+      Hint = 'Copy URLs from the list to Clipboard'
       ImageIndex = 5
       ShortCut = 16429
       OnExecute = actCopyUrlsToClipboard2Execute
@@ -1010,11 +994,6 @@ object FormYTD: TFormYTD
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
   end
-  object RedrawDelay: TTimer
-    OnTimer = RedrawDelayTimer
-    Left = 384
-    Top = 144
-  end
   object StateImages: TImageList
     Left = 168
     Top = 208
@@ -1424,7 +1403,7 @@ object FormYTD: TFormYTD
   end
   object DownloadsPopup: TPopupMenu
     Images = ActionImages
-    Left = 512
+    Left = 288
     Top = 144
     object AddnewURL1: TMenuItem
       Action = actAddNewUrl

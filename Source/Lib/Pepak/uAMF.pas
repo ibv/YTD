@@ -7,7 +7,7 @@ unit uAMF;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
   uStringUtils;
 
 type
@@ -250,8 +250,10 @@ type
       property Body: TAMFPacketBodyArray read fBody write fBody;
     end;
 
-procedure AMFItemDump(const Name: WideString; Item: TAMFItem; const Indent: string = '');
-procedure AMFPacketDump(const Name: WideString; Packet: TAMFPacket; const Indent: string = '');
+{$IFDEF DEBUG}
+procedure AMFItemDump(const Name: WideString; Item: TAMFItem; const Indent: WideString = '');
+procedure AMFPacketDump(const Name: WideString; Packet: TAMFPacket; const Indent: WideString = '');
+{$ENDIF}
 
 implementation
 
@@ -290,9 +292,10 @@ const
   AMF3_XML = 11;
   AMF3_BYTE_ARRAY = 12;
 
-procedure AMFCommonArrayDump(const Name: WideString; Item: TAMFCommonArray; const Indent: string = '');
+{$IFDEF DEBUG}
+procedure AMFCommonArrayDump(const Name: WideString; Item: TAMFCommonArray; const Indent: WideString = '');
 var i: integer;
-    s: string;
+    s: WideString;
 begin
   Writeln(Format('%s[%s] => %s', [Indent, Name, Item.ClassName]));
   Writeln(Format('%s(', [Indent]));
@@ -306,8 +309,8 @@ begin
   Writeln(Format('%s)', [Indent]));
 end;
 
-procedure AMFItemDump(const Name: WideString; Item: TAMFItem; const Indent: string = '');
-var s: string;
+procedure AMFItemDump(const Name: WideString; Item: TAMFItem; const Indent: WideString = '');
+var s: WideString;
 begin
   if Item is TAMFCommonArray then
     AMFCommonArrayDump(Name, TAMFCommonArray(Item), Indent)
@@ -321,7 +324,7 @@ begin
     end;
 end;
 
-procedure AMFPacketDump(const Name: WideString; Packet: TAMFPacket; const Indent: string = '');
+procedure AMFPacketDump(const Name: WideString; Packet: TAMFPacket; const Indent: WideString = '');
 var i: integer;
 begin
   Writeln(Format('%s[%s] => %s', [Indent, Name, Packet.ClassName]));
@@ -358,8 +361,9 @@ begin
     end;
   Writeln(Format('%s'#9')', [Indent]));
 end;
+{$ENDIF}
 
-{$IFNDEF DELPHI2009_UP}
+{$IFNDEF UNICODE}
 function StoreWideStringInAnsiString(const Value: WideString): AnsiString;
 var n: integer;
 begin
@@ -733,7 +737,7 @@ end;
 
 function TAMFCommonArray.FindByPath(const APath: WideString): TAMFItem;
 var Item: TAMFItem;
-    Path, s: string;
+    Path, s: WideString;
     i: integer;
     Found: boolean;
 begin

@@ -73,14 +73,14 @@ begin
   try
     Xml.Xml := Page;
     if not GetXmlVar(Xml, 'configuration/title', Title) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
     else if not DownloadPage(Http, 'http://api.mpora.com/tv/player/playlist/vid/' + MovieID + '/', InfoXml) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin
       Xml.Xml := InfoXml;
       if not GetXmlAttr(Xml, 'channel/item/enclosure', 'url', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         SetName(Title);

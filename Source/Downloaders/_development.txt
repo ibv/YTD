@@ -1,11 +1,15 @@
 Prot.	Zdr.naz	Zdr.URL	Nazev
 
 HTTP	HTML	HTML	down5min
+HTTP	HTML	HTML	downAktualne
+HTTP	HTML	XML	downAutoTube
 RTMP	XML	XML	downBarrandov
 HTTP	XML	XML	downBlipTv
 HTTP	HTML	XML	downBofunk
+HTTP	HTML	Nested	downBomba
 HTTP	HTML	JSON	downBreak
 HTTP	HTML	HTML	downCekniTo
+HTTP	HTML	HTML	downCestyKSobe
 HTTP	XML	XML	downClipfish
 HTTP	XML	XML	downCollegeHumor
 RTMP	HTML	XML	downCrunchyRoll
@@ -15,6 +19,7 @@ MS	HTML	XML	downCT24
 MS	HTML	XML	downCT24MSFotbal
 HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion
+HTTP	HTML	HTML	downDeutscheBahn
 HTTP	HTML	HTML	downEbaumsWorld
 HTTP	HTML	HTML	downEHow
 HTTP	HTML	XML	downESPN
@@ -24,9 +29,11 @@ HTTP	XML	XML	downFlickr
 HTTP	XML	XML	downFreeCaster
 HTTP	HTML	XML	downFreeRide
 HTTP	HTML	JSON	downFreeVideoRu
+HTTP	HTML	Nested	downGameAnyone
 HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
 HTTP	HTML	HTML	downGuba
+RTMP	HTML	HTML	downIHned
 HTTP	HTML	HTML	downIPrima
 HTTP	XML	XML	downJoj
 HTTP	HTML	HTML	downKukaj
@@ -43,6 +50,7 @@ HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace
 HTTP	HTML	HTML	downMyUbo
 HTTP	HTML	HTML	downNJoy
+HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)

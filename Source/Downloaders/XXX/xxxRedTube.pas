@@ -80,12 +80,12 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'VARS', FlashVars) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else
     begin
     FlashVars := HtmlDecode(FlashVars);
     if not GetRegExpVar(FlashMovieUrlRegExp, FlashVars, 'URL', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       begin
       MovieUrl := UrlDecode(Url);

@@ -23,7 +23,8 @@ type
       function GetFileName: string; override;
       function GetThisFileName: string; virtual;
       procedure SetNestedDownloader(Value: TDownloader); virtual;
-      procedure CreateNestedDownloader(const MovieID: string); virtual;
+      function CreateNestedDownloaderFromID(const MovieID: string): boolean; virtual;
+      function CreateNestedDownloaderFromURL(const Url: string): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
@@ -44,7 +45,8 @@ type
 implementation
 
 uses
-  uMessages;
+  uMessages,
+  uDownloadClassifier;
   
 { TNestedDownloader }
 
@@ -68,8 +70,32 @@ begin
   fNestedDownloader := Value;
 end;
 
-procedure TNestedDownloader.CreateNestedDownloader(const MovieID: string);
+function TNestedDownloader.CreateNestedDownloaderFromID(const MovieID: string): boolean;
 begin
+  Result := False;
+end;
+
+function TNestedDownloader.CreateNestedDownloaderFromURL(const Url: string): boolean;
+var DC: TDownloadClassifier;
+begin
+  Result := False;
+  DC := TDownloadClassifier.Create;
+  try
+    DC.OwnsDownloader := False;
+    DC.Url := Url;
+    if DC.Downloader <> nil then
+      begin
+      MovieURL := Url;
+      NestedDownloader := DC.Downloader;
+      NestedDownloader.InitOptions(Options);
+      NestedDownloader.DestinationPath := DestinationPath;
+      NestedDownloader.OnProgress := OnProgress;
+      NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
+      Result := True;
+      end;
+  finally
+    DC.Free;
+    end;
 end;
 
 function TNestedDownloader.GetFileName: string;
@@ -141,17 +167,21 @@ var ID, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
-  if NestedIDRegExp <> nil then
-    if GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) then
-      begin
-      CreateNestedDownloader(ID);
-      if NestedUrlRegExp <> nil then
-        if GetRegExpVar(NestedUrlRegExp, Page, 'URL', URL) then
-          MovieURL := URL;
-      SetPrepared(True);
-      Result := True;
-      end;
+  SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
+  if (NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) and CreateNestedDownloaderFromID(ID) then
+    begin
+    if NestedUrlRegExp <> nil then
+      if GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) then
+        MovieURL := Url;
+    SetPrepared(True);
+    Result := True;
+    end
+  else if (NestedUrlRegExp <> nil) and GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) and CreateNestedDownloaderFromURL(Url) then
+    begin
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 procedure TNestedDownloader.NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);

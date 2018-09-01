@@ -4,8 +4,8 @@ interface
 
 type
   TMsdlOption = record
-    ShortOption: char;
-    Argument: string;
+    ShortOption: AnsiChar;
+    Argument: AnsiString;
     end;
   TMsdlOptions = array of TMsdlOption;
 
@@ -32,7 +32,7 @@ type
   PInternalMsdlOption = ^TInternalMsdlOption;
   TInternalMsdlOption = record
     ShortOption: integer;
-    Argument: PChar;
+    Argument: PAnsiChar;
     end;
 
 type
@@ -81,7 +81,7 @@ begin
       if Options[i].Argument = '' then
         RealOptions[i].Argument := nil
       else
-        RealOptions[i].Argument := PChar(Options[i].Argument);
+        RealOptions[i].Argument := PAnsiChar(Options[i].Argument);
       end;
     end;
   Result := MsdlMain(Tag, Callback, Length(Options), RealOptionsPtr);

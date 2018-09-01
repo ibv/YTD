@@ -46,10 +46,13 @@ uses
   {$ENDIF}
   // Downloaders
   down5min in 'Downloaders\down5min.pas',
+  downAktualne in 'Downloaders\downAktualne.pas',
+  downAutoTube in 'Downloaders\downAutoTube.pas',
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
   downBlipTv in 'Downloaders\downBlipTv.pas',
   downBlipTvV2 in 'Downloaders\downBlipTvV2.pas',
   downBofunk in 'Downloaders\downBofunk.pas',
+  downBomba in 'Downloaders\downBomba.pas',
   downBreak in 'Downloaders\downBreak.pas',
   downCekniTo in 'Downloaders\downCekniTo.pas',
   downCestyKSobe in 'Downloaders\downCestyKSobe.pas',
@@ -64,6 +67,7 @@ uses
   downCT24MSFotbal_V2 in 'Downloaders\downCT24MSFotbal_V2.pas',
   downDailyHaha in 'Downloaders\downDailyHaha.pas',
   downDailyMotion in 'Downloaders\downDailyMotion.pas',
+  downDeutscheBahn in 'Downloaders\downDeutscheBahn.pas',
   downEbaumsWorld in 'Downloaders\downEbaumsWorld.pas',
   downEHow in 'Downloaders\downEHow.pas',
   downESPN in 'Downloaders\downESPN.pas',
@@ -74,11 +78,13 @@ uses
   downFreeSk in 'Downloaders\downFreeSk.pas',
   downFreeRide in 'Downloaders\downFreeRide.pas',
   downFreeVideoRu in 'Downloaders\downFreeVideoRu.pas',
+  downGameAnyone in 'Downloaders\downGameAnyone.pas',
   downGodTube in 'Downloaders\downGodTube.pas',
   downGuba in 'Downloaders\downGuba.pas',
   downGrindTV in 'Downloaders\downGrindTV.pas',
-  downJoj in 'Downloaders\downJoj.pas',
+  downiHned in 'Downloaders\downIHned.pas',
   downiPrima in 'Downloaders\downIPrima.pas',
+  downJoj in 'Downloaders\downJoj.pas',
   downKukaj in 'Downloaders\downKukaj.pas',
   downLibimSeTi in 'Downloaders\downLibimSeTi.pas',
   downLiveLeak in 'Downloaders\downLiveLeak.pas',
@@ -94,6 +100,8 @@ uses
   downMyUbo in 'Downloaders\downMyUbo.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
   downNova in 'Downloaders\downNova.pas',
+  downNovinky in 'Downloaders\downNovinky.pas',
+  downPublicTV in 'Downloaders\downPublicTV.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
   downRingTV in 'Downloaders\downRingTV.pas',
   downRozhlas in 'Downloaders\downRozhlas.pas',
@@ -145,6 +153,7 @@ uses
     xxxYuvutu in 'Downloaders\XXX\xxxYuvutu.pas',
   {$ENDIF}
   // Playlist handlers
+  listGameAnyone in 'Playlists\listGameAnyone.pas',
   listHTML in 'Playlists\listHTML.pas',
   listHTMLfile in 'Playlists\listHTMLfile.pas',
   listBing in 'Playlists\listBing.pas',
@@ -178,7 +187,7 @@ begin
           if DebugHook <> 0 then
             begin
             Writeln;
-            Write(MSG_PRESS_ANY_KEY_TO_QUIT);
+            Write(_(MSG_PRESS_ANY_KEY_TO_QUIT));
             Readln;
             end;
         {$ENDIF}
@@ -187,7 +196,7 @@ begin
   except
     on E: Exception do
       begin
-      ErrorMsg := Format(ERR_EXCEPTION_MESSAGE, [E.ClassName, E.Message]);
+      ErrorMsg := Format(_(ERR_EXCEPTION_MESSAGE), [E.ClassName, E.Message]);
       {$IFDEF FPC}
         Writeln(ErrorMsg);
       {$ELSE}

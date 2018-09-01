@@ -3,7 +3,7 @@
   All parts of the translation system are kept in this unit.
 
   @author Lars B. Dybdahl and others
-  @version $LastChangedRevision: 153 $
+  @version $LastChangedRevision: 149 $
   @see http://dybdahl.dk/dxgettext/
 -------------------------------------------------------------------------------}
 unit gnugettext;
@@ -21,8 +21,8 @@ unit gnugettext;
 (**************************************************************)
 
 // Information about this file:
-// $LastChangedDate: 2008-03-10 10:29:54 +0100 (ma, 10 mar 2008) $
-// $LastChangedRevision: 153 $
+// $LastChangedDate: 2008-03-08 10:12:41 +0100 (08 mar 2008) $
+// $LastChangedRevision: 149 $
 // $HeadURL: https://dybdahl@svn.berlios.de/svnroot/repos/dxgettext/trunk/dxgettext/sample/gnugettext.pas $
 
 // Redistribution and use in source and binary forms, with or without
@@ -48,59 +48,8 @@ interface
 // Use DefaultInstance.DebugLogToFile() to write the log to a file.
 { $define DXGETTEXTDEBUG}
 
-{$ifdef VER100}
-  // Delphi 3
-  {$DEFINE DELPHI5OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
-{$ifdef VER110}
-  // C++ Builder 3
-  {$DEFINE DELPHI5OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
-{$ifdef VER120}
-  // Delphi 4
-  {$DEFINE DELPHI5OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
-{$ifdef VER125}
-  // C++ Builder 4
-  {$DEFINE DELPHI5OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
-{$ifdef VER130}
-  // Delphi 5
-  {$DEFINE DELPHI5OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-  {$ifdef WIN32}
-  {$DEFINE MSWINDOWS}
-  {$endif}
-{$endif}
-{$ifdef VER135}
-  // C++ Builder 5
-  {$DEFINE DELPHI5OROLDER}
-  {$DEFINE DELPHI6OROLDER}
-  {$ifdef WIN32}
-  {$DEFINE MSWINDOWS}
-  {$endif}
-{$endif}
-{$ifdef VER140}
-  // Delphi 6
-{$ifdef MSWINDOWS}
-  {$DEFINE DELPHI6OROLDER}
-{$endif}
-{$endif}
-{$ifdef VER150}
-  // Delphi 7
-{$endif}
-{$ifdef VER170}
-  // Delphi 2005
-{$endif}
 
 uses
-{$ifdef DELPHI5OROLDER}
-  gnugettextD5,
-{$endif}
 {$ifdef MSWINDOWS}
   Windows,
 {$else}
@@ -180,7 +129,7 @@ const
 
 const
   // Subversion source code version control version information
-  VCSVersion='$LastChangedRevision: 153 $';
+  VCSVersion='$LastChangedRevision: 149 $';
 
 type
   EGnuGettext=class(Exception);
@@ -206,7 +155,7 @@ procedure HookIntoResourceStrings (enabled:boolean=true; SupportPackages:boolean
 (*****************************************************************************)
 
 {$ifdef MSWINDOWS}
-{$ifndef DELPHI6OROLDER}
+{$ifndef VER140}
 {$WARN UNSAFE_TYPE OFF}
 {$WARN UNSAFE_CODE OFF}
 {$WARN UNSAFE_CAST OFF}
@@ -300,16 +249,10 @@ type
       destructor Destroy; override;
       procedure UseLanguage(LanguageCode: string);
       procedure GetListOfLanguages (const domain:string; list:TStrings); // Puts list of language codes, for which there are translations in the specified domain, into list
-      {$ifdef DELPHI5OROLDER}
-      function gettext(const szMsgId: widestring): widestring; virtual;
-      function ngettext(const singular,plural:widestring;Number:longint):widestring; virtual;
-      {$endif}
-      {$ifndef DELPHI5OROLDER}
       function gettext(const szMsgId: ansistring): widestring; overload; virtual;
       function gettext(const szMsgId: widestring): widestring; overload; virtual;
       function ngettext(const singular,plural:ansistring;Number:longint):widestring; overload; virtual;
       function ngettext(const singular,plural:widestring;Number:longint):widestring; overload; virtual;
-      {$endif}
       function GetCurrentLanguage:string;
       function GetTranslationProperty (const Propertyname:string):WideString;
       function GetTranslatorNameAndEmail:widestring;
@@ -326,16 +269,10 @@ type
       procedure RetranslateComponent(AnObject: TComponent; const TextDomain:string='');
 
       // Multi-domain functions
-      {$ifdef DELPHI5OROLDER}
-      function dgettext(const szDomain: string; const szMsgId: widestring): widestring; virtual;
-      function dngettext(const szDomain: string; const singular,plural:widestring;Number:longint):widestring; virtual;
-      {$endif}
-      {$ifndef DELPHI5OROLDER}
       function dgettext(const szDomain: string; const szMsgId: ansistring): widestring; overload; virtual;
       function dgettext(const szDomain: string; const szMsgId: widestring): widestring; overload; virtual;
       function dngettext(const szDomain: string; const singular,plural:ansistring;Number:longint):widestring; overload; virtual;
       function dngettext(const szDomain: string; const singular,plural:widestring;Number:longint):widestring; overload; virtual;
-      {$endif}
       procedure textdomain(const szDomain: string);
       function getcurrenttextdomain: string;
       procedure bindtextdomain(const szDomain: string; const szDirectory: string);
@@ -393,6 +330,14 @@ var
 
 implementation
 
+{$ifndef MSWINDOWS}
+{$ifndef LINUX}
+  'This version of gnugettext.pas is only meant to be compiled with Kylix 3,'
+  'Delphi 6, Delphi 7 and later versions. If you use other versions, please'
+  'get the gnugettext.pas version from the Delphi 5 directory.'
+{$endif}
+{$endif}
+
 (**************************************************************************)
 // Some comments on the implementation:
 // This unit should be independent of other units where possible.
@@ -403,10 +348,6 @@ implementation
 (**************************************************************************)
 
 {$B-,R+,I+,Q+}
-{$ifdef DELPHI5OROLDER}
-uses
-  FileCtrl;
-{$endif}
 
 type
   TTP_RetranslatorItem=
@@ -1369,12 +1310,10 @@ begin
   inherited;
 end;
 
-{$ifndef DELPHI5OROLDER}
 function TGnuGettextInstance.dgettext(const szDomain: string; const szMsgId: ansistring): widestring;
 begin
   Result:=dgettext(szDomain, ansi2wideDTCP(szMsgId));
 end;
-{$endif}
 
 function TGnuGettextInstance.dgettext(const szDomain: string;
   const szMsgId: widestring): widestring;
@@ -1403,13 +1342,11 @@ begin
   Result := curmsgdomain;
 end;
 
-{$ifndef DELPHI5OROLDER}
 function TGnuGettextInstance.gettext(
   const szMsgId: ansistring): widestring;
 begin
   Result := dgettext(curmsgdomain, szMsgId);
 end;
-{$endif}
 
 function TGnuGettextInstance.gettext(
   const szMsgId: widestring): widestring;
@@ -1593,15 +1530,9 @@ end;
 
 procedure TGnuGettextInstance.TranslateProperty (AnObject:TObject; PropInfo:PPropInfo; TodoList:TStrings; const TextDomain:string);
 var
-  {$ifdef DELPHI5OROLDER}
-  ws: string;
-  old: string;
-  {$endif}
-  {$ifndef DELPHI5OROLDER}
   ppi:PPropInfo;
   ws: WideString;
   old: WideString;
-  {$endif}
   compmarker:TComponent;
   obj:TObject;
   Propname:string;
@@ -1615,15 +1546,10 @@ begin
           {$ifdef DXGETTEXTDEBUG}
           DebugWriteln ('Translating '+AnObject.ClassName+'.'+PropName);
           {$endif}
-          {$ifdef DELPHI5OROLDER}
-          old := GetStrProp(AnObject, PropName);
-          {$endif}
-          {$ifndef DELPHI5OROLDER}
           if PropInfo^.PropType^.Kind<>tkWString then
             old := ansi2wideDTCP(GetStrProp(AnObject, PropName))
           else
             old := GetWideStrProp(AnObject, PropName);
-          {$endif}
           {$ifdef DXGETTEXTDEBUG}
           if old='' then
             DebugWriteln ('(Empty, not translated)')
@@ -1635,19 +1561,12 @@ begin
               (TP_Retranslator as TTP_Retranslator).Remember(AnObject, PropName, old);
             ws := dgettext(textdomain,old);
             if ws <> old then begin
-              {$ifdef DELPHI5OROLDER}
-              SetStrProp(AnObject, PropName, ws);
-              {$endif}
-              {$ifndef DELPHI5OROLDER}
               ppi:=GetPropInfo(AnObject, Propname);
               if ppi<>nil then begin
                 SetWideStrProp(AnObject, ppi, ws);
               end else begin
-                {$ifdef DXGETTEXTDEBUG}
                 DebugWriteln ('ERROR: Property disappeared: '+Propname+' for object of type '+AnObject.ClassName);
-                {$endif}
               end;
-              {$endif}
             end;
           end;
         end { case item };
@@ -1687,9 +1606,6 @@ var
   currentcm:TClassMode; // currentcm is nil or contains special information about how to handle the current object
   ObjectPropertyIgnoreList:TStringList;
   objid, Name:string;
-  {$ifdef DELPHI5OROLDER}
-  Data:PTypeData;
-  {$endif}
 begin
   {$ifdef DXGETTEXTDEBUG}
   DebugWriteln ('----------------------------------------------------------------------');
@@ -1712,12 +1628,10 @@ begin
     TodoList.AddObject('', AnObject);
     DoneList.Sorted:=True;
     ObjectPropertyIgnoreList.Sorted:=True;
-    {$ifndef DELPHI5OROLDER}
     ObjectPropertyIgnoreList.Duplicates:=dupIgnore;
     ObjectPropertyIgnoreList.CaseSensitive:=False;
     DoneList.Duplicates:=dupError;
     DoneList.CaseSensitive:=True;
-    {$endif}
 
     while TodoList.Count<>0 do begin
       AnObject:=TodoList.Objects[0];
@@ -1780,24 +1694,8 @@ begin
           continue;
         end;
 
-        {$ifdef DELPHI5OROLDER}
-        if AnObject.ClassInfo=nil then begin
-          {$ifdef DXGETTEXTDEBUG}
-          DebugWriteln ('ClassInfo=nil encountered for class '+AnObject.ClassName+'. Translation of that component has stopped. You should ignore this object.');
-          {$endif}
-          continue;
-        end;
-        Data := GetTypeData(AnObject.Classinfo);
-        Count := Data^.PropCount;
-        GetMem(PropList, Count * Sizeof(PPropInfo));
-        {$endif}
-        {$ifndef DELPHI5OROLDER}
         Count := GetPropList(AnObject, PropList);
-        {$endif}
         try
-          {$ifdef DELPHI5OROLDER}
-          GetPropInfos(AnObject.ClassInfo, PropList);
-          {$endif}
           for j := 0 to Count - 1 do begin
             PropInfo := PropList[j];
             if not (PropInfo^.PropType^.Kind in [tkString, tkLString, tkWString, tkClass]) then
@@ -1811,13 +1709,8 @@ begin
             end;  // if
           end;  // for
         finally
-          {$ifdef DELPHI5OROLDER}
-          FreeMem(PropList, Data^.PropCount * Sizeof(PPropInfo));
-          {$endif}
-          {$ifndef DELPHI5OROLDER}
           if Count<>0 then
             FreeMem (PropList);
-          {$endif}
         end;
         if AnObject is TStrings then begin
           if ((AnObject as TStrings).Text<>'') and (TP_Retranslator<>nil) then
@@ -2002,13 +1895,11 @@ begin
   end;
 end;
 
-{$ifndef DELPHI5OROLDER}
 function TGnuGettextInstance.ngettext(const singular, plural: ansistring;
   Number: Integer): widestring;
 begin
   Result := dngettext(curmsgdomain, singular, plural, Number);
 end;
-{$endif}
 
 function TGnuGettextInstance.ngettext(const singular, plural: widestring;
   Number: Integer): widestring;

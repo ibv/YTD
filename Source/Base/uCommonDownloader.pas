@@ -96,11 +96,11 @@ begin
     // Download the media info page.
     URL := GetMovieInfoUrl;
     if URL = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
     else if not GetMovieInfoContent(Info, URL, Page) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else if not BeforePrepareFromPage(Page, Info) then
-      SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(_(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE))
     else
       begin
       SetName('');
@@ -124,7 +124,7 @@ begin
       if not AfterPrepareFromPage(Page, Info) then
         SetPrepared(False);
       if (not Prepared) and (LastErrorMsg = '') then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
       Result := Prepared;
       end;
   finally

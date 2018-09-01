@@ -86,7 +86,7 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(FlashObjectRegExp, Page, 'OBJECT', FlashObject) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
   else
     begin
     FlashVars := FlashVarsRegExp.Matches(FlashObject);
@@ -103,7 +103,7 @@ begin
           GetRegExpVar(FlashVarSrcRegExp, VarValue, 'SRC', FileName);
         end;
       if (UrlBase = '') or (FileName = '') then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
         MovieURL := UrlBase + FileName;
