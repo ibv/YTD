@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
 
 type
@@ -13,7 +13,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function GetPlayListItemURL(Match: IMatch; Index: integer): string; override;
+      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -55,7 +55,7 @@ end;
 
 destructor TPlaylist_YouTube_Page.Destroy;
 begin
-  PlayListItemRegExp := nil;
+  RegExFreeAndNil(PlayListItemRegExp);
   inherited;
 end;
 
@@ -64,9 +64,9 @@ begin
   Result := 'http://www.youtube.com/' + MovieID;
 end;
 
-function TPlaylist_YouTube_Page.GetPlayListItemURL(Match: IMatch; Index: integer): string;
+function TPlaylist_YouTube_Page.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
 begin
-  Result := 'http://www.youtube.com/watch?v=' + Match.Groups.ItemsByName['ID'].Value;
+  Result := 'http://www.youtube.com/watch?v=' + Match.SubexpressionByName('ID');
 end;
 
 initialization

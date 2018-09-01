@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_EHow = class(THttpDownloader)
     private
     protected
-      SwitchVideoRegExp: IRegEx;
+      SwitchVideoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -61,8 +61,8 @@ end;
 
 destructor TDownloader_EHow.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  SwitchVideoRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(SwitchVideoRegExp);
   inherited;
 end;
 
@@ -72,20 +72,16 @@ begin
 end;
 
 function TDownloader_EHow.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Urls: IMatchCollection;
-    Url, s: string;
+var Url, s: string;
     UrlQuality, Quality: integer;
-    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Urls := SwitchVideoRegExp.Matches(Page);
-  try
-    Url := '';
-    UrlQuality := 0;
-    for i := 0 to Pred(Urls.Count) do
-      begin
-      s := Urls[i].Groups.ItemsByName['VERSION'].Value;
+  Url := '';
+  UrlQuality := 0;
+  if SwitchVideoRegExp.Match(Page) then
+    repeat
+      s := SwitchVideoRegExp.SubexpressionByName('VERSION');
       if AnsiCompareText(s, 'SD') = 0 then
         Quality := 1
       else if AnsiCompareText(s, 'HD') = 0 then
@@ -95,17 +91,14 @@ begin
       if Quality > UrlQuality then
         begin
         UrlQuality := Quality;
-        Url := Urls[i].Groups.ItemsByName['URL'].Value;
+        Url := SwitchVideoRegExp.SubexpressionByName('URL');
         end;
-      end;
-    if Url <> '' then
-      begin
-      MovieUrl := Url;
-      SetPrepared(True);
-      Result := True;
-      end;
-  finally
-    Urls := nil;
+    until not SwitchVideoRegExp.MatchAgain;
+  if Url <> '' then
+    begin
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

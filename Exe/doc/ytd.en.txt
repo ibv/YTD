@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.39                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.40                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -45,6 +45,10 @@ SUPPORTED PROVIDERS
 
  - Break.com
      - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
+
+ - Cas.sk
+     - http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
+     - http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
 
  - CekniTo.cz / CekniTo.sk
      - http://www.ceknito.cz/video/446074
@@ -144,6 +148,7 @@ SUPPORTED PROVIDERS
 
  - LiveLeak.com:
      - http://www.liveleak.com/view?i=6f4_1272904024
+     - http://www.liveleak.com/e/57d_1278546690
 
  - LiveVideo.com:
      - http://www.livevideo.com/liveshow/brian3maria
@@ -153,6 +158,12 @@ SUPPORTED PROVIDERS
 
      Note: Each movie can be made up of several files. In such a case, all
      files are downloaded.
+
+ - MediaSport.cz:
+     - http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
+
+     Note: Video title is not listed anywhere in the video page, so the
+           original filename is used instead.
 
  - MegaVideo.com:
      - http://www.megavideo.com/?v=2MJBY4HB
@@ -445,6 +456,7 @@ In section [YTD] these settings are available:
       usage lets you use YTD as a portable application which doesn't write
       anything to the host system's configuration.
       application, because it needs write access to YTD.INI.
+    - Command-line version never uses registry.
     - Possible values are "0" (use registry) and "1" (don't use registry).
     - Default value is "0".
 
@@ -510,6 +522,31 @@ SYNTAX
        ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   If no arguments are provided, the graphical version of YTD is started.
+
+
+
+RESULT CODES
+------------
+
+The command-line version supports result codes (errorlevel). Possible values
+are:
+
+  0 ..... All operations succeeded.
+          Note! In case of multidownloads (downloading from a playlist, list
+          file or a HTML source), it is enough if any one of the URLs was
+          successfully downloaded. If you depend on errorlevels, it is
+          strongly recommended to only download one URL at a time.
+  1 ..... Download error in any URL.
+  2 ..... No known URLs were found among the arguments.
+  3 ..... Invalid syntax. Generally, it means either an unknown argument, or 
+          a known argument but without a required parametr (e.g. in case of
+          argument -i, see above).
+  4 ..... Invalid content of a parameter. A required parameter was provided,
+          but its content was somehow invalid (file didn't exist, list file
+          didn't contain any URLs etc.).
+  254 ... User abort.
+  255 ... Exception was raised. As all exceptions should be handled, this code
+          indicates a bug in YouTube Downloader.
 
 
 
@@ -581,15 +618,15 @@ YouTube Downloader uses following components by other authors:
   - license: custom, freeware
   - source: http://synapse.ararat.cz/
 
+- Jan Goyvaerts
+  - library PerlRegEx for regular expression matching.
+  - license: Mozilla Public License 1.1
+  - source: http://www.regular-expressions.info/delphi.html
+
 - Mark James
   - Silk iconpack, used in the GUI version of YTD.
   - license: Creative Common Attribution 2.5
   - source: http://www.famfamfam.com/lab/icons/silk/
-
-- Renato Mancuso (mancuso@renatomancuso.com)
-  - library PCRE for regular expression support.
-  - license: custom, freeware
-  - source: http://www.renatomancuso.com/software/dpcre/dpcre.htm
 
 - Jun "metro" Oyama (me_t_ro@yahoo.com)
   - MSDL, a tool for downloading MMS, RTSP and related protocols.

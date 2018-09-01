@@ -82,7 +82,7 @@ AUTOMAKE = ${SHELL} /work/msdl-1.2.7/missing --run automake-1.10
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -g -O2 -Os
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo

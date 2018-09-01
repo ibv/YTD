@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_DeutscheBahn = class(THttpDownloader)
     private
     protected
-      BaseNameRegExp: IRegEx;
-      SwfObjectRegExp: IRegEx;
+      BaseNameRegExp: TRegExp;
+      SwfObjectRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -64,9 +64,9 @@ end;
 
 destructor TDownloader_DeutscheBahn.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  BaseNameRegExp := nil;
-  SwfObjectRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(BaseNameRegExp);
+  RegExFreeAndNil(SwfObjectRegExp);
   inherited;
 end;
 

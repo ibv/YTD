@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uMSDownloader;
 
@@ -15,8 +15,8 @@ type
     private
       fRealMedia: boolean;
     protected
-      MovieObjectRegExp: IRegEx;
-      IVysilaniUrlRegExp: IRegEx;
+      MovieObjectRegExp: TRegExp;
+      IVysilaniUrlRegExp: TRegExp;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -74,9 +74,9 @@ end;
 
 destructor TDownloader_CT.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieObjectRegExp := nil;
-  IVysilaniUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieObjectRegExp);
+  RegExFreeAndNil(IVysilaniUrlRegExp);
   inherited;
 end;
 

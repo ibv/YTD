@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_SpankingTube = class(THttpDownloader)
     private
     protected
-      MovieFileNameRegExp: IRegEx;
+      MovieFileNameRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -61,8 +61,8 @@ end;
 
 destructor TDownloader_SpankingTube.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieFileNameRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieFileNameRegExp);
   inherited;
 end;
 

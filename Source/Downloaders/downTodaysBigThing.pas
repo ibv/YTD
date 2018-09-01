@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_TodaysBigThing = class(THttpDownloader)
     private
     protected
-      VideoIdRegExp: IRegEx;
+      VideoIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -60,7 +60,7 @@ end;
 
 destructor TDownloader_TodaysBigThing.Destroy;
 begin
-  VideoIdRegExp := nil;
+  RegExFreeAndNil(VideoIdRegExp);
   inherited;
 end;
 

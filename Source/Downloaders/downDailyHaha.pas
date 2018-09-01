@@ -5,16 +5,16 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_DailyHaha = class(THttpDownloader)
     private
     protected
-      FlashObjectRegExp: IRegEx;
-      FlashVarsRegExp: IRegEx;
-      FlashVarSrcRegExp: IRegEx;
+      FlashObjectRegExp: TRegExp;
+      FlashVarsRegExp: TRegExp;
+      FlashVarSrcRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
@@ -66,10 +66,10 @@ end;
 
 destructor TDownloader_DailyHaha.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  FlashObjectRegExp := nil;
-  FlashVarsRegExp := nil;
-  FlashVarSrcRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(FlashObjectRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarSrcRegExp);
   inherited;
 end;
 
@@ -79,9 +79,7 @@ begin
 end;
 
 function TDownloader_DailyHaha.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var FlashObject, VarName, VarValue, UrlBase, FileName: string;
-    FlashVars: IMatchCollection;
-    i: integer;
+var FlashObject, FlashVars, UrlBase, FileName: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -89,29 +87,15 @@ begin
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
   else
     begin
-    FlashVars := FlashVarsRegExp.Matches(FlashObject);
-    try
-      UrlBase := '';
-      FileName := '';
-      for i := 0 to Pred(FlashVars.Count) do
-        begin
-        VarName := FlashVars[i].Groups.ItemsByName['VARNAME'].Value;
-        VarValue := FlashVars[i].Groups.ItemsByName['VARVALUE'].Value;
-        if VarName = 'base' then
-          UrlBase := VarValue
-        else if VarName = 'FlashVars' then
-          GetRegExpVar(FlashVarSrcRegExp, VarValue, 'SRC', FileName);
-        end;
-      if (UrlBase = '') or (FileName = '') then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := UrlBase + FileName;
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      FlashVars := nil;
+    GetRegExpVarPairs(FlashVarsRegExp, FlashObject, ['base', 'FlashVars'], [@UrlBase, @FlashVars]);
+    GetRegExpVar(FlashVarSrcRegExp, FlashVars, 'SRC', FileName);
+    if (UrlBase = '') or (FileName = '') then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else
+      begin
+      MovieURL := UrlBase + FileName;
+      SetPrepared(True);
+      Result := True;
       end;
     end;
 end;

@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type

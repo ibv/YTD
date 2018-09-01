@@ -7,12 +7,14 @@ unit downYouTube;
   // Use http://www.youtube.com/get_video_info script. Is is much easier to parse
   // and allows bypassing of age verification.
   // Otherwise use HTML video page.
+{$DEFINE FMT_URL_MAP}
+  // Use fmt_url_map object rather than timestamps
 
 interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -22,17 +24,23 @@ type
       {$IFDEF GET_VIDEO_INFO}
       GetVideoInfoFailed: Boolean;
       {$ENDIF}
-      YouTubeConfigRegExp: IRegEx;
-      FormatListRegExp: IRegEx;
+      YouTubeConfigRegExp: TRegExp;
+      FormatListRegExp: TRegExp;
       {$IFDEF FLASHVARS_PARSER}
-      FlashVarsParserRegExp: IRegEx;
+      FlashVarsParserRegExp: TRegExp;
       {$ELSE}
-      ExtractFormatListRegExp: IRegEx;
-      ExtractTokenRegExp: IRegEx;
-      ExtractVideoIdRegExp: IRegEx;
+      ExtractFormatListRegExp: TRegExp;
+      ExtractTokenRegExp: TRegExp;
+      ExtractVideoIdRegExp: TRegExp;
       {$ENDIF}
       Extension: string;
+      {$IFDEF FMT_URL_MAP}
+      FmtUrlMapRegExp: TRegExp;
+      {$ENDIF}
       function GetBestVideoFormat(const FormatList: string): string; virtual;
+      {$IFDEF FMT_URL_MAP}
+      function FindUrlForFormat(const VideoFormat, FormatUrlMap: string; out Url: string): boolean; virtual;
+      {$ENDIF}
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -57,9 +65,9 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.youtube.com/v/HANqEpKDHyk
-// http://www.youtube.com/watch/v/HANqEpKDHyk
-// http://www.youtube.com/watch?v=eYSbVcjyVyw
+// http://www.youtube.com/v/b5AWQ5aBjgE
+// http://www.youtube.com/watch/v/b5AWQ5aBjgE
+// http://www.youtube.com/watch?v=b5AWQ5aBjgE
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?v=)';
   URLREGEXP_ID =        '[^/?&]+';
@@ -77,6 +85,9 @@ const
   {$ENDIF}
   //REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
   REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
+  {$IFDEF FMT_URL_MAP}
+  REGEXP_FORMAT_URL_MAP = '(?P<FORMAT>[0-9]+)\|(?P<URL>https?://.+?)(?:,|$)';
+  {$ENDIF}
 
 { TDownloader_YouTube }
 
@@ -107,20 +118,26 @@ begin
   ExtractVideoIdRegExp := RegExCreate(REGEXP_FLASHVARS_VIDEOID, [rcoIgnoreCase, rcoSingleLine]);
   {$ENDIF}
   FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST, [rcoIgnoreCase]);
+  {$IFDEF FMT_URL_MAP}
+  FmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP, [rcoIgnoreCase]);
+  {$ENDIF}
 end;
 
 destructor TDownloader_YouTube.Destroy;
 begin
-  YouTubeConfigRegExp := nil;
-  MovieTitleRegExp := nil;
+  RegExFreeAndNil(YouTubeConfigRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
   {$IFDEF FLASHVARS_PARSER}
-  FlashVarsParserRegExp := nil;
+  RegExFreeAndNil(FlashVarsParserRegExp);
   {$ELSE}
-  ExtractFormatListRegExp := nil;
-  ExtractTokenRegExp := nil;
-  ExtractVideoIdRegExp := nil;
+  RegExFreeAndNil(ExtractFormatListRegExp);
+  RegExFreeAndNil(ExtractTokenRegExp);
+  RegExFreeAndNil(ExtractVideoIdRegExp);
   {$ENDIF}
-  FormatListRegExp := nil;
+  RegExFreeAndNil(FormatListRegExp);
+  {$IFDEF FMT_URL_MAP}
+  RegExFreeAndNil(FmtUrlMapRegExp);
+  {$ENDIF}
   inherited;
 end;
 
@@ -144,11 +161,11 @@ function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpS
 const GetVideoInfoDoesNotExist = 'status=fail&errorcode=150&';
       GetVideoInfoDoesNotExistLength = Length(GetVideoInfoDoesNotExist);
 {$ENDIF}
-var FlashVars, FormatList, Token, VideoId, VideoFormat: string;
-    {$IFDEF FLASHVARS_PARSER}
-    VarList: IMatchCollection;
-    VarName, VarValue: string;
-    i: integer;
+var FlashVars, FormatList, Title, VideoId, VideoFormat: string;
+    {$IFDEF FMT_URL_MAP}
+    Url, FmtUrlMap: string;
+    {$ELSE}
+    Token, Token1, Token2: string;
     {$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, Http);
@@ -178,31 +195,30 @@ begin
   {$IFDEF FLASHVARS_PARSER}
   else
     begin
-    VarList := FlashVarsParserRegExp.Matches(FlashVars);
-    FormatList := '';
-    Token := '';
-    VideoId := MovieID;
-    for i := 0 to Pred(VarList.Count) do
-      begin
-      VarName := VarList[i].Groups.ItemsByName['VARNAME'].Value;
-      VarValue := VarList[i].Groups.ItemsByName['VARVALUE'].Value;
-      if VarName = 'fmt_list' then
-        FormatList := VarValue
-      else if VarName = 'title' then
-        SetName(WideToAnsi(Utf8ToWide(UrlDecode(VarValue))))
+    GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['fmt_list', 'title', 'video_id', {$IFDEF FMT_URL_MAP} 'fmt_url_map' {$ELSE} 'token', 't' {$ENDIF} ], [@FormatList, @Title, @VideoID, {$IFDEF FMT_URL_MAP} @FmtUrlMap {$ELSE} @Token1, @Token2 {$ENDIF} ]);
+    {$IFDEF FMT_URL_MAP}
+    FmtUrlMap := UrlDecode(FmtUrlMap);
+    {$ELSE}
       {$IFDEF GET_VIDEO_INFO}
-      else if (not GetVideoInfoFailed) and (VarName = 'token') then
-        Token := VarValue
+      if not GetVideoInfoFailed then
+        Token := Token1
+      else
+        Token := Token2;
+      {$ELSE}
+      Token := Token2;
       {$ENDIF}
-      else if {$IFDEF GET_VIDEO_INFO} GetVideoInfoFailed and {$ENDIF} (VarName = 't') then
-        Token := VarValue
-      else if VarName = 'video_id' then
-        VideoID := VarValue;
-      end;
+    {$ENDIF}
+    if Title <> '' then
+      SetName(WideToAnsi(Utf8ToWide(UrlDecode(Title))));
     if FormatList = '' then
       SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
+    {$IFDEF FMT_URL_MAP}
+    else if FmtUrlMap = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format-URL Map']))
+    {$ELSE}
     else if Token = '' then
       SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Token']))
+    {$ENDIF}
   {$ELSE}
   else if not GetRegExpVar(ExtractFormatListRegExp, FlashVars, 'FORMATLIST', FormatList) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Format List']))
@@ -222,41 +238,63 @@ begin
       Extension := '.flv'
     else
       Extension := '.mp4';
-    MovieURL := 'http://www.youtube.com/get_video?fmt=' + VideoFormat + '&video_id=' + VideoID + '&t=' + Token;
+    {$IFDEF FMT_URL_MAP}
+    if not FindUrlForFormat(VideoFormat, FmtUrlMap, Url) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else
+      begin
+      MovieURL := Url;
+      Result := True;
+      SetPrepared(True);
+      end;
+    {$ELSE}
+    MovieURL := 'http://www.youtube.com/get_video?video_id=' + VideoID + '&t=' + UrlDecode(Token) + '&eurl=&el=embedded&ps=default&fmt=' + VideoFormat + '&asv=2&noflv=1';
     Result := True;
     SetPrepared(True);
+    {$ENDIF}
     end;
   {$IFDEF FLASHVARS_PARSER}
     end;
   {$ENDIF}
 end;
 
+{$IFDEF FMT_URL_MAP}
+function TDownloader_YouTube.FindUrlForFormat(const VideoFormat, FormatUrlMap: string; out Url: string): boolean;
+var Found: string;
+begin
+  Result := False;
+  Url := '';
+  if FmtUrlMapRegExp.Match(FormatUrlMap) then
+    repeat
+      Found := FmtUrlMapRegExp.SubexpressionByName('FORMAT');
+      if VideoFormat = Found then
+        begin
+        Url := UrlDecode(FmtUrlMapRegExp.SubexpressionByName('URL'));
+        Result := True;
+        Break;
+        end;
+    until not FmtUrlMapRegExp.MatchAgain;
+end;
+{$ENDIF}
+
 function TDownloader_YouTube.GetBestVideoFormat(const FormatList: string): string;
-var Matches: IMatchCollection;
-    MaxVideoQuality, MaxAudioQuality: integer;
+var MaxVideoQuality, MaxAudioQuality: integer;
     VideoQuality, AudioQuality: integer;
-    i: integer;
 begin
   Result := '';
   MaxVideoQuality := 0;
   MaxAudioQuality := 0;
-  Matches := FormatListRegExp.Matches(FormatList);
-  try
-    for i := 0 to Pred(Matches.Count) do
-      with Matches[i].Groups do
+  if FormatListRegExp.Match(FormatList) then
+    repeat
+      VideoQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('VIDEOQUALITY'), 0);
+      AudioQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('AUDIOQUALITY'), 0);
+      if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
         begin
-        VideoQuality := StrToIntDef(GetItemByName('VIDEOQUALITY').Value, 0);
-        AudioQuality := StrToIntDef(GetItemByName('AUDIOQUALITY').Value, 0);
-        if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
-          begin
-          Result := GetItemByName('FORMAT').Value;
-          MaxVideoQuality := VideoQuality;
-          MaxAudioQuality := AudioQuality;
-          end;
+        Result := FormatListRegExp.SubexpressionByName('FORMAT');
+        MaxVideoQuality := VideoQuality;
+        MaxAudioQuality := AudioQuality;
         end;
-  finally
-    Matches := nil;
-    end;
+    until not FormatListRegExp.MatchAgain;
 end;
 
 initialization

@@ -28,7 +28,7 @@ type
     protected // Application info
       function AppTitle: string; virtual; abstract;
       function AppVersion: string; virtual; abstract;
-      function DoExecute: boolean; virtual; abstract;
+      function DoExecute: integer; virtual; abstract;
     protected // Parameter handling methods
       procedure ParamInitialize; virtual;
       function ParamGetNext(out Value: string): boolean; virtual;
@@ -56,13 +56,18 @@ type
     public
       constructor Create; virtual;
       destructor Destroy; override;
-      function Execute: boolean; virtual;
+      function Execute: DWORD; virtual;
     public
       class function HasConsole: TConsoleState; virtual;
       class function ParentHasConsole: boolean; virtual;
     end;
 
-function ExecuteConsoleApp(AppClass: TConsoleAppClass): boolean;
+const
+  RESCODE_OK = 0;
+  RESCODE_ABORT = 254;
+  RESCODE_EXCEPTION = 255;
+
+function ExecuteConsoleApp(AppClass: TConsoleAppClass): integer;
 
 implementation
 
@@ -75,7 +80,7 @@ var KernelDLL: THandle = 0;
     GetConsoleWindow: TGetConsoleWindowFn = nil;
     AttachConsole: TAttachConsoleFn = nil;
 
-function ExecuteConsoleApp(AppClass: TConsoleAppClass): boolean;
+function ExecuteConsoleApp(AppClass: TConsoleAppClass): integer;
 var App: TConsoleApp;
     {$IFDEF FORCECONSOLE}
     ConsoleState: TConsoleState;
@@ -106,12 +111,12 @@ begin
     except
       on E: EAbort do
         begin
-        Result := False;
+        Result := RESCODE_ABORT;
         end;
       on E: Exception do
         begin
         Writeln('ERROR ' + E.ClassName + ': ' + E.Message);
-        Result := False;
+        Result := RESCODE_EXCEPTION;
         end;
       end;
   {$IFDEF FORCECONSOLE}
@@ -138,7 +143,7 @@ begin
   inherited;
 end;
 
-function TConsoleApp.Execute: boolean;
+function TConsoleApp.Execute: DWORD;
 var Err: string;
 begin
   ShowHeader;

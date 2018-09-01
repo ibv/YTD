@@ -1,6 +1,51 @@
 CHANGELOG
 ---------
 
+  v0.40
+
+    * Nový poskytovatel: Cas.sk.
+
+    * Nový poskytovatel: MediaSport.cz.
+
+    * Free.zoznam.sk: Video se ukládalo s pøíponou .php.
+
+    * LiveLeak.com: Podpora pro embedded verze odkazù.
+
+    * MSFotbal.ct24.cz: Pùvodní odkazy (na vlastní subdoménì) už neexistují,
+      k videu se ale stále dá dostat pøes "obecné" odkazy CT24.cz.
+
+    * Rozhlas.cz: Opìt funguje (sice už není potøeba, protože na stránkách
+      je pøímý odkaz na download, ale když už byl kdysi podporován...). Byla
+      opravena chyba, kdy se za jistých okolností mohly soubory nechtìnì 
+      pøepisovat.
+
+    * YouTube.cz: Opìt funguje, po další zmìnì stránek YouTube.
+
+    * Grafická verze: Okna pro výbìr souboru (pøi ukládání nebo naèítání)
+      používají grafickou podobu odpovídající Windows, ve kterých jsou spuštìné
+      - dosud používaly zobrazení odpovídající Windows 98.
+
+    * CLI verze: Podpora pro návratové kódy (errorlevel). Popis je uveden v
+      pøíslušné sekci v dokumentaci.
+
+    * CLI verze: Chyba v parametrech nebo "zobrazovací" parametry (-?, -v, -l)
+      ukonèí další zpracování pøíkazové øádky a vyskoèí z programu.
+
+    * Drobné optimalizace velikosti programu.
+
+    * Opraveno ukládání seznamu nestažených souborù: pokud byl seznam prázdný,
+      nepøepsal už døíve uložený seznam.
+
+    * Program nyní používá pro regulární výrazy komponentu TPerlRegEx místo
+      pùvodní DPCRE. To sice mùže vést k problémùm u nìkterých poskytovatelù, 
+      kteøí døíve fungovali (øadu z nich jsem testoval a fungují, ale 
+      neovìøoval jsem všechny), ale umožnilo mi to obejít se bez knihovny
+      PCRE.DLL a hlavnì to bude mnohem lépe udržovatelné do budoucnosti,
+      protože TPerlRegExp je celkem pravidelnì aktualizován a oficiálnì
+      podporuje i nové verze Delphi (2009 a 2010).
+
+
+
   v0.39
 
     * GUI verze: Automaticky se ukládá seznam videí ke stažení, a tento seznam

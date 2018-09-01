@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uNestedDownloader,
   downYouTube;
 
@@ -59,8 +59,8 @@ end;
 
 destructor TDownloader_Bomba.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  NestedUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 

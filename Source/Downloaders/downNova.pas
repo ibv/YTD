@@ -6,14 +6,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
   TDownloader_Nova = class(TRtmpDownloader)
     private
     protected
-      MovieVariablesRegExp: IRegEx;
+      MovieVariablesRegExp: TRegExp;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -62,7 +62,7 @@ end;
 
 destructor TDownloader_Nova.Destroy;
 begin
-  MovieVariablesRegExp := nil;
+  RegExFreeAndNil(MovieVariablesRegExp);
   inherited;
 end;
 
@@ -77,8 +77,7 @@ begin
 end;
 
 function TDownloader_Nova.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Variables: IMatchCollection;
-    i: integer;
+var i: integer;
     Name, Value: string;
     MediaID, SiteID, SectionID, SessionID, UserAdID: string;
     ServersUrl, Servers, VideosUrl, Videos: string;
@@ -87,27 +86,9 @@ var Variables: IMatchCollection;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  MediaID := '';
-  SiteID := '';
-  SectionID := '';
   SessionID := '';
   UserAdID := '';
-  Variables := MovieVariablesRegExp.Matches(Page);
-  try
-    for i := 0 to Pred(Variables.Count) do
-      begin
-      Name := Variables.Items[i].Groups.ItemsByName['VARNAME'].Value;
-      Value := Variables.Items[i].Groups.ItemsByName['VARVALUE'].Value;
-      if AnsiCompareText(Name, 'media_id') = 0 then
-        MediaID := Value
-      else if AnsiCompareText(Name, 'site_id') = 0 then
-        SiteID := Value
-      else if AnsiCompareText(Name, 'section_id') = 0 then
-        SectionID := Value;
-      end;
-  finally
-    Variables := nil;
-    end;
+  GetRegExpVarPairs(MovieVariablesRegExp, Page, ['media_id', 'site_id', 'section_id'], [@MediaID, @SiteID, @SectionID]);
   for i := 0 to Pred(Http.Cookies.Count) do
     begin
     Name := Http.Cookies.Names[i];

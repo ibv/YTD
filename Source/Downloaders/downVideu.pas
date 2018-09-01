@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Videu = class(THttpDownloader)
     private
     protected
-      InfoUrlRegExp: IRegEx;
+      InfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -61,8 +61,8 @@ end;
 
 destructor TDownloader_Videu.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  InfoUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(InfoUrlRegExp);
   inherited;
 end;
 
@@ -73,30 +73,21 @@ end;
 
 function TDownloader_Videu.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Info, VidType, VidID, VidHost: string;
-    Match: IMatch;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not DownloadPage(Http, 'http://www.videu.de/zgst372zst4u3.php?iid=' + MovieID, Info) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else if not InfoUrlRegExp.Match(Info) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
-    Match := InfoUrlRegExp.Match(Info);
-    try
-      if not Match.Matched then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        VidType := Match.Groups.ItemsByName['TYPE'].Value;
-        VidID := Match.Groups.ItemsByName['ID'].Value;
-        VidHost := Match.Groups.ItemsByName['HOST'].Value;
-        MovieUrl := 'http://' + VidHost + '/userfiles/items/' + VidType + '/' + VidID + '/' + UpperCase(MovieID) + '_VIDEO1.flv';
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Match := nil;
-      end;
+    VidType := InfoUrlRegExp.SubexpressionByName('TYPE');
+    VidID := InfoUrlRegExp.SubexpressionByName('ID');
+    VidHost := InfoUrlRegExp.SubexpressionByName('HOST');
+    MovieUrl := 'http://' + VidHost + '/userfiles/items/' + VidType + '/' + VidID + '/' + UpperCase(MovieID) + '_VIDEO1.flv';
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

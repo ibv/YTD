@@ -5,16 +5,16 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Break = class(THttpDownloader)
     private
     protected
-      MoviePlayerRegExp: IRegEx;
-      VideoFromPlayerRegExp: IRegEx;
-      TokenFromPlayerRegExp: IRegEx;
+      MoviePlayerRegExp: TRegExp;
+      VideoFromPlayerRegExp: TRegExp;
+      TokenFromPlayerRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -68,10 +68,10 @@ end;
 
 destructor TDownloader_Break.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MoviePlayerRegExp := nil;
-  VideoFromPlayerRegExp := nil;
-  TokenFromPlayerRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MoviePlayerRegExp);
+  RegExFreeAndNil(VideoFromPlayerRegExp);
+  RegExFreeAndNil(TokenFromPlayerRegExp);
   inherited;
 end;
 

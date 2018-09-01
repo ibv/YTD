@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_ESPN = class(THttpDownloader)
     private
     protected
-      PlayerIDRegExp: IRegEx;
+      PlayerIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -61,7 +61,7 @@ end;
 
 destructor TDownloader_ESPN.Destroy;
 begin
-  PlayerIDRegExp := nil;
+  RegExFreeAndNil(PlayerIDRegExp);
   inherited;
 end;
 

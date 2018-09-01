@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
@@ -13,7 +13,7 @@ type
     private
       fFileNameExt: string;
     protected
-      InfoUrlRegExp: IRegEx;
+      InfoUrlRegExp: TRegExp;
       property FileNameExt: string read fFileNameExt write fFileNameExt; 
     protected
       function GetMovieInfoUrl: string; override;
@@ -65,8 +65,8 @@ end;
 
 destructor TDownloader_CrunchyRoll.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  InfoUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(InfoUrlRegExp);
   inherited;
 end;
 

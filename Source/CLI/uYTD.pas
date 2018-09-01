@@ -23,7 +23,7 @@ type
     protected
       function AppTitle: string; override;
       function AppVersion: string; override;
-      function DoExecute: boolean; override;
+      function DoExecute: integer; override;
       procedure ShowSyntax(const Error: string = ''); override;
       procedure ParamInitialize; override;
       property UrlList: TStringList read fUrlList;
@@ -45,6 +45,12 @@ type
       destructor Destroy; override;
       property Options: TYTDOptions read fOptions;
     end;
+
+const
+  RESCODE_DOWNLOADFAILED = 1;
+  RESCODE_NOURLS = 2;
+  RESCODE_BADPARAMS = 3;
+  RESCODE_BADDATA = 4;
 
 implementation
 
@@ -155,15 +161,18 @@ begin
     Options.Init;
 end;
 
-function TYTD.DoExecute: boolean;
+function TYTD.DoExecute: integer;
 var Param: string;
     n: integer;
 begin
-  Result := False;
   if ParamCount = 0 then
-    ShowSyntax
+    begin
+    ShowSyntax;
+    Result := RESCODE_OK;
+    end
   else
     begin
+    Result := RESCODE_NOURLS;
     ParamInitialize;
     while ParamGetNext(Param) do
       if Param[1] = '-' then
@@ -171,17 +180,23 @@ begin
         if (Param = '-?') or (Param = '-h') then
           begin
           ShowSyntax;
-          Result := True;
+          if Result in [RESCODE_OK, RESCODE_NOURLS] then
+            Result := RESCODE_OK;
+          Break;
           end
         else if (Param = '-l') then
           begin
           ShowProviders;
-          Result := True;
+          if Result in [RESCODE_OK, RESCODE_NOURLS] then
+            Result := RESCODE_OK;
+          Break;
           end
         else if (Param = '-v') then
           begin
           ShowVersion;
-          Result := True;
+          if Result in [RESCODE_OK, RESCODE_NOURLS] then
+            Result := RESCODE_OK;
+          Break;
           end
         else if (Param = '-n') then
           Options.OverwriteMode := omNever
@@ -199,46 +214,90 @@ begin
               DeleteFile(Param);
             end
           else
-            ShowSyntax(_('With -e a filename must be provided.')) // CLI: Error message for invalid command line argument
+            begin
+            ShowSyntax(_('With -e a filename must be provided.')); // CLI: Error message for invalid command line argument
+            Result := RESCODE_BADPARAMS;
+            Break;
+            end
         else if (Param = '-s') then
           if ParamGetNext(Param) then
             begin
             n := DownloadURLsFromHTML(Param);
-            if n > 0 then
-              Result := True
-            else if n = 0 then
-              ShowSyntax(_('HTML source "%s" doesn''t contain any useful links.'), [Param]) // CLI: Error message for invalid command line argument
-            else
+            if n = 0 then
+              begin
+              ShowSyntax(_('HTML source "%s" doesn''t contain any useful links.'), [Param]); // CLI: Error message for invalid command line argument
+              Result := RESCODE_DOWNLOADFAILED;
+              end
+            else if n < 0 then
+              begin
               ShowSyntax(_('HTML source "%s" not found.'), [Param]); // CLI: Error message for invalid command line argument
+              Result := RESCODE_BADDATA;
+              Break;
+              end
+            else
+              if Result = RESCODE_NOURLS then
+                Result := RESCODE_OK;
             end
           else
-            ShowSyntax(_('With -h a filename or an URL must be provided.')) // CLI: Error message for invalid command line argument
+            begin
+            ShowSyntax(_('With -s a filename or an URL must be provided.')); // CLI: Error message for invalid command line argument
+            Result := RESCODE_BADPARAMS;
+            Break;
+            end
         else if (Param = '-i') then
           if ParamGetNext(Param) then
             if FileExists(Param) then
-              begin
               if DownloadURLsFromFileList(Param) > 0 then
-                Result := True;
-              end
+                begin
+                if Result = RESCODE_NOURLS then
+                  Result := RESCODE_OK;
+                end
+              else
+                Result := RESCODE_DOWNLOADFAILED
             else
-              ShowSyntax(_('URL list-file "%s" not found.'), [Param]) // CLI: Error message for invalid command line argument
+              begin
+              ShowSyntax(_('URL list-file "%s" not found.'), [Param]); // CLI: Error message for invalid command line argument
+              Result := RESCODE_BADDATA;
+              Break;
+              end
           else
-            ShowSyntax(_('With -i a filename must be provided.')) // CLI: Error message for invalid command line argument
+            begin
+            ShowSyntax(_('With -i a filename must be provided.')); // CLI: Error message for invalid command line argument
+            Result := RESCODE_BADPARAMS;
+            Break;
+            end
         else if (Param = '-o') then
           if ParamGetNext(Param) then
             if DirectoryExists(Param) then
               Options.DestinationPath := Param
             else
-              ShowSyntax(_('Destination directory "%s" not found.'), [Param]) // CLI: Error message for invalid command line argument
+              begin
+              ShowSyntax(_('Destination directory "%s" not found.'), [Param]); // CLI: Error message for invalid command line argument
+              Result := RESCODE_BADDATA;
+              Break;
+              end
           else
-            ShowSyntax(_('With -o a directory name must be provided.')) // CLI: Error message for invalid command line argument
+            begin
+            ShowSyntax(_('With -o a directory name must be provided.')); // CLI: Error message for invalid command line argument
+            Result := RESCODE_BADPARAMS;
+            Break;
+            end
         else
+          begin
           ShowSyntax(_('Unknown parameter "%s".'), [Param]); // CLI: Error message for invalid command line argument
+          Result := RESCODE_BADPARAMS;
+          Break;
+          end
         end
       else
         if DownloadURL(Param) then
-          Result := True;
-    if not Result then
+          begin
+          if Result = RESCODE_NOURLS then
+            Result := RESCODE_OK;
+          end
+        else
+          Result := RESCODE_DOWNLOADFAILED;
+    if Result = RESCODE_NOURLS then
       ShowError(_('No valid URLs found.')); // CLI: Error message for invalid command line argument
     end;
 end;

@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_GodTube = class(THttpDownloader)
     private
     protected
-      PlaylistRegExp: IRegEx;
+      PlaylistRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -60,7 +60,7 @@ end;
 
 destructor TDownloader_GodTube.Destroy;
 begin
-  PlaylistRegExp := nil;
+  RegExFreeAndNil(PlaylistRegExp);
   inherited;
 end;
 

@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_CekniTo = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: IRegEx;
+      MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -61,8 +61,8 @@ end;
 
 destructor TDownloader_CekniTo.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieIDRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
   inherited;
 end;
 

@@ -223,6 +223,7 @@ end;
 
 procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  DownloadList.StopAll;
   SaveSettings;
 end;
 
@@ -673,7 +674,7 @@ begin
     for i := 0 to Pred(DownloadList.Count) do
       if DownloadList[i].State <> dtsFinished then
         L.Add(DownloadList.Urls[i]);
-    if L.Count > 0 then
+    //if L.Count > 0 then
       if Options.DontUseRegistry then
         begin
         try

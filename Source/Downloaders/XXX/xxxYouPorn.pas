@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_YouPorn = class(THttpDownloader)
     private
     protected
-      MovieInfoUrlRegExp: IRegEx;
+      MovieInfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; override;
@@ -62,8 +62,8 @@ end;
 
 destructor TDownloader_YouPorn.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieInfoUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieInfoUrlRegExp);
   inherited;
 end;
 

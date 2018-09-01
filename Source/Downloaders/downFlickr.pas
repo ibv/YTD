@@ -5,17 +5,17 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Flickr = class(THttpDownloader)
     private
     protected
-      VideoSrcRegExp: IRegEx;
-      PhotoSecretRegexp: IRegEx;
-      PhotoIdRegExp: IRegEx;
-      VideoExtensionRegExp: IRegEx;
+      VideoSrcRegExp: TRegExp;
+      PhotoSecretRegexp: TRegExp;
+      PhotoIdRegExp: TRegExp;
+      VideoExtensionRegExp: TRegExp;
       Extension: string;
     protected
       function GetMovieInfoUrl: string; override;
@@ -71,10 +71,10 @@ end;
 
 destructor TDownloader_Flickr.Destroy;
 begin
-  VideoSrcRegExp := nil;
-  PhotoSecretRegexp := nil;
-  PhotoIdRegexp := nil;
-  VideoExtensionRegExp := nil;
+  RegExFreeAndNil(VideoSrcRegExp);
+  RegExFreeAndNil(PhotoSecretRegexp);
+  RegExFreeAndNil(PhotoIdRegexp);
+  RegExFreeAndNil(VideoExtensionRegExp);
   inherited;
 end;
 

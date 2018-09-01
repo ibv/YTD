@@ -1,0 +1,3 @@
+- compatibility with Delphi 5 (using jedi.inc)
+- use statically linked PCRE (no pcre.dll dependency)
+- change constant MAX_SUBEXPRESSIONS to 65536 (IMPORTANT!!!)

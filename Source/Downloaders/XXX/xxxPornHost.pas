@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -56,7 +56,7 @@ end;
 
 destructor TDownloader_PornHost.Destroy;
 begin
-  MovieUrlRegExp := nil;
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 

@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_VitalMtb = class(THttpDownloader)
     private
     protected
-      XmlPathRegExp: IRegEx;
+      XmlPathRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -60,7 +60,7 @@ end;
 
 destructor TDownloader_VitalMtb.Destroy;
 begin
-  XmlPathRegExp := nil;
+  RegExFreeAndNil(XmlPathRegExp);
   inherited;
 end;
 

@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader;
 
 type
@@ -14,11 +14,11 @@ type
       fUrlList: TStringList;
       fNameList: TStringList;
     protected
-      PlayListItemRegExp: IRegEx;
+      PlayListItemRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      function GetPlayListItemName(Match: IMatch; Index: integer): string; virtual;
-      function GetPlayListItemURL(Match: IMatch; Index: integer): string; virtual;
+      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; virtual;
+      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; virtual;
       function GetItemCount: integer; virtual;
       function GetItemUrl(Index: integer): string; virtual;
       function GetItemName(Index: integer): string; virtual;
@@ -67,7 +67,7 @@ destructor TPlaylistDownloader.Destroy;
 begin
   FreeAndNil(fUrlList);
   FreeAndNil(fNameList);
-  PlayListItemRegExp := nil;
+  RegExFreeAndNil(PlayListItemRegExp);
   inherited;
 end;
 
@@ -91,39 +91,38 @@ begin
   Result := NameList[Index];
 end;
 
-function TPlaylistDownloader.GetPlayListItemName(Match: IMatch; Index: integer): string;
+function TPlaylistDownloader.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
 begin
   Result := Format(_(MSG_PLAYLIST_ITEM), [Index]);
 end;
 
-function TPlaylistDownloader.GetPlayListItemURL(Match: IMatch; Index: integer): string;
+function TPlaylistDownloader.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
 begin
-  Result := Match.Groups.ItemsByName['URL'].Value;
+  Result := Match.SubexpressionByName('URL');
 end;
 
 function TPlayListDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Urls: IMatchCollection;
-    Url: string;
+var Url: string;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if PlayListItemRegExp <> nil then
-    begin
-    Urls := PlayListItemRegExp.Matches(Page);
-    if Urls.Count <= 0 then
+    if not PlayListItemRegExp.Match(Page) then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
-      for i := 0 to Pred(Urls.Count) do
-        begin
-        Url := GetPlayListItemURL(Urls[i], i);
+      begin
+      i := 0;
+      repeat
+        Url := GetPlayListItemURL(PlayListItemRegExp, i);
         if (Url <> '') and (UrlList.IndexOf(Url) < 0) then
           begin
           UrlList.Add(Url);
-          NameList.Add(GetPlayListItemName(Urls[i], i));
+          NameList.Add(GetPlayListItemName(PlayListItemRegExp, i));
           end;
-        end;
-    end;
+        Inc(i);
+      until not PlayListItemRegExp.MatchAgain;
+      end;
   if UrlList.Count <= 0 then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else

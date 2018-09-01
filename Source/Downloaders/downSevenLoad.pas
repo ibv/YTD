@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_SevenLoad = class(THttpDownloader)
     private
     protected
-      ConfigUrlRegExp: IRegEx;
+      ConfigUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -60,7 +60,7 @@ end;
 
 destructor TDownloader_SevenLoad.Destroy;
 begin
-  ConfigUrlRegExp := nil;
+  RegExFreeAndNil(ConfigUrlRegExp);
   inherited;
 end;
 

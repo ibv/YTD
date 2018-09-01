@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_XVideos = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: IRegEx;
-      FlashMovieUrlRegExp: IRegEx;
+      FlashVarsRegExp: TRegExp;
+      FlashMovieUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -63,9 +63,9 @@ end;
 
 destructor TDownloader_XVideos.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  FlashVarsRegExp := nil;
-  FlashMovieUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashMovieUrlRegExp);
   inherited;
 end;
 

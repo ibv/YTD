@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uMSDownloader;
 
 type
   TDownloader_TVcom = class(TMSDownloader)
     private
     protected
-      ConfigXmlRegExp: IRegEx;
-      MMSUrlRegExp: IRegEx;
+      ConfigXmlRegExp: TRegExp;
+      MMSUrlRegExp: TRegExp;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -66,9 +66,9 @@ end;
 
 destructor TDownloader_TVcom.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  ConfigXmlRegExp := nil;
-  MMSUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(ConfigXmlRegExp);
+  RegExFreeAndNil(MMSUrlRegExp);
   inherited;
 end;
 

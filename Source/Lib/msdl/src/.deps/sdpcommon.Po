@@ -1,47 +1,47 @@
 sdpcommon.o sdpcommon.o: sdpcommon.c \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h \
   msdllib.h \
-  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h \
+  C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h \
   display.h sdpcommon.h
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h:
 
 msdllib.h:
 
-D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h:
+C:/C/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h:
 
 display.h:
 

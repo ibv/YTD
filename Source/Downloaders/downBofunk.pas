@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Bofunk = class(THttpDownloader)
     private
     protected
-      InfoUrlRegExp: IRegEx;
+      InfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -62,8 +62,8 @@ end;
 
 destructor TDownloader_Bofunk.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  InfoUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(InfoUrlRegExp);
   inherited;
 end;
 

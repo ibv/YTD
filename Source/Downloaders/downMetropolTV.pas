@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_MetropolTV = class(THttpDownloader)
     private
     protected
-      MovieParamsUrlRegExp: IRegEx; 
+      MovieParamsUrlRegExp: TRegExp; 
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -65,8 +65,8 @@ end;
 
 destructor TDownloader_MetropolTV.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieParamsUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieParamsUrlRegExp);
   inherited;
 end;
 

@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader,
   downGrindTV;
 
@@ -55,16 +55,16 @@ constructor TDownloader_StupidVideos.Create(const AMovieID: string);
 begin
   inherited;
   SetInfoPageEncoding(peUnknown);
-  MovieTitleRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieIdRegExp := nil;
+  RegExFreeAndNil(MovieIdRegExp);
   MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_StupidVideos.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieIdRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieIdRegExp);
   inherited;
 end;
 

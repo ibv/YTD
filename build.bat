@@ -54,9 +54,9 @@ if "%kol%"=="1" (
 )
 
 call :%compiler% lib\Pepak\*.pas
-call :%compiler% lib\Pepak\uAMF.pas
+call :%compiler% lib\Pepak\%extra%*.pas
 call :%compiler% lib\Synapse\source\lib\httpsend.pas
-call :%compiler% lib\dpcre67\pcre.pas
+call :%compiler% lib\PerlRegEx\PerlRegEx.pas
 call :%compiler% lib\janXmlParser2\janXmlParser2.pas
 call :%compiler% lib\RtmpDump\rtmpdump_dll.pas
 call :%compiler% lib\msdl\src\msdl_dll.pas
@@ -65,6 +65,7 @@ rem call :%compiler% Tools\AmfView.dpr
 call :%compiler% YTD.dpr
 popd
 if "%upx%"=="1" set upx= & upx --lzma Exe\ytd.exe & set upx=1
+if not "%upx%"=="1" ren Exe\YTD.exe ytd.exe
 goto konec
 
 :delphi

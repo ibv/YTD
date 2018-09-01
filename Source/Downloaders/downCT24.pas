@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend, SynaCode,
+  uPCRE, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uMSDownloader, downCT;
 
 type
   TDownloader_CT24 = class(TDownloader_CT)
     private
     protected
-      PortToIVysilaniRegExp: IRegEx;
-      PortTitleRegExp: IRegEx;
+      PortToIVysilaniRegExp: TRegExp;
+      PortTitleRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -55,8 +55,8 @@ end;
 
 destructor TDownloader_CT24.Destroy;
 begin
-  PortToIVysilaniRegExp := nil;
-  PortTitleRegExp := nil;
+  RegExFreeAndNil(PortToIVysilaniRegExp);
+  RegExFreeAndNil(PortTitleRegExp);
   inherited;
 end;
 

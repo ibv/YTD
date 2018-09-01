@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -13,6 +13,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,14 +61,19 @@ end;
 
 destructor TDownloader_FreeSk.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
 function TDownloader_FreeSk.GetMovieInfoUrl: string;
 begin
   Result := 'http://free.zoznam.sk/video/' + MovieID;
+end;
+
+function TDownloader_FreeSk.GetFileNameExt: string;
+begin
+  Result := '.flv';
 end;
 
 initialization

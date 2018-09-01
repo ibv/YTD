@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_XTube = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: IRegEx;
+      FlashVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -60,8 +60,8 @@ end;
 
 destructor TDownloader_XTube.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  FlashVarsRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
   inherited;
 end;
 
@@ -75,52 +75,28 @@ const
   PREFIX_FILENAME = '&filename=';
   PREFIX_FILENAME_LENGTH = Length(PREFIX_FILENAME);
 var
-  FlashVars: IMatchCollection;
   SwfUrl, UserID, VideoID, ClipID: string;
-  VarName, VarValue: string;
-  i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  FlashVars := FlashVarsRegExp.Matches(Page);
-  try
-    SwfUrl := '';
-    UserID := '';
-    VideoID := '';
-    ClipID := '';
-    for i := 0 to Pred(FlashVars.Count) do
-      begin
-      VarName := FlashVars[i].Groups.ItemsByName['VARNAME'].Value;
-      VarValue := FlashVars[i].Groups.ItemsByName['VARVALUE'].Value;
-      if VarName = 'swfURL' then
-        SwfUrl := VarValue
-      else if VarName = 'user_id' then
-        UserID := VarValue
-      else if VarName = 'video_id' then
-        VideoID := VarValue
-      else if VarName = 'clip_id' then
-        ClipID := VarValue;
-      end;
-    if SwfUrl = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['swfURL']))
-    else if UserID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['user_id']))
-    else if VideoID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['video_id']))
-    else if ClipID = '' then
-      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['clip_id']))
-    else if not DownloadPage(Http, 'http://video2.xtube.com/find_video.php?user_id=' + UserID + '&clip_id=' + ClipID + '&video_id=' + VideoID, Page) then
-      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-    else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-    else
-      begin
-      MovieUrl := SwfUrl + Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt);
-      SetPrepared(True);
-      Result := True;
-      end;
-  finally
-    FlashVars := nil;
+  GetRegExpVarPairs(FlashVarsRegExp, Page, ['swfURL', 'user_id', 'video_id', 'clip_id'], [@SwfUrl, @UserID, @VideoID, @ClipID]);
+  if SwfUrl = '' then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['swfURL']))
+  else if UserID = '' then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['user_id']))
+  else if VideoID = '' then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['video_id']))
+  else if ClipID = '' then
+    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['clip_id']))
+  else if not DownloadPage(Http, 'http://video2.xtube.com/find_video.php?user_id=' + UserID + '&clip_id=' + ClipID + '&video_id=' + VideoID, Page) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
+    begin
+    MovieUrl := SwfUrl + Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt);
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

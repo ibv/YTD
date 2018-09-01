@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  uPCRE, HttpSend, 
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_PornoTube = class(THttpDownloader)
     private
     protected
-      FlashIdRegExp: IRegEx;
-      FlashVarsRegExp: IRegEx;
+      FlashIdRegExp: TRegExp;
+      FlashVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -63,9 +63,9 @@ end;
 
 destructor TDownloader_PornoTube.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  FlashVarsRegExp := nil;
-  FlashIdRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashIdRegExp);
   inherited;
 end;
 
@@ -75,9 +75,7 @@ begin
 end;
 
 function TDownloader_PornoTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var FlashID, FlashVars, VarName, VarValue, MediaID, UserID, MediaDomain: string;
-    VarList: IMatchCollection;
-    i: integer;
+var FlashID, FlashVars, MediaID, UserID, MediaDomain: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -87,36 +85,18 @@ begin
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    VarList := FlashVarsRegExp.Matches(FlashVars);
-    try
-      MediaID := '';
-      UserID := '';
-      MediaDomain := '';
-      for i := 0 to Pred(VarList.Count) do
-        begin
-        VarName := VarList[i].Groups.ItemsByName['VARNAME'].Value;
-        VarValue := VarList[i].Groups.ItemsByName['VARVALUE'].Value;
-        if VarName = 'mediaId' then
-          MediaID := VarValue
-        else if VarName = 'userId' then
-          UserID := VarValue
-        else if VarName = 'mediaDomain' then
-          MediaDomain := VarValue;
-        end;
-      if MediaID = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaId']))
-      else if UserID = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['userId']))
-      else if MediaDomain = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaDomain']))
-      else
-        begin
-        MovieUrl := MediaDomain + '.pornotube.com/' + UserId + '/' + MediaID + '.flv';
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      VarList := nil;
+    GetRegExpVarPairs(FlashVarsRegExp, FlashVars, ['mediaId', 'userId', 'mediaDomain'], [@MediaID, @UserID, @MediaDomain]);
+    if MediaID = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaId']))
+    else if UserID = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['userId']))
+    else if MediaDomain = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaDomain']))
+    else
+      begin
+      MovieUrl := MediaDomain + '.pornotube.com/' + UserId + '/' + MediaID + '.flv';
+      SetPrepared(True);
+      Result := True;
       end;
     end;
 end;

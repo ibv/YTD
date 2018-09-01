@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_StreetFire = class(THttpDownloader)
     private
     protected
-      VideoIDRegExp: IRegEx;
+      VideoIDRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
@@ -60,8 +60,8 @@ end;
 
 destructor TDownloader_StreetFire.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  VideoIDRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(VideoIDRegExp);
   inherited;
 end;
 

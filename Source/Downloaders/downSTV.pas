@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uMSDownloader;
 
@@ -13,8 +13,8 @@ type
   TDownloader_STV = class(TMSDownloader)
     private
     protected
-      MovieObjectRegExp: IRegEx;
-      IVysilaniUrlRegExp: IRegEx;
+      MovieObjectRegExp: TRegExp;
+      IVysilaniUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;

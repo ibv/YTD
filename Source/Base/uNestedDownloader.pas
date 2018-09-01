@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend, blcksock, janXmlParser2,
+  uPCRE, HttpSend, blcksock, janXmlParser2,
   uDownloader, uCommonDownloader,
   uOptions;
 
@@ -17,8 +17,8 @@ type
       fFirstItem: boolean;
       {$ENDIF}
     protected
-      NestedIDRegExp: IRegEx;
-      NestedUrlRegExp: IRegEx;
+      NestedIDRegExp: TRegExp;
+      NestedUrlRegExp: TRegExp;
     protected
       function GetFileName: string; override;
       function GetThisFileName: string; virtual;
@@ -59,8 +59,8 @@ end;
 destructor TNestedDownloader.Destroy;
 begin
   FreeAndNil(fNestedDownloader);
-  NestedIDRegExp := nil;
-  NestedUrlRegExp := nil;
+  RegExFreeAndNil(NestedIDRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
@@ -168,7 +168,7 @@ begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO));
-  if (NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) and CreateNestedDownloaderFromID(ID) then
+  if (NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) and (ID <> '') and CreateNestedDownloaderFromID(ID) then
     begin
     if NestedUrlRegExp <> nil then
       if GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) then
@@ -176,7 +176,7 @@ begin
     SetPrepared(True);
     Result := True;
     end
-  else if (NestedUrlRegExp <> nil) and GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) and CreateNestedDownloaderFromURL(Url) then
+  else if (NestedUrlRegExp <> nil) and GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) and (Url <> '') and CreateNestedDownloaderFromURL(Url) then
     begin
     MovieUrl := Url;
     SetPrepared(True);

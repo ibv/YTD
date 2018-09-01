@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Muzu = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: IRegEx;
-      FlashVarsVariablesRegExp: IRegEx;
+      FlashVarsRegExp: TRegExp;
+      FlashVarsVariablesRegExp: TRegExp;
       NetworkID, VideoID, ChannelID: string;
     protected
       function GetMovieInfoUrl: string; override;
@@ -68,9 +68,9 @@ end;
 
 destructor TDownloader_Muzu.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  FlashVarsRegExp := nil;
-  FlashVarsVariablesRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarsVariablesRegExp);
   inherited;
 end;
 
@@ -80,68 +80,44 @@ begin
 end;
 
 function TDownloader_Muzu.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var FlashVarsInfo, CountryID, NetworkVersion, VarName, VarValue, InfoXml, Url: string;
-    FlashVars: IMatchCollection;
-    i: integer;
+var FlashVarsInfo, CountryID, NetworkVersion, InfoXml, Url: string;
     Xml: TjanXmlParser2;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  NetworkID := '';
-  VideoID := '';
-  ChannelID := '';
   if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVarsInfo) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
   else
     begin
-    FlashVars := FlashVarsVariablesRegExp.Matches(FlashVarsInfo);
-    try
-      CountryID := '';
-      NetworkVersion := '';
-      for i := 0 to Pred(FlashVars.Count) do
-        begin
-        VarName := FlashVars[i].Groups.ItemsByName['VARNAME'].Value;
-        VarValue := FlashVars[i].Groups.ItemsByName['VARVALUE'].Value;
-        if AnsiCompareText(VarName, 'networkId') = 0 then
-          NetworkID := VarValue
-        else if AnsiCompareText(VarName, 'vidId') = 0 then
-          VideoID := VarValue
-        else if AnsiCompareText(VarName, 'countryIdentity') = 0 then
-          CountryID := VarValue
-        else if AnsiCompareText(VarName, 'networkVersion') = 0 then
-          NetworkVersion := VarValue;
-        end;
-      if NetworkID = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkId']))
-      else if VideoID = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['vidId']))
-      else if CountryID = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['countryIdentity']))
-      else if NetworkVersion = '' then
-        SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkVersion']))
-      else if not DownloadPage(Http, 'http://www.muzu.tv/player/networkVideos/' + NetworkID + '?countryIdentity=' + CountryID + '&networkVersion=' + NetworkVersion + '&hostName=http%3A%2F%2Fwww%2Emuzu%2Etv', InfoXml, peUtf8) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-      else
-        begin
-        Xml := TjanXmlParser2.Create;
-        try
-          Xml.Xml := InfoXml;
-          if not GetXmlAttr(Xml, 'channels/channel', 'id', ChannelID) then
-            SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['channelId']))
-          else if not GetMuzuMediaUrl(Url) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-          else
-            begin
-            MovieUrl := Url;
-            SetPrepared(True);
-            Result := True;
-            end;
-        finally
-          Xml.Free;
+    GetRegExpVarPairs(FlashVarsVariablesRegExp, FlashVarsInfo, ['networkId', 'vidId', 'countryIdentity', 'networkVersion'], [@NetworkID, @VideoID, @CountryID, @NetworkVersion]);
+    if NetworkID = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkId']))
+    else if VideoID = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['vidId']))
+    else if CountryID = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['countryIdentity']))
+    else if NetworkVersion = '' then
+      SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkVersion']))
+    else if not DownloadPage(Http, 'http://www.muzu.tv/player/networkVideos/' + NetworkID + '?countryIdentity=' + CountryID + '&networkVersion=' + NetworkVersion + '&hostName=http%3A%2F%2Fwww%2Emuzu%2Etv', InfoXml, peUtf8) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    else
+      begin
+      Xml := TjanXmlParser2.Create;
+      try
+        Xml.Xml := InfoXml;
+        if not GetXmlAttr(Xml, 'channels/channel', 'id', ChannelID) then
+          SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['channelId']))
+        else if not GetMuzuMediaUrl(Url) then
+          SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+        else
+          begin
+          MovieUrl := Url;
+          SetPrepared(True);
+          Result := True;
           end;
+      finally
+        Xml.Free;
         end;
-    finally
-      FlashVars := nil;
       end;
     end;
 end;

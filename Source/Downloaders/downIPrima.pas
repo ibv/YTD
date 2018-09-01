@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, downStream;
 
 type
   TDownloader_iPrima = class(TDownloader_Stream)
     private
     protected
-      StreamIDRegExp: IRegEx;
+      StreamIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
     public
@@ -64,7 +64,7 @@ end;
 
 destructor TDownloader_iPrima.Destroy;
 begin
-  StreamIDRegExp := nil;
+  RegExFreeAndNil(StreamIDRegExp);
   inherited;
 end;
 

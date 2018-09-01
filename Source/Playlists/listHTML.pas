@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uPlaylistDownloader,
   uDownloadClassifier;
 
@@ -15,7 +15,7 @@ type
       fClassifier: TDownloadClassifier;
     protected
       function GetUrlRegExp: string; virtual;
-      function GetPlayListItemURL(Match: IMatch; Index: integer): string; override;
+      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       property Classifier: TDownloadClassifier read fClassifier;
     public
       constructor Create(const AMovieID: string); override;
@@ -38,7 +38,7 @@ end;
 
 destructor TPlaylist_HTML.Destroy;
 begin
-  PlaylistItemRegExp := nil;
+  RegExFreeAndNil(PlaylistItemRegExp);
   FreeAndNil(fClassifier);
   inherited;
 end;
@@ -48,7 +48,7 @@ begin
   Result := REGEXP_URL;
 end;
 
-function TPlaylist_HTML.GetPlayListItemURL(Match: IMatch; Index: integer): string;
+function TPlaylist_HTML.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
 begin
   Result := inherited GetPlayListItemURL(Match, Index);
   Result := HtmlDecode(Result);

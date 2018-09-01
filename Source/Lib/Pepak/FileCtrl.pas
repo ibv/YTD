@@ -3,13 +3,13 @@ unit FileCtrl;
 
 interface
 
-uses
-  SysUtils, Windows;
-
 function DirectoryExists(const Name: string): boolean;
 function ForceDirectories(Dir: string): Boolean;
 
 implementation
+
+uses
+  SysUtils, Windows;
 
 function DirectoryExists(const Name: string): boolean;
 var

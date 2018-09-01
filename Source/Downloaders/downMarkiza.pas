@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Markiza = class(THttpDownloader)
     private
     protected
-      FileInfoRegExp: IRegEx;
+      FileInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -60,7 +60,7 @@ end;
 
 destructor TDownloader_Markiza.Destroy;
 begin
-  FileInfoRegExp := nil;
+  RegExFreeAndNil(FileInfoRegExp);
   inherited;
 end;
 

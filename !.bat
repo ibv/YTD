@@ -1,2 +1,2 @@
 @echo off
-call build delphi5
+call build delphi5 noupx

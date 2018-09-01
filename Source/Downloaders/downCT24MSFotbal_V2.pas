@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend, SynaCode,
+  uPCRE, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uMSDownloader, downCT24MSFotbal;
 
 type
@@ -71,13 +71,13 @@ constructor TDownloader_CT24MSFotbal_V2.Create(const AMovieID: string);
 begin
   inherited;
   SetInfoPageEncoding(peUTF8);
-  MovieTitleRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_CT24MSFotbal_V2.Destroy;
 begin
-  MovieTitleRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
   inherited;
 end;
 

@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Facebook = class(THttpDownloader)
     private
     protected
-      MovieUrlHQRegExp: IRegEx;
-      MovieUrlLQRegExp: IRegEx;
+      MovieUrlHQRegExp: TRegExp;
+      MovieUrlLQRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -64,9 +64,9 @@ end;
 
 destructor TDownloader_Facebook.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieUrlHQRegExp := nil;
-  MovieUrlLQRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlHQRegExp);
+  RegExFreeAndNil(MovieUrlLQRegExp);
   inherited;
 end;
 

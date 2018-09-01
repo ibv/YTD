@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
 
 type
   TPlaylist_GameAnyone = class(TPlaylistDownloader)
     private
     protected
-      function GetPlayListItemName(Match: IMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: IMatch; Index: integer): string; override;
+      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
+      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
     public
       class function Provider: string; override;
@@ -56,7 +56,7 @@ end;
 
 destructor TPlaylist_GameAnyone.Destroy;
 begin
-  PlayListItemRegExp := nil;
+  RegExFreeAndNil(PlayListItemRegExp);
   inherited;
 end;
 
@@ -65,14 +65,14 @@ begin
   Result := 'http://www.gameanyone.com/game/dummy/' + MovieID;
 end;
 
-function TPlaylist_GameAnyone.GetPlayListItemName(Match: IMatch; Index: integer): string;
+function TPlaylist_GameAnyone.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
 begin
-  Result := Trim(Match.Groups.ItemsByName['NAME'].Value);
+  Result := Trim(Match.SubexpressionByName('NAME'));
 end;
 
-function TPlaylist_GameAnyone.GetPlayListItemURL(Match: IMatch; Index: integer): string;
+function TPlaylist_GameAnyone.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
 begin
-  Result := 'http://www.gameanyone.com/video/' + Match.Groups.ItemsByName['ID'].Value;
+  Result := 'http://www.gameanyone.com/video/' + Match.SubexpressionByName('ID');
 end;
 
 initialization

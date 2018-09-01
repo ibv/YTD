@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.39                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.40                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -45,6 +45,10 @@ PODPOROVANÉ WEBY
 
  - Break.com
      - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
+
+ - Cas.sk
+     - http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
+     - http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
 
  - CekniTo.cz / CekniTo.sk
      - http://www.ceknito.cz/video/446074
@@ -151,6 +155,7 @@ PODPOROVANÉ WEBY
 
  - LiveLeak.com:
      - http://www.liveleak.com/view?i=6f4_1272904024
+     - http://www.liveleak.com/e/57d_1278546690
 
  - LiveVideo.com:
      - http://www.livevideo.com/liveshow/brian3maria
@@ -159,6 +164,12 @@ PODPOROVANÉ WEBY
      - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
 
      Pozn.: Poøady mohou být tvoøeny nìkolika rùznými video soubory.
+
+ - MediaSport.cz:
+     - http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
+
+     Pozn.: Název videa není nikde na stránce dostupný, používá se proto
+            pùvodní název, jak je soubor uložený na serveru.
 
  - MegaVideo.com:
      - http://www.megavideo.com/?v=2MJBY4HB
@@ -451,6 +462,7 @@ V sekci [YTD] jsou následující nastavení:
       že jsou dostupné všude (ukládá se do vìtve HKEY_CURRENT_USER), zatímco
       INI soubor nemusí být kvùli pøístupovým právùm dostupný; zato se hodí v 
       pøípadì, že chcete aplikaci používat jako portable.
+    - Command-line verze nikdy nepoužívá registry.
     - Možné hodnoty jsou "0" (používat registry) a "1" (nepoužívat registry).
     - Výchozí hodnota je "0".
 
@@ -520,6 +532,29 @@ SYNTAXE
          ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
+
+
+
+NÁVRATOVÉ KÓDY
+--------------
+
+Verze pro pøíkazový øádek podporuje návratové kódy (errorlevel). Možné hodnoty
+jsou:
+
+  0 ..... Operace a všechny downloady probìhly úspìšnì. 
+          Pozor! V pøípadì stahování z playlistu nebo ze souboru s URL staèí,
+          aby se úspìšnì stáhnul libovolný odkaz. Pokud chcete využívat 
+          návratové kódy, je vhodné stahovat vždy jen jeden soubor a pro více
+          souborù zavolat víckrát YouTube Downloader.
+  1 ..... Chyba pøi kterémkoliv downloadu.
+  2 ..... Nebyly nalezeny žádné použitelné URL.
+  3 ..... Neplatná syntaxe. Byl uveden neznámý parametr nebo nebyla uvedena
+          povinná hodnota parametru (napø. pro parametr -i, viz výše).
+  4 ..... Chybný obsah parametru. Chyba je vyvolána u parametrù s povinnou
+          hodnotou, pokud sice hodnota je zadána, ale její obsah není oèekáván
+          - napø. pokud za parametru -i zadáte název neexistujícího souboru).
+  254 ... Aplikace byla pøerušena z popudu uživatele.
+  255 ... V aplikaci došlo k výjimce, tzn. chyba v programu.
 
 
 
@@ -600,15 +635,15 @@ YouTube Downloader využívá ke své funkci komponenty dalších autorù:
   - licence: vlastní, freeware
   - zdroj: http://synapse.ararat.cz/
 
+- Jan Goyvaerts
+  - knihovna PerlRegEx pro vyhodnocování regulárních výrazù.
+  - licence: Mozilla Public License 1.1
+  - zdroj: http://www.regular-expressions.info/delphi.html
+
 - Mark James
   - ikonky Silk použité v grafické verzi programu.
   - licence: Creative Common Attribution 2.5
   - zdroj: http://www.famfamfam.com/lab/icons/silk/
-
-- Renato Mancuso (mancuso@renatomancuso.com)
-  - knihovna DPCRE pro vyhodnocování regulárních výrazù.
-  - licence: vlastní, freeware
-  - zdroj: http://www.renatomancuso.com/software/dpcre/dpcre.htm
 
 - Jun "metro" Oyama (me_t_ro@yahoo.com)
   - MSDL, nástroj pro stahování protokolù MMS, RTSP a jejich variant.

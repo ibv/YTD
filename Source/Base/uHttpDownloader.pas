@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend, blcksock,
+  uPCRE, HttpSend, blcksock,
   uDownloader, uCommonDownloader;
 
 type
@@ -193,6 +193,7 @@ begin
     if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then
       begin
       SetName(NameList[DownloadIndex]);
+      SetFileName('');
       MovieURL := UrlList[DownloadIndex];
       Result := True;
       end;

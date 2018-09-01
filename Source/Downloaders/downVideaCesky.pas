@@ -6,16 +6,16 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
   TDownloader_VideaCesky = class(TNestedDownloader)
     private
     protected
-      YouTubeUrlRegexp1, YouTubeUrlRegExp2: IRegEx;
+      YouTubeUrlRegexp1, YouTubeUrlRegExp2: TRegExp;
       {$IFDEF SUBTITLES}
-      SubtitlesRegExp1, SubtitlesRegExp2: IRegEx;
+      SubtitlesRegExp1, SubtitlesRegExp2: TRegExp;
       Subtitles: string;
       SubtitlesName: string;
       {$ENDIF}
@@ -79,13 +79,13 @@ end;
 
 destructor TDownloader_VideaCesky.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  //NestedUrlRegExp := nil;
-  YouTubeUrlRegExp1 := nil;
-  YouTubeUrlRegExp2 := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  //RegExFreeAndNil(NestedUrlRegExp);
+  RegExFreeAndNil(YouTubeUrlRegExp1);
+  RegExFreeAndNil(YouTubeUrlRegExp2);
   {$IFDEF SUBTITLES}
-  SubtitlesRegExp1 := nil;
-  SubtitlesRegExp2 := nil;
+  RegExFreeAndNil(SubtitlesRegExp1);
+  RegExFreeAndNil(SubtitlesRegExp2);
   {$ENDIF}
   inherited;
 end;
@@ -96,14 +96,15 @@ begin
 end;
 
 function TDownloader_VideaCesky.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+{$IFDEF SUBTITLES}
 var Url: string;
+{$ENDIF}
 begin
   try
     NestedUrlRegExp := YouTubeUrlRegExp1;
     Result := inherited AfterPrepareFromPage(Page, Http);
     if not Result then
       begin
-      NestedUrlRegExp := nil;
       NestedUrlRegExp := YouTubeUrlRegExp2;
       Result := inherited AfterPrepareFromPage(Page, Http);
       end;

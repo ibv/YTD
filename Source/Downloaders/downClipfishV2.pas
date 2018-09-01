@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, downClipfish;
 
 type
   TDownloader_ClipfishV2 = class(TDownloader_Clipfish)
     private
     protected
-      MovieIDFromPageRegExp: IRegEx;
+      MovieIDFromPageRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
     public
@@ -52,7 +52,7 @@ end;
 
 destructor TDownloader_ClipfishV2.Destroy;
 begin
-  MovieIDFromPageRegExp := nil;
+  RegExFreeAndNil(MovieIDFromPageRegExp);
   inherited;
 end;
 

@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, downBlipTv;
 
 type
   TDownloader_BlipTvV2 = class(TDownloader_BlipTv)
     private
     protected
-      MovieIDFromPageRegExp: IRegEx;
+      MovieIDFromPageRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
     public
@@ -50,7 +50,7 @@ end;
 
 destructor TDownloader_BlipTvV2.Destroy;
 begin
-  MovieIDFromPageRegExp := nil;
+  RegExFreeAndNil(MovieIDFromPageRegExp);
   inherited;
 end;
 

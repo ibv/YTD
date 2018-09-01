@@ -5,14 +5,14 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Wrzuta = class(THttpDownloader)
     private
     protected
-      MovieUrlPartsRegExp: IRegEx;
+      MovieUrlPartsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -62,8 +62,8 @@ end;
 
 destructor TDownloader_Wrzuta.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieUrlPartsRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlPartsRegExp);
   inherited;
 end;
 
@@ -73,29 +73,23 @@ begin
 end;
 
 function TDownloader_Wrzuta.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Match: IMatch;
-    Url: string;
+var Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Match := MovieUrlPartsRegExp.Match(MovieID);
-  try
-    if not Match.Matched then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  if not MovieUrlPartsRegExp.Match(MovieID) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  else
+    begin
+    Url := MovieUrlPartsRegExp.SubexpressionByName('DOMAIN') + 'sr/f/' + MovieUrlPartsRegExp.SubexpressionByName('ID');
+    if not DownloadPage(Http, Url, hmHEAD) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
       begin
-      Url := Match.Groups.ItemsByName['DOMAIN'].Value + 'sr/f/' + Match.Groups.ItemsByName['ID'].Value;
-      if not DownloadPage(Http, Url, hmHEAD) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := LastURL;
-        SetPrepared(True);
-        Result := True;
-        end;
+      MovieURL := LastURL;
+      SetPrepared(True);
+      Result := True;
       end;
-  finally
-    Match := nil;
     end;
 end;
 

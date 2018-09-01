@@ -10,7 +10,7 @@ program YTD;
 {%File 'YTD.inc'}
 
 uses
-  uLanguages in 'uLanguages.pas',
+  uLanguages in 'Common\uLanguages.pas',
   SysUtils,
   Windows,
   {$IFDEF FPC}
@@ -20,9 +20,10 @@ uses
     Forms,
   {$ENDIF}
   // Base objects and units
-  uMessages in 'uMessages.pas',
-  uOptions in 'uOptions.pas',
-  uDownloadClassifier in 'Base\uDownloadClassifier.pas',
+  uMessages in 'Common\uMessages.pas',
+  uOptions in 'Common\uOptions.pas',
+  uPCRE in 'Common\uPCRE.pas',
+  uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
   uCommonDownloader in 'Base\uCommonDownloader.pas',
   uHttpDownloader in 'Base\uHttpDownloader.pas',
@@ -54,6 +55,7 @@ uses
   downBofunk in 'Downloaders\downBofunk.pas',
   downBomba in 'Downloaders\downBomba.pas',
   downBreak in 'Downloaders\downBreak.pas',
+  downCasSk in 'Downloaders\downCasSk.pas',
   downCekniTo in 'Downloaders\downCekniTo.pas',
   downCestyKSobe in 'Downloaders\downCestyKSobe.pas',
   downClipfish in 'Downloaders\downClipfish.pas',
@@ -88,8 +90,10 @@ uses
   downKukaj in 'Downloaders\downKukaj.pas',
   downLibimSeTi in 'Downloaders\downLibimSeTi.pas',
   downLiveLeak in 'Downloaders\downLiveLeak.pas',
+  downLiveLeakEmbedded in 'Downloaders\downLiveLeakEmbedded.pas',
   downLiveVideo in 'Downloaders\downLiveVideo.pas',
   downMarkiza in 'Downloaders\downMarkiza.pas',
+  downMediaSport in 'Downloaders\downMediaSport.pas',
   downMegaVideo in 'Downloaders\downMegaVideo.pas',
   downMetaCafe in 'Downloaders\downMetaCafe.pas',
   downMetropolTV in 'Downloaders\downMetropolTV.pas',
@@ -165,6 +169,7 @@ var
 
 begin
   try
+    ExitCode := 0;
     {$IFDEF GUI}
       if (ParamCount <= 0) then
         begin
@@ -182,7 +187,7 @@ begin
     {$ENDIF}
       begin
       {$IFDEF CLI}
-        ExecuteConsoleApp(TYTD);
+        ExitCode := ExecuteConsoleApp(TYTD);
         {$IFNDEF FPC}
           if DebugHook <> 0 then
             begin

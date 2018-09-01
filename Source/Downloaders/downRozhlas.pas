@@ -5,17 +5,17 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Rozhlas = class(THttpDownloader)
     private
     protected
-      FileInfoRegExp: IRegEx;
-      TableRowsRegExp: IRegEx;
-      StreamIdRegExp: IRegEx;
-      StreamTitleRegExp: IRegEx;
+      FileInfoRegExp: TRegExp;
+      TableRowsRegExp: TRegExp;
+      StreamIdRegExp: TRegExp;
+      StreamTitleRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -40,7 +40,8 @@ const
 
 const
   REGEXP_TABLE_ROWS = '<tr>(?P<ROW>.*?)</tr>';
-  REGEXP_STREAM_ID = '"https?://(?:www\.)?rozhlas\.cz/default/default/rnp-player\.php\?id=(?P<ID>[0-9]+)"';
+  //REGEXP_STREAM_ID = '"https?://(?:www\.)?rozhlas\.cz/default/default/rnp-player\.php\?id=(?P<ID>[0-9]+)"';
+  REGEXP_STREAM_ID = 'https?://(?:[a-z0-9]+\.)*rozhlas.cz/(?:_audio|stream)/(?P<ID>[0-9]+)\.mp3';
   REGEXP_STREAM_TITLE = '<strong>(?P<TITLE>.*?)</strong>';
 
 { TDownloader_Rozhlas }
@@ -66,9 +67,9 @@ end;
 
 destructor TDownloader_Rozhlas.Destroy;
 begin
-  TableRowsRegExp := nil;
-  StreamIdRegExp := nil;
-  StreamTitleRegExp := nil;
+  RegExFreeAndNil(TableRowsRegExp);
+  RegExFreeAndNil(StreamIdRegExp);
+  RegExFreeAndNil(StreamTitleRegExp);
   inherited;
 end;
 
@@ -80,17 +81,14 @@ end;
 function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 const
   MediaUrl = 'http://media.rozhlas.cz/_audio/%s.mp3';
-var TableRows: IMatchCollection;
-    Row, Title, ID: string;
-    i: integer;
+var Row, Title, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  TableRows := TableRowsRegExp.Matches(Page);
-  try
-    for i := 0 to Pred(TableRows.Count) do
-      begin
-      Row := TableRows[i].Groups.ItemsByName['ROW'].Value;
+  if TableRowsRegExp.Match(Page) then
+    begin
+    repeat
+      Row := TableRowsRegExp.SubexpressionByName('ROW');
       if GetRegExpVar(StreamIdRegExp, Row, 'ID', ID) and GetRegExpVar(StreamTitleRegExp, Row, 'TITLE', Title) then
         begin
         {$IFDEF MULTIDOWNLOADS}
@@ -104,7 +102,7 @@ begin
         Exit;
         {$ENDIF}
         end;
-      end;
+    until not TableRowsRegExp.MatchAgain;
     {$IFDEF MULTIDOWNLOADS}
     if UrlList.Count <= 0 then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
@@ -116,8 +114,6 @@ begin
     {$ELSE}
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
     {$ENDIF}
-  finally
-    TableRows := nil;
     end;
 end;
 

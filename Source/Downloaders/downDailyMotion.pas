@@ -5,15 +5,15 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_DailyMotion = class(THttpDownloader)
     private
     protected
-      MovieParamsRegExp: IRegEx;
-      JSONVarsRegExp: IRegEx;
+      MovieParamsRegExp: TRegExp;
+      JSONVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -62,8 +62,8 @@ end;
 
 destructor TDownloader_DailyMotion.Destroy;
 begin
-  MovieParamsRegExp := nil;
-  JSONVarsRegExp := nil;
+  RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(JSONVarsRegExp);
   inherited;
 end;
 
@@ -73,14 +73,8 @@ begin
 end;
 
 function TDownloader_DailyMotion.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-const
-  QUALITY_SD = 1;
-  QUALITY_HQ = 2;
-  QUALITY_HD = 3;
 var
-  VarMatches: IMatchCollection;
-  Params, VarName, VarValue, Title, Url: string;
-  i, Quality: integer;
+  Params, Title, Url, HDUrl, HQUrl, SDUrl: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -89,55 +83,23 @@ begin
   else
     begin
     Params := UrlDecode(Params);
-    Title := '';
-    Url := '';
-    Quality := 0;
-    VarMatches := JSONVarsRegExp.Matches(Params);
-    try
-      for i := 0 to Pred(VarMatches.Count) do
-        begin
-        VarName := VarMatches[i].Groups.ItemsByName['VARNAME'].Value;
-        VarValue := VarMatches[i].Groups.ItemsByName['VARVALUE'].Value;
-        if VarName = 'videoTitle' then
-          Title := VarValue
-        else if VarName = 'sdURL' then
-          begin
-          if Quality < QUALITY_SD then
-            begin
-            Url := VarValue;
-            Quality := QUALITY_SD;
-            end;
-          end
-        else if VarName = 'hqURL' then
-          begin
-          if Quality < QUALITY_HQ then
-            begin
-            Url := VarValue;
-            Quality := QUALITY_HQ;
-            end;
-          end
-        else if VarName = 'hdURL' then
-          begin
-          if Quality < QUALITY_HD then
-            begin
-            Url := VarValue;
-            Quality := QUALITY_HD;
-            end;
-          end;
-        end;
-      if Title = '' then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-      else if Url = '' then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        SetName(Title);
-        MovieURL := StripSlashes(Url);
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      VarMatches := nil;
+    GetRegExpVarPairs(JSONVarsRegExp, Params, ['videoTitle', 'sdURL', 'hqURL', 'hdURL'], [@Title, @SDUrl, @HQUrl, @HDUrl]);
+    if HDUrl <> '' then
+      Url := HDUrl
+    else if HQUrl <> '' then
+      Url := HQUrl
+    else
+      Url := SDUrl;
+    if Title = '' then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+    else if Url = '' then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else
+      begin
+      SetName(Title);
+      MovieURL := StripSlashes(Url);
+      Result := True;
+      SetPrepared(True);
       end;
     end;
 end;

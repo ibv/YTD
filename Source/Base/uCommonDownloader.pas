@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend, blcksock, janXmlParser2,
+  uPCRE, HttpSend, blcksock, janXmlParser2,
   uDownloader;
 
 type
@@ -16,8 +16,8 @@ type
     protected
       function GetMovieInfoUrl: string; virtual; abstract;
     protected
-      MovieTitleRegExp: IRegEx;
-      MovieUrlRegExp: IRegEx;
+      MovieTitleRegExp: TRegExp;
+      MovieUrlRegExp: TRegExp;
       function GetInfoPageEncoding: TPageEncoding; virtual;
       procedure SetInfoPageEncoding(const Value: TPageEncoding); virtual;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; virtual;
@@ -28,7 +28,8 @@ type
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
     protected
-      function GetRegExpVar(RegExp: IRegEx; const Text, VarName: string; out VarValue: string): boolean; virtual;
+      function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; virtual;
+      function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; virtual;
       function GetXmlVar(Xml: TjanXmlNode2; const Path: string; out VarValue: string): boolean; virtual;
       function GetXmlAttr(Xml: TjanXmlNode2; const Path, Attribute: string; out VarValue: string): boolean; virtual;
     public
@@ -49,14 +50,14 @@ constructor TCommonDownloader.Create(const AMovieID: string);
 begin
   inherited;
   fInfoPageEncoding := peUnknown;
-  MovieTitleRegExp := nil;
-  MovieUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
 end;
 
 destructor TCommonDownloader.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieUrlRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
@@ -157,19 +158,29 @@ begin
   fInfoPageEncoding := Value;
 end;
 
-function TCommonDownloader.GetRegExpVar(RegExp: IRegEx; const Text, VarName: string; out VarValue: string): boolean;
-var Match: IMatch;
+function TCommonDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
 begin
-  Match := RegExp.Match(Text);
-  try
-    Result := Match.Matched;
-    if Result then
-      VarValue := Match.Groups.ItemsByName[VarName].Value
-    else
-      VarValue := '';
-  finally
-    Match := nil;
-    end;
+  Result := RegExp.Match(Text) and RegExp.SubexpressionByName(VarName, VarValue);
+end;
+
+function TCommonDownloader.GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean; const VarNameSubExprName, VarValueSubExprName: string): boolean;
+var i, j: integer;
+    VarName: string;
+begin
+  if InitValues then
+    for i := 0 to High(VarValues) do
+      VarValues[i]^ := '';
+  Result := RegExp.Match(Text);
+  if Result then
+    repeat
+      VarName := RegExp.SubexpressionByName(VarNameSubExprName);
+      for j := 0 to High(VarNames) do
+        if VarName = VarNames[j] then
+          begin
+          if j <= High(VarValues) then
+            VarValues[j]^ := RegExp.SubexpressionByName(VarValueSubExprName);
+          end;
+    until not RegExp.MatchAgain;
 end;
 
 function TCommonDownloader.GetXmlVar(Xml: TjanXmlNode2; const Path: string; out VarValue: string): boolean;

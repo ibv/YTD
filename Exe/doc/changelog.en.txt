@@ -1,6 +1,53 @@
 CHANGELOG
 ---------
 
+  v0.40
+
+    * New provider: Cas.sk.
+
+    * New provider: MediaSport.cz.
+
+    * Free.zoznam.sk: Video was saved with .php extension.
+
+    * LiveLeak.com: Support for embedded videos (alternate link).
+
+    * MSFotbal.ct24.cz: The original links on the "msfotbal" subdomain no
+      longer exist, but you can still get to the videos using standard
+      CT24.cz links.
+
+    * Rozhlas.cz: Works again (it's not needed anymore, because the pages now 
+      contain direct links to music, but since this provider is supported...).
+      Fixed a bug which could lead to unwanted overwriting of files from the
+      same page.
+
+    * YouTube.cz: Works again, after YouTube changed their pages.
+
+    * GUI version: File-selection dialogs (opening or saving) now use interface
+      of your Windows version, rather than the old Windows 98 interface used
+      in older versions.
+
+    * Command-line version: Support for result codes (errorlevel). The codes
+      are listed in the main documentation.
+
+    * Command-line version: An error in arguments or encounter of a "display"
+      parameter (-?, -v, -l) causes YouTube Downloader to stop processing the
+      command line and exit.
+
+    * Some size-optimizations of the utility.
+
+    * Fixed saving of unfinished URLs, which didn't work correctly if the
+      download list was empty.
+
+    * Switched to a new library for regular expressions. Program now uses
+      TPerlRegExp instead of the old DPCRE. While this may cause some providers
+      to stop working (I did check many of them, but not all of them), it 
+      removed the dependency on PCRE.DLL and it is much more future-proof - 
+      TPerlRegExp is still maintained and updated to new versions of PCRE,
+      and it officially supports all versions of Delphi, including the new
+      ones (2009, 2010).
+
+
+
   v0.39
 
     * GUI version: The list of unfinished URLs is automatically saved on change

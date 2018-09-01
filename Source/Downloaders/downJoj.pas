@@ -6,14 +6,14 @@ interface
 
 uses
   SysUtils, Classes,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Joj = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: IRegEx;
+      FlashVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
@@ -68,7 +68,7 @@ end;
 
 destructor TDownloader_Joj.Destroy;
 begin
-  FlashVarsRegExp := nil;
+  RegExFreeAndNil(FlashVarsRegExp);
   inherited;
 end;
 
@@ -138,33 +138,27 @@ begin
 end;
 
 function TDownloader_Joj.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Match: IMatch;
-    RelationID, CalendarUrl: string;
+var RelationID, CalendarUrl: string;
     Day, Month, Year: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Match := FlashVarsRegExp.Match(Page);
-  try
-    if not Match.Matched then
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-    else
-      begin
-      RelationId := Match.Groups.ItemsByName['RELATIONID'].Value;
-      Day := StrToInt(Match.Groups.ItemsByName['DAY'].Value);
-      Month := StrToInt(Match.Groups.ItemsByName['MONTH'].Value);
-      Year := StrToInt(Match.Groups.ItemsByName['YEAR'].Value);
-      CalendarUrl := Match.Groups.ItemsByName['CALENDARURL'].Value;
-      Result := False
-        or ProcessCalendar(Http, UrlDecode(CalendarUrl), RelationID, Day, Month, Year)
-        or ProcessCalendar(Http, CALENDAR_URL_BY_RELATIONID + RelationID, RelationID, Day, Month, Year)
-        {$IFDEF ALLOW_MDY_DATE}
-        or ProcessCalendar(Http, CALENDAR_URL_BY_DATE + Format('%04.4d-%02.2d', [Year, Day]), RelationID, Month, Day, Year)
-        {$ENDIF}
-        ;
-      end;
-  finally
-    Match := nil;
+  if not FlashVarsRegExp.Match(Page) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  else
+    begin
+    RelationId := FlashVarsRegExp.SubexpressionByName('RELATIONID');
+    Day := StrToInt(FlashVarsRegExp.SubexpressionByName('DAY'));
+    Month := StrToInt(FlashVarsRegExp.SubexpressionByName('MONTH'));
+    Year := StrToInt(FlashVarsRegExp.SubexpressionByName('YEAR'));
+    CalendarUrl := FlashVarsRegExp.SubexpressionByName('CALENDARURL');
+    Result := False
+      or ProcessCalendar(Http, UrlDecode(CalendarUrl), RelationID, Day, Month, Year)
+      or ProcessCalendar(Http, CALENDAR_URL_BY_RELATIONID + RelationID, RelationID, Day, Month, Year)
+      {$IFDEF ALLOW_MDY_DATE}
+      or ProcessCalendar(Http, CALENDAR_URL_BY_DATE + Format('%04.4d-%02.2d', [Year, Day]), RelationID, Month, Day, Year)
+      {$ENDIF}
+      ;
     end;
 end;
 

@@ -6,17 +6,17 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  PCRE, HttpSend,
+  uPCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Stream = class(THttpDownloader)
     private
     protected
-      MovieParamsRegExp: IRegEx;
-      MovieIdFromParamsRegExp: IRegEx;
-      MovieHDIdFromParamsRegExp: IRegEx;
-      MovieCdnIdFromParamsRegExp: IRegEx;
+      MovieParamsRegExp: TRegExp;
+      MovieIdFromParamsRegExp: TRegExp;
+      MovieHDIdFromParamsRegExp: TRegExp;
+      MovieCdnIdFromParamsRegExp: TRegExp;
       function GetMovieInfoUrlForID(const ID: string): string; virtual;
     protected
       function GetMovieInfoUrl: string; override;
@@ -77,11 +77,11 @@ end;
 
 destructor TDownloader_Stream.Destroy;
 begin
-  MovieTitleRegExp := nil;
-  MovieParamsRegExp := nil;
-  MovieIdFromParamsRegExp := nil;
-  MovieHDIdFromParamsRegExp := nil;
-  MovieCdnIdFromParamsRegExp := nil;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(MovieIdFromParamsRegExp);
+  RegExFreeAndNil(MovieHDIdFromParamsRegExp);
+  RegExFreeAndNil(MovieCdnIdFromParamsRegExp);
   inherited;
 end;
 
@@ -101,23 +101,14 @@ var {$IFDEF XMLINFO}
     Xml: TjanXmlParser2;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
-    ParamMatch: IMatch;
     Params, CdnID, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   Params := '';
-  ParamMatch := MovieParamsRegExp.Match(Page);
-  try
-    if ParamMatch.Matched then
-      begin
-      Params := ParamMatch.Groups.ItemsByName['PARAM'].Value;
-      if Params = '' then
-        Params := ParamMatch.Groups.ItemsByName['PARAM2'].Value;
-      end;
-  finally
-    ParamMatch := nil;
-    end;
+  if MovieParamsRegExp.Match(Page) then
+    if not MovieParamsRegExp.SubexpressionByName('PARAM', Params) then
+      Params := MovieParamsRegExp.SubexpressionByName('PARAM2');
   if Params = '' then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then

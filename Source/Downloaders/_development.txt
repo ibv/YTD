@@ -8,6 +8,7 @@ HTTP	XML	XML	downBlipTv
 HTTP	HTML	XML	downBofunk
 HTTP	HTML	Nested	downBomba
 HTTP	HTML	JSON	downBreak
+HTTP	HTML	Nested	downCasSk
 HTTP	HTML	HTML	downCekniTo
 HTTP	HTML	HTML	downCestyKSobe
 HTTP	XML	XML	downClipfish
@@ -41,6 +42,7 @@ HTTP	HTML	HTML	downLibimSeTi
 HTTP	HTML	XML	downLiveLeak
 HTTP	XML	XML	downLiveVideo
 HTTP	XML	XML	downMarkiza
+HTTP	HTML	HTML	downMediaSport
 HTTP	XML	XML	downMegaVideo
 HTTP	HTML	HTML	downMetaCafe
 HTTP	HTML	XML	downMetropolTV
