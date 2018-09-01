@@ -34,89 +34,85 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uRtmpDirectDownloader;
+unit downPracticalMethod;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TRtmpDirectDownloader = class(TRtmpDownloader)
+  TDownloader_PracticalMethod = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      constructor Create(const AMovieID, AMovieName: string); reintroduce; virtual;
+      constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// rtmp://...
+// http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'rtmpt?e?://.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*practicalmethod\.com/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
-{ TRtmpDirectDownloader }
+const
+  REGEXP_EXTRACT_TITLE = '<h1\s+class="entry-title">(?P<TITLE>.*?)</h1>';
+  REGEXP_EXTRACT_URL = '\.addVariable\s*\(\s*"file"\s*,\s*"(?P<URL>/.+?)"';
 
-class function TRtmpDirectDownloader.Provider: string;
+{ TDownloader_PracticalMethod }
+
+class function TDownloader_PracticalMethod.Provider: string;
 begin
-  Result := 'RTMP direct download';
+  Result := 'PracticalMethod.com';
 end;
 
-class function TRtmpDirectDownloader.UrlRegExp: string;
+class function TDownloader_PracticalMethod.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TRtmpDirectDownloader.Create(const AMovieID, AMovieName: string);
+constructor TDownloader_PracticalMethod.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetName(AMovieName);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
 end;
 
-destructor TRtmpDirectDownloader.Destroy;
+destructor TDownloader_PracticalMethod.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TRtmpDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_PracticalMethod.GetMovieInfoUrl: string;
 begin
-  Result := '';
+  Result := 'http://practicalmethod.com/' + MovieID;
 end;
 
-function TRtmpDirectDownloader.Prepare: boolean;
+function TDownloader_PracticalMethod.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  inherited Prepare;
-  Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetRtmpDumpOption('r', MovieID);
-    SetPrepared(True);
-    Result := True;
-    end;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  MovieUrl := 'http://practicalmethod.com' + MovieUrl;
+  Result := Prepared;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TRtmpDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_PracticalMethod);
 
 end.

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.77                                     (c) 2009-11 Pepak
+YouTube Downloader v0.78                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -116,6 +116,12 @@ PODPOROVANÉ WEBY
  - Clipfish.de:
      - http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
      - http://www.clipfish.de/special/lets-dance/home/
+
+ - CNBC.com:
+     - http://www.cnbc.com/id/15840232?video=3000016920&play=1
+     - http://video.cnbc.com/gallery/?video=3000016920
+
+     Pozn.: Tento poskytovatel používá protokol RTMP. Viz poznámky níže.
 
  - CrunchyRoll.com:
      - http://www.crunchyroll.com/library/Naruto_Shippuden
@@ -243,6 +249,11 @@ PODPOROVANÉ WEBY
      Pozn.: Nìkterá videa jsou hostovaná na jiných serverech, napø. na 
             YouTube, a nelze je stahovat pøímo. Mùžete ale použít funkci
             "Pøidat URL z HTML stránky".
+
+ - i-Concerts.com:
+     - http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
  - iDnes.cz;
      - http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
@@ -394,6 +405,9 @@ PODPOROVANÉ WEBY
             zøejmì tedy nejde o chybu v YTD ale buï o chybné video nebo napø. 
             nepodporovaný stát uživatele.
 
+ - PracticalMethod.com:
+     - http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
+
  - PrahovaHD.ro:
      - http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
 
@@ -407,6 +421,12 @@ PODPOROVANÉ WEBY
 
  - Prima-Cool.cz:
      - http://www.prima-cool.cz/video/drsnejsi-simpsonovi
+
+ - Proglas.cz:
+     - http://www.proglas.cz/audioarchiv-detail/cteni-na-pokracovani/don-bosco.html
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTSP. Viz níže v 
+            poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
@@ -602,6 +622,11 @@ PODPOROVANÉ WEBY
  - VideoClipsDump.com:
      - http://www.videoclipsdump.com/media/1951/Karate_Fail/
 
+ - VideoPortal.sf.tv:
+     - http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
+
  - Videu.de:
      - http://www.videu.de/video/4etN3FlaaY
 
@@ -705,6 +730,12 @@ nedostatkù, se kterými je tøeba poèítat:
 
 4) Nelze stoprocentnì detekovat, zda bylo video staženo kompletní.
 
+Od verze 0.78 lze pøímo stahovat URL založená na protokolu RTMP - mùžete tedy
+do programu vložit adresy jako "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4".
+Požadavkem ovšem je, aby pøíslušnému serveru staèila ke spuštìní videa právì
+jenom adresa (a nebyly vyžadovány dodateèné parametry) - v takovém pøípadì
+YTD použít nelze.
+
 
 
 PROTOKOLY MMS/RTSP
@@ -722,6 +753,12 @@ Pozn.: Celková velikost stahovaného streamu je jen odhad, který nemusí být
 úplnì pøesný. Klidnì se mùže stát, že pøenos skonèí v 93 % a pøesto se
 ohlásí jako úspìšný - a pøehráním skuteènì zjistíte, že stream je stažen
 kompletnì.
+
+Od verze 0.78 lze pøímo stahovat URL založená na protokolu MMS - mùžete tedy
+do programu vložit adresy jako "mms://netshow.play.cz/proglas/audio_15681.wma".
+Požadavkem ovšem je, aby pøíslušnému serveru staèila ke spuštìní videa právì
+jenom adresa (a nebyly vyžadovány dodateèné parametry) - v takovém pøípadì
+YTD použít nelze.
 
 
 

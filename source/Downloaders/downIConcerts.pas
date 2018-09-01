@@ -34,89 +34,92 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uRtmpDirectDownloader;
+unit downiConcerts;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TRtmpDirectDownloader = class(TRtmpDownloader)
+  TDownloader_iConcerts = class(TRtmpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      constructor Create(const AMovieID, AMovieName: string); reintroduce; virtual;
+      constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// rtmp://...
+// http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'rtmpt?e?://.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*i-concerts\.com/.*[?&]q=';
+  URLREGEXP_ID =        '[^#]+';
   URLREGEXP_AFTER_ID =  '';
 
-{ TRtmpDirectDownloader }
+const
+  REGEXP_EXTRACT_TITLE = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
+  REGEXP_EXTRACT_URL = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>.+?)''';
 
-class function TRtmpDirectDownloader.Provider: string;
+{ TDownloader_iConcerts }
+
+class function TDownloader_iConcerts.Provider: string;
 begin
-  Result := 'RTMP direct download';
+  Result := 'iConcerts.com';
 end;
 
-class function TRtmpDirectDownloader.UrlRegExp: string;
+class function TDownloader_iConcerts.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TRtmpDirectDownloader.Create(const AMovieID, AMovieName: string);
+constructor TDownloader_iConcerts.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  SetName(AMovieName);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
 end;
 
-destructor TRtmpDirectDownloader.Destroy;
+destructor TDownloader_iConcerts.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TRtmpDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_iConcerts.GetMovieInfoUrl: string;
 begin
-  Result := '';
+  Result := 'http://www.i-concerts.com/index2.php?q=' + MovieID;
 end;
 
-function TRtmpDirectDownloader.Prepare: boolean;
+function TDownloader_iConcerts.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  inherited Prepare;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
+  if MovieUrl <> '' then
     begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetRtmpDumpOption('r', MovieID);
+    MovieUrl := 'rtmp://iconcerts.infomaniak.ch/icpreview/' + MovieUrl;
+    AddRtmpDumpOption ('r', MovieUrl);
     SetPrepared(True);
     Result := True;
     end;
+
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TRtmpDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_iConcerts);
 
 end.

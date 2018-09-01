@@ -64,11 +64,23 @@
   //   - WaitFor fails with an error. No idea why.
   //   - OnTerminate doesn't get called. No idea why. So I call it manually.
 
+{$DEFINE DIRECTDOWNLOADERS}
+  // Publish direct downloaders for non-HTTP protocols (RTMP, MMS). Basically,
+  // this allows YTD to work as a simplified RTMPDUMP/MSDL (without support
+  // for extra parameters, only URL is supported).
+
 {.DEFINE JSON}
   // Many providers use JSON for their data storage. While it may be a good idea
   // to use a JSON parser for this data, in fact it is often better to simply
   // use regular expressions: One, it is shorter, and two, it turns out LkJSON
   // has bugs which may prevent the parsing.
+
+{$DEFINE BUGGYANSISTRINGCONVERT}
+  // It seems that, given Text: string, Result: string, Delphi 5 have problems 
+  // with constructs such as
+  //   Result := string(EncodeUrl(AnsiString(Text)));
+  // if Text is declared as "const" - it tends to cause Access Violation
+  // randomly.
 
 {.DEFINE NONWORKING}
   // Build the non-working providers in. By default they are only available

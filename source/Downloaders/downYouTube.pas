@@ -276,8 +276,12 @@ begin
       VideoFormat := GetBestVideoFormat(UrlDecode(Trim(FmtList)));
       if VideoFormat = '' then
         VideoFormat := '22';
-      if (VideoFormat = '34') or (VideoFormat = '35') then
+      if (VideoFormat = '5') or (VideoFormat = '34') or (VideoFormat = '35') then
         Extension := '.flv'
+      else if (VideoFormat = '43') or (VideoFormat = '45') then
+        Extension := '.webm'
+      else if (VideoFormat = '17') then
+        Extension := '.3gp'
       else
         Extension := '.mp4';
       if not FindUrlForFormat(VideoFormat, UrlDecode(FmtUrlMap), Url) then

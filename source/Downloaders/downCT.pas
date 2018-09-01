@@ -81,7 +81,7 @@ const
   REGEXP_MOVIE_TITLE = '<title>\s*(?P<TITLE>.*?)\s*</title>';
   //REGEXP_MOVIE_OBJECT = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="(?:url|src)"\s+value)="(?P<OBJURL>[^"]+)"';
   REGEXP_MOVIE_OBJECT = '\bflashvars\.playlistURL\s*=\s*"(?P<OBJURL>https?://.+?)"';
-  REGEXP_IFRAME_TO_IVYSILANI = '<iframe\s+src="(?P<PATH>/ivysilani/embed/.*?)"';
+  REGEXP_IFRAME_TO_IVYSILANI = '<iframe\s[^>]*\bsrc="(?:http://[^/]+)?(?P<PATH>/ivysilani/embed/.*?)"';
 
 { TDownloader_CT }
 

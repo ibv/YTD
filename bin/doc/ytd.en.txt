@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.77                                     (c) 2009-11 Pepak
+YouTube Downloader v0.78                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -113,6 +113,12 @@ SUPPORTED PROVIDERS
  - Clipfish.de:
      - http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
      - http://www.clipfish.de/special/lets-dance/home/
+
+ - CNBC.com:
+     - http://www.cnbc.com/id/15840232?video=3000016920&play=1
+     - http://video.cnbc.com/gallery/?video=3000016920
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - CrunchyRoll.com:
      - http://www.crunchyroll.com/library/Naruto_Shippuden
@@ -240,6 +246,11 @@ SUPPORTED PROVIDERS
      Note: Some movies are hosted on third-part servers, e.g. YouTube. These
            can't be downloaded directly, but work if you use the "Add URLs
            from HTML page" function.
+
+ - i-Concerts.com:
+     - http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - iDnes.cz;
      - http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
@@ -391,6 +402,9 @@ SUPPORTED PROVIDERS
            itself, though, which makes it likely that the problem lies not in 
            YTD but rather some bug or country restriction of PCPlanets.com.
 
+ - PracticalMethod.com:
+     - http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
+
  - PrahovaHD.ro:
      - http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
 
@@ -403,6 +417,11 @@ SUPPORTED PROVIDERS
 
  - Prima-Cool.cz:
      - http://www.prima-cool.cz/video/drsnejsi-simpsonovi
+
+ - Proglas.cz:
+     - http://www.proglas.cz/audioarchiv-detail/cteni-na-pokracovani/don-bosco.html
+
+     Note: This provider uses RTSP. See the note below.
 
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
@@ -595,6 +614,11 @@ SUPPORTED PROVIDERS
  - VideoClipsDump.com:
      - http://www.videoclipsdump.com/media/1951/Karate_Fail/
 
+ - VideoPortal.sf.tv:
+     - http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
+
+     Note: This provider uses RTMP protocol. See the note below.
+
  - Videu.de:
      - http://www.videu.de/video/4etN3FlaaY
 
@@ -701,6 +725,12 @@ interface rather than command-line. The implementation has several problems:
 4) It's impossible to reliably detect whether a download was complete or not.
    Please check each downloaded file to make sure it is complete.
 
+Since version 0.78, URLs with RTMP protocol can be downloaded directly - you
+can enter URLs such as "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4"
+directly into YTD. It will only work if the provider's server only needs video
+URL to start a playback - if it needs extra parameters, you can't use YTD and
+will need to use RTMPDUMP directly.
+
 
 
 MMS/RTSP PROTOCOLS
@@ -716,6 +746,12 @@ Note: As with RTMP, the total size of a stream is just guessed. It is quite
 possible that a download ends at 93% and turns out to be complete. The same
 cautionary note as with RTMP applies: Please test every downloaded file to 
 make sure it really is complete.
+
+Since version 0.78, URLs with MMS protocol can be downloaded directly - you
+can enter URLs such as "mms://netshow.play.cz/proglas/audio_15681.wma"
+directly into YTD. It will only work if the provider's server only needs video
+URL to start a playback - if it needs extra parameters, you can't use YTD and
+will need to use MSDL directly.
 
 
 

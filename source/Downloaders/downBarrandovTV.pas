@@ -121,7 +121,7 @@ begin
   else
     begin
     SetName(Title);
-    MovieUrl := 'rtmp://' + HostName + '/' + StreamName;
+    MovieUrl := 'rtmpe://' + HostName + '/' + StreamName;
     AddRtmpDumpOption('r', MovieURL);
     AddRtmpDumpOption('y', StreamName);
     Result := True;

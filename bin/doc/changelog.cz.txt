@@ -1,6 +1,52 @@
 CHANGELOG
 ---------
 
+  v0.78:
+
+    * Novı poskytovatel: CNBC.com.
+
+    * Novı poskytovatel: i-Concerts.com.
+
+      - Zatím jen free verze bez playlistù a podobnì.
+
+    * Novı poskytovatel: PracticalMethod.com.
+
+    * Novı poskytovatel: Proglas.cz.
+
+    * Novı poskytovatel: VideoPortal.sf.tv.
+
+    * Byly aktivovány "generické" downloadery pro protokoly RTMP (RTMPE,
+      RTMPT, RTMPTE) a MMS (MMSH, RTSP). To znamená, e do YTD lze nyní vloit
+      i URL tìchto protokolù (napø. "mms://netshow.play.cz/proglas/audio_15681.wma"
+      nebo "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4")
+      a program je moná stáhne (pokud to server dovolí) - YTD se tak vlastnì
+      chová jako velmi zjednodušenı RTMPDUMP resp. MSDL (podle pouitého 
+      protokolu). Základní nevıhody tohoto pøístupu jsou dvì:
+        1) Není k dispozici "hezké" jméno videa, soubory se ukládají pod 
+           vnitøním ID poskytovatele.
+        2) Ze serverù, které vyadují další parametry kromì URL, se tímto 
+           zpùsobem stahovat nedá. Pouijte na nì pøímo RTMPDUMP nebo MSDL,
+           ty dovolují specifikovat i všechny potøebné parametry.
+      Základní vıhodou je, e je takto moné stahovat i z mnoha serverù,
+      které v YTD pøímo podporovány nejsou (napø. Proglas.cz).
+
+    * Barrandov.tv: Stahování je momentálnì nefunkèní, protoe poskytovatel
+      pøešel na novı pøehrávaè a šifrované pøenosy, take neumím zjistit, co
+      ode mì vlastnì oèekává. Pokud by nìkdo umìl zprovoznit RTMPSUCK (jde
+      o souèást projektu RTMPDUMP) tak, abych se dostal k datùm, mohlo by 
+      stahování opìt fungovat.
+
+    * CeskaTelevize.cz: Opìt zprovoznìny poøady (www.ceskatelevize.cz/porady).
+
+    * Zakulisi.cz: Snad opravena náhodná chyba "Access Violation". Vypadá to
+      na nìjakou chybku pøímo v Delphi 5, kvùli které se v urèitıch typech
+      øetìzcovıch operací pøepíše pamì. Moje oprava snad chodí, ale protoe
+      se i chyba vyskytovala náhodnì, nemohu to spolehlivì ovìøit.
+
+    * Aktualizován slovenskı pøeklad (opìt V. Kubala, díky).
+
+
+
   v0.77:
 
     * Novı poskytovatel: DancingBear.com (porno).

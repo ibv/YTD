@@ -34,22 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxZakulisi;
+unit downCNBC;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_Zakulisi = class(THttpDownloader)
+  TDownloader_CNBC = class(TRtmpDownloader)
     private
     protected
-      MovieIdRegExp: TRegExp;
-      MovieUrlFromJsonRegExp: TRegExp;
+      InfoUrlRegExp: TRegExp;
+      RtmpUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,71 +66,105 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://video.cnbc.com/gallery/?video=3000016920
+// http://www.cnbc.com/id/15840232?video=3000016920&play=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*zakulisi\.cz/';
-  URLREGEXP_ID =        '.*?[?&]IdVideo=[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cnbc\.com/.*[?&]video=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>.*?\((?P<TITLE>.*?)\)';
-  REGEXP_MOVIE_ID = '\bso\.addVariable\s*\(\s*"video_id"\s*,\s*"(?P<ID>.+?)"';
-  REGEXP_MOVIE_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_MOVIE_TITLE = '<h1>\s*<a\s[^>]*>(?P<TITLE>.*?)</a>\s*</h1>';
+  REGEXP_INFO_URL = '\bformatLink\s*:\s*''[^''|]+\|(?P<URL>https?://[^''|]+)';
+  REGEXP_RTMP_URL = '(?P<URL>rtmpt?e?://[^?]+)\?(?:[^&]*&)*slist=(?P<LIST>[^&]+)';
 
-{ TDownloader_Zakulisi }
+{ TDownloader_CNBC }
 
-class function TDownloader_Zakulisi.Provider: string;
+class function TDownloader_CNBC.Provider: string;
 begin
-  Result := 'Zakulisi.cz';
+  Result := 'CNBC.com';
 end;
 
-class function TDownloader_Zakulisi.UrlRegExp: string;
+class function TDownloader_CNBC.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_Zakulisi.Create(const AMovieID: string);
+constructor TDownloader_CNBC.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
-  MovieUrlFromJsonRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL);
+  RtmpUrlRegExp := RegExCreate(REGEXP_RTMP_URL);
 end;
 
-destructor TDownloader_Zakulisi.Destroy;
+destructor TDownloader_CNBC.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIdRegExp);
-  RegExFreeAndNil(MovieUrlFromJsonRegExp);
+  RegExFreeAndNil(InfoUrlRegExp);
+  RegExFreeAndNil(RtmpUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Zakulisi.GetMovieInfoUrl: string;
+function TDownloader_CNBC.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.zakulisi.cz/' + MovieID;
+  Result := 'http://video.cnbc.com/gallery/?video=' + MovieID;
 end;
 
-function TDownloader_Zakulisi.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, JSON, Url: string;
+function TDownloader_CNBC.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const STR_BREAK = '<break>';
+      STR_BREAK_LENGTH = Length(STR_BREAK);
+var Url, Title, App, List: string;
+    Xml: TXmlDoc;
+    i, idx: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', ID) then
+  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-//  else if not DownloadPage(Http, 'http://www.zakulisi.cz/amfphp/services/gateway.php', AnsiString(UrlEncode('data={"params":["' + ID + '","2"],"action":"media.file"}')), 'application/x-www-form-urlencoded', JSON, peAnsi) then
-  else if not DownloadPage(Http, 'http://www.zakulisi.cz/amfphp/services/gateway.php', AnsiString(UrlEncode('data={"params":["25496-2a50r07cxlytk","2"],"action":"media.file"}')), 'application/x-www-form-urlencoded', JSON, peAnsi) then
+  else if not DownloadXml(Http, Url, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else if not GetRegExpVar(MovieUrlFromJsonRegExp, JSON, 'URL', Url) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
-    begin
-    MovieURL := StripSlashes(Url);
-    Result := True;
-    SetPrepared(True);
-    end;
+    try
+      for i := 0 to Pred(Xml.Root.NodeCount) do
+        if Xml.Root.Nodes[i].Name = 'choice' then
+          if GetXmlVar(Xml.Root.Nodes[i], 'url', Url) then
+            begin
+            GetXmlVar(Xml.Root.Nodes[i], 'title', Title);
+            if AnsiCompareText(Title, 'Ad Media') <> 0 then
+              if GetRegExpVars(RtmpUrlRegExp, Url, ['URL', 'LIST'], [@App, @List]) then
+                if App <> '' then
+                  while List <> '' do
+                    begin
+                    idx := Pos(STR_BREAK, List);
+                    if idx <= 0 then
+                      begin
+                      Url := List;
+                      List := '';
+                      end
+                    else
+                      begin
+                      Url := Copy(List, 1, Pred(idx));
+                      System.Delete(List, 1, idx+STR_BREAK_LENGTH-1);
+                      end;
+                    if Url <> '' then
+                      begin
+                      MovieUrl := App + Url;
+                      AddRtmpDumpOption('r', App);
+                      AddRtmpDumpOption('y', Url);
+                      SetPrepared(True);
+                      Result := True;
+                      Exit;
+                      end;
+                    end;
+            end;
+    finally
+      Xml.Free;
+      end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Zakulisi);
+  RegisterDownloader(TDownloader_CNBC);
 
 end.

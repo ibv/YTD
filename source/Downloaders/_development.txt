@@ -22,6 +22,7 @@ HTTP	HTML	HTML	downCekniTo
 HTTP	HTML	HTML	downCeskeDrahy
 HTTP	HTML	HTML	downCestyKSobe
 HTTP	XML	XML	downClipfish
+RTMP	HTML	XML	downCNBC
 HTTP	XML	XML	downCollegeHumor
 RTMP	HTML	XML	downCrunchyRoll
 HTTP	XML	XML	downCSmaTalent (<-downJoj_Porady)
@@ -58,6 +59,7 @@ HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
 HTTP	HTML	HTML	downGuba
 RTMP	HTML	HTML	downHasici150
+HTTP	HTML	HTML	downIConcerts
 RTMP	XML	XML	downIDnes
 RTMP	HTML	HTML	downIHned
 HTTP	HTML	HTML	downIPrima
@@ -92,9 +94,11 @@ RTMP	XML	XML	downNova
 HTTP	HTML	Nested	downOverStream
 HTTP	HTML	Nested	downPBS
 HTTP	XML	XML	downPCPlanets
+HTTP	HTML	HTML	downPracticalMethod
 RTMP	-	HTML	downPrahovaHD
 MS	HTML	XML	downPrazdninyVTelci
 HTTP	HTML	Nested	downPrimaCool
+MS	HTML	HTML	downProglas
 HTTP	-	HTML	downQipRu_Embed
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)
@@ -135,6 +139,7 @@ HTTP	HTML	HTML+AMF	downUStream
 HTTP	HTML	Nested	downVideaCesky
 HTTP	HTML	XML	downVideoAlbumyAzet
 HTTP	HTML	HTML	downVideoClipsDump
+RTMP	JSON	JSON	downVideoPortalSfTV
 HTTP	HTML	HTML	downVideoTiscaliCZ
 HTTP	HTML	XML	downVideu
 HTTP	XML	XML	downVimeo

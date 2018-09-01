@@ -60,7 +60,14 @@ type
 implementation
 
 uses
+  uDownloadClassifier,
   uLanguages, uMessages;
+
+// mms://...
+const
+  URLREGEXP_BEFORE_ID = '^';
+  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_AFTER_ID =  '';
 
 { TMSDirectDownloader }
 
@@ -71,10 +78,7 @@ end;
 
 class function TMSDirectDownloader.UrlRegExp: string;
 begin
-  Raise EDownloaderError.Create('TMSDirectDownloader.UrlRegExp is not supported.');
-  {$IFDEF FPC}
-  Result := '';
-  {$ENDIF}
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TMSDirectDownloader.Create(const AMovieID, AMovieName: string);
@@ -101,10 +105,17 @@ begin
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin
+    if UnpreparedName = '' then
+      SetName(ExtractUrlFileName(MovieID));
     MovieURL := MovieID;
     SetPrepared(True);
     Result := True;
     end;
 end;
+
+initialization
+  {$IFDEF DIRECTDOWNLOADERS}
+  RegisterDownloader(TMSDirectDownloader);
+  {$ENDIF}
 
 end.

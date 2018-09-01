@@ -105,10 +105,10 @@ type
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function StripSlashes(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF DEBUG}
       procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
@@ -584,17 +584,17 @@ begin
   Result := StringReplace(Result, '&amp;', '&', [rfReplaceAll]);
 end;
 
-function TDownloader.UrlDecode(const Text: string): string;
+function TDownloader.UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
 begin
   Result := string(DecodeUrl(AnsiString(StringReplace(Text, '+', ' ', [rfReplaceAll]))));
 end;
 
-function TDownloader.UrlEncode(const Text: string): string;
+function TDownloader.UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
 begin
   Result := string(EncodeUrl(AnsiString(Text)));
 end;
 
-function TDownloader.Base64Decode(const Text: string): string;
+function TDownloader.Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
 begin
   Result := string(DecodeBase64(AnsiString(Text)));
 end;
@@ -634,7 +634,7 @@ begin
     end;
 end;
 
-function TDownloader.StripSlashes(const Text: string): string;
+function TDownloader.StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
 var i, n: integer;
 begin
   Result := Text;

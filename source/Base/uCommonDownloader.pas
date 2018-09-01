@@ -46,6 +46,7 @@ uses
 
 type
   TStringArray = array of string;
+  PStringArray = array of string;
 
   TCommonDownloader = class(TDownloader)
     private
@@ -368,7 +369,7 @@ begin
   Result := n > 0;
 end;
 
-function TCommonDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean;
+function TCommonDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean): boolean;
 var i: integer;
     VarValue: string;
 begin

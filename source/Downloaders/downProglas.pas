@@ -34,89 +34,77 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uRtmpDirectDownloader;
+unit downProglas;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TRtmpDirectDownloader = class(TRtmpDownloader)
+  TDownloader_Proglas = class(TMSDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      constructor Create(const AMovieID, AMovieName: string); reintroduce; virtual;
+      constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// rtmp://...
+// http://www.proglas.cz/detail-poradu/2010-12-10-11-05.html
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'rtmpt?e?://.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*proglas\.cz/detail-poradu/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
-{ TRtmpDirectDownloader }
+const
+  REGEXP_MOVIE_TITLE = '<strong>N·zev Ë·sti</strong>:\s*(?P<TITLE>.*?)<';
+  REGEXP_MOVIE_URL = '<a\s+href="(?P<URL>(?:mmsh?|rtsp)://.+?)"';
 
-class function TRtmpDirectDownloader.Provider: string;
+{ TDownloader_Proglas }
+
+class function TDownloader_Proglas.Provider: string;
 begin
-  Result := 'RTMP direct download';
+  Result := 'Proglas.cz';
 end;
 
-class function TRtmpDirectDownloader.UrlRegExp: string;
+class function TDownloader_Proglas.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TRtmpDirectDownloader.Create(const AMovieID, AMovieName: string);
+constructor TDownloader_Proglas.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  SetName(AMovieName);
+  inherited;
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TRtmpDirectDownloader.Destroy;
+destructor TDownloader_Proglas.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TRtmpDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_Proglas.GetMovieInfoUrl: string;
 begin
-  Result := '';
-end;
-
-function TRtmpDirectDownloader.Prepare: boolean;
-begin
-  inherited Prepare;
-  Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetRtmpDumpOption('r', MovieID);
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.proglas.cz/detail-poradu/' + MovieID;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TRtmpDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Proglas);
 
 end.

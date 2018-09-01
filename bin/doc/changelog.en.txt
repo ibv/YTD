@@ -1,6 +1,56 @@
 CHANGELOG
 ---------
 
+  v0.78:
+
+    * New provider: CNBC.com.
+
+    * New provider: i-Concerts.com.
+
+      - Only the free version without playlists for now.
+
+    * New provider: PracticalMethod.com.
+
+    * New provider: Proglas.cz.
+
+    * New provider: VideoPortal.sf.tv.
+
+    * Activated "generic" downloaders for protocols RTMP (RTMPE, RTMPT, RTMPTE)
+      and MMS (MMSH, RTSP). This means that direct URLs for these protocols
+      (e.g. "mms://netshow.play.cz/proglas/audio_15681.wma" or "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4")
+      can now be entered into YTD and the program will download them (if
+      permitted by the server). Basically, YTD behaves like an extremely
+      simplified version of RTMPDUMP (or MSDL) for these URLs.
+
+      There are two major disadvantages of this approach:
+        1) You won't get nice video names. The files are stored under the
+           internal name selected by the provider.
+        2) If a provider's server requires additional parameters, such a movie
+           can't be downloaded this way. Use a full RTMPDUMP (MSDL) in these
+           cases, because these tools can accept the required parameters.
+
+      The major advantage is that this functionality enables downloads from
+      servers which are not directly supported by YTD (e.g. Proglas.cz).
+
+    * Barrandov.tv: Downloads don't work any more, because the provider
+      switched to a new player and encrypted communication, which prevents
+      me from discovering which requests the server expects. Until someone
+      finds out the parameters or shows me how to set up RTMPSUCK (part of
+      the RTMPDUMP project) to get to the unencrypted data, the provider will
+      remain non-working.
+
+    * CeskaTelevize.cz: Updated "porady" (www.ceskatelevize.cz/porady).
+
+    * Zakulisi.cz: Fixed the random "Access Violation" bug, I hope. It seems
+      to be a bug in Delphi 5, which manifests in certain kinds of string
+      operations and overwrites memory it shoudln't. My fix seems to work,
+      but as the bug appeared randomly, I have no way of reliably testing the
+      fix.
+
+    * Updated the slovak translation (thanks to V. Kubala).
+
+
+
   v0.77:
 
     * New provider: DancingBear.com (porno).
