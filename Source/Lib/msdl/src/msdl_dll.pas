@@ -3,7 +3,16 @@ unit msdl_dll;
 interface
 
 type
+  TMsdlOption = record
+    ShortOption: char;
+    Argument: string;
+    end;
+  TMsdlOptions = array of TMsdlOption;
+
   TMsdlDownloadProgressCallback = procedure(Tag: integer; DownloadedSize, TotalSize: integer; var DoAbort: integer); cdecl;
+
+const 
+  MSDL_OPTION_URL = #0;
 
 function Msdl_Init: boolean;
 procedure Msdl_Done;
@@ -11,7 +20,7 @@ procedure Msdl_Done;
 function Msdl_Download(
   Tag: integer; 
   Callback: TMsdlDownloadProgressCallback; 
-  LogFileName, AsfFileName, MSUrl: PChar
+  const Options: TMsdlOptions
   ): integer;
 
 implementation
@@ -20,7 +29,14 @@ uses
   Windows;
 
 type
-  TMsdlMainFn = function(Tag: integer; Callback: TMsdlDownloadProgressCallback; LogFileName, AsfFileName, MSUrl: PChar): integer; cdecl;
+  PInternalMsdlOption = ^TInternalMsdlOption;
+  TInternalMsdlOption = record
+    ShortOption: integer;
+    Argument: PChar;
+    end;
+
+type
+  TMsdlMainFn = function(Tag: integer; Callback: TMsdlDownloadProgressCallback; OptionCount: integer; Options: PInternalMsdlOption): integer; cdecl;
 
 var LibHandle: THandle;
     MsdlMain: TMsdlMainFn;
@@ -46,10 +62,29 @@ begin
   MsdlMain := nil;
 end;
 
-function Msdl_Download(Tag: integer; Callback: TMsdlDownloadProgressCallback; LogFileName, AsfFileName, MSUrl: PChar): integer;
+function Msdl_Download(Tag: integer; Callback: TMsdlDownloadProgressCallback; const Options: TMsdlOptions): integer;
+var i, n: integer;
+    RealOptionsPtr: PInternalMsdlOption;
+    RealOptions: array of TInternalMsdlOption;
 begin
   Msdl_Init;
-  Result := MsdlMain(Tag, Callback, LogFileName, AsfFileName, MSUrl);
+  n := Length(Options);
+  if n <= 0 then
+    RealOptionsPtr := nil
+  else
+    begin
+    SetLength(RealOptions, n);
+    RealOptionsPtr := @RealOptions[0];
+    for i := 0 to Pred(n) do
+      begin
+      RealOptions[i].ShortOption := Ord(Options[i].ShortOption);
+      if Options[i].Argument = '' then
+        RealOptions[i].Argument := nil
+      else
+        RealOptions[i].Argument := PChar(Options[i].Argument);
+      end;
+    end;
+  Result := MsdlMain(Tag, Callback, Length(Options), RealOptionsPtr);
 end;
 
 initialization

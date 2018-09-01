@@ -22,13 +22,13 @@
  */
 
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #define GetSockError()	WSAGetLastError()
 #define setsockopt(a,b,c,d,e)	(setsockopt)(a,b,c,(const char *)d,(int)e)
 #define EWOULDBLOCK	WSAETIMEDOUT	/* we don't use nonblocking, but we do use timeouts */
 #define sleep(n)	Sleep(n*1000)
 #define msleep(n)	Sleep(n)
-#define socklen_t	int
 #define SET_RCVTIMEO(tv,s)	int tv = s*1000
 #else
 #include <sys/types.h>
@@ -48,7 +48,27 @@
 
 #include "rtmp.h"
 
-#ifdef USE_GNUTLS
+#ifdef USE_POLARSSL
+#include <polarssl/net.h>
+#include <polarssl/ssl.h>
+#include <polarssl/havege.h>
+typedef struct tls_ctx {
+	havege_state hs;
+	ssl_session ssn;
+} tls_ctx;
+#define TLS_CTX tls_ctx *
+#define TLS_client(ctx,s)	s = malloc(sizeof(ssl_context)); ssl_init(s);\
+	ssl_set_endpoint(s, SSL_IS_CLIENT); ssl_set_authmode(s, SSL_VERIFY_NONE);\
+	ssl_set_rng(s, havege_rand, &ctx->hs); ssl_set_ciphers(s, ssl_default_ciphers);\
+	ssl_set_session(s, 1, 600, &ctx->ssn)
+#define TLS_setfd(s,fd)	ssl_set_bio(s, net_recv, &fd, net_send, &fd)
+#define TLS_connect(s)	ssl_handshake(s)
+#define TLS_read(s,b,l)	ssl_read(s,(unsigned char *)b,l)
+#define TLS_write(s,b,l)	ssl_write(s,(unsigned char *)b,l)
+#define TLS_shutdown(s)	ssl_close_notify(s)
+#define TLS_close(s)	ssl_free(s); free(s)
+
+#elif defined(USE_GNUTLS)
 #include <gnutls/gnutls.h>
 typedef struct tls_ctx {
 	gnutls_certificate_credentials_t cred;
@@ -62,7 +82,8 @@ typedef struct tls_ctx {
 #define TLS_write(s,b,l)	gnutls_record_send(s,b,l)
 #define TLS_shutdown(s)	gnutls_bye(s, GNUTLS_SHUT_RDWR)
 #define TLS_close(s)	gnutls_deinit(s)
-#else
+
+#else	/* USE_OPENSSL */
 #define TLS_CTX	SSL_CTX *
 #define TLS_client(ctx,s)	s = SSL_new(ctx)
 #define TLS_setfd(s,fd)	SSL_set_fd(s,fd)

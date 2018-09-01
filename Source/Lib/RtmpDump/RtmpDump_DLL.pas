@@ -3,6 +3,12 @@ unit rtmpdump_dll;
 interface
 
 type
+  TRtmpDumpOption = record
+    ShortOption: char;
+    Argument: string;
+    end;
+  TRtmpDumpOptions = array of TRtmpDumpOption;
+
   TRtmpDumpDownloadProgressCallback = procedure(Tag: integer; DownloadedSize: integer; PercentDone: double; var DoAbort: integer); cdecl;
 
 function RtmpDump_Init: boolean;
@@ -11,7 +17,8 @@ procedure RtmpDump_Done;
 function RtmpDump_Download(
   Tag: integer; 
   Callback: TRtmpDumpDownloadProgressCallback; 
-  LogFileName, FlvFileName, RtmpUrl, PlayPath: PChar
+  LogFileName: PChar;
+  const Options: TRtmpDumpOptions
   ): integer;
 
 implementation
@@ -20,7 +27,14 @@ uses
   Windows;
 
 type
-  TRtmpDumpMainFn = function(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; LogFileName, FlvFileName, RtmpUrl, PlayPath: PChar): integer; cdecl;
+  PInternalRtmpDumpOption = ^TInternalRtmpDumpOption;
+  TInternalRtmpDumpOption = record
+    ShortOption: integer;
+    Argument: PChar;
+    end;
+
+type
+  TRtmpDumpMainFn = function(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; OptionCount: integer; Options: PInternalRtmpDumpOption; LogFileName: PChar): integer; cdecl;
 
 var LibHandle: THandle;
     RtmpDumpMain: TRtmpDumpMainFn;
@@ -46,10 +60,29 @@ begin
   RtmpDumpMain := nil;
 end;
 
-function RtmpDump_Download(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; LogFileName, FlvFileName, RtmpUrl, PlayPath: PChar): integer;
+function RtmpDump_Download(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; LogFileName: PChar; const Options: TRtmpDumpOptions): integer;
+var i, n: integer;
+    RealOptionsPtr: PInternalRtmpDumpOption;
+    RealOptions: array of TInternalRtmpDumpOption;
 begin
   RtmpDump_Init;
-  Result := RtmpDumpMain(Tag, Callback, LogFileName, FlvFileName, RtmpUrl, PlayPath);
+  n := Length(Options);
+  if n <= 0 then
+    RealOptionsPtr := nil
+  else
+    begin
+    SetLength(RealOptions, n);
+    RealOptionsPtr := @RealOptions[0];
+    for i := 0 to Pred(n) do
+      begin
+      RealOptions[i].ShortOption := Ord(Options[i].ShortOption);
+      if Options[i].Argument = '' then
+        RealOptions[i].Argument := nil
+      else
+        RealOptions[i].Argument := PChar(Options[i].Argument);
+      end;
+    end;
+  Result := RtmpDumpMain(Tag, Callback, Length(Options), RealOptionsPtr, LogFileName);
 end;
 
 initialization

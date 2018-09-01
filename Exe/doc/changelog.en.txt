@@ -1,0 +1,322 @@
+CHANGELOG
+---------
+
+  v0.27
+
+    * Support for more media providers:
+       - Bing.com
+       - Bofunk.com
+       - Break.com.
+       - CekniTo.cz (.sk)
+       - Clipfish.de
+       - CollegeHumor.com
+       - CrunchyRoll.com
+       - DailyHaha.com
+       - DailyMotion.com
+       - EbaumsWorld.com
+       - ESPN.go.com
+       - FileCabi.net
+       - Free.Zoznam.sk
+       - FreeRide.cz
+       - GodTube.com
+       - Guba.com
+       - LiveLeak.com
+       - LiveVideo.com
+       - MetaCafe.com
+       - MySpace.com Video (http://video.myspace.com)
+       - PornHost.com (note: porn)
+       - PornHub.com (note: porn)
+       - PornoTube.com (note: porn)
+       - Raajje.tv
+       - RedTube.com (note: porn)
+       - Rude.com (note: porn)
+       - RuTube.ru
+       - Shufuni.com (note: porn)
+       - SpankingTube.com (note: porn)
+       - Stickam.com
+       - StreetFire.com
+       - Tangle.com
+       - TeacherTube.com
+       - Tontuyau.com
+       - Tube8.com (note: porn)
+       - VideoClipsDump.com
+       - Videu.de
+       - Vimeo.com
+       - XHamster.com (note: porn)
+       - XNXX.com (note: porn)
+       - XTube.com (note: porn)
+       - XVideoHost.com (note: porn)
+       - XVideos.com (note: porn)
+       - YouPorn.com (note: porn)
+       - Yuvutu.com (note: porn)
+       - ZkoukniTo.cz (note: includes an adult section)
+
+    * Added english documentation.
+
+    * Cleaned-up licensing terms: The program is released under the
+      GNU GPL3 license.
+
+    * More source code cleanup.
+
+    * RTMPDUMP updated to version 2.2d.
+
+    * The RTMPDUMP_DLL.DLL library has been modified for easier maintenance.
+      It now allows the full use of all features of RTMPDUMP, too.
+
+    * The MSDL_DLL.DLL library has been modified for easier maintenance.
+      It now allows the full use of all features of MSDL, too.
+
+    * Support for an INI file with default values. See documentation for
+      details.
+
+    * Czech Television is now being downloaded in the highest quality. You can
+      now choose between Windows Media (default) and Real Media streams (in
+      the INI file).
+
+    * Fixed download of Czech Television's program PORT so that the program is
+      downloaded rather than advertisment.
+
+    * Command-line argument -l shows a list of available providers.
+
+    * Command-line argument -v tests for availability of a newer version.
+
+    * GUI version has a new button 'About' (F1), which displays some basic 
+      information about the program and checks for availability of a newer
+      version. It shows a list of available providers (what you get if you
+      use the -l argument on command-line), too.
+
+    * Movies from YouTube have their filenames properly converted to ANSI
+      encoding.
+
+
+
+  v0.26
+
+    * Support for YouTube channels (pages containing content of a particular
+      user, e.g. http://www.youtube.com/titanicpiano14). They are handled in
+      much the same way as playlists.
+
+
+
+  v0.25
+
+    * Support for Snotr.com.
+
+
+
+  v0.24
+
+    * Some YouTube videos couldn't be downloaded with the age-verification-
+      bypass method of the last version, but they did work with the older
+      download method of version 0.22. The code was modified to first try
+      the age-verification-bypass method, and if unsuccessful, fall back
+      to the old method.
+
+      Example: http://www.youtube.com/watch?v=REpXf0cmJ64
+
+
+
+  v0.23
+
+    * Re-worked playlist support for less cluttered output in command-line
+      version. This also allows faster and easier support for more playlist
+      formats.
+
+    * Support for "adult" videos at YouTube.
+
+    * Parameter -e for logging failed downloads to a file.
+
+    * Parameter -s for reading links from HTML source. Both local files and
+      remote URLs are supported. Example:
+
+      ytd.exe -s "http://www.somewebsite.com/movies.html"
+      ytd.exe -s "c:\temp\movies.html"
+
+    * Functions for reading URL list from listfile (like -i in CLI version)
+      and reading URL list from HTML page or HTML file (like -s in CLI) were
+      added to the graphical version.
+
+    * GUI version can now save the list of unfinished downloads to a list
+      file, which can be later read using the -i parameter.
+
+
+
+  v0.22
+
+    * GUI version now displays hints for each button.
+
+    * Changed the default behavior when an existing file is encountered. The
+      older versions used to overwrite such a file. This version asks the
+      user what to do.
+
+      You may use parameters -n (never overwrite - skip), -a (automatically
+      overwrite - like the older versions), -r (rename automatically) and
+      -k (ask) to define the behavior in advance.
+
+      GUI version always asks, except when "Auto-overwrite" is checked - in
+      that case existing files are automatically overwritten like in the older
+      versions.
+
+    * GUI version minimizes to system tray.
+
+    * YouTube playlists (e.g. http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E)
+      are supported. All videos on a playlist are scheduled for download.
+
+
+
+  v0.21
+
+    * The changes in version 0.19 apparently rendered HTTP-based providers,
+      such as YouTube, inoperative. Fixed.
+
+
+
+  v0.20
+
+    * Czech TV: Support for program PORT.
+
+
+
+  v0.19
+
+    * Memory leaks due some un-freed regular expressions fixed.
+
+    * YouTube: Video "http://www.youtube.com/watch?v=7INIRLe7x0Y" was saved
+      with ".mp4" extension, although it really is a ".flv". It is possible
+      you will encounter more such cases, because I don't have a full list
+      of supported formats and their respective extensions. Just let me know
+      the URL of a video with incorrect extension and I will fix it.
+
+    * Support for http://www.tvcom.cz.
+
+    * Support for http://www.markiza.sk. If a movie consists of several
+      files, all will be downloaded.
+
+    * Support for http://www.rozhlas.cz. If a movie consists of several
+      files, all will be downloaded.
+
+
+
+  v0.18
+
+    * Support for the new YouTube design.
+
+
+
+  v0.17
+
+    * Support for MMS, MMSH, RTSP protocols and their tunnelling variants.
+      You will need MSDL_DLL.DLL library, built as a slight modification of
+      MSDL tool (http://msdl.sf.net).
+
+    * Support for Czech TV (iVysilani).
+
+    * RTMPDUMP updated to its current version.
+
+
+
+  v0.16
+
+    * Shortened output lines in command-line version, to work better with
+      100+ MB files in default console size.
+
+    * Support for TV Nova (nova.cz).
+
+
+
+  v0.15:
+  
+    * Restructured source code to better facilitate new media sources.
+
+    * Support for streams based on RTMP protocol. It is done through
+      RTMPDUMP_DLL.DLL library, which is based on RTMPDUMP project
+      (http://rtmpdump.mplayerhq.hu). The library requires OpenSSL 
+      in version 0.9.8, specifically the libraries SSLEAY32-0.9.8.DLL
+      and CRYPTOEAY32-0.9.8.DLL.
+
+    * Support for Barrandov.tv.
+
+
+
+  v0.14:
+
+    * The changes for Stream.cz caused the other sources to stop working.
+
+    * Updated the graphical interface (icons, buttons etc.).
+
+    * Added support for building only CLI or only GUI version of the
+      program: When calling BUILD.BAT, use the optional argument "CLI"
+      (only command-line version) or "GUI" (only graphical version).
+      Building just CLI version results in a much smaller EXE file,
+      just GUI version gets rid of the console window. The default
+      behavior is to use both CLI and GUI support in the same EXE file.
+
+    * The Synapse library updated to release 39. Unfortunately, this does
+      not fix the Stream.cz problem (see below).
+
+    * Support for iPrima.cz (based on Stream.cz).
+
+
+
+  v0.13:
+
+    * Support for Stream.cz. Unfortunately, it contains an unknown error
+      that occassionally occurs - see the main readme file.
+
+    * Besides video name and file the CLI version now also displays the URL,
+      which can be used - with some providers - to download movies using
+      your favorite download manager.
+
+
+
+  v0.12:
+
+    * Fixed YouTube downloader to once again support movies without a HD
+      version.
+    
+    * The graphical version was completely rebuilt. Now it shows an URL list,
+      downloads multiple files at once etc.
+
+
+
+  v0.11:
+
+    * YouTube: Experimental support for higher-quality HD formats (720HQ,
+      1080p). Please let me know if you encounter a video which doesn't
+      work.
+
+
+
+  v0.10:
+
+    * The program was rewritten from scratch. Now it is possible to add
+      support for more media providers than just YouTube.
+
+    * All outputs were changed to an easier-to-read form.
+
+    * Support for n-joy.cz.
+
+    * Support for blip.tv.
+
+    * Support for files with URL list (one URL per line) with parameter -i.
+
+    * PCRE.DLL is now required.
+
+    * Added version info and icon to the application.
+
+    * Added a very simple graphical interface, which is displayed if the
+      program is started without arguments.
+
+
+
+  v0.06:
+
+    * Support for URLs like http://www.youtube.com/v/(id)
+
+
+
+  v0.05:
+
+    * Cleaned up source codes and the build batch-file.
+
+    * Support for URLs like http://www.youtube.com/watch/v/(id)

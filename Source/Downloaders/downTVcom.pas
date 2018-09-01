@@ -14,14 +14,13 @@ type
     protected
       ConfigXmlRegExp: IRegEx;
       MMSUrlRegExp: IRegEx;
-      function GetMovieInfoUrl: string; override;
+    protected
       function GetFileNameExt: string; override;
-      function GetInfoPageEncoding: TPageEncoding; override;
+      function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -29,22 +28,40 @@ type
 implementation
 
 uses
+  janXmlParser2,
   uDownloadClassifier,
-  uStringUtils,
-  janXmlParser2;
+  uMessages;
 
-const MOVIE_TITLE_REGEXP = '<h2>(?P<TITLE>.*?)</h2>';
-const CONFIG_XML_REGEXP = '<param name="initParams" value="config=(?P<URL>https?://[^,"]+)';
-const MMSURL_REGEXP = 'playlist\.asx\?video=(?P<URL>[^&]+)';
+// http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+const
+  URLREGEXP_BEFORE_ID = '^';
+  URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*tvcom\.cz/video/.+';
+  URLREGEXP_AFTER_ID =  '$';
+
+const
+  REGEXP_MOVIE_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
+  REGEXP_CONFIG_XML = '<param name="initParams" value="config=(?P<URL>https?://[^,"]+)';
+  REGEXP_MMSURL = 'playlist\.asx\?video=(?P<URL>[^&]+)';
 
 { TDownloader_TVcom }
+
+class function TDownloader_TVcom.Provider: string;
+begin
+  Result := 'TVcom.cz';
+end;
+
+class function TDownloader_TVcom.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_TVcom.Create(const AMovieID: string);
 begin
   inherited;
-  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase]);
-  ConfigXmlRegExp := RegExCreate(CONFIG_XML_REGEXP, [rcoIgnoreCase]);
-  MMSUrlRegExp := RegExCreate(MMSURL_REGEXP, [rcoIgnoreCase]);
+  SetInfoPageEncoding(peUTF8);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  ConfigXmlRegExp := RegExCreate(REGEXP_CONFIG_XML, [rcoIgnoreCase]);
+  MMSUrlRegExp := RegExCreate(REGEXP_MMSURL, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_TVcom.Destroy;
@@ -55,20 +72,9 @@ begin
   inherited;
 end;
 
-class function TDownloader_TVcom.Provider: string;
+function TDownloader_TVcom.GetFileNameExt: string;
 begin
-  Result := 'TVcom.cz';
-end;
-
-class function TDownloader_TVcom.MovieIDParamName: string;
-begin
-  Result := 'TVCOM';
-end;
-
-class function TDownloader_TVcom.UrlRegExp: string;
-begin
-  // http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
-  Result := '^(?P<' + MovieIDParamName + '>https?://(?:[a-z0-9-]+\.)?tvcom\.cz/video/.+)$';
+  Result := '.asf';
 end;
 
 function TDownloader_TVcom.GetMovieInfoUrl: string;
@@ -76,38 +82,25 @@ begin
   Result := MovieID;
 end;
 
-function TDownloader_TVcom.GetFileNameExt: string;
-begin
-  Result := '.asf';
-end;
-
-function TDownloader_TVcom.GetInfoPageEncoding: TPageEncoding;
-begin
-  Result := peUtf8;
-end;
-
 function TDownloader_TVcom.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, ConfigXml: string;
+var Url, ConfigXml, VideoUrl: string;
     Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigXmlRegExp, Page, 'URL', URL) then
-    SetLastErrorMsg('Failed to find ConfigXML URL.')
-  else if not DownloadPage(Http, URL, ConfigXml) then
-    SetLastErrorMsg('Failed to download ConfigXML.')
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+  else if not DownloadPage(Http, URL, ConfigXml, peUTF8) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
   else
     begin
-    ConfigXml := WideToAnsi(Utf8ToWide(ConfigXml));
     Xml := TjanXmlParser2.Create;
     try
       Xml.xml := ConfigXml;
-      Node := Xml.GetChildByPath('Video');
-      if Node = nil then
-        SetLastErrorMsg('Failed to find video URL.')
-      else if not GetRegExpVar(MMSUrlRegExp, Node.text, 'URL', Url) then
-        SetLastErrorMsg('Failed to find video URL (2).')
+      if not GetXmlVar(Xml, 'Video', VideoUrl) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else if not GetRegExpVar(MMSUrlRegExp, VideoUrl, 'URL', Url) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
         MovieURL := URL;

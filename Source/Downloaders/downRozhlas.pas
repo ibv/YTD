@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  HttpSend, PCRE,
+  PCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -16,12 +16,12 @@ type
       TableRowsRegExp: IRegEx;
       StreamIdRegExp: IRegEx;
       StreamTitleRegExp: IRegEx;
+    protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -30,20 +30,38 @@ implementation
 
 uses
   uDownloadClassifier,
-  uStringUtils;
+  uMessages;
 
-const TABLE_ROWS_REGEXP = '<tr>(?P<ROW>.*?)</tr>';
-const STREAM_ID_REGEXP = '"https?://(?:www\.)?rozhlas\.cz/default/default/rnp-player\.php\?id=(?P<ID>[0-9]+)"';
-const STREAM_TITLE_REGEXP = '<strong>(?P<TITLE>.*?)</strong>';
+// http://www.rozhlas.cz/vltava/porady/_zprava/676996
+const
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/vltava/porady/_zprava/';
+  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_AFTER_ID =  '';
+
+const
+  REGEXP_TABLE_ROWS = '<tr>(?P<ROW>.*?)</tr>';
+  REGEXP_STREAM_ID = '"https?://(?:www\.)?rozhlas\.cz/default/default/rnp-player\.php\?id=(?P<ID>[0-9]+)"';
+  REGEXP_STREAM_TITLE = '<strong>(?P<TITLE>.*?)</strong>';
 
 { TDownloader_Rozhlas }
+
+class function TDownloader_Rozhlas.Provider: string;
+begin
+  Result := 'Rozhlas.cz';
+end;
+
+class function TDownloader_Rozhlas.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_Rozhlas.Create(const AMovieID: string);
 begin
   inherited;
-  TableRowsRegExp := RegExCreate(TABLE_ROWS_REGEXP, [rcoSingleLine, rcoIgnoreCase]);
-  StreamIdRegExp := RegExCreate(STREAM_ID_REGEXP, [rcoIgnoreCase]);
-  StreamTitleRegExp := RegExCreate(STREAM_TITLE_REGEXP, [rcoIgnoreCase]);
+  SetInfoPageEncoding(peUnknown);
+  TableRowsRegExp := RegExCreate(REGEXP_TABLE_ROWS, [rcoSingleLine, rcoIgnoreCase]);
+  StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
+  StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_Rozhlas.Destroy;
@@ -54,29 +72,14 @@ begin
   inherited;
 end;
 
-class function TDownloader_Rozhlas.Provider: string;
-begin
-  Result := 'rozhlas.cz';
-end;
-
-class function TDownloader_Rozhlas.MovieIDParamName: string;
-begin
-  Result := 'ROZHLAS';
-end;
-
-class function TDownloader_Rozhlas.UrlRegExp: string;
-begin
-  // http://www.rozhlas.cz/vltava/porady/_zprava/676996
-  Result := '^https?://(?:[a-z0-9-]+\.)?rozhlas\.cz/vltava/porady/_zprava/(?P<' + MovieIDParamName + '>[0-9]+)';
-end;
-
 function TDownloader_Rozhlas.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.rozhlas.cz/vltava/porady/_zprava/' + MovieID;
 end;
 
 function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-const MediaUrl = 'http://media.rozhlas.cz/_audio/%s.mp3';
+const
+  MediaUrl = 'http://media.rozhlas.cz/_audio/%s.mp3';
 var TableRows: IMatchCollection;
     Row, Title, ID: string;
     i: integer;
@@ -104,14 +107,14 @@ begin
       end;
     {$IFDEF MULTIDOWNLOADS}
     if UrlList.Count <= 0 then
-      SetLastErrorMsg('Failed to locate useful stream.')
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       SetPrepared(True);
       Result := First;
       end;
     {$ELSE}
-    SetLastErrorMsg('Failed to locate useful stream.');
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
     {$ENDIF}
   finally
     TableRows := nil;

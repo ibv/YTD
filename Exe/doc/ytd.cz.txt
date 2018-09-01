@@ -1,0 +1,381 @@
+______________________________________________________________________________
+
+YouTube Downloader v0.27                                  (C) 2009, 2010 Pepak
+http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+______________________________________________________________________________
+
+Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
+z pøíkazové øádky, odkud pøijme libovolnı poèet URL ke staení, pøípadnì
+soubor se seznamem URL. Soubory ukládá pod název z YouTube, preferuje
+HD video, pokud je k dispozici.
+
+PODPOROVANÉ WEBY
+----------------
+
+ - Barrandov.tv:
+     - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
+     Pøehrát jde napøíklad programem The KMPlayer.
+
+ - Bing.com:
+     - http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
+
+ - Blip.tv:
+     - http://blip.tv/play/hIVV4tIUAg
+     - http://blip.tv/file/1607673/
+     - http://thespoonyone.blip.tv/file/1607673/
+
+ - Bofunk.com:
+     - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
+
+ - Break.com
+     - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
+
+ - CekniTo.cz / CekniTo.sk
+     - http://www.ceknito.cz/video/446074
+
+ - CeskaTelevize.cz
+     - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+     - http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTSP over HTTP. Viz
+     níe v poznámkách ke knihovnì MSDL_DLL.DLL.
+
+ - Clipfish.de:
+     - http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
+     - http://www.clipfish.de/special/lets-dance/home/
+
+ - CrunchyRoll.com:
+     - http://www.crunchyroll.com/library/Naruto_Shippuden
+
+     Pozn.: This provider usesTento poskytovatel pouívá protokol RTMP. Viz
+     poznámky níe.
+
+ - DailyHaha.com:
+     - http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
+
+ - DailyMotion.com:
+     - http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
+
+ - EbaumsWorld.com:
+     - http://www.ebaumsworld.com/video/watch/80973186/
+
+ - ESPN.go.com:
+     - http://espn.go.com/video/clip?id=5163631
+
+ - FileCabi.net:
+     - http://www.filecabi.net/video/hiddendogstopsrobbery.html
+
+ - Free.Zoznam.sk:
+     - http://free.zoznam.sk/video/Splhajuci-buldozer
+
+ - FreeRide.cz:
+     - http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
+     - http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
+
+ - GodTube.com:
+     - http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
+
+ - Guba.com:
+     - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
+
+ - iPrima.cz:
+     - http://www.iprima.cz/videoarchiv/44524/all/all
+
+ - LiveLeak.com:
+     - http://www.liveleak.com/view?i=6f4_1272904024
+
+ - LiveVideo.com:
+     - http://www.livevideo.com/liveshow/brian3maria
+
+ - Markiza.sk:
+     - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
+
+     Pozn.: Poøady mohou bıt tvoøeny nìkolika rùznımi video soubory.
+
+ - MetaCafe.com:
+     - http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
+
+ - MySpace.com
+     - http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
+
+ - N-joy.cz:
+     - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+
+ - Nova.cz:
+     - http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
+     Pøehrát jde napøíklad programem The KMPlayer.
+
+ - Raajje.tv:
+     - http://www.raajje.tv/video/991/president-anni-diving
+
+ - Rozhlas.cz:
+     - http://www.rozhlas.cz/vltava/porady/_zprava/676996
+
+     Pozn.: Poøady mohou bıt tvoøeny nìkolika rùznımi audio soubory.
+
+ - RuTube.ru:
+     - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
+
+ - Snotr.com:
+     - http://www.snotr.com/video/4280
+
+ - Stickam.com:
+     - http://www.stickam.com/viewMedia.do?mId=188284575
+
+ - StreetFire.com:
+     - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
+
+ - Stream.cz:
+     - http://www.stream.cz/video/437197-meziplyn-30
+
+     Pozn.: V obsluze stream.cz je chyba, kvùli které nìkdy video stáhnout
+     jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjakı èasovací
+     problém v knihovnì Synapse, protoe staèí vloit na vhodné místo 
+     breakpoint nebo prodlevu a hned problém zmizí.
+
+     Pozn.: Stream.cz slouí jako content-delivery-network pro øadu dalších
+     slueb, napøíklad pro televizní stanici Óèko.
+
+ - Tangle.com:
+     - http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
+
+ - TeacherTube.com:
+     - http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
+
+ - Tontuyau.com:
+     - http://www.tontuyau.com/v.asp?id=21715
+
+ - TVcom.cz:
+     - http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTSP over HTTP. Viz
+     níe v poznámkách ke knihovnì MSDL_DLL.DLL.
+
+ - VideoClipsDump.com:
+     - http://www.videoclipsdump.com/media/1951/Karate_Fail/
+
+ - Videu.de:
+     - http://www.videu.de/video/4etN3FlaaY
+
+ - Vimeo.com:
+     - http://www.vimeo.com/10777111
+
+ - Youtube.com:
+     - http://www.youtube.com/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch?v=b5AWQ5aBjgE
+     - http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+     - http://www.youtube.com/titanicpiano14
+
+ - ZkoukniTo.cz:
+     - http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
+
+
+
+Podporované porno weby:
+
+ - PornHost.com
+ - PornHub.com
+ - PornoTube.com
+ - RedTube.com
+ - Rude.com
+ - Shufuni.com
+ - SpankingTube.com
+ - Tube8.com
+ - XHamster.com
+ - XNXX.com
+ - XTube.com
+ - XVideoHost.com
+ - XVideos.com
+ - YouPorn.com
+ - Yuvutu.com
+
+
+
+PROTOKOL RTMP
+-------------
+
+Od verze 0.15 program zahrnuje podporu pro streamované video podle protokolu
+RTMP. Protokol je implementován pomocí knihovny vzniklé drobnou úpravou 
+projektu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Tato implementace má øadu
+nedostatkù, se kterımi je tøeba poèítat:
+
+1) Neumí pøesnì urèit celkovou velikost videa. Velikost je odhadována na
+   základì dosud staené velikosti, dosud staeného èasu a celkového èasu
+   videa.
+
+2) Z knihovny nejsou do Downloaderu pøedávány informace o chybách. Místo
+   toho je v TEMP adresáøi uivatele generován klasickı log projektu RTMPDUMP,
+   ve kterém lze pøíèiny pøípadnıch chyb dohledat.
+
+3) Aby šlo stahovat z RTMP streamù, jsou vyadovány následující DLL knihovny:
+   - RTMPDUMP_DLL.DLL - je souèástí YTD.
+   - CRYPTOEAY32-0.9.8.DLL - souèást OpenSSL verze 0.9.8. V OpenSSL mùe bıt
+       pojmenována i CRYPTOEAY32.DLL.
+   - SSLEAY32-0.9.8.DLL - souèást OpenSSL. Alternativní jméno SSLEAY32.DLL.
+
+4) Nelze stoprocentnì detekovat, zda bylo video staeno kompletní.
+
+
+
+PROTOKOLY MMS/RTSP
+------------------
+
+Od verze 0.17 je podporována rodina protokolù kolem MMS a RTSP (mimo jiné
+Microsoftí streamy, Real streamy a øada dalších). Protokol je implementován
+pomocí knihovny vzniklé drobnou úpravou projektu MSDL (http://msdl.sf.net/).
+Poèítejte s tím, e cílem bylo mít úpravu hotovou rychle a s minimem zmìn
+v pùvodním projektu (podobnì jako u podpory RTMP vıše), take jsem spoustu
+monıch variant prostì ignoroval; a je budu potøebovat, rozšíøím pøíslušnì
+úpravy MSDL.
+
+Pozn.: Celková velikost stahovaného streamu je jen odhad, kterı nemusí bıt
+úplnì pøesnı. Klidnì se mùe stát, e pøenos skonèí v 93 % a pøesto se
+ohlásí jako úspìšnı - a pøehráním skuteènì zjistíte, e stream je staen
+kompletnì.
+
+
+
+PLAYLISTY
+---------
+
+Od verze 0.19 jsou podporovány zdroje, ve kterıch je jeden poøad tvoøen
+nìkolika samostatnımi mediálními soubory (napø. Markiza.sk). YouTube
+Downloader momentálnì neumoòuje vybrat, které ze souborù se stáhnou a
+které ne - stahují se vdy všechny.
+
+
+
+INI SOUBOR
+----------
+
+Od verze 0.27 je podporován INI soubor. Program pøi svém spuštìní kontroluje
+existenci souboru, kterı má stejné jméno jako hlavní EXE soubor, ale s
+pøíponou INI (tzn. obvykle YTD.INI). Pokud existuje, pokusí se z nìj naèíst
+vıchozí nastavení. Ta je dále moné pozmìnit pomocí parametrù na pøíkazové
+øádce.
+
+Pozor, grafická verze programu pøebije tyto hodnoty údaji z registrù Windows,
+pokud nepouijete nastavení "DontUseRegistry".
+
+V sekci [YTD] jsou následující nastavení:
+
+  OverwriteMode=Ask
+    - Vıchozí nastavení zpùsobu, jak má YTD reagovat na existující soubory.
+    - Moné hodnoty jsou (bez uvozovek):
+      "ask" - zeptat se, co dìlat (jako parametr -k)
+      "never" - existující soubory pøeskakovat (jako parametr -n)
+      "always" - existující soubory pøepisovat (jako parametr -a)
+      "rename" - vytváøet nové, jedineèné jméno (jako parametr -r)
+    - Vıchozí hodnotou je "ask".
+   
+  DestinationPath=C:\Downloads
+    - Cesta, do které se mají ukládat videa (jako parametr -o).
+    - Vıchozí hodnotou je prázdnı øetìzec, kterı znaèí aktuální pracovní
+      adresáø.
+
+  ErrorLog=C:\Downloads\error.log
+    - Název souboru, do kterého se mají ukládat informace o nepodaøenıch
+      downloadech (jako parametr -e).
+    - Vıchozí hodnotou je prázdnı øetìzec, záznam nebude vytváøen.
+
+  DontUseRegistry=1
+    - Touto volnou je moné urèit, jestli má grafická verze programu ukládat
+      svoje nastavení do registrù nebo do INI souboru. Registry mají vıhodu,
+      e jsou dostupné všude (ukládá se do vìtve HKEY_CURRENT_USER), zatímco
+      INI soubor nemusí bıt kvùli pøístupovım právùm dostupnı; zato se hodí v 
+      pøípadì, e chcete aplikaci pouívat jako portable.
+    - Moné hodnoty jsou "0" (pouívat registry) a "1" (nepouívat registry).
+    - Vıchozí hodnota je "1".
+
+V sekci [CeskaTelevize.cz] jsou následující nastavení:
+
+  PreferRealMedia=1
+    - Touto volbou si volíte mezi streamem ve formátu Windows Media a Real
+      Media.
+    - Moné hodnoty jsou "0" (Windows Media) a "1" (Real Media).
+    - Vıchozí hodnota je "0".
+
+
+
+SYNTAXE
+-------
+
+  ytd.exe <param> [<param>] [<param>] ...
+
+  kde <param> je buï URL, nebo jedna z následujících moností:
+
+    -?, -h ........ Zobrazí nápovìdu.
+    -i <soubor> ... Stáhne všechna URL z textového souboru <soubor>, kde
+                    kadı øádek reprezentuje jednu URL.
+    -o <cesta> .... Soubory se budou stahovat do adresáøe <cesta>. Vıchozí
+                    hodnotou je aktuální pracovní adresáø.
+    -e <soubor> ... Do souboru <soubor> se budou zapisovat všechny downloady,
+                    které skonèily chybou.
+    -s <zdroj> .... <zdroj> (soubor nebo URL) se prohledá na podporované
+                    odkazy a ty nalezené se stáhnou.
+    -l ............ Zobrazí seznam podporovanıch poskytovatelù médií.
+    -v ............ Zkontroluje dostupnost novìjší verze programu.
+    -n ............ Nikdy nepøepisovat existující soubory.
+    -a ............ Vdy pøepsat existující soubory.
+    -r ............ Pokud soubor se stejnım názvem existuje, automaticky
+                    vygenerovat novı název, kterı u bude jedineènı.
+    -k ............ Pokud soubor existuje, zeptat se uivatele (vıchozí).
+
+  Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+         ytd.exe -i c:\temp\seznam.txt
+         ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+
+  Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
+
+
+
+LICENCE
+-------
+
+Program je uvolnìn pod GNU GPL3 licencí.
+
+
+
+AUTOØI
+------
+
+Autorem programu je Pepak (http://www.pepak.net).
+
+YouTube Downloader vyuívá ke své funkci komponenty dalších autorù:
+
+- Lukáš Gebauer
+  - knihovna Synapse pro práci s TCP/IP, HTTP a další síové záleitosti.
+  - licence: vlastní, freeware
+  - zdroj: http://synapse.ararat.cz/
+
+- Mark James
+  - ikonky Silk pouité v grafické verzi programu.
+  - licence: Creative Common Attribution 2.5
+  - zdroj: http://www.famfamfam.com/lab/icons/silk/
+
+- Renato Mancuso (mancuso@renatomancuso.com)
+  - knihovna DPCRE pro vyhodnocování regulárních vırazù.
+  - licence: vlastní, freeware
+  - zdroj: http://www.renatomancuso.com/software/dpcre/dpcre.htm
+
+- Jun "metro" Oyama (me_t_ro@yahoo.com)
+  - MSDL, nástroj pro stahování protokolù MMS, RTSP a jejich variant.
+  - licence: GNU GPL v3
+  - zdroj: http://msdl.sourceforge.net/
+
+- Andrej Stepanchuk + Howard Chu
+  - RTMPDUMP, nástroj pro stahování protokolu RTMP a jeho variant.
+  - licence: GNU GPL v2
+  - zdroj: http://rtmpdump.mplayerhq.hu/
+
+- Jan Verhoeven (jan1.verhoeven@wxs.nl)
+  - knihovna janXmlParser2 pro práci s XML.
+  - licence: vlastní, freeware
+  - zdroj: http://jansfreeware.com/jfdelphi.htm

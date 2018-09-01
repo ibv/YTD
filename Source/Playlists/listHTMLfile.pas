@@ -13,7 +13,7 @@ type
   TPlaylist_HTMLfile = class(TPlaylist_HTML)
     private
     protected
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; UsePost: boolean = False): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; override;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -36,7 +36,7 @@ begin
   inherited;
 end;
 
-function TPlaylist_HTMLfile.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; UsePost: boolean): boolean;
+function TPlaylist_HTMLfile.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
 var MS: TMemoryStream;
     s: AnsiString;
 begin

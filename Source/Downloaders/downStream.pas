@@ -6,25 +6,24 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  HttpSend, PCRE,
+  PCRE, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Stream = class(THttpDownloader)
     private
+    protected
       MovieParamsRegExp: IRegEx;
       MovieIdFromParamsRegExp: IRegEx;
       MovieCdnIdFromParamsRegExp: IRegEx;
-    protected
-      function GetInfoPageEncoding: TPageEncoding; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function GetMovieInfoUrlForID(const ID: string): string; virtual;
+    protected
+      function GetFileNameExt: string; override;
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -35,22 +34,43 @@ uses
   {$IFDEF XMLINFO}
   janXmlParser2,
   {$ENDIF}
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-const MOVIE_TITLE_REGEXP = '<title>(?P<TITLE>.*?)\s+-[^<-]+</title>';
-const MOVIE_PARAMS_REGEXP = '<param\s+name="flashvars"\s+value="(?P<PARAM>.*?)"|\swriteSWF\s*\((?P<PARAM2>.*?)\)\s*;';
-const MOVIE_ID_FROM_PARAMS_REGEXP = '[&'']id=(?P<ID>[0-9]+)';
-const MOVIE_CDNID_FROM_PARAMS_REGEXP = '[&'']cdnID=(?P<ID>[0-9]+)';
+// http://www.stream.cz/reklamozrouti/410282-reklamozrouti-medvedi-reklama
+// http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
+// http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
+const
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*stream\.cz/(?:[^/]+/)*';
+  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_AFTER_ID =  '';
+
+const
+  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)\s+-[^<-]+</title>';
+  REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.*?)"|\swriteSWF\s*\((?P<PARAM2>.*?)\)\s*;';
+  REGEXP_MOVIE_ID_FROM_PARAMS = '[&'']id=(?P<ID>[0-9]+)';
+  REGEXP_MOVIE_CDNID_FROM_PARAMS = '[&'']cdnID=(?P<ID>[0-9]+)';
 
 { TDownloader_Stream }
+
+class function TDownloader_Stream.Provider: string;
+begin
+  Result := 'Stream.cz';
+end;
+
+class function TDownloader_Stream.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_Stream.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase]);
-  MovieParamsRegExp := RegExCreate(MOVIE_PARAMS_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  MovieIdFromParamsRegExp := RegExCreate(MOVIE_ID_FROM_PARAMS_REGEXP, [rcoIgnoreCase]);
-  MovieCdnIdFromParamsRegExp := RegExCreate(MOVIE_CDNID_FROM_PARAMS_REGEXP, [rcoIgnoreCase]);
+  SetInfoPageEncoding(peUTF8);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
+  MovieIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PARAMS, [rcoIgnoreCase]);
+  MovieCdnIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_CDNID_FROM_PARAMS, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_Stream.Destroy;
@@ -62,14 +82,9 @@ begin
   inherited;
 end;
 
-class function TDownloader_Stream.Provider: string;
+function TDownloader_Stream.GetFileNameExt: string;
 begin
-  Result := 'Stream.cz';
-end;
-
-function TDownloader_Stream.GetMovieInfoUrlForID(const ID: string): string;
-begin
-  Result := 'http://www.stream.cz/video/' + ID;
+  Result := '.flv';
 end;
 
 function TDownloader_Stream.GetMovieInfoUrl: string;
@@ -77,9 +92,14 @@ begin
   Result := GetMovieInfoUrlForID(MovieID);
 end;
 
+function TDownloader_Stream.GetMovieInfoUrlForID(const ID: string): string;
+begin
+  Result := 'http://www.stream.cz/video/' + ID;
+end;
+
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var {$IFDEF XMLINFO}
-    ID, Info: string;
+    ID, Info, Title: string;
     Xml: TjanXmlParser2;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
@@ -88,6 +108,7 @@ var {$IFDEF XMLINFO}
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
+  Params := '';
   ParamMatch := MovieParamsRegExp.Match(Page);
   try
     if ParamMatch.Matched then
@@ -95,59 +116,38 @@ begin
       Params := ParamMatch.Groups.ItemsByName['PARAM'].Value;
       if Params = '' then
         Params := ParamMatch.Groups.ItemsByName['PARAM2'].Value;
-      if GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
-        begin
-        {$IFDEF XMLINFO}
-        if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
-          try
-            if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info) then
-              begin
-              Info := WideToAnsi(Utf8ToWide(Info));
-              Xml := TjanXmlParser2.create;
-              try
-                Xml.xml := Info;
-                TitleNode := Xml.getChildByPath('video/title');
-                if TitleNode <> nil then
-                  SetName(WideToAnsi(Utf8ToWide(TitleNode.text)));
-              finally
-                Xml.Free;
-                end;
-              end;
-          except
-            ;
-            end;
-        {$ENDIF}
-        MovieURL := 'http://cdn-dispatcher.stream.cz/?id=' + CdnID;
-        Result := True;
-        SetPrepared(True);
-        end;
       end;
   finally
     ParamMatch := nil;
     end;
-end;
-
-function TDownloader_Stream.GetFileNameExt: string;
-begin
-  Result := '.flv';
-end;
-
-class function TDownloader_Stream.MovieIDParamName: string;
-begin
-  Result := 'STREAM';
-end;
-
-class function TDownloader_Stream.UrlRegExp: string;
-begin
-  // http://www.stream.cz/reklamozrouti/410282-reklamozrouti-medvedi-reklama
-  // http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
-  // http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
-  Result := '^https?://(?:[a-z0-9-]+\.)?stream\.cz/(?:[^/]+/)*(?P<' + MovieIDParamName + '>[0-9]+)';
-end;
-
-function TDownloader_Stream.GetInfoPageEncoding: TPageEncoding;
-begin
-  Result := peUTF8;
+  if Params = '' then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    {$IFDEF XMLINFO}
+    if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
+      try
+        if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info, peUTF8) then
+          begin
+          Xml := TjanXmlParser2.create;
+          try
+            Xml.xml := Info;
+            if GetXmlVar(Xml, 'video/title', Title) then
+              SetName(Title);
+          finally
+            Xml.Free;
+            end;
+          end;
+      except
+        ;
+        end;
+    {$ENDIF}
+    MovieURL := 'http://cdn-dispatcher.stream.cz/?id=' + CdnID;
+    Result := True;
+    SetPrepared(True);
+    end;
 end;
 
 initialization

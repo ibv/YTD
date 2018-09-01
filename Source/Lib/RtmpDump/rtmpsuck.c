@@ -95,9 +95,6 @@ typedef struct
   Flist *f_head, *f_tail;
   Flist *f_cur;
 
-#ifdef CRYPTO
-  unsigned char hash[HASHLEN];
-#endif
 } STREAMING_SERVER;
 
 STREAMING_SERVER *rtmpServer = 0;	// server structure pointer
@@ -215,11 +212,9 @@ ServeInvoke(STREAMING_SERVER *server, int which, RTMPPacket *pack, const char *b
           else if (AVMATCH(&pname, &av_swfUrl))
             {
 #ifdef CRYPTO
-              if (pval.av_val && RTMP_HashSWF(pval.av_val, &server->rc.Link.SWFSize, server->hash, 30) == 0)
-                {
-                  server->rc.Link.SWFHash.av_val = (char *)server->hash;
-                  server->rc.Link.SWFHash.av_len = HASHLEN;
-                }
+              if (pval.av_val)
+	        RTMP_HashSWF(pval.av_val, &server->rc.Link.SWFSize,
+		  (unsigned char *)server->rc.Link.SWFHash, 30);
 #endif
               server->rc.Link.swfUrl = pval;
               pval.av_val = NULL;
@@ -246,19 +241,24 @@ ServeInvoke(STREAMING_SERVER *server, int which, RTMPPacket *pack, const char *b
                       r1 = pval.av_val+8;
                     }
                   r2 = strchr(r1, '/');
-                  len = r2 - r1;
+		  if (r2)
+                    len = r2 - r1;
+		  else
+		    len = pval.av_len - (r1 - pval.av_val);
                   r2 = malloc(len+1);
                   memcpy(r2, r1, len);
                   r2[len] = '\0';
-                  server->rc.Link.hostname = (const char *)r2;
-                  r1 = strrchr(server->rc.Link.hostname, ':');
+                  server->rc.Link.hostname.av_val = r2;
+                  r1 = strrchr(r2, ':');
                   if (r1)
                     {
+		      server->rc.Link.hostname.av_len = r1 - r2;
                       *r1++ = '\0';
                       server->rc.Link.port = atoi(r1);
                     }
                   else
                     {
+		      server->rc.Link.hostname.av_len = len;
                       server->rc.Link.port = 1935;
                     }
                 }
@@ -288,7 +288,8 @@ ServeInvoke(STREAMING_SERVER *server, int which, RTMPPacket *pack, const char *b
         }
       if (obj.o_num > 3)
         {
-          server->rc.Link.authflag = AMFProp_GetBoolean(&obj.o_props[3]);
+          if (AMFProp_GetBoolean(&obj.o_props[3]))
+            server->rc.Link.lFlags |= RTMP_LF_AUTH;
           if (obj.o_num > 4)
           {
             AMFProp_GetString(&obj.o_props[4], &server->rc.Link.auth);
@@ -330,7 +331,17 @@ ServeInvoke(STREAMING_SERVER *server, int which, RTMPPacket *pack, const char *b
       /* strip trailing URL parameters */
       q = memchr(av.av_val, '?', av.av_len);
       if (q)
-        av.av_len = q - av.av_val;
+        {
+	  if (q == av.av_val)
+	    {
+	      av.av_val++;
+	      av.av_len--;
+	    }
+	  else
+	    {
+              av.av_len = q - av.av_val;
+	    }
+	}
       /* strip leading slash components */
       for (p=av.av_val+av.av_len-1; p>=av.av_val; p--)
         if (*p == '/')
@@ -905,16 +916,16 @@ void doServe(STREAMING_SERVER * server,	// server socket and state (our listenin
                       short nType = AMF_DecodeInt16(pc.m_body);
                       /* SWFverification */
                       if (nType == 0x1a)
-  #ifdef CRYPTO
-                        if (server->rc.Link.SWFHash.av_len)
+#ifdef CRYPTO
+                        if (server->rc.Link.SWFSize)
                         {
                           RTMP_SendCtrl(&server->rc, 0x1b, 0, 0);
                           sendit = 0;
                         }
-  #else
+#else
                         /* The session will certainly fail right after this */
                         RTMP_Log(RTMP_LOGERROR, "%s, server requested SWF verification, need CRYPTO support! ", __FUNCTION__);
-  #endif
+#endif
                     }
                   else if (server->f_cur && (
                        pc.m_packetType == 0x08 ||
@@ -965,17 +976,13 @@ cleanup:
   server->f_cur = NULL;
   free(buf);
   /* Should probably be done by RTMP_Close() ... */
-  free((void *)server->rc.Link.hostname);
-  server->rc.Link.hostname = NULL;
+  server->rc.Link.hostname.av_val = NULL;
   server->rc.Link.tcUrl.av_val = NULL;
   server->rc.Link.swfUrl.av_val = NULL;
   server->rc.Link.pageUrl.av_val = NULL;
   server->rc.Link.app.av_val = NULL;
   server->rc.Link.auth.av_val = NULL;
   server->rc.Link.flashVer.av_val = NULL;
-#ifdef CRYPTO
-  server->rc.Link.SWFHash.av_val = NULL;
-#endif
   RTMP_LogPrintf("done!\n\n");
 
 quit:

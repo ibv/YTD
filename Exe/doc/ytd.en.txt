@@ -1,0 +1,381 @@
+______________________________________________________________________________
+
+YouTube Downloader v0.27                                  (C) 2009, 2010 Pepak
+http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+______________________________________________________________________________
+
+YouTube Downloader is an utility designed for downloading multimedia content
+from YouTube and other online streaming services. It works from command-line,
+where it accepts any number of URLs or a text file with a list of URLs. It
+saves the movies under their "human-readable" name from YouTube. When a movie
+has several variants, the highest-quality one is downloaded.
+
+SUPPORTED PROVIDERS
+-------------------
+
+ - Barrandov.tv:
+     - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+
+     Note: This provider uses RTMP protocol. See the note below.
+
+ - Bing.com:
+     - http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
+
+ - Blip.tv:
+     - http://blip.tv/play/hIVV4tIUAg
+     - http://blip.tv/file/1607673/
+     - http://thespoonyone.blip.tv/file/1607673/
+
+ - Bofunk.com:
+     - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
+
+ - Break.com
+     - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
+
+ - CekniTo.cz / CekniTo.sk
+     - http://www.ceknito.cz/video/446074
+
+ - CeskaTelevize.cz
+     - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+     - http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
+
+     Note: This provider uses RTSP over HTTP protocol. See the note below.
+
+ - Clipfish.de:
+     - http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
+     - http://www.clipfish.de/special/lets-dance/home/
+
+ - CrunchyRoll.com:
+     - http://www.crunchyroll.com/library/Naruto_Shippuden
+
+     Note: This provider uses RTMP protocol. See the note below.
+
+ - DailyHaha.com:
+     - http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
+
+ - DailyMotion.com:
+     - http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
+
+ - EbaumsWorld.com:
+     - http://www.ebaumsworld.com/video/watch/80973186/
+
+ - ESPN.go.com:
+     - http://espn.go.com/video/clip?id=5163631
+
+ - FileCabi.net:
+     - http://www.filecabi.net/video/hiddendogstopsrobbery.html
+
+ - Free.Zoznam.sk:
+     - http://free.zoznam.sk/video/Splhajuci-buldozer
+
+ - FreeRide.cz:
+     - http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
+     - http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
+
+ - GodTube.com:
+     - http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
+
+ - Guba.com:
+     - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
+
+ - iPrima.cz:
+     - http://www.iprima.cz/videoarchiv/44524/all/all
+
+ - LiveLeak.com:
+     - http://www.liveleak.com/view?i=6f4_1272904024
+
+ - LiveVideo.com:
+     - http://www.livevideo.com/liveshow/brian3maria
+
+ - Markiza.sk:
+     - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
+
+     Note: Each movie can be made up of several files. In such a case, all
+     files are downloaded.
+
+ - MetaCafe.com:
+     - http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
+
+ - MySpace.com
+     - http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
+
+     Note: This provider uses RTMP protocol. See the note below.
+
+ - N-joy.cz:
+     - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+
+ - Nova.cz:
+     - http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+
+     Note: This provider uses RTMP protocol. See the note below.
+
+ - Raajje.tv:
+     - http://www.raajje.tv/video/991/president-anni-diving
+
+ - Rozhlas.cz:
+     - http://www.rozhlas.cz/vltava/porady/_zprava/676996
+
+     Note: Each page can contain several files. In such a case, all files
+     are downloaded.
+
+ - RuTube.ru:
+     - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
+
+ - Snotr.com:
+     - http://www.snotr.com/video/4280
+
+ - Stickam.com:
+     - http://www.stickam.com/viewMedia.do?mId=188284575
+
+ - Stream.cz:
+     - http://www.stream.cz/video/437197-meziplyn-30
+
+     Note: There is an unresolved bug with stream.cz, which sometimes 
+     prevents a download. The cause is not know yet, but it seems to be
+     related to some timing issue within Synapse library. A slight delay
+     inserted in the right place removes the bug, apparently.
+
+     Note: Stream.cz provides a content-delivery-network for a number of
+     other services, such as TV stations Ocko or Prima.
+
+ - StreetFire.com:
+     - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
+
+ - Tangle.com:
+     - http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
+
+ - TeacherTube.com:
+     - http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
+
+ - Tontuyau.com:
+     - http://www.tontuyau.com/v.asp?id=21715
+
+ - TVcom.cz:
+     - http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+
+     Note: This provider uses RTSP over HTTP protocol. See the note below.
+
+ - VideoClipsDump.com:
+     - http://www.videoclipsdump.com/media/1951/Karate_Fail/
+
+ - Videu.de:
+     - http://www.videu.de/video/4etN3FlaaY
+
+ - Vimeo.com:
+     - http://www.vimeo.com/10777111
+
+ - Youtube.com:
+     - http://www.youtube.com/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch?v=b5AWQ5aBjgE
+     - http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+     - http://www.youtube.com/titanicpiano14
+
+ - ZkoukniTo.cz:
+     - http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
+
+
+
+Supported porn providers:
+
+ - PornHost.com
+ - PornHub.com
+ - PornoTube.com
+ - RedTube.com
+ - Rude.com
+ - Shufuni.com
+ - SpankingTube.com
+ - Tube8.com
+ - XHamster.com
+ - XNXX.com
+ - XTube.com
+ - XVideoHost.com
+ - XVideos.com
+ - YouPorn.com
+ - Yuvutu.com
+
+
+
+RTMP PROTOCOL
+-------------
+
+Since version 0.15 the program supports "real" streaming video according to
+the RTMP protocol. The protocol is implemented with a library RTMPDUMP_DLL,
+which is heavily based on project RTMPDUMP (http://rtmpdump.mplayerhq.hu)
+- basically, the library is the same as RTMPDUMP, except that it has a DLL
+interface rather than command-line. The implementation has several problems:
+
+1) It is not possible to determine total video size exactly. The size is
+   just guessed, based on the total time of video and the time and size of
+   downloaded data.
+
+2) Errors are not passed to YouTube Downloader. Instead, they are written
+   to a log file in the user's temporary directory.
+
+3) In order to download RTMP streams, including those which are not encrypted,
+   these libraries are required in the exe-file's directory:
+   - RTMPDUMP_DLL.DLL - provided with YouTube Downloader.
+   - CRYPTOEAY32-0.9.8.DLL - a component of OpenSSL version 0.9.8. It may be
+     called CRYPTOEAY32.DLL in the distribution archive, but YTD expects the
+     name which includes version number.
+   - SSLEAY32-0.9.8.DLL - again, a component of OpenSSL 0.9.8.
+
+4) It's impossible to reliably detect whether a download was complete or not.
+   Please check each downloaded file to make sure it is complete.
+
+
+
+MMS/RTSP PROTOCOLS
+------------------
+
+Since version 0.17, protocol family around MMS and RTSP (e.g. Microsoft's
+streaming servers, Real servers and a number of others) is supported. The
+protocol is implemented by library MDSL_DLL.DLL, which is a wrapper around
+the MDSL project (http://msdl.sf.net). The library is built in much the same
+way as the RTMPDUMP library above, with similar drawbacks.
+
+Note: As with RTMP, the total size of a stream is just guessed. It is quite
+possible that a download ends at 93% and turns out to be complete. The same
+cautionary note as with RTMP applies: Please test every downloaded file to 
+make sure it really is complete.
+
+
+
+PLAYLISTS
+---------
+
+Since version 0.19, sources which contain multiple files on one page are
+supported (e.g. Markiza.sk). At the moment it is not possible to choose which
+files to download and which to skip - YTD simply downloads them all. You can
+of course use the GUI version and delete unwanted streams from there.
+
+
+
+INI FILE
+--------
+
+Since version 0.27, YTD supports an INI file. When the program is started,
+it checks for existence of an INI file named exactly the same as the EXE
+file, but with an INI extension (usually, that means YTD.INI). If it exists,
+program tries to read default options from it. These options may be overriden
+by command line switches.
+
+Note that the GUI version overrides these values with entries from Windows
+registry, unless you use the "DontUseRegistry" setting.
+
+In section [YTD] these settings are available:
+
+  OverwriteMode=Ask
+    - Determine, how will YTD react to already-existing files.
+    - Possible values are (without quotes):
+      "ask" - ask the user, what to do (like the -k parameter)
+      "never" - skip existing files (like the -n parameter)
+      "always" - overwrite existing files (like the -a switch)
+      "rename" - generate a new unique name (like the -r switch)
+    - Default value is "ask".
+
+  DestinationPath=C:\Downloads
+    - Directory, where the downloads will be placed (like the -o parameter).
+    - Default value is an empty string, which means "current working
+      directory".
+
+  ErrorLog=C:\Downloads\error.log
+    - Name of file, where YTD logs failed downloads (like the -e parameter).
+    - Default value is an empty string, which means "no log file".
+
+  DontUseRegistry=1
+    - Determine, whether the GUI version saves its settings in an INI file
+      or in Windows registry. Windows registry are available everywhere (the
+      settings are stored in the HKEY_CURRENT_USER key) while INI file may
+      not be available due to access rights; on the other hand, the INI file
+      usage lets you use YTD as a portable application which doesn't write
+      anything to the host system's configuration.
+      application, because it needs write access to YTD.INI.
+    - Possible values are "0" (use registry) and "1" (don't use registry).
+    - Default value is "1".
+
+In section [CeskaTelevize.cz] these settings are available:
+
+  PreferRealMedia=1
+    - This option selects, which stream is downloaded: Windows Media or Real
+      Media.
+    - Possible values are "0" (Windows Media) and "1" (Real Media).
+    - Default value is "0".
+
+
+
+SYNTAX
+------
+
+  ytd.exe <param> [<param>] [<param>] ...
+
+  where <param> is either an URL or one of the following:
+
+    -?, -h ........ Show help.
+    -i <file> ..... Downloads all URLs listed in the text file <file>, where
+                    each line represents one URL.
+    -o <dir> ...... Downloaded files will be stored in directory <dir>. If this
+                    option is not used, the current working directory will be
+                    used.
+    -e <file> ..... Log all failed downloads to file <file>.
+    -s <source> ... <source> (local file or URL) is searched for known URLs and
+                    these will be downloaded.
+    -l ............ Displays a list of supported media providers.
+    -v ............ Checks for availability of a newer version of YTD.
+    -n ............ Never overwrite existing files. Skip the download instead.
+    -a ............ Always overwrite existing files.
+    -r ............ If a file with matching filename already exists, generate
+                    a new unique filename.
+    -k ............ Ask the user what to do if a file already exists (default).
+
+  Ex.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+       ytd.exe -i c:\temp\seznam.txt
+       ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+
+  If no arguments are provided, the graphical version of YTD is started.
+
+
+
+LICENSE
+-------
+
+The program is relased under the GNU GLP 3 license.
+
+
+
+AUTHORS
+-------
+
+Program was written by Pepak (http://www.pepak.net).
+
+YouTube Downloader uses following components by other authors:
+
+- Lukas Gebauer
+  - library Synapse, used for TCP/IP, HTTP and other network operations.
+  - license: custom, freeware
+  - source: http://synapse.ararat.cz/
+
+- Mark James
+  - Silk iconpack, used in the GUI version of YTD.
+  - license: Creative Common Attribution 2.5
+  - source: http://www.famfamfam.com/lab/icons/silk/
+
+- Renato Mancuso (mancuso@renatomancuso.com)
+  - library PCRE for regular expression support.
+  - license: custom, freeware
+  - source: http://www.renatomancuso.com/software/dpcre/dpcre.htm
+
+- Jun "metro" Oyama (me_t_ro@yahoo.com)
+  - MSDL, a tool for downloading MMS, RTSP and related protocols.
+  - license: GNU GPL v3
+  - source: http://msdl.sourceforge.net/
+
+- Andrej Stepanchuk + Howard Chu
+  - RTMPDUMP, a tool for downloading RTMP and related protocols.
+  - license: GNU GPL v2
+  - source: http://rtmpdump.mplayerhq.hu/
+
+- Jan Verhoeven (jan1.verhoeven@wxs.nl)
+  - library janXmlParser2 for XML support.
+  - license: custom, freeware
+  - source: http://jansfreeware.com/jfdelphi.htm

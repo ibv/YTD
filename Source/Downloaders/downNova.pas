@@ -13,14 +13,13 @@ type
     private
     protected
       MovieVariablesRegExp: IRegEx;
-      function GetMovieInfoUrl: string; override;
+    protected
       function GetFileNameExt: string; override;
-      function GetInfoPageEncoding: TPageEncoding; override;
+      function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -28,18 +27,36 @@ type
 implementation
 
 uses
+  janXmlParser2,
   uDownloadClassifier,
-  uStringUtils,
-  janXmlParser2;
-  
-const MOVIE_VARIABLES_REGEXP = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
+  uMessages;
+
+// http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+const
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*archiv\.nova\.cz/multimedia/';
+  URLREGEXP_ID =        '.+?';
+  URLREGEXP_AFTER_ID =  '\.html?';
+
+const
+  REGEXP_MOVIE_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
 
 { TDownloader_Nova }
+
+class function TDownloader_Nova.Provider: string;
+begin
+  Result := 'Nova.cz';
+end;
+
+class function TDownloader_Nova.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
-  MovieVariablesRegExp := RegExCreate(MOVIE_VARIABLES_REGEXP, [rcoIgnoreCase, rcoSingleLine])
+  SetInfoPageEncoding(peUTF8);
+  MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES, [rcoIgnoreCase, rcoSingleLine])
 end;
 
 destructor TDownloader_Nova.Destroy;
@@ -48,30 +65,14 @@ begin
   inherited;
 end;
 
-class function TDownloader_Nova.Provider: string;
+function TDownloader_Nova.GetFileNameExt: string;
 begin
-  Result := 'TV Nova';
-end;
-
-class function TDownloader_Nova.MovieIDParamName: string;
-begin
-  Result := 'TVNOVA';
-end;
-
-class function TDownloader_Nova.UrlRegExp: string;
-begin
-  // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
-  Result := '^https?://archiv\.nova\.cz/multimedia/(?P<' + MovieIDParamName + '>.+?)\.html?';
+  Result := '.flv';
 end;
 
 function TDownloader_Nova.GetMovieInfoUrl: string;
 begin
   Result := 'http://archiv.nova.cz/multimedia/' + MovieID + '.html';
-end;
-
-function TDownloader_Nova.GetInfoPageEncoding: TPageEncoding;
-begin
-  Result := peUTF8;
 end;
 
 function TDownloader_Nova.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
@@ -82,7 +83,6 @@ var Variables: IMatchCollection;
     ServersUrl, Servers, VideosUrl, Videos: string;
     FlvServer, FlvStream, FlvName: string;
     Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -118,15 +118,15 @@ begin
     end;
   Http.Cookies.Values['bit'] := UserAdID;
   if SiteID = '' then
-    SetLastErrorMsg('SiteID not found.')
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SiteID']))
   else if SectionID = '' then
-    SetLastErrorMsg('SectionID not found.')
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SectionID']))
   else if MediaID = '' then
-    SetLastErrorMsg('MediaID not found.')
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['MediaID']))
   else if SessionID = '' then
-    SetLastErrorMsg('SessionID not found.')
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SessionID']))
   //else if UserAdID = '' then
-  //  SetLastErrorMsg('UserAdID not found.')
+  //  SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UserAdID']))
   else
     begin
     ServersUrl := 'http://tn.nova.cz/bin/player/config.php?site_id=' + SiteID + '&';
@@ -139,55 +139,39 @@ begin
                  '&fv=WIN 10,0,45,2' +
                  '&session_id=' + SessionID +
                  '&ad_file=noad';
-    if not DownloadPage(Http, ServersUrl, Servers) then
-      SetLastErrorMsg('Failed loading server list.')
-    else if not DownloadPage(Http, VideosUrl, Videos) then
-      SetLastErrorMsg('Failed loading video list.')
+    if not DownloadPage(Http, ServersUrl, Servers, peUTF8) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
+    else if not DownloadPage(Http, VideosUrl, Videos, peUTF8) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_EMBEDDED_OBJECT)
     else
       begin
-      Servers := WideToAnsi(Utf8ToWide(Servers));
-      Videos := WideToAnsi(Utf8ToWide(Videos));
-      FlvServer := '';
-      FlvStream := '';
-      FlvName := '';
       Xml := TjanXmlParser2.Create;
       try
         Xml.Xml := Servers;
-        Node := Xml.GetChildByPath('flvserver');
-        if Node <> nil then
-          FlvServer := Node.attribute['url'];
+        GetXmlAttr(Xml, 'flvserver', 'url', FlvServer);
         Xml.Xml := Videos;
-        Node := Xml.GetChildByPath('item');
-        if Node <> nil then
-          begin
-          FlvStream := Node.attribute['src'];
-          FlvName := Node.Attribute['txt'];
-          end;
+        GetXmlAttr(Xml, 'item', 'src', FlvStream);
+        GetXmlAttr(Xml, 'item', 'txt', FlvName);
       finally
         Xml.Free;
         end;
       if FlvName = '' then
         FlvName := MediaID;
       if FlvServer = '' then
-        SetLastErrorMsg('Failed to locate streaming server.')
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
       else if FlvStream = '' then
-        SetLastErrorMsg('Failed to locate video stream.')
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
       else
         begin
         SetName(FlvName);
-        RtmpPlayPath := FlvStream;
-        RtmpUrl := FlvServer + '/' + FlvStream;
-        MovieUrl := RtmpUrl;
+        MovieUrl := FlvServer + '/' + FlvStream;
+        AddRtmpDumpOption('r', MovieURL);
+        AddRtmpDumpOption('y', FlvStream);
         Result := True;
         SetPrepared(True);
         end;
       end;
     end;
-end;
-
-function TDownloader_Nova.GetFileNameExt: string;
-begin
-  Result := '.flv';
 end;
 
 initialization

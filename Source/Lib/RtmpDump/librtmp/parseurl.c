@@ -29,7 +29,7 @@
 #include "rtmp_sys.h"
 #include "log.h"
 
-bool RTMP_ParseURL(const char *url, int *protocol, char **host, unsigned int *port,
+bool RTMP_ParseURL(const char *url, int *protocol, AVal *host, unsigned int *port,
 	AVal *playpath, AVal *app)
 {
 	char *p, *end, *col, *ques, *slash;
@@ -43,9 +43,9 @@ bool RTMP_ParseURL(const char *url, int *protocol, char **host, unsigned int *po
 	app->av_len = 0;
 	app->av_val = NULL;
 
-	// Old School Parsing
+	/* Old School Parsing */
 
-	// look for usual :// pattern
+	/* look for usual :// pattern */
 	p = strstr(url, "://");
 	if(!p) {
 		RTMP_Log(RTMP_LOGERROR, "RTMP URL: No :// in url!");
@@ -75,10 +75,10 @@ bool RTMP_ParseURL(const char *url, int *protocol, char **host, unsigned int *po
 	RTMP_Log(RTMP_LOGDEBUG, "Parsed protocol: %d", *protocol);
 
 parsehost:
-	// lets get the hostname
+	/* let's get the hostname */
 	p+=3;
 
-	// check for sudden death
+	/* check for sudden death */
 	if(*p==0) {
 		RTMP_Log(RTMP_LOGWARNING, "No hostname in URL!");
 		return false;
@@ -99,11 +99,9 @@ parsehost:
 		hostlen = col - p;
 
 	if(hostlen < 256) {
-		*host = malloc(hostlen+1);
-		strncpy(*host, p, hostlen);
-		(*host)[hostlen]=0;
-
-		RTMP_Log(RTMP_LOGDEBUG, "Parsed host    : %s", *host);
+		host->av_val = p;
+		host->av_len = hostlen;
+		RTMP_Log(RTMP_LOGDEBUG, "Parsed host    : %.*s", hostlen, host->av_val);
 	} else {
 		RTMP_Log(RTMP_LOGWARNING, "Hostname exceeds 255 characters!");
 	}
@@ -111,10 +109,11 @@ parsehost:
 	p+=hostlen;
 	}
 
-	// get the port number if available
+	/* get the port number if available */
 	if(*p == ':') {
+		unsigned int p2;
 		p++;
-		unsigned int p2 = atoi(p);
+		p2 = atoi(p);
 		if(p2 > 65535) {
 			RTMP_Log(RTMP_LOGWARNING, "Invalid port number!");
 		} else {
@@ -129,10 +128,11 @@ parsehost:
 	p = slash+1;
 
 	{
-	// parse application
-	//
-	// rtmp://host[:port]/app[/appinstance][/...]
-	// application = app[/appinstance]
+	/* parse application
+	 *
+	 * rtmp://host[:port]/app[/appinstance][/...]
+	 * application = app[/appinstance]
+	 */
 
 	char *slash2, *slash3 = NULL;
 	int applen, appnamelen;
@@ -141,18 +141,18 @@ parsehost:
 	if(slash2)
 		slash3 = strchr(slash2+1, '/');
 
-	applen = end-p; // ondemand, pass all parameters as app
-	appnamelen = applen; // ondemand length
+	applen = end-p; /* ondemand, pass all parameters as app */
+	appnamelen = applen; /* ondemand length */
 
-	if(ques && strstr(p, "slist=")) { // whatever it is, the '?' and slist= means we need to use everything as app and parse plapath from slist=
+	if(ques && strstr(p, "slist=")) { /* whatever it is, the '?' and slist= means we need to use everything as app and parse plapath from slist= */
 		appnamelen = ques-p;
 	}
 	else if(strncmp(p, "ondemand/", 9)==0) {
-                // app = ondemand/foobar, only pass app=ondemand
+                /* app = ondemand/foobar, only pass app=ondemand */
                 applen = 8;
                 appnamelen = 8;
         }
-	else { // app!=ondemand, so app is app[/appinstance]
+	else { /* app!=ondemand, so app is app[/appinstance] */
 		if(slash3)
 			appnamelen = slash3-p;
 		else if(slash2)
@@ -198,6 +198,7 @@ void RTMP_ParsePlaypath(AVal *in, AVal *out) {
 	const char *playpath = in->av_val;
 	const char *temp, *q, *ext = NULL;
 	const char *ppstart = playpath;
+	char *streamname, *destptr, *p;
 
 	int pplen = in->av_len;
 
@@ -225,7 +226,7 @@ void RTMP_ParsePlaypath(AVal *in, AVal *out) {
 		    (strncmp(ext, ".mp4", 4) == 0)) {
 			addMP4 = 1;
 			subExt = 1;
-		// Only remove .flv from rtmp URL, not slist params
+		/* Only remove .flv from rtmp URL, not slist params */
 		} else if ((ppstart == playpath) &&
 		    (strncmp(ext, ".flv", 4) == 0)) {
 			subExt = 1;
@@ -235,17 +236,25 @@ void RTMP_ParsePlaypath(AVal *in, AVal *out) {
 		}
 	}
 
-	char *streamname = (char *)malloc((pplen+4+1)*sizeof(char));
+	streamname = (char *)malloc((pplen+4+1)*sizeof(char));
 	if (!streamname)
 		return;
 
-	char *destptr = streamname, *p;
-	if (addMP4 && (strncmp(ppstart, "mp4:", 4) != 0)) {
-		strcpy(destptr, "mp4:");
-		destptr += 4;
-	} else if (addMP3 && (strncmp(ppstart, "mp3:", 4) != 0)) {
-		strcpy(destptr, "mp3:");
-		destptr += 4;
+	destptr = streamname;
+	if (addMP4) {
+		if (strncmp(ppstart, "mp4:", 4)) {
+			strcpy(destptr, "mp4:");
+			destptr += 4;
+		} else {
+			subExt = 0;
+		}
+	} else if (addMP3) {
+		if (strncmp(ppstart, "mp3:", 4)) {
+			strcpy(destptr, "mp3:");
+			destptr += 4;
+		} else {
+			subExt = 0;
+		}
 	}
 
  	for (p=(char *)ppstart; pplen >0;) {
@@ -255,7 +264,7 @@ void RTMP_ParsePlaypath(AVal *in, AVal *out) {
 			pplen -= 4;
 		}
 		if (*p == '%') {
-			int c;
+			unsigned int c;
 			sscanf(p+1, "%02x", &c);
 			*destptr++ = c;
 			pplen -= 3;

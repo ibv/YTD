@@ -1,15 +1,19 @@
-VERSION=v2.2b
+VERSION=v2.2d
 
 CC=$(CROSS_COMPILE)gcc
 LD=$(CROSS_COMPILE)ld
 
 CRYPTO=OPENSSL
+#CRYPTO=POLARSSL
 #CRYPTO=GNUTLS
-LIB_GNUTLS=-lgnutls
+LIB_GNUTLS=-lgnutls -lgcrypt
 LIB_OPENSSL=-lssl -lcrypto
+LIB_POLARSSL=-lpolarssl
 CRYPTO_LIB=$(LIB_$(CRYPTO))
+DEF_=-DNO_CRYPTO
+CRYPTO_DEF=$(DEF_$(CRYPTO))
 
-DEF=-DRTMPDUMP_VERSION=\"$(VERSION)\"
+DEF=-DRTMPDUMP_VERSION=\"$(VERSION)\" $(CRYPTO_DEF) $(XDEF)
 OPT=-O2
 CFLAGS=-Wall $(XCFLAGS) $(INC) $(DEF) $(OPT)
 LDFLAGS=-Wall $(XLDFLAGS)
@@ -57,9 +61,6 @@ $(LIBRTMP): FORCE
 rtmpdump: rtmpdump.o $(LIBRTMP)
 	$(CC) $(LDFLAGS) $^ $> -o $@$(EXT) $(LIBS)
 
-rtmpdump_dll: rtmpdump_dll.o rtmpdump_dll.def $(LIBRTMP)
-	$(CC) $(LDFLAGS) -s -shared $^ $> -o $@.dll $(LIBS)
-
 rtmpsrv: rtmpsrv.o thread.o $(LIBRTMP)
 	$(CC) $(LDFLAGS) $^ $> -o $@$(EXT) $(SLIBS)
 
@@ -69,9 +70,13 @@ rtmpsuck: rtmpsuck.o thread.o $(LIBRTMP)
 rtmpgw: rtmpgw.o thread.o $(LIBRTMP)
 	$(CC) $(LDFLAGS) $^ $> -o $@$(EXT) $(SLIBS)
 
+rtmpdump_dll: rtmpdump_dll.o rtmpdump_dll.def $(LIBRTMP)
+	$(CC) $(LDFLAGS) -s -shared $^ $> -o $@.dll $(LIBS)
+
+rtmpdump_dll.o: rtmpdump_dll.c $(INCRTMP) Makefile
+
 rtmpgw.o: rtmpgw.c $(INCRTMP) Makefile
 rtmpdump.o: rtmpdump.c $(INCRTMP) Makefile
-rtmpdump_dll.o: rtmpdump_dll.c $(INCRTMP) Makefile
 rtmpsrv.o: rtmpsrv.c $(INCRTMP) Makefile
 rtmpsuck.o: rtmpsuck.c $(INCRTMP) Makefile
 thread.o: thread.c thread.h

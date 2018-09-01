@@ -34,6 +34,10 @@
 #ifdef DLL
 
 typedef void (*DownloadProgressCallback) (int tag, int downloaded_bytes, int total_bytes, int *stop_it); // tag zvenku, pocet stazenych bajtu, procento prenosu, ma se prenos stopnout?
+typedef struct {
+  int shortOpt;
+  char *optArg;
+} DllOption;
 
 #endif
 

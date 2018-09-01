@@ -12,14 +12,13 @@ type
   TDownloader_BlipTv = class(THttpDownloader)
     private
     protected
-      MovieIdFromUrlRegExp: IRegEx;
+      MovieIdFromUrlRegExp: IRegEx; 
+    protected
       function GetMovieInfoUrl: string; override;
-      function GetInfoPageEncoding: TPageEncoding; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -27,17 +26,36 @@ type
 implementation
 
 uses
+  janXmlParser2,
   uDownloadClassifier,
-  janXmlParser2;
-  
-const MOVIE_ID_FROM_URL_REGEXP = '[?&]file=http(?:%3A%2F%2F|://)(?:www\.)?blip\.tv(?:%2F|/)rss(?:%2F|/)flash(?:%2F|/)(?P<ID>[0-9]+)';
+  uMessages;
+
+// http://blip.tv/play/hIVV4sNUAg
+const
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*blip\.tv/play/';
+  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_AFTER_ID =  '';
+
+const
+  REGEXP_MOVIE_ID_FROM_URL = '[?&]file=http(?:%3A%2F%2F|://)(?:www\.)?blip\.tv(?:%2F|/)rss(?:%2F|/)flash(?:%2F|/)(?P<ID>[0-9]+)';
 
 { TDownloader_BlipTv }
+
+class function TDownloader_BlipTv.Provider: string;
+begin
+  Result := 'Blip.tv';
+end;
+
+class function TDownloader_BlipTv.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_BlipTv.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  MovieIdFromUrlRegExp := RegExCreate(MOVIE_ID_FROM_URL_REGEXP, [rcoIgnoreCase]);
+  SetInfoPageEncoding(peUTF8);
+  MovieIdFromUrlRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_URL, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_BlipTv.Destroy;
@@ -53,6 +71,7 @@ begin
   Result := '';
   Http := CreateHttp;
   try
+    Http.Document.Clear;
     if Http.HttpMethod('GET', 'http://blip.tv/play/' + MovieID) then
       if CheckRedirect(Http, Url) then
         if GetRegExpVar(MovieIdFromUrlRegExp, Url, 'ID', ID) then
@@ -64,49 +83,27 @@ end;
 
 function TDownloader_BlipTv.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Xml: TjanXmlParser2;
-    TitleNode, ContentNode: TjanXmlNode2;
+    Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   Xml := TjanXmlParser2.create;
   try
     Xml.xml := Page;
-    TitleNode := Xml.getChildByPath('channel/item/media:title');
-    if TitleNode <> nil then
+    if not GetXmlVar(Xml, 'channel/item/media:title', Title) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+    else if not GetXmlAttr(Xml, 'channel/item/media:group/media:content', 'url', Url) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
       begin
-      SetName(TitleNode.text);
-      ContentNode := Xml.GetChildByPath('channel/item/media:group/media:content');
-      if ContentNode <> nil then
-        begin
-        MovieUrl := ContentNode.attribute['url'];
-        Result := True;
-        SetPrepared(True);
-        end;
+      SetName(Title);
+      MovieURL := Url;
+      Result := True;
+      SetPrepared(True);
       end;
   finally
     Xml.Free;
     end;
-end;
-
-class function TDownloader_BlipTv.Provider: string;
-begin
-  Result := 'Blip.tv';
-end;
-
-class function TDownloader_BlipTv.MovieIDParamName: string;
-begin
-  Result := 'BLIPTV';
-end;
-
-class function TDownloader_BlipTv.UrlRegExp: string;
-begin
-  // http://blip.tv/play/hIVV4sNUAg
-  Result := '^https?://(?:[a-z0-9-]+\.)?blip\.tv/play/(?P<' + MovieIDParamName + '>[^/&?]+)';
-end;
-
-function TDownloader_BlipTv.GetInfoPageEncoding: TPageEncoding;
-begin
-  Result := peUTF8;
 end;
 
 initialization

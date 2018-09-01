@@ -2019,7 +2019,9 @@ begin
     l := Stream.Size - Stream.Position;;
     if Indy then
       l := SwapBytes(l);
-  end;
+  end
+  else
+    l := 0;
   repeat
     {$IFDEF CIL}
     Setlength(buf, FSendMaxChunk);

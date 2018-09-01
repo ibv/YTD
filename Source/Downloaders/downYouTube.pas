@@ -18,7 +18,6 @@ uses
 type
   TDownloader_YouTube = class(THttpDownloader)
     private
-      fCookies: TStringList;
     protected
       {$IFDEF GET_VIDEO_INFO}
       GetVideoInfoFailed: Boolean;
@@ -33,18 +32,14 @@ type
       ExtractVideoIdRegExp: IRegEx;
       {$ENDIF}
       Extension: string;
-      function GetMovieInfoUrl: string; override;
-      function GetInfoPageEncoding: TPageEncoding; override;
-      function GetFileNameExt: string; override;
-      function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      function BeforeDownload(Http: THttpSend): boolean; override;
       function GetBestVideoFormat(const FormatList: string): string; virtual;
-      property Cookies: TStringList read fCookies;
+    protected
+      function GetFileNameExt: string; override;
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -58,45 +53,63 @@ implementation
 {$ENDIF}
 
 uses
+  uStringUtils,
   uDownloadClassifier,
-  SynaCode;
+  uMessages;
+
+// http://www.youtube.com/v/HANqEpKDHyk
+// http://www.youtube.com/watch/v/HANqEpKDHyk
+// http://www.youtube.com/watch?v=eYSbVcjyVyw
+const
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?v=)';
+  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_AFTER_ID =  '';
 
 const
-  EXTRACT_CONFIG_REGEXP = '<param\s+name=((?:\\?["''])?)flashvars\1\s+value=\1(?P<FLASHVARS>.*?)\1';
-  MOVIE_TITLE_REGEXP = '<title>(?:\s*YouTube\s*-)?\s*(?P<TITLE>.*?)\s*</title>';
+  REGEXP_EXTRACT_CONFIG = '<param\s+name=((?:\\?["''])?)flashvars\1\s+value=\1(?P<FLASHVARS>.*?)\1';
+  REGEXP_MOVIE_TITLE = '<title>(?:\s*YouTube\s*-)?\s*(?P<TITLE>.*?)\s*</title>';
   {$IFDEF FLASHVARS_PARSER}
-  FLASHVARS_PARSER_REGEXP = '(?:^|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
+  REGEXP_FLASHVARS_PARSER = '(?:^|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   {$ELSE}
-  FLASHVARS_FORMATLIST_REGEXP = '&fmt_list=(?P<FORMATLIST>.*?)(?:&|$)';
-  FLASHVARS_TOKEN_REGEXP = '&t=(?P<TOKEN>.*?)(?:&|$)';
-  FLASHVARS_VIDEOID_REGEXP = '&video_id=(?P<VIDEOID>.*?)(?:&|$)';
+  REGEXP_FLASHVARS_FORMATLIST = '&fmt_list=(?P<FORMATLIST>.*?)(?:&|$)';
+  REGEXP_FLASHVARS_TOKEN = '&t=(?P<TOKEN>.*?)(?:&|$)';
+  REGEXP_FLASHVARS_VIDEOID = '&video_id=(?P<VIDEOID>.*?)(?:&|$)';
   {$ENDIF}
-  FORMAT_LIST_REGEXP = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
+  REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
 
 { TDownloader_YouTube }
+
+class function TDownloader_YouTube.Provider: string;
+begin
+  Result := 'YouTube.com';
+end;
+
+class function TDownloader_YouTube.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  YouTubeConfigRegExp := RegExCreate(EXTRACT_CONFIG_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  SetInfoPageEncoding(peUTF8);
+  YouTubeConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   {$IFDEF GET_VIDEO_INFO}
   GetVideoInfoFailed := False;
   {$ENDIF}
   {$IFDEF FLASHVARS_PARSER}
-  FlashVarsParserRegExp := RegExCreate(FLASHVARS_PARSER_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER, [rcoIgnoreCase, rcoSingleLine]);
   {$ELSE}
-  ExtractFormatListRegExp := RegExCreate(FLASHVARS_FORMATLIST_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  ExtractTokenRegExp := RegExCreate(FLASHVARS_TOKEN_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  ExtractVideoIdRegExp := RegExCreate(FLASHVARS_VIDEOID_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  ExtractFormatListRegExp := RegExCreate(REGEXP_FLASHVARS_FORMATLIST, [rcoIgnoreCase, rcoSingleLine]);
+  ExtractTokenRegExp := RegExCreate(REGEXP_FLASHVARS_TOKEN, [rcoIgnoreCase, rcoSingleLine]);
+  ExtractVideoIdRegExp := RegExCreate(REGEXP_FLASHVARS_VIDEOID, [rcoIgnoreCase, rcoSingleLine]);
   {$ENDIF}
-  FormatListRegExp := RegExCreate(FORMAT_LIST_REGEXP, [rcoIgnoreCase]);
-  fCookies := TStringList.Create;
+  FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_YouTube.Destroy;
 begin
-  FreeAndNil(fCookies);
   YouTubeConfigRegExp := nil;
   MovieTitleRegExp := nil;
   {$IFDEF FLASHVARS_PARSER}
@@ -110,6 +123,11 @@ begin
   inherited;
 end;
 
+function TDownloader_YouTube.GetFileNameExt: string;
+begin
+  Result := Extension;
+end;
+
 function TDownloader_YouTube.GetMovieInfoUrl: string;
 begin
   {$IFDEF GET_VIDEO_INFO}
@@ -118,23 +136,6 @@ begin
   else
   {$ENDIF}
   Result := 'http://www.youtube.com/watch?v=' + MovieID;
-end;
-
-function TDownloader_YouTube.GetFileNameExt: string;
-begin
-  Result := Extension;
-end;
-
-function TDownloader_YouTube.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
-begin
-  Result := inherited BeforePrepareFromPage(Page, Http);
-  Cookies.Assign(Http.Cookies);
-end;
-
-function TDownloader_YouTube.BeforeDownload(Http: THttpSend): boolean;
-begin
-  Result := inherited BeforeDownload(Http);
-  Http.Cookies.Assign(Cookies);
 end;
 
 function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
@@ -156,25 +157,23 @@ begin
     FlashVars := Page
   else
   {$ENDIF}
-  if not GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
-    FlashVars := '';
+  GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars);
+  if FlashVars = '' then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   {$IFDEF GET_VIDEO_INFO}
-  if (not GetVideoInfoFailed) and (AnsiCompareText(Copy(FlashVars, 1, GetVideoInfoDoesNotExistLength), GetVideoInfoDoesNotExist) = 0) then
+  else if (not GetVideoInfoFailed) and (AnsiCompareText(Copy(FlashVars, 1, GetVideoInfoDoesNotExistLength), GetVideoInfoDoesNotExist) = 0) then
     begin
+    // Some videos may fail with the new (age-verification-bypassing) implementation. If that happens,
+    // try again using the old method.
     GetVideoInfoFailed := True;
     try
-      if Prepare then
-        begin
-        Result := True;
-        Exit;
-        end;
+      Result := Prepare;
+      Exit;
     finally
       GetVideoInfoFailed := False;
       end;
-    end;
+    end
   {$ENDIF}
-  if FlashVars = '' then
-    SetLastErrorMsg('Failed to locate flashvars.')
   {$IFDEF FLASHVARS_PARSER}
   else
     begin
@@ -189,7 +188,7 @@ begin
       if VarName = 'fmt_list' then
         FormatList := VarValue
       else if VarName = 'title' then
-        SetName(DecodeUrl(StringReplace(VarValue, '+', ' ', [rfReplaceAll])))
+        SetName(WideToAnsi(Utf8ToWide(UrlDecode(VarValue))))
       {$IFDEF GET_VIDEO_INFO}
       else if (not GetVideoInfoFailed) and (VarName = 'token') then
         Token := VarValue
@@ -200,14 +199,14 @@ begin
         VideoID := VarValue;
       end;
     if FormatList = '' then
-      SetLastErrorMsg('Failed to locate format list.')
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']))
     else if Token = '' then
-      SetLastErrorMsg('Failed to locate token.')
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Token']))
   {$ELSE}
   else if not GetRegExpVar(ExtractFormatListRegExp, FlashVars, 'FORMATLIST', FormatList) then
-    SetLastErrorMsg('Failed to locate format list.')
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']))
   else if not GetRegExpVar(ExtractTokenRegExp, FlashVars, 'TOKEN', Token) then
-    SetLastErrorMsg('Failed to locate token.')
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Token']))
   {$ENDIF}
   else
     begin
@@ -215,7 +214,7 @@ begin
     if not GetRegExpVar(ExtractVideoIdRegExp, FlashVars, 'VIDEOID', VideoId) then
       VideoId := MovieId;
     {$ENDIF}
-    VideoFormat := GetBestVideoFormat(DecodeUrl(Trim(FormatList)));
+    VideoFormat := GetBestVideoFormat(UrlDecode(Trim(FormatList)));
     if VideoFormat = '' then
       VideoFormat := '22';
     if (VideoFormat = '34') or (VideoFormat = '35') then
@@ -257,29 +256,6 @@ begin
   finally
     Matches := nil;
     end;
-end;
-
-class function TDownloader_YouTube.Provider: string;
-begin
-  Result := 'YouTube.com';
-end;
-
-class function TDownloader_YouTube.MovieIDParamName: string;
-begin
-  Result := 'YOUTUBE';
-end;
-
-class function TDownloader_YouTube.UrlRegExp: string;
-begin
-  // http://www.youtube.com/v/HANqEpKDHyk
-  // http://www.youtube.com/watch/v/HANqEpKDHyk
-  // http://www.youtube.com/watch?v=eYSbVcjyVyw
-  Result := '^https?://(?:www\.)?youtube\.com/(?:v/|watch/v/|watch\?v=)(?P<' + MovieIDParamName + '>[^&?]+)';
-end;
-
-function TDownloader_YouTube.GetInfoPageEncoding: TPageEncoding;
-begin
-  Result := peUTF8;
 end;
 
 initialization

@@ -3,13 +3,20 @@ setlocal
 
 set delphi=call dcc32 -B -E..\Exe -N..\Units -U..\Units
 
-if /i "%~1"=="gui" set delphi=%delphi% -DNO_CLI
-if /i "%~1"=="cli" set delphi=%delphi% -DNO_GUI
+:params
+if "%~1"=="" goto noparams
+if /i "%~1"=="-?" goto help
+if /i "%~1"=="-h" goto help
+if /i "%~1"=="nocli" set delphi=%delphi% -DNO_CLI
+if /i "%~1"=="nogui" set delphi=%delphi% -DNO_GUI
+if /i "%~1"=="noxxx" set delphi=%delphi% -DNO_XXX
+shift
+goto :params
 
+:noparams
 del /q Units\*.*
 pushd Source
-%delphi% lib\lkJSON\uLkJSON.pas
-if errorlevel 1 goto konec
+
 %delphi% lib\Synapse\source\lib\*.pas
 if errorlevel 1 goto konec
 %delphi% lib\dpcre67\pcre.pas
@@ -25,6 +32,14 @@ if errorlevel 1 goto konec
 %delphi% YTD.dpr
 if errorlevel 1 goto konec
 popd
-upx Exe\ytd.exe
+upx --best Exe\ytd.exe
+goto konec
+
+:help
+echo Possible arguments:
+echo    nocli ... Build only the GUI version.
+echo    nogui ... Build only the CLI version.
+echo    noxxx ... Don't build support for porn providers.
+goto konec
 
 :konec

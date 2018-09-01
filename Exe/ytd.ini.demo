@@ -1,0 +1,8 @@
+[YTD]
+OverwriteMode=always
+DestinationPath=C:\Downloads
+ErrorLog=C:\Downloads\!_error.log
+DontUseRegistry=1
+
+[CeskaTelevize.cz]
+PreferRealMedia=1

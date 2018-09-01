@@ -46,11 +46,9 @@
 #include <windows.h>
 #endif
 
-
-
 static void print_usage(void);
 #ifdef DLL
-static struct list_h *set_options(struct options_t *options,char *logFileName, char *asfFileName, char *paramUrl);
+static struct list_h *set_options(struct options_t *options, int DllOptionCount, DllOption *DllOptions);
 #else
 static struct list_h *set_options(struct options_t *options,int argc,char **argv);
 #endif
@@ -65,7 +63,7 @@ int main(int argc, char **argv)
   return 0;
 }
 
-int MsdlMain(int tag, DownloadProgressCallback callback, char * logFileName, char * asfFileName, char *paramUrl)
+int MsdlMain(int tag, DownloadProgressCallback callback, int DllOptionCount, DllOption *DllOptions)
 #else
 int main(int argc,char **argv)
 #endif
@@ -95,7 +93,7 @@ int main(int argc,char **argv)
 #ifdef DLL
     options->tag = tag;
     options->downloadProgressCallback = callback;
-    targets = set_options(options, logFileName, asfFileName, paramUrl);
+    targets = set_options(options, DllOptionCount, DllOptions);
 #else
     targets = set_options(options,argc,argv);
 #endif
@@ -213,7 +211,7 @@ static void print_usage(void)
  * read arguments. returns target url
  */
 #ifdef DLL
-static struct list_h *set_options(struct options_t *options,char *logFileName, char *asfFileName, char *paramUrl)
+static struct list_h *set_options(struct options_t *options, int DllOptionCount, DllOption *DllOptions)
 #else
 static struct list_h *set_options(struct options_t *options,int argc,char **argv)
 #endif
@@ -224,7 +222,7 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
     struct list_h *targets = NULL;
     struct target_t *t = NULL;
 
-
+#ifndef DLL
     struct option long_options[] = {
 	{"output",1,0,'o'},      /* equal to '-o' */
 	{"logfile",1,0,'l'},     /*          '-l' */
@@ -250,6 +248,7 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
 	{"debug",0,0,0},          /* debug messages, super verbose mode        */
 	{NULL,0,0,0}
     };
+#endif
     char *env = NULL;
     
     
@@ -271,7 +270,21 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
     /*
       set command line options
     */
-#ifndef DLL
+#ifdef DLL
+    for (option_index = 0; option_index < DllOptionCount; option_index++) {
+
+        ch = DllOptions[option_index].shortOpt;
+        optarg = DllOptions[option_index].optArg;
+
+        switch(ch) {
+
+        case 0:   /* URL to download */
+	    t = new_target_t(optarg,0);
+	    list_h_append(&targets,t);
+	    target_count++;
+            break;
+
+#else
     while(1) {
 
 	ch = getopt_long(argc,argv,"o:l:p:b:s:r:a:m:n:hcVvq",long_options,&option_index);
@@ -312,6 +325,7 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
 	    }
 	    
 	    break;
+#endif
       
 	case 'p': /* specify protocol               */
 	    if(options->protocol) free(options->protocol);
@@ -319,20 +333,12 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
 	    break;
       
 	case 'o': /* output file name specification */
-#else
-            optarg = asfFileName;
-#endif
 	    list_h_append(&(options->local_filename_list),strdup(optarg));
-#ifndef DLL
 	    break;
 
 	case 'l':
-#else
-            optarg = logFileName;
-#endif
 	    if(options->logfile) free(options->logfile);
 	    options->logfile = strdup(optarg);
-#ifndef DLL
 	    break;
       
 	case 'b': /* bandwidth                      */
@@ -407,17 +413,14 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
 	    goto exit_now;
 	}
     }
-  
+
+#ifndef DLL
     if(optind < argc) {
     
 	while(optind < argc) {
 	    t = new_target_t(argv[optind++],0);
-#else
-            t = new_target_t(paramUrl, 0);
-#endif
 	    list_h_append(&targets,t);
 	    target_count++;
-#ifndef DLL
 	}
     }
 #endif

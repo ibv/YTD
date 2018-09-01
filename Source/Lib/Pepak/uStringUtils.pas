@@ -25,6 +25,8 @@ function WideToUtf8(const Value: WideString): Utf8String; overload;
 function Utf8ToWide(Value: Pointer; Length: integer): WideString; overload;
 function Utf8ToWide(const Value: Utf8String): WideString; overload;
 
+function StrTr(const Kde, Co, Cim: string): string;
+
 implementation
 
 uses
@@ -136,6 +138,19 @@ end;
 function Utf8ToWide(const Value: Utf8String): WideString;
 begin
   Result := Utf8ToWide(@(Value[1]), Length(Value));
+end;
+
+function StrTr(const Kde, Co, Cim: string): string;
+var i, j: integer;
+begin
+  Result := Kde;
+  if Kde <> '' then
+    for i := 1 to Length(Co) do
+      repeat
+        j := Pos(Co[i], Result);
+        if j > 0 then
+          Result[j] := Cim[i];
+      until j <= 0;
 end;
 
 end.

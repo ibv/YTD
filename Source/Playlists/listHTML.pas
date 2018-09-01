@@ -14,6 +14,7 @@ type
     private
       fClassifier: TDownloadClassifier;
     protected
+      function GetUrlRegExp: string; virtual;
       function GetPlayListItemURL(Match: IMatch; Index: integer): string; override;
       property Classifier: TDownloadClassifier read fClassifier;
     public
@@ -23,15 +24,15 @@ type
 
 implementation
 
-//const URL_REGEXP = '(?:href|src)=(["'']?)(?P<URL>https?://[a-z0-9./?&%+-]+)\1';
-const URL_REGEXP = '(?:href|src)=(["''])(?P<URL>https?://.*?)\1';
+const
+  REGEXP_URL = '(?:href|src)=(["''])(?P<URL>https?://.*?)\1';
 
 { TPlaylist_HTML }
 
 constructor TPlaylist_HTML.Create(const AMovieID: string);
 begin
   inherited;
-  PlaylistItemRegExp := RegExCreate(URL_REGEXP);
+  PlaylistItemRegExp := RegExCreate(GetUrlRegExp);
   fClassifier := TDownloadClassifier.Create;
 end;
 
@@ -42,10 +43,15 @@ begin
   inherited;
 end;
 
+function TPlaylist_HTML.GetUrlRegExp: string;
+begin
+  Result := REGEXP_URL;
+end;
+
 function TPlaylist_HTML.GetPlayListItemURL(Match: IMatch; Index: integer): string;
 begin
   Result := inherited GetPlayListItemURL(Match, Index);
-  Result := StringReplace(Result, '&amp;', '&', [rfReplaceAll]);
+  Result := HtmlDecode(Result);
   Classifier.Url := Result;
   if Classifier.Downloader = nil then
     Result := '';

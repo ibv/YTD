@@ -24,10 +24,13 @@
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
+#ifndef NO_CRYPTO
 #define CRYPTO
+#endif
 
 #include <errno.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "amf.h"
 
@@ -36,7 +39,7 @@ extern "C"
 {
 #endif
 
-#define RTMP_LIB_VERSION	0x020202	/* 2.2b */
+#define RTMP_LIB_VERSION	0x020204	/* 2.2d */
 
 #define RTMP_FEATURE_HTTP	0x01
 #define RTMP_FEATURE_ENC	0x02
@@ -55,7 +58,8 @@ extern "C"
 
 #define RTMP_DEFAULT_CHUNKSIZE	128
 
-#define RTMP_BUFFER_CACHE_SIZE (16*1024)	// needs to fit largest number of bytes recv() may return
+/* needs to fit largest number of bytes recv() may return */
+#define RTMP_BUFFER_CACHE_SIZE (16*1024)
 
 #define	RTMP_CHANNELS	65600
 
@@ -63,7 +67,7 @@ extern "C"
   extern const AVal RTMP_DefaultFlashVer;
   extern bool RTMP_ctrlC;
 
-  uint32_t RTMP_GetTime();
+  uint32_t RTMP_GetTime(void);
 
 #define RTMP_PACKET_TYPE_AUDIO 0x08
 #define RTMP_PACKET_TYPE_VIDEO 0x09
@@ -76,8 +80,6 @@ extern "C"
 #define RTMP_PACKET_SIZE_SMALL    2
 #define RTMP_PACKET_SIZE_MINIMUM  3
 
-  typedef unsigned char BYTE;
-
   typedef struct RTMPChunk
   {
     int c_headerSize;
@@ -88,12 +90,12 @@ extern "C"
 
   typedef struct RTMPPacket
   {
-    BYTE m_headerType;
-    BYTE m_packetType;
-    BYTE m_hasAbsTimestamp;	// timestamp absolute or relative?
+    uint8_t m_headerType;
+    uint8_t m_packetType;
+    uint8_t m_hasAbsTimestamp;	/* timestamp absolute or relative? */
     int m_nChannel;
-    uint32_t m_nTimeStamp;	// timestamp
-    int32_t m_nInfoField2;	// last 4 bytes in a long header
+    uint32_t m_nTimeStamp;	/* timestamp */
+    int32_t m_nInfoField2;	/* last 4 bytes in a long header */
     uint32_t m_nBodySize;
     uint32_t m_nBytesRead;
     RTMPChunk *m_chunk;
@@ -119,11 +121,11 @@ extern "C"
 
   typedef struct RTMP_LNK
   {
-    const char *hostname;
-    unsigned int port;
-    int protocol;
+    AVal hostname;
+    AVal sockshost;
 
-    AVal playpath;
+    AVal playpath0;	/* parsed from URL */
+    AVal playpath;	/* passed in explicitly */
     AVal tcUrl;
     AVal swfUrl;
     AVal pageUrl;
@@ -132,27 +134,35 @@ extern "C"
     AVal flashVer;
     AVal subscribepath;
     AVal token;
-    AVal playpath0;
     AMFObject extras;
+    int edepth;
 
-    double seekTime;
-    uint32_t length;
-    bool authflag;
-    bool bLiveStream;
+    int seekTime;
+    int stopTime;
 
-    int timeout;		// number of seconds before connection times out
+#define RTMP_LF_AUTH	0x0001
+#define RTMP_LF_LIVE	0x0002
+#define RTMP_LF_SWFV	0x0004
+#define RTMP_LF_PLST	0x0008
+    int lFlags;
 
-    const char *sockshost;
+    int swfAge;
+
+    int protocol;
+    int timeout;		/* connection timeout in seconds */
+
     unsigned short socksport;
+    unsigned short port;
 
 #ifdef CRYPTO
-    void *dh;			// for encryption
+#define RTMP_SWF_HASHLEN	32
+    void *dh;			/* for encryption */
     void *rc4keyIn;
     void *rc4keyOut;
 
-    AVal SWFHash;
     uint32_t SWFSize;
-    char SWFVerificationResponse[42];
+    uint8_t SWFHash[RTMP_SWF_HASHLEN];
+    char SWFVerificationResponse[RTMP_SWF_HASHLEN+10];
 #endif
   } RTMP_LNK;
 
@@ -196,7 +206,7 @@ extern "C"
     int m_nBytesIn;
     int m_nBytesInSent;
     int m_nBufferMS;
-    int m_stream_id;		// returned in _result from invoking createStream
+    int m_stream_id;		/* returned in _result from createStream */
     int m_mediaChannel;
     uint32_t m_mediaStamp;
     uint32_t m_pauseStamp;
@@ -212,16 +222,15 @@ extern "C"
     int m_numCalls;
     AVal *m_methodCalls;	/* remote method calls queue */
 
-    RTMP_LNK Link;
     RTMPPacket *m_vecChannelsIn[RTMP_CHANNELS];
     RTMPPacket *m_vecChannelsOut[RTMP_CHANNELS];
-    int m_channelTimestamp[RTMP_CHANNELS];	// abs timestamp of last packet
+    int m_channelTimestamp[RTMP_CHANNELS];	/* abs timestamp of last packet */
 
-    double m_fAudioCodecs;	// audioCodecs for the connect packet
-    double m_fVideoCodecs;	// videoCodecs for the connect packet
+    double m_fAudioCodecs;	/* audioCodecs for the connect packet */
+    double m_fVideoCodecs;	/* videoCodecs for the connect packet */
     double m_fEncoding;		/* AMF0 or AMF3 */
 
-    double m_fDuration;		// duration of stream in seconds
+    double m_fDuration;		/* duration of stream in seconds */
 
     int m_msgCounter;		/* RTMPT stuff */
     int m_polling;
@@ -230,20 +239,24 @@ extern "C"
     AVal m_clientID;
 
     RTMP_READ m_read;
-	RTMPPacket m_write;
+    RTMPPacket m_write;
     RTMPSockBuf m_sb;
+    RTMP_LNK Link;
   } RTMP;
 
-  bool RTMP_ParseURL(const char *url, int *protocol, char **host,
+  bool RTMP_ParseURL(const char *url, int *protocol, AVal *host,
 		     unsigned int *port, AVal *playpath, AVal *app);
+
   void RTMP_ParsePlaypath(AVal *in, AVal *out);
   void RTMP_SetBufferMS(RTMP *r, int size);
   void RTMP_UpdateBufferMS(RTMP *r);
 
+  bool RTMP_SetOpt(RTMP *r, const AVal *opt, AVal *arg);
+  bool RTMP_SetupURL(RTMP *r, char *url);
   void RTMP_SetupStream(RTMP *r, int protocol,
-			const char *hostname,
+			AVal *hostname,
 			unsigned int port,
-			const char *sockshost,
+			AVal *sockshost,
 			AVal *playpath,
 			AVal *tcUrl,
 			AVal *swfUrl,
@@ -254,8 +267,8 @@ extern "C"
 			uint32_t swfSize,
 			AVal *flashVer,
 			AVal *subscribepath,
-			double dTime,
-			uint32_t dLength, bool bLiveStream, long int timeout);
+			int dStart,
+			int dStop, bool bLiveStream, long int timeout);
 
   bool RTMP_Connect(RTMP *r, RTMPPacket *cp);
   struct sockaddr;
@@ -271,21 +284,23 @@ extern "C"
   double RTMP_GetDuration(RTMP *r);
   bool RTMP_ToggleStream(RTMP *r);
 
-  bool RTMP_ConnectStream(RTMP *r, double seekTime, uint32_t dLength);
-  bool RTMP_ReconnectStream(RTMP *r, int bufferTime, double seekTime,
-			    uint32_t dLength);
+  bool RTMP_ConnectStream(RTMP *r, int seekTime);
+  bool RTMP_ReconnectStream(RTMP *r, int seekTime);
   void RTMP_DeleteStream(RTMP *r);
   int RTMP_GetNextMediaPacket(RTMP *r, RTMPPacket *packet);
   int RTMP_ClientPacket(RTMP *r, RTMPPacket *packet);
 
   void RTMP_Init(RTMP *r);
   void RTMP_Close(RTMP *r);
-  int RTMP_LibVersion();
-  void RTMP_UserInterrupt();	/* user typed Ctrl-C */
+  RTMP *RTMP_Alloc(void);
+  void RTMP_Free(RTMP *r);
+
+  int RTMP_LibVersion(void);
+  void RTMP_UserInterrupt(void);	/* user typed Ctrl-C */
 
   bool RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject,
 		     unsigned int nTime);
-  bool RTMP_SendPause(RTMP *r, bool DoPause, double dTime);
+  bool RTMP_SendPause(RTMP *r, bool DoPause, int dTime);
   bool RTMP_FindFirstMatchingProperty(AMFObject *obj, const AVal *name,
 				      AMFObjectProperty * p);
 
@@ -294,20 +309,16 @@ extern "C"
   int RTMPSockBuf_Close(RTMPSockBuf *sb);
 
   bool RTMP_SendCreateStream(RTMP *r);
-  bool RTMP_SendSeek(RTMP *r, double dTime);
+  bool RTMP_SendSeek(RTMP *r, int dTime);
   bool RTMP_SendServerBW(RTMP *r);
   bool RTMP_SendClientBW(RTMP *r);
   void RTMP_DropRequest(RTMP *r, int i, bool freeit);
   int RTMP_Read(RTMP *r, char *buf, int size);
   int RTMP_Write(RTMP *r, char *buf, int size);
 
-#ifdef CRYPTO
 /* hashswf.c */
-#define HASHLEN	32
-
   int RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
 		   int age);
-#endif
 
 #ifdef __cplusplus
 };

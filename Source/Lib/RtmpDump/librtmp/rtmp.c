@@ -31,9 +31,11 @@
 #include "log.h"
 
 #ifdef CRYPTO
-#ifdef USE_GNUTLS
+#ifdef USE_POLARSSL
+#include <polarssl/havege.h>
+#elif defined(USE_GNUTLS)
 #include <gnutls/gnutls.h>
-#else
+#else	/* USE_OPENSSL */
 #include <openssl/ssl.h>
 #include <openssl/rc4.h>
 #endif
@@ -196,14 +198,23 @@ void
 RTMP_TLS_Init()
 {
 #ifdef CRYPTO
-#ifdef USE_GNUTLS
+#ifdef USE_POLARSSL
+  /* Do this regardless of NO_SSL, we use havege for rtmpe too */
+  RTMP_TLS_ctx = calloc(1,sizeof(struct tls_ctx));
+  havege_init(&RTMP_TLS_ctx->hs);
+#elif defined(USE_GNUTLS) && !defined(NO_SSL)
+  /* Technically we need to initialize libgcrypt ourselves if
+   * we're not going to call gnutls_global_init(). Ignoring this
+   * for now.
+   */
   gnutls_global_init();
   RTMP_TLS_ctx = malloc(sizeof(struct tls_ctx));
   gnutls_certificate_allocate_credentials(&RTMP_TLS_ctx->cred);
   gnutls_priority_init(&RTMP_TLS_ctx->prios, "NORMAL", NULL);
   gnutls_certificate_set_x509_trust_file(RTMP_TLS_ctx->cred,
   	"ca.pem", GNUTLS_X509_FMT_PEM);
-#else
+#elif !defined(NO_SSL) /* USE_OPENSSL */
+  /* libcrypto doesn't need anything special */
   SSL_load_error_strings();
   SSL_library_init();
   OpenSSL_add_all_digests();
@@ -212,6 +223,18 @@ RTMP_TLS_Init()
   SSL_CTX_set_default_verify_paths(RTMP_TLS_ctx);
 #endif
 #endif
+}
+
+RTMP *
+RTMP_Alloc()
+{
+  return calloc(1, sizeof(RTMP));
+}
+
+void
+RTMP_Free(RTMP *r)
+{
+  free(r);
 }
 
 void
@@ -226,12 +249,14 @@ RTMP_Init(RTMP *r)
   r->m_sb.sb_socket = -1;
   r->m_inChunkSize = RTMP_DEFAULT_CHUNKSIZE;
   r->m_outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
-  r->m_nBufferMS = 300;
+  r->m_nBufferMS = 30000;
   r->m_nClientBW = 2500000;
   r->m_nClientBW2 = 2;
   r->m_nServerBW = 2500000;
   r->m_fAudioCodecs = 3191.0;
   r->m_fVideoCodecs = 252.0;
+  r->Link.timeout = 30;
+  r->Link.swfAge = 30;
 }
 
 double
@@ -276,16 +301,17 @@ RTMP_UpdateBufferMS(RTMP *r)
 #else
 #define OSS	"GNU"
 #endif
-static const char DEFAULT_FLASH_VER[] = OSS " 10,0,32,18";
+#define DEF_VERSTR	OSS " 10,0,32,18"
+static const char DEFAULT_FLASH_VER[] = DEF_VERSTR;
 const AVal RTMP_DefaultFlashVer =
   { (char *)DEFAULT_FLASH_VER, sizeof(DEFAULT_FLASH_VER) - 1 };
 
 void
 RTMP_SetupStream(RTMP *r,
 		 int protocol,
-		 const char *hostname,
+		 AVal *host,
 		 unsigned int port,
-		 const char *sockshost,
+		 AVal *sockshost,
 		 AVal *playpath,
 		 AVal *tcUrl,
 		 AVal *swfUrl,
@@ -296,11 +322,11 @@ RTMP_SetupStream(RTMP *r,
 		 uint32_t swfSize,
 		 AVal *flashVer,
 		 AVal *subscribepath,
-		 double dTime,
-		 uint32_t dLength, bool bLiveStream, long int timeout)
+		 int dStart,
+		 int dStop, bool bLiveStream, long int timeout)
 {
   RTMP_Log(RTMP_LOGDEBUG, "Protocol : %s", RTMPProtocolStrings[protocol&7]);
-  RTMP_Log(RTMP_LOGDEBUG, "Hostname : %s", hostname);
+  RTMP_Log(RTMP_LOGDEBUG, "Hostname : %.*s", host->av_len, host->av_val);
   RTMP_Log(RTMP_LOGDEBUG, "Port     : %d", port);
   RTMP_Log(RTMP_LOGDEBUG, "Playpath : %s", playpath->av_val);
 
@@ -318,10 +344,10 @@ RTMP_SetupStream(RTMP *r,
     RTMP_Log(RTMP_LOGDEBUG, "subscribepath : %s", subscribepath->av_val);
   if (flashVer && flashVer->av_val)
     RTMP_Log(RTMP_LOGDEBUG, "flashVer : %s", flashVer->av_val);
-  if (dTime > 0)
-    RTMP_Log(RTMP_LOGDEBUG, "SeekTime      : %.3f sec", (double)dTime / 1000.0);
-  if (dLength > 0)
-    RTMP_Log(RTMP_LOGDEBUG, "playLength    : %.3f sec", (double)dLength / 1000.0);
+  if (dStart > 0)
+    RTMP_Log(RTMP_LOGDEBUG, "StartTime     : %d msec", dStart);
+  if (dStop > 0)
+    RTMP_Log(RTMP_LOGDEBUG, "StopTime      : %d msec", dStop);
 
   RTMP_Log(RTMP_LOGDEBUG, "live     : %s", bLiveStream ? "yes" : "no");
   RTMP_Log(RTMP_LOGDEBUG, "timeout  : %d sec", timeout);
@@ -329,36 +355,36 @@ RTMP_SetupStream(RTMP *r,
 #ifdef CRYPTO
   if (swfSHA256Hash != NULL && swfSize > 0)
     {
-      r->Link.SWFHash = *swfSHA256Hash;
+      memcpy(r->Link.SWFHash, swfSHA256Hash->av_val, sizeof(r->Link.SWFHash));
       r->Link.SWFSize = swfSize;
       RTMP_Log(RTMP_LOGDEBUG, "SWFSHA256:");
-      RTMP_LogHex(RTMP_LOGDEBUG, r->Link.SWFHash.av_val, 32);
+      RTMP_LogHex(RTMP_LOGDEBUG, r->Link.SWFHash, sizeof(r->Link.SWFHash));
       RTMP_Log(RTMP_LOGDEBUG, "SWFSize  : %lu", r->Link.SWFSize);
     }
   else
     {
-      r->Link.SWFHash.av_len = 0;
-      r->Link.SWFHash.av_val = NULL;
       r->Link.SWFSize = 0;
     }
 #endif
 
-  if (sockshost)
+  if (sockshost->av_len)
     {
-      const char *socksport = strchr(sockshost, ':');
-      char *hostname = strdup(sockshost);
+      const char *socksport = strchr(sockshost->av_val, ':');
+      char *hostname = strdup(sockshost->av_val);
 
       if (socksport)
-	hostname[socksport - sockshost] = '\0';
-      r->Link.sockshost = hostname;
+	hostname[socksport - sockshost->av_val] = '\0';
+      r->Link.sockshost.av_val = hostname;
+      r->Link.sockshost.av_len = strlen(hostname);
 
       r->Link.socksport = socksport ? atoi(socksport + 1) : 1080;
-      RTMP_Log(RTMP_LOGDEBUG, "Connecting via SOCKS proxy: %s:%d", r->Link.sockshost,
+      RTMP_Log(RTMP_LOGDEBUG, "Connecting via SOCKS proxy: %s:%d", r->Link.sockshost.av_val,
 	  r->Link.socksport);
     }
   else
     {
-      r->Link.sockshost = NULL;
+      r->Link.sockshost.av_val = NULL;
+      r->Link.sockshost.av_len = 0;
       r->Link.socksport = 0;
     }
 
@@ -371,20 +397,24 @@ RTMP_SetupStream(RTMP *r,
   if (app && app->av_len)
     r->Link.app = *app;
   if (auth && auth->av_len)
-    r->Link.auth = *auth;
+    {
+      r->Link.auth = *auth;
+      r->Link.lFlags |= RTMP_LF_AUTH;
+    }
   if (flashVer && flashVer->av_len)
     r->Link.flashVer = *flashVer;
   else
     r->Link.flashVer = RTMP_DefaultFlashVer;
   if (subscribepath && subscribepath->av_len)
     r->Link.subscribepath = *subscribepath;
-  r->Link.seekTime = dTime;
-  r->Link.length = dLength;
-  r->Link.bLiveStream = bLiveStream;
+  r->Link.seekTime = dStart;
+  r->Link.stopTime = dStop;
+  if (bLiveStream)
+    r->Link.lFlags |= RTMP_LF_LIVE;
   r->Link.timeout = timeout;
 
   r->Link.protocol = protocol;
-  r->Link.hostname = hostname;
+  r->Link.hostname = *host;
   r->Link.port = port;
   r->Link.playpath = *playpath;
 
@@ -399,9 +429,315 @@ RTMP_SetupStream(RTMP *r,
     }
 }
 
-static bool
-add_addr_info(struct sockaddr_in *service, const char *hostname, int port)
+enum { OPT_STR=0, OPT_INT, OPT_BOOL, OPT_CONN };
+static const char *optinfo[] = {
+	"string", "integer", "boolean", "AMF" };
+
+#define OFF(x)	offsetof(struct RTMP,x)
+
+static struct urlopt {
+  AVal name;
+  off_t off;
+  int otype;
+  int omisc;
+  char *use;
+} options[] = {
+  { AVC("socks"),     OFF(Link.sockshost),     OPT_STR, 0,
+  	"Use the specified SOCKS proxy" },
+  { AVC("app"),       OFF(Link.app),           OPT_STR, 0,
+	"Name of target app on server" },
+  { AVC("tcUrl"),     OFF(Link.tcUrl),         OPT_STR, 0,
+  	"URL to played stream" },
+  { AVC("pageUrl"),   OFF(Link.pageUrl),       OPT_STR, 0,
+  	"URL of played media's web page" },
+  { AVC("swfUrl"),    OFF(Link.swfUrl),        OPT_STR, 0,
+  	"URL to player SWF file" },
+  { AVC("flashver"),  OFF(Link.flashVer),      OPT_STR, 0,
+  	"Flash version string (default " DEF_VERSTR ")" },
+  { AVC("conn"),      OFF(Link.extras),        OPT_CONN, 0,
+  	"Append arbitrary AMF data to Connect message" },
+  { AVC("playpath"),  OFF(Link.playpath),      OPT_STR, 0,
+  	"Path to target media on server" },
+  { AVC("playlist"),  OFF(Link.lFlags),        OPT_BOOL, RTMP_LF_PLST,
+  	"Set playlist before play command" },
+  { AVC("live"),      OFF(Link.lFlags),        OPT_BOOL, RTMP_LF_LIVE,
+  	"Stream is live, no seeking possible" },
+  { AVC("subscribe"), OFF(Link.subscribepath), OPT_STR, 0,
+  	"Stream to subscribe to" },
+  { AVC("token"),     OFF(Link.token),	       OPT_STR, 0,
+  	"Key for SecureToken response" },
+  { AVC("swfVfy"),    OFF(Link.lFlags),        OPT_BOOL, RTMP_LF_SWFV,
+  	"Perform SWF Verification" },
+  { AVC("swfAge"),    OFF(Link.swfAge),        OPT_INT, 0,
+  	"Number of days to use cached SWF hash" },
+  { AVC("start"),     OFF(Link.seekTime),      OPT_INT, 0,
+  	"Stream start position in milliseconds" },
+  { AVC("stop"),      OFF(Link.stopTime),      OPT_INT, 0,
+  	"Stream stop position in milliseconds" },
+  { AVC("buffer"),    OFF(m_nBufferMS),        OPT_INT, 0,
+  	"Buffer time in milliseconds" },
+  { AVC("timeout"),   OFF(Link.timeout),       OPT_INT, 0,
+  	"Session timeout in seconds" },
+  { {NULL,0}, 0, 0}
+};
+
+static const AVal truth[] = {
+	AVC("1"),
+	AVC("on"),
+	AVC("yes"),
+	AVC("true"),
+	{0,0}
+};
+
+static void RTMP_OptUsage()
 {
+  int i;
+
+  RTMP_Log(RTMP_LOGERROR, "Valid RTMP options are:\n");
+  for (i=0; options[i].name.av_len; i++) {
+    RTMP_Log(RTMP_LOGERROR, "%10s %-7s  %s\n", options[i].name.av_val,
+    	optinfo[options[i].otype], options[i].use);
+  }
+}
+
+static int
+parseAMF(AMFObject *obj, AVal *av, int *depth)
+{
+  AMFObjectProperty prop = {{0,0}};
+  int i;
+  char *p, *arg = av->av_val;
+
+  if (arg[1] == ':')
+    {
+      p = (char *)arg+2;
+      switch(arg[0])
+	{
+	case 'B':
+	  prop.p_type = AMF_BOOLEAN;
+	  prop.p_vu.p_number = atoi(p);
+	  break;
+	case 'S':
+	  prop.p_type = AMF_STRING;
+	  prop.p_vu.p_aval.av_val = p;
+	  prop.p_vu.p_aval.av_len = av->av_len - (p-arg);
+	  break;
+	case 'N':
+	  prop.p_type = AMF_NUMBER;
+	  prop.p_vu.p_number = strtod(p, NULL);
+	  break;
+	case 'Z':
+	  prop.p_type = AMF_NULL;
+	  break;
+	case 'O':
+	  i = atoi(p);
+	  if (i)
+	    {
+	      prop.p_type = AMF_OBJECT;
+	    }
+	  else
+	    {
+	      (*depth)--;
+	      return 0;
+	    }
+	  break;
+	default:
+	  return -1;
+	}
+    }
+  else if (arg[2] == ':' && arg[0] == 'N')
+    {
+      p = strchr(arg+3, ':');
+      if (!p || !*depth)
+	return -1;
+      prop.p_name.av_val = (char *)arg+3;
+      prop.p_name.av_len = p - (arg+3);
+
+      p++;
+      switch(arg[1])
+	{
+	case 'B':
+	  prop.p_type = AMF_BOOLEAN;
+	  prop.p_vu.p_number = atoi(p);
+	  break;
+	case 'S':
+	  prop.p_type = AMF_STRING;
+	  prop.p_vu.p_aval.av_val = p;
+	  prop.p_vu.p_aval.av_len = av->av_len - (p-arg);
+	  break;
+	case 'N':
+	  prop.p_type = AMF_NUMBER;
+	  prop.p_vu.p_number = strtod(p, NULL);
+	  break;
+	case 'O':
+	  prop.p_type = AMF_OBJECT;
+	  break;
+	default:
+	  return -1;
+	}
+    }
+  else
+    return -1;
+
+  if (*depth)
+    {
+      AMFObject *o2;
+      for (i=0; i<*depth; i++)
+	{
+	  o2 = &obj->o_props[obj->o_num-1].p_vu.p_object;
+	  obj = o2;
+	}
+    }
+  AMF_AddProp(obj, &prop);
+  if (prop.p_type == AMF_OBJECT)
+    (*depth)++;
+  return 0;
+}
+
+bool RTMP_SetOpt(RTMP *r, const AVal *opt, AVal *arg)
+{
+  int i;
+  void *v;
+
+  for (i=0; options[i].name.av_len; i++) {
+    if (opt->av_len != options[i].name.av_len) continue;
+    if (strcasecmp(opt->av_val, options[i].name.av_val)) continue;
+    v = (char *)r + options[i].off;
+    switch(options[i].otype) {
+    case OPT_STR: {
+      AVal *aptr = v;
+      *aptr = *arg; }
+      break;
+    case OPT_INT: {
+      long l = strtol(arg->av_val, NULL, 0);
+      *(int *)v = l; }
+      break;
+    case OPT_BOOL: {
+      int j, fl;
+      fl = *(int *)v;
+      for (j=0; truth[j].av_len; j++) {
+        if (arg->av_len != truth[j].av_len) continue;
+        if (strcasecmp(arg->av_val, truth[j].av_val)) continue;
+        fl |= options[i].omisc; break; }
+      *(int *)v = fl;
+      }
+      break;
+    case OPT_CONN:
+      if (parseAMF(&r->Link.extras, arg, &r->Link.edepth))
+        return false;
+      break;
+    }
+    break;
+  }
+  if (!options[i].name.av_len) {
+    RTMP_Log(RTMP_LOGERROR, "Unknown option %s", opt->av_val);
+    RTMP_OptUsage();
+    return false;
+  }
+
+  return true;
+}
+
+bool RTMP_SetupURL(RTMP *r, char *url)
+{
+  AVal opt, arg;
+  char *p1, *p2, *ptr = strchr(url, ' ');
+  bool ret;
+  unsigned int port = 0;
+
+  if (ptr)
+    *ptr = '\0';
+
+  ret = RTMP_ParseURL(url, &r->Link.protocol, &r->Link.hostname,
+  	&port, &r->Link.playpath0, &r->Link.app);
+  if (!ret)
+    return ret;
+  r->Link.port = port;
+  r->Link.playpath = r->Link.playpath0;
+
+  while (ptr) {
+    *ptr++ = '\0';
+    p1 = ptr;
+    p2 = strchr(p1, '=');
+    if (!p2)
+      break;
+    opt.av_val = p1;
+    opt.av_len = p2 - p1;
+    *p2++ = '\0';
+    arg.av_val = p2;
+    ptr = strchr(p2, ' ');
+    if (ptr) {
+      *ptr = '\0';
+      arg.av_len = ptr - p2;
+    } else {
+      arg.av_len = strlen(p2);
+    }
+
+    /* unescape */
+    port = arg.av_len;
+    for (p1=p2; port >0;) {
+      if (*p1 == '\\') {
+	unsigned int c;
+	if (port < 3)
+	  return false;
+	sscanf(p1+1, "%02x", &c);
+	*p2++ = c;
+	port -= 3;
+	p1 += 3;
+      } else {
+	*p2++ = *p1++;
+	port--;
+      }
+    }
+    arg.av_len = p2 - arg.av_val;
+
+    ret = RTMP_SetOpt(r, &opt, &arg);
+    if (!ret)
+      return ret;
+  }
+
+  if (!r->Link.tcUrl.av_len)
+    {
+	  r->Link.tcUrl.av_val = url;
+	  if (r->Link.app.av_len)
+	    r->Link.tcUrl.av_len = r->Link.app.av_len + (r->Link.app.av_val - url);
+	  else
+	    r->Link.tcUrl.av_len = strlen(url);
+	}
+
+#ifdef CRYPTO
+  if ((r->Link.lFlags & RTMP_LF_SWFV) && r->Link.swfUrl.av_len)
+    RTMP_HashSWF(r->Link.swfUrl.av_val, &r->Link.SWFSize,
+	  (unsigned char *)r->Link.SWFHash, r->Link.swfAge);
+#endif
+
+  if (r->Link.port == 0)
+    {
+      if (r->Link.protocol & RTMP_FEATURE_SSL)
+	r->Link.port = 443;
+      else if (r->Link.protocol & RTMP_FEATURE_HTTP)
+	r->Link.port = 80;
+      else
+	r->Link.port = 1935;
+    }
+  return true;
+}
+
+static bool
+add_addr_info(struct sockaddr_in *service, AVal *host, int port)
+{
+  char *hostname;
+  bool ret = true;
+  if (host->av_val[host->av_len])
+    {
+      hostname = malloc(host->av_len+1);
+      memcpy(hostname, host->av_val, host->av_len);
+      hostname[host->av_len] = '\0';
+    }
+  else
+    {
+      hostname = host->av_val;
+    }
+
   service->sin_addr.s_addr = inet_addr(hostname);
   if (service->sin_addr.s_addr == INADDR_NONE)
     {
@@ -409,21 +745,23 @@ add_addr_info(struct sockaddr_in *service, const char *hostname, int port)
       if (host == NULL || host->h_addr == NULL)
 	{
 	  RTMP_Log(RTMP_LOGERROR, "Problem accessing the DNS. (addr: %s)", hostname);
-	  return false;
+	  ret = false;
+	  goto finish;
 	}
       service->sin_addr = *(struct in_addr *)host->h_addr;
     }
 
   service->sin_port = htons(port);
-  return true;
+finish:
+  if (hostname != host->av_val)
+    free(hostname);
+  return ret;
 }
 
 bool
 RTMP_Connect0(RTMP *r, struct sockaddr * service)
 {
-  // close any previous connection
-  RTMP_Close(r);
-
+  int on = 1;
   r->m_sb.sb_timedout = false;
   r->m_pausing = 0;
   r->m_fDuration = 0.0;
@@ -458,16 +796,17 @@ RTMP_Connect0(RTMP *r, struct sockaddr * service)
       return false;
     }
 
-  // set timeout
-  SET_RCVTIMEO(tv, r->Link.timeout);
-  if (setsockopt
-      (r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)))
-    {
-      RTMP_Log(RTMP_LOGERROR, "%s, Setting socket timeout to %ds failed!",
-	  __FUNCTION__, r->Link.timeout);
-    }
+  /* set timeout */
+  {
+    SET_RCVTIMEO(tv, r->Link.timeout);
+    if (setsockopt
+        (r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)))
+      {
+        RTMP_Log(RTMP_LOGERROR, "%s, Setting socket timeout to %ds failed!",
+	    __FUNCTION__, r->Link.timeout);
+      }
+  }
 
-  int on = 1;
   setsockopt(r->m_sb.sb_socket, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
 
   return true;
@@ -478,7 +817,7 @@ RTMP_Connect1(RTMP *r, RTMPPacket *cp)
 {
   if (r->Link.protocol & RTMP_FEATURE_SSL)
     {
-#ifdef CRYPTO
+#if defined(CRYPTO) && !defined(NO_SSL)
       TLS_client(RTMP_TLS_ctx, r->m_sb.sb_ssl);
       TLS_setfd(r->m_sb.sb_ssl, r->m_sb.sb_socket);
       if (TLS_connect(r->m_sb.sb_ssl) < 0)
@@ -488,7 +827,7 @@ RTMP_Connect1(RTMP *r, RTMPPacket *cp)
 	  return false;
 	}
 #else
-      RTMP_Log(RTMP_LOGERROR, "%s, no CRYPTO support", __FUNCTION__);
+      RTMP_Log(RTMP_LOGERROR, "%s, no SSL/TLS support", __FUNCTION__);
       RTMP_Close(r);
       return false;
 
@@ -525,7 +864,7 @@ bool
 RTMP_Connect(RTMP *r, RTMPPacket *cp)
 {
   struct sockaddr_in service;
-  if (!r->Link.hostname)
+  if (!r->Link.hostname.av_len)
     return false;
 
   memset(&service, 0, sizeof(struct sockaddr_in));
@@ -533,14 +872,14 @@ RTMP_Connect(RTMP *r, RTMPPacket *cp)
 
   if (r->Link.socksport)
     {
-      // Connect via SOCKS
-      if (!add_addr_info(&service, r->Link.sockshost, r->Link.socksport))
+      /* Connect via SOCKS */
+      if (!add_addr_info(&service, &r->Link.sockshost, r->Link.socksport))
 	return false;
     }
   else
     {
-      // Connect directly
-      if (!add_addr_info(&service, r->Link.hostname, r->Link.port))
+      /* Connect directly */
+      if (!add_addr_info(&service, &r->Link.hostname, r->Link.port))
 	return false;
     }
 
@@ -555,46 +894,50 @@ RTMP_Connect(RTMP *r, RTMPPacket *cp)
 static bool
 SocksNegotiate(RTMP *r)
 {
+  unsigned long addr;
   struct sockaddr_in service;
   memset(&service, 0, sizeof(struct sockaddr_in));
 
-  add_addr_info(&service, r->Link.hostname, r->Link.port);
-  unsigned long addr = htonl(service.sin_addr.s_addr);
+  add_addr_info(&service, &r->Link.hostname, r->Link.port);
+  addr = htonl(service.sin_addr.s_addr);
 
-  char packet[] = {
-    4, 1,			// SOCKS 4, connect
-    (r->Link.port >> 8) & 0xFF,
-    (r->Link.port) & 0xFF,
-    (char)(addr >> 24) & 0xFF, (char)(addr >> 16) & 0xFF,
-    (char)(addr >> 8) & 0xFF, (char)addr & 0xFF,
-    0
-  };				// NULL terminate
+  {
+    char packet[] = {
+      4, 1,			/* SOCKS 4, connect */
+      (r->Link.port >> 8) & 0xFF,
+      (r->Link.port) & 0xFF,
+      (char)(addr >> 24) & 0xFF, (char)(addr >> 16) & 0xFF,
+      (char)(addr >> 8) & 0xFF, (char)addr & 0xFF,
+      0
+    };				/* NULL terminate */
 
-  WriteN(r, packet, sizeof packet);
+    WriteN(r, packet, sizeof packet);
 
-  if (ReadN(r, packet, 8) != 8)
-    return false;
-
-  if (packet[0] == 0 && packet[1] == 90)
-    {
-      return true;
-    }
-  else
-    {
-      RTMP_Log(RTMP_LOGERROR, "%s, SOCKS returned error code %d", packet[1]);
+    if (ReadN(r, packet, 8) != 8)
       return false;
-    }
+
+    if (packet[0] == 0 && packet[1] == 90)
+      {
+        return true;
+      }
+    else
+      {
+        RTMP_Log(RTMP_LOGERROR, "%s, SOCKS returned error code %d", packet[1]);
+        return false;
+      }
+  }
 }
 
 bool
-RTMP_ConnectStream(RTMP *r, double seekTime, uint32_t dLength)
+RTMP_ConnectStream(RTMP *r, int seekTime)
 {
   RTMPPacket packet = { 0 };
-  if (seekTime >= -2.0)
-    r->Link.seekTime = seekTime;
 
-  if (dLength >= 0)
-    r->Link.length = dLength;
+  /* seekTime was already set by SetupStream / SetupURL.
+   * This is only needed by ReconnectStream.
+   */
+  if (seekTime > 0)
+    r->Link.seekTime = seekTime;
 
   r->m_mediaChannel = 0;
 
@@ -622,16 +965,13 @@ RTMP_ConnectStream(RTMP *r, double seekTime, uint32_t dLength)
 }
 
 bool
-RTMP_ReconnectStream(RTMP *r, int bufferTime, double seekTime,
-		     uint32_t dLength)
+RTMP_ReconnectStream(RTMP *r, int seekTime)
 {
   RTMP_DeleteStream(r);
 
   RTMP_SendCreateStream(r);
 
-  RTMP_SetBufferMS(r, bufferTime);
-
-  return RTMP_ConnectStream(r, seekTime, dLength);
+  return RTMP_ConnectStream(r, seekTime);
 }
 
 bool
@@ -662,6 +1002,7 @@ RTMP_DeleteStream(RTMP *r)
   r->m_bPlaying = false;
 
   SendDeleteStream(r, r->m_stream_id);
+  r->m_stream_id = -1;
 }
 
 int
@@ -716,33 +1057,33 @@ RTMP_ClientPacket(RTMP *r, RTMPPacket *packet)
   switch (packet->m_packetType)
     {
     case 0x01:
-      // chunk size
+      /* chunk size */
       HandleChangeChunkSize(r, packet);
       break;
 
     case 0x03:
-      // bytes read report
+      /* bytes read report */
       RTMP_Log(RTMP_LOGDEBUG, "%s, received: bytes read report", __FUNCTION__);
       break;
 
     case 0x04:
-      // ctrl
+      /* ctrl */
       HandleCtrl(r, packet);
       break;
 
     case 0x05:
-      // server bw
+      /* server bw */
       HandleServerBW(r, packet);
       break;
 
     case 0x06:
-      // client bw
+      /* client bw */
       HandleClientBW(r, packet);
       break;
 
     case 0x08:
-      // audio data
-      //RTMP_Log(RTMP_LOGDEBUG, "%s, received: audio %lu bytes", __FUNCTION__, packet.m_nBodySize);
+      /* audio data */
+      /*RTMP_Log(RTMP_LOGDEBUG, "%s, received: audio %lu bytes", __FUNCTION__, packet.m_nBodySize); */
       HandleAudio(r, packet);
       bHasMediaPacket = 1;
       if (!r->m_mediaChannel)
@@ -752,8 +1093,8 @@ RTMP_ClientPacket(RTMP *r, RTMPPacket *packet)
       break;
 
     case 0x09:
-      // video data
-      //RTMP_Log(RTMP_LOGDEBUG, "%s, received: video %lu bytes", __FUNCTION__, packet.m_nBodySize);
+      /* video data */
+      /*RTMP_Log(RTMP_LOGDEBUG, "%s, received: video %lu bytes", __FUNCTION__, packet.m_nBodySize); */
       HandleVideo(r, packet);
       bHasMediaPacket = 1;
       if (!r->m_mediaChannel)
@@ -762,41 +1103,43 @@ RTMP_ClientPacket(RTMP *r, RTMPPacket *packet)
 	r->m_mediaStamp = packet->m_nTimeStamp;
       break;
 
-    case 0x0F:			// flex stream send
+    case 0x0F:			/* flex stream send */
       RTMP_Log(RTMP_LOGDEBUG,
 	  "%s, flex stream send, size %lu bytes, not supported, ignoring",
 	  __FUNCTION__, packet->m_nBodySize);
       break;
 
-    case 0x10:			// flex shared object
+    case 0x10:			/* flex shared object */
       RTMP_Log(RTMP_LOGDEBUG,
 	  "%s, flex shared object, size %lu bytes, not supported, ignoring",
 	  __FUNCTION__, packet->m_nBodySize);
       break;
 
-    case 0x11:			// flex message
+    case 0x11:			/* flex message */
       {
 	RTMP_Log(RTMP_LOGDEBUG,
 	    "%s, flex message, size %lu bytes, not fully supported",
 	    __FUNCTION__, packet->m_nBodySize);
-	//RTMP_LogHex(packet.m_body, packet.m_nBodySize);
+	/*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
 
-	// some DEBUG code
-	/*RTMP_LIB_AMFObject obj;
+	/* some DEBUG code */
+#if 0
+	   RTMP_LIB_AMFObject obj;
 	   int nRes = obj.Decode(packet.m_body+1, packet.m_nBodySize-1);
 	   if(nRes < 0) {
 	   RTMP_Log(RTMP_LOGERROR, "%s, error decoding AMF3 packet", __FUNCTION__);
-	   //return;
+	   /*return; */
 	   }
 
-	   obj.Dump(); */
+	   obj.Dump();
+#endif
 
 	if (HandleInvoke(r, packet->m_body + 1, packet->m_nBodySize - 1) == 1)
 	  bHasMediaPacket = 2;
 	break;
       }
     case 0x12:
-      // metadata (notify)
+      /* metadata (notify) */
       RTMP_Log(RTMP_LOGDEBUG, "%s, received: notify %lu bytes", __FUNCTION__,
 	  packet->m_nBodySize);
       if (HandleMetadata(r, packet->m_body, packet->m_nBodySize))
@@ -809,10 +1152,10 @@ RTMP_ClientPacket(RTMP *r, RTMPPacket *packet)
       break;
 
     case 0x14:
-      // invoke
+      /* invoke */
       RTMP_Log(RTMP_LOGDEBUG, "%s, received: invoke %lu bytes", __FUNCTION__,
 	  packet->m_nBodySize);
-      //RTMP_LogHex(packet.m_body, packet.m_nBodySize);
+      /*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
 
       if (HandleInvoke(r, packet->m_body, packet->m_nBodySize) == 1)
 	bHasMediaPacket = 2;
@@ -820,13 +1163,13 @@ RTMP_ClientPacket(RTMP *r, RTMPPacket *packet)
 
     case 0x16:
       {
-	// go through FLV packets and handle metadata packets
+	/* go through FLV packets and handle metadata packets */
 	unsigned int pos = 0;
 	uint32_t nTimeStamp = packet->m_nTimeStamp;
 
 	while (pos + 11 < packet->m_nBodySize)
 	  {
-	    uint32_t dataSize = AMF_DecodeInt24(packet->m_body + pos + 1);	// size without header (11) and prevTagSize (4)
+	    uint32_t dataSize = AMF_DecodeInt24(packet->m_body + pos + 1);	/* size without header (11) and prevTagSize (4) */
 
 	    if (pos + 11 + dataSize + 4 > packet->m_nBodySize)
 	      {
@@ -847,8 +1190,8 @@ RTMP_ClientPacket(RTMP *r, RTMPPacket *packet)
 	if (!r->m_pausing)
 	  r->m_mediaStamp = nTimeStamp;
 
-	// FLV tag(s)
-	//RTMP_Log(RTMP_LOGDEBUG, "%s, received: FLV tag(s) %lu bytes", __FUNCTION__, packet.m_nBodySize);
+	/* FLV tag(s) */
+	/*RTMP_Log(RTMP_LOGDEBUG, "%s, received: FLV tag(s) %lu bytes", __FUNCTION__, packet.m_nBodySize); */
 	bHasMediaPacket = 1;
 	break;
       }
@@ -934,7 +1277,7 @@ ReadN(RTMP *r, char *buffer, int n)
 	      && r->m_nBytesIn > r->m_nBytesInSent + r->m_nClientBW / 2)
 	    SendBytesReceived(r);
 	}
-      //RTMP_Log(RTMP_LOGDEBUG, "%s: %d bytes\n", __FUNCTION__, nBytes);
+      /*RTMP_Log(RTMP_LOGDEBUG, "%s: %d bytes\n", __FUNCTION__, nBytes); */
 #ifdef _DEBUG
       fwrite(ptr, 1, nBytes, netstackdump_read);
 #endif
@@ -942,7 +1285,7 @@ ReadN(RTMP *r, char *buffer, int n)
       if (nBytes == 0)
 	{
 	  RTMP_Log(RTMP_LOGDEBUG, "%s, RTMP socket closed by peer", __FUNCTION__);
-	  //goto again;
+	  /*goto again; */
 	  RTMP_Close(r);
 	  break;
 	}
@@ -991,7 +1334,7 @@ WriteN(RTMP *r, const char *buffer, int n)
         nBytes = HTTP_Post(r, RTMPT_SEND, ptr, n);
       else
         nBytes = RTMPSockBuf_Send(&r->m_sb, ptr, n);
-      //RTMP_Log(RTMP_LOGDEBUG, "%s: %d\n", __FUNCTION__, nBytes);
+      /*RTMP_Log(RTMP_LOGDEBUG, "%s: %d\n", __FUNCTION__, nBytes); */
 
       if (nBytes < 0)
 	{
@@ -1046,19 +1389,20 @@ SendConnectPacket(RTMP *r, RTMPPacket *cp)
 {
   RTMPPacket packet;
   char pbuf[4096], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
   if (cp)
     return RTMP_SendPacket(r, cp, true);
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_connect);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_OBJECT;
@@ -1115,7 +1459,7 @@ SendConnectPacket(RTMP *r, RTMPPacket *cp)
 	}
     }
   if (r->m_fEncoding != 0.0 || r->m_bSendEncoding)
-    {	// AMF0, AMF3 not fully supported yet
+    {	/* AMF0, AMF3 not fully supported yet */
       enc = AMF_EncodeNamedNumber(enc, pend, &av_objectEncoding, r->m_fEncoding);
       if (!enc)
 	return false;
@@ -1123,13 +1467,13 @@ SendConnectPacket(RTMP *r, RTMPPacket *cp)
   if (enc + 3 >= pend)
     return false;
   *enc++ = 0;
-  *enc++ = 0;			// end of object - 0x00 0x00 0x09
+  *enc++ = 0;			/* end of object - 0x00 0x00 0x09 */
   *enc++ = AMF_OBJECT_END;
 
-  // add auth string
+  /* add auth string */
   if (r->Link.auth.av_len)
     {
-      enc = AMF_EncodeBoolean(enc, pend, r->Link.authflag);
+      enc = AMF_EncodeBoolean(enc, pend, r->Link.lFlags & RTMP_LF_AUTH);
       if (!enc)
 	return false;
       enc = AMF_EncodeString(enc, pend, &r->Link.auth);
@@ -1159,16 +1503,17 @@ SendBGHasStream(RTMP *r, double dId, AVal *playpath)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_bgHasStream);
   enc = AMF_EncodeNumber(enc, pend, dId);
   *enc++ = AMF_NULL;
@@ -1190,19 +1535,20 @@ RTMP_SendCreateStream(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_createStream);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
-  *enc++ = AMF_NULL;		// NULL
+  *enc++ = AMF_NULL;		/* NULL */
 
   packet.m_nBodySize = enc - packet.m_body;
 
@@ -1216,16 +1562,17 @@ SendFCSubscribe(RTMP *r, AVal *subscribepath)
 {
   RTMPPacket packet;
   char pbuf[512], *pend = pbuf + sizeof(pbuf);
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  char *enc;
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
   RTMP_Log(RTMP_LOGDEBUG, "FCSubscribe: %s", subscribepath->av_val);
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_FCSubscribe);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
@@ -1246,16 +1593,17 @@ SendReleaseStream(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+ enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_releaseStream);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
@@ -1265,7 +1613,7 @@ SendReleaseStream(RTMP *r)
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  return RTMP_SendPacket(r, &packet, true);
+  return RTMP_SendPacket(r, &packet, false);
 }
 
 SAVC(FCPublish);
@@ -1275,16 +1623,17 @@ SendFCPublish(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_FCPublish);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
@@ -1294,7 +1643,7 @@ SendFCPublish(RTMP *r)
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  return RTMP_SendPacket(r, &packet, true);
+  return RTMP_SendPacket(r, &packet, false);
 }
 
 SAVC(FCUnpublish);
@@ -1304,16 +1653,17 @@ SendFCUnpublish(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_FCUnpublish);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
@@ -1323,7 +1673,7 @@ SendFCUnpublish(RTMP *r)
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  return RTMP_SendPacket(r, &packet, true);
+  return RTMP_SendPacket(r, &packet, false);
 }
 
 SAVC(publish);
@@ -1335,16 +1685,17 @@ SendPublish(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x04;	// source channel (invoke)
+  packet.m_nChannel = 0x04;	/* source channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = r->m_stream_id;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_publish);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
@@ -1352,7 +1703,7 @@ SendPublish(RTMP *r)
   if (!enc)
     return false;
 
-  /* FIXME: should we choose live based on Link.bLiveStream? */
+  /* FIXME: should we choose live based on Link.lFlags & RTMP_LF_LIVE? */
   enc = AMF_EncodeString(enc, pend, &av_live);
   if (!enc)
     return false;
@@ -1369,16 +1720,17 @@ SendDeleteStream(RTMP *r, double dStreamId)
 {
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_deleteStream);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
@@ -1393,53 +1745,55 @@ SendDeleteStream(RTMP *r, double dStreamId)
 SAVC(pause);
 
 bool
-RTMP_SendPause(RTMP *r, bool DoPause, double dTime)
+RTMP_SendPause(RTMP *r, bool DoPause, int iTime)
 {
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x08;	// video channel
+  packet.m_nChannel = 0x08;	/* video channel */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// invoke
+  packet.m_packetType = 0x14;	/* invoke */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_pause);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
   enc = AMF_EncodeBoolean(enc, pend, DoPause);
-  enc = AMF_EncodeNumber(enc, pend, (double)dTime);
+  enc = AMF_EncodeNumber(enc, pend, (double)iTime);
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  RTMP_Log(RTMP_LOGDEBUG, "%s, %d, pauseTime=%.2f", __FUNCTION__, DoPause, dTime);
+  RTMP_Log(RTMP_LOGDEBUG, "%s, %d, pauseTime=%d", __FUNCTION__, DoPause, iTime);
   return RTMP_SendPacket(r, &packet, true);
 }
 
 SAVC(seek);
 
 bool
-RTMP_SendSeek(RTMP *r, double dTime)
+RTMP_SendSeek(RTMP *r, int iTime)
 {
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x08;	// video channel
+  packet.m_nChannel = 0x08;	/* video channel */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// invoke
+  packet.m_packetType = 0x14;	/* invoke */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_seek);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
-  enc = AMF_EncodeNumber(enc, pend, dTime);
+  enc = AMF_EncodeNumber(enc, pend, (double)iTime);
 
   packet.m_nBodySize = enc - packet.m_body;
 
@@ -1455,9 +1809,9 @@ RTMP_SendServerBW(RTMP *r)
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
 
-  packet.m_nChannel = 0x02;	// control channel (invoke)
+  packet.m_nChannel = 0x02;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
-  packet.m_packetType = 0x05;	// Server BW
+  packet.m_packetType = 0x05;	/* Server BW */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -1475,9 +1829,9 @@ RTMP_SendClientBW(RTMP *r)
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
 
-  packet.m_nChannel = 0x02;	// control channel (invoke)
+  packet.m_nChannel = 0x02;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
-  packet.m_packetType = 0x06;	// Client BW
+  packet.m_packetType = 0x06;	/* Client BW */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -1496,9 +1850,9 @@ SendBytesReceived(RTMP *r)
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
 
-  packet.m_nChannel = 0x02;	// control channel (invoke)
+  packet.m_nChannel = 0x02;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x03;	// bytes in
+  packet.m_packetType = 0x03;	/* bytes in */
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -1506,10 +1860,10 @@ SendBytesReceived(RTMP *r)
 
   packet.m_nBodySize = 4;
 
-  AMF_EncodeInt32(packet.m_body, pend, r->m_nBytesIn);	// hard coded for now
+  AMF_EncodeInt32(packet.m_body, pend, r->m_nBytesIn);	/* hard coded for now */
   r->m_nBytesInSent = r->m_nBytesIn;
 
-  //RTMP_Log(RTMP_LOGDEBUG, "Send bytes report. 0x%x (%d bytes)", (unsigned int)m_nBytesIn, m_nBytesIn);
+  /*RTMP_Log(RTMP_LOGDEBUG, "Send bytes report. 0x%x (%d bytes)", (unsigned int)m_nBytesIn, m_nBytesIn); */
   return RTMP_SendPacket(r, &packet, false);
 }
 
@@ -1520,23 +1874,24 @@ SendCheckBW(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;	/* RTMP_GetTime(); */
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av__checkbw);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  // triggers _onbwcheck and eventually results in _onbwdone
+  /* triggers _onbwcheck and eventually results in _onbwdone */
   return RTMP_SendPacket(r, &packet, false);
 }
 
@@ -1547,16 +1902,17 @@ SendCheckBWResult(RTMP *r, double txn)
 {
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x03;	// control channel (invoke)
+  packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x14;	// INVOKE
-  packet.m_nTimeStamp = 0x16 * r->m_nBWCheckCounter;	// temp inc value. till we figure it out.
+  packet.m_packetType = 0x14;	/* INVOKE */
+  packet.m_nTimeStamp = 0x16 * r->m_nBWCheckCounter;	/* temp inc value. till we figure it out. */
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av__result);
   enc = AMF_EncodeNumber(enc, pend, txn);
   *enc++ = AMF_NULL;
@@ -1574,56 +1930,101 @@ SendPlay(RTMP *r)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
-  packet.m_nChannel = 0x08;	// we make 8 our stream channel
+  packet.m_nChannel = 0x08;	/* we make 8 our stream channel */
   packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
-  packet.m_packetType = 0x14;	// INVOKE
+  packet.m_packetType = 0x14;	/* INVOKE */
   packet.m_nTimeStamp = 0;
-  packet.m_nInfoField2 = r->m_stream_id;	//0x01000000;
+  packet.m_nInfoField2 = r->m_stream_id;	/*0x01000000; */
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_play);
   enc = AMF_EncodeNumber(enc, pend, ++r->m_numInvokes);
   *enc++ = AMF_NULL;
 
-  RTMP_Log(RTMP_LOGDEBUG, "%s, seekTime=%.2f, dLength=%d, sending play: %s",
-      __FUNCTION__, r->Link.seekTime, r->Link.length,
+  RTMP_Log(RTMP_LOGDEBUG, "%s, seekTime=%d, stopTime=%d, sending play: %s",
+      __FUNCTION__, r->Link.seekTime, r->Link.stopTime,
       r->Link.playpath.av_val);
   enc = AMF_EncodeString(enc, pend, &r->Link.playpath);
   if (!enc)
     return false;
 
-  // Optional parameters start and len.
-
-  // start: -2, -1, 0, positive number
-  //  -2: looks for a live stream, then a recorded stream, if not found any open a live stream
-  //  -1: plays a live stream
-  // >=0: plays a recorded streams from 'start' milliseconds
-  if (r->Link.bLiveStream)
+  /* Optional parameters start and len.
+   *
+   * start: -2, -1, 0, positive number
+   *  -2: looks for a live stream, then a recorded stream,
+   *      if not found any open a live stream
+   *  -1: plays a live stream
+   * >=0: plays a recorded streams from 'start' milliseconds
+   */
+  if (r->Link.lFlags & RTMP_LF_LIVE)
     enc = AMF_EncodeNumber(enc, pend, -1000.0);
   else
     {
       if (r->Link.seekTime > 0.0)
-	enc = AMF_EncodeNumber(enc, pend, r->Link.seekTime);	// resume from here
+	enc = AMF_EncodeNumber(enc, pend, r->Link.seekTime);	/* resume from here */
       else
-	enc = AMF_EncodeNumber(enc, pend, 0.0);	//-2000.0); // recorded as default, -2000.0 is not reliable since that freezes the player if the stream is not found
+	enc = AMF_EncodeNumber(enc, pend, 0.0);	/*-2000.0);*/ /* recorded as default, -2000.0 is not reliable since that freezes the player if the stream is not found */
     }
   if (!enc)
     return false;
 
-  // len: -1, 0, positive number
-  //  -1: plays live or recorded stream to the end (default)
-  //   0: plays a frame 'start' ms away from the beginning
-  //  >0: plays a live or recoded stream for 'len' milliseconds
-  //enc += EncodeNumber(enc, -1.0); // len
-  if (r->Link.length)
+  /* len: -1, 0, positive number
+   *  -1: plays live or recorded stream to the end (default)
+   *   0: plays a frame 'start' ms away from the beginning
+   *  >0: plays a live or recoded stream for 'len' milliseconds
+   */
+  /*enc += EncodeNumber(enc, -1.0); */ /* len */
+  if (r->Link.stopTime)
     {
-      enc = AMF_EncodeNumber(enc, pend, r->Link.length);	// len
+      enc = AMF_EncodeNumber(enc, pend, r->Link.stopTime - r->Link.seekTime);
       if (!enc)
 	return false;
     }
+
+  packet.m_nBodySize = enc - packet.m_body;
+
+  return RTMP_SendPacket(r, &packet, true);
+}
+
+SAVC(set_playlist);
+SAVC(0);
+
+static bool
+SendPlaylist(RTMP *r)
+{
+  RTMPPacket packet;
+  char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
+
+  packet.m_nChannel = 0x08;	/* we make 8 our stream channel */
+  packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
+  packet.m_packetType = 0x14;	/* INVOKE */
+  packet.m_nTimeStamp = 0;
+  packet.m_nInfoField2 = r->m_stream_id;	/*0x01000000; */
+  packet.m_hasAbsTimestamp = 0;
+  packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
+
+  enc = packet.m_body;
+  enc = AMF_EncodeString(enc, pend, &av_set_playlist);
+  enc = AMF_EncodeNumber(enc, pend, 0);
+  *enc++ = AMF_NULL;
+  *enc++ = AMF_ECMA_ARRAY;
+  *enc++ = 0;
+  *enc++ = 0;
+  *enc++ = 0;
+  *enc++ = AMF_OBJECT;
+  enc = AMF_EncodeNamedString(enc, pend, &av_0, &r->Link.playpath);
+  if (!enc)
+    return false;
+  if (enc + 3 >= pend)
+    return false;
+  *enc++ = 0;
+  *enc++ = 0;
+  *enc++ = AMF_OBJECT_END;
 
   packet.m_nBodySize = enc - packet.m_body;
 
@@ -1635,6 +2036,7 @@ SendSecureTokenResponse(RTMP *r, AVal *resp)
 {
   RTMPPacket packet;
   char pbuf[1024], *pend = pbuf + sizeof(pbuf);
+  char *enc;
 
   packet.m_nChannel = 0x03;	/* control channel (invoke) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
@@ -1644,7 +2046,7 @@ SendSecureTokenResponse(RTMP *r, AVal *resp)
   packet.m_hasAbsTimestamp = 0;
   packet.m_body = pbuf + RTMP_MAX_HEADER_SIZE;
 
-  char *enc = packet.m_body;
+  enc = packet.m_body;
   enc = AMF_EncodeString(enc, pend, &av_secureTokenResponse);
   enc = AMF_EncodeNumber(enc, pend, 0.0);
   *enc++ = AMF_NULL;
@@ -1676,15 +2078,16 @@ The type of Ping packet is 0x4 and contains two mandatory parameters and two opt
 bool
 RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject, unsigned int nTime)
 {
-  RTMP_Log(RTMP_LOGDEBUG, "sending ctrl. type: 0x%04x", (unsigned short)nType);
-
   RTMPPacket packet;
   char pbuf[256], *pend = pbuf + sizeof(pbuf);
   int nSize;
+  char *buf;
 
-  packet.m_nChannel = 0x02;	// control channel (ping)
+  RTMP_Log(RTMP_LOGDEBUG, "sending ctrl. type: 0x%04x", (unsigned short)nType);
+
+  packet.m_nChannel = 0x02;	/* control channel (ping) */
   packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
-  packet.m_packetType = 0x04;	// ctrl
+  packet.m_packetType = 0x04;	/* ctrl */
   packet.m_nTimeStamp = 0;	/* RTMP_GetTime(); */
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -1699,7 +2102,7 @@ RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject, unsigned int nTime)
 
   packet.m_nBodySize = nSize;
 
-  char *buf = packet.m_body;
+  buf = packet.m_body;
   buf = AMF_EncodeInt16(buf, pend, nType);
 
   if (nType == 0x1B)
@@ -1707,7 +2110,7 @@ RTMP_SendCtrl(RTMP *r, short nType, unsigned int nObject, unsigned int nTime)
 #ifdef CRYPTO
       memcpy(buf, r->Link.SWFVerificationResponse, 42);
       RTMP_Log(RTMP_LOGDEBUG, "Sending SWFVerification response: ");
-      RTMP_LogHex(RTMP_LOGDEBUG, packet.m_body, packet.m_nBodySize);
+      RTMP_LogHex(RTMP_LOGDEBUG, (uint8_t *)packet.m_body, packet.m_nBodySize);
 #endif
     }
   else if (nType == 0x1A)
@@ -1778,6 +2181,7 @@ SAVC(close);
 SAVC(code);
 SAVC(level);
 SAVC(onStatus);
+SAVC(playlist_ready);
 static const AVal av_NetStream_Failed = AVC("NetStream.Failed");
 static const AVal av_NetStream_Play_Failed = AVC("NetStream.Play.Failed");
 static const AVal av_NetStream_Play_StreamNotFound =
@@ -1793,19 +2197,21 @@ static const AVal av_NetStream_Play_UnpublishNotify =
 AVC("NetStream.Play.UnpublishNotify");
 static const AVal av_NetStream_Publish_Start = AVC("NetStream.Publish.Start");
 
-// Returns 0 for OK/Failed/error, 1 for 'Stop or Complete'
+/* Returns 0 for OK/Failed/error, 1 for 'Stop or Complete' */
 static int
 HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 {
+  AMFObject obj;
+  AVal method;
+  double txn;
   int ret = 0, nRes;
-  if (body[0] != 0x02)		// make sure it is a string method name we start with
+  if (body[0] != 0x02)		/* make sure it is a string method name we start with */
     {
       RTMP_Log(RTMP_LOGWARNING, "%s, Sanity failed. no string method in invoke packet",
 	  __FUNCTION__);
       return 0;
     }
 
-  AMFObject obj;
   nRes = AMF_Decode(&obj, body, nBodySize, false);
   if (nRes < 0)
     {
@@ -1814,9 +2220,8 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
     }
 
   AMF_Dump(&obj);
-  AVal method;
   AMFProp_GetString(AMF_GetProp(&obj, NULL, 0), &method);
-  double txn = AMFProp_GetNumber(AMF_GetProp(&obj, NULL, 1));
+  txn = AMFProp_GetNumber(AMF_GetProp(&obj, NULL, 1));
   RTMP_Log(RTMP_LOGDEBUG, "%s, server invoking <%s>", __FUNCTION__, method.av_val);
 
   if (AVMATCH(&method, &av__result))
@@ -1855,7 +2260,7 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	      /* Send the FCSubscribe if live stream or if subscribepath is set */
 	      if (r->Link.subscribepath.av_len)
 	        SendFCSubscribe(r, &r->Link.subscribepath);
-	      else if (r->Link.bLiveStream)
+	      else if (r->Link.lFlags & RTMP_LF_LIVE)
 	        SendFCSubscribe(r, &r->Link.playpath);
 	    }
 	}
@@ -1869,6 +2274,8 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	    }
 	  else
 	    {
+	      if (r->Link.lFlags & RTMP_LF_PLST)
+	        SendPlaylist(r);
 	      SendPlay(r);
 	      RTMP_SendCtrl(r, 3, r->m_stream_id, r->m_nBufferMS);
 	    }
@@ -1886,7 +2293,7 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
     }
   else if (AVMATCH(&method, &av_onFCSubscribe))
     {
-      // SendOnFCSubscribe();
+      /* SendOnFCSubscribe(); */
     }
   else if (AVMATCH(&method, &av_onFCUnsubscribe))
     {
@@ -1963,7 +2370,7 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	    }
 	}
 
-      // Return 1 if this is a Play.Complete or Play.Stop
+      /* Return 1 if this is a Play.Complete or Play.Stop */
       else if (AVMATCH(&code, &av_NetStream_Play_Complete)
 	  || AVMATCH(&code, &av_NetStream_Play_Stop)
 	  || AVMATCH(&code, &av_NetStream_Play_UnpublishNotify))
@@ -1985,6 +2392,18 @@ HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 	    r->m_pausing = 3;
 	  }
 	}
+    }
+  else if (AVMATCH(&method, &av_playlist_ready))
+    {
+      int i;
+      for (i = 0; i < r->m_numCalls; i++)
+        {
+          if (AVMATCH(&r->m_methodCalls[i], &av_set_playlist))
+	    {
+	      AV_erase(r->m_methodCalls, &r->m_numCalls, i, true);
+	      break;
+	    }
+        }
     }
   else
     {
@@ -2052,17 +2471,17 @@ DumpMetaData(AMFObject *obj)
 	    }
 	  if (prop->p_name.av_len)
 	    {
-	      // chomp
+	      /* chomp */
 	      if (strlen(str) >= 1 && str[strlen(str) - 1] == '\n')
 		str[strlen(str) - 1] = '\0';
-	      RTMP_LogPrintf("  %-22.*s%s\n", prop->p_name.av_len,
+	      RTMP_Log(RTMP_LOGINFO, "  %-22.*s%s", prop->p_name.av_len,
 			prop->p_name.av_val, str);
 	    }
 	}
       else
 	{
 	  if (prop->p_name.av_len)
-	    RTMP_LogPrintf("%.*s:\n", prop->p_name.av_len, prop->p_name.av_val);
+	    RTMP_Log(RTMP_LOGINFO, "%.*s:", prop->p_name.av_len, prop->p_name.av_val);
 	  DumpMetaData(&prop->p_vu.p_object);
 	}
     }
@@ -2075,8 +2494,8 @@ SAVC(duration);
 static bool
 HandleMetadata(RTMP *r, char *body, unsigned int len)
 {
-  // allright we get some info here, so parse it and print it
-  // also keep duration or filesize to make a nice progress bar
+  /* allright we get some info here, so parse it and print it */
+  /* also keep duration or filesize to make a nice progress bar */
 
   AMFObject obj;
   AVal metastring;
@@ -2095,13 +2514,13 @@ HandleMetadata(RTMP *r, char *body, unsigned int len)
   if (AVMATCH(&metastring, &av_onMetaData))
     {
       AMFObjectProperty prop;
-      // Show metadata
-      RTMP_LogPrintf("Metadata:\n");
+      /* Show metadata */
+      RTMP_Log(RTMP_LOGINFO, "Metadata:");
       DumpMetaData(&obj);
       if (RTMP_FindFirstMatchingProperty(&obj, &av_duration, &prop))
 	{
 	  r->m_fDuration = prop.p_vu.p_number;
-	  //RTMP_Log(RTMP_LOGDEBUG, "Set duration: %.2f", m_fDuration);
+	  /*RTMP_Log(RTMP_LOGDEBUG, "Set duration: %.2f", m_fDuration); */
 	}
       ret = true;
     }
@@ -2139,7 +2558,7 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
     nType = AMF_DecodeInt16(packet->m_body);
   RTMP_Log(RTMP_LOGDEBUG, "%s, received ctrl. type: %d, len: %d", __FUNCTION__, nType,
       packet->m_nBodySize);
-  //RTMP_LogHex(packet.m_body, packet.m_nBodySize);
+  /*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
 
   if (packet->m_nBodySize >= 6)
     {
@@ -2167,7 +2586,7 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
 	  RTMP_Log(RTMP_LOGDEBUG, "%s, Stream IsRecorded %d", __FUNCTION__, tmp);
 	  break;
 
-	case 6:		// server ping. reply with pong.
+	case 6:		/* server ping. reply with pong. */
 	  tmp = AMF_DecodeInt32(packet->m_body + 2);
 	  RTMP_Log(RTMP_LOGDEBUG, "%s, Ping %d", __FUNCTION__, tmp);
 	  RTMP_SendCtrl(r, 0x07, tmp, 0);
@@ -2176,7 +2595,7 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
 	case 31:
 	  tmp = AMF_DecodeInt32(packet->m_body + 2);
 	  RTMP_Log(RTMP_LOGDEBUG, "%s, Stream BufferEmpty %d", __FUNCTION__, tmp);
-	  if (r->Link.bLiveStream || (r->Link.protocol & RTMP_FEATURE_HTTP))
+	  if ((r->Link.lFlags & RTMP_LF_LIVE) || (r->Link.protocol & RTMP_FEATURE_HTTP))
 	    break;
 	  if (!r->m_pausing)
 	    {
@@ -2208,10 +2627,10 @@ HandleCtrl(RTMP *r, const RTMPPacket *packet)
     {
       RTMP_Log(RTMP_LOGDEBUG, "%s, SWFVerification ping received: ", __FUNCTION__);
 #ifdef CRYPTO
-      //RTMP_LogHex(packet.m_body, packet.m_nBodySize);
+      /*RTMP_LogHex(packet.m_body, packet.m_nBodySize); */
 
-      // respond with HMAC SHA256 of decompressed SWF, key is the 30byte player key, also the last 30 bytes of the server handshake are applied
-      if (r->Link.SWFHash.av_len)
+      /* respond with HMAC SHA256 of decompressed SWF, key is the 30byte player key, also the last 30 bytes of the server handshake are applied */
+      if (r->Link.SWFSize)
 	{
 	  RTMP_SendCtrl(r, 0x1B, 0, 0);
 	}
@@ -2275,6 +2694,8 @@ bool
 RTMP_ReadPacket(RTMP *r, RTMPPacket *packet)
 {
   char hbuf[RTMP_MAX_HEADER_SIZE] = { 0 }, *header = hbuf;
+  int nSize, hSize, nToRead, nChunk;
+  bool didAlloc = false;
 
   RTMP_Log(RTMP_LOGDEBUG2, "%s: fd=%d", __FUNCTION__, r->m_sb.sb_socket);
 
@@ -2314,13 +2735,13 @@ RTMP_ReadPacket(RTMP *r, RTMPPacket *packet)
       header += 2;
     }
 
-  int nSize = packetSize[packet->m_headerType], hSize;
+  nSize = packetSize[packet->m_headerType];
 
-  if (nSize == RTMP_LARGE_HEADER_SIZE)	// if we get a full header the timestamp is absolute
+  if (nSize == RTMP_LARGE_HEADER_SIZE)	/* if we get a full header the timestamp is absolute */
     packet->m_hasAbsTimestamp = true;
 
   else if (nSize < RTMP_LARGE_HEADER_SIZE)
-    {				// using values from the last message of this channel
+    {				/* using values from the last message of this channel */
       if (r->m_vecChannelsIn[packet->m_nChannel])
 	memcpy(packet, r->m_vecChannelsIn[packet->m_nChannel],
 	       sizeof(RTMPPacket));
@@ -2341,7 +2762,7 @@ RTMP_ReadPacket(RTMP *r, RTMPPacket *packet)
     {
       packet->m_nTimeStamp = AMF_DecodeInt24(header);
 
-      //RTMP_Log(RTMP_LOGDEBUG, "%s, reading RTMP packet chunk on channel %x, headersz %i, timestamp %i, abs timestamp %i", __FUNCTION__, packet.m_nChannel, nSize, packet.m_nTimeStamp, packet.m_hasAbsTimestamp);
+      /*RTMP_Log(RTMP_LOGDEBUG, "%s, reading RTMP packet chunk on channel %x, headersz %i, timestamp %i, abs timestamp %i", __FUNCTION__, packet.m_nChannel, nSize, packet.m_nTimeStamp, packet.m_hasAbsTimestamp); */
 
       if (nSize >= 6)
 	{
@@ -2370,9 +2791,8 @@ RTMP_ReadPacket(RTMP *r, RTMPPacket *packet)
 	}
     }
 
-  RTMP_LogHexString(RTMP_LOGDEBUG2, hbuf, hSize);
+  RTMP_LogHexString(RTMP_LOGDEBUG2, (uint8_t *)hbuf, hSize);
 
-  bool didAlloc = false;
   if (packet->m_nBodySize > 0 && packet->m_body == NULL)
     {
       if (!RTMPPacket_Alloc(packet, packet->m_nBodySize))
@@ -2384,8 +2804,8 @@ RTMP_ReadPacket(RTMP *r, RTMPPacket *packet)
       packet->m_headerType = (hbuf[0] & 0xc0) >> 6;
     }
 
-  int nToRead = packet->m_nBodySize - packet->m_nBytesRead;
-  int nChunk = r->m_inChunkSize;
+  nToRead = packet->m_nBodySize - packet->m_nBytesRead;
+  nChunk = r->m_inChunkSize;
   if (nToRead < nChunk)
     nChunk = nToRead;
 
@@ -2405,28 +2825,28 @@ RTMP_ReadPacket(RTMP *r, RTMPPacket *packet)
       return false;
     }
 
-  RTMP_LogHexString(RTMP_LOGDEBUG2, packet->m_body + packet->m_nBytesRead, nChunk);
+  RTMP_LogHexString(RTMP_LOGDEBUG2, (uint8_t *)packet->m_body + packet->m_nBytesRead, nChunk);
 
   packet->m_nBytesRead += nChunk;
 
-  // keep the packet as ref for other packets on this channel
+  /* keep the packet as ref for other packets on this channel */
   if (!r->m_vecChannelsIn[packet->m_nChannel])
     r->m_vecChannelsIn[packet->m_nChannel] = malloc(sizeof(RTMPPacket));
   memcpy(r->m_vecChannelsIn[packet->m_nChannel], packet, sizeof(RTMPPacket));
 
   if (RTMPPacket_IsReady(packet))
     {
-      // make packet's timestamp absolute
+      /* make packet's timestamp absolute */
       if (!packet->m_hasAbsTimestamp)
-	packet->m_nTimeStamp += r->m_channelTimestamp[packet->m_nChannel];	// timestamps seem to be always relative!!
+	packet->m_nTimeStamp += r->m_channelTimestamp[packet->m_nChannel];	/* timestamps seem to be always relative!! */
 
       r->m_channelTimestamp[packet->m_nChannel] = packet->m_nTimeStamp;
 
-      // reset the data from the stored packet. we keep the header since we may use it later if a new packet for this channel
-      // arrives and requests to re-use some info (small packet header)
+      /* reset the data from the stored packet. we keep the header since we may use it later if a new packet for this channel */
+      /* arrives and requests to re-use some info (small packet header) */
       r->m_vecChannelsIn[packet->m_nChannel]->m_body = NULL;
       r->m_vecChannelsIn[packet->m_nChannel]->m_nBytesRead = 0;
-      r->m_vecChannelsIn[packet->m_nChannel]->m_hasAbsTimestamp = false;	// can only be false if we reuse header
+      r->m_vecChannelsIn[packet->m_nChannel]->m_hasAbsTimestamp = false;	/* can only be false if we reuse header */
     }
   else
     {
@@ -2441,12 +2861,15 @@ static bool
 HandShake(RTMP *r, bool FP9HandShake)
 {
   int i;
+  uint32_t uptime, suptime;
+  bool bMatch;
+  char type;
   char clientbuf[RTMP_SIG_SIZE + 1], *clientsig = clientbuf + 1;
   char serversig[RTMP_SIG_SIZE];
 
-  clientbuf[0] = 0x03;		// not encrypted
+  clientbuf[0] = 0x03;		/* not encrypted */
 
-  uint32_t uptime = htonl(RTMP_GetTime());
+  uptime = htonl(RTMP_GetTime());
   memcpy(clientsig, &uptime, 4);
 
   memset(&clientsig[4], 0, 4);
@@ -2462,8 +2885,7 @@ HandShake(RTMP *r, bool FP9HandShake)
   if (!WriteN(r, clientbuf, RTMP_SIG_SIZE + 1))
     return false;
 
-  char type;
-  if (ReadN(r, &type, 1) != 1)	// 0x03 or 0x06
+  if (ReadN(r, &type, 1) != 1)	/* 0x03 or 0x06 */
     return false;
 
   RTMP_Log(RTMP_LOGDEBUG, "%s: Type Answer   : %02X", __FUNCTION__, type);
@@ -2475,8 +2897,7 @@ HandShake(RTMP *r, bool FP9HandShake)
   if (ReadN(r, serversig, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
     return false;
 
-  // decode server response
-  uint32_t suptime;
+  /* decode server response */
 
   memcpy(&suptime, serversig, 4);
   suptime = ntohl(suptime);
@@ -2485,14 +2906,14 @@ HandShake(RTMP *r, bool FP9HandShake)
   RTMP_Log(RTMP_LOGDEBUG, "%s: FMS Version   : %d.%d.%d.%d", __FUNCTION__,
       serversig[4], serversig[5], serversig[6], serversig[7]);
 
-  // 2nd part of handshake
+  /* 2nd part of handshake */
   if (!WriteN(r, serversig, RTMP_SIG_SIZE))
     return false;
 
   if (ReadN(r, serversig, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
     return false;
 
-  bool bMatch = (memcmp(serversig, clientsig, RTMP_SIG_SIZE) == 0);
+  bMatch = (memcmp(serversig, clientsig, RTMP_SIG_SIZE) == 0);
   if (!bMatch)
     {
       RTMP_Log(RTMP_LOGWARNING, "%s, client signature does not match!", __FUNCTION__);
@@ -2507,8 +2928,9 @@ SHandShake(RTMP *r)
   char serverbuf[RTMP_SIG_SIZE + 1], *serversig = serverbuf + 1;
   char clientsig[RTMP_SIG_SIZE];
   uint32_t uptime;
+  bool bMatch;
 
-  if (ReadN(r, serverbuf, 1) != 1)	// 0x03 or 0x06
+  if (ReadN(r, serverbuf, 1) != 1)	/* 0x03 or 0x06 */
     return false;
 
   RTMP_Log(RTMP_LOGDEBUG, "%s: Type Request  : %02X", __FUNCTION__, serverbuf[0]);
@@ -2538,7 +2960,7 @@ SHandShake(RTMP *r)
   if (ReadN(r, clientsig, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
     return false;
 
-  // decode client response
+  /* decode client response */
 
   memcpy(&uptime, clientsig, 4);
   uptime = ntohl(uptime);
@@ -2547,14 +2969,14 @@ SHandShake(RTMP *r)
   RTMP_Log(RTMP_LOGDEBUG, "%s: Player Version: %d.%d.%d.%d", __FUNCTION__,
       clientsig[4], clientsig[5], clientsig[6], clientsig[7]);
 
-  // 2nd part of handshake
+  /* 2nd part of handshake */
   if (!WriteN(r, clientsig, RTMP_SIG_SIZE))
     return false;
 
   if (ReadN(r, clientsig, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
     return false;
 
-  bool bMatch = (memcmp(serversig, clientsig, RTMP_SIG_SIZE) == 0);
+  bMatch = (memcmp(serversig, clientsig, RTMP_SIG_SIZE) == 0);
   if (!bMatch)
     {
       RTMP_Log(RTMP_LOGWARNING, "%s, client signature does not match!", __FUNCTION__);
@@ -2571,11 +2993,11 @@ RTMP_SendChunk(RTMP *r, RTMPChunk *chunk)
 
   RTMP_Log(RTMP_LOGDEBUG2, "%s: fd=%d, size=%d", __FUNCTION__, r->m_sb.sb_socket,
       chunk->c_chunkSize);
-  RTMP_LogHexString(RTMP_LOGDEBUG2, chunk->c_header, chunk->c_headerSize);
+  RTMP_LogHexString(RTMP_LOGDEBUG2, (uint8_t *)chunk->c_header, chunk->c_headerSize);
   if (chunk->c_chunkSize)
     {
       char *ptr = chunk->c_chunk - chunk->c_headerSize;
-      RTMP_LogHexString(RTMP_LOGDEBUG2, chunk->c_chunk, chunk->c_chunkSize);
+      RTMP_LogHexString(RTMP_LOGDEBUG2, (uint8_t *)chunk->c_chunk, chunk->c_chunkSize);
       /* save header bytes we're about to overwrite */
       memcpy(hbuf, ptr, chunk->c_headerSize);
       memcpy(ptr, chunk->c_header, chunk->c_headerSize);
@@ -2592,9 +3014,17 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, bool queue)
 {
   const RTMPPacket *prevPacket = r->m_vecChannelsOut[packet->m_nChannel];
   uint32_t last = 0;
+  int nSize;
+  int hSize, cSize;
+  char *header, *hptr, *hend, hbuf[RTMP_MAX_HEADER_SIZE], c;
+  uint32_t t;
+  char *buffer, *tbuf = NULL, *toff = NULL;
+  int nChunkSize;
+  int tlen;
+
   if (prevPacket && packet->m_headerType != RTMP_PACKET_SIZE_LARGE)
     {
-      // compress a bit by using the prev packet's attributes
+      /* compress a bit by using the prev packet's attributes */
       if (prevPacket->m_nBodySize == packet->m_nBodySize
 	  && prevPacket->m_packetType == packet->m_packetType
 	  && packet->m_headerType == RTMP_PACKET_SIZE_MEDIUM)
@@ -2606,17 +3036,16 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, bool queue)
       last = prevPacket->m_nTimeStamp;
     }
 
-  if (packet->m_headerType > 3)	// sanity
+  if (packet->m_headerType > 3)	/* sanity */
     {
       RTMP_Log(RTMP_LOGERROR, "sanity failed!! trying to send header of type: 0x%02x.",
 	  (unsigned char)packet->m_headerType);
       return false;
     }
 
-  int nSize = packetSize[packet->m_headerType];
-  int hSize = nSize, cSize = 0;
-  char *header, *hptr, *hend, hbuf[RTMP_MAX_HEADER_SIZE], c;
-  uint32_t t = packet->m_nTimeStamp - last;
+  nSize = packetSize[packet->m_headerType];
+  hSize = nSize; cSize = 0;
+  t = packet->m_nTimeStamp - last;
 
   if (packet->m_body)
     {
@@ -2685,9 +3114,8 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, bool queue)
     hptr = AMF_EncodeInt32(hptr, hend, t);
 
   nSize = packet->m_nBodySize;
-  char *buffer = packet->m_body, *tbuf = NULL, *toff = NULL;
-  int nChunkSize = r->m_outChunkSize;
-  int tlen;
+  buffer = packet->m_body;
+  nChunkSize = r->m_outChunkSize;
 
   RTMP_Log(RTMP_LOGDEBUG2, "%s: fd=%d, size=%d", __FUNCTION__, r->m_sb.sb_socket,
       nSize);
@@ -2711,8 +3139,8 @@ RTMP_SendPacket(RTMP *r, RTMPPacket *packet, bool queue)
       if (nSize < nChunkSize)
 	nChunkSize = nSize;
 
-      RTMP_LogHexString(RTMP_LOGDEBUG2, header, hSize);
-      RTMP_LogHexString(RTMP_LOGDEBUG2, buffer, nChunkSize);
+      RTMP_LogHexString(RTMP_LOGDEBUG2, (uint8_t *)header, hSize);
+      RTMP_LogHexString(RTMP_LOGDEBUG2, (uint8_t *)buffer, nChunkSize);
       if (tbuf)
         {
 	  memcpy(toff, header, nChunkSize + hSize);
@@ -2810,6 +3238,7 @@ RTMP_Close(RTMP *r)
   r->m_nBytesIn = 0;
   r->m_nBytesInSent = 0;
 
+  free(r->m_read.buf);
   r->m_read.buf = NULL;
   r->m_read.dataType = 0;
   r->m_read.flags = 0;
@@ -2847,6 +3276,9 @@ RTMP_Close(RTMP *r)
   r->m_resplen = 0;
   r->m_unackd = 0;
 
+  free(r->Link.playpath0.av_val);
+  r->Link.playpath0.av_val = NULL;
+
 #ifdef CRYPTO
   if (r->Link.dh)
     {
@@ -2877,7 +3309,7 @@ RTMPSockBuf_Fill(RTMPSockBuf *sb)
   while (1)
     {
       nBytes = sizeof(sb->sb_buf) - sb->sb_size - (sb->sb_start - sb->sb_buf);
-#ifdef CRYPTO
+#if defined(CRYPTO) && !defined(NO_SSL)
       if (sb->sb_ssl)
 	{
 	  nBytes = TLS_read(sb->sb_ssl, sb->sb_start + sb->sb_size, nBytes);
@@ -2920,7 +3352,7 @@ RTMPSockBuf_Send(RTMPSockBuf *sb, const char *buf, int len)
   fwrite(buf, 1, len, netstackdump);
 #endif
 
-#ifdef CRYPTO
+#if defined(CRYPTO) && !defined(NO_SSL)
   if (sb->sb_ssl)
     {
       rc = TLS_write(sb->sb_ssl, buf, len);
@@ -2936,7 +3368,7 @@ RTMPSockBuf_Send(RTMPSockBuf *sb, const char *buf, int len)
 int
 RTMPSockBuf_Close(RTMPSockBuf *sb)
 {
-#ifdef CRYPTO
+#if defined(CRYPTO) && !defined(NO_SSL)
   if (sb->sb_ssl)
     {
       TLS_shutdown(sb->sb_ssl);
@@ -3024,7 +3456,7 @@ HTTP_Post(RTMP *r, RTMPTCmd cmd, const char *buf, int len)
 {
   char hbuf[512];
   int hlen = snprintf(hbuf, sizeof(hbuf), "POST /%s%s/%d HTTP/1.1\r\n"
-    "Host: %s:%d\r\n"
+    "Host: %.*s:%d\r\n"
     "Accept: */*\r\n"
     "User-Agent: Shockwave Flash\n"
     "Connection: Keep-Alive\n"
@@ -3032,7 +3464,8 @@ HTTP_Post(RTMP *r, RTMPTCmd cmd, const char *buf, int len)
     "Content-type: application/x-fcs\r\n"
     "Content-length: %d\r\n\r\n", RTMPT_cmds[cmd],
     r->m_clientID.av_val ? r->m_clientID.av_val : "",
-    r->m_msgCounter, r->Link.hostname, r->Link.port, len);
+    r->m_msgCounter, r->Link.hostname.av_len, r->Link.hostname.av_val,
+    r->Link.port, len);
   RTMPSockBuf_Send(&r->m_sb, hbuf, hlen);
   hlen = RTMPSockBuf_Send(&r->m_sb, buf, len);
   r->m_msgCounter++;
@@ -3097,6 +3530,10 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
   int rtnGetNextMediaPacket = 0, ret = RTMP_READ_EOF;
   RTMPPacket packet = { 0 };
   bool recopy = false;
+  unsigned int size;
+  char *ptr, *pend;
+  uint32_t nTimeStamp = 0;
+  unsigned int len;
 
   rtnGetNextMediaPacket = RTMP_GetNextMediaPacket(r, &packet);
   while (rtnGetNextMediaPacket)
@@ -3121,14 +3558,14 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 
       if (packet.m_packetType == 0x09 && nPacketLen <= 5)
 	{
-	  RTMP_Log(RTMP_LOGWARNING, "ignoring too small video packet: size: %d",
+	  RTMP_Log(RTMP_LOGDEBUG, "ignoring too small video packet: size: %d",
 	      nPacketLen);
 	  ret = RTMP_READ_IGNORE;
 	  break;
 	}
       if (packet.m_packetType == 0x08 && nPacketLen <= 1)
 	{
-	  RTMP_Log(RTMP_LOGWARNING, "ignoring too small audio packet: size: %d",
+	  RTMP_Log(RTMP_LOGDEBUG, "ignoring too small audio packet: size: %d",
 	      nPacketLen);
 	  ret = RTMP_READ_IGNORE;
 	  break;
@@ -3166,7 +3603,7 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 
 		      if (AVMATCH(&metastring, &av_onMetaData))
 			{
-			  // compare
+			  /* compare */
 			  if ((r->m_read.nMetaHeaderSize != nPacketLen) ||
 			      (memcmp
 			       (r->m_read.metaHeader, packetBody,
@@ -3375,12 +3812,11 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 	}
 
       /* calculate packet size and allocate slop buffer if necessary */
-      unsigned int size = nPacketLen +
+      size = nPacketLen +
 	((packet.m_packetType == 0x08 || packet.m_packetType == 0x09
 	  || packet.m_packetType == 0x12) ? 11 : 0) +
 	(packet.m_packetType != 0x16 ? 4 : 0);
 
-      char *ptr, *pend;
       if (size + 4 > buflen)
 	{
 	  /* the extra 4 is for the case of an FLV stream without a last
@@ -3389,7 +3825,7 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 	  if (r->m_read.buf == 0)
 	    {
 	      RTMP_Log(RTMP_LOGERROR, "Couldn't allocate memory!");
-	      ret = RTMP_READ_ERROR;		// fatal error
+	      ret = RTMP_READ_ERROR;		/* fatal error */
 	      break;
 	    }
 	  recopy = true;
@@ -3402,7 +3838,6 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
       pend = ptr + size + 4;
 
       /* use to return timestamp of last processed packet */
-      uint32_t nTimeStamp = 0;
 
       /* audio (0x08), video (0x09) or metadata (0x12) packets :
        * construct 11 byte header then add rtmp packet's data */
@@ -3416,22 +3851,24 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 	  ptr++;
 	  ptr = AMF_EncodeInt24(ptr, pend, nPacketLen);
 
-	  /*if(packet.m_packetType == 0x09) { // video
+#if 0
+	    if(packet.m_packetType == 0x09) { /* video */
 
-	     // H264 fix:
-	     if((packetBody[0] & 0x0f) == 7) { // CodecId = H264
+	     /* H264 fix: */
+	     if((packetBody[0] & 0x0f) == 7) { /* CodecId = H264 */
 	     uint8_t packetType = *(packetBody+1);
 
-	     uint32_t ts = AMF_DecodeInt24(packetBody+2); // composition time
+	     uint32_t ts = AMF_DecodeInt24(packetBody+2); /* composition time */
 	     int32_t cts = (ts+0xff800000)^0xff800000;
 	     RTMP_Log(RTMP_LOGDEBUG, "cts  : %d\n", cts);
 
 	     nTimeStamp -= cts;
-	     // get rid of the composition time
+	     /* get rid of the composition time */
 	     CRTMP::EncodeInt24(packetBody+2, 0);
 	     }
 	     RTMP_Log(RTMP_LOGDEBUG, "VIDEO: nTimeStamp: 0x%08X (%d)\n", nTimeStamp, nTimeStamp);
-	     } */
+	     }
+#endif
 
 	  ptr = AMF_EncodeInt24(ptr, pend, nTimeStamp);
 	  *ptr = (char)((nTimeStamp & 0xFF000000) >> 24);
@@ -3442,12 +3879,18 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 	}
 
       memcpy(ptr, packetBody, nPacketLen);
-      unsigned int len = nPacketLen;
+      len = nPacketLen;
 
       /* correct tagSize and obtain timestamp if we have an FLV stream */
       if (packet.m_packetType == 0x16)
 	{
 	  unsigned int pos = 0;
+	  int delta;
+
+	  /* grab first timestamp and see if it needs fixing */
+	  nTimeStamp = AMF_DecodeInt24(packetBody + 4);
+	  nTimeStamp |= (packetBody[7] << 24);
+	  delta = packet.m_nTimeStamp - nTimeStamp;
 
 	  while (pos + 11 < nPacketLen)
 	    {
@@ -3456,9 +3899,12 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 	      nTimeStamp = AMF_DecodeInt24(packetBody + pos + 4);
 	      nTimeStamp |= (packetBody[pos + 7] << 24);
 
-	      /*
-	         CRTMP::EncodeInt24(ptr+pos+4, nTimeStamp);
-	         ptr[pos+7] = (nTimeStamp>>24)&0xff;// */
+	      if (delta)
+		{
+		  nTimeStamp += delta;
+		  AMF_EncodeInt24(ptr+pos+4, pend, nTimeStamp);
+		  ptr[pos+7] = nTimeStamp>>24;
+		}
 
 	      /* set data type */
 	      r->m_read.dataType |= (((*(packetBody + pos) == 0x08) << 2) |
@@ -3509,7 +3955,7 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
 		    }
 		}
 
-	      pos += prevTagSize + 4;	//(11+dataSize+4);
+	      pos += prevTagSize + 4;	/*(11+dataSize+4); */
 	    }
 	}
       ptr += len;
@@ -3524,8 +3970,8 @@ Read_1_Packet(RTMP *r, char *buf, int buflen)
        * Update ext timestamp with this absolute offset in non-live mode
        * otherwise report the relative one
        */
-      // RTMP_LogPrintf("\nDEBUG: type: %02X, size: %d, pktTS: %dms, TS: %dms, bLiveStream: %d", packet.m_packetType, nPacketLen, packet.m_nTimeStamp, nTimeStamp, bLiveStream);
-      r->m_read.timestamp = r->Link.bLiveStream ? packet.m_nTimeStamp : nTimeStamp;
+      /* RTMP_Log(RTMP_LOGDEBUG, "type: %02X, size: %d, pktTS: %dms, TS: %dms, bLiveStream: %d", packet.m_packetType, nPacketLen, packet.m_nTimeStamp, nTimeStamp, r->Link.lFlags & RTMP_LF_LIVE); */
+      r->m_read.timestamp = (r->Link.lFlags & RTMP_LF_LIVE) ? packet.m_nTimeStamp : nTimeStamp;
 
       ret = size;
       break;
@@ -3651,7 +4097,7 @@ RTMP_Write(RTMP *r, char *buf, int size)
   char *pend, *enc;
   int s2 = size, ret, num;
 
-  pkt->m_nChannel = 0x04;	// source channel
+  pkt->m_nChannel = 0x04;	/* source channel */
   pkt->m_nInfoField2 = r->m_stream_id;
 
   while (s2)

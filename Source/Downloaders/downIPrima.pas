@@ -5,36 +5,49 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  HttpSend, PCRE,
-  uDownloader, uHttpDownloader, downStream;
+  PCRE, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader, downStream;
 
 type
   TDownloader_iPrima = class(TDownloader_Stream)
     private
+    protected
       StreamIDRegExp: IRegEx;
     protected
+      function GetMovieInfoUrl: string; override;
     public
       class function UrlRegExp: string; override;
-      class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function GetMovieInfoUrl: string; override;
     end;
 
 implementation
 
 uses
   uDownloadClassifier,
-  uStringUtils;
-  
-const STREAM_ID_REGEXP = '<param\s+name="movie"\s+value="http://(?:www\.)?stream\.cz/object/(?P<STREAMID>[0-9]+)';
+  uMessages;
+
+// http://www.iprima.cz/videoarchiv/44524/all/all
+const
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima.cz/videoarchiv/';
+  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_AFTER_ID =  '';
+
+const
+  REGEXP_STREAM_ID = '<param\s+name="movie"\s+value="http://(?:www\.)?stream\.cz/object/(?P<STREAMID>[0-9]+)';
 
 { TDownloader_iPrima }
+
+class function TDownloader_iPrima.UrlRegExp: string;
+begin
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+end;
 
 constructor TDownloader_iPrima.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  StreamIDRegExp := RegExCreate(STREAM_ID_REGEXP, [rcoIgnoreCase]);
+  SetInfoPageEncoding(peUTF8);
+  StreamIDRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_iPrima.Destroy;
@@ -50,27 +63,13 @@ begin
   Result := '';
   Info := CreateHttp;
   try
-    Url := Format('http://www.iprima.cz/videoarchiv/%s/all/all', [MovieID]);
-    if DownloadPage(Info, Url, Page) then
-      begin
-      Page := WideToAnsi(Utf8ToWide(Page));
+    Url := 'http://www.iprima.cz/videoarchiv/' + MovieID + '/all/all';
+    if DownloadPage(Info, Url, Page, peUTF8) then
       if GetRegExpVar(StreamIDRegExp, Page, 'STREAMID', ID) then
         Result := GetMovieInfoUrlForID(ID);
-      end;
   finally
     Info.Free;
     end;
-end;
-
-class function TDownloader_iPrima.MovieIDParamName: string;
-begin
-  Result := 'IPRIMA';
-end;
-
-class function TDownloader_iPrima.UrlRegExp: string;
-begin
-  // http://www.iprima.cz/videoarchiv/44524/all/all
-  Result := '^https?://(?:[a-z0-9-]+\.)?iprima.cz/videoarchiv/(?P<' + MovieIDParamName + '>[0-9]+)';
 end;
 
 initialization
