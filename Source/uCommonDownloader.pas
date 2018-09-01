@@ -21,6 +21,7 @@ type
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function GetMovieInfoUrl: string; virtual; abstract;
+      function GetRegExpVar(RegExp: IRegEx; const Text, VarName: string; out VarValue: string): boolean; virtual;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
     public
       constructor Create(const AMovieID: string); override;
@@ -124,6 +125,18 @@ end;
 function TCommonDownloader.GetInfoPageEncoding: TPageEncoding;
 begin
   Result := peUnknown;
+end;
+
+function TCommonDownloader.GetRegExpVar(RegExp: IRegEx; const Text, VarName: string; out VarValue: string): boolean;
+var Match: IMatch;
+begin
+  Match := RegExp.Match(Text);
+  Result := Match.Matched;
+  if Result then
+    VarValue := Match.Groups.ItemsByName[VarName].Value
+  else
+    VarValue := '';
+  Match := nil;
 end;
 
 end.

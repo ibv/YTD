@@ -13,10 +13,11 @@ type
       fCookies: TStringList;
     protected
       YouTubeConfigRegExp: IRegEx;
-      SimplifyJSONRegExp: IRegEx;
       FormatListRegExp: IRegEx;
-      YouTubeTimestamp: string;
-      HDAvailable: boolean;
+      ExtractFormatListRegExp: IRegEx;
+      ExtractTimestampRegExp: IRegEx;
+      ExtractVideoIdRegExp: IRegEx;
+      Extension: string;
       function GetMovieInfoUrl: string; override;
       function GetInfoPageEncoding: TPageEncoding; override;
       function GetFileNameExt: string; override;
@@ -37,11 +38,14 @@ implementation
 
 uses
   uDownloadClassifier,
-  ulkJSON, SynaCode;
+  SynaCode;
 
 const
-  EXTRACT_CONFIG_REGEXP = '\.setConfig\s*\(\s*(?P<JSON>\{.*?\})\s*\)\s*;';
-  SIMPLIFY_JSON_REGEXP = '''\s*:\s*\(.*?\),';
+  EXTRACT_CONFIG_REGEXP = '<param\s+name=((?:\\?["''])?)flashvars\1\s+value=\1(?P<FLASHVARS>.*?)\1';
+  MOVIE_TITLE_REGEXP = '<title>(?:\s*YouTube\s*-)?\s*(?P<TITLE>.*?)\s*</title>';
+  FLASHVARS_FORMATLIST_REGEXP = '&fmt_list=(?P<FORMATLIST>.*?)(?:&|$)';
+  FLASHVARS_TIMESTAMP_REGEXP = '&t=(?P<TIMESTAMP>.*?)(?:&|$)';
+  FLASHVARS_VIDEOID_REGEXP = '&video_id=(?P<VIDEOID>.*?)(?:&|$)';
   FORMAT_LIST_REGEXP = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
 
 { TDownloader_YouTube }
@@ -50,7 +54,10 @@ constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   YouTubeConfigRegExp := RegExCreate(EXTRACT_CONFIG_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  SimplifyJSONRegExp := RegExCreate(SIMPLIFY_JSON_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  ExtractFormatListRegExp := RegExCreate(FLASHVARS_FORMATLIST_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  ExtractTimestampRegExp := RegExCreate(FLASHVARS_TIMESTAMP_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  ExtractVideoIdRegExp := RegExCreate(FLASHVARS_VIDEOID_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
   FormatListRegExp := RegExCreate(FORMAT_LIST_REGEXP, [rcoIgnoreCase]);
   fCookies := TStringList.Create;
 end;
@@ -59,8 +66,10 @@ destructor TDownloader_YouTube.Destroy;
 begin
   FreeAndNil(fCookies);
   YouTubeConfigRegExp := nil;
-  SimplifyJSONRegExp := nil;
   FormatListRegExp := nil;
+  ExtractFormatListRegExp := nil;
+  ExtractTimestampRegExp := nil;
+  ExtractVideoIdRegExp := nil;
   inherited;
 end;
 
@@ -71,18 +80,14 @@ end;
 
 function TDownloader_YouTube.GetFileNameExt: string;
 begin
-  if HDAvailable then
-    Result := '.mp4'
-  else
-    Result := '.flv';
+  Result := Extension;
 end;
 
 function TDownloader_YouTube.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
 begin
   Result := inherited BeforePrepareFromPage(Page, Http);
   Cookies.Assign(Http.Cookies);
-  YouTubeTimestamp := '';
-  HDAvailable := False;
+  Extension := '.flv';
 end;
 
 function TDownloader_YouTube.BeforeDownload(Http: THttpSend): boolean;
@@ -92,56 +97,30 @@ begin
 end;
 
 function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var JSONtext, VideoFormat: string;
-    Matches: IMatchCollection;
-    JSON, JSONobj: TlkJSONObject;
-    i: integer;
+var FlashVars, FormatList, TimeStamp, VideoId, VideoFormat: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Matches := YouTubeConfigRegExp.Matches(Page);
-  for i := 0 to Pred(Matches.Count) do
+  if not GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
+    SetLastErrorMsg('Failed to locate flashvars.')
+  else if not GetRegExpVar(ExtractFormatListRegExp, FlashVars, 'FORMATLIST', FormatList) then
+    SetLastErrorMsg('Failed to locate format list.')
+  else if not GetRegExpVar(ExtractTimestampRegExp, FlashVars, 'TIMESTAMP', Timestamp) then
+    SetLastErrorMsg('Failed to locate timestamp.')
+  else
     begin
-    JSONtext := Matches[i].Groups.ItemsByName['JSON'].Value;
-    if JSONtext <> '' then
-      begin
-      JSONtext := SimplifyJSONRegExp.Replace(JSONtext, ''': null,');
-      JSON := TlkJSON.ParseText(JSONtext) as TlkJSONobject;
-      if JSON <> nil then
-        try
-          if JSON.IndexOfName('VIDEO_TITLE') >= 0 then
-            begin
-            SetName(Trim(JSON.getString('VIDEO_TITLE')));
-            HDAvailable := JSON.getBoolean('IS_HD_AVAILABLE');
-            JSONobj := JSON.Field['SWF_ARGS'] as TlkJSONobject;
-            if JSONobj <> nil then
-              try
-                YouTubeTimeStamp := DecodeUrl(Trim(JSONobj.getString('t')));
-                if YouTubeTimeStamp <> '' then
-                  begin
-                  //if HDAvailable then
-                  //  begin
-                    VideoFormat := GetBestVideoFormat(DecodeUrl(Trim(JSONobj.getString('fmt_list'))));
-                    if VideoFormat = '' then
-                      VideoFormat := '22';
-                  //  end
-                  //else
-                  //  VideoFormat := '18';
-                  MovieURL := 'http://www.youtube.com/get_video.php?fmt=' + VideoFormat + '&video_id=' + MovieID + '&t=' + YouTubeTimeStamp;
-                  Result := True;
-                  SetPrepared(True);
-                  Break;
-                  end;
-              finally
-                // Note: DO NOT DO THIS!
-                // JSONobj.Free;
-                end;
-            Break;
-            end;
-        finally
-          JSON.Free;
-          end;
-      end;
+    if not GetRegExpVar(ExtractVideoIdRegExp, FlashVars, 'VIDEOID', VideoId) then
+      VideoId := MovieId;
+    VideoFormat := GetBestVideoFormat(DecodeUrl(Trim(FormatList)));
+    if VideoFormat = '' then
+      VideoFormat := '22';
+    if VideoFormat = '34' then
+      Extension := '.flv'
+    else
+      Extension := '.mp4';
+    MovieURL := 'http://www.youtube.com/get_video.php?fmt=' + VideoFormat + '&video_id=' + MovieID + '&t=' + TimeStamp;
+    Result := True;
+    SetPrepared(True);
     end;
 end;
 
