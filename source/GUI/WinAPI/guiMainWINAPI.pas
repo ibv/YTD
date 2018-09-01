@@ -325,6 +325,7 @@ begin
 end;
 
 function TFormMain.DoInitDialog: boolean;
+const DownloadListStyle = LVS_EX_FULLROWSELECT or LVS_EX_GRIDLINES or LVS_EX_DOUBLEBUFFER or LVS_EX_LABELTIP;
 begin
   Result := inherited DoInitDialog;
   CreateObjects;
@@ -338,14 +339,14 @@ begin
   ShowWindow(MainToolbar, 1);
   // Download list
   DownloadListHandle := GetDlgItem(Self.Handle, IDC_LIST_DOWNLOADS);
-  SendMessage(DownloadListHandle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(DownloadListHandle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_FULLROWSELECT or LVS_EX_GRIDLINES or LVS_EX_DOUBLEBUFFER or LVS_EX_LABELTIP);
+  SendMessage(DownloadListHandle, LVM_SETEXTENDEDLISTVIEWSTYLE, DownloadListStyle, DownloadListStyle);
+  SendMessage(DownloadListHandle, LVM_SETIMAGELIST, LVSIL_SMALL, ImageList_DownloadStates);
   ListViewInsertColumn(DownloadListHandle, 0, LISTVIEW_SUBITEM_URL,      alLeft,   160, _('URL'));
   ListViewInsertColumn(DownloadListHandle, 1, LISTVIEW_SUBITEM_PROVIDER, alLeft,    80, _('Provider'));
   ListViewInsertColumn(DownloadListHandle, 2, LISTVIEW_SUBITEM_STATUS,   alCenter,  96, _('Status'));
   ListViewInsertColumn(DownloadListHandle, 3, LISTVIEW_SUBITEM_TITLE,    alLeft,   200, _('Title'));
   ListViewInsertColumn(DownloadListHandle, 4, LISTVIEW_SUBITEM_SIZE,     alRight,   64, _('Size'));
   ListViewInsertColumn(DownloadListHandle, 5, LISTVIEW_SUBITEM_PROGRESS, alCenter, 120, _('Progress'));
-  SendMessage(DownloadListHandle, LVM_SETIMAGELIST, LVSIL_SMALL, ImageList_DownloadStates);
   // Tray icon
   {$IFDEF SYSTRAY}
     Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
@@ -510,7 +511,6 @@ function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
 var DlItem: TDownloadListItem;
 begin
   Result := False;
-  DispInfo^.item.mask := 0;
   if DownloadList <> nil then
     begin
     DlItem := DownloadList[DispInfo^.item.iItem];

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.66                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.67                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 

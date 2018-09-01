@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+  v0.67
+
+    * Opraveno nepøekreslování seznamu downloadù pod Windows 7.
+
+
+
   v0.66
 
     * Opravena chyba pøi spouštìní programu na Windows 7.

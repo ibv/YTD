@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+  v0.67
+
+    * Fixed non-refreshing download list under Windows 7.
+
+
+
   v0.66
 
     * Fixed a bug when starting the program under Windows 7.
