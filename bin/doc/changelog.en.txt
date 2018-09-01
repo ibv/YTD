@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.80:
+
+    * New provider: HardSexTube (porn).
+
+    * New provider: Zmozek.cz.
+
+    * CeskaTelevize.cz, CT24.cz: Fixed to the current player code. All videos
+      in all pages should work.
+
+    * XHamster: Updated to the current player.
+
+    * Fixed bugs when compiling with Delphi 2009.
+
+
+
   v0.79:
 
     * New provider: CKKlic.cz.

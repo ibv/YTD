@@ -56,12 +56,13 @@ type
       {$ENDIF}
     protected
       MovieObjectRegExp: TRegExp;
-      IFrameRegExp: TRegExp;
+      EmbeddedFrameRegExp: TRegExp;
       LiveStream: boolean;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
+      function ConvertMovieObject(var Data: string): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
       procedure SetOptions(const Value: TYTDOptions); override;
       {$IFDEF MULTIDOWNLOADS}
       property BaseUrls: TStringList read fBaseUrls;
@@ -84,21 +85,22 @@ implementation
 
 uses
   uStringConsts,
+  uJSON, uLkJSON,
+  SynaUtil,
   uDownloadClassifier,
   uMessages;
 
 // http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
 // http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/?online=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/(?=ivysilani/|porady/)';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        '^https?://(?:[a-z0-9-]+\.)*(?:ceskatelevize|ct24)\.cz/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>\s*(?P<TITLE>.*?)\s*</title>';
-  //REGEXP_MOVIE_OBJECT = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="(?:url|src)"\s+value)="(?P<OBJURL>[^"]+)"';
-  REGEXP_MOVIE_OBJECT = '\bflashvars\.playlistURL\s*=\s*"(?P<OBJURL>https?://.+?)"';
-  REGEXP_IFRAME_TO_IVYSILANI = '<iframe\s[^>]*\bsrc="(?:http://[^/]+)?(?P<PATH>/ivysilani/embed/.*?)"';
+  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*&mdash;\s*iVysílání)?(?:\s*&mdash;\s*Ceská televize)?\s*</title>';
+  REGEXP_MOVIE_OBJECT = '\bcallSOAP\s*\(\s*(?P<OBJECT>.*?)\s*\)\s*;';
+  REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
 
 { TDownloader_CT }
 
@@ -118,7 +120,7 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT);
-  IFrameRegExp := RegExCreate(REGEXP_IFRAME_TO_IVYSILANI);
+  EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
   LiveStream := True;
   {$IFDEF MULTIDOWNLOADS}
   fStreams := TStringList.Create;
@@ -130,7 +132,7 @@ destructor TDownloader_CT.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
-  RegExFreeAndNil(IFrameRegExp);
+  RegExFreeAndNil(EmbeddedFrameRegExp);
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fStreams);
   FreeAndNil(fBaseUrls);
@@ -140,33 +142,113 @@ end;
 
 function TDownloader_CT.GetMovieInfoUrl: string;
 begin
-  // http://www.ceskatelevize.cz/porady/1095946610-diagnoza/84-alzheimerova-choroba/video/?pridat=84
-  Result := 'http://www.ceskatelevize.cz/' + MovieID;
+  Result := MovieID;
 end;
 
-function TDownloader_CT.GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean;
-var Path, Frame: string;
+function TDownloader_CT.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
+var Host, Path, NewPage: string;
 begin
-  Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', Url);
+  Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJECT', MovieObject);
   if not Result then
-    if GetRegExpVar(IFrameRegExp, Page, 'PATH', Path) then
-      if DownloadPage(Http, 'http://www.ceskatelevize.cz' + UrlEncode(HtmlDecode(Path)), Frame, InfoPageEncoding) then
-        Result := GetRegExpVar(MovieObjectRegExp, Frame, 'OBJURL', Url);
+    if GetRegExpVars(EmbeddedFrameRegExp, Page, ['HOST', 'PATH'], [@Host, @Path]) then
+      begin
+      if Host = '' then
+        Host := ExtractUrlRoot(MovieID);
+      if DownloadPage(Http, Host + StringReplace(HtmlDecode(Path), ' ',  '+', [rfReplaceAll]), NewPage, InfoPageEncoding) then
+        if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
+          begin
+          Page := NewPage;
+          Result := True;
+          end;
+      end;
+end;
+
+function TDownloader_CT.ConvertMovieObject(var Data: string): boolean;
+
+  function SaveJSON(JSON: TJSON; var Res: string; const Path: string): boolean;
+    var
+      Value, NewPath: string;
+      i: integer;
+    begin
+      if JSON = nil then
+        Result := False
+      else
+        begin
+        Result := True;
+        if JSON is TlkJSONobject then
+          begin
+          for i := 0 to Pred(JSON.Count) do
+            if not SaveJSON(JSON.Child[i], Res, Path) then
+              begin
+              Result := False;
+              Break;
+              end;
+          end
+        else if JSON is TlkJSONobjectmethod then
+          begin
+          if Path = '' then
+            NewPath := TlkJSONobjectmethod(JSON).Name
+          else
+            NewPath := Format('%s[%s]', [Path, TlkJSONobjectmethod(JSON).Name]);
+          Result := SaveJSON(TlkJSONobjectmethod(JSON).ObjValue, Res, NewPath);
+          end
+        else if JSON is TlkJSONcustomlist then
+          begin
+          for i := 0 to Pred(JSON.Count) do
+            if not SaveJSON(JSON.Child[i], Res, Format('%s[%d]', [Path, i])) then
+              begin
+              Result := False;
+              Break;
+              end;
+          end
+        else
+          begin
+          if JSON.Value = null then
+            Value := ''
+          else
+            Value := JSON.Value;
+          Value := UrlEncode(Path) + '=' + UrlEncode(Value);
+          if Res = '' then
+            Res := Value
+          else
+            Res := Res + '&' + Value;
+          end;
+        end;
+    end;
+
+var JSON: TJSON;
+    Res: string;
+begin
+  Result := False;
+  JSON := JSONCreate(Data);
+  if JSON <> nil then
+    begin
+    Res := '';
+    Result := SaveJSON(JSON, Res, '');
+    if Result then
+      Data := Res;
+    end;
 end;
 
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const REKLAMA = '-AD-';
       REKLAMA_LENGTH = Length(REKLAMA);
-var Url, ID, BaseUrl, BestStream, Stream, sBitrate: string;
+var MovieObject, Url, ID, BaseUrl, BestStream, Stream, sBitrate: string;
     Xml: TXmlDoc;
     Body, Node: TXmlNode;
     i, j, Bitrate, BestBitrate: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetMovieObjectUrl(Http, Page, Url) then
+  if not GetMovieObject(Http, Page, MovieObject) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+  else if not ConvertMovieObject(MovieObject) then
+    SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/playlistURL.php', MovieObject, HTTP_FORM_URLENCODING_UTF8, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, URL, Xml) then
+  else if Copy(Url, 1, 4) <> 'http' then
+    SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
+  else if not DownloadXml(Http, Url, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try

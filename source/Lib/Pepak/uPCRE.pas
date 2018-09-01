@@ -63,7 +63,7 @@ type
 function RegExCreate(const Pattern: PCREString; Options: TRegExpOptions): TRegExp; overload;
 function RegExCreate(const Pattern: PCREString): TRegExp; overload;
 {$IFDEF UNICODE}
-function RegExCreate(const Pattern: string; Options: TRegExpOptions = []): TRegExp; overload;
+function RegExCreate(const Pattern: string; Options: TRegExpOptions): TRegExp; overload;
 function RegExCreate(const Pattern: string): TRegExp; overload;
 {$ENDIF}
 procedure RegExFree(RegExp: TRegExp);

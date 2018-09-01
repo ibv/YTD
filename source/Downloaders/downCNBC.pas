@@ -40,7 +40,7 @@ unit downCNBC;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 

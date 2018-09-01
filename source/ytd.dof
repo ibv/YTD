@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.zdf.de/ZDFmediathek//beitrag/video/1308766/
+RunParams=http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=76
+MinorVer=79
 Release=0
-Build=596
+Build=604
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +68,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.76.0.596
+FileVersion=0.79.0.604
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
-ProductVersion=0.76.0.581
+ProductVersion=0.79.0.599
 Comments=http://www.pepak.net/download/youtube-downloader/
 [HistoryLists\hlDebugSourcePath]
 Count=2

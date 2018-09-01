@@ -34,28 +34,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit downCT24;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes, Windows,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  SysUtils, Classes,
+  uPCRE, uXml, HttpSend, SynaCode,
+  uDownloader, uCommonDownloader, uMSDownloader, downCT;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_CT24 = class(TDownloader_CT)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
+      PortToIVysilaniRegExp: TRegExp;
+      PortTitleRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      //function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -68,81 +66,69 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
+// http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
+// http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ct24\.cz/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXPCT24_TO_IVYSILANI = '<iframe\s+src="(?P<PATH>(?:https?://(?:[a-z0-9-]+\.)ct24\.cz)?/embed/iFramePlayer\.php\?.+?)"';
+  REGEXPCT24_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_CT24 }
 
-class function TDownloader_CestyKSobe.Provider: string;
-begin
-  Result := 'CestyKSobe.sk';
-end;
-
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_CT24.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_CT24.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2);
+  inherited;
+  PortToIVysilaniRegExp := RegExCreate(REGEXPCT24_TO_IVYSILANI);
+  PortTitleRegExp := RegExCreate(REGEXPCT24_TITLE);
 end;
 
-destructor TDownloader_CestyKSobe.Destroy;
+destructor TDownloader_CT24.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
+  RegExFreeAndNil(PortToIVysilaniRegExp);
+  RegExFreeAndNil(PortTitleRegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+function TDownloader_CT24.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
+  Result := 'http://www.ct24.cz/' + MovieID;
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
+{
+function TDownloader_CT24.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Path, Url, EmbeddedPlayer, Title: string;
 begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
-end;
-
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var s: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if Name = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
+  if not GetRegExpVar(PortToIVysilaniRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else
     begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
-    SetPrepared(True);
-    Result := True;
+    Url := HtmlDecode(Path);
+    if AnsiCompareText('http', Copy(Url, 1, 4)) <> 0 then
+      Url := 'http://www.ct24.cz' + Url;
+    if not DownloadPage(Http, Url, EmbeddedPlayer, peXml) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    else
+      begin
+      Result := inherited AfterPrepareFromPage(EmbeddedPlayer, nil, Http);
+      if Result then
+        if GetRegExpVar(PortTitleRegExp, Page, 'TITLE', Title) then
+          SetName(Title);
+      end;
     end;
 end;
+}
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  //RegisterDownloader(TDownloader_CT24);
 
 end.

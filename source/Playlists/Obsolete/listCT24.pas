@@ -108,6 +108,6 @@ begin
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_CT24);
+  //RegisterDownloader(TPlaylist_CT24);
 
 end.

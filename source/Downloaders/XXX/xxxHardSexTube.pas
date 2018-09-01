@@ -34,26 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit xxxHardSexTube;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_HardSexTube = class(THttpDownloader)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,81 +63,50 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
+  URLREGEXP_BEFORE_ID = 'hardsextube\.com/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXP_MOVIE_TITLE =  '<h1[^>]*>(?P<TITLE>.*?)</h1>';
+  REGEXP_MOVIE_URL =    '\bflvpathValue\s*:\s*"(?P<URL>https?://.+?)"';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_HardSexTube }
 
-class function TDownloader_CestyKSobe.Provider: string;
+class function TDownloader_HardSexTube.Provider: string;
 begin
-  Result := 'CestyKSobe.sk';
+  Result := 'HardSexTube.com';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_HardSexTube.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_HardSexTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2);
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_CestyKSobe.Destroy;
+destructor TDownloader_HardSexTube.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
   RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+function TDownloader_HardSexTube.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
-end;
-
-function TDownloader_CestyKSobe.GetFileNameExt: string;
-begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
-end;
-
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var s: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if Name = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
-    begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.hardsextube.com/video/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_HardSexTube);
+  {$ENDIF}
 
 end.

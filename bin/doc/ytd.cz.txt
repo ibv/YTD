@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.79                                     (c) 2009-11 Pepak
+YouTube Downloader v0.80                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -333,14 +333,6 @@ PODPOROVANÉ WEBY
 
  - Mpora.com:
      - http://video.mpora.com/watch/xfnGGmZDC/
-
- - MSFotbal.CT24.cz:
-     - http://msfotbal.ct24.cz/article.asp?id=339
-     - http://msfotbal.ct24.cz/video.asp?video_id=95
-     - http://msfotbal.ct24.cz/video.asp
-
-     Pozn.: Skuteèným poskytovatelem je Èeská televize a platí proto všechno,
-            co pro CeskaTelevize.cz.
 
  - MTV.com:
      - http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
@@ -687,6 +679,9 @@ PODPOROVANÉ WEBY
  - ZkoukniTo.cz:
      - http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
 
+ - Zmozek.cz:
+     - http://www.zmozek.cz/textypisni.php?pisen=415
+
 
 
 Podporované porno weby:
@@ -698,6 +693,7 @@ Podporované porno weby:
  - EmpFlix.com
  - ExtremeTube.com
  - Grinvi.com
+ - HardSexTube.com
  - KeezMovies.com
  - MegaPorn.com
  - PornHost.com
@@ -1356,6 +1352,8 @@ NAPSALI O PROGRAMU
 ------------------
 
 http://blog.zarohem.cz/clanek.asp?cislo=1605
+http://www.grafika.cz/art/vse/youtube_downloader_074.html
+http://pctuning.tyden.cz/component/content/article/1-aktualni-zpravy/20761-navod-stahujeme-videa-i-cele-playlisty-nejen-z-youtube
 
 
 

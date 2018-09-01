@@ -40,7 +40,7 @@ unit uNestedDownloader;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend, blcksock, 
   uDownloader, uCommonDownloader, uHttpDirectDownloader,
   uOptions;

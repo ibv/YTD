@@ -157,5 +157,6 @@ HTTP	HTML	HTML	downZ1TV
 MS	HTML	HTML	downZDF
 HTTP	HTML	Nested	downZkoukniTo
 HTTP	-	XML	downZkoukniToEmbed
+HTTP	HTML	HTML	downZmozek
 
 *HTTP1 ... Multiple vars parsing

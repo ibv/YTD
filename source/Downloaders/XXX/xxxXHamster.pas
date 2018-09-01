@@ -75,7 +75,7 @@ const
 const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
   REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
-  REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[0-9]+:[^'']+)''';
+  REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[0-9_]+:[^'']+)''';
 
 { TDownloader_XHamster }
 

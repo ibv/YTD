@@ -232,7 +232,7 @@ begin
       if FileExists(FileName) then
         if FileGetSize(FileName) = 0 then
           begin
-          DeleteFile(FileName);
+          SysUtils.DeleteFile(FileName);
           SetRtmpDumpOption('y', 'flv:' + FlvStream);
           Result := inherited Download;
           end;

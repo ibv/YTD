@@ -147,12 +147,6 @@ uses
   downCollegeHumor in 'Downloaders\downCollegeHumor.pas',
   downCSmaTalent in 'Downloaders\downCSmaTalent.pas',
   downCT in 'Downloaders\downCT.pas',
-  downCT_old in 'Downloaders\downCT_old.pas',
-  downCT_Port in 'Downloaders\downCT_Port.pas',
-  downCT_Program in 'Downloaders\downCT_Program.pas',
-  downCT24 in 'Downloaders\downCT24.pas',
-  downCT24MSFotbal in 'Downloaders\downCT24MSFotbal.pas',
-  downCT24MSFotbal_V2 in 'Downloaders\downCT24MSFotbal_V2.pas',
   downCurrent in 'Downloaders\downCurrent.pas',
   downDailyHaha in 'Downloaders\downDailyHaha.pas',
   downDailyMotion in 'Downloaders\downDailyMotion.pas',
@@ -291,6 +285,7 @@ uses
   downZDF in 'Downloaders\downZDF.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',
   downZkoukniToEmbed in 'Downloaders\downZkoukniToEmbed.pas',
+  downZmozek in 'Downloaders\downZmozek.pas',
   {$IFDEF XXX}
     xxxAdultLoop in 'Downloaders\XXX\xxxAdultLoop.pas',
     xxxBeeg in 'Downloaders\XXX\xxxBeeg.pas',
@@ -300,6 +295,7 @@ uses
     xxxEmpFlix in 'Downloaders\XXX\xxxEmpFlix.pas',
     xxxExtremeTube in 'Downloaders\XXX\xxxExtremeTube.pas',
     xxxGrinvi in 'Downloaders\XXX\xxxGrinvi.pas',
+    xxxHardSexTube in 'Downloaders\XXX\xxxHardSexTube.pas',
     xxxKeezMovies in 'Downloaders\XXX\xxxKeezMovies.pas',
     xxxMegaPorn in 'Downloaders\XXX\xxxMegaPorn.pas',
     xxxPornHost in 'Downloaders\XXX\xxxPornHost.pas',
@@ -339,7 +335,6 @@ uses
   {$ENDIF}
   // Playlist handlers
   listBlipTV in 'Playlists\listBlipTV.pas',
-  listCT24 in 'Playlists\listCT24.pas',
   listGameAnyone in 'Playlists\listGameAnyone.pas',
   listHTML in 'Playlists\listHTML.pas',
   listHTMLfile in 'Playlists\listHTMLfile.pas',

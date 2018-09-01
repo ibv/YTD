@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.79                                     (c) 2009-11 Pepak
+YouTube Downloader v0.80                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -330,14 +330,6 @@ SUPPORTED PROVIDERS
 
  - Mpora.com:
      - http://video.mpora.com/watch/xfnGGmZDC/
-
- - MSFotbal.CT24.cz:
-     - http://msfotbal.ct24.cz/article.asp?id=339
-     - http://msfotbal.ct24.cz/video.asp?video_id=95
-     - http://msfotbal.ct24.cz/video.asp
-
-     Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
-           CT24.cz as well.
 
  - MTV.com:
      - http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
@@ -677,6 +669,9 @@ SUPPORTED PROVIDERS
  - ZkoukniTo.cz:
      - http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
 
+ - Zmozek.cz:
+     - http://www.zmozek.cz/textypisni.php?pisen=415
+
 
 
 Supported porn providers:
@@ -688,6 +683,7 @@ Supported porn providers:
  - EmpFlix.com
  - ExtremeTube.com
  - Grinvi.com
+ - HardSexTube.com
  - KeezMovies.com
  - MegaPorn.com
  - PornHost.com

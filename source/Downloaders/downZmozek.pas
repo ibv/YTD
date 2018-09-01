@@ -34,26 +34,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCT24;
+unit downZmozek;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SynaCode,
-  uDownloader, uCommonDownloader, uMSDownloader, downCT_old;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_CT24 = class(TDownloader_CT_old)
+  TDownloader_Zmozek = class(THttpDownloader)
     private
     protected
-      PortToIVysilaniRegExp: TRegExp;
-      PortTitleRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
+      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -66,65 +63,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
-// http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
+// http://www.zmozek.cz/textypisni.php?pisen=415
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ct24\.cz/';
-  URLREGEXP_ID =        '([^/?&]+/[0-9]+-[^/?&]*/video/[0-9]+|vysilani/[0-9]+[^?]*)';
+  URLREGEXP_BEFORE_ID = 'zmozek\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXPCT24_TO_IVYSILANI = '<iframe\s+src="(?P<PATH>https?://(?:[a-z0-9-]+\.)ct24\.cz/embed/iFramePlayer\.php\?.+?)"';
-  REGEXPCT24_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
+  REGEXP_MOVIE_TITLE =  '<span\s+style="font-size:14px"\s+class=red><b>(?:<br>|\s)*(?P<TITLE>[^<]*?)(?:<br>|\s)*</b></span>';
+  REGEXP_MOVIE_URL =    '<param\s+name="FlashVars"\s+value="(?:[^"&]+&)*mp3=(?P<URL>https?://[^"&]+)';
 
-{ TDownloader_CT24 }
+{ TDownloader_Zmozek }
 
-class function TDownloader_CT24.UrlRegExp: string;
+class function TDownloader_Zmozek.Provider: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := 'Zmozek.cz';
 end;
 
-constructor TDownloader_CT24.Create(const AMovieID: string);
+class function TDownloader_Zmozek.UrlRegExp: string;
 begin
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+end;
+
+constructor TDownloader_Zmozek.Create(const AMovieID: string);
+begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_Zmozek.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
-  PortToIVysilaniRegExp := RegExCreate(REGEXPCT24_TO_IVYSILANI);
-  PortTitleRegExp := RegExCreate(REGEXPCT24_TITLE);
 end;
 
-destructor TDownloader_CT24.Destroy;
+function TDownloader_Zmozek.GetMovieInfoUrl: string;
 begin
-  RegExFreeAndNil(PortToIVysilaniRegExp);
-  RegExFreeAndNil(PortTitleRegExp);
-  inherited;
-end;
-
-function TDownloader_CT24.GetMovieInfoUrl: string;
-begin
-  Result := 'http://www.ct24.cz/' + MovieID;
-end;
-
-function TDownloader_CT24.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Path, Url, EmbeddedPlayer, Title: string;
-begin
-  Result := False;
-  if not GetRegExpVar(PortToIVysilaniRegExp, Page, 'PATH', Path) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else
-    begin
-    Url := HtmlDecode(Path);
-    if not DownloadPage(Http, Url, EmbeddedPlayer, peXml) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-    else
-      begin
-      Result := inherited AfterPrepareFromPage(EmbeddedPlayer, nil, Http);
-      if Result then
-        if GetRegExpVar(PortTitleRegExp, Page, 'TITLE', Title) then
-          SetName(Title);
-      end;
-    end;
+  Result := 'http://www.zmozek.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CT24);
+  RegisterDownloader(TDownloader_Zmozek);
 
 end.

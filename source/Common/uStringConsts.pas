@@ -64,6 +64,7 @@ const
   REGEXP_URL_LINK_VIDEOSRC = '<link\s+rel="video_src"\s+href="(?P<URL>https?://.+?)"';
 
   HTTP_FORM_URLENCODING = 'application/x-www-form-urlencoded';
+  HTTP_FORM_URLENCODING_UTF8 = HTTP_FORM_URLENCODING + '; charset=UTF-8';
 
   URL_QUERY_VARS = '[?&](?P<VARNAME>[^=]+)=(?P<VARVALUE>[^&]*)';
 

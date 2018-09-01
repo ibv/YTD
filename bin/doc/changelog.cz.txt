@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.80:
+
+    * Nový poskytovatel: HardSexTube.com (porno).
+
+    * Nový poskytovatel: Zmozek.cz.
+
+    * CeskaTelevize.cz, CT24.cz: Pøedìláno na aktuální tvar stránek. Mìla by
+      fungovat všechna videa i na všech podstránkách, snad.
+
+    * XHamsher: Aktualizován na souèasný pøehrávaè.
+
+    * Opraveny chyby pøi pøekladu v Delphi 2009.
+
+
+
   v0.79:
 
     * Nový poskytovatel: CKKlic.cz.

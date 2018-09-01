@@ -42,7 +42,7 @@ unit downVideaCesky;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uVarNestedDownloader;

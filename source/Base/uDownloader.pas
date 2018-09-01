@@ -101,12 +101,12 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function DownloadPage(Http: THttpSend; Url: string; const PostData, PostMimeType: AnsiString; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function DownloadPage(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Page: string; Encoding: TPageEncoding = peUnknown; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Page: string; Encoding: TPageEncoding = peUnknown; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function DownloadXml(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Xml: TXmlDoc; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Xml: TXmlDoc; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -117,6 +117,7 @@ type
       function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
+      function ExtractUrlRoot(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
@@ -129,9 +130,9 @@ type
       function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXmlVar(Http: THttpSend; const Url, Path: string; out VarValue: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function DownloadXmlVar(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXmlVar(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Path: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXmlAttr(Http: THttpSend; const Url, Path, Attribute: string; out VarValue: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function DownloadXmlAttr(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path, Attribute: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXmlAttr(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Path, Attribute: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       {$IFDEF DEBUG}
       procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -393,7 +394,7 @@ begin
     end;
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string; const PostData, PostMimeType: AnsiString; Clear: boolean): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; Clear: boolean): boolean;
 var OldInputStream, InputStream: TStream;
 begin
   if Clear then
@@ -418,7 +419,7 @@ begin
     end;
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Page: string; Encoding: TPageEncoding; Clear: boolean): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Page: string; Encoding: TPageEncoding; Clear: boolean): boolean;
 begin
   Page := '';
   Result := DownloadPage(Http, Url, PostData, PostMimeType, Clear);
@@ -467,7 +468,7 @@ begin
   Result := DownloadXml(Http, Url, Page, Xml, Method, Clear);
 end;
 
-function TDownloader.DownloadXml(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Xml: TXmlDoc; Clear: boolean): boolean;
+function TDownloader.DownloadXml(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Xml: TXmlDoc; Clear: boolean): boolean;
 begin
   Xml := nil;
   Result := False;
@@ -633,7 +634,11 @@ begin
         Code := StrToIntDef(Copy(Result, Start+2, i-Start-2), -1);
         System.Delete(Result, Start, i-Start+1);
         i := Start;
+        {$IFDEF UNICODE}
+        if (Code >= 0) and (Code <= 65535) then
+        {$ELSE}
         if (Code >= 0) and (Code <= 255) then
+        {$ENDIF}
           begin
           System.Insert(Chr(Code), Result, i);
           Inc(i);
@@ -714,6 +719,19 @@ end;
 function TDownloader.ExtractUrlExt(const Url: string): string;
 begin
   Result := ExtractFileExt(ExtractUrlFileName(Url));
+end;
+
+function TDownloader.ExtractUrlRoot(const Url: string): string;
+var Protocol, User, Password, Host, Port, Path, Paragraph: string;
+begin
+  ParseUrl(Url, Protocol, User, Password, Host, Port, Path, Paragraph);
+  Result := Protocol + '://';
+  if User <> '' then
+    if Password = '' then
+      Result := Result + User + '@'
+    else
+      Result := Result + User + ':' + Password + '@';
+  Result := Result + Host + ':' + Port;
 end;
 
 function TDownloader.ExtractUrlFileName(const Url: string): string;
@@ -850,7 +868,7 @@ begin
       end;
 end;
 
-function TDownloader.DownloadXmlVar(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path: string; out VarValue: string; Clear: boolean): boolean;
+function TDownloader.DownloadXmlVar(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Path: string; out VarValue: string; Clear: boolean): boolean;
 var Xml: TXmlDoc;
 begin
   Result := False;
@@ -878,7 +896,7 @@ begin
       end;
 end;
 
-function TDownloader.DownloadXmlAttr(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; const Path, Attribute: string; out VarValue: string; Clear: boolean): boolean;
+function TDownloader.DownloadXmlAttr(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Path, Attribute: string; out VarValue: string; Clear: boolean): boolean;
 var Xml: TXmlDoc;
 begin
   Result := False;
