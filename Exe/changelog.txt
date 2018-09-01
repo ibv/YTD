@@ -1,6 +1,12 @@
 CHANGELOG
 ---------
 
+  v0.25
+
+    * Podpora pro Snotr.com.
+
+
+
   v0.24
 
     * Nìkterá YouTube videa nelze stahovat zpùsobem, který obchází kontrolu

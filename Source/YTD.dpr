@@ -42,7 +42,8 @@ uses
   uPlaylist_YouTube in 'uPlaylist_YouTube.pas',
   uPlaylistDownloader in 'uPlaylistDownloader.pas',
   uPlaylist_HTML in 'uPlaylist_HTML.pas',
-  uPlaylist_HTMLfile in 'uPlaylist_HTMLfile.pas';
+  uPlaylist_HTMLfile in 'uPlaylist_HTMLfile.pas',
+  uDownloader_Snotr in 'uDownloader_Snotr.pas';
 
 begin
   {$IFNDEF NO_GUI}

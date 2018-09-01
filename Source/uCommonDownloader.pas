@@ -24,6 +24,7 @@ type
       function GetMovieInfoUrl: string; virtual; abstract;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; UsePost: boolean = False): boolean; virtual;
       function GetRegExpVar(RegExp: IRegEx; const Text, VarName: string; out VarValue: string): boolean; virtual;
+      function BuildMovieUrl(out Url: string): boolean; virtual;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
     public
       constructor Create(const AMovieID: string); override;
@@ -91,9 +92,12 @@ begin
           if MovieTitleRegExp <> nil then
             if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
               SetName(s);
-          if MovieUrlRegExp <> nil then
-            if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
-              MovieURL := s;
+          if BuildMovieURL(s) then
+            MovieURL := s
+          else
+            if MovieUrlRegExp <> nil then
+              if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
+                MovieURL := s;
           if (MovieUrl <> '') then
             SetPrepared(True);
           if not AfterPrepareFromPage(Page, Info) then
@@ -140,6 +144,11 @@ begin
   finally
     Match := nil;
     end;
+end;
+
+function TCommonDownloader.BuildMovieUrl(out Url: string): boolean;
+begin
+  Result := False;
 end;
 
 end.

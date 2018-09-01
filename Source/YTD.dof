@@ -49,7 +49,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.youtube.com/v/b5AWQ5aBjgE
+RunParams=http://www.snotr.com/video/4280
 HostApplication=
 [Language]
 ActiveLang=
@@ -59,7 +59,7 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=24
+MinorVer=25
 Release=0
 Build=166
 Debug=0
@@ -72,7 +72,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.24.0.166
+FileVersion=0.25.0.166
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=

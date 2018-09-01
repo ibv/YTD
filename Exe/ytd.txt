@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.24                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.25                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -58,6 +58,10 @@ Podporované weby a formáty URL:
      - http://www.rozhlas.cz/vltava/porady/_zprava/676996
 
      Pozn.: Poøady mohou být tvoøeny nìkolika rùznými audio soubory.
+
+ - Snotr.com:
+
+     - http://www.snotr.com/video/4280
 
  - Stream.cz:
 
