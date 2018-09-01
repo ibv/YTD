@@ -1,4 +1,4 @@
-unit uYTDAbout;
+unit guiAboutVCL;
 
 interface
 
@@ -35,6 +35,7 @@ type
     procedure DoFirstShow; {$IFDEF FPC} override; {$ELSE} virtual; {$ENDIF}
     procedure SetUrlStyle(ALabel: TLabel); virtual;
     procedure LoadProviders; virtual;
+    procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
     property NewVersionUrl: string read fNewVersionUrl write fNewVersionUrl;
   public
     constructor Create(AOwner: TComponent); override;
@@ -85,16 +86,23 @@ begin
   // Providers
   LoadProviders;
   // Show available version
-  LabelNewestVersion.Caption := _('not found'); // GUI: Check for a new version wasn't made yet - or failed.
+  LabelNewestVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found'); {$ENDIF} // GUI: Check for a new version wasn't made yet - or failed.
   Application.ProcessMessages;
   if Options <> nil then
+    {$IFDEF THREADEDVERSION}
+    Options.GetNewestVersionInBackground(NewVersionEvent);
+    {$ELSE}
     if Options.GetNewestVersion(Version, Url) then
-      begin
-      LabelNewestVersion.Caption := Version;
-      NewVersionUrl := Url;
-      if Version > {$INCLUDE 'YTD.version'} then
-        SetUrlStyle(LabelNewestVersion);
-      end;
+      NewVersionEvent(Options, Version, Url);
+    {$ENDIF}
+end;
+
+procedure TFormAbout.NewVersionEvent(Sender: TObject; const Version, Url: string);
+begin
+  LabelNewestVersion.Caption := Version;
+  NewVersionUrl := Url;
+  if Version > {$INCLUDE 'YTD.version'} then
+    SetUrlStyle(LabelNewestVersion);
 end;
 
 procedure TFormAbout.SetUrlStyle(ALabel: TLabel);

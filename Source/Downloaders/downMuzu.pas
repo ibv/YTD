@@ -30,7 +30,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -81,7 +81,7 @@ end;
 
 function TDownloader_Muzu.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var FlashVarsInfo, CountryID, NetworkVersion, InfoXml, Url: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -98,11 +98,11 @@ begin
       SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['countryIdentity']))
     else if NetworkVersion = '' then
       SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['networkVersion']))
-    else if not DownloadPage(Http, 'http://www.muzu.tv/player/networkVideos/' + NetworkID + '?countryIdentity=' + CountryID + '&networkVersion=' + NetworkVersion + '&hostName=http%3A%2F%2Fwww%2Emuzu%2Etv', InfoXml, peUtf8) then
+    else if not DownloadPage(Http, 'http://www.muzu.tv/player/networkVideos/' + NetworkID + '?countryIdentity=' + CountryID + '&networkVersion=' + NetworkVersion + '&hostName=http%3A%2F%2Fwww%2Emuzu%2Etv', InfoXml, peXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin
-      Xml := TjanXmlParser2.Create;
+      Xml := TXmlDoc.Create;
       try
         Xml.Xml := InfoXml;
         if not GetXmlAttr(Xml, 'channels/channel', 'id', ChannelID) then
@@ -124,7 +124,7 @@ end;
 
 function TDownloader_Muzu.GetMuzuMediaUrl(out Url: string): boolean;
 var Http: THttpSend;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
     InfoXml, Src: string;
 begin
   Result := False;
@@ -133,9 +133,9 @@ begin
     begin
     Http := CreateHttp;
     try
-      if DownloadPage(Http, 'http://www.muzu.tv/player/playAsset?id=' + NetworkID + '&assetId=' + VideoID + '&videoType=1&playlistId=' + ChannelID, InfoXml, peUtf8) then
+      if DownloadPage(Http, 'http://www.muzu.tv/player/playAsset?id=' + NetworkID + '&assetId=' + VideoID + '&videoType=1&playlistId=' + ChannelID, InfoXml, peXml) then
         begin
-        Xml := TjanXmlParser2.Create;
+        Xml := TXmlDoc.Create;
         try
           Xml.Xml := InfoXml;
           if GetXmlAttr(Xml, 'body/video', 'src', Src) then

@@ -28,7 +28,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -82,7 +82,7 @@ var i: integer;
     MediaID, SiteID, SectionID, SessionID, UserAdID: string;
     ServersUrl, Servers, VideosUrl, Videos: string;
     FlvServer, FlvStream, FlvName: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -121,13 +121,13 @@ begin
                  '&fv=WIN 10,0,45,2' +
                  '&session_id=' + SessionID +
                  '&ad_file=noad';
-    if not DownloadPage(Http, ServersUrl, Servers, peUTF8) then
+    if not DownloadPage(Http, ServersUrl, Servers, peXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST))
-    else if not DownloadPage(Http, VideosUrl, Videos, peUTF8) then
+    else if not DownloadPage(Http, VideosUrl, Videos, peXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin
-      Xml := TjanXmlParser2.Create;
+      Xml := TXmlDoc.Create;
       try
         Xml.Xml := Servers;
         GetXmlAttr(Xml, 'flvserver', 'url', FlvServer);

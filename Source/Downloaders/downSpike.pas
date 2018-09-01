@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -70,8 +70,8 @@ begin
 end;
 
 function TDownloader_Spike.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
+var Xml: TXmlDoc;
+    Node: TXmlNode;
     Url, InfoXml, Title, BitrateStr, BestUrl: string;
     i, Bitrate, BestBitrate: integer;
 begin
@@ -79,30 +79,29 @@ begin
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.spike.com' + UrlDecode(Url), InfoXml) then
+  else if not DownloadPage(Http, 'http://www.spike.com' + UrlDecode(Url), InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'gui/share/embed/title', Title) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-      else if not DownloadPage(Http, 'http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId=' + MovieID + '&royaltyReport=true&duration=152&width=640&height=391&impressiontype=18', InfoXml) then
+      else if not DownloadPage(Http, 'http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId=' + MovieID + '&royaltyReport=true&duration=152&width=640&height=391&impressiontype=18', InfoXml, peXml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin
         Xml.Xml := InfoXml;
         BestUrl := '';
         BestBitrate := 0;
-        Node := Xml.getChildByPath('video/item');
-        if Node <> nil then
-          for i := 0 to Pred(Node.childCount) do
-            if (Node.childNode[i].name = 'rendition') and GetXmlAttr(Node.childNode[i], '', 'bitrate', BitrateStr) then
+        if Xml.NodeByPath('video/item', Node) then
+          for i := 0 to Pred(Node.NodeCount) do
+            if (Node.Nodes[i].Name = 'rendition') and GetXmlAttr(Node.Nodes[i], '', 'bitrate', BitrateStr) then
               begin
               Bitrate := StrToIntDef(BitrateStr, 0);
               if Bitrate > BestBitrate then
-                if GetXmlVar(Node.childNode[i], 'src', Url) then
+                if GetXmlVar(Node.Nodes[i], 'src', Url) then
                   begin
                   BestUrl := Url;
                   BestBitrate := Bitrate;

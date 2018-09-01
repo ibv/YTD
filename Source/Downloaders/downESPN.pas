@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -72,24 +72,24 @@ end;
 
 function TDownloader_ESPN.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Player, InfoXml, MediaUrl, PlaylistUrl, PlayListXml, Title, FileName: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(PlayerIDRegExp, Page, 'PLAYER', Player) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', InfoXml) then
+  else if not DownloadPage(Http, 'http://espn.go.com/videohub/mpf/config.prodXml?player=' + Player + '&adminOver=none', InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'globalPlayerConfig/mediaUrl', MediaUrl) then
         SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['mediaUrl']))
       else if not GetXmlVar(Xml, 'globalPlayerConfig/playlistURL', PlaylistUrl) then
         SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['playlistURL']))
-      else if not DownloadPage(Http, PlaylistUrl + '?id=' + MovieID + '&player=' + Player, PlaylistXml) then
+      else if not DownloadPage(Http, PlaylistUrl + '?id=' + MovieID + '&player=' + Player, PlaylistXml, peXml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin

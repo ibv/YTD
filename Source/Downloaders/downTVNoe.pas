@@ -24,7 +24,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -52,7 +52,7 @@ end;
 constructor TDownloader_TVNoe.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peAnsi);
+  SetInfoPageEncoding(peXml);
 end;
 
 destructor TDownloader_TVNoe.Destroy;
@@ -67,11 +67,11 @@ end;
 
 function TDownloader_TVNoe.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, Title: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.Create;
+  Xml := TXmlDoc.Create;
   try
     Xml.Xml := Page;
     if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then

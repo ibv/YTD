@@ -22,19 +22,19 @@ type
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      procedure InitOptions(Options: TYTDOptions); override;
       property RealMedia: boolean read fRealMedia write fRealMedia;
     end;
 
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -80,11 +80,11 @@ begin
   inherited;
 end;
 
-procedure TDownloader_CT.InitOptions(Options: TYTDOptions);
+procedure TDownloader_CT.SetOptions(const Value: TYTDOptions);
 var s: string;
 begin
   inherited;
-  if Options.ReadProviderOption(Provider, 'PreferRealMedia', s) then
+  if Value.ReadProviderOption(Provider, 'prefer_real_media', s) then
     RealMedia := StrToIntDef(s, Integer(RealMedia)) <> 0;
 end;
 
@@ -112,14 +112,14 @@ end;
 
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var HREF, URL, ObjectDef{, Title}: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetMovieObjectUrl(Http, Page, Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, URL, ObjectDef, peUTF8) then
+  else if not DownloadPage(Http, URL, ObjectDef, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
@@ -129,15 +129,12 @@ begin
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else if ObjectDef[1] = '<' then
       begin
-      // Pozn.: ObjectDef muze byt neplatnym XML souborem v tom smyslu, ze v nem
-      // mohou byt "neoentitovane" ampersandy - tzn. muze tam byt "a&b", pricemz
-      // spravne je "a&amp;b" JanXmlParseru to je jedno.
-      Xml := TjanXmlParser2.Create;
+      Xml := TXmlDoc.Create;
       try
         Xml.xml := ObjectDef;
-        for i := 0 to Pred(Xml.childCount) do
-          if Xml.childNode[i].name = 'ENTRY' then
-            if GetXmlAttr(Xml.childNode[i], 'REF', 'HREF', HREF) then
+        for i := 0 to Pred(Xml.Root.NodeCount) do
+          if Xml.Root.Nodes[i].Name = 'ENTRY' then
+            if GetXmlAttr(Xml.Root.Nodes[i], 'REF', 'HREF', HREF) then
               //if GetRegExpVar(IVysilaniUrlRegExp, HREF, 'URL', Url) then
                 begin
                 //if GetXmlVar(Xml.childNode[i], 'TITLE', Title) then

@@ -7,7 +7,7 @@ goto zip
 :zip
 set pack=7z a -tzip -mx -r
 set packext=zip
-set build=delphi5
+set build=delphi5 upx
 goto build
 
 :7z
@@ -20,27 +20,27 @@ goto build
 set version=%1
 shift
 
-if exist ytd-%version%.%packext% del ytd-%version%.%packext%
-if exist ytd-%version%-source.%packext% del ytd-%version%-source.%packext%
-if exist ytdlite-%version%.%packext% del ytdlite-%version%.%packext%
-rd /s /q exe\locale
-md exe\locale
-xcopy source\locale\*.mo exe\locale /s /i
+if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
+if exist ..\ytd-%version%-source.%packext% del ..\ytd-%version%-source.%packext%
+if exist ..\ytdlite-%version%.%packext% del ..\ytdlite-%version%.%packext%
+rd /s /q ..\exe\locale
+md ..\exe\locale
+xcopy locale\*.mo ..\exe\locale /s /i
 call clean.bat
 call build.bat noxxx %build% %*
-del exe\amfview.exe
 call clean.bat
-pushd exe
+pushd ..\exe
 %pack% ..\ytdlite-%version%.%packext%
 popd
 call clean.bat
 call build.bat %build% %*
-del exe\amfview.exe
 call clean.bat
-pushd exe
+pushd ..\exe
 %pack% ..\ytd-%version%.%packext%
 popd
-%pack% -x!units\* -x!todo -x!*.%packext% ytd-%version%-source.%packext% *
+pushd ..
+%pack% ytd-%version%-source.%packext% exe\* source\*
+popd
 goto konec
 
 :syntax

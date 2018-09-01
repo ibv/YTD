@@ -32,7 +32,7 @@ implementation
 
 uses
   {$IFDEF XMLINFO}
-  janXmlParser2,
+  uXML,
   {$ENDIF}
   uDownloadClassifier,
   uMessages;
@@ -98,7 +98,7 @@ end;
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var {$IFDEF XMLINFO}
     Info, Title: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
     Params, CdnID, ID: string;
@@ -120,9 +120,9 @@ begin
     {$IFDEF XMLINFO}
     if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
       try
-        if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info, peUTF8) then
+        if DownloadPage(Http, 'http://flash.stream.cz/get_info/' + ID, Info, peXml) then
           begin
-          Xml := TjanXmlParser2.create;
+          Xml := TXmlDoc.create;
           try
             Xml.xml := Info;
             if GetXmlVar(Xml, 'video/title', Title) then

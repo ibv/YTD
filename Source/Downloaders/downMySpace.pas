@@ -25,7 +25,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -65,11 +65,11 @@ end;
 
 function TDownloader_MySpace.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Title, Url: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.Create;
+  Xml := TXmlDoc.Create;
   try
     Xml.Xml := Page;
     if not GetXmlVar(Xml, 'channel/item/title', Title) then

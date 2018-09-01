@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXml,
   uDownloadClassifier,
   uMessages;
 
@@ -82,12 +82,12 @@ begin
 end;
 
 function TDownloader_BlipTv.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.create;
+  Xml := TXmlDoc.create;
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'channel/item/media:title', Title) then

@@ -61,8 +61,10 @@ interface
     {$DEFINE PCRE_LINKDLL}
 {$ENDIF}
 
-{$UNDEF PCRE_LINKDLL}
-{$DEFINE PCRE_STATICLINK}
+{$IFNDEF FPC}
+  {$UNDEF PCRE_LINKDLL}
+  {$DEFINE PCRE_STATICLINK}
+{$ENDIF}
 
 // The supplied pcrelib.dll compiled PCRE 7.9 using the C calling convention
 {$IFDEF PCRE_LINKDLL}

@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -72,22 +72,21 @@ end;
 function TDownloader_FreeCaster.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var StreamID, InfoXml, MaxUrl, Url, UrlBase, Title, Bitrate: string;
     MaxBitRate, i: integer;
-    Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
+    Xml: TXmlDoc;
+    Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(StreamIdRegExp, Page, 'ID', StreamID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://freecaster.tv/player/info/' + StreamID, InfoXml, peUTF8) then
+  else if not DownloadPage(Http, 'http://freecaster.tv/player/info/' + StreamID, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
-      Node := Xml.getChildByPath('streams');
-      if Node = nil then
+      if not Xml.NodeByPath('streams', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlAttr(Node, '', 'server', UrlBase) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
@@ -97,12 +96,12 @@ begin
         begin
         MaxUrl := '';
         MaxBitRate := 0;
-        for i := 0 to Pred(Node.childCount) do
-          if Node.childNode[i].name = 'stream' then
-            if GetXmlAttr(Node.childNode[i], '', 'bitrate', Bitrate) then
+        for i := 0 to Pred(Node.NodeCount) do
+          if Node.Nodes[i].Name = 'stream' then
+            if GetXmlAttr(Node.Nodes[i], '', 'bitrate', Bitrate) then
               if StrToIntDef(Bitrate, 0) > MaxBitRate then
                 begin
-                Url := Trim(Node.childNode[i].text);
+                Url := Trim(XmlValueIncludingCData(Node.Nodes[i]));
                 if Url <> '' then
                   begin
                   MaxUrl := Url;

@@ -35,7 +35,7 @@ uses
 // http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*break\.com/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_ID =        '[^?]+\.html';
   URLREGEXP_AFTER_ID =  '';
 
 const

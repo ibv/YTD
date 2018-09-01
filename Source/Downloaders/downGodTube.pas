@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -71,29 +71,28 @@ end;
 
 function TDownloader_GodTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, PlayList, Title: string;
-    Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
+    Xml: TXmlDoc;
+    Node: TXmlNode;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(PlayListRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, Url, PlayList) then
+  else if not DownloadPage(Http, Url, PlayList, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := PlayList;
-      Node := Xml.getChildByPath('playlist');
-      if Node = nil then
+      if not Xml.NodeByPath('playlist', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else
         begin
-        for i := 0 to Pred(Node.childCount) do
-          if Node.childNode[i].name = 'item' then
-            if GetXmlVar(Node.childNode[i], 'filelocation', Url) and GetXmlVar(Node.childNode[i], 'title', Title) then
+        for i := 0 to Pred(Node.NodeCount) do
+          if Node.Nodes[i].Name = 'item' then
+            if GetXmlVar(Node.Nodes[i], 'filelocation', Url) and GetXmlVar(Node.Nodes[i], 'title', Title) then
               begin
               {$IFDEF MULTIDOWNLOADS}
               NameList.Add(Title);

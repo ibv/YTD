@@ -1,6 +1,100 @@
 CHANGELOG
 ---------
 
+  v0.50
+
+    * Pøi prvním spuštìní grafické verze (tzn. v okamžiku, kdy zjistí, že
+      neexistuje konfiguraèní XML soubor) se vás program zeptá na nìkolik
+      nastavení, která mohou ovlivòovat vaše soukromí. Vìnujte prosím tìmto
+      dotazùm svoji pozornost.
+
+    * Pøi startu grafické verze programu se automaticky testuje dostupnost
+      novìjší verze. Pokud vám to vadí, je na to nastavení v konfiguraci.
+      Popis je v dokumentaci k programu.
+
+    * Kompletnì pøepracován systém ukládání a naèítání konfiguraèních údajù.
+      Místo pùvodní ponìkud schizofrenní kombinace INI souboru a registru je
+      nyní použit jeden XML soubor, uložený buï v adresáøi programu nebo
+      v uživatelském profilu, podle toho, jestli YouTube Downloader pužíváte
+      jako pøenositelnou (portable) aplikaci nebo normální. Podrobnosti jsou
+      uvedeny v dokumentaci.
+
+      Staré konfiguraèní údaje v INI souboru a v registrech už nebudou
+      používány.
+
+    * Podpora pro konverzi videa nebo jakékoliv jiné akce po jeho úspìšném
+      stáhnutí. Detaily, jak funkci používat, jsou popsány v dokumentaci v 
+      sekci "Konverze stáhnutých souborù", v sekci "Konfigurace" je v èásti
+      <converters> popsáno, jak definovat vlastní konvertovaèe nebo mìnit
+      parametry pøeddefinovaných.
+
+    * GUI verze má nyní speciální tlaèítko, pokud by snad nìkdo chtìl
+      pøispìt opravdovými penìzi na další vývoj programu. Žádný strach,
+      aplikace je a bude free i bez pøíspìvkù - pro mì jde spíš o zpùsob
+      sledování, kolika lidem program pøipadá užiteèný, než o zdroj pøíjmù
+      (nehledì na to, že bych se nerad dostal do situace, kdy by pøíspìvky
+      pøerostly hranici a já je musel danit).
+
+    * GUI verze má dále tlaèítko pro nahlášení URL, které by stáhnout jít
+      mìlo, ale nejde. Podmínkou pro využití této funkce ale je, abyste
+      používali aktuální verzi programu. Pøed hlášením si prosím ovìøte, že
+      chyba opravdu je v programu - speciálnì, že vám funguje pøipojení k
+      internetu a že dotyèné video funguje, pokud si ho necháte zobrazit
+      normálnì v prohlížeèi. Dìkuji za pochopení.
+
+      Hlášení chyb probíhá pøes speciální webový formuláø, který bude mít
+      už v okamžiku otevøení pøedvyplnìné všechny nezbytné parametry.
+      Doporuèuji vám ale vyplnit i nepovinné pole "Popis", a - pro pøípad,
+      že budete chtít odpovìï, nebo já budu potøebovat další upøesnìní
+      - e-mail.
+
+    * Podrobnìjší chybová hlášení v GUI verzi.
+
+    * Opravena chyba, která náhodnì (tzn. já sám jsem na ni poprvé narazil
+      až v této verzi, pøestože chyba je tu s námi už od verze 0.12) 
+      zpùsobovala pády programu po skonèení downloadu.
+
+    * Noví poskytovatelé:
+        - AngryAlien.com
+        - Blennus.com
+        - Bolt.com (BoltAgain.ning.com)
+        - Current.com
+        - Dachix.com (porno)
+        - DevilDucky.com
+        - EmpFlix.com (porno)
+        - EVTV1.com
+        - Grinvi.com (porno)
+        - NothingToxic.com
+        - Revver.com
+        - SlutLoad.com (porno)
+        - Spankwire.com (porno)
+        - TnaFlix.com (porno)
+        - TotallyCrap.com
+        - YouJizz.com (porno)
+
+    * Barrandov.tv: Používá se vhodnìjší pøípona .flv místo pùvodního .f4v.
+
+    * Break.com: Podpora pro dvì varianty odkazù na embedded verzi.
+
+    * VideaCesky.cz: Pøidána druhá varianta pro zobrazení videa, tím by se
+      mìla zprovoznit vìtšina filmù, které dosud nefungovaly.
+
+    * PornHub.com: Podpora pro odkazy na embedded verzi. Opraveno stahování
+      u normální (HTML) verze.
+
+    * Další velká programátorská zmìna: místo pùvodního TjanXmlParser2 je
+      použita komponenta TNativeXml, která se stále vyvíjí, podporuje i nové 
+      verze Delphi a podstatnì lépe vyhovuje standardùm XML. Stejnì jako v
+      pøípadì regulárních výrazù v minulé verzi to mùže vést k nìkterým 
+      nefunkèním poskytovatelùm, ale drtivou vìtšinu jsem jich zkoušel a
+      fungovaly.
+
+    * Opìt zprovoznìna kompilace pod FreePascalem. V souboru Source\build.txt
+      je popis, jak YTD zkompilovat. Do Source byly pøesunuty i skripty pro
+      kompilaci programu.
+
+
+
   v0.40
 
     * Nový poskytovatel: Cas.sk.
@@ -19,7 +113,7 @@ CHANGELOG
       opravena chyba, kdy se za jistých okolností mohly soubory nechtìnì 
       pøepisovat.
 
-    * YouTube.cz: Opìt funguje, po další zmìnì stránek YouTube.
+    * YouTube.com: Opìt funguje, po další zmìnì stránek YouTube.
 
     * Grafická verze: Okna pro výbìr souboru (pøi ukládání nebo naèítání)
       používají grafickou podobu odpovídající Windows, ve kterých jsou spuštìné

@@ -25,7 +25,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -74,13 +74,13 @@ begin
 end;
 
 function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     Info, Url: string;
 begin
   Result := False;
-  if DownloadPage(Http, 'http://www.gameanyone.com/gameanyone.xml?id=' + MovieID, Info, peANSI) then
+  if DownloadPage(Http, 'http://www.gameanyone.com/gameanyone.xml?id=' + MovieID, Info, peXml) then
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := Info;
       if GetXmlVar(Xml, 'file', Url) then

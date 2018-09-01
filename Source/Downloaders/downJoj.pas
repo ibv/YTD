@@ -28,7 +28,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -79,58 +79,45 @@ end;
 
 function TDownloader_Joj.ProcessCalendar(Http: THttpSend; const CalendarUrl, RelationID: string; Day, Month, Year: integer): boolean;
 var CalendarXml: string;
-    Xml: TjanXmlParser2;
-    Node, Files, FileNode: TjanXmlNode2;
-    i, j, k, l, m: integer;
+    Xml: TXmlDoc;
+    Node, MonthNode, DayNode, FileNode: TXmlNode;
+    i: integer;
     WantedDay, WantedMonth, Title, Path: string;
 begin
   Result := False;
-  if DownloadPage(Http, CalendarUrl, CalendarXml, peUTF8) then
+  if DownloadPage(Http, CalendarUrl, CalendarXml, peXml) then
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := CalendarXml;
       WantedMonth := Format('%04.4d-%02.2d', [Year, Month]);
       WantedDay := IntToStr(Day); //Format('%02.2d', [Day]);
-      for i := 0 to Pred(Xml.childCount) do
-        if (Xml.childNode[i].name = 'month') and (Xml.childNode[i].attribute['date'] = WantedMonth) then
-          for j := 0 to Pred(Xml.childNode[i].childCount) do
-            if (Xml.childNode[i].childNode[j].name = 'day') and (Xml.childNode[i].childNode[j].attribute['date'] = WantedDay) then
-              for k := 0 to Pred(Xml.childNode[i].childNode[j].childCount) do
-                if (Xml.childNode[i].childNode[j].childNode[k].name = 'episode') then
-                  for l := 0 to Pred(Xml.childNode[i].childNode[j].childNode[k].childCount) do
-                    if (Xml.childNode[i].childNode[j].childNode[k].childNode[l].name = 'relation') and (Xml.childNode[i].childNode[j].childNode[k].childNode[l].attribute['id'] = RelationId) then
+      if Xml.NodeByPathAndAttr('month', 'date', WantedMonth, MonthNode) then
+        if XmlNodeByPathAndAttr(MonthNode, 'day', 'date', WantedDay, DayNode) then
+          for i := 0 to Pred(DayNode.NodeCount) do
+            if DayNode.Nodes[i].Name = 'episode' then
+              if XmlNodeByPathAndAttr(DayNode.Nodes[i], 'relation', 'id', RelationId, Node) then
+                begin
+                Node := DayNode.Nodes[i];
+                if not XmlNodeByPathAndAttr(Node, 'files/file', 'quality', 'hi', FileNode) then
+                  XmlNodeByPath(Node, 'files/file', FileNode);
+                if FileNode <> nil then
+                  if GetXmlAttr(Node, '', 'title', Title) then
+                    if GetXmlAttr(FileNode, '', 'path', Path) then
                       begin
-                      Node := Xml.childNode[i].childNode[j].childNode[k];
-                      if Node <> nil then
+                      if Copy(Path, 1, 5) = 'data/' then
+                        Path := Copy(Path, 6, MaxInt);
+                      if (Title <> '') and (Path <> '') then
                         begin
-                        FileNode := Node.getChildByPath('files/file');
-                        Files := Node.getChildByPath('files');
-                        if Files <> nil then
-                          for m := 0 to Pred(Files.childCount) do
-                            if (Files.childNode[m].name = 'file') and (Files.childNode[m].attribute['quality'] = 'hi') then
-                              begin
-                              FileNode := Files.childNode[m];
-                              Break;
-                              end;
-                        if FileNode <> nil then
-                          begin
-                          Title := Node.attribute['title'];
-                          Path := FileNode.attribute['path'];
-                          if Copy(Path, 1, 5) = 'data/' then
-                            Path := Copy(Path, 6, MaxInt);
-                          if (Title <> '') and (Path <> '') then
-                            begin
-                            SetName(Format('%s (%04.4d-%02.2d-%02.2d)', [Title, Year, Month, Day]));
-                            // Note: This is a VERY DIRTY HACK! I don't really know whether the domain is fixed or not!
-                            MovieURL := 'http://n03.joj.sk' + Base64Decode(Path);
-                            SetPrepared(True);
-                            Result := True;
-                            Exit;
-                            end;
-                          end;
+                        SetName(Format('%s (%04.4d-%02.2d-%02.2d)', [Title, Year, Month, Day]));
+                        // Note: This is a VERY DIRTY HACK! I don't really know whether the domain is fixed or not!
+                        MovieURL := 'http://n03.joj.sk' + Base64Decode(Path);
+                        SetPrepared(True);
+                        Result := True;
+                        Exit;
                         end;
                       end;
+                end;
     finally
       Xml.Free;
       end;

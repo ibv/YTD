@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -71,17 +71,17 @@ end;
 
 function TDownloader_TodaysBigThing.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var VideoID, InfoXml, Url, Title: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(VideoIdRegExp, Page, 'ID', VideoID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.todaysbigthing.com/betamax:' + VideoID, InfoXml, peUTF8) then
+  else if not DownloadPage(Http, 'http://www.todaysbigthing.com/betamax:' + VideoID, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'title', Title) then

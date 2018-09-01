@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ytd>
+	<config>
+		<portable_mode>0</portable_mode>
+		<language>en</language>
+		<destination_path>c:\downloads</destination_path>
+		<error_log>c:\downloads\_ytd.log</error_log>
+		<overwrite_mode>ask</overwrite_mode>
+		<proxy_server>
+			<active>1</active>
+			<host>localhost</host>
+			<port>3128</port>
+			<user></user>
+			<password></password>
+		</proxy_server>
+	</config>
+	<gui>
+		<auto_start_downloads>1</auto_start_downloads>
+		<check_for_new_version>1</check_for_new_version>
+	</gui>
+	<modules>
+		<CeskaTelevize_cz>
+			<prefer_real_media>0</prefer_real_media>
+		</CeskaTelevize_cz>
+	</modules>
+	<converters>
+		<selected></selected>
+		<max_threads>1</max_threads>
+		<converter id="to-avi">
+			<title>MEncoder: Change container to .avi</title>
+			<exe_path>mencoder.exe</exe_path>
+			<command_line>-oac copy -ovc copy -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>
+			<visibility>minimized</visibility>
+		</converter>
+		<converter id="convert-to-xvid">
+			<title>MEncoder: Convert movie to AVI/XVID</title>
+			<exe_path>mencoder.exe</exe_path>
+			<command_line>-oac mp3lame -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200 -ffourcc xvid -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>
+			<visibility>minimized</visibility>
+		</converter>
+		<converter id="convert-to-x264">
+			<title>MEncoder: Convert movie to AVI/X264</title>
+			<exe_path>mencoder.exe</exe_path>
+			<command_line>-oac mp3lame -ovc x264 -x264encopts bitrate=1200 -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>
+			<visibility>minimized</visibility>
+		</converter>
+	</converters>
+</ytd>

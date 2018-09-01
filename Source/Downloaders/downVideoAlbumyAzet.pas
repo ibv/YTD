@@ -24,7 +24,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -68,16 +68,16 @@ begin
 end;
 
 function TDownloader_VideoAlbumyAzet.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     InfoXml, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  if not DownloadPage(Http, 'http://videoalbumy.azet.sk/players/jw/plConf.phtml?&h=' + MovieID, InfoXml) then
+  if not DownloadPage(Http, 'http://videoalbumy.azet.sk/players/jw/plConf.phtml?&h=' + MovieID, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'file', Url) then

@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -75,17 +75,17 @@ end;
 
 function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var ID, Url, InfoXml: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, InfoXml) then
+  else if not DownloadPage(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'file', Url) then

@@ -362,7 +362,7 @@ var Playlist: TPlaylistDownloader;
 begin
   Result := False;
   try
-    Downloader.InitOptions(Options);
+    Downloader.Options := Options;
     if Downloader is TPlaylistDownloader then
       begin
       PlayList := TPlaylistDownloader(Downloader);
@@ -389,7 +389,6 @@ begin
     else
       begin
       fLastProgressPercentage := -1;
-      Downloader.DestinationPath := Options.DestinationPath;
       Downloader.OnProgress := DownloaderProgress;
       Downloader.OnFileNameValidate := DownloaderFileNameValidate;
       if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
@@ -510,7 +509,7 @@ var FilePath, Answer: string;
       end;
 
 begin
-  FilePath := (Sender as TDownloader).DestinationPath;
+  FilePath := (Sender as TDownloader).Options.DestinationPath;
   if FileExists(FilePath + FileName) then
     case Options.OverwriteMode of
       omNever:

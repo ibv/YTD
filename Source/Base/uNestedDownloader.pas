@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock, janXmlParser2,
+  uPCRE, HttpSend, blcksock, 
   uDownloader, uCommonDownloader,
   uOptions;
 
@@ -24,7 +24,7 @@ type
       function GetThisFileName: string; virtual;
       procedure SetNestedDownloader(Value: TDownloader); virtual;
       function CreateNestedDownloaderFromID(const MovieID: string): boolean; virtual;
-      function CreateNestedDownloaderFromURL(const Url: string): boolean; virtual;
+      function CreateNestedDownloaderFromURL(var Url: string): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
@@ -75,7 +75,7 @@ begin
   Result := False;
 end;
 
-function TNestedDownloader.CreateNestedDownloaderFromURL(const Url: string): boolean;
+function TNestedDownloader.CreateNestedDownloaderFromURL(var Url: string): boolean;
 var DC: TDownloadClassifier;
 begin
   Result := False;
@@ -87,8 +87,7 @@ begin
       begin
       MovieURL := Url;
       NestedDownloader := DC.Downloader;
-      NestedDownloader.InitOptions(Options);
-      NestedDownloader.DestinationPath := DestinationPath;
+      NestedDownloader.Options := Options;
       NestedDownloader.OnProgress := OnProgress;
       NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
       Result := True;
@@ -110,7 +109,7 @@ begin
       Result := NestedDownloader.FileName
     else
     {$ENDIF}
-      Result := ChangeFileExt(Result, '') + ExtractFileExt(NestedFN);
+      Result := {ChangeFileExt(}Result{, '')} + ExtractFileExt(NestedFN);
     end;
 end;
 
@@ -134,8 +133,7 @@ begin
   Result := False;
   if NestedDownloader <> nil then
     begin
-    NestedDownloader.InitOptions(Options);
-    NestedDownloader.DestinationPath := DestinationPath;
+    NestedDownloader.Options := Options;
     NestedDownloader.OnProgress := OnProgress;
     NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
     Result := NestedDownloader.ValidateFileName and NestedDownloader.Download;

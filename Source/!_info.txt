@@ -1,0 +1,65 @@
+HOW TO BUILD
+------------
+
+Several batch files for building YouTube Downloader are provided:
+
+  build.bat .......... Main build script. You can control the build options,
+                       such as compiler used or specific features, using
+                       arguments such as "delphi5" or "nogui". You can get
+                       a list of the most important arguments using argument
+                       -h (or -?).
+
+  build-locale.bat ... Script for building a new .pot file for translators.
+                       It requires that DxGetText http://dxgettext.po.dk is
+                       installed and set up in PATH.
+                       (This script really should be a part of build.bat,
+                       but I wanted to keep it separate for the people who
+                       don't want to install DxGetText.)
+
+  build-rel.bat ...... Quick script for building a release. It builds and
+                       compresses the regular version, the Lite version and
+                       the sources. It is unlikely you'll ever want or need
+                       to use this script.
+
+  clean.bat .......... Delete all unneeded files - backup files, compiled unit
+                       files, IDE trash etc.
+
+Below you'll find notes on building with specific compilers. If a compiler is
+not listed here, I didn't try it and you are on your own (though I would
+appreciate any feedback regarding builds using these compilers). You can 
+contact me through my discussion forum:
+
+http://forum.pepak.net
+
+(At the time of writing this file, registration was NOT required to post.)
+
+
+
+Delphi 5
+--------
+
+- Main development platform, should always work, with all features.
+- Use the "delphi5" argument with build.bat.
+
+
+
+Delphi 2009
+-----------
+
+- Not yet ready for use. I intend to get it working one day, though.
+- Use the "delphi2009" argument with build.bat.
+
+
+
+Free Pascal
+-----------
+
+- Works, but is not recommended since many of the features will be lost:
+  GUI is not available at all, probably forever, and GetText (support for 
+  localizations) is removed pending appearance of an implementation that 
+  actually works. Also, the executables are MUCH larger than those made by
+  Delphi. But if you want to build YouTube Downloader using free tools only,
+  you can.
+- Executable files compiled by FreePascal require pcrelib.dll. It is located
+  in Source\Lib\PerlRegEx.
+- Use the "fpc nogui" argument.

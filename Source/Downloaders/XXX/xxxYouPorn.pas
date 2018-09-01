@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -73,18 +73,18 @@ begin
 end;
 
 function TDownloader_YouPorn.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     Url, InfoXml: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, Url, InfoXml) then
+  else if not DownloadPage(Http, Url, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'trackList/track/location', Url) then

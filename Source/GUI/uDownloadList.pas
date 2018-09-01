@@ -25,9 +25,9 @@ type
       fOnDownloadProgress: TDownloadListNotifyEvent;
       fOnError: TDownloadListNotifyEvent;
       fOnFinished: TDownloadListNotifyEvent;
-      fAutoStart: boolean;
-      fAutoOverwrite: boolean;
-      fDestinationPath: string;
+      {$IFDEF CONVERTERS}
+      fOnConverted: TDownloadListNotifyEvent;
+      {$ENDIF}
       fOptions: TYTDOptions;
     protected
       function GetCount: integer; virtual;
@@ -35,7 +35,6 @@ type
       function GetUrl(Index: integer): string; virtual;
       function GetDownloadingCount: integer; virtual;
       function GetDownloadingItem(Index: integer): TDownloadListItem; virtual;
-      procedure SetDestinationPath(const Value: string); virtual;
       procedure NotifyList; virtual;
       procedure Notify(Event: TDownloadListNotifyEvent; Item: TDownloadListItem); virtual;
       procedure DownloadItemStateChange(Sender: TObject); virtual;
@@ -43,6 +42,9 @@ type
       procedure DownloadItemFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       procedure DownloadItemError(Sender: TObject); virtual;
       procedure DownloadItemThreadFinished(Sender: TObject); virtual;
+      {$IFDEF CONVERTERS}
+      procedure DownloadItemConvertThreadFinished(Sender: TObject); virtual;
+      {$ENDIF}
       function AddNewItem(const Source: string; Downloader: TDownloader): integer; virtual;
       property List: TStringList read fList;
       property DownloadingList: TList read fDownloadingList;
@@ -56,11 +58,16 @@ type
       procedure Start(Item: TDownloadListItem); virtual;
       procedure Stop(Item: TDownloadListItem); virtual;
       procedure Pause(Item: TDownloadListItem); virtual;
+      {$IFDEF CONVERTERS}
+      procedure ConvertAll; virtual;
+      {$ENDIF}
       function Add(const Url: string): integer; virtual;
       function AddFromHTML(const Source: string): integer; virtual;
       function IndexOf(Item: TDownloadListItem): integer; virtual;
       procedure Delete(Item: TDownloadListItem); overload; virtual;
       procedure Delete(Index: integer); overload; virtual;
+      procedure LoadFromOptions; virtual;
+      procedure SaveToOptions; virtual;
       property Count: integer read GetCount;
       property Items[Index: integer]: TDownloadListItem read GetItem; default;
       property Urls[Index: integer]: string read GetUrl;
@@ -68,14 +75,14 @@ type
       property DownloadingItems[Index: integer]: TDownloadListItem read GetDownloadingItem;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
     published
-      property AutoStart: boolean read fAutoStart write fAutoStart;
-      property AutoOverwrite: boolean read fAutoOverwrite write fAutoOverwrite;
-      property DestinationPath: string read fDestinationPath write SetDestinationPath;
       property Options: TYTDOptions read fOptions write fOptions;
       property OnStateChange: TDownloadListNotifyEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDownloadListNotifyEvent read fOnDownloadProgress write fOnDownloadProgress;
       property OnError: TDownloadListNotifyEvent read fOnError write fOnError;
       property OnFinished: TDownloadListNotifyEvent read fOnFinished write fOnFinished;
+      {$IFDEF CONVERTERS}
+      property OnConverted: TDownloadListNotifyEvent read fOnConverted write fOnConverted;
+      {$ENDIF}
       property OnListChange: TNotifyEvent read fOnListChange write fOnListChange;
     end;
 
@@ -90,8 +97,6 @@ begin
   fDownloadClassifier.OwnsDownloader := False;
   fList := TStringList.Create;
   fDownloadingList := TList.Create;
-  fAutoStart := True;
-  fAutoOverwrite := False;
 end;
 
 destructor TDownloadList.Destroy;
@@ -107,16 +112,16 @@ procedure TDownloadList.Clear;
 var i: integer;
     AutoSt: boolean;
 begin
-  AutoSt := AutoStart;
+  AutoSt := Options.AutoStartDownloads;
   try
-    AutoStart := False;
+    Options.AutoStartDownloads := False;
     StopAll;
     for i := 0 to Pred(Count) do
       Items[i].Free;
     List.Clear;
     DownloadingList.Clear;
   finally
-    AutoStart := AutoSt;
+    Options.AutoStartDownloads := AutoSt;
     end;
 end;
 
@@ -145,29 +150,22 @@ begin
   Result := TDownloadListItem(DownloadingList[Index]);
 end;
 
-procedure TDownloadList.SetDestinationPath(const Value: string);
-var i: integer;
-begin
-  fDestinationPath := Value;
-  for i := 0 to Pred(Count) do
-    if Items[i].Waiting then
-      Items[i].Downloader.DestinationPath := Value;
-end;
-
 function TDownloadList.AddNewItem(const Source: string; Downloader: TDownloader): integer; 
 var Item: TDownloadListItem;
 begin
   Item := TDownloadListItem.Create(Downloader, True);
-  Item.Downloader.DestinationPath := DestinationPath;
   Item.Options := Options;
   Item.OnStateChange := DownloadItemStateChange;
   Item.OnDownloadProgress := DownloadItemDownloadProgress;
   Item.OnFileNameValidate := DownloadItemFileNameValidate;
   Item.OnError := DownloadItemError;
   Item.OnThreadFinished := DownloadItemThreadFinished;
+  {$IFDEF CONVERTERS}
+  Item.OnConvertThreadFinished := DownloadItemConvertThreadFinished;
+  {$ENDIF}
   Result := List.AddObject(Source, Item);
   NotifyList;
-  if AutoStart then
+  if Options.AutoStartDownloads then
     StartAll;
 end;
 
@@ -216,31 +214,52 @@ begin
 end;
 
 procedure TDownloadList.DownloadItemFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
+
+    function AutoRename(var FileName: string): boolean;
+      var FileNameBase, FileNameExt: string;
+          Index: integer;
+      begin
+        Index := 1;
+        FileNameExt := ExtractFileExt(FileName);
+        FileNameBase := ChangeFileExt(FileName, '');
+        repeat
+          FileName := Format('%s%s.%d%s', [Options.DestinationPath, FileNameBase, Index, FileNameExt]);
+          Inc(Index);
+        until not FileExists(FileName);
+        Result := True;
+      end;
+
 var D: TSaveDialog;
 begin
-  if FileExists(DestinationPath + FileName) then
-    if AutoOverwrite then
-      Valid := True
-    else
-      begin
-      D := TSaveDialog.Create(nil);
-      try
-        D.DefaultExt := Copy(ExtractFileExt(FileName), 2, MaxInt);
-        D.FileName := FileName;
-        D.InitialDir := DestinationPath;
-        if D.InitialDir = '' then
-          D.InitialDir := GetCurrentDir;
-        D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
-        D.Title := _('File already exists.'); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-        Valid := D.Execute;
-        if Valid then
-          FileName := ExtractFileName(D.FileName);
-      finally
-        D.Free;
+  if FileExists(Options.DestinationPath + FileName) then
+    case Options.OverwriteMode of
+      omAlways:
+        Valid := True;
+      omNever:
+        Valid := False;
+      omRename:
+        Valid := AutoRename(FileName);
+      else
+        begin
+        D := TSaveDialog.Create(nil);
+        try
+          D.DefaultExt := Copy(ExtractFileExt(FileName), 2, MaxInt);
+          D.FileName := FileName;
+          D.InitialDir := ExcludeTrailingBackslash(Options.DestinationPath);
+          if D.InitialDir = '' then
+            D.InitialDir := GetCurrentDir;
+          D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
+          D.Title := _('File already exists.'); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+          Valid := D.Execute;
+          if Valid then
+            FileName := ExtractFileName(D.FileName);
+        finally
+          D.Free;
+          end;
         end;
       end;
-  if Valid and FileExists(DestinationPath + FileName) then
-    DeleteFile(DestinationPath + FileName);
+  if Valid and FileExists(Options.DestinationPath + FileName) then
+    DeleteFile(Options.DestinationPath + FileName);
 end;
 
 procedure TDownloadList.DownloadItemError(Sender: TObject);
@@ -267,7 +286,7 @@ begin
     for i := 0 to Pred(Playlist.Count) do
       Add(Playlist[i]);
     end;
-  if AutoStart then
+  if Options.AutoStartDownloads then
     StartAll;
 end;
 
@@ -345,7 +364,40 @@ begin
     if CanStart then
       Start(Item);
     end;
+  {$IFDEF CONVERTERS}
+  ConvertAll;
+  {$ENDIF}
 end;
+
+{$IFDEF CONVERTERS}
+procedure TDownloadList.ConvertAll;
+var i, ConvertThreadCount, MaxConvertThreadCount: integer;
+begin
+  if Options.SelectedConverterID <> '' then
+    begin
+    ConvertThreadCount := 0;
+    for i := 0 to Pred(Count) do
+      if Items[i].ConvertState = ctsConverting then
+        Inc(ConvertThreadCount);
+    MaxConvertThreadCount := Options.MaxConversionThreads;
+    i := 0;
+    while (ConvertThreadCount < MaxConvertThreadCount) and (i < Count) do
+      begin
+      if Items[i].Convert then
+        Inc(ConvertThreadCount);
+      Inc(i);
+      end;
+    end;
+end;
+
+procedure TDownloadList.DownloadItemConvertThreadFinished(Sender: TObject);
+var Item: TDownloadListItem;
+begin
+  Item := TDownloadListItem(Sender);
+  Notify(OnConverted, Item);
+  ConvertAll;
+end;
+{$ENDIF}
 
 procedure TDownloadList.StopAll;
 begin
@@ -358,6 +410,36 @@ var i: integer;
 begin
   for i := 0 to Pred(DownloadingCount) do
     Pause(DownloadingItems[i]);
+end;
+
+procedure TDownloadList.LoadFromOptions;
+var L: TStringList;
+    i: integer;
+begin
+  L := TStringList.Create;
+  try
+    Options.ReadUrlList(L);
+    for i := 0 to Pred(L.Count) do
+      if L[i] <> '' then
+        Add(L[i]);
+  finally
+    L.Free;
+    end;
+end;
+
+procedure TDownloadList.SaveToOptions;
+var L: TStringList;
+    i: integer;
+begin
+  L := TStringList.Create;
+  try
+    for i := 0 to Pred(Count) do
+      if Items[i].State <> dtsFinished then
+        L.Add(Urls[i]);
+    Options.WriteUrlList(L);
+  finally
+    L.Free;
+    end;
 end;
 
 end.

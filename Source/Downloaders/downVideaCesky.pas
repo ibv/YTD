@@ -22,6 +22,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -44,8 +45,8 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
-  REGEXP_EXTRACT_YOUTUBE_ID = '\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/watch\?v=(?P<ID>[^"]+?))&amp;';
-  REGEXP_EXTRACT_YOUTUBE_ID2 = '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=(?P<URL>https?%3A//(?:[a-z0-9-]+\.)*youtube\.com/watch%3Fv%3D(?P<ID>[^"]+?))&amp;';
+  REGEXP_EXTRACT_YOUTUBE_URL = '\sflashvars="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")';
+  REGEXP_EXTRACT_YOUTUBE_URL2 = '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=(?P<URL>https?[^"]+?)(?:&amp;|")';
   {$IFDEF SUBTITLES}
   REGEXP_EXTRACT_SUBTITLES = '\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)';
   REGEXP_EXTRACT_SUBTITLES2 = '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)';
@@ -69,8 +70,8 @@ begin
   SetInfoPageEncoding(peUTF8);
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   //NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
-  YouTubeUrlRegExp1 := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
-  YouTubeUrlRegExp2 := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID2, [rcoIgnoreCase, rcoSingleLine]);
+  YouTubeUrlRegExp1 := RegExCreate(REGEXP_EXTRACT_YOUTUBE_URL, [rcoIgnoreCase, rcoSingleLine]);
+  YouTubeUrlRegExp2 := RegExCreate(REGEXP_EXTRACT_YOUTUBE_URL2, [rcoIgnoreCase, rcoSingleLine]);
   {$IFDEF SUBTITLES}
   SubtitlesRegExp1 := RegExCreate(REGEXP_EXTRACT_SUBTITLES, [rcoIgnoreCase, rcoSingleLine]);
   SubtitlesRegExp2 := RegExCreate(REGEXP_EXTRACT_SUBTITLES2, [rcoIgnoreCase, rcoSingleLine]);
@@ -145,6 +146,12 @@ begin
           end;
     end;
   {$ENDIF}
+end;
+
+function TDownloader_VideaCesky.CreateNestedDownloaderFromURL(var Url: string): boolean;
+begin
+  Url := UrlDecode(Url);
+  Result := inherited CreateNestedDownloaderFromURL(Url);
 end;
 
 initialization

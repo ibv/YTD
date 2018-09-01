@@ -93,7 +93,10 @@ begin
   TotalBytes := -1;
   Aborted := False;
   Result := False;
-  if Options.ProxyHost <> '' then
+  {$IFDEF DEBUG}
+  AddRtmpDumpOption('z');
+  {$ENDIF}
+  if Options.ProxyActive and (Options.ProxyHost <> '') then
     AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
   AddRtmpDumpOption('o', FileName);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';

@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -100,7 +100,7 @@ var Request: string;
     RequestStream: TStringStream;
     Params, Token, VideoID, Quality: string;
     Info: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   Result := False;
   if GetRegExpVar(MovieParamsRegExp, Page, 'PARAMS', Params) then
@@ -114,9 +114,9 @@ begin
           Http.Headers.Add('SOAPAction: "' + SOAP_ACTION + '"');
           Http.MimeType := 'text/xml; charset=utf-8';
           Http.InputStream := RequestStream;
-          if DownloadPage(Http, SOAP_URL, Info, peUTF8, hmPOST, False) then
+          if DownloadPage(Http, SOAP_URL, Info, peXml, hmPOST, False) then
             begin
-            Xml := TjanXmlParser2.Create;
+            Xml := TXmlDoc.Create;
             try
               Xml.Xml := Info;
               Result := GetXmlVar(Xml, 'soap:Body/GetPlaylistUrlResponse/GetPlaylistUrlResult', Url);

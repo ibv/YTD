@@ -25,7 +25,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -65,16 +65,16 @@ end;
 
 function TDownloader_Mpora.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, Title, InfoXml: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.Create;
+  Xml := TXmlDoc.Create;
   try
     Xml.Xml := Page;
     if not GetXmlVar(Xml, 'configuration/title', Title) then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
-    else if not DownloadPage(Http, 'http://api.mpora.com/tv/player/playlist/vid/' + MovieID + '/', InfoXml) then
+    else if not DownloadPage(Http, 'http://api.mpora.com/tv/player/playlist/vid/' + MovieID + '/', InfoXml, peXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin

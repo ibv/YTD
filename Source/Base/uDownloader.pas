@@ -14,7 +14,13 @@ type
   TDownloaderProgressEvent = procedure(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean) of object;
   TDownloaderFileNameValidateEvent = procedure(Sender: TObject; var FileName: string; var Valid: boolean) of object;
 
-  TPageEncoding = (peUnknown, peANSI, peUTF8, peUTF16);
+type
+  TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
+
+const
+  peXml: TPageEncoding = peNone;
+
+type
   THttpMethod = (hmGET, hmPOST, hmHEAD);
 
   TDownloaderClass = class of TDownloader;
@@ -25,7 +31,6 @@ type
       fLastErrorMsg: string;
       fOnProgress: TDownloaderProgressEvent;
       fHttp: THttpSend;
-      fDestinationPath: string;
       fMovieID: string;
       fFileName: string;
       fLastUrl: string;
@@ -40,7 +45,6 @@ type
       procedure SetLastUrl(const Value: string); virtual;
       procedure SetOptions(const Value: TYTDOptions); virtual;
       property LastURL: string read fLastUrl;
-      property Options: TYTDOptions read fOptions write SetOptions;
     protected
       function GetDefaultFileName: string; virtual;
       function GetFileName: string; virtual;
@@ -73,7 +77,6 @@ type
     public
       constructor Create(const AMovieID: string); virtual;
       destructor Destroy; override;
-      procedure InitOptions(Options: TYTDOptions); virtual;
       function Prepare: boolean; virtual; abstract;
       function ValidateFileName: boolean; overload; virtual;
       function Download: boolean; virtual;
@@ -92,7 +95,7 @@ type
       property DefaultHttp: THttpSend read fHttp;
     published
       property MovieID: string read fMovieID write SetMovieID;
-      property DestinationPath: string read fDestinationPath write fDestinationPath;
+      property Options: TYTDOptions read fOptions write SetOptions;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
       property OnFileNameValidate: TDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
     end;
@@ -166,8 +169,8 @@ end;
 function TDownloader.GetDefaultFileName: string;
 begin
   Result := {AnsiToOem}(StrTr(Trim(Name), '\/:*?"<>|', '--;..''--!') + GetFileNameExt);
-  if DestinationPath <> '' then
-    Result := IncludeTrailingBackslash(DestinationPath) + Result;
+  if Options.DestinationPath <> '' then
+    Result := Options.DestinationPath + Result;
 end;
 
 function TDownloader.GetFileName: string;
@@ -372,10 +375,20 @@ end;
 procedure TDownloader.SetOptions(const Value: TYTDOptions);
 begin
   fOptions := Value;
-  fHttp.ProxyHost := Value.ProxyHost;
-  fHttp.ProxyPort := Value.ProxyPort;
-  fHttp.ProxyUser := Value.ProxyUser;
-  fHttp.ProxyPass := Value.ProxyPassword;
+  if Value.ProxyActive then
+    begin
+    DefaultHttp.ProxyHost := Value.ProxyHost;
+    DefaultHttp.ProxyPort := Value.ProxyPort;
+    DefaultHttp.ProxyUser := Value.ProxyUser;
+    DefaultHttp.ProxyPass := Value.ProxyPassword;
+    end
+  else
+    begin
+    DefaultHttp.ProxyHost := '';
+    DefaultHttp.ProxyPort := '';
+    DefaultHttp.ProxyUser := '';
+    DefaultHttp.ProxyPass := '';
+    end;
 end;
 
 function TDownloader.ValidateFileName(var FileName: string): boolean;
@@ -450,6 +463,8 @@ end;
 function TDownloader.ConvertString(const Text: string; Encoding: TPageEncoding): string;
 begin
   case Encoding of
+    peNone:
+      Result := Text;
     peUnknown:
       Result := Text;
     peANSI:
@@ -478,11 +493,6 @@ begin
       end;
     Inc(i);
     end;
-end;
-
-procedure TDownloader.InitOptions(Options: TYTDOptions);
-begin
-  SetOptions(Options);
 end;
 
 end.

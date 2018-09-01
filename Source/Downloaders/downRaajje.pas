@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -73,18 +73,18 @@ begin
 end;
 
 function TDownloader_Raajje.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     FileName, Path, ConfigXml: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['Filename']))
-  else if not DownloadPage(Http, 'http://www.raajje.tv/csplayer.config.php', ConfigXml) then
+  else if not DownloadPage(Http, 'http://www.raajje.tv/csplayer.config.php', ConfigXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := ConfigXml;
       if not GetXmlVar(Xml, 'VIDEOS_PATH', Path) then

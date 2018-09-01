@@ -2,12 +2,17 @@ Prot.	Zdr.naz	Zdr.URL	Nazev
 
 HTTP	HTML	HTML	down5min
 HTTP	HTML	HTML	downAktualne
+HTTP	HTML	HTML	downAngryAlien
 HTTP	HTML	XML	downAutoTube
 RTMP	XML	XML	downBarrandov
+HTTP	HTML	Nested	downBlennus
 HTTP	XML	XML	downBlipTv
 HTTP	HTML	XML	downBofunk
+HTTP	HTML	XML	downBolt
 HTTP	HTML	Nested	downBomba
 HTTP	HTML	JSON	downBreak
+HTTP	Url	Url	downBreakEmbed
+HTTP	Url	Url	downBreakEmbedV2
 HTTP	HTML	Nested	downCasSk
 HTTP	HTML	HTML	downCekniTo
 HTTP	HTML	HTML	downCestyKSobe
@@ -18,12 +23,16 @@ MS	HTML	XML	downCT
 MS	HTML	XML	downCT_Port
 MS	HTML	XML	downCT24
 MS	HTML	XML	downCT24MSFotbal
+HTTP	HTML	HTML	downCurrent
 HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion
 HTTP	HTML	HTML	downDeutscheBahn
+HTTP	HTML	Nested	downDevilDucky
+HTTP	HTML	HTML	downDoubleAgent
 HTTP	HTML	HTML	downEbaumsWorld
 HTTP	HTML	HTML	downEHow
 HTTP	HTML	XML	downESPN
+HTTP	HTML	HTML	downEVTV1
 HTTP	HTML	HTML	downFacebook
 HTTP	HTML	HTML	downFileCabi
 HTTP	XML	XML	downFlickr
@@ -37,6 +46,7 @@ HTTP	HTML	HTML	downGuba
 RTMP	HTML	HTML	downIHned
 HTTP	HTML	HTML	downIPrima
 HTTP	XML	XML	downJoj
+HTTP	HTML	HTML	downKontraband
 HTTP	HTML	HTML	downKukaj
 HTTP	HTML	HTML	downLibimSeTi
 HTTP	HTML	XML	downLiveLeak
@@ -52,6 +62,7 @@ HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace
 HTTP	HTML	HTML	downMyUbo
 HTTP	HTML	HTML	downNJoy
+HTTP	HTML	HTML	downNothingToxic
 HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
 HTTP	HTML	HTML+XML	downRaajje
@@ -70,6 +81,7 @@ HTTP	XML	XML	downTangle
 HTTP	XML	XML	downTeacherTube
 HTTP	XML	XML	downTodaysBigThing
 HTTP	HTML	HTML	downTontuyau
+RTMP	HTML	XML	downTotallyCrap
 MS	HTML	XML	downTVcom
 HTTP	XML	XML	downTVNoe
 RTMP	HTML	XML	downUniMinnesota

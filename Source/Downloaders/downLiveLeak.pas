@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXml,
   uDownloadClassifier,
   uMessages;
 
@@ -74,22 +74,22 @@ end;
 
 function TDownloader_LiveLeak.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, InfoXml: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, UrlDecode(Url), InfoXml) then
+  else if not DownloadPage(Http, UrlDecode(Url), InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
       if not GetXmlVar(Xml, 'file', Url) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-      else if not DownloadPage(Http, Url, InfoXml) then
+      else if not DownloadPage(Http, Url, InfoXml, peXml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin

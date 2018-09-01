@@ -74,7 +74,7 @@ begin
   else
     begin
     Url := 'http://www.ceskatelevize.cz' + EncodeUrl(HtmlDecode(Path));
-    if not DownloadPage(Http, Url, EmbeddedPlayer, peUTF8) then
+    if not DownloadPage(Http, Url, EmbeddedPlayer, peXml) then
       SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
     else
       begin

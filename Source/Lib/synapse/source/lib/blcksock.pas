@@ -672,6 +672,13 @@ type
     {:Return value of protocol type for socket creation.}
     function GetSocketProtocol: integer; Virtual;
 
+    {:Return descriptive string for given error code. This is class function.
+     You may call it without created object!}
+    class function GetErrorDesc(ErrorCode: Integer): string;
+
+    {:Return descriptive string for @link(LastError).}
+    function GetErrorDescEx: string; virtual;
+
     {:WSA structure with information about socket provider. On linux is this
      structure simulated!}
     property WSAData: TWSADATA read GetWsaData;
@@ -728,13 +735,6 @@ type
      connection.}
     property SendCounter: Integer read FSendCounter;
   published
-    {:Return descriptive string for given error code. This is class function.
-     You may call it without created object!}
-    class function GetErrorDesc(ErrorCode: Integer): string;
-
-    {:Return descriptive string for @link(LastError).}
-    function GetErrorDescEx: string; virtual;
-
     {:this value is for free use.}
     property Tag: Integer read FTag write FTag;
 

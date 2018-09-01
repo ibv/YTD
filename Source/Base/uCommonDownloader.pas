@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock, janXmlParser2,
+  uPCRE, uXML, HttpSend, blcksock, 
   uDownloader;
 
 type
@@ -20,7 +20,8 @@ type
       MovieUrlRegExp: TRegExp;
       function GetInfoPageEncoding: TPageEncoding; virtual;
       procedure SetInfoPageEncoding(const Value: TPageEncoding); virtual;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod = hmGET): boolean; virtual;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean; overload; virtual;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
     protected
       function GetFileNameExt: string; override;
@@ -30,8 +31,10 @@ type
     protected
       function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; virtual;
       function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; virtual;
-      function GetXmlVar(Xml: TjanXmlNode2; const Path: string; out VarValue: string): boolean; virtual;
-      function GetXmlAttr(Xml: TjanXmlNode2; const Path, Attribute: string; out VarValue: string): boolean; virtual;
+      function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; virtual;
+      function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; virtual;
+      function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; virtual;
+      function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; virtual;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -78,6 +81,11 @@ begin
     end
   else
     NotPreparedError;
+end;
+
+function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string): boolean;
+begin
+  Result := GetMovieInfoContent(Http, Url, Page, hmGET);
 end;
 
 function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; Method: THttpMethod): boolean;
@@ -183,29 +191,44 @@ begin
     until not RegExp.MatchAgain;
 end;
 
-function TCommonDownloader.GetXmlVar(Xml: TjanXmlNode2; const Path: string; out VarValue: string): boolean;
-var Node: TjanXmlNode2;
+function TCommonDownloader.GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean;
+var Node: TXmlNode;
 begin
-  Node := Xml.GetChildByPath(Path);
-  Result := Node <> nil;
-  if Result then
-    VarValue := Node.Text
+  if XmlNodeByPath(Xml, Path, Node) then
+    begin
+    VarValue := XmlValueIncludingCData(Node);
+    Result := True;
+    end
   else
+    begin
     VarValue := '';
+    Result := False;
+    end;
 end;
 
-function TCommonDownloader.GetXmlAttr(Xml: TjanXmlNode2; const Path, Attribute: string; out VarValue: string): boolean;
-var Node: TjanXmlNode2;
+function TCommonDownloader.GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean;
+var Node: TXmlNode;
 begin
-  if Path = '' then
-    Node := Xml
+  if XmlNodeByPath(Xml, Path, Node) and Node.HasAttribute(Attribute) then
+    begin
+    VarValue := Node.AttributeByNameWide[Attribute];
+    Result := True;
+    end
   else
-    Node := Xml.GetChildByPath(Path);
-  Result := (Node <> nil) and Node.hasAttribute(Attribute);
-  if Result then
-    VarValue := Node.Attribute[Attribute]
-  else
+    begin
     VarValue := '';
+    Result := False;
+    end;
+end;
+
+function TCommonDownloader.GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean;
+begin
+  Result := GetXmlVar(Xml.Root, Path, VarValue);
+end;
+
+function TCommonDownloader.GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean;
+begin
+  Result := GetXmlAttr(Xml.Root, Path, Attribute, VarValue);
 end;
 
 end.

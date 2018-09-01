@@ -6,10 +6,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, HttpSend, 
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, xxxPornHubEmbed;
 
 type
-  TDownloader_PornHub = class(THttpDownloader)
+  TDownloader_PornHub = class(TDownloader_PornHubEmbed)
     private
     protected
       MovieIDRegExp: TRegExp;
@@ -17,7 +17,6 @@ type
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -26,13 +25,12 @@ type
 implementation
 
 uses
-  janXmlParser2,
   uDownloadClassifier,
   uMessages;
 
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*pornhub\.com/.*[?&]viewkey=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*pornhub\.com/view_video\.php\?(?:.*&)?viewkey=';
+  URLREGEXP_ID =        '[0-9a-f]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -40,11 +38,6 @@ const
   REGEXP_MOVIE_ID = '<input\s+type="hidden"\s+id="video_[0-9+]"\s+value="(?P<ID>[0-9]+)"';
 
 { TDownloader_PornHub }
-
-class function TDownloader_PornHub.Provider: string;
-begin
-  Result := 'PornHub.com';
-end;
 
 class function TDownloader_PornHub.UrlRegExp: string;
 begin
@@ -54,7 +47,7 @@ end;
 constructor TDownloader_PornHub.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUnknown);
+  SetInfoPageEncoding(peUTF8);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -72,31 +65,18 @@ begin
 end;
 
 function TDownloader_PornHub.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
-    ID, Url, InfoXml: string;
+var ID, Title, InfoXml: string;
 begin
-  inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://www.pornhub.com/embed_player.php?id=' + ID, InfoXml) then
+  else if not DownloadPage(Http, 'http://www.pornhub.com/embed_player.php?id=' + ID, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
-    try
-      Xml.Xml := InfoXml;
-      if not GetXmlVar(Xml, 'flv_url', Url) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieUrl := HtmlDecode(Url);
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
+    Result := inherited AfterPrepareFromPage(InfoXml, Http);
+    if Result and GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
+      SetName(Title);
     end;
 end;
 

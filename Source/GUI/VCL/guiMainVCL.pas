@@ -1,4 +1,4 @@
-unit uYTDGUI;
+unit guiMainVCL;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -6,13 +6,11 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList, ActnList,
-  Registry, ToolWin, CommDlg,
-  {$IFDEF SYSTRAY}
-  ShellApi,
-  {$ENDIF}
-  uLanguages, uMessages, uOptions, FileCtrlGUI,
-  uDownloadList, uDownloadListItem, uDownloadThread,
-  uYTDAbout;
+  ToolWin, CommDlg, ShellApi,
+  SynaCode,
+  uLanguages, uMessages, uOptions, uStringUtils,
+  guiOptions, FileCtrlGUI,
+  uDownloadList, uDownloadListItem, uDownloadThread;
 
 {$IFDEF SYSTRAY}
 const
@@ -37,15 +35,15 @@ type
     actAutoDownload: TAction;
     actSelectAll: TAction;
     DownloadsPopup: TPopupMenu;
-    AddnewURL1: TMenuItem;
-    AddURLsfromClipboard1: TMenuItem;
-    DeleteURL1: TMenuItem;
-    CopyURLstoClipboard1: TMenuItem;
-    StartPauseResume1: TMenuItem;
-    Stop1: TMenuItem;
-    DeleteURL2: TMenuItem;
-    Autodownload1: TMenuItem;
-    Refresh1: TMenuItem;
+    mnuAddNewUrl: TMenuItem;
+    mnuAddUrlFromClipboard: TMenuItem;
+    mnuDelete: TMenuItem;
+    mnuCopyUrls: TMenuItem;
+    mnuStart: TMenuItem;
+    mnuStop: TMenuItem;
+    mnuSelectAll: TMenuItem;
+    mnuAutoDownload: TMenuItem;
+    mnuRefresh: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
     ToolBar1: TToolBar;
@@ -62,11 +60,11 @@ type
     StatusBar1: TStatusBar;
     actDownloadDirectory: TAction;
     N3: TMenuItem;
-    Setdownloaddirectory1: TMenuItem;
+    mnuSetDownloadDir: TMenuItem;
     ToolDownloadDir: TToolButton;
     actAutoOverwrite: TAction;
     ToolAutooverwrite: TToolButton;
-    AutoOverwrite1: TMenuItem;
+    mnuAutoOverwrite: TMenuItem;
     actAddUrlsFromHTML: TAction;
     OpenHtmlFile: TOpenDialog;
     actAddUrlsFromHTMLfile: TAction;
@@ -76,12 +74,12 @@ type
     ToolButton1: TToolButton;
     ToolAddFromHTML: TToolButton;
     ToolAddFromHTMLfile: TToolButton;
-    AddURLsfromfile1: TMenuItem;
-    AddURLsfromHTMLpage1: TMenuItem;
-    AddURLsfromHTMLfile1: TMenuItem;
+    mnuAddUrlFromFile: TMenuItem;
+    mnuAddUrlFromHtmlPage: TMenuItem;
+    mnuAddUrlFromHtmlFile: TMenuItem;
     N4: TMenuItem;
     actSaveUrlList: TAction;
-    SaveURLlist1: TMenuItem;
+    mnuSaveUrlList: TMenuItem;
     ToolSave: TToolButton;
     SaveUrlList: TSaveDialog;
     ToolButton2: TToolButton;
@@ -89,14 +87,26 @@ type
     ToolButton3: TToolButton;
     ToolAbout: TToolButton;
     N5: TMenuItem;
-    About1: TMenuItem;
+    mnuAbout: TMenuItem;
+    actConvert: TAction;
+    ToolConvert: TToolButton;
+    mnuConvert: TMenuItem;
+    actSelectConverter: TAction;
+    ToolSelectConverter: TToolButton;
+    mnuSelectConverter: TMenuItem;
+    actReportBug: TAction;
+    ToolReportBug: TToolButton;
+    actDonate: TAction;
+    ToolDonate: TToolButton;
+    mnuReportBug: TMenuItem;
+    mnuDonate: TMenuItem;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure DownloadsData(Sender: TObject; Item: TListItem);
     procedure actAddNewUrlExecute(Sender: TObject);
     procedure actDeleteURLExecute(Sender: TObject);
     procedure actAddUrlsFromClipboardExecute(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure actStartExecute(Sender: TObject);
     procedure actStopExecute(Sender: TObject);
     procedure actCopyUrlsToClipboardExecute(Sender: TObject);
@@ -114,16 +124,27 @@ type
     procedure actSaveUrlListExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
     procedure DownloadsDblClick(Sender: TObject);
-  private
+    procedure actConvertExecute(Sender: TObject);
+    procedure actSelectConverterExecute(Sender: TObject);
+    procedure actReportBugExecute(Sender: TObject);
+    procedure actDonateExecute(Sender: TObject);
+  protected
+    fLoading: boolean;
     {$IFDEF SYSTRAY}
     fNotifyIconData: TNotifyIconData;
-    procedure CMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
+    procedure WMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
     procedure ApplicationMinimize(Sender: TObject);
+    {$ENDIF}
+    {$IFDEF THREADEDVERSION}
+    procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
     {$ENDIF}
   protected
     DownloadList: TDownloadList;
     NextProgressUpdate: DWORD;
     Options: TYTDOptions;
+    {$IFDEF CONVERTERS}
+    LastConverterID: string;
+    {$ENDIF}
     procedure Refresh; virtual;
     procedure DownloadListChange(Sender: TObject); virtual;
     procedure DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem); virtual;
@@ -134,11 +155,13 @@ type
     procedure DeleteTask(Index: integer); virtual;
     procedure StartPauseResumeTask(Index: integer); virtual;
     procedure StopTask(Index: integer); virtual;
+    procedure ReportBug(Index: integer); virtual;
+    {$IFDEF CONVERTERS}
+    procedure ConvertTask(Index: integer; const ConverterID: string); virtual;
+    {$ENDIF}
     procedure PlayMedia(Index: integer); virtual;
     procedure LoadSettings; virtual;
     procedure SaveSettings; virtual;
-    procedure LoadDownloadList; virtual;
-    procedure SaveDownloadList; virtual;
   public
   end;
 
@@ -149,68 +172,85 @@ implementation
 
 {$R *.DFM}
 
-{gnugettext: scan-all}
-const
-  THREADSTATE_WAITING = 'Waiting'; // GUI: Download thread state: Waiting for its turn
-  THREADSTATE_PREPARING = 'Preparing'; // GUI: Download thread state: Preparing download (getting title, URL...)
-  THREADSTATE_DOWNLOADING = 'Downloading'; // GUI: Download thread state: Downloading
-  THREADSTATE_FINISHED = 'Finished'; // GUI: Download thread state: Download finished successfully
-  THREADSTATE_FAILED = 'Failed'; // GUI: Download thread state: Download failed
-  THREADSTATE_ABORTED = 'Aborted'; // GUI: Download thread state: Download was aborted by user
-{gnugettext: reset}
+uses
+  guiConsts, guiAboutVCL, guiConverterVCL;
 
+{$IFNDEF FPC}
 const
-  States: array[TDownloadThreadState] of string
-        = (THREADSTATE_WAITING, THREADSTATE_PREPARING, THREADSTATE_DOWNLOADING, THREADSTATE_FINISHED, THREADSTATE_FAILED, THREADSTATE_ABORTED);
+  ThreadStateImgs: array[TDownloadThreadState] of integer
+                 = (-1, 3, 3, 2, 1, 0);
 
-  {$IFNDEF FPC}
-  StateImgs: array[TDownloadThreadState] of integer
-        = (-1, 3, 3, 2, 1, 0);
+  {$IFDEF CONVERTERS}
+  ConvertThreadStateImgs: array[TConvertThreadState] of integer
+                 = (4, 6, 5, 1);
   {$ENDIF}
+
+{$ENDIF}
+
+const
+  DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
+  BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&url=%s&error=%s';
 
 { TFormYTD }
 
 procedure TFormYTD.FormCreate(Sender: TObject);
 begin
-  Options := TYTDOptions.Create;
-  UseLanguage(Options.Language);
-  TranslateProperties(self);
-  Caption := Application.Title + ' v' + {$INCLUDE 'ytd.version'} ;
-  DownloadList := TDownloadList.Create;
-  DownloadList.OnListChange := DownloadListChange;
-  DownloadList.OnStateChange := DownloadListItemChange;
-  DownloadList.OnDownloadProgress := DownloadListProgress;
-  DownloadList.OnError := DownloadListItemChange;
-  DownloadList.OnFinished := DownloadListItemChange;
-  DownloadList.DestinationPath := Options.DestinationPath;
-  DownloadList.AutoOverwrite := Options.OverwriteMode = omAlways;
-  DownloadList.AutoStart := True;
-  DownloadList.Options := Options;
-  LoadSettings;
-  actAutoDownload.Checked := DownloadList.AutoStart;
-  actAutoOverwrite.Checked := DownloadList.AutoOverwrite;
-  {$IFDEF SYSTRAY}
-  Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
-  fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
-  fNotifyIconData.Wnd := Self.Handle;
-  fNotifyIconData.uID := Integer(Self);
-  fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
-  fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
-  fNotifyIconData.hIcon := Application.Icon.Handle;
-  StrPCopy(fNotifyIconData.szTip, Copy(Caption, 1, Pred(Length(fNotifyIconData.szTip))));
-  Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
-  Application.OnMinimize := ApplicationMinimize;
+  fLoading := True;
+  try
+    Caption := Application.Title + ' v' + {$INCLUDE 'ytd.version'} ;
+    Options := TYTDOptionsGUI.Create;
+    UseLanguage(Options.Language);
+    {$IFDEF GETTEXT}
+    TranslateProperties(self);
+    {$ENDIF}
+    DownloadList := TDownloadList.Create;
+    DownloadList.OnListChange := DownloadListChange;
+    DownloadList.OnStateChange := DownloadListItemChange;
+    DownloadList.OnDownloadProgress := DownloadListProgress;
+    DownloadList.OnError := DownloadListItemChange;
+    DownloadList.OnFinished := DownloadListItemChange;
+    {$IFDEF CONVERTERS}
+    DownloadList.OnConverted := DownloadListItemChange;
+    actSelectConverter.Checked := Options.SelectedConverterID <> '';
+    {$ELSE}
+    actConvert.Visible := False;
+    actConvert.Enabled := False;
+    actSelectConverter.Visible := False;
+    actSelectConverter.Enabled := False;
+    {$ENDIF}
+    DownloadList.Options := Options;
+    LoadSettings;
+    actAutoDownload.Checked := DownloadList.Options.AutoStartDownloads;
+    actAutoOverwrite.Checked := DownloadList.Options.OverwriteMode = omAlways;
+    {$IFDEF SYSTRAY}
+    Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+    fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
+    fNotifyIconData.Wnd := Self.Handle;
+    fNotifyIconData.uID := Integer(Self);
+    fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
+    fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
+    fNotifyIconData.hIcon := Application.Icon.Handle;
+    StrPCopy(fNotifyIconData.szTip, Copy(Caption, 1, Pred(Length(fNotifyIconData.szTip))));
+    Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
+    Application.OnMinimize := ApplicationMinimize;
+    {$ENDIF}
+  finally
+    fLoading := False;
+    end;
+  {$IFDEF THREADEDVERSION}
+  if Options.CheckForNewVersionOnStartup then
+    Options.GetNewestVersionInBackground(NewVersionEvent);
   {$ENDIF}
 end;
 
 procedure TFormYTD.FormDestroy(Sender: TObject);
 begin
   DownloadList.StopAll;
-  FreeAndNil(Options);
-  FreeAndNil(DownloadList);
   {$IFDEF SYSTRAY}
   Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
+  FreeAndNil(DownloadList);
+  FreeAndNil(Options);
 end;
 
 procedure TFormYTD.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -228,7 +268,7 @@ begin
 end;
 
 {$IFDEF SYSTRAY}
-procedure TFormYTD.CMClickIcon(var msg: TMessage);
+procedure TFormYTD.WMClickIcon(var msg: TMessage);
 begin
   case Msg.lParam of
     {WM_LBUTTONDBLCLK} WM_LBUTTONDOWN:
@@ -239,6 +279,18 @@ end;
 procedure TFormYTD.ApplicationMinimize(Sender: TObject);
 begin
   Hide;
+end;
+{$ENDIF}
+
+{$IFDEF THREADEDVERSION}
+procedure TFormYTD.NewVersionEvent(Sender: TObject; const Version, Url: string);
+begin
+  if Version > {$INCLUDE 'YTD.version'} then
+    begin
+    actReportBug.Enabled := False;
+    if MessageDlg(Format(_('A newer version (%s) is available.'#10'Do you want to download it?'), [Version]), mtInformation, [mbYes, mbNo], 0) = mrYes then
+      ShellExecute(Handle, 'open', PChar(Url), nil, nil, SW_SHOWNORMAL);
+    end;
 end;
 {$ENDIF}
 
@@ -259,7 +311,7 @@ begin
   Downloads.Items.Count := Sender.Count;
   if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
     if DownloadList[Idx].State = dtsFinished then
-    SaveDownloadList;
+      SaveSettings;
   if Idx >= 0 then
     Downloads.UpdateItems(Idx, Idx);
   {$ENDIF}
@@ -303,9 +355,9 @@ begin
     Item.StateIndex := Integer(DlItem.State);
     {$ENDIF}
     Item.SubItems.Add(DlItem.Downloader.Provider);
-    sState := _(States[DlItem.State]);
+    sState := _(ThreadStates[DlItem.State]);
     {$IFNDEF FPC}
-    iStateImage := StateImgs[DlItem.State];
+    iStateImage := ThreadStateImgs[DlItem.State];
     {$ENDIF}
     sTitle := '';
     sSize := '';
@@ -341,7 +393,17 @@ begin
           end;
         end;
       dtsFinished:
-        ;
+        begin
+        {$IFDEF CONVERTERS}
+          if (DlItem.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
+            begin
+            sState := _(ConvertThreadStates[DlItem.ConvertState]);
+            {$IFNDEF FPC}
+            iStateImage := ConvertThreadStateImgs[DlItem.ConvertState];
+            {$ENDIF}
+            end;
+        {$ENDIF}
+        end;
       dtsFailed:
         sProgress := DlItem.ErrorClass + ': ' + DlItem.ErrorMessage;
       dtsAborted:
@@ -425,6 +487,65 @@ begin
         StopTask(i);
 end;
 
+procedure TFormYTD.actReportBugExecute(Sender: TObject);
+begin
+  if Downloads.SelCount < 1 then
+    Exit;
+  if MessageDlg(_('Do you really want to report a bug for this transfer?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+    Exit;
+  ReportBug(Downloads.Selected.Index);  
+end;
+
+procedure TFormYTD.actDonateExecute(Sender: TObject);
+begin
+  ShellExecute(0, 'open', DONATE_URL, nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TFormYTD.actConvertExecute(Sender: TObject);
+{$IFDEF CONVERTERS}
+var i: integer;
+    ConverterID: string;
+{$ENDIF}
+begin
+  {$IFDEF CONVERTERS}
+  if Downloads.SelCount < 1 then
+    Exit;
+  if LastConverterID = '' then
+    ConverterID := Options.SelectedConverterID
+  else
+    ConverterID := LastConverterID;
+  if SelectConverter(Options, ConverterID, Self, _('Convert selected files with')) then
+    begin
+    LastConverterID := ConverterID;
+    if Downloads.SelCount = 1 then
+      ConvertTask(Downloads.Selected.Index, LastConverterID)
+    else
+      for i := 0 to Pred(Downloads.Items.Count) do
+        if Downloads.Items[i].Selected then
+          ConvertTask(i, LastConverterID);
+    end;
+  {$ENDIF}
+end;
+
+procedure TFormYTD.actSelectConverterExecute(Sender: TObject);
+{$IFDEF CONVERTERS}
+var ConverterID: string;
+{$ENDIF}
+begin
+  {$IFDEF CONVERTERS}
+  ConverterID := Options.SelectedConverterID;
+  actSelectConverter.Checked := ConverterID = '';
+  actSelectConverter.Checked := ConverterID <> '';
+  if SelectConverter(Options, ConverterID, Self, _('Automatically convert with')) then
+    begin
+    LastConverterID := ConverterID;
+    Options.SelectedConverterID := ConverterID;
+    actSelectConverter.Checked := ConverterID = '';
+    actSelectConverter.Checked := ConverterID <> '';
+    end;
+  {$ENDIF}
+end;
+
 procedure TFormYTD.actAddUrlsFromClipboardExecute(Sender: TObject);
 var L: TStringList;
     i: integer;
@@ -481,11 +602,11 @@ end;
 procedure TFormYTD.actDownloadDirectoryExecute(Sender: TObject);
 var Dir: string;
 begin
-  Dir := DownloadList.DestinationPath;
+  Dir := DownloadList.Options.DestinationPath;
   if SelectDirectory(Dir, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
     begin
-    DownloadList.DestinationPath := Dir;
-    Options.DestinationPath := Dir;
+    DownloadList.Options.DestinationPath := Dir;
+    SaveSettings;
     end;
 end;
 
@@ -508,19 +629,19 @@ end;
 procedure TFormYTD.AddTask(const Url: string);
 begin
   DownloadList.Add(Url);
-  //SaveDownloadList;
+  SaveSettings;
 end;
 
 procedure TFormYTD.AddTaskFromHTML(const Source: string);
 begin
   DownloadList.AddFromHTML(Source);
-  //SaveDownloadList;
+  SaveSettings;
 end;
 
 procedure TFormYTD.DeleteTask(Index: integer);
 begin
   DownloadList.Delete(Index);
-  SaveDownloadList;
+  SaveSettings;
 end;
 
 procedure TFormYTD.StartPauseResumeTask(Index: integer);
@@ -541,20 +662,35 @@ begin
   DownloadList.Items[Index].Stop;
 end;
 
-procedure TFormYTD.PlayMedia(Index: integer);
-var Item: TDownloadListItem;
+procedure TFormYTD.ReportBug(Index: integer);
+var BugReportUrl: string;
 begin
-  Item := DownloadList.Items[Index];
-  if Item.Finished then
-    if FileExists(Item.Downloader.DestinationPath + Item.Downloader.FileName) then
-      ShellExecute(Handle, 'open', PChar(Item.Downloader.FileName), nil, nil, SW_SHOWNORMAL);
+  BugReportUrl := Format(BUGREPORT_URL,
+                       [ {$INCLUDE 'YTD.version'} ,
+                         EncodeUrl(DownloadList.Urls[Index]),
+                         EncodeUrl(WideToUtf8(AnsiToWide(DownloadList[Index].Downloader.LastErrorMsg)))
+                       ]);
+  ShellExecute(0, 'open', PChar(BugReportUrl), nil, nil, SW_SHOWNORMAL);
+end;
+
+{$IFDEF CONVERTERS}
+procedure TFormYTD.ConvertTask(Index: integer; const ConverterID: string);
+begin
+  DownloadList.Items[Index].Convert(True, ConverterID);
+end;
+{$ENDIF}
+
+procedure TFormYTD.PlayMedia(Index: integer);
+begin
+  DownloadList.Items[Index].PlayMedia;
 end;
 
 procedure TFormYTD.actAutoDownloadExecute(Sender: TObject);
 begin
-  DownloadList.AutoStart := not DownloadList.AutoStart;
-  actAutoDownload.Checked := DownloadList.AutoStart;
-  if DownloadList.AutoStart then
+  DownloadList.Options.AutoStartDownloads := not DownloadList.Options.AutoStartDownloads;
+  actAutoDownload.Checked := DownloadList.Options.AutoStartDownloads;
+  SaveSettings;
+  if DownloadList.Options.AutoStartDownloads then
     DownloadList.StartAll;
 end;
 
@@ -565,153 +701,28 @@ begin
     Downloads.Items[i].Selected := True;
 end;
 
-const REGISTRY_KEY = '\Software\Pepak\YouTube Downloader';
-      REGISTRY_KEY_LIST = REGISTRY_KEY + '\Download list';
-      REGISTRY_DOWNLOADDIR = 'Download directory';
-      REGISTRY_AUTOSTART = 'Autostart downloads';
-      REGISTRY_AUTOOVERWRITE = 'Automatically overwrite existing files';
-
 procedure TFormYTD.LoadSettings;
-var Reg: TRegistry;
 begin
-  if Options.DontUseRegistry then
-    begin
-    // Don't do anything.
-    end
-  else
-    begin
-    Reg := TRegistry.Create;
-    try
-      Reg.RootKey := HKEY_CURRENT_USER;
-      Reg.Access := KEY_READ;
-      if Reg.OpenKey(REGISTRY_KEY, False) then
-        begin
-        if Reg.ValueExists(REGISTRY_DOWNLOADDIR) then
-          DownloadList.DestinationPath := Reg.ReadString(REGISTRY_DOWNLOADDIR);
-        if Reg.ValueExists(REGISTRY_AUTOSTART) then
-          DownloadList.AutoStart := Reg.ReadInteger(REGISTRY_AUTOSTART) <> 0;
-        if Reg.ValueExists(REGISTRY_AUTOOVERWRITE) then
-          DownloadList.AutoOverwrite := Reg.ReadInteger(REGISTRY_AUTOOVERWRITE) <> 0;
-        end;
-    finally
-      Reg.Free;
-      end;
-    end;
-  LoadDownloadList;
+  DownloadList.LoadFromOptions;
 end;
 
 procedure TFormYTD.SaveSettings;
-var Reg: TRegistry;
 begin
-  SaveDownloadList;
-  if Options.DontUseRegistry then
+  if not fLoading then
     begin
-    try
-      Options.Save;
-    except
-      on Exception do
-        ;
-      end;
-    end
-  else
-    begin
-    Reg := TRegistry.Create;
-    try
-      Reg.RootKey := HKEY_CURRENT_USER;
-      Reg.Access := KEY_ALL_ACCESS;
-      if Reg.OpenKey(REGISTRY_KEY, True) then
-        begin
-        Reg.WriteString(REGISTRY_DOWNLOADDIR, DownloadList.DestinationPath);
-        Reg.WriteInteger(REGISTRY_AUTOSTART, Integer(DownloadList.AutoStart));
-        Reg.WriteInteger(REGISTRY_AUTOOVERWRITE, Integer(DownloadList.AutoOverwrite));
-        end;
-    finally
-      Reg.Free;
-      end;
-    end;
-end;
-
-procedure TFormYTD.LoadDownloadList;
-var L: TStringList;
-    i: integer;
-    Reg: TRegistry;
-begin
-  L := TStringList.Create;
-  try
-    if Options.DontUseRegistry then
-      begin
-      Options.LoadUrls(L);
-      end
-    else
-      begin
-      Reg := TRegistry.Create;
-      try
-        Reg.RootKey := HKEY_CURRENT_USER;
-        Reg.Access := KEY_READ;
-        if Reg.OpenKey(REGISTRY_KEY_LIST, False) then
-          Reg.GetValueNames(L);
-        for i := 0 to Pred(L.Count) do
-          L[i] := Reg.ReadString(L[i]);
-      finally
-        Reg.Free;
-        end;
-      end;
-    for i := 0 to Pred(L.Count) do
-      if L[i] <> '' then
-        AddTask(L[i]);
-  finally
-    L.Free;
-    end;
-end;
-
-procedure TFormYTD.SaveDownloadList;
-var L: TStringList;
-    i: integer;
-    Reg: TRegistry;
-begin
-  L := TStringList.Create;
-  try
-    for i := 0 to Pred(DownloadList.Count) do
-      if DownloadList[i].State <> dtsFinished then
-        L.Add(DownloadList.Urls[i]);
-    //if L.Count > 0 then
-      if Options.DontUseRegistry then
-        begin
-        try
-          Options.SaveUrls(L);
-        except
-          on Exception do
-            ;
-          end;
-        end
-      else
-        begin
-        Reg := TRegistry.Create;
-        try
-          Reg.RootKey := HKEY_CURRENT_USER;
-          Reg.Access := KEY_ALL_ACCESS;
-          if Reg.KeyExists(REGISTRY_KEY_LIST) then
-            Reg.DeleteKey(REGISTRY_KEY_LIST);
-          if Reg.OpenKey(REGISTRY_KEY_LIST, True) then
-            for i := 0 to Pred(L.Count) do
-              Reg.WriteString(IntToStr(i), L[i]);
-        finally
-          Reg.Free;
-          end;
-        end;
-  finally
-    L.Free;
+    DownloadList.SaveToOptions;
+    Options.Save;
     end;
 end;
 
 procedure TFormYTD.actAutoOverwriteExecute(Sender: TObject);
 begin
-  DownloadList.AutoOverwrite := not DownloadList.AutoOverwrite;
-  actAutoOverwrite.Checked := DownloadList.AutoOverwrite;
-  if DownloadList.AutoOverwrite then
-    Options.OverwriteMode := omAlways
+  if DownloadList.Options.OverwriteMode = omAlways then
+    DownloadList.Options.OverwriteMode := omAsk
   else
-    Options.OverwriteMode := omAsk;
+    DownloadList.Options.OverwriteMode := omAlways;
+  actAutoOverwrite.Checked := DownloadList.Options.OverwriteMode = omAlways;
+  SaveSettings;
 end;
 
 procedure TFormYTD.actAddUrlsFromFileExecute(Sender: TObject);

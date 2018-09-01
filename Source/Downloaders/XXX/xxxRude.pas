@@ -24,7 +24,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -62,17 +62,17 @@ begin
 end;
 
 function TDownloader_Rude.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXMlParser2;
+var Xml: TXmlDoc;
     Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   // I couldn't download this page directly because I need the cookie
-  if not DownloadPage(Http, 'http://www.rude.com/v/' + MovieID + '/view_xml', Page, peUTF8) then
+  if not DownloadPage(Http, 'http://www.rude.com/v/' + MovieID + '/view_xml', Page, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXMlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := Page;
       if not GetXmlVar(Xml, 'video/titleShort', Title) then

@@ -1,5 +1,6 @@
 program YTD;
 {$INCLUDE 'YTD.inc'}
+{$INCLUDE 'YTD_Warnings.inc'}
 
 {$IFDEF CLI}
   {$APPTYPE CONSOLE}
@@ -23,6 +24,7 @@ uses
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
   uPCRE in 'Common\uPCRE.pas',
+  uXML in 'Common\uXML.pas',
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
   uCommonDownloader in 'Base\uCommonDownloader.pas',
@@ -39,8 +41,13 @@ uses
   {$ENDIF}
   // GUI version
   {$IFDEF GUI}
-    uYTDGUI in 'GUI\uYTDGUI.pas' {FormYTD},
-    uYTDAbout in 'GUI\uYTDAbout.pas' {FormAbout},
+    guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
+    guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
+    {$IFDEF CONVERTERS}
+    guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas', {FormSelectConverter}
+    {$ENDIF}
+    guiConsts in 'GUI\guiConsts.pas',
+    guiOptions in 'GUI\guiOptions.pas',
     uDownloadList in 'GUI\uDownloadList.pas',
     uDownloadListItem in 'GUI\uDownloadListItem.pas',
     uDownloadThread in 'GUI\uDownloadThread.pas',
@@ -48,13 +55,18 @@ uses
   // Downloaders
   down5min in 'Downloaders\down5min.pas',
   downAktualne in 'Downloaders\downAktualne.pas',
+  downAngryAlien in 'Downloaders\downAngryAlien.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
+  downBlennus in 'Downloaders\downBlennus.pas',
   downBlipTv in 'Downloaders\downBlipTv.pas',
   downBlipTvV2 in 'Downloaders\downBlipTvV2.pas',
   downBofunk in 'Downloaders\downBofunk.pas',
+  downBolt in 'Downloaders\downBolt.pas',
   downBomba in 'Downloaders\downBomba.pas',
   downBreak in 'Downloaders\downBreak.pas',
+  downBreakEmbed in 'Downloaders\downBreakEmbed.pas',
+  downBreakEmbedV2 in 'Downloaders\downBreakEmbedV2.pas',
   downCasSk in 'Downloaders\downCasSk.pas',
   downCekniTo in 'Downloaders\downCekniTo.pas',
   downCestyKSobe in 'Downloaders\downCestyKSobe.pas',
@@ -67,12 +79,16 @@ uses
   downCT24 in 'Downloaders\downCT24.pas',
   downCT24MSFotbal in 'Downloaders\downCT24MSFotbal.pas',
   downCT24MSFotbal_V2 in 'Downloaders\downCT24MSFotbal_V2.pas',
+  downCurrent in 'Downloaders\downCurrent.pas',
   downDailyHaha in 'Downloaders\downDailyHaha.pas',
   downDailyMotion in 'Downloaders\downDailyMotion.pas',
   downDeutscheBahn in 'Downloaders\downDeutscheBahn.pas',
+  downDevilDucky in 'Downloaders\downDevilDucky.pas',
+  downDoubleAgent in 'Downloaders\downDoubleAgent.pas',
   downEbaumsWorld in 'Downloaders\downEbaumsWorld.pas',
   downEHow in 'Downloaders\downEHow.pas',
   downESPN in 'Downloaders\downESPN.pas',
+  downEVTV1 in 'Downloaders\downEVTV1.pas',
   downFacebook in 'Downloaders\downFacebook.pas',
   downFileCabi in 'Downloaders\downFileCabi.pas',
   downFlickr in 'Downloaders\downFlickr.pas',
@@ -87,6 +103,7 @@ uses
   downiHned in 'Downloaders\downIHned.pas',
   downiPrima in 'Downloaders\downIPrima.pas',
   downJoj in 'Downloaders\downJoj.pas',
+  downKontraband in 'Downloaders\downKontraband.pas',
   downKukaj in 'Downloaders\downKukaj.pas',
   downLibimSeTi in 'Downloaders\downLibimSeTi.pas',
   downLiveLeak in 'Downloaders\downLiveLeak.pas',
@@ -103,10 +120,12 @@ uses
   downMySpace in 'Downloaders\downMySpace.pas',
   downMyUbo in 'Downloaders\downMyUbo.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
+  downNothingToxic in 'Downloaders\downNothingToxic.pas',
   downNova in 'Downloaders\downNova.pas',
   downNovinky in 'Downloaders\downNovinky.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
+  downRevver in 'Downloaders\downRevver.pas',
   downRingTV in 'Downloaders\downRingTV.pas',
   downRozhlas in 'Downloaders\downRozhlas.pas',
   downSevenLoad in 'Downloaders\downSevenLoad.pas',
@@ -122,6 +141,7 @@ uses
   downTeacherTube in 'Downloaders\downTeacherTube.pas',
   downTodaysBigThing in 'Downloaders\downTodaysBigThing.pas',
   downTontuyau in 'Downloaders\downTontuyau.pas',
+  downTotallyCrap in 'Downloaders\downTotallyCrap.pas',
   downTVcom in 'Downloaders\downTVcom.pas',
   downTVNoe in 'Downloaders\downTVNoe.pas',
   downUniMinnesota in 'Downloaders\downUniMinnesota.pas',
@@ -137,22 +157,30 @@ uses
   downYouTube in 'Downloaders\downYouTube.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',
   {$IFDEF XXX}
+    xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
+    xxxEmpFlix in 'Downloaders\XXX\xxxEmpFlix.pas',
     xxxExtremeTube in 'Downloaders\XXX\xxxExtremeTube.pas',
+    xxxGrinvi in 'Downloaders\XXX\xxxGrinvi.pas',
     xxxKeezMovies in 'Downloaders\XXX\xxxKeezMovies.pas',
     xxxMegaPorn in 'Downloaders\XXX\xxxMegaPorn.pas',
     xxxPornHost in 'Downloaders\XXX\xxxPornHost.pas',
     xxxPornHub in 'Downloaders\XXX\xxxPornHub.pas',
+    xxxPornHubEmbed in 'Downloaders\XXX\xxxPornHubEmbed.pas',
     xxxPornoTube in 'Downloaders\XXX\xxxPornoTube.pas',
     xxxRedTube in 'Downloaders\XXX\xxxRedTube.pas',
     xxxRude in 'Downloaders\XXX\xxxRude.pas',
     xxxShufuni in 'Downloaders\XXX\xxxShufuni.pas',
+    xxxSlutLoad in 'Downloaders\XXX\xxxSlutLoad.pas',
     xxxSpankingTube in 'Downloaders\XXX\xxxSpankingTube.pas',
+    xxxSpankWire in 'Downloaders\XXX\xxxSpankWire.pas',
+    xxxTnaFlix in 'Downloaders\XXX\xxxTnaFlix.pas',
     xxxTube8 in 'Downloaders\XXX\xxxTube8.pas',
     xxxXHamster in 'Downloaders\XXX\xxxXHamster.pas',
     xxxXNXX in 'Downloaders\XXX\xxxXNXX.pas',
     xxxXTube in 'Downloaders\XXX\xxxXTube.pas',
     xxxXVideoHost in 'Downloaders\XXX\xxxXVideoHost.pas',
     xxxXVideos in 'Downloaders\XXX\xxxXVideos.pas',
+    xxxYouJizz in 'Downloaders\XXX\xxxYouJizz.pas',
     xxxYouPorn in 'Downloaders\XXX\xxxYouPorn.pas',
     xxxYuvutu in 'Downloaders\XXX\xxxYuvutu.pas',
   {$ENDIF}
@@ -216,3 +244,4 @@ begin
       end;
     end;
 end.
+

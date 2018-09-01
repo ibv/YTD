@@ -12,14 +12,13 @@ type
   TDownloader_LiveLeakEmbedded = class(TDownloader_LiveLeak)
     private
     protected
-      class function UrlRegExp: string; override;
     public
+      class function UrlRegExp: string; override;
     end;
 
 implementation
 
 uses
-  janXmlParser2,
   uDownloadClassifier,
   uMessages;
 

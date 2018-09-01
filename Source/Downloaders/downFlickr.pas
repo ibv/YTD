@@ -31,7 +31,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -94,10 +94,9 @@ begin
 end;
 
 function TDownloader_Flickr.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Url, Secret, ID, InfoXml, NodeID, s, Title, Host, Path: string;
-    Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
-    i: integer;
+var Url, Secret, ID, InfoXml, NodeID, Title, Host, Path: string;
+    Xml: TXmlDoc;
+    Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -107,25 +106,20 @@ begin
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_secret']))
   else if not GetRegExpVar(PhotoIdRegexp, Url, 'VALUE', ID) then
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['photo_id']))
-  else if not DownloadPage(Http, 'http://www.flickr.com/apps/video/video_mtl_xml.gne?v=x&photo_id=' + ID + '&secret=' + Secret + '&olang=en-us&noBuffer=null&bitrate=700&target=_self', InfoXml, peUTF8) then
+  else if not DownloadPage(Http, 'http://www.flickr.com/apps/video/video_mtl_xml.gne?v=x&photo_id=' + ID + '&secret=' + Secret + '&olang=en-us&noBuffer=null&bitrate=700&target=_self', InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;      
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
-      Node := Xml.getChildByPath('Data');
-      NodeId := '';
-      if Node <> nil then
-        for i := 0 to Pred(Node.childCount) do
-          if (Node.childNode[i].name = 'Item') and GetXmlAttr(Node.childNode[i], '', 'id', s) and (s = 'id') then
-            begin
-            NodeId := Trim(Node.childNode[i].text);
-            Break;
-            end;
-      if NodeId = '' then
+      if not Xml.NodeByPathAndAttr('Data/Item', 'id', 'id', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
-      else if not DownloadPage(Http, 'http://www.flickr.com/video_playlist.gne?node_id=' + NodeID + '&tech=flash&mode=playlist&bitrate=700&secret=' + Secret + '&rd=video.yahoo.com&noad=1', InfoXml, peUTF8) then
+      else if not GetXmlVar(Node, '', NodeId) then
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+      else if NodeId = '' then
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+      else if not DownloadPage(Http, 'http://www.flickr.com/video_playlist.gne?node_id=' + NodeID + '&tech=flash&mode=playlist&bitrate=700&secret=' + Secret + '&rd=video.yahoo.com&noad=1', InfoXml, peXml) then
         SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
       else
         begin

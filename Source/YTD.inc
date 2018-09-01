@@ -6,10 +6,11 @@
 {.DEFINE KOL}    // Use Key Objects Library (http://kolmck.net)
 
 // Behavior/functionality
-{$DEFINE MULTIDOWNLOADS} // Allow multiple downloads per URL (needed for some downloaders)
-{$DEFINE SYSTRAY}        // Minimize to systray
-{$DEFINE INIFILE}        // Use INI file to store default settings
-{$DEFINE GETTEXT}        // Multilanguage support
+{$DEFINE MULTIDOWNLOADS}  // Allow multiple downloads per URL (needed for some downloaders)
+{$DEFINE SYSTRAY}         // Minimize to systray
+{$DEFINE GETTEXT}         // Multilanguage support
+{$DEFINE THREADEDVERSION} // Check for new version done in an extra thread (in background)
+{$DEFINE CONVERTERS}      // Support for converters: applications called after a download is finished
 
 
 
@@ -20,25 +21,22 @@
 
 {$IFNDEF NO_GUI}
   {$DEFINE GUI}
-  {$IFDEF FPC}
-    {$MESSAGE ERROR 'GUI cannot be built with FPC (yet).'}
-  {$ENDIF}
 {$ENDIF}
 
 {$IFNDEF NO_CLI}
   {$DEFINE CLI}
 {$ENDIF}
 
-{$IFNDEF GUI}
-  {$IFNDEF CLI}
-    Error: At least one interface (GUI or CLI) must be present
-  {$ENDIF}
-{$ENDIF}
-
 {$IFNDEF NO_XXX}
   {$DEFINE XXX}
 {$ENDIF}
 
-{$IFDEF FPC}
+{$IFNDEF GUI}
   {$UNDEF SYSTRAY}
+  {$UNDEF CONVERTERS}
+  {$UNDEF THREADEDVERSION}
+{$ENDIF}
+
+{$IFDEF FPC}
+  {$UNDEF GETTEXT}
 {$ENDIF}

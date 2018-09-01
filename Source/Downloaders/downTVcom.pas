@@ -28,7 +28,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -84,17 +84,17 @@ end;
 
 function TDownloader_TVcom.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, ConfigXml, VideoUrl: string;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigXmlRegExp, Page, 'URL', URL) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, URL, ConfigXml, peUTF8) then
+  else if not DownloadPage(Http, URL, ConfigXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.xml := ConfigXml;
       if not GetXmlVar(Xml, 'Video', VideoUrl) then

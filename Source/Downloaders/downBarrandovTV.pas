@@ -13,6 +13,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -26,7 +27,7 @@ implementation
 uses
   uMessages,
   uDownloadClassifier,
-  janXmlParser2;
+  uXml;
 
 // http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 const
@@ -62,13 +63,20 @@ begin
   Result := 'http://www.barrandov.tv/special/videoplayerdata/' + MovieID;
 end;
 
+function TDownloader_BarrandovTV.GetFileNameExt: string;
+begin
+  Result := inherited GetFileNameExt;
+  if AnsiCompareText(Result, '.f4v') = 0 then
+    Result := '.flv';
+end;
+
 function TDownloader_BarrandovTV.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     Title, HostName, StreamName: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.create;
+  Xml := TXmlDoc.create;
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'videotitle', Title) then

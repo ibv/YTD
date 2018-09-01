@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -71,50 +71,41 @@ end;
 
 function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, FileInfo, Description: string;
-    Xml: TjanXmlParser2;
-    Channel, ContentNode: TjanXmlNode2;
+    Xml: TXmlDoc;
+    Channel, ContentNode: TXmlNode;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(FileInfoRegExp, Page, 'URL', URL) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, URL, FileInfo, peUTF8) then
+  else if not DownloadPage(Http, URL, FileInfo, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    // TjanXmlParser2 requires spaces within attributes, not whitespace :-(
-    for i := 1 to Length(FileInfo) do
-      if FileInfo[i] in [#0, #10, #13, #9] then
-        FileInfo[i] := ' ';
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
-      Xml.xml := FileInfo;
-      Channel := Xml.GetChildByPath('channel');
-      if Channel <> nil then
-        for i := 0 to Pred(Channel.childCount) do
-          if Channel.childNode[i].name = 'item' then
-            if GetXmlVar(channel.childNode[i], 'description', Description) then
-              begin
-              ContentNode := Channel.childNode[i].GetChildByPath('media:content');
-              if (ContentNode <> nil) and (ContentNode.attribute['list'] <> 'false') then
-                begin
-                Url := ContentNode.attribute['url'];
-                if Url <> '' then
-                  begin
-                  {$IFDEF MULTIDOWNLOADS}
-                  NameList.Add(Description);
-                  UrlList.Add(Url);
-                  {$ELSE}
-                  SetName(Description);
-                  MovieURL := Url;
-                  Result := True;
-                  SetPrepared(True);
-                  Exit;
-                  {$ENDIF}
-                  end;
-                end;
-              end;
+      Xml.Xml := FileInfo;
+      if Xml.NodeByPath('channel', Channel) then
+        for i := 0 to Pred(Channel.NodeCount) do
+          if Channel.Nodes[i].Name = 'item' then
+            if GetXmlVar(Channel.Nodes[i], 'description', Description) then
+              if XmlNodeByPath(Channel.Nodes[i], 'media:content', ContentNode) then
+                if ContentNode.AttributeByName['list'] <> 'false' then
+                  if GetXmlAttr(ContentNode, '', 'url', Url) then
+                    if Url <> '' then
+                      begin
+                      {$IFDEF MULTIDOWNLOADS}
+                      NameList.Add(Description);
+                      UrlList.Add(Url);
+                      {$ELSE}
+                      SetName(Description);
+                      MovieURL := Url;
+                      Result := True;
+                      SetPrepared(True);
+                      Exit;
+                      {$ENDIF}
+                      end;
       {$IFDEF MULTIDOWNLOADS}
       if UrlList.Count <= 0 then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))

@@ -28,7 +28,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -69,11 +69,11 @@ end;
 function TDownloader_STV.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url: string;
     i: integer;
-    Xml: TjanXmlParser2;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.Create;
+  Xml := TXmlDoc.Create;
   try
     Xml.Xml := Page;
     if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then

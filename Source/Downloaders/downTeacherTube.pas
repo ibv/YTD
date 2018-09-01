@@ -24,7 +24,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -63,12 +63,12 @@ begin
 end;
 
 function TDownloader_TeacherTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
+var Xml: TXmlDoc;
     Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.create;
+  Xml := TXmlDoc.create;
   try
     Xml.xml := Page;
     if not GetXmlVar(Xml, 'channel/item/title', Title) then

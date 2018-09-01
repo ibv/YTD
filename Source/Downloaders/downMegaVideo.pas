@@ -30,7 +30,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -74,16 +74,15 @@ begin
 end;
 
 function TDownloader_MegaVideo.LocateMegaVideoParams(const Page: string; Http: THttpSend; out Title, Server: string; out Key1, Key2: integer; out EncryptedFileID: string): boolean;
-var Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
+var Xml: TXmlDoc;
+    Node: TXmlNode;
     sKey1, sKey2: string;
 begin
   Result := False;
-  Xml := TjanXmlParser2.Create;
+  Xml := TXmlDoc.Create;
   try
     Xml.Xml := Page;
-    Node := Xml.getChildByPath('ROW');
-    if Node = nil then
+    if not Xml.NodeByPath('ROW', Node) then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
     else if not GetXmlAttr(Node, '', 'title', Title) then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))

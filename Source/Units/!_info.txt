@@ -1,0 +1,2 @@
+All compiled units come here. They can be rebuilt any time using the build.bat 
+script, so you can delete any files in this directory whenever you like. 

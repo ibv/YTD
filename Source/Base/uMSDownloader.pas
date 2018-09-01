@@ -82,7 +82,7 @@ begin
   TotalBytes := -1;
   Aborted := False;
   Result := False;
-  if Options.ProxyHost <> '' then
+  if Options.ProxyActive and (Options.ProxyHost <> '') then
     begin
     ProxyString := Options.ProxyHost + ':' + Options.ProxyPort;
     if Options.ProxyUser <> '' then

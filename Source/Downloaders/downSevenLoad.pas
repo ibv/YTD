@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -72,22 +72,21 @@ end;
 function TDownloader_SevenLoad.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, InfoXml, Title, BestUrl, StreamWidth, StreamHeight: string;
     i, BestQuality, Quality: integer;
-    Xml: TjanXmlParser2;
-    Node, Streams: TjanXmlNode2;
+    Xml: TXmlDoc;
+    Node, Streams: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(ConfigUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, UrlDecode(Url), InfoXml) then
+  else if not DownloadPage(Http, UrlDecode(Url), InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
-      Node := Xml.getChildByPath('playlists/playlist/items/item');
-      if Node = nil then
+      if not Xml.NodeByPath('playlists/playlist/items/item', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else if not GetXmlVar(Node, 'title', Title) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
@@ -95,15 +94,14 @@ begin
         begin
         BestUrl := '';
         BestQuality := 0;
-        Streams := Node.getChildByPath('videos/video/streams');
-        if Streams <> nil then
-          for i := 0 to Pred(Streams.childCount) do
-            if Streams.childNode[i].name = 'stream' then
-              if (GetXmlAttr(Streams.childNode[i], '', 'width', StreamWidth) and GetXmlAttr(Streams.childNode[i], '', 'height', StreamHeight)) or (BestQuality = 0) then
+        if XmlNodeByPath(Node, 'videos/video/streams', Streams) then
+          for i := 0 to Pred(Streams.NodeCount) do
+            if Streams.Nodes[i].Name = 'stream' then
+              if (GetXmlAttr(Streams.Nodes[i], '', 'width', StreamWidth) and GetXmlAttr(Streams.Nodes[i], '', 'height', StreamHeight)) or (BestQuality = 0) then
                 begin
                 Quality := StrToIntDef(StreamWidth, 0) * StrToIntDef(StreamHeight, 0);
                 if Quality >= BestQuality then
-                  if GetXmlVar(Streams.childNode[i], 'locations/location', Url) then
+                  if GetXmlVar(Streams.Nodes[i], 'locations/location', Url) then
                     begin
                     BestQuality := Quality;
                     BestUrl := Url;

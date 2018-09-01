@@ -36,7 +36,7 @@ begin
 //    Info.ulFlags := BIF_RETURNONLYFSDIRS ;//+ BIF_EDITBOX + BIF_VALIDATE + $40 {BIF_NEWDIALOGSTYLE};
 //    if not (sdAllowCreate in Options) then
 //      Info.ulFlags := Info.ulFlags + $200 {BIF_NONEWFOLDERBUTTON};
-    Item := SHBrowseForFolder(Info);
+    Item := {$IFDEF FPC} SHBrowseForFolder(@Info) {$ELSE} SHBrowseForFolder(Info) {$ENDIF};
     if (Item <> nil) then
       try
         if SHGetPathFromIDList(Item, @Path[0]) then

@@ -20,6 +20,7 @@ type
       {$ENDIF}
       fCookies: TStringList;
       fHeaders: TStringList;
+      fReferer: string;
     protected
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
@@ -31,6 +32,7 @@ type
       property BytesTransferred: int64 read fBytesTransferred write fBytesTransferred;
       property Cookies: TStringList read fCookies;
       property Headers: TStringList read fHeaders;
+      property Referer: string read fReferer write fReferer;
       {$IFDEF MULTIDOWNLOADS}
       property NameList: TStringList read fNameList;
       property UrlList: TStringList read fUrlList;
@@ -107,6 +109,7 @@ begin
   UrlList.Clear;
   DownloadIndex := 0;
   {$ENDIF}
+  Referer := '';
   Result := inherited Prepare;
 end;
 
@@ -117,10 +120,26 @@ begin
 end;
 
 function THttpDownloader.BeforeDownload(Http: THttpSend): boolean;
+const RefererHdr = 'Referer:';
+var i: integer;
+    Found: boolean;
 begin
   Result := True;
   Http.Cookies.Assign(Cookies);
   Http.Headers.Assign(Headers);
+  if Referer <> '' then
+    begin
+    Found := False;
+    for i := 0 to Pred(Http.Headers.Count) do
+      if AnsiCompareText(RefererHdr, Copy(Http.Headers[i], 1, Length(RefererHdr))) = 0 then
+        begin
+        Http.Headers[i] := RefererHdr + ' ' + Referer;
+        Found := True;
+        Break;
+        end;
+    if not Found then
+      Http.Headers.Add(RefererHdr + ' ' + Referer);
+    end;
 end;
 
 function THttpDownloader.Download: boolean;

@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
@@ -74,41 +74,30 @@ end;
 
 function TDownloader_Bofunk.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Url, InfoXml: string;
-    Xml: TjanXmlParser2;
-    Node: TjanXmlNode2;
-    i: integer;
+    Xml: TXmlDoc;
+    Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadPage(Http, 'http://flv.bofunk.com' + Url, InfoXml) then
+  else if not DownloadPage(Http, 'http://flv.bofunk.com' + Url, InfoXml, peXml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     begin
-    // Note: Bofunk's XML is malformed in several ways. This one is critical
-    InfoXml := StringReplace(InfoXml, '">>Next', '"&gt;&gt;Next', [rfReplaceAll, rfIgnoreCase]);
-    Xml := TjanXmlParser2.Create;
+    Xml := TXmlDoc.Create;
     try
       Xml.Xml := InfoXml;
-      Node := Xml.getChildByPath('SETTINGS');
-      if Node = nil then
+      if not Xml.NodeByPathAndAttr('SETTINGS/PLAYER_SETTINGS', 'Name', 'FLVPath', Node) then
+        SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
+      else if not GetXmlAttr(Node, '', 'Value', Url) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else
-        for i := 0 to Pred(Node.childCount) do
-          if Node.childNode[i].name = 'PLAYER_SETTINGS' then
-            if Node.childNode[i].attribute['Name'] = 'FLVPath' then
-              begin
-              if not Node.childNode[i].hasAttribute('Value') then
-                SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
-              else
-                begin
-                MovieUrl := Node.childNode[i].attribute['Value'];
-                Result := True;
-                SetPrepared(True);
-                end;
-              Break;
-              end;
+        begin
+        MovieUrl := Url;
+        Result := True;
+        SetPrepared(True);
+        end;
     finally
       Xml.Free;
       end;

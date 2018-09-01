@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.40                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.50                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -20,6 +20,9 @@ PODPOROVANÉ WEBY
  - Aktualne.cz:
      - http://aktualne.centrum.cz/video/?id=316586
 
+ - AngryAlien.com:
+     - http://www.angryalien.com/0605/freddyjasonbuns.asp
+
  - AutoTube.cz:
      - http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 
@@ -32,6 +35,9 @@ PODPOROVANÉ WEBY
  - Bing.com:
      - http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
 
+ - Blenus.com:
+     - http://www.blennus.com/index.php?option=content&task=view&id=1027&Itemid=
+
  - Blip.tv:
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
@@ -40,11 +46,16 @@ PODPOROVANÉ WEBY
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
 
+ - Bolt.com (BoltAgain.ning.com):
+     - http://boltagain.ning.com/video/vacation-wellness
+
  - Bomba.cz:
      - http://www.bomba.cz/video/simpsnovi-vs-cesti-politici/
 
  - Break.com
      - http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
+     - http://embed.break.com/MzU5NDE4
+     - http://media1.break.com/static/app/v1/global/swf/player10.swf?sVidLoc=http%3a%2f%2fvideo1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.flv&sThumbLoc=http%3a%2f%2fmedia1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.jpg&contentURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html&sShareURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html%23TellAFriendhttp%3a%2f%2fstats.break.com%2finvoke.txt&iContentID=359418&autoplay=0&embed=2&contentidencoded=359418&categoryid=4&userid=1620903&mode=embed&linktitle=Funny+Videos&sVidTitle=EMBED-Dude+Blows+Off+Firecracker+In+Teeth&icon=1B608EE7AFCE3765E176F3C6FBB98002B3D18C64572F2307D76FAB7CA970F3B1D7D7
 
  - Cas.sk
      - http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
@@ -80,6 +91,9 @@ PODPOROVANÉ WEBY
      Pozn.: Skuteènım poskytovatelem je Èeská televize a platí proto všechno,
             co pro CeskaTelevize.cz.
 
+ - Current.com:
+     - http://current.com/shows/the-rotten-tomatoes-show/92561962_angelina-jolies-top-5-hottest-parts.htm
+
  - DailyHaha.com:
      - http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
 
@@ -89,6 +103,13 @@ PODPOROVANÉ WEBY
  - DeutscheBahn.com:
      - http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
 
+ - DevilDucky.com:
+     - http://www.devilducky.com/media/213159/
+
+ - DoubleAgent.com:
+     - http://www.doubleagent.com/agent/tiffany/video-blog/video-28
+     - http://www.doubleagent.com/play/are-you-a-tweetbook-twit
+
  - EbaumsWorld.com:
      - http://www.ebaumsworld.com/video/watch/80973186/
 
@@ -97,6 +118,9 @@ PODPOROVANÉ WEBY
 
  - ESPN.go.com:
      - http://espn.go.com/video/clip?id=5163631
+
+ - EVTV1.com:
+     - http://www.evtv1.com/player.aspx?itemnum=15099&aid=
 
  - Facebook.com:
      - http://www.facebook.com/video/video.php?v=1131482863478
@@ -205,6 +229,9 @@ PODPOROVANÉ WEBY
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
 
+ - NothingToxic.com:
+     - http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
+
  - Nova.cz:
      - http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 
@@ -220,6 +247,9 @@ PODPOROVANÉ WEBY
 
  - Raajje.tv:
      - http://www.raajje.tv/video/991/president-anni-diving
+
+ - Revver.com:
+     - http://www.revver.com/video/2378230/super-mario-bros-2-on-the-nes-level-x/
 
  - RingTV.com:
      - http://www.ringtv.com/video/frankie_gomez_training/
@@ -247,9 +277,6 @@ PODPOROVANÉ WEBY
  - Stickam.com:
      - http://www.stickam.com/viewMedia.do?mId=188284575
 
- - StreetFire.com:
-     - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
-
  - Stream.cz:
      - http://www.stream.cz/video/437197-meziplyn-30
 
@@ -260,6 +287,9 @@ PODPOROVANÉ WEBY
 
      Pozn.: Stream.cz slouí jako content-delivery-network pro øadu dalších
      slueb, napøíklad pro televizní stanici Óèko.
+
+ - StreetFire.com:
+     - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 
  - StupidVideos.com:
      - http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
@@ -284,6 +314,11 @@ PODPOROVANÉ WEBY
 
  - Tontuyau.com:
      - http://www.tontuyau.com/v.asp?id=21715
+
+ - TotallyCrap.com:
+     - http://www.totallycrap.com/videos/videos_man_tries_to_commit_suicide_by_laying_under_a_truck/
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
 
  - TV Noe:
      - http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
@@ -339,7 +374,10 @@ PODPOROVANÉ WEBY
 
 Podporované porno weby:
 
+ - Dachix.com
+ - EmpFlix.com
  - ExtremeTube.com
+ - Grinvi.com
  - KeezMovies.com
  - MegaPorn.com
  - PornHost.com
@@ -348,13 +386,17 @@ Podporované porno weby:
  - RedTube.com
  - Rude.com
  - Shufuni.com
+ - SlutLoad.com
  - SpankingTube.com
+ - SpankWire.com
+ - TnaFlix.com
  - Tube8.com
  - XHamster.com
  - XNXX.com
  - XTube.com
  - XVideoHost.com
  - XVideos.com
+ - YouJizz.com
  - YouPorn.com
  - Yuvutu.com
 
@@ -414,92 +456,296 @@ které ne - stahují se vdy všechny.
 
 
 
-INI SOUBOR
-----------
+KONVERZE STÁHNUTİCH SOUBORÙ
+---------------------------
 
-Od verze 0.27 je podporován INI soubor. Program pøi svém spuštìní kontroluje
-existenci souboru, kterı má stejné jméno jako hlavní EXE soubor, ale s
-pøíponou INI (tzn. obvykle YTD.INI). Pokud existuje, pokusí se z nìj naèíst
-vıchozí nastavení. Ta je dále moné pozmìnit pomocí parametrù na pøíkazové
-øádce.
+Od verze 0.50 podporuje YouTube Downloader funkci, která do jisté míry
+umoòuje konvertovat stáhnuté soubory do jinıch formátù - nabízí rozhraní,
+pomocí kterého lze po dokonèení downloadu nebo po kliknutím na pøíslušné
+tlaèítko v grafickém prostøedí spustit externí aplikaci a pøedat jí jméno
+stáhnutého souboru (a pøípadnì další parametry). Tato externí aplikace pak
+mùe udìlat cokoliv, vèetnì konverze do jiného formátu. 
 
-Pozor, grafická verze programu pøebije tyto hodnoty údaji z registrù Windows,
-pokud nepouijete nastavení "DontUseRegistry".
+V demonstraèních konfiguraèních souborech jsou nadefinovány tøi základní
+konverze, vyuívající program MEncoder (souèást projektu MPlayer, domovská
+stránka http://www.mplayerhq.hu) pro
 
-V sekci [YTD] jsou následující nastavení:
+a) pøevod videa do kontejneru AVI. Tato funkce je velmi rychlá a nedochází
+   pøi ní ke zmìnì kvality, nemusí ale fungovat pro všechny vstupní formáty
+   (napø. pro mnoho souborù .FLV, ne-li pro všechny) a hlavnì zmìní jenom
+   kontejner, ale ne obsah, take pro pøehrání stále potøebujete kodeky,
+   které byly potøeba pro pùvodní video. Vıznam konverze je víceménì omezen
+   jen na programy, které nepodporují jiné kontejnery ne AVI.
 
-  Language=cs
-    - Vynutí pouití vybrané jazykové verze.
-    - Obsahem poloky je dvouznakovı ISO kód jazyka, napø. "cs" pro èeštinu
-      nebo "en" pro angliètinu. Pokud zvolenı jazyk nebyl zatím pøeloen,
-      program pouije angliètinu. Seznam monıch kódù na Wikipedii:
-      http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-    - Vıchozí hodnotou je prázdnı øetìzec, kterı znamená, e si program sám
-      zvolí jazyk podle toho, jak je nastavené Locale ve Windows.
+b) konverzi videa do kontejneru AVI s kodekem XVID+MP3. Zde u jde o plnou
+   rekompresi, s vlastnostmi v zásadì opaènımi ne u pøevodu kontejneru -
+   je to pomalé a dochází ke ztrátì kvality, ale funguje to pro (skoro)
+   všechny vstupní soubory a vısledek pak pøehrajete v kadém pøehrávaèi,
+   pokud ovšem podporuje kodek XVID (to u jsou dnes snad všechny).
 
-  OverwriteMode=Ask
-    - Vıchozí nastavení zpùsobu, jak má YTD reagovat na existující soubory.
-    - Moné hodnoty jsou (bez uvozovek):
-      "ask" - zeptat se, co dìlat (jako parametr -k)
-      "never" - existující soubory pøeskakovat (jako parametr -n)
-      "always" - existující soubory pøepisovat (jako parametr -a)
-      "rename" - vytváøet nové, jedineèné jméno (jako parametr -r)
-    - Vıchozí hodnotou je "ask".
-   
-  DestinationPath=C:\Downloads
-    - Cesta, do které se mají ukládat videa (jako parametr -o).
-    - Vıchozí hodnotou je prázdnı øetìzec, kterı znaèí aktuální pracovní
-      adresáø.
+c) konverzi videa do kontejneru AVI s kodekem H264+MP3. Platí to samé co pro
+   pøedchozí pøípad.
 
-  ErrorLog=C:\Downloads\error.log
-    - Název souboru, do kterého se mají ukládat informace o nepodaøenıch
-      downloadech (jako parametr -e).
-    - Vıchozí hodnotou je prázdnı øetìzec, záznam nebude vytváøen.
+Pro všechny tøi varianty jsou nastaveny nìjaké základní parametry, ovšem 
+zdùrazòuji, e moje zkušenosti s konverzemi jsou mizivé a tudí ty parametry
+s jistotou nebudou optimální. Nebuïte tedy pøekvapeni dosaenımi vısledky.
+Pokud se najde nìjakı expert ochotnı moje nastavení zoptimalizovat, budu jen
+rád.
 
-  DontUseRegistry=0
-    - Touto volnou je moné urèit, jestli má grafická verze programu ukládat
-      svoje nastavení do registrù nebo do INI souboru. Registry mají vıhodu,
-      e jsou dostupné všude (ukládá se do vìtve HKEY_CURRENT_USER), zatímco
-      INI soubor nemusí bıt kvùli pøístupovım právùm dostupnı; zato se hodí v 
-      pøípadì, e chcete aplikaci pouívat jako portable.
-    - Command-line verze nikdy nepouívá registry.
-    - Moné hodnoty jsou "0" (pouívat registry) a "1" (nepouívat registry).
+Co potøebujete udìlat pro to, aby konverze chodily:
+
+1. Stáhnout si a nainstalovat kompletní MPlayer (obsahuje i MEncoder.exe).
+
+2. MEncoder.exe zkopírovat do adresáøe v PATH nebo do adresáøe, kde je
+   nainstalovanı YouTube Downloader.
+
+3. a) Pokud chcete automaticky zkonvertovat všechny soubory:
+
+      V grafickém prostøedí kliknout na ikonku "Vybrat konvertovaè" (film s
+      tukou) a vybrat si jeden z pøednastavenıch konvertovaèù. Od té chvíle
+      budou všechny novì staené soubory pøedhozeny tomuto konvertovaèi
+      (ve vıchozím stavu jeden po druhém, program je nastaven tak, aby 
+      v jednu chvíli automaticky bìel jen jeden konverzní proces).
+
+   b) Pokud chcete zkonvertovat jen soubory, které sám urèíte:
+
+      V grafickém prostøedí vybrat jeden nebo více souborù a kliknout na
+      ikonu "Zkonvertovat" (film se zelenou šipkou). Konverze bude spuštìna
+      pro všechny zvolené filmy, bez ohledu na to, kolik jich je a jestli
+      byly úspìšnì dokonèeny.
+
+Pokroèilí uivatelé mohou zásahem do konfigurace zmìnit nastavení tìchto
+úloh nebo pøidat úlohy úplnì nové. Pokud vám nevyhovuje MEncoder, mùete
+pouít jinı program - a nemusíte se vùbec omezovat na programy pro konverzi
+videa, funkce je napsána natolik obecnì, abyste mohli tøeba spustit nìjakı
+BAT skript nebo video nìkomu poslat mailem. Popis dostupnıch nastavení je
+uveden níe v sekci Konfigurace.
+
+Ve verzi spouštìné z pøíkazového øádku tato funkce podporována není - tuto
+verzi je moné skriptovat "samu od sebe" a mì pøipadá zbyteèné zavádìt
+duplicitní funkci, která pøinese jen zvıšené riziko chyb a ádnou skuteènou
+vıhodu.
+
+
+
+KONFIGURACE
+-----------
+
+Od verze 0.50 pouívá YouTube Downloader pro svoji konfiguraci XML soubor
+"ytd.xml". Umístìn mùe bıt ve dvou místech:
+
+1) Adresáø, ve kterém je YTD.exe. Toto je primární umístìní.
+
+2) Adresáø "YouTube Downloader" v uivatelském profilu Windows (%APPDATA%).
+   Toto umístìní se zkoumá v pøípadì, e primární XML soubor neexistuje
+   nebo e je v nìm pro aplikaci vypnut pøenositelnı (portable) reim.
+
+Konfiguraèní parametry jsou vdy ukládány jako obsahy XML tagù. V souladu
+s XML standardem jsou názvy tagù citlivé na velikost písmen (case-sensitive);
+jejich obsahy obecnì citlivé nejsou (case-insensitive), ale je vhodné pouívat
+v nich jen malá písmena. Logické hodnoty (ano-ne) jsou ukládány jako "1" (ano)
+a "0" (ne).
+
+<ytd> 
+  - Koøenovı prvek; jeho název mùe bıt v zásadì libovolnı, program to (zatím) 
+    nekontroluje. Obsahuje všechna nastavení.
+
+<config>
+  - Potomek <ytd>; obsahuje základní konfiguraci spoleènou pro grafickou i 
+    textovou verzi programu.
+
+  <portable_mode>
+    - Potomek <config>; obsahuje logickou hodnotu urèující, jestli YTD pracuje
+      v pøenositelném (portable) nebo standardním reimu. Ani jeden z reimù
+      nezapisuje do registru Windows, liší se však tím, do kterého XML souboru
+      jsou ukládána uivatelská nastavení: v portable reimu se zapisují do 
+      souboru "ytd.xml" v adresáøi, ve kterém je program nahrán (a kde tedy 
+      musí bıt právo zápisu, pokud se má konfigurace ukládat úspìšnì), ve 
+      standardním reimu se ukládají do "ytd.xml" v uivatelském profilu (kde 
+      je za bìnıch okolností právo zápisu vdy).
+    - Moné hodnoty jsou "1" (zapnout portable reim) a "0" (vypnout).
     - Vıchozí hodnota je "0".
 
-  ProxyHost=localhost
-    - Adresa proxy serveru. Pokud není vyplnìna, proxy server se nebude 
-      pouívat.
-    - Pozn.: Proxy server funguje pro servery pouívající protokoly HTTP
-      a MMS/RTSP. Kod pro servery pouívající RTMP je napsán a zkompilován
-      do aplikace, ale není ovìøen.
-    - Monou hodnotou je IP adresa nebo doménové jméno.
-    - Vıchozí hodnota je prázdnı øetìzec (nepouívat proxy).
+  <language_mode>
+    - Potomek <config>; urèuje, jakı jazyk má bıt pouit pro zobrazení textù
+      programu. 
+    - Monımi hodnotami jsou dvouznakové ISO kódy jazykù, viz sekce Lokalizace
+      níe. Povolen je i prázdnı øetìzec, kterı znaèí jazyk podle nastavení
+      operaèního systému.
+    - Vıchozí hodnota je prázdnı øetìzec (jazyk podle nastavení OS).
+    - Pozor: V distribuèním archívu jsou k dispozici jazykové soubory jen pro
+      èeštinu ("cs") a angliètinu ("en"); další jazyky èekají na to, a je 
+      nìkdo pøeloí.
 
-  ProxyPort=3128
-    - Port, na kterém poslouchá proxy server ProxyHost.
-    - Monou hodnotou je èíslo portu.
-    - Vıchozí hodnota je 3128.
+  <destination_path>
+    - Potomek <config>; urèuje, do kterého adresáøe se mají videa ukládat.
+    - Monou hodnotou je buï prázdnı øetìzec (znaèí aktuální pracovní adresáø,
+      co je obvykle adresáø, ze kterého byl program spuštìn), nebo libovolná
+      platná cesta, absolutní ("c:\download") i relativní ("..\downoad").
+      V pøípadì portable verze doporuèuji vyhnout se absolutním cestám a 
+      pouívat buï prázdnı øetìzec nebo cestu relativní,
+    - Vıchozí hodnota je prázdnı øetìzec (aktuální pracovní adresáø).
+    - Odpovídá parametru -o na pøíkazové øádce.
 
-  ProxyUser=uivatel
-    - Pokud je vyplnìno, bude uivatel na proxy serveru autentizován svım
-      jménem a heslem.
-    - Autentizace jménem a heslem nefunguje a nebude fungovat u protokolu
-      RTMP.
-    - Funkènost není ovìøena.
-    - Vıchozí hodnota je prázdná (nepouívat autentizaci).
+  <error_log>
+    - Potomek <config>; urèuje, do kterého souboru se bude ukládat seznam URL,
+      které se z nìjakého dùvodu nepodaøilo stáhnout.
+    - Monou hodnotou je buï prázdnı øetìzec (øíká, e se seznam chybnıch URL
+      ukládat nebude) nebo cesta k souboru.
+    - Vıchozí hodnota je prázdnı øetìzec (neukládat seznam chyb).
+    - Grafická verze programu tuto poloku nepouívá.
+    - Odpovídá parametru -e na pøíkazové øádce.
 
-  ProxyPassword=heslo
-    - Heslo pro autentizaci uivatele na proxy serveru.
-    - Pouije se jen v pøípadì, e je vyplnìn ProxyUser.
-    - Vıchozí hodnotou je prázdnı øetìzec (bez hesla).
+  <overwrite_mode>
+    - Potomek <config>; øíká, jak se má program zachovat v pøípadì, e pøi
+      ukládání videa narazí na existující soubor.
+    - Moné hodnoty jsou:
+        "ask" - zeptat se uivatele na akci.
+        "never" - pøeskoèit soubor (pøedpoklad: u byl staen døíve).
+        "always" - pøepsat soubor (pøedpoklad: pøedchozí verze je chybná).
+        "rename" - pojmenovat novı soubor tak, aby mìl jedineèné jméno
+                   (pøedpoklad: pùvodní soubor je jinı ne ten, co stahuji 
+                   teï).
+    - Vıchozí hodnota je "ask" (zeptat se uivatele).
+    - Odpovídá parametrùm -k (ask), -n (never), -a (always), -r (rename) na
+      pøíkazové øádce.
 
-V sekci [CeskaTelevize.cz] jsou následující nastavení:
+  <proxy_server>
+    - Potomek <config>; umoòuje nastavit proxy server pro vaši sí. Proxy 
+      server je v souèasné dobì podporován a ovìøen pro protokoly HTTP a 
+      MMS/RTSP. V pøípadì protokolu RTMP se mi nepodaøilo funkènost ovìøit.
 
-  PreferRealMedia=1
-    - Touto volbou si volíte mezi streamem ve formátu Windows Media a Real
-      Media.
-    - Moné hodnoty jsou "0" (Windows Media) a "1" (Real Media).
-    - Vıchozí hodnota je "0".
+    <active>
+      - Potomek <proxy_server>; øíká, jestli je proxy server aktivní (bude
+        se pouívat) nebo neaktivní.
+      - Moné hodnoty jsou "1" (pouívat proxy) a "0" (nepouívat proxy).
+      - Vıchozí hodnota je "0" (nepouívat proxy).
+
+    <host>
+      - Potomek <proxy_server>; urèuje adresu, na které proxy server èeká.
+      - Moné hodnoty: prázdnı øetìzec (nepouívat proxy) nebo libovolná
+        pøípustná internetová adresa (èíselná nebo doménové jméno).
+      - Vıchozí hodnota je prázdnı øetìzec (nepouívat proxy).
+
+    <port>
+      - Potomek <proxy_server>; urèuje port, na kterém proxy server èeká.
+      - Moné hodnoty: èísla od 1 do 65535. Bìné jsou hodnoty 3128, 8080.
+      - Vıchozí hodnota je 3128.
+
+    <user>
+      - Potomek <proxy_server>; urèuje uivatelské jméno, kterım se svému
+        proxy serveru pøihlašujete. Podporováno je pouze pro protokol HTTP
+        a jeho funkènost není ovìøena.
+      - Monou hodnotou je libovolné platné uivatelské jméno nebo prázdnı
+        øetìzec (autorizace se nepouívá).
+      - Vıchozí hodnotou je prázdnı øetìzec (autorizace se nepouívá).
+
+    <password>
+      - Potomek <proxy_server>; urèuje heslo pro pøihlášení k proxy serveru.
+      - Monou hodnotou je jakıkoliv øetìzec.
+      - Vıchozí hodnotou je prázdnı øetìzec (bez hesla).
+
+<gui>
+  - Potomek <ytd>; obsahuje nastavení specifická pro grafickou verzi programu.
+    Za normálních okolností tyto údaje nemìníte ruènì, ale napø. klikáním na
+    tlaèítka a podobnì.
+
+  <auto_start_downloads>
+    - Potomek <gui>; øíká, jestli se mají novì pøidané odkazy automaticky
+      spouštìt nebo jestli si je spustíte sami ruènì tlaèítkem Start.
+    - Moné hodnoty jsou "1" (spouštìt automaticky) a "0" (poèkat na ádost
+      uivatele).
+    - Vıchozí hodnotou je "1" (spouštìt automaticky).
+
+  <check_for_new_version>
+    - Potomek <gui>; urèuje, jestli se má program pøi spuštìní grafické verze
+      pokusit o zjištìní dostupnosti novìjších verzí. I v pøípadì, e test
+      zakáete, mùe program novou verzi zjistit, ale jen na vyádání - buï 
+      parametrem -v na pøíkazovém øádku nebo tím, e otevøete okno "O 
+      aplikaci".
+    - Moné hodnoty jsou "1" (zjišovat verze) a "0" (nezjišovat).
+    - Vıchozí hodnotou je "1" (testovat novou verzi).
+
+<modules>
+  - Potomek <ytd>. V této sekci se nacházejí specifická nastavení pro 
+    jednotlivé poskytovatele.
+
+  <CeskaTelevize_cz>
+    - Potomek <modules>; obsahuje nastavení pro Èeskou televizi a odvozené
+      odkazy (Port, ÈT24 atd.).
+
+    <prefer_real_media>
+      - Potomek <CeskaTelevize_cz>; urèuje, ve kterém formátu se bude video
+        stahovat.
+      - Moné hodnoty jsou "0" (pouívat formáty Microsoftu) a "1" (pouívat
+        formáty Real Media).
+      - Vıchozí hodnotou je "0" (stahovat ve formátech Microsoft).
+
+<converters>
+  - Potomek <ytd>. V této sekci jsou nadefinovány parametry jednotlivıch 
+    konvertovaèù (aplikací volanıch funkcí Konverze nebo automaticky po
+    stáhnutí filmu).
+
+  <selected>
+    - Potomek <converters>; urèuje, kterı konvertovaè se má automaticky pouít
+      pro všechny stáhnuté filmy.
+    - Moné hodnoty jsou prázdnı øetìzec (automatická konverze se nebude
+      provádìt) nebo nìkterá hodnota atributu "id" poloek <converter> (viz
+      dále).
+    - Vıchozí hodnotou je prázdnı øetìzec (neprovádìt automatické konverze).
+
+  <max_threads>
+    - Potomek <converters>; urèuje, maximálnì kolik automatickıch konverzních 
+      úloh smí soubìnì probíhat. Doporuèuji nechat zde hodnotu 1, a pokud u
+      ji budete zvyšovat, nezvyšujte ji nad poèet procesorù ve vašem poèítaèi.
+      I to mùe bıt pøíliš, pokud chcete mít rychlou odezvu systému.
+    - Moné hodnoty jsou èísla od nuly vıše, pøièem nula vypíná automatické
+      konverze.
+    - Vıchozí hodnotou je 1.
+
+  <converter>
+    - Potomek <converters>; kadı vıskyt této poloky definuje jeden konkrétní 
+      konvertovaè. Kadı konvertovaè musí mít atribut "id" s nìjakou jedineènou 
+      hodnotou, která bude pouita do <selected>.
+
+    <title>
+      - Potomek <converter>; obsahuje název, kterı se bude zobrazovat uivateli
+        ve formuláøi pro vıbìr konvertovaèe.
+      - Monou hodnotou je libovolnı øetìzec. Program sám s ním nijak nepracuje,
+        jen ho zobrazuje uivateli, proto je vhodné zvolit nìco popisného.
+      - Vıchozí hodnotou je prázdnı øetìzec.
+
+    <exe_path>
+      - Potomek <converter>; urèuje název programu nebo skriptu, kterı se má 
+        spustit. Pokud není program v PATH nebo v adresáøi YouTube Downloaderu,
+        musí zde bıt uvedena celá cesta.
+      - Monou hodnotou je libovolná cesta, mùe obsahovat i mezery (v takovém
+        pøípadì ji NEDÁVEJTE do uvozovek).
+      - Vıchozí hodnotou je prázdnı øetìzec.
+
+    <command_line>
+      - Potomek <converter>; obsahuje pøíkazovou øádku, která bude programu
+        pøedána. Kromì pevnıch parametrù (napø. -ovc copy -oac copy) zde mohou
+        bıt i promìnné, které YouTube Downloader nahradí skuteènımi údaji.
+        Jsou to:
+
+          {$FULLPATH} .... celá cesta k souboru
+          {$FILENAME} .... pouze název souboru bez cesty
+          {$FILEPATH} .... jen adresáø souboru (cesta souboru bez názvu)
+          {$FILEEXT} ..... pøípona souboru, vèetnì teèky
+          {$FILENOEXT} ... název souboru bez cesty a bez pøípony
+          {$TITLE} ....... název filmu (napø. pro úèely tagování)
+
+
+      - Monou hodnotou je libovolnı øetìzec, i prázdnı.
+      - Vıchozí hodnotou je prázdnı øetìzec.
+
+    <visibility>
+      - Potomek <converter>; urèuje, jak se má konvertovaè spouštìt.
+      - Moné hodnoty jsou "visible" (standardní spuštìní), "minimized"
+        (konvertovaè se spustí normálnì, ale jeho okno bude minimalizováno)
+        a "hidden" (konvertovaè se spustí neviditelnì).
+      - Vıchozí hodnota je "minimized".
 
 
 
@@ -640,6 +886,11 @@ YouTube Downloader vyuívá ke své funkci komponenty dalších autorù:
   - licence: Mozilla Public License 1.1
   - zdroj: http://www.regular-expressions.info/delphi.html
 
+- Nils Haeck
+  - knihovna NativeXml pro práci s XML.
+  - licence: vlastní, freeware
+  - zdroj: http://www.simdesign.nl/xml.html
+
 - Mark James
   - ikonky Silk pouité v grafické verzi programu.
   - licence: Creative Common Attribution 2.5
@@ -654,8 +905,3 @@ YouTube Downloader vyuívá ke své funkci komponenty dalších autorù:
   - RTMPDUMP, nástroj pro stahování protokolu RTMP a jeho variant.
   - licence: GNU GPL v2
   - zdroj: http://rtmpdump.mplayerhq.hu/
-
-- Jan Verhoeven (jan1.verhoeven@wxs.nl)
-  - knihovna janXmlParser2 pro práci s XML.
-  - licence: vlastní, freeware
-  - zdroj: http://jansfreeware.com/jfdelphi.htm

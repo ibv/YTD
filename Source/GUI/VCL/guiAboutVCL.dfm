@@ -36,7 +36,7 @@ object FormAbout: TFormAbout
     Caption = 'Version:'
   end
   object LabelVersion: TLabel
-    Left = 96
+    Left = 112
     Top = 40
     Width = 74
     Height = 13
@@ -57,7 +57,7 @@ object FormAbout: TFormAbout
     Caption = 'Newest version:'
   end
   object LabelNewestVersion: TLabel
-    Left = 96
+    Left = 112
     Top = 56
     Width = 55
     Height = 13
@@ -79,9 +79,9 @@ object FormAbout: TFormAbout
     Caption = 'Homepage:'
   end
   object LabelHomepage: TLabel
-    Left = 96
+    Left = 112
     Top = 72
-    Width = 307
+    Width = 291
     Height = 13
     Anchors = [akTop, akRight]
     Caption = 'http://www.pepak.net/download/youtube-downloader'

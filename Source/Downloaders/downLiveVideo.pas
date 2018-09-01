@@ -24,11 +24,11 @@ type
 implementation
 
 uses
-  janXmlParser2,
+  uXML,
   uDownloadClassifier,
   uMessages;
 
-// http://www.livevideo.com/liveshow/brian3maria
+// http://www.livevideo.com/liveshow/TakeOffMyLipGloss
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*livevideo\.com/liveshow/';
   URLREGEXP_ID =        '[^/?&]+';
@@ -49,7 +49,7 @@ end;
 constructor TDownloader_LiveVideo.Create(const AMovieID: string);
 begin
   inherited;
-  SetInfoPageEncoding(peUTF8);
+  SetInfoPageEncoding(peXml);
 end;
 
 destructor TDownloader_LiveVideo.Destroy;
@@ -63,21 +63,20 @@ begin
 end;
 
 function TDownloader_LiveVideo.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
-var Xml: TjanXmlParser2;
-    Archives: TjanXmlNode2;
+var Xml: TXmlDoc;
+    Archives: TXmlNode;
     Title, Url: string;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
-  Xml := TjanXmlParser2.Create;
+  Xml := TXmlDoc.Create;
   try
     Xml.Xml := Page;
-    Archives := Xml.getChildByPath('archives');
-    if Archives <> nil then
-      for i := 0 to Pred(Archives.childCount) do
-        if Archives.childNode[i].name = 'archive' then
-          if GetXmlVar(Archives.childNode[i], 'url', Url) and GetXmlVar(Archives.childNode[i], 'title', Title) then
+    if Xml.NodeByPath('archives', Archives) then
+      for i := 0 to Pred(Archives.NodeCount) do
+        if Archives.Nodes[i].Name = 'archive' then
+          if GetXmlVar(Archives.Nodes[i], 'url', Url) and GetXmlVar(Archives.Nodes[i], 'title', Title) then
             begin
             Title := MovieID + ' - ' + Title;
             Url := HtmlDecode(Url);

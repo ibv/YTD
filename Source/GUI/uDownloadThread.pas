@@ -14,6 +14,10 @@ type
 
   TDownloadThreadState = (dtsWaiting, dtsPreparing, dtsDownloading, dtsFinished, dtsFailed, dtsAborted);
 
+  {$IFDEF CONVERTERS}
+  TConvertThreadState = (ctsWaiting, ctsConverting, ctsFinished, ctsFailed);
+  {$ENDIF}
+
   TDTStateChangeEvent = procedure(Sender: TDownloadThread; State: TDownloadThreadState) of object;
   TDTDownloadProgressEvent = procedure(Sender: TDownloadThread; TotalSize, DownloadedSize: int64) of object;
   TDTDownloaderFileNameValidateEvent = procedure(Sender: TDownloadThread; var FileName: string; var Valid: boolean) of object;
@@ -68,6 +72,7 @@ constructor TDownloadThread.Create(ADownloader: TDownloader; CreateSuspended: Bo
 begin
   fDownloader := ADownloader;
   fState := dtsWaiting;
+  FreeOnTerminate := True;
   inherited Create(CreateSuspended);
 end;
 
@@ -93,12 +98,12 @@ begin
           if Downloader.Prepare then
             State := dtsFinished
           else
-            Raise EDownloadThreadError.Create('Failed to process the playlist.');
+            Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
           end
         else
           begin
           if (not Downloader.Prepare) {$IFDEF MULTIDOWNLOADS} or (not Downloader.First) {$ENDIF} then
-            Raise EDownloadThreadError.Create('Failed to prepare a download.');
+            Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
           if Terminated then
             Break;
           State := dtsDownloading;
@@ -109,7 +114,7 @@ begin
             if Terminated then
               Break
             else
-              Raise EDownloadThreadError.Create('Download failed.');
+              Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
           if Terminated then
             Break;
           {$IFDEF MULTIDOWNLOADS}
