@@ -1,0 +1,108 @@
+2010-8-02 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.7-r2: 15th release
+	* src/msdl.c: fixed bug with stdout output when target url contains no filename. (thanks to many)
+	* msdl.spec:  fixed order of the changelog inside the file.
+
+2010-2-27 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.7-r1: 14th release
+	* src/network.c: send(,,,MSG_NOSIGNAL) doesn't compile in Mac OS, changed to ignore SIGPIPE.
+	* src/main.c: code added to ignore sigpipe. signal(SIGPIPE,SIG_IGN);
+
+2010-2-24 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.7: 13th release
+	* src/main.c: -a inf for infinite download (thanks to Mr. Zidlicky)
+	* src/mmsh.c: mmsh resume (partly) supported (also thanks to Mr. Zidlicky)
+	* src/mmst.c: mmst to mmsh auto fallback support
+	* src/main.c: fixed possible memory leaks
+	* src/msdl.c: added write check
+	* msdl.spec:  specfile, for the RPM. I got from Mr. Zidlicky. Thanks a lot.
+
+2009-10-26 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.6: 12th release
+	* src/msdl.c: -o chain enabled, multiple name for multiple targets
+	* src/msdl.c: --stream-timeout option to quit streaming after some time. (thanks to Mr. Bicchi)
+	* NEWS: rewrote the format. It got easier to see, I think.
+
+2009-7-21 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.5: 11th release
+	* src/display.c: all message goes to stderr
+	* src/msdl.c: -o - for stdout, like wget. (thanks to Mr.Rees)
+	* src/msdl.c: fixed get_url_list_from_file
+	* src/*: FreeBSD test
+
+2009-3-31 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.4-r1: bugfix release to 1.2.4
+	* src/msdl.c: fixed a bug happens in redirected url. (thanks again to Mr.Jubany)
+	* src/http.c: fixed typo "ridirect" -> "redirect"
+
+2009-3-31 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.4: 10th release
+	* src/network.c: fiexed proxy string parse bug
+	* src/url.c: fixed is_url_valid_char(), added some missing valid characters (thanks to Mr.Jubany)
+	* src/wmserver.c: fixed SETUP request routine, a=control can be both absolute/relative URL
+	* src/display.c: use stdout for error output. error message goes to stdout now!
+
+2008-11-29 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.3: 9th release
+	* src/mmst.c: fixed mmst 0x33 command bug (thanks for Mr.ear5cm)
+	* src/main.c: put more debug infos for --debug switch
+	* src/mmsh.c: fixed 2nd mmsh request header
+	* src/wmserver.c: fixed the dirtiest inplementation in this source code! (0x82 magic stuff)
+
+2008-09-21 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.2: 8th release
+	* src/msdl.c: some rewrite
+	* src/http.c: http redirect support
+	* src/*     : added copyright information for MPlayer/xine-lib, on which some codes are based
+
+2008-06-20 metro <me_t_ro@yahoo.com>
+	* msdl-1.2.1: 7th release
+	* src/mmst.c: bug fix for mmst. version 1.2 could download mmst
+	* src/wmserver.c: show server message on PLAY request if error
+	* src/real.c: show server message on PLAY request if error
+
+2008-05-25 metro <me_t_ro@yahoo.com>
+	* msdl-1.2: 6th release
+	* src/msdl.c: -aN (auto-retry) option added
+	* src/real.c: resume for real-rtsp support
+
+2008-04-20 metro <me_t_ro@yahoo.com>
+	* msdl-1.1.99: beta release for 6th release
+	* src/mmsh.c: rewrite
+	* src/wmserver.c: resume (continue) support
+	* src/http.c: resume (continue) support
+	* src/ftp.c: resume (continue) support
+	* src/http.c: byterange support
+	* src/ftp.c: byterange support
+
+2008-02-06 metro <me_t_ro@yahoo.com>
+	* msdl-1.1.1: 5th release
+	* msdl-1.1.1: -l (log to file) option added
+	* src/msdl.c: (almost) complete rewrite
+	* src/wmserver.c: changed algorithm
+	* src/real.c: changed algorithm
+	* src/url.c: separated from network.c
+
+2008-01-20 metro <me_t_ro@yahoo.com>
+	* msdl-1.1: 4th release.
+	* msdl-1.1: -s (speed) and -r (range) options added.
+	* src/*: fixed trivial bugs and memory leaks.
+	* src/*: some clean-ups.
+	* src/realchallenge.c: got apart from real.c.
+	* src/rtsp.c: code for speed and range options
+	* doc/: document directory added
+	* doc/msdl.1.in: man file added
+
+2007-09-23 metro <me_t_ro@yahoo.com>
+	* msdl-1.0: third release.
+	* src/*: fixed memory leaks.
+	* src/ftp.c: added ftp support.
+	* src/wmserver.c: WMP 11 useragent.
+	* src/mmsh.c: WMP 11 useragent.
+
+2007-08-09 metro <me_t_ro@yahoo.com>
+	* msdl-0.9: second beta release.
+	* src/msdl.c: auto fallback from rtsp->mms.
+
+2007-07-28 metro <me_t_ro@yahoo.com>
+	* msdl-0.8: first beta release.

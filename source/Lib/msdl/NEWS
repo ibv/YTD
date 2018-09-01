@@ -1,0 +1,115 @@
+Version 1.2.7-r2.
+-- msdl
+	* 15th release
+	* bugfix release for stdout "-o -" when target url contains no filename.
+
+Version 1.2.7-r1.
+-- msdl
+	* 14th release
+	* bugfix release to delete MSG_NOSIGNAL and added SIGPIPE,SIG_IGN, for more portability.
+
+Version 1.2.7.
+-- msdl
+	* 13th release
+	* -a inf for infinite download retries.
+	  $ msdl -a inf rtsp://foo.com/bar.wma
+	* mmsh resumeing (partly) supported
+	  Still cannot resume in some cases, but mmsh resume support added.
+	* mmst to mmsh auto fallback added. if mmst fails to connect, it automatically tries mmsh.
+	* added check on fwrite()
+	* fixed possible memory leaks which happens when --logfile a --logfile b etc.
+	* msdl.spec added, for rpm systems.
+	  the "msdl.spec" file was originally created by Mr.Zidlicky. Thanks.
+
+
+Version 1.2.6.
+-- msdl
+	* 12th release
+	* -o chain enabled, you can do
+          $ msdl -o 1.foo -o 2.foo -o 3.foo http://bar/file1 http://bar/file2 http://bar/file3
+	* --stream-timeout option for quit streaming after some time.
+	  $ msdl --stream-timeout 3m30s rtsp://foo.com/bar.wmv
+          to download the first 3 and a half minutes.
+	  This is helpful for downloading the real-time streaming, which ignores RTSP Range parameters.
+
+Version 1.2.5.
+-- msdl
+	* 11th release
+	* all message goes to stderr
+	* -o - (stdout) option added
+	  the stream will be written to stdout, so you can write to device, or pipes, etc.
+	* changed uinq filtering function in get_url_list_from_file()
+	* FreeBSD test done
+
+Version 1.2.4-r1.
+-- msdl
+	* bugfix release
+	* fiexed bug about redirection (thanks for Mr.Jubany)
+	* fixed some codes
+
+Version 1.2.4.
+-- msdl
+	* 10th release
+	* fiexed proxy string parse bug
+	* fixed is_url_valid_char(), added some missing valid characters (thanks for Mr.Jubany)
+	* fixed SETUP request routine, a=control can be both absolute/relative URL
+	* use stdout for error output. error message goes to stdout now!
+
+Version 1.2.3.
+-- msdl
+	* 9th release
+	* fixed mmst 0x33 command bug (Thanks for Mr.ear5cm)
+	* put more debug infos for --debug switch
+	* fixed mmsh 2nd request message
+	* fixed rtsp 0x82 magic inplementation
+
+Version 1.2.2.
+-- msdl
+	* 8th release
+	* http redirect support
+	* added MPlayer/xine-lib copyright infos in each file
+
+Version 1.2.1.
+-- msdl
+	* 7th release
+	* fixed fatal bug on mmst
+	* some change on wmserver/real
+
+Version 1.2.
+-- msdl
+	* 6th release
+	* -aN option added (for streams which often cause timeout error)
+	* resume real-rtsp support
+
+Version 1.1.99.
+-- msdl
+	* beta release
+	* -c (--continue) option added
+	* --byterange option added
+
+Version 1.1.1.
+-- msdl
+	* 5th release
+	* -l (--logfile) option added
+
+Version 1.1.
+-- msdl
+	* 4th release
+	* -s and -r options added, now Fast streaming is (partly) available.
+	* some cleanup on rtsp-related codes
+
+Version 1.0.
+-- msdl
+	* third release
+	* fixed memory leaks
+	* ftp support added
+	* WMP ver.11 useragent string
+
+Version 0.9.
+-- msdl
+	* Second release
+	* added auto fallback of rtsp->mmst
+
+Version 0.8.
+-- msdl
+	* First release

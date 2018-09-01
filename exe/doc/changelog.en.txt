@@ -1,0 +1,735 @@
+CHANGELOG
+---------
+
+  v0.51
+    
+    * License terms change: YouTube Downloader is no longer distributed under
+      the GNU GPL: a careful study of both GPL and the licenses of third-party
+      libraries used in the application reveals that I don't have the right
+      to release the program under GPL. YouTube Downloader is now being released
+      under the "new BSD license", with third-party components (in directory
+      Source/Lib) being governed by their own respective licenses. The details
+      are described in the documentation.
+
+    * GUI: Converters are now deactivated by default and must be activated in
+      the configuration file before they can be used. The reason is, many people
+      failed to read the documentation and instead started complaining that
+      converters don't work (which was, and still is, expected - converters
+      must be configured first). The activation steps are described in the
+      documentation.
+
+    * GUI: The conversion failure is now split: You can recognize whether the 
+      conversion failed to even start or whether it started but failed to
+      finish successfully.
+
+    * GUI: An error message is displayed if you try to add an unsupported URL.
+
+    * CeskaTelevize.cz:
+      - Support for advertisments (specifically, skipping them).
+      - Support for URLs like: http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
+
+    * CT24.cz: Support for URLs like: http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
+
+    * VideaCesky.cz: Support for movies hosted directly on the server rather
+      than on YouTube (e.g. http://www.videacesky.cz/ostatni/ceska-republika-narod-pivaru)
+
+    * MSDL updated to version 1.2.7-r2.
+
+
+
+  v0.50
+
+    * Before the first start of the GUI version (that is, when a GUI version
+      is stared but no configuration XML file exists), the program will ask
+      you several questions in regards of configuration options which influence
+      your privacy. Please pay close attention to these questions.
+    
+    * When starting the GUI, a check for new version is automatically
+      performed. If you prefer not to do this check, there is an option
+      to turn in off in the configuration. See the documentation for details.
+
+    * Completely rewritten the way options are stored. Instead of the old
+      weird combination of INI files and registry, YouTube Downloader now
+      uses a XML file. This file can be stored either in the application
+      directory or in the user's profile, depending on whether you use YTD
+      as a portable application or a regular one. You'll find more details
+      in the documentation.
+
+    * Support for conversion or any other operation on successfully downloaded
+      movies. The basic usage is described in the documentation in section 
+      "Conversion of downloaded file", section "Configuration" provides 
+      details on defining your own converters or changing the existing ones
+      (search for <converters>).
+
+    * GUI version now has a button for donations, if you feel like spending
+      some money to help further development. Don't feel obliged to do so,
+      though, the application is and will remain free regardless. It's more
+      of a means of tracking how many people find my application useful
+      than a source of income (besides, I would have to tax it if too many
+      people donate, and I'd rather not have to do that).
+
+    * The GUI version also provides a button for reporting non-working URLs.
+      The function requires that you use the newest version of YTD. Before
+      reporting an error, please make sure the problem is with YouTube
+      Downloader and not your internet connection or the media provider's
+      web site (for example, try that the movie plays fine if you try to
+      load it in a web browser). Thank you.
+
+      The error reporting is done through a special web form. The required
+      fields will be filled in when you open it, but I urge you to fill in
+      the description field and, if you want to get a response or in case
+      I need more detailed info, an e-mail as well.
+
+    * GUI version now has more detailed error messages.
+
+    * An elusive long-standing bug, present since version 0.12 (though I first
+      encountered it while working on version 0.41), which could cause random
+      crashes after a download was finished, was found and squashed.
+
+    * New providers:
+        - AngryAlien.com
+        - Blennus.com
+        - Bolt.com (BoltAgain.ning.com)
+        - Current.com
+        - Dachix.com (porn)
+        - DevilDucky.com
+        - EmpFlix.com (porn)
+        - EVTV1.com
+        - Grinvi.com (porn)
+        - NothingToxic.com
+        - Revver.com
+        - SlutLoad.com (porn)
+        - Spankwire.com (porn)
+        - TnaFlix.com (porn)
+        - TotallyCrap.com
+        - YouJizz.com (porn)
+
+    * Barrandov.tv: Instead of the old .f4v extension a better .flv is used.
+
+    * Break.com: Support for two variants of links to the embedded version.
+
+    * VideaCesky.cz: Added support for an alternate embedding method, which
+      should make previously non-downloadable movies work.
+
+    * PornHub.com: Support for links to the embedded version. Fixed downloads
+      of the regular (HTML) version.
+
+    * Another significant change in the source code: I removed the old XML
+      parsing component TjanXmlParser2 and replaced it with TNativeXml, which
+      is still being developed, supports all versions of Delphi and is more
+      more compatible with XML specs. Just like with regular expressions in
+      the last version, this change may lead to some non-working providers,
+      although I tried most of them and they seem to be fine.
+
+    * YouTube Downloader can once again be built with FreePascal. A guide to
+      building YTD is written in Source\build.txt. The build scripts were
+      moved to Source, too.
+
+
+
+  v0.40
+
+    * New provider: Cas.sk.
+
+    * New provider: MediaSport.cz.
+
+    * Free.zoznam.sk: Video was saved with .php extension.
+
+    * LiveLeak.com: Support for embedded videos (alternate link).
+
+    * MSFotbal.ct24.cz: The original links on the "msfotbal" subdomain no
+      longer exist, but you can still get to the videos using standard
+      CT24.cz links.
+
+    * Rozhlas.cz: Works again (it's not needed anymore, because the pages now 
+      contain direct links to music, but since this provider is supported...).
+      Fixed a bug which could lead to unwanted overwriting of files from the
+      same page.
+
+    * YouTube.com: Works again, after YouTube changed their pages.
+
+    * GUI version: File-selection dialogs (opening or saving) now use interface
+      of your Windows version, rather than the old Windows 98 interface used
+      in older versions.
+
+    * Command-line version: Support for result codes (errorlevel). The codes
+      are listed in the main documentation.
+
+    * Command-line version: An error in arguments or encounter of a "display"
+      parameter (-?, -v, -l) causes YouTube Downloader to stop processing the
+      command line and exit.
+
+    * Some size-optimizations of the utility.
+
+    * Fixed saving of unfinished URLs, which didn't work correctly if the
+      download list was empty.
+
+    * Switched to a new library for regular expressions. Program now uses
+      TPerlRegExp instead of the old DPCRE. While this may cause some providers
+      to stop working (I did check many of them, but not all of them), it 
+      removed the dependency on PCRE.DLL and it is much more future-proof - 
+      TPerlRegExp is still maintained and updated to new versions of PCRE,
+      and it officially supports all versions of Delphi, including the new
+      ones (2009, 2010).
+
+
+
+  v0.39
+
+    * GUI version: The list of unfinished URLs is automatically saved on change
+      and loaded when the program starts. In effect, you can now quit YouTube
+      Downloader and later continue with downloads where they finished. 
+      
+      If YTD is used in portable mode (DontUseRegistry=1), the INI file must be 
+      writable for this function to work.
+
+    * To facilitate the previous feature, default value for DontUseRegistry
+      was changed to 0 - "use registry". If you want to run YouTube Downloader
+      in portable mode, you MUST create the INI file and put DontUseRegistry=1
+      into it.
+
+    * VideaCesky.cz: Some movies couldn't be downloaded.
+
+    * New provider: Aktualne.cz (Aktualne.Centrum.cz).
+
+    * New provider: AutoTube.cz.
+
+    * New provider: Bomba.cz.
+
+    * New provider: DeutscheBahn.com.
+
+    * New provider: GameAnyone.com.
+
+    * New provider: iHned.cz.
+
+    * New provider: Novinky.cz.
+
+    * New provider: PublicTV.cz.
+
+
+
+  v0.38
+
+    * Support for alternate form of URLs for msfotbal.ct24.cz.
+
+    * Updated YouTube support to changes from Jun 17, 2010.
+
+    * GUI: Double click on a downloaded video plays that video in the default
+      player (according to its extension).
+
+    * New provider: CestyKSobe.cz
+
+
+
+  v0.37
+
+    * Some changes in the code result shortening of the command-line-only 
+      version of YouTube Downloader in half - if you disable GUI, the
+      executable file's size drops by more than a half of the original size.
+
+      Optimizations of the GUI version are also planned.
+
+      (I realize that, given today's disk sizes, no-one is impressed by 
+      saved 100 KBs. But I just happen to like small programs...)
+
+    * New provider: CT24.cz
+
+    * New provider: MSFotbal.CT24.cz
+
+    * New provider: STV.LiveTV.sk
+
+    * Check for new version (CLI: argument -v; GUI: About window) didn't
+      use proxy server even if it was set in the INI file.
+
+
+
+  v0.36
+
+    * Relaxed a too-strict check for valid conversions between UTF8 and
+      Wide: unknown characters used to result in an error message, now they
+      are simply replaced with question marks and conversion continues.
+      (Solves an inconsistent behavior of CeskaTelevize.cz, which sometimes
+      worked and sometimes didn't, even with the same URL.)
+
+    * Localization support.
+
+      - Using existing translations: In its default state, the program will
+        load the language version that matches your Windows' locale. You may
+        force a particular language by changing the Language option in the
+        INI file.
+
+      - Creating your own translations: Please read the documenation for
+        details.
+
+
+
+  v0.35
+
+    * New providers:
+        - 5min.com
+        - eHow.com
+        - ExtremeTube.com (note: porn)
+        - Flickr.com
+        - FreeVideo.ru
+        - GrindTV.com
+        - KeezMovies.com (note: porn)
+        - Muzu.tv
+        - RingTV.com
+        - SevenLoad.com
+        - Spike.com
+        - Stagevu.com
+        - StupidVideos.com
+        - TodaysBigThing.com
+        - University of Minnesota (ima.umn.edu)
+
+
+
+  v0.34
+
+    * Removed the forgotten console window in GUI version.
+
+    * Updated support for MySpace. Note: Only movies hosted on MySpace servers
+      can be downloaded. Movies hosted elsewhere (e.g. Hulu.com) can't.
+
+    * Support for TV Noe (http://tvnoe.tbsystem.cz).
+
+    * Support for FreeCaster.tv.
+
+    * Support for Mpora.com.
+
+    * Support for VitalMtb.com.
+
+    * If an output file already exists and the user agreed to overwrite, YTD
+      tries to delete the file first and only after that start writing to it.
+      It's an attempt to solve a strange behavior of Windows 7, which won't
+      let YTD write to a pre-existing file.
+
+
+
+  v0.33
+
+    * Stream.cz: support for HQ video.
+
+    * Joj.sk: Implemented two more ways to detect video address. This should
+      fix the three problems of some movies not downloading at all, other 
+      movies being replaced by some other movies and some movies not being
+      downloaded in HQ. Please make sure you check any downloads from Joj
+      carefully, as Joj's backend is apparently rather shoddy and it is
+      quite possible there are even more possible storage formats.
+
+    * VideaCesky.cz: Subtitles are also downloaded.
+
+    * Fixed missing .po files in the source of MSDL library. Those are only
+      needed for clean build, of no interest for end-users.
+
+    * Support for proxy servers. There are new settings ProxyHost, ProxyPort, 
+      ProxyUser and ProxyPassword in the INI file. See documentation for
+      details.
+
+
+
+  v0.32
+
+    * Slightly rearranged icons in the GUI version.
+
+    * Support for MegaVideo.com and MegaPorn.com.
+
+    * Support for Wimp.com.
+
+    * Support for UStream.tv.
+
+      Note for developers: The AMF support is incomplete as of yet - it does
+      not handle AMF3 at all, for starters. The support will be expanded as
+      (and when needed).
+
+
+
+  v0.31
+
+    * Invalid date format in Joj.sk handling caused downloading of a wrong
+      movie.
+
+
+
+  v0.30
+
+    * Experimental support for Joj.sk. Due to the fact that URL geenrator
+      makes a number of unwarranted assumptions, it is to be expected that
+      some movies will not download. I will need to know their URLs to fix
+      them.
+
+    * Support for Metropol TV (tvpraha11.cz).
+
+    * Support for VideaCesky.cz. The same method can be used for downloads
+      from other secondary providers (who don't host their videos, but instead
+      use someone else's servers).
+
+
+
+  v0.29
+
+    * More compatibility fixes for Free Pascal. GUI version won't work for
+      quite a some time, perhaps forever.
+
+    * Fixed a bug in RTMPDUMP (used by, e.g. TV Nova or Barrandov), which 
+      only allowed one stream to download and failed with all successive
+      streams.
+
+      This bug also meant that if you tried to download two RTMP streams at
+      the same time, they were both written to one file, rendering this file
+      invalid. This behqavior is also fixed.
+
+    * Introduced a concept of "ultimate providers", which allow finer control
+      over simultaneously downloaded stream. For example, if a stream is
+      currently being downloaded from Stream.cz, another request from iPrima.cz
+      (which uses Stream.cz as a content provider) should wait.
+
+    * The graphical version ignored the "PreferRealMedia" setting for Ceska
+      Televize.cz.
+
+
+
+  v0.28
+
+    * Support for more media providers:
+       - Facebook.com
+       - Kukaj.sk
+       - LibimSeTi.cz
+       - MojeVideo.cz
+       - Myubo.sk
+       - Videoalbumy.azet.sk
+       - Wrzuta.pl
+
+    * Movies from Nova.cz now download in high quality (.mp4).
+
+    * RTMPDUMP_DLL.DLL was built with library PolarSSL rather than OpenSSL,
+      which removes the dependency on CRYPTOEAY32-0.9.8.DLL and
+      SSLEAY32-0.9.8.DLL. It means that RTMPDUMP_DLL grew by some 180 KB,
+      though.
+
+    * Program can now be built with FreePascal (http://www.freepascal.org),
+      tested with version 2.4.0. Only command-line version is supported for
+      now, though - GUI version (using project Lazarus) can be built, but
+      won't run in GUI mode.
+
+
+
+  v0.27
+
+    * Support for more media providers:
+       - Bing.com
+       - Bofunk.com
+       - Break.com.
+       - CekniTo.cz (.sk)
+       - Clipfish.de
+       - CollegeHumor.com
+       - CrunchyRoll.com
+       - DailyHaha.com
+       - DailyMotion.com
+       - EbaumsWorld.com
+       - ESPN.go.com
+       - FileCabi.net
+       - Free.Zoznam.sk
+       - FreeRide.cz
+       - GodTube.com
+       - Guba.com
+       - LiveLeak.com
+       - LiveVideo.com
+       - MetaCafe.com
+       - MySpace.com Video (http://video.myspace.com)
+       - PornHost.com (note: porn)
+       - PornHub.com (note: porn)
+       - PornoTube.com (note: porn)
+       - Raajje.tv
+       - RedTube.com (note: porn)
+       - Rude.com (note: porn)
+       - RuTube.ru
+       - Shufuni.com (note: porn)
+       - SpankingTube.com (note: porn)
+       - Stickam.com
+       - StreetFire.com
+       - Tangle.com
+       - TeacherTube.com
+       - Tontuyau.com
+       - Tube8.com (note: porn)
+       - VideoClipsDump.com
+       - Videu.de
+       - Vimeo.com
+       - XHamster.com (note: porn)
+       - XNXX.com (note: porn)
+       - XTube.com (note: porn)
+       - XVideoHost.com (note: porn)
+       - XVideos.com (note: porn)
+       - YouPorn.com (note: porn)
+       - Yuvutu.com (note: porn)
+       - ZkoukniTo.cz (note: includes an adult section)
+
+    * Added english documentation.
+
+    * Cleaned-up licensing terms: The program is released under the
+      GNU GPL3 license.
+
+    * More source code cleanup.
+
+    * RTMPDUMP updated to version 2.2d.
+
+    * The RTMPDUMP_DLL.DLL library has been modified for easier maintenance.
+      It now allows the full use of all features of RTMPDUMP, too.
+
+    * The MSDL_DLL.DLL library has been modified for easier maintenance.
+      It now allows the full use of all features of MSDL, too.
+
+    * Support for an INI file with default values. See documentation for
+      details.
+
+    * Czech Television is now being downloaded in the highest quality. You can
+      now choose between Windows Media (default) and Real Media streams (in
+      the INI file).
+
+    * Fixed download of Czech Television's program PORT so that the program is
+      downloaded rather than advertisment.
+
+    * Command-line argument -l shows a list of available providers.
+
+    * Command-line argument -v tests for availability of a newer version.
+
+    * GUI version has a new button 'About' (F1), which displays some basic 
+      information about the program and checks for availability of a newer
+      version. It shows a list of available providers (what you get if you
+      use the -l argument on command-line), too.
+
+    * Movies from YouTube have their filenames properly converted to ANSI
+      encoding.
+
+
+
+  v0.26
+
+    * Support for YouTube channels (pages containing content of a particular
+      user, e.g. http://www.youtube.com/titanicpiano14). They are handled in
+      much the same way as playlists.
+
+
+
+  v0.25
+
+    * Support for Snotr.com.
+
+
+
+  v0.24
+
+    * Some YouTube videos couldn't be downloaded with the age-verification-
+      bypass method of the last version, but they did work with the older
+      download method of version 0.22. The code was modified to first try
+      the age-verification-bypass method, and if unsuccessful, fall back
+      to the old method.
+
+      Example: http://www.youtube.com/watch?v=REpXf0cmJ64
+
+
+
+  v0.23
+
+    * Re-worked playlist support for less cluttered output in command-line
+      version. This also allows faster and easier support for more playlist
+      formats.
+
+    * Support for "adult" videos at YouTube.
+
+    * Parameter -e for logging failed downloads to a file.
+
+    * Parameter -s for reading links from HTML source. Both local files and
+      remote URLs are supported. Example:
+
+      ytd.exe -s "http://www.somewebsite.com/movies.html"
+      ytd.exe -s "c:\temp\movies.html"
+
+    * Functions for reading URL list from listfile (like -i in CLI version)
+      and reading URL list from HTML page or HTML file (like -s in CLI) were
+      added to the graphical version.
+
+    * GUI version can now save the list of unfinished downloads to a list
+      file, which can be later read using the -i parameter.
+
+
+
+  v0.22
+
+    * GUI version now displays hints for each button.
+
+    * Changed the default behavior when an existing file is encountered. The
+      older versions used to overwrite such a file. This version asks the
+      user what to do.
+
+      You may use parameters -n (never overwrite - skip), -a (automatically
+      overwrite - like the older versions), -r (rename automatically) and
+      -k (ask) to define the behavior in advance.
+
+      GUI version always asks, except when "Auto-overwrite" is checked - in
+      that case existing files are automatically overwritten like in the older
+      versions.
+
+    * GUI version minimizes to system tray.
+
+    * YouTube playlists (e.g. http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E)
+      are supported. All videos on a playlist are scheduled for download.
+
+
+
+  v0.21
+
+    * The changes in version 0.19 apparently rendered HTTP-based providers,
+      such as YouTube, inoperative. Fixed.
+
+
+
+  v0.20
+
+    * Czech TV: Support for program PORT.
+
+
+
+  v0.19
+
+    * Memory leaks due some un-freed regular expressions fixed.
+
+    * YouTube: Video "http://www.youtube.com/watch?v=7INIRLe7x0Y" was saved
+      with ".mp4" extension, although it really is a ".flv". It is possible
+      you will encounter more such cases, because I don't have a full list
+      of supported formats and their respective extensions. Just let me know
+      the URL of a video with incorrect extension and I will fix it.
+
+    * Support for http://www.tvcom.cz.
+
+    * Support for http://www.markiza.sk. If a movie consists of several
+      files, all will be downloaded.
+
+    * Support for http://www.rozhlas.cz. If a movie consists of several
+      files, all will be downloaded.
+
+
+
+  v0.18
+
+    * Support for the new YouTube design.
+
+
+
+  v0.17
+
+    * Support for MMS, MMSH, RTSP protocols and their tunnelling variants.
+      You will need MSDL_DLL.DLL library, built as a slight modification of
+      MSDL tool (http://msdl.sf.net).
+
+    * Support for Czech TV (iVysilani).
+
+    * RTMPDUMP updated to its current version.
+
+
+
+  v0.16
+
+    * Shortened output lines in command-line version, to work better with
+      100+ MB files in default console size.
+
+    * Support for TV Nova (nova.cz).
+
+
+
+  v0.15:
+  
+    * Restructured source code to better facilitate new media sources.
+
+    * Support for streams based on RTMP protocol. It is done through
+      RTMPDUMP_DLL.DLL library, which is based on RTMPDUMP project
+      (http://rtmpdump.mplayerhq.hu). The library requires OpenSSL 
+      in version 0.9.8, specifically the libraries SSLEAY32-0.9.8.DLL
+      and CRYPTOEAY32-0.9.8.DLL.
+
+    * Support for Barrandov.tv.
+
+
+
+  v0.14:
+
+    * The changes for Stream.cz caused the other sources to stop working.
+
+    * Updated the graphical interface (icons, buttons etc.).
+
+    * Added support for building only CLI or only GUI version of the
+      program: When calling BUILD.BAT, use the optional argument "CLI"
+      (only command-line version) or "GUI" (only graphical version).
+      Building just CLI version results in a much smaller EXE file,
+      just GUI version gets rid of the console window. The default
+      behavior is to use both CLI and GUI support in the same EXE file.
+
+    * The Synapse library updated to release 39. Unfortunately, this does
+      not fix the Stream.cz problem (see below).
+
+    * Support for iPrima.cz (based on Stream.cz).
+
+
+
+  v0.13:
+
+    * Support for Stream.cz. Unfortunately, it contains an unknown error
+      that occassionally occurs - see the main readme file.
+
+    * Besides video name and file the CLI version now also displays the URL,
+      which can be used - with some providers - to download movies using
+      your favorite download manager.
+
+
+
+  v0.12:
+
+    * Fixed YouTube downloader to once again support movies without a HD
+      version.
+    
+    * The graphical version was completely rebuilt. Now it shows an URL list,
+      downloads multiple files at once etc.
+
+
+
+  v0.11:
+
+    * YouTube: Experimental support for higher-quality HD formats (720HQ,
+      1080p). Please let me know if you encounter a video which doesn't
+      work.
+
+
+
+  v0.10:
+
+    * The program was rewritten from scratch. Now it is possible to add
+      support for more media providers than just YouTube.
+
+    * All outputs were changed to an easier-to-read form.
+
+    * Support for n-joy.cz.
+
+    * Support for blip.tv.
+
+    * Support for files with URL list (one URL per line) with parameter -i.
+
+    * PCRE.DLL is now required.
+
+    * Added version info and icon to the application.
+
+    * Added a very simple graphical interface, which is displayed if the
+      program is started without arguments.
+
+
+
+  v0.06:
+
+    * Support for URLs like http://www.youtube.com/v/(id)
+
+
+
+  v0.05:
+
+    * Cleaned up source codes and the build batch-file.
+
+    * Support for URLs like http://www.youtube.com/watch/v/(id)
