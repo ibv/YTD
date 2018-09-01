@@ -144,10 +144,7 @@ end;
 
 function TCommonDownloader.GetFileNameExt: string;
 begin
-  if Prepared then
-    Result := ExtractUrlExt(MovieURL)
-  else
-    NotPreparedError;
+  Result := ExtractUrlExt(MovieURL);
 end;
 
 function TCommonDownloader.ExtractUrlExt(const Url: string): string;
@@ -180,7 +177,7 @@ function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out
 begin
   Xml := nil;
   Result := DownloadPage(Http, Url, Page, InfoPageEncoding, Method);
-  if Result then
+  if Result and InfoPageIsXml then
     begin
     Xml := TXmlDoc.Create;
     try

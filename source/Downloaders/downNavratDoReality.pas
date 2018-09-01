@@ -85,15 +85,15 @@ end;
 
 class function TDownloader_NavratDoReality.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_NavratDoReality.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MoviePathRegExp := RegExCreate(REGEXP_EXTRACT_PATH, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MoviePathRegExp := RegExCreate(REGEXP_EXTRACT_PATH);
 end;
 
 destructor TDownloader_NavratDoReality.Destroy;
@@ -109,26 +109,9 @@ begin
 end;
 
 function TDownloader_NavratDoReality.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
-var FormData: AnsiString;
-    Buf: TMemoryStream;
 begin
-  Page := '';
   Xml := nil;
-  FormData := 'ACTION=check_adult&check=18plus';
-  Buf := TMemoryStream.Create;
-  try
-    Buf.WriteBuffer(FormData[1], Length(FormData));
-    Buf.Position := 0;
-    Http.MimeType := 'application/x-www-form-urlencoded';
-    Http.InputStream := Buf;
-    try
-      Result := DownloadPage(Http, Url, Page, InfoPageEncoding, hmPOST, False);
-    finally
-      Http.InputStream := nil;
-      end;
-  finally
-    Buf.Free;
-    end;
+  Result := DownloadPage(Http, Url, 'ACTION=check_adult&check=18plus', 'application/x-www-form-urlencoded', Page, InfoPageEncoding, False);
 end;
 
 function TDownloader_NavratDoReality.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

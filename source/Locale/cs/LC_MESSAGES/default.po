@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.62\n"
-"POT-Creation-Date: 2011-01-09 15:10\n"
-"PO-Revision-Date: 2011-01-09 15:50+0100\n"
+"POT-Creation-Date: 2011-03-26 07:13\n"
+"PO-Revision-Date: 2011-03-26 07:18+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -90,7 +90,7 @@ msgstr "Poskytovatelé médií:"
 #: GUI/VCL/guiAboutVCL.dfm:111
 #: GUI/VCL/guiMainVCL.dfm:170
 #: GUI/WinAPI/guiAboutWINAPI.pas:366
-#: GUI/WinAPI/guiMainWINAPI.pas:353
+#: GUI/WinAPI/guiMainWINAPI.pas:355
 msgid "Provider"
 msgstr "Poskytovatel"
 
@@ -115,45 +115,45 @@ msgstr "&Konvertor:"
 #. FormSelectConverter..ActionList..actOK..Caption
 #. FormOptions..ActionList..actOK..Caption
 #: GUI/VCL/guiConverterVCL.dfm:60
-#: GUI/VCL/guiOptionsVCL.dfm:280
+#: GUI/VCL/guiOptionsVCL.dfm:289
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #. FormOptions..ActionList..actCancel..Caption
 #: GUI/VCL/guiConverterVCL.dfm:64
-#: GUI/VCL/guiOptionsVCL.dfm:285
+#: GUI/VCL/guiOptionsVCL.dfm:294
 msgid "&Cancel"
 msgstr "&Storno"
 
 #. FormYTD..Downloads......Caption
 #. Download list
 #: GUI/VCL/guiMainVCL.dfm:166
-#: GUI/WinAPI/guiMainWINAPI.pas:352
+#: GUI/WinAPI/guiMainWINAPI.pas:354
 msgid "URL"
 msgstr "URL"
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:175
-#: GUI/WinAPI/guiMainWINAPI.pas:354
+#: GUI/WinAPI/guiMainWINAPI.pas:356
 msgid "Status"
 msgstr "Status"
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:179
-#: GUI/WinAPI/guiMainWINAPI.pas:355
+#: GUI/WinAPI/guiMainWINAPI.pas:357
 msgid "Title"
 msgstr "Název"
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:184
-#: GUI/WinAPI/guiMainWINAPI.pas:356
+#: GUI/WinAPI/guiMainWINAPI.pas:358
 msgid "Size"
 msgstr "Velikost"
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:189
-#: GUI/WinAPI/guiMainWINAPI.pas:357
+#: GUI/WinAPI/guiMainWINAPI.pas:359
 msgid "Progress"
 msgstr "Průběh stahování"
 
@@ -360,7 +360,7 @@ msgstr "-"
 
 #. FormYTD..OpenHtmlFile..Filter
 #: GUI/VCL/guiMainVCL.dfm:1507
-#: GUI/WinAPI/guiMainWINAPI.pas:607
+#: GUI/WinAPI/guiMainWINAPI.pas:609
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
 
@@ -368,7 +368,7 @@ msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
 #. FormYTD..SaveUrlList..Filter
 #: GUI/VCL/guiMainVCL.dfm:1513
 #: GUI/VCL/guiMainVCL.dfm:1520
-#: GUI/WinAPI/guiMainWINAPI.pas:584
+#: GUI/WinAPI/guiMainWINAPI.pas:586
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
 
@@ -427,25 +427,25 @@ msgstr "&Automaticky spouštět downloady"
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #. Overwrite Mode
 #: GUI/VCL/guiOptionsVCL.dfm:159
-#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:216
+#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:220
 msgid "Ask user"
 msgstr "Zeptat se uživatele"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:160
-#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:217
+#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:221
 msgid "Overwrite"
 msgstr "Přepisovat"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:161
-#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:218
+#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:222
 msgid "Skip"
 msgstr "Přeskočit"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:162
-#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:219
+#: GUI/WinAPI/guiOptionsWINAPI_Downloads.pas:223
 msgid "Rename automatically"
 msgstr "Automaticky přejmenovat"
 
@@ -454,121 +454,126 @@ msgstr "Automaticky přejmenovat"
 msgid "Download &subtitles if available"
 msgstr "Pokud jsou k dispozici, stahovat &titulky"
 
+#. FormOptions..PageOptions..TabDownloadOptions..CheckAutoTryHtmlParser..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:207
+msgid "Automatically try &HTML parser"
+msgstr "Automaticky používat &HTML parser"
+
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:203
+#: GUI/VCL/guiOptionsVCL.dfm:212
 #: GUI/WinAPI/guiOptionsWINAPI.pas:129
 msgid "Network settings"
 msgstr "Síť"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:210
+#: GUI/VCL/guiOptionsVCL.dfm:219
 msgid "Proxy &host:"
 msgstr "Proxy &server:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:218
+#: GUI/VCL/guiOptionsVCL.dfm:227
 msgid "Proxy &port:"
 msgstr "Proxy &port:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:226
+#: GUI/VCL/guiOptionsVCL.dfm:235
 msgid "Proxy &username:"
 msgstr "Proxy &uživatel:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:234
+#: GUI/VCL/guiOptionsVCL.dfm:243
 msgid "Proxy pass&word:"
 msgstr "Proxy &heslo:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:243
+#: GUI/VCL/guiOptionsVCL.dfm:252
 msgid "U&se proxy server"
 msgstr "Použít prox&y server"
 
 #. FormOptions..ActionList..actDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:289
+#: GUI/VCL/guiOptionsVCL.dfm:298
 msgid "..."
 msgstr "..."
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:294
+#: GUI/VCL/guiOptionsVCL.dfm:303
 msgid "Create shortcut on &desktop"
 msgstr "Vytvořit odkaz na &Ploše"
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:298
+#: GUI/VCL/guiOptionsVCL.dfm:307
 msgid "Create shortcut in &Start menu"
 msgstr "Vytvořit odkaz ve &Start menu"
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:95
+#: Base/uHttpDownloader.pas:99
 msgid "Resolving began"
 msgstr "Zahájeno zjišťování adresy"
 
 #. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:96
+#: Base/uHttpDownloader.pas:100
 msgid "Resolving ended"
 msgstr "Dokončeno zjišťování adresy"
 
 #. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:97
+#: Base/uHttpDownloader.pas:101
 msgid "Socket created"
 msgstr "Vytvořen socket"
 
 #. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:98
+#: Base/uHttpDownloader.pas:102
 msgid "Socket closed"
 msgstr "Uzavřen socket"
 
 #. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:99
+#: Base/uHttpDownloader.pas:103
 msgid "Bound to IP/port"
 msgstr "Napojeno na IP/port"
 
 #. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:100
+#: Base/uHttpDownloader.pas:104
 msgid "Connected"
 msgstr "Spojeno"
 
 #. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:101
+#: Base/uHttpDownloader.pas:105
 msgid "Can read data"
 msgstr "Možno číst data"
 
 #. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:102
+#: Base/uHttpDownloader.pas:106
 msgid "Can write data"
 msgstr "Možno psát data"
 
 #. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:103
+#: Base/uHttpDownloader.pas:107
 msgid "Listening"
 msgstr "Čeká se na požadavek"
 
 #. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:104
+#: Base/uHttpDownloader.pas:108
 msgid "Accepted connection"
 msgstr "Požadavek přijat"
 
 #. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:105
+#: Base/uHttpDownloader.pas:109
 msgid "Read data"
 msgstr "Data přečtena"
 
 #. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:106
+#: Base/uHttpDownloader.pas:110
 msgid "Wrote data"
 msgstr "Data zapsána"
 
@@ -576,14 +581,14 @@ msgstr "Data zapsána"
 #. Programmer's name for it: SOCKSTATUS_WAITING
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
-#: Base/uHttpDownloader.pas:107
+#: Base/uHttpDownloader.pas:111
 #: GUI/guiConsts.pas:47
 msgid "Waiting"
 msgstr "Čeká se"
 
 #. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:108
+#: Base/uHttpDownloader.pas:112
 msgid "Socket error"
 msgstr "Chyba socketu"
 
@@ -642,192 +647,201 @@ msgstr " .......... Vypsat seznam podporovanych poskytovatelu."
 msgid " .......... Test for updated version of YTD."
 msgstr " .......... Overit existenci novejsi verze."
 
+#. CLI: Help for -ah command line argument
+#: CLI/uYTD.pas:142
+msgid " ...... [Don't] Automatically try HTML parser for unknown URLs."
+msgstr " ...... [Ne-] Pokusit se pouzit HTML parser na neznama URL."
+
 #. CLI: Help for <url> command line argument
-#: CLI/uYTD.pas:143
+#: CLI/uYTD.pas:144
 msgid " ....... URL to download."
 msgstr " ....... URL ke stazeni."
 
 #. CLI: Title for the list of providers (-l command line argument)
-#: CLI/uYTD.pas:153
+#: CLI/uYTD.pas:154
 msgid "Available providers:"
 msgstr "Dostupni poskytovatele:"
 
 #. CLI: The "Total: " part of "Total: 123 providers." Note the ending space
-#: CLI/uYTD.pas:160
+#: CLI/uYTD.pas:161
 msgid "Total: "
 msgstr "Celkem: "
 
 #. CLI: The " providers" part of "Total: 123 providers." Note the starting space
-#: CLI/uYTD.pas:162
+#: CLI/uYTD.pas:163
 msgid " providers."
 msgstr " poskytovatelu."
 
 #. CLI: Note: pad with spaces to the same length as "Newest version:"
-#: CLI/uYTD.pas:169
+#: CLI/uYTD.pas:170
 msgid "Current version: "
 msgstr "Aktualni verze:   "
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
-#: CLI/uYTD.pas:170
+#: CLI/uYTD.pas:171
 msgid "Newest version:  "
 msgstr "Nejnovejsi verze: "
 
 #. CLI: Couldn't check for a newer version
-#: CLI/uYTD.pas:172
+#: CLI/uYTD.pas:173
 msgid "check failed"
 msgstr "nenalezena"
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
-#: CLI/uYTD.pas:176
+#: CLI/uYTD.pas:177
 msgid "Download URL:    "
 msgstr "URL ke stahnuti:  "
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:245
+#: CLI/uYTD.pas:246
 msgid "With -e a filename must be provided."
 msgstr "K parametru -e musi byt uvedeno jmeno souboru."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:255
+#: CLI/uYTD.pas:260
 msgid "HTML source \"%s\" doesn't contain any useful links."
 msgstr "HTML zdroj \"%s\" neobsahuje zadne pouzitelne odkazy."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:260
+#: CLI/uYTD.pas:265
 msgid "HTML source \"%s\" not found."
 msgstr "HTML zdroj \"%s\" nebyl nalezen."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:270
+#: CLI/uYTD.pas:275
 msgid "With -s a filename or an URL must be provided."
 msgstr "K parametru -s musi byt uvedena URL nebo jmeno souboru."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:286
+#: CLI/uYTD.pas:291
 msgid "URL list-file \"%s\" not found."
 msgstr "Soubor \"%s\" se seznamem URL nenalezen."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:292
+#: CLI/uYTD.pas:297
 msgid "With -i a filename must be provided."
 msgstr "K parametru -i musi byt uvedeno jmeno souboru."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:302
+#: CLI/uYTD.pas:307
 msgid "Destination directory \"%s\" not found."
 msgstr "Cilovy adresar \"%s\" nenalezen."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:308
+#: CLI/uYTD.pas:313
 msgid "With -o a directory name must be provided."
 msgstr "K parametru -o musi byt uvedeno jmeno adresare."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:314
+#: CLI/uYTD.pas:319
 msgid "Unknown parameter \"%s\"."
 msgstr "Neznamy parametr \"%s\"."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:328
+#: CLI/uYTD.pas:333
 msgid "No valid URLs found."
 msgstr "Nenalezeny zadne zname URL."
 
 #. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
-#: CLI/uYTD.pas:351
+#: CLI/uYTD.pas:356
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
 msgstr "  Stahuje se: <%s> %d.%d%% (%s/%s)"
 
-#: CLI/uYTD.pas:360
+#: CLI/uYTD.pas:365
 msgid "  ERROR: "
 msgstr "  CHYBA: "
 
 #. CLI: Error message to be written to the log file. %: URL, message
-#: CLI/uYTD.pas:362
+#: CLI/uYTD.pas:367
 msgid "FAILED \"%s\": %s"
 msgstr "CHYBA \"%s\": %s"
 
 #. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
-#: CLI/uYTD.pas:380
+#: CLI/uYTD.pas:385
 msgid "  Playlist item: "
 msgstr "  Polozka seznamu:"
 
 #. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
-#: CLI/uYTD.pas:385
+#: CLI/uYTD.pas:390
 msgid "            URL: "
 msgstr "            URL: "
 
 #. CLI: Title shown before media title. Pad to the same length as "File name:'
-#: CLI/uYTD.pas:404
+#: CLI/uYTD.pas:409
 msgid "  Media title: "
 msgstr "  Nazev média: "
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:405
-#: CLI/uYTD.pas:528
+#: CLI/uYTD.pas:410
+#: CLI/uYTD.pas:539
 msgid "    File name: "
 msgstr "Nazev souboru: "
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:407
+#: CLI/uYTD.pas:412
 msgid "  Content URL: "
 msgstr "   URL obsahu: "
 
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:413
+#: CLI/uYTD.pas:418
 msgid "  SUCCESS."
 msgstr "  V PORADKU."
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:429
+#: CLI/uYTD.pas:434
 msgid "  ABORTED BY USER"
 msgstr "  PRERUSENO UZIVATELEM"
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:434
+#: CLI/uYTD.pas:439
 msgid "ERROR %s: %s"
 msgstr "CHYBA %s: %s"
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:449
+#: CLI/uYTD.pas:454
 msgid "Unknown URL."
 msgstr "Neznama URL."
 
+#: CLI/uYTD.pas:469
+msgid "Trying to parse as HTML page..."
+msgstr "Zpracovavam URL jako HTML stranku..."
+
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:534
+#: CLI/uYTD.pas:545
 msgid "  File "
 msgstr "  Soubor "
 
-#: CLI/uYTD.pas:536
+#: CLI/uYTD.pas:547
 msgid " already exists."
 msgstr " uz existuje."
 
-#: CLI/uYTD.pas:537
+#: CLI/uYTD.pas:548
 msgid "  Do you want to: "
 msgstr "Chcete ho:"
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:538
+#: CLI/uYTD.pas:549
 msgid "kip it, "
 msgstr " preskocit, "
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:539
+#: CLI/uYTD.pas:550
 msgid "verwrite it, or "
 msgstr " prepsat, nebo "
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:540
+#: CLI/uYTD.pas:551
 msgid "ename it? "
 msgstr " prejmenovat?"
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:556
+#: CLI/uYTD.pas:567
 msgid "  New filename: "
 msgstr "  Novy nazev: "
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:567
+#: CLI/uYTD.pas:578
 msgid "Incorrect answer."
 msgstr "Nespravna odpoved."
 
@@ -1230,8 +1244,8 @@ msgstr "Zkonvertovat film do AVI/H264"
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:284
-#: GUI/uDownloadList.pas:294
+#: GUI/uDownloadList.pas:286
+#: GUI/uDownloadList.pas:296
 msgid "File already exists."
 msgstr "Soubor už existuje."
 

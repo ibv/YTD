@@ -84,14 +84,14 @@ end;
 
 class function TDownloader_PCPlanets.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_PCPlanets.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
 destructor TDownloader_PCPlanets.Destroy;
@@ -107,10 +107,7 @@ end;
 
 function TDownloader_PCPlanets.GetFileNameExt: string;
 begin
-  if Prepared then
-    Result := ExtractFileExt(MovieUrl)
-  else
-    NotPreparedError;
+  Result := ExtractFileExt(MovieUrl);
 end;
 
 function TDownloader_PCPlanets.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

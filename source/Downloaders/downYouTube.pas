@@ -113,18 +113,18 @@ end;
 
 class function TDownloader_YouTube.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  YouTubeConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER, [rcoIgnoreCase, rcoSingleLine]);
-  FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST, [rcoIgnoreCase]);
-  FmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP, [rcoIgnoreCase]);
+  YouTubeConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
+  FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST);
+  FmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP);
   {$IFDEF SUBTITLES}
     PreferredLanguages := 'en';
     {$IFDEF CONVERTSUBTITLES}

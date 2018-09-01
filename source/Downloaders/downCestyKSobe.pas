@@ -88,17 +88,17 @@ end;
 
 class function TDownloader_CestyKSobe.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL);
+  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2);
 end;
 
 destructor TDownloader_CestyKSobe.Destroy;
@@ -130,7 +130,7 @@ begin
   if MovieURL = '' then
     if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
       MovieURL := s;
-  if UnpreparedName = '' then
+  if Name = '' then
     if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
       SetName(s);
   if MovieURL <> '' then

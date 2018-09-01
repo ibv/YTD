@@ -44,7 +44,7 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 312
     Height = 225
-    ActivePage = TabMain
+    ActivePage = TabDownloadOptions
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet
@@ -115,7 +115,7 @@ object FormOptions: TFormOptions
       ImageIndex = 1
       object LabelOverwriteMode: TLabel
         Left = 8
-        Top = 92
+        Top = 116
         Width = 60
         Height = 13
         Caption = '&Existing files:'
@@ -123,7 +123,7 @@ object FormOptions: TFormOptions
       end
       object LabelDownloadDir: TLabel
         Left = 8
-        Top = 68
+        Top = 92
         Width = 94
         Height = 13
         Caption = '&Download directory:'
@@ -131,7 +131,7 @@ object FormOptions: TFormOptions
       end
       object LabelConverter: TLabel
         Left = 8
-        Top = 124
+        Top = 148
         Width = 49
         Height = 13
         Caption = '&Converter:'
@@ -148,7 +148,7 @@ object FormOptions: TFormOptions
       end
       object ComboOverwriteMode: TComboBox
         Left = 112
-        Top = 88
+        Top = 112
         Width = 185
         Height = 21
         Style = csDropDownList
@@ -163,7 +163,7 @@ object FormOptions: TFormOptions
       end
       object EditDownloadDir: TEdit
         Left = 112
-        Top = 64
+        Top = 88
         Width = 169
         Height = 21
         Anchors = [akLeft, akTop, akRight]
@@ -171,7 +171,7 @@ object FormOptions: TFormOptions
       end
       object BtnDownloadDir: TButton
         Left = 280
-        Top = 64
+        Top = 88
         Width = 17
         Height = 21
         Action = actDownloadDir
@@ -180,7 +180,7 @@ object FormOptions: TFormOptions
       end
       object ComboConverter: TComboBox
         Left = 112
-        Top = 120
+        Top = 144
         Width = 185
         Height = 21
         Style = csDropDownList
@@ -191,12 +191,21 @@ object FormOptions: TFormOptions
       end
       object CheckSubtitlesEnabled: TCheckBox
         Left = 8
-        Top = 32
+        Top = 56
         Width = 289
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Download &subtitles if available'
         TabOrder = 1
+      end
+      object CheckAutoTryHtmlParser: TCheckBox
+        Left = 7
+        Top = 32
+        Width = 289
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Automatically try &HTML parser'
+        TabOrder = 6
       end
     end
     object TabNetworkOptions: TTabSheet

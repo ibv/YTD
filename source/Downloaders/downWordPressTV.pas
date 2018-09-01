@@ -48,10 +48,7 @@ type
   TDownloader_WordPressTV = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,7 +59,6 @@ type
 implementation
 
 uses
-  uAMF,
   uDownloadClassifier,
   uMessages;
 
@@ -73,13 +69,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+name="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_MOVIE_ID = '<meta\s+name="og:video"\s+content="[^"]*\bguid=(?P<ID>[0-9a-z]+)"';
-
-const
-  AMF_REQUEST_PACKET =
-    'AAMAAAABABJtYW5pZmVzdC5mcm9tX2d1aWQAAi8xAAAAGQoAAAACAgAIZHpxb1JZdjYAQILo' +
-    'AAAAAAA=';
+  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(\s*&laquo;.*?)</title>';
+  REGEXP_MOVIE_URL = '<a\s+[^>]*\stype="video/mp4"\s+href="(?P<URL>https?://.+?)"';
 
 { TDownloader_WordPressTV }
 
@@ -90,95 +81,27 @@ end;
 
 class function TDownloader_WordPressTV.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_WordPressTV.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_WordPressTV.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
 function TDownloader_WordPressTV.GetMovieInfoUrl: string;
 begin
   Result := 'http://wordpress.tv/' + MovieID;
-end;
-
-function TDownloader_WordPressTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var AMFRequest, AMFResponse: TAMFPacket;
-    ID, BestUrl: string;
-    Title, Url, sWidth, sHeight, sBitrate: TAMFValue;
-    MediaList: TAMFCommonArray;
-    i: integer;
-    BestResolution, BestBitrate, Resolution, Bitrate: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
-  else
-    begin
-    AMFRequest := TAMFPacket.Create;
-    try
-      AMFRequest.LoadFromString(AnsiString(Base64Decode(AMF_REQUEST_PACKET)));
-      // Note: I don't need to check types (or make sure pointers are not null)
-      // because I use a pre-made packet which has all required properties. That
-      // is not true while parsing response packets!
-      TAMFCommonArray(AMFRequest.Body[0].Content).Items[0].Value := ID;
-      if not DownloadAMF(Http, 'http://videopress.com/data/gateway.amf', AMFRequest, AMFResponse) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-      else
-        try
-          if AMFResponse.HasBody(0) then
-            begin
-            if AMFResponse.Body[0].Content.FindValueByPath('mediaTitle', Title, TAMFString) then
-              SetName(Title);
-            MediaList := TAMFCommonArray(AMFResponse.Body[0].Content.FindByPath('mediaElement/media', TAMFCommonArray));
-            BestUrl := '';
-            BestResolution := -1;
-            BestBitrate := -1;
-            if MediaList <> nil then
-              for i := 0 to Pred(MediaList.Count) do
-                if MediaList.Items[i].FindValueByPath('url', Url) then
-                  begin
-                  if MediaList.Items[i].FindValueByPath('width', sWidth, TAMFNumber) and MediaList.Items[i].FindValueByPath('height', sHeight, TAMFNumber) then
-                    Resolution := StrToIntDef(sWidth, 0) * StrToIntDef(sHeight, 0)
-                  else
-                    Resolution := 0;
-                  if MediaList.Items[i].FindValueByPath('bitrate', sBitrate, TAMFNumber) then
-                    Bitrate := StrToIntDef(sBitrate, 0)
-                  else
-                    Bitrate := 0;
-                  if (Resolution > BestResolution) or ((Resolution = BestResolution) and (Bitrate > BestBitrate)) then
-                    begin
-                    BestResolution := Resolution;
-                    BestBitrate := Bitrate;
-                    BestUrl := Url;
-                    end;
-                  end;
-            if BestUrl <> '' then
-              begin
-              MovieUrl := BestUrl;
-              SetPrepared(True);
-              Result := True;
-              end;
-            end;
-        finally
-          AMFResponse.Free;
-          end;
-    finally
-      AMFRequest.Free;
-      end;
-    end;
 end;
 
 initialization

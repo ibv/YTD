@@ -4,6 +4,7 @@ HTTP	HTML	HTML	xxxAdultLoop
 HTTP	HTML	HTML	xxxBeeg
 HTTP	HTML	HTML	xxxBrazzers
 HTTP	HTML	HTML	xxxDachix
+HTTP	HTML	HTML	xxxDancingBear
 HTTP	HTML	XML	xxxEmpFlix
 HTTP	HTML	HTML	xxxExtremeTube
 HTTP	HTML	Nested	xxxGrinvi
@@ -30,5 +31,6 @@ HTTP	HTML	HTML	xxxXVideos
 HTTP	HTML	HTML	xxxYouJizz
 HTTP	HTML	XML	xxxYouPorn
 HTTP	HTML	HTML	xxxYuvutu
+HTTP	HTML	JSON	xxxZakulisi
 
 *HTTP1 ... Multiple vars parsing

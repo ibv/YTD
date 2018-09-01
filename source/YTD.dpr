@@ -74,8 +74,10 @@ uses
   uHttpDirectDownloader in 'Base\uHttpDirectDownloader.pas',
   uExternalDownloader in 'Base\uExternalDownloader.pas',
   uMSDownloader in 'Base\uMSDownloader.pas',
+  uMSDirectDownloader in 'Base\uMSDirectDownloader.pas',
   uNestedDownloader in 'Base\uNestedDownloader.pas',
   uRtmpDownloader in 'Base\uRtmpDownloader.pas',
+  uRtmpDirectDownloader in 'Base\uRtmpDirectDownloader.pas',
   uPlaylistDownloader in 'Base\uPlaylistDownloader.pas',
   // Command Line Version
   {$IFDEF CLI}
@@ -136,7 +138,6 @@ uses
   downClipfish in 'Downloaders\downClipfish.pas',
   downClipfishV2 in 'Downloaders\downClipfishV2.pas',
   downCollegeHumor in 'Downloaders\downCollegeHumor.pas',
-  downCrunchyRoll in 'Downloaders\downCrunchyRoll.pas',
   downCSmaTalent in 'Downloaders\downCSmaTalent.pas',
   downCT in 'Downloaders\downCT.pas',
   downCT_old in 'Downloaders\downCT_old.pas',
@@ -149,6 +150,7 @@ uses
   downDailyHaha in 'Downloaders\downDailyHaha.pas',
   downDailyMotion in 'Downloaders\downDailyMotion.pas',
   downDeutscheBahn in 'Downloaders\downDeutscheBahn.pas',
+  downDenik in 'Downloaders\downDenik.pas',
   downDevilDucky in 'Downloaders\downDevilDucky.pas',
   downDotSub in 'Downloaders\downDotSub.pas',
   downDoubleAgent in 'Downloaders\downDoubleAgent.pas',
@@ -166,15 +168,18 @@ uses
   downFreeSk in 'Downloaders\downFreeSk.pas',
   downFreeRide in 'Downloaders\downFreeRide.pas',
   downFreeVideoRu in 'Downloaders\downFreeVideoRu.pas',
+  downFunnyOrDie in 'Downloaders\downFunnyOrDie.pas',
   downGameAnyone in 'Downloaders\downGameAnyone.pas',
   downGodTube in 'Downloaders\downGodTube.pas',
   downGuba in 'Downloaders\downGuba.pas',
   downGrindTV in 'Downloaders\downGrindTV.pas',
   downHasici150 in 'Downloaders\downHasici150.pas',
   downHrej in 'Downloaders\downHrej.pas',
+  downiDnes in 'Downloaders\downIDnes.pas',
   downiHned in 'Downloaders\downIHned.pas',
   downiPrima in 'Downloaders\downIPrima.pas',
   downJoj in 'Downloaders\downJoj.pas',
+  downJoj_Porady in 'Downloaders\downJoj_Porady.pas',
   downKontraband in 'Downloaders\downKontraband.pas',
   downKukaj in 'Downloaders\downKukaj.pas',
   downLibimSeTi in 'Downloaders\downLibimSeTi.pas',
@@ -210,6 +215,7 @@ uses
   downNovinky in 'Downloaders\downNovinky.pas',
   downNovinkyV2 in 'Downloaders\downNovinkyV2.pas',
   downOverStream in 'Downloaders\downOverStream.pas',
+  downPBS in 'Downloaders\downPBS.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
   downPrahovaHD in 'Downloaders\downPrahovaHD.pas',
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
@@ -224,8 +230,10 @@ uses
   downRTA in 'Downloaders\downRTA.pas',
   downRTA_Embed in 'Downloaders\downRTA_Embed.pas',
   downRtlNl in 'Downloaders\downRtlNl.pas',
+  downSefka in 'Downloaders\downSefka.pas',
   downSerialyCZ in 'Downloaders\downSerialyCZ.pas',
   downSevenLoad in 'Downloaders\downSevenLoad.pas',
+  downSmeSK in 'Downloaders\downSmeSK.pas',
   downSnotr in 'Downloaders\downSnotr.pas',
   downSpike in 'Downloaders\downSpike.pas',
   downSportCZ in 'Downloaders\downSportCZ.pas',
@@ -273,6 +281,7 @@ uses
     xxxBeeg in 'Downloaders\XXX\xxxBeeg.pas',
     xxxBrazzers in 'Downloaders\XXX\xxxBrazzers.pas',
     xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
+    xxxDancingBear in 'Downloaders\XXX\xxxDancingBear.pas',
     xxxEmpFlix in 'Downloaders\XXX\xxxEmpFlix.pas',
     xxxExtremeTube in 'Downloaders\XXX\xxxExtremeTube.pas',
     xxxGrinvi in 'Downloaders\XXX\xxxGrinvi.pas',
@@ -301,12 +310,13 @@ uses
     xxxYouJizz in 'Downloaders\XXX\xxxYouJizz.pas',
     xxxYouPorn in 'Downloaders\XXX\xxxYouPorn.pas',
     xxxYuvutu in 'Downloaders\XXX\xxxYuvutu.pas',
+    xxxZakulisi in 'Downloaders\XXX\xxxZakulisi.pas',
   {$ENDIF}
   {$IFDEF NONWORKING}
+    // Needs some improved RTMP handling
+    downCrunchyRoll in 'Downloaders\Non-working\downCrunchyRoll.pas',
     // Download only works for logged-in users
     downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
-    // RTMPDUMP fails to connect
-    downiDnes in 'Downloaders\Non-working\downIDnes.pas',
     // Some transformation of movie ID is needed
     downTipovani in 'Downloaders\Non-working\downTipovani.pas',
     // Download from http://www.wat.tv/get/web/ doesn't work

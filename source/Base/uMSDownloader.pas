@@ -53,6 +53,7 @@ type
     protected
       procedure ClearMsdlOptions; virtual;
       procedure AddMsdlOption(ShortOption: char; const Argument: string = ''); virtual;
+      procedure SetMsdlOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure OnMsdlDownloadProgress(DownloadedSize, TotalSize: integer; var DoAbort: integer); virtual;
       property MsdlOptions: TMsdlOptions read fMsdlOptions;
     public
@@ -96,6 +97,19 @@ begin
   SetLength(fMsdlOptions, Succ(n));
   fMsdlOptions[n].ShortOption := AnsiChar(ShortOption);
   fMsdlOptions[n].Argument := AnsiString(Argument);
+end;
+
+procedure TMSDownloader.SetMsdlOption(ShortOption: char; const Argument: string);
+var i: integer;
+begin
+  for i := 0 to Pred(Length(fMsdlOptions)) do
+    if fMsdlOptions[i].ShortOption = AnsiChar(ShortOption) then
+      begin
+      fMsdlOptions[i].ShortOption := AnsiChar(ShortOption);
+      fMsdlOptions[i].Argument := AnsiString(Argument);
+      Exit;
+      end;
+  AddMsdlOption(ShortOption, Argument);
 end;
 
 procedure TMSDownloader.OnMsdlDownloadProgress(DownloadedSize, TotalSize: integer; var DoAbort: integer);

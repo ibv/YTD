@@ -84,14 +84,14 @@ end;
 
 class function TDownloader_ESPN.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_ESPN.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  PlayerIDRegExp := RegExCreate(REGEXP_PLAYERID, [rcoIgnoreCase, rcoSingleLine]);
+  PlayerIDRegExp := RegExCreate(REGEXP_PLAYERID);
 end;
 
 destructor TDownloader_ESPN.Destroy;

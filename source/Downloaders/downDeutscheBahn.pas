@@ -86,16 +86,16 @@ end;
 
 class function TDownloader_DeutscheBahn.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_DeutscheBahn.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  BaseNameRegExp := RegExCreate(REGEXP_BASENAME, [rcoIgnoreCase, rcoSingleLine]);
-  SwfObjectRegExp := RegExCreate(REGEXP_SWFOBJECT, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  BaseNameRegExp := RegExCreate(REGEXP_BASENAME);
+  SwfObjectRegExp := RegExCreate(REGEXP_SWFOBJECT);
 end;
 
 destructor TDownloader_DeutscheBahn.Destroy;

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.76                                     (c) 2009-11 Pepak
+YouTube Downloader v0.77                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -44,7 +44,7 @@ PODPOROVANÉ WEBY
      - http://autosalontv.cz/?year=2010&week=50
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
-     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+            níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - AutoTube.cz:
      - http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
@@ -56,7 +56,7 @@ PODPOROVANÉ WEBY
      - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
-     Pøehrát jde napøíklad programem The KMPlayer.
+            Pøehrát jde napøíklad programem The KMPlayer.
 
  - Bing.com:
      - http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
@@ -71,8 +71,9 @@ PODPOROVANÉ WEBY
      - http://thespoonyone.blip.tv
 
      Pozn.: Naèítání obsahu playlistu probíhá bez jakéhokoliv výstupu a mùže
-     u nìkterých playlistù (napø. http://thespoonyone.blip.tv) trvat i dost
-     dlouho. Nenechte se znervóznit tím, že se zdánlivì nic nedìje.
+            u nìkterých playlistù (napø. http://thespoonyone.blip.tv) trvat 
+            i dost dlouho. Nenechte se znervóznit tím, že se zdánlivì nic 
+            nedìje.
 
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
@@ -119,8 +120,7 @@ PODPOROVANÉ WEBY
  - CrunchyRoll.com:
      - http://www.crunchyroll.com/library/Naruto_Shippuden
 
-     Pozn.: This provider usesTento poskytovatel používá protokol RTMP. Viz
-     poznámky níže.
+     Pozn.: Tento poskytovatel používá protokol RTMP. Viz poznámky níže.
 
  - CSmaTalent.cz, CSmaTalent.sk:
      - http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
@@ -145,6 +145,11 @@ PODPOROVANÉ WEBY
 
  - DeutscheBahn.com:
      - http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
+
+ - Denik.cz:
+     - http://www.denik.cz/multimedia/video/2857495.html
+     - http://www.denik.cz/multimedia/audio/2861648.html
+     - http://benesovsky.denik.cz/multimedia/video/1538221.html
 
  - DevilDucky.com:
      - http://www.devilducky.com/media/213159/
@@ -185,12 +190,12 @@ PODPOROVANÉ WEBY
      - http://fishki.net/comment.php?id=79682
 
      Pozn.: Je sice možné detekovat název, jak je napsaný ve stránce, ale
-     vznikl by problém, jak z nìj udìlat funkèní název souboru - na to by
-     musel YTD být zkompilovaný pomocí Delphi 2009, což má øadu nevýhod
-     (velikost programu, nepodpora pro stará Windows atd.). Proto se zatím
-     pøebírá pùvodní název souboru a titulek videa se ignoruje. Pokud máte
-     nìjaký nápad, jak ruštinu jednoduše a spolehlivì pøevést do latinky,
-     rád ho implementuji.
+            vznikl by problém, jak z nìj udìlat funkèní název souboru - na to 
+            by musel YTD být zkompilovaný pomocí Delphi 2009, což má øadu 
+            nevýhod (velikost programu, nepodpora pro stará Windows atd.). 
+            Proto se zatím pøebírá pùvodní název souboru a titulek videa se 
+            ignoruje. Pokud máte nìjaký nápad, jak ruštinu jednoduše a 
+            spolehlivì pøevést do latinky, rád ho implementuji.
 
  - Flickr.com:
      - http://www.flickr.com/photos/landersz/2403626167/
@@ -201,12 +206,18 @@ PODPOROVANÉ WEBY
  - FreeCaster.tv:
      - http://freecaster.tv/freeski/1012253
 
+     Pozn.: Tento poskytovatel používá jak HTTP streamy, tak i RTMP. K podpoøe
+            RTMP viz níže.
+
  - FreeRide.cz:
      - http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
      - http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
 
  - FreeVideo.ru:
      - http://freevideo.ru/video/view/?id=v14445361101
+
+ - FunnyOrDie.com:
+     - http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
 
  - GameAnyone.com:
      - http://www.gameanyone.com/game/PC/936.html
@@ -222,7 +233,7 @@ PODPOROVANÉ WEBY
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 
  - Hasici150.tv:
-     - http://www.hasici150.tv/cz/Videogalerie/Slavnostni-vyhlaseni-Extraliga-CR-v-PU-2010_____93/
+     - http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
@@ -232,6 +243,11 @@ PODPOROVANÉ WEBY
      Pozn.: Nìkterá videa jsou hostovaná na jiných serverech, napø. na 
             YouTube, a nelze je stahovat pøímo. Mùžete ale použít funkci
             "Pøidat URL z HTML stránky".
+
+ - iDnes.cz;
+     - http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
  - iHned.cz:
      - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
@@ -336,6 +352,9 @@ PODPOROVANÉ WEBY
 
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+     - http://n-joy.cz/right-now/video/honza-b/psvfmt8b61ghlgg4
+     - http://n-joy.cz/right-now/audio/vera-spinarova/2zpSLkXoR5IteMyC
+     - http://n-joy.cz/audio/vera-spinarova/2zpSLkXoR5IteMyC
 
  - NaStojaka.cz:
      - http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
@@ -355,7 +374,6 @@ PODPOROVANÉ WEBY
      - http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
-     Pøehrát jde napøíklad programem The KMPlayer.
 
  - Novinky.cz:
      - http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
@@ -365,13 +383,16 @@ PODPOROVANÉ WEBY
      - http://www.overstream.net/view.php?oid=uinsn9n7uomx
      - http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
 
+ - PBS.org:
+     - http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
+
  - PCPlanets.com:
      - http://www.pcplanets.com/videos-225353-Bamboo.shtml
 
-     Pozn.: Poskytovatel by mìl fungovat, ale vytrvale vrací HTTP chybu 403
-     (forbidden). Stejnì se ovšem chová i samotný flashový pøehrávaè, zøejmì
-     tedy nejde o chybu v YTD ale buï o chybné video nebo napø. nepodporovaný
-     stát uživatele.
+     Pozn.: Poskytovatel by mìl fungovat, ale vytrvale vrací HTTP chybu 403 
+            (forbidden). Stejnì se ovšem chová i samotný flashový pøehrávaè, 
+            zøejmì tedy nejde o chybu v YTD ale buï o chybné video nebo napø. 
+            nepodporovaný stát uživatele.
 
  - PrahovaHD.ro:
      - http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
@@ -382,7 +403,7 @@ PODPOROVANÉ WEBY
      - http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
-     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+            níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - Prima-Cool.cz:
      - http://www.prima-cool.cz/video/drsnejsi-simpsonovi
@@ -407,8 +428,8 @@ PODPOROVANÉ WEBY
      - https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
 
      Pozn.: Tento poskytovatel funguje na šifrovaném protokolu HTTPS, proto
-     je nezbytné mít v cestì (PATH) OpenSSL knihovny (LIBEAY32.DLL a 
-     SSLEAY32.DLL).
+            je nezbytné mít v cestì (PATH) OpenSSL knihovny (LIBEAY32.DLL a 
+            SSLEAY32.DLL).
 
  - Rozhlas.cz:
      - http://www.rozhlas.cz/vltava/porady/_zprava/676996
@@ -419,30 +440,38 @@ PODPOROVANÉ WEBY
      - http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 
      Pozn.: Protože server obsahuje znaèné množství porno materiálu, nebyl
-     zaøazen do Lite verze YouTube Downloaderu.
+            zaøazen do Lite verze YouTube Downloaderu.
 
  - RTA.cz:
      - http://www.rta.cz/?article=140331
      - http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
-     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+            níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - Rtl.nl:
      - http://www.rtl.nl/xl/#/u/e6820785-1c71-381e-a3fa-37c6acc343b9/
      - http://www.rtl.nl/system/s4m/xldata/uuid/e6820785-1c71-381e-a3fa-37c6acc343b9.xml
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
-     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+            níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - RuTube.ru:
      - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
+
+ - Sefka.cz, Sefka.sk:
+     - http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
+     - http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
 
  - SerialyCZ.cz:
      - http://www.serialycz.cz/2011/01/chuck-04x12/
 
  - SevenLoad.com:
      - http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
+
+ - Sme.sk:
+     - http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
+     - http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
 
  - Snotr.com:
      - http://www.snotr.com/video/4280
@@ -471,12 +500,11 @@ PODPOROVANÉ WEBY
      - http://www.stream.cz/video/437197-meziplyn-30
 
      Pozn.: V obsluze stream.cz je chyba, kvùli které nìkdy video stáhnout
-     jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjaký èasovací
-     problém v knihovnì Synapse, protože staèí vložit na vhodné místo 
-     breakpoint nebo prodlevu a hned problém zmizí.
-
+            jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjaký 
+            èasovací problém v knihovnì Synapse, protože staèí vložit na 
+            vhodné místo breakpoint nebo prodlevu a hned problém zmizí.
      Pozn.: Stream.cz slouží jako content-delivery-network pro øadu dalších
-     služeb, napøíklad pro televizní stanici Óèko.
+            služeb, napøíklad pro televizní stanici Óèko.
 
  - StreetFire.com:
      - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
@@ -541,7 +569,7 @@ PODPOROVANÉ WEBY
      - http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
-     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+            níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
  - TVNoe.tbsystem.cz (TV Noe):
      - http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
@@ -649,6 +677,7 @@ Podporované porno weby:
  - YouJizz.com
  - YouPorn.com
  - Yuvutu.com
+ - Zakulisi.cz
 
 
 
@@ -789,11 +818,14 @@ KONFIGURACE
 -----------
 
 Od verze 0.50 používá YouTube Downloader pro svoji konfiguraci XML soubor
-"ytd.xml". Umístìn mùže být ve dvou místech:
+"ytd.xml". Umístìn mùže být ve tøech místech:
 
-1) Adresáø, ve kterém je YTD.exe. Toto je primární umístìní.
+1) Aktuální pracovní adresáø. Toto je primární umístìní.
 
-2) Adresáø "YouTube Downloader" v uživatelském profilu Windows (%APPDATA%).
+2) Adresáø, ve kterém je YTD.exe. Toto umístìní se použije, pokud v pracovním
+   adresáøi konfiguraèní soubor neexistuje a v adresáøi YTD ano.
+
+3) Adresáø "YouTube Downloader" v uživatelském profilu Windows (%APPDATA%).
    Toto umístìní se zkoumá v pøípadì, že primární XML soubor neexistuje
    nebo že je v nìm pro aplikaci vypnut pøenositelný (portable) režim.
 
@@ -866,6 +898,17 @@ a "0" (ne).
     - Výchozí hodnota je "ask" (zeptat se uživatele).
     - Odpovídá parametrùm -k (ask), -n (never), -a (always), -r (rename) na
       pøíkazové øádce.
+
+  <auto_try_html_parser>
+    - Potomek <config>; zapíná nebo vypíná podporu pro automatické použití 
+      HTML parseru na neznámá URL - tzn. YTD napøed zkusí, jestli jde o známou 
+      adresu, a když ne, stáhne ji jako HTML soubor a v nìm zkusí vyhledat
+      známé adresy (jako parametr -s). Tím je zajištìna podpora pro servery
+      jako Zive.cz nebo Vlaky,net, které svá videa ukládají na cizí servery.
+    - Možné hodnoty jsou "1" (povolit automatické použití HTML parseru)
+      nebo "0" (zakázat).
+    - Výchozí hodnota je "1" (povolit automatické použití HTML parseru).
+    - Odpovídá parametrùm -ah (povolit), -ah- (zakázat) na pøíkazové øádce.
 
   <subtitle_support>
     - Potomek <config>; umožòuje vypnout podporu titulkù v celé aplikaci.
@@ -957,6 +1000,17 @@ a "0" (ne).
         je s ním pak ménì problémù.
       - Možné hodnoty jsou "0" (stahovat jako soubor) a "1" (živé video).
       - Výchozí hodnotou je "1" (stahovat jako živé video).
+
+  <Nova_cz>
+    - Potomek <modules>; obsahuje nastavení pro TV Nova.
+
+    <low_quality>
+      - Potomek <Nova_cz>; urèuje, jestli se má video stahovat v nízké kvalitì
+        místo standardní vysoké. Dùvod je ten, že nìkterá videa (k 24.3.2011
+        napø. "Ordinace v rùžové zahradì 2 - díl 250") nejsou ve vysoké kvalitì
+        k dispozici a YTD nemá šanci toto spolehlivì zjistit.
+      - Možné hodnoty jsou "0" (vysoká kvalitu) a "1" (nízká kvalita).
+      - Výchozí hodnotou je "0" (vysoká kvalita).
 
   <YouTube_com>
     - Potomek <modules>; obsahuje nastavení pro YouTube.

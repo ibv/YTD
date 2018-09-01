@@ -24,7 +24,7 @@ HTTP	HTML	HTML	downCestyKSobe
 HTTP	XML	XML	downClipfish
 HTTP	XML	XML	downCollegeHumor
 RTMP	HTML	XML	downCrunchyRoll
-HTTP	XML	XML	downCSmaTalent
+HTTP	XML	XML	downCSmaTalent (<-downJoj_Porady)
 RTMP	HTML	XML	downCT
 MS	HTML	XML	downCT_old
 MS	HTML	XML	downCT_Port
@@ -35,6 +35,7 @@ HTTP	HTML	HTML	downCurrent
 HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion
 HTTP	HTML	HTML	downDeutscheBahn
+HTTP	XML	XML	downDenik
 HTTP	HTML	Nested	downDevilDucky
 HTTP	JSON	JSON	downDotSub
 HTTP	HTML	HTML	downDoubleAgent
@@ -48,9 +49,10 @@ HTTP	HTML	HTML	downFacebook
 HTTP	HTML	HTML	downFileCabi
 HTTP	HTML	HTML	downFishki
 HTTP	XML	XML	downFlickr
-HTTP	XML	XML	downFreeCaster
-HTTP	HTML	XML	downFreeRide
+HTTP/RTMP	XML	XML	downFreeCaster
+RTMP	XML	XML	downFreeRide
 HTTP	HTML	JSON	downFreeVideoRu
+HTTP	XML	XML	downFunnyOrDie
 HTTP	HTML	Nested	downGameAnyone
 HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
@@ -88,6 +90,7 @@ HTTP	HTML	HTML	downNothingToxic
 HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
 HTTP	HTML	Nested	downOverStream
+HTTP	HTML	Nested	downPBS
 HTTP	XML	XML	downPCPlanets
 RTMP	-	HTML	downPrahovaHD
 MS	HTML	XML	downPrazdninyVTelci
@@ -100,6 +103,7 @@ HTTP	HTML	HTML	downRozhlas
 MS	XML	XML	downRTA (<-downRTA_Embed)
 MS	XML	XML	downRTA_Embed
 MS	XML	XML	downRtlNl
+HTTP	XML	XML	downSefka (<-downJoj_Porady)
 HTTP	HTML	XML	downSerialyCZ (<-downZkoukniTo)
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
@@ -137,7 +141,7 @@ HTTP	XML	XML	downVimeo
 HTTP	XML	XML	downVitalMtb
 HTTP	HTML	HTML	downWeGame
 HTTP	HTML	HTML	downWimp
-HTTP	AMF	AMF	downWordPressTV
+HTTP	HTML	HTML	downWordPressTV
 HTTP	HTML	HTML	downWrzuta
 HTTP	HTML	HTML	downYikers
 HTTP	HTML	HTML1	downYouTube

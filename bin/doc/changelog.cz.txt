@@ -1,6 +1,109 @@
 CHANGELOG
 ---------
 
+  v0.77:
+
+    * Nový poskytovatel: DancingBear.com (porno).
+
+    * Nový poskytovatel: Denik.cz.
+
+      - Podporovány jsou i všechny regionální varianty, audio i video.
+
+    * Nový poskytovatel: FunnyOrDie.com.
+
+    * Nový poskytovatel: iDnes.cz.
+
+      - Implementace je øešena pomìrnì brutálním zpùsobem: natvrdo se používá
+        konkrétní streamovací server místo serveru, o který si øekne samotný
+        iDnes. Bohužel je to nezbytné, protože ten správný oficiální server
+        nefunguje...
+
+    * Nový poskytovatel: PBS.org.
+
+    * Nový poskytovatel: Sefka.cz, Sefka.sk.
+
+      - Pøidání budoucích Prima-Joj projektù bude triviální záležitost.
+
+    * Nový poskytovatel: Sme.sk.
+
+    * Nový poskytovatel: Zakulisi.cz (porno).
+
+    * FreeCaster.tv: K existující podpoøe pro HTTP streamy byla pøidána ještì
+      podpora pro RTMP streamy, které jsou také u nìkterých videí využívány.
+
+    * N-Joy.cz: Rozšíøeno o podporu pro stahování audia, podporu pro Right 
+      Now (audio i video) a podporu pro streamy na bázi protokolù MMS/RTSP
+      (ale tohle není vyzkoušené, protože jediné takové video, které jsem
+      našel, nefunguje ani pøímo ve Flashi).
+
+    * Nova.cz: Bylo zprovoznìno video "Ordinace v rùžové zahradì 2, 250. díl"
+      (a možná i nìkterá jiná). Problém s videem je, že na serveru není k
+      dispozici ve vysoké kvalitì, ve které se program snaží stahovat, a
+      server pøesto nesprávnì informuje o úspìšném stažení. Problém byl
+      vyøešen dvìma zpùsoby:
+
+      1. V konfiguraèním souboru lze nastavit, že se z Novy má stahovat v 
+         nízké kvalitì místo ve vysoké. Viz dokumentace, hledejte <nova_cz>.
+
+      2. Pokud jsou zapnuty "špinavé hacky" (což ve standardní konfiguraci
+         jsou), YTD se pokusí tuto situaci detekovat a rovnou automaticky
+         stáhnout nízkokvalitní verzi. Podotýkám, že skuteènì *jde* o "špinavý
+         hack", takže si nestìžujte, že se to chová divnì (napøíklad se nemìní
+         pøípona souboru, stále zùstává .mp4).
+
+    * Servery opravené na aktuální stav:
+      - Hasici150.tv.
+      - MTV.com (stejnì nefunguje, viz "handshake" poznámka níže).
+      - RedTube.com (porno).
+      - TotallyCrap.com.
+      - UStream.tv.
+      - WordPress.tv.
+
+    * Doèasnì nefunkèní servery:
+      - CrunchyRoll.com: vyžaduje autentizaci Flash pøehrávaèe.
+
+    * Mnoho serverù používajících protokol RTMP nyní nejde stahovat - pøi
+      pokusu o download zapíší do logu varování "HandShake: Type mismatch: 
+      client sent 6, server answered 9" a následnì chybu, "handshake failed".
+      Je to zpùsobené tím, že tyto servery už vyžadují Flash verze 10 a ten
+      zatím není RTMPDUMPem podporovaný (viz http://stream-recorder.com/forum/rtmpdump-does-not-start-error-handshake-type-t8603.html).
+      Až to RTMPDUMP zaène podporovat, bude to zakomponováno i do YTD. Zatím
+      se s tìmito servery nedá nic dìlat.
+
+    * Podpora pro automatické použití HTML parseru na neznámá URL: pokud do
+      YTD zadáte neznámou adresu, program se pokusí vyhledat v ní známé adresy
+      stejnì, jako kdyby ta adresa byla zadána parametrem -s (resp. tlaèítkem
+      "Pøidat URL z HTML stránky"). Tím je zajištìna jednoduchá podpora pro
+      servery jako Zive.cz, Vlaky.net a mnohé další, které se odkazují napø. na
+      YouTube. Staré chování (YTD ovìøí, jestli jde o známou adresu, a když ne,
+      tak hned skonèí s chybou) mùžete nastavit parametrem -ah-, nastavením 
+      <auto_try_html_parser> v konfiguraèním souboru nebo v grafické verzi v 
+      nastaveních.
+
+    * Odstranìna zdvojená pøípona souborù u vnoøených downloaderù.
+
+    * Pøi pøepínání aplikací pomocí ALT+TAB se zobrazuje správná ikonka.
+
+    * Podpora pro verze YTD vyšší než 0.99.
+
+    * Pøekompilována knihovna RTMPDUMP_DLL tak, aby používala více osekanou
+      (a menší) verzi PolarSSL. Tím jsem získal nìjakých 27 KB na velikosti
+      archívu, aniž by to mìlo viditelnì ovlivnit funkènost (vyøazeny jsou
+      rùzné ladící tisky a nìkolik málo šifrovacích algoritmù, které se stejnì
+      v RTMPDUMPu nepoužívají). Kdybyste pøesto narazili na problém (jiný než
+      "handshake problém" výše), mùžete použít RTMPDUMP_DLL z pøedchozích
+      verzí YTD. Ale neoèekávám to, vyzkoušel jsem snad všechny servery
+      používající RTMP a všechny chodí.
+
+    * Hlavní (portable) konfiguraèní soubor YTD.XML se nyní hledá napøed v 
+      aktuálním pracovním adresáøi a teprve pokud tam nebyl nalezen, tak v
+      adresáøi s YTD.EXE. To umožòuje mít nìkolik rùzných konfigurací, aniž by
+      bylo tøeba mít nìkolik kopií YouTube Downloaderu. Na vedlejším 
+      (ne-portable) konfiguraèním souboru se nic nemìní, je stále v adresáøi 
+      profilu.
+
+
+
   v0.76:
 
     * CeskaTelevize.cz: Pøedchozí úprava znefunkènila staré iVysílání a další

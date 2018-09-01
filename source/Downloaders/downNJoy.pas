@@ -42,13 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TDownloader_NJoy = class(THttpDownloader)
+  TDownloader_NJoy = class(TNestedDownloader)
     private
     protected
+      HttpProtocolRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -59,18 +62,28 @@ type
 implementation
 
 uses
+  uHttpDirectDownloader,
+  uMSDirectDownloader,
   uDownloadClassifier,
   uMessages;
 
 // http://n-joy.cz/video/supcom-2-zabery-z-hrani-2/oiuhz6e3xgt35e4e
+// http://n-joy.cz/right-now/video/honza-b/psvfmt8b61ghlgg4
+// http://n-joy.cz/right-now/audio/vera-spinarova/2zpSLkXoR5IteMyC
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*n-joy\.cz/video/[^/]+/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*n-joy\.cz/(?:right-now/)?(?:video|audio)/[^/]+/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?:N-JOY.CZ - )?(?P<TITLE>.*?)</title>';
-  REGEXP_EXTRACT_URL = '\sflashvars\.file_url\s*=\s*"(?P<URL>.*?)"';
+  REGEXP_EXTRACT_URL = '\sflashvars\.file(?:_url)?\s*=\s*"(?P<URL>.*?)"';
+  REGEXP_PROTOCOL_HTTP = '^https?://';
+
+type
+  TDownloader_NJoy_HTTP = class(THttpDirectDownloader);
+  TDownloader_NJoy_MMS = class(TMSDirectDownloader);
+
 
 { TDownloader_NJoy }
 
@@ -81,19 +94,21 @@ end;
 
 class function TDownloader_NJoy.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_NJoy.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  HttpProtocolRegExp := RegExCreate(REGEXP_PROTOCOL_HTTP);
 end;
 
 destructor TDownloader_NJoy.Destroy;
 begin
+  RegExFreeAndNil(HttpProtocolRegExp);
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
@@ -102,6 +117,17 @@ end;
 function TDownloader_NJoy.GetMovieInfoUrl: string;
 begin
   Result := 'http://n-joy.cz/video/dummy/' + MovieID;
+end;
+
+function TDownloader_NJoy.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    if HttpProtocolRegExp.Match(MovieURL) then
+      Result := CreateNestedDownloaderFromDownloader(TDownloader_NJoy_HTTP.Create(MovieUrl, Name))
+    else
+      Result := CreateNestedDownloaderFromDownloader(TDownloader_NJoy_MMS.Create(MovieUrl, Name))
 end;
 
 initialization

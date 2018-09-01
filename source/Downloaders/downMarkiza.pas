@@ -99,7 +99,7 @@ end;
 
 class function TDownloader_Markiza.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Markiza.Create(const AMovieID: string);
@@ -107,11 +107,11 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   {$IFDEF JSON}
-  JSONSourceRegExp := RegExCreate(JSON_SOURCE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  JSONSourceRegExp := RegExCreate(JSON_SOURCE_REGEXP);
   {$ELSE}
-  PlaylistItemRegExp := RegExCreate(PLAYLIST_ITEM_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  NotAnAdRegExp := RegExCreate(NOTANAD_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  DescriptionRegExp := RegExCreate(DESCRIPTION_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  PlaylistItemRegExp := RegExCreate(PLAYLIST_ITEM_REGEXP);
+  NotAnAdRegExp := RegExCreate(NOTANAD_REGEXP);
+  DescriptionRegExp := RegExCreate(DESCRIPTION_REGEXP);
   {$ENDIF}
 end;
 

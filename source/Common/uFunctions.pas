@@ -43,7 +43,7 @@ uses
   SysUtils, uMessages;
   
 function PrettySize(Size: int64): string;
-function IsNewerVersion(const OnlineVersion: string): boolean;
+function IsNewerVersion(OnlineVersion: string): boolean;
 
 implementation
 
@@ -70,9 +70,55 @@ begin
     Result := PrettySizeInternal(Size, 40, 'T')
 end;
 
-function IsNewerVersion(const OnlineVersion: string): boolean;
+function IsNewerVersion(OnlineVersion: string): boolean;
+
+  function ExtractVersionPartAsInteger(var Version: string; out Part: integer): boolean;
+    var i: integer;
+        s: string;
+    begin
+      i := Pos('.', Version);
+      if i > 0 then
+        begin
+        s := Copy(Version, 1, Pred(i));
+        Delete(Version, 1, i);
+        end
+      else
+        begin
+        s := Version;
+        Version := '';
+        end;
+      try
+        Part := StrToInt(s);
+        Result := True;
+      except
+        on EConvertError do
+          begin
+          Part := 0;
+          Result := False;
+          end;
+        end;
+    end;
+
+var Version: string;
+    NumCurrent, NumOnline: integer;
+    FoundCurrent, FoundOnline: boolean;
 begin
-  Result := OnlineVersion > APPLICATION_VERSION;
+  Result := False;
+  Version := APPLICATION_VERSION;
+  repeat
+    FoundCurrent := ExtractVersionPartAsInteger(Version, NumCurrent);
+    FoundOnline := ExtractVersionPartAsInteger(OnlineVersion, NumOnline);
+    if not (FoundCurrent or FoundOnline) then
+      Break
+    else
+      if NumCurrent < NumOnline then
+        begin
+        Result := True;
+        Break;
+        end
+      else if NumCurrent > NumOnline then
+        Break;
+  until False;
 end;
 
 end.

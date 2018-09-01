@@ -5,7 +5,7 @@ Several batch files for building YouTube Downloader are provided:
 
   build.bat .......... Main build script. You can control the build options,
                        such as compiler used or specific features, using
-                       arguments such as "delphi5" or "nogui". You can get
+                       arguments such as "delphi" or "nogui". You can get
                        a list of the most important arguments using argument
                        -h (or -?).
 

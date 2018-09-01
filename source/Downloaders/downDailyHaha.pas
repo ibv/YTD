@@ -87,17 +87,17 @@ end;
 
 class function TDownloader_DailyHaha.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_DailyHaha.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  FlashObjectRegExp := RegExCreate(REGEXP_FLASHOBJECT, [rcoIgnoreCase, rcoSingleLine]);
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
-  FlashVarSrcRegExp := RegExCreate(REGEXP_FLASHVARSRC, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  FlashObjectRegExp := RegExCreate(REGEXP_FLASHOBJECT);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashVarSrcRegExp := RegExCreate(REGEXP_FLASHVARSRC);
 end;
 
 destructor TDownloader_DailyHaha.Destroy;

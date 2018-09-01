@@ -84,14 +84,14 @@ end;
 
 class function TDownloader_QipRu_Embed.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_QipRu_Embed.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUnknown;
-  RealUrlRegExp := RegExCreate(EXTRACT_URL_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  RealUrlRegExp := RegExCreate(EXTRACT_URL_REGEXP);
 end;
 
 destructor TDownloader_QipRu_Embed.Destroy;

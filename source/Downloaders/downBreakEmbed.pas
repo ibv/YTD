@@ -84,14 +84,14 @@ end;
 
 class function TDownloader_BreakEmbed.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_BreakEmbed.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peNone;
-  MovieVarsRegExp := RegExCreate(REGEXP_EXTRACT_VARS, [rcoIgnoreCase]);
+  MovieVarsRegExp := RegExCreate(REGEXP_EXTRACT_VARS);
 end;
 
 destructor TDownloader_BreakEmbed.Destroy;

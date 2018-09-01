@@ -91,14 +91,14 @@ end;
 
 class function TDownloader_Joj.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Joj.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
 end;
 
 destructor TDownloader_Joj.Destroy;

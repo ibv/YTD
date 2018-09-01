@@ -338,6 +338,8 @@ begin
   Result := inherited DoInitDialog;
   CreateObjects;
   Self.Translate;
+  // Application
+  SetClassLong(Self.Handle, GCL_HICON, Icon);
   // Caption
   SetWindowText(Self.Handle, APPLICATION_CAPTION);
   // Accelerators
@@ -829,10 +831,17 @@ begin
 end;
 
 function TFormMain.ClipboardChanged: boolean;
+var OldAutoTryHtmlParser: boolean;
 begin
   if NextClipboardViewer <> 0 then
     SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
-  AddFromClipboard(True);
+  OldAutoTryHtmlParser := Options.AutoTryHtmlParser;
+  try
+    Options.AutoTryHtmlParser := False;
+    AddFromClipboard(True);
+  finally
+    Options.AutoTryHtmlParser := OldAutoTryHtmlParser;
+    end;
   Result := True;
 end;
 

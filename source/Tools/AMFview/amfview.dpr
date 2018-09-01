@@ -11,7 +11,7 @@ var Packet: TAMFPacket;
 begin
   if ParamCount < 1 then
     begin
-    Writeln('amfpost.exe <url> <amf-packet>');
+    Writeln('amfview.exe <amf-packet>');
     ExitCode := 1;
     Exit;
     end;

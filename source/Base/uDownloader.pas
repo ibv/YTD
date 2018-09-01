@@ -40,7 +40,7 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows, 
+  SysUtils, Classes, Windows,
   HttpSend, SynaUtil, SynaCode,
   uOptions, uXML, uAMF, uCompatibility;
 
@@ -94,9 +94,12 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; Url: string; const PostData, PostMimeType: AnsiString; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Page: string; Encoding: TPageEncoding = peUnknown; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadXml(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Xml: TXmlDoc; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -366,6 +369,42 @@ begin
     end;
 end;
 
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; const PostData, PostMimeType: AnsiString; Clear: boolean): boolean;
+var OldInputStream, InputStream: TStream;
+begin
+  if Clear then
+    Http.Clear;
+  InputStream := TMemoryStream.Create;
+  try
+    if PostData <> '' then
+      begin
+      InputStream.WriteBuffer(PostData[1], Length(PostData));
+      InputStream.Position := 0;
+      end;
+    OldInputStream := Http.InputStream;
+    try
+      Http.InputStream := InputStream;
+      Http.MimeType := PostMimeType;
+      Result := DownloadPage(Http, Url, hmPOST, False);
+    finally
+      Http.InputStream := OldInputStream;
+      end;
+  finally
+    InputStream.Free;
+    end;
+end;
+
+function TDownloader.DownloadPage(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Page: string; Encoding: TPageEncoding; Clear: boolean): boolean;
+begin
+  Page := '';
+  Result := DownloadPage(Http, Url, PostData, PostMimeType, Clear);
+  if Result then
+    begin
+    Page := ConvertString(Http.Document, Encoding);
+    Http.Document.Seek(0, 0);
+    end;
+end;
+
 function TDownloader.DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod; Clear: boolean): boolean;
 begin
   Result := DownloadPage(Http, Url, Method, Clear);
@@ -382,18 +421,20 @@ end;
 function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;
 begin
   Xml := nil;
-  Result := DownloadPage(Http, Url, Page, peXml, Method, Clear);
-  if Result and (Page <> '') then
-    begin
-    Xml := TXmlDoc.Create;
-    try
-      Xml.LoadFromStream(Http.Document);
-      Http.Document.Seek(0, 0);
-    except
-      FreeAndNil(Xml);
-      Result := False;
+  Result := False;
+  if DownloadPage(Http, Url, Page, peXml, Method, Clear) then
+    if Http.Document.Size > 0 then
+      begin
+      Xml := TXmlDoc.Create;
+      try
+        Xml.LoadFromStream(Http.Document);
+        Http.Document.Seek(0, 0);
+        Result := True;
+      except
+        FreeAndNil(Xml);
+        Result := False;
+        end;
       end;
-    end;
 end;
 
 function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;
@@ -402,39 +443,45 @@ begin
   Result := DownloadXml(Http, Url, Page, Xml, Method, Clear);
 end;
 
+function TDownloader.DownloadXml(Http: THttpSend; const Url: string; const PostData, PostMimeType: AnsiString; out Xml: TXmlDoc; Clear: boolean): boolean;
+begin
+  Xml := nil;
+  Result := False;
+  if DownloadPage(Http, Url, PostData, PostMimeType, Clear) then
+    if Http.Document.Size > 0 then
+      begin
+      Xml := TXmlDoc.Create;
+      try
+        Xml.LoadFromStream(Http.Document);
+        Http.Document.Seek(0, 0);
+        Result := True;
+      except
+        FreeAndNil(Xml);
+        Result := False;
+        end;
+      end;
+end;
+
 function TDownloader.DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean;
-var OldInputStr: TStream;
+var RequestStr: AnsiString;
 begin
   Result := False;
-  Response := nil;
-  Http.Clear;
-  OldInputStr := Http.InputStream;
-  try
-    Http.InputStream := TMemoryStream.Create;
-    try
-      Http.MimeType := 'application/x-amf';
-      Request.SaveToStream(Http.InputStream);
-      Http.InputStream.Position := 0;
-      if DownloadPage(Http, Url, hmPOST, False) then
-        if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
-          begin
-          Response := TAMFPacket.Create;
-          try
-            Http.Document.Seek(0, 0);
-            Response.LoadFromStream(Http.Document);
-            Http.Document.Seek(0, 0);
-            Result := True;
-          except
-            Response.Free;
-            Response := nil;
-            end;
+  Request.SaveToString(RequestStr);
+  if DownloadPage(Http, Url, RequestStr, 'application/x-amf', True) then
+    if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
+      if Http.Document.Size > 0 then
+        begin
+        Response := TAMFPacket.Create;
+        try
+          Http.Document.Seek(0, 0);
+          Response.LoadFromStream(Http.Document);
+          Http.Document.Seek(0, 0);
+          Result := True;
+        except
+          Response.Free;
+          Response := nil;
           end;
-    finally
-      Http.OutputStream.Free;
-      end;
-  finally
-    Http.InputStream := OldInputStr;
-    end;
+        end;
 end;
 
 procedure TDownloader.AbortTransfer;

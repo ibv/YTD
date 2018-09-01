@@ -87,17 +87,17 @@ end;
 
 class function TDownloader_Facebook.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Facebook.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlHQRegExp := RegExCreate(REGEXP_MOVIE_URL_HQ, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlLQRegExp := RegExCreate(REGEXP_MOVIE_URL_LQ, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  MovieUrlHQRegExp := RegExCreate(REGEXP_MOVIE_URL_HQ);
+  MovieUrlLQRegExp := RegExCreate(REGEXP_MOVIE_URL_LQ);
 end;
 
 destructor TDownloader_Facebook.Destroy;

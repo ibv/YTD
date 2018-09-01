@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
-  uPCRE, uXml, HttpSend, blcksock,
+  uPCRE, uXml, HttpSend, blcksock, ssl_openssl,
   uDownloader, uCommonDownloader;
 
 type
@@ -63,6 +63,7 @@ type
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function BeforeDownload(Http: THttpSend): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ClearHttpData; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property VideoDownloader: THttpSend read fVideoDownloader write fVideoDownloader;
       property BytesTransferred: int64 read fBytesTransferred write fBytesTransferred;
       property Cookies: TStringList read fCookies;
@@ -88,7 +89,11 @@ type
 implementation
 
 uses
-  uLanguages, uMessages;
+  {$IFDEF DIRTYHACKS}
+  uFiles,
+  {$ENDIF}
+  uLanguages,
+  uMessages;
 
 {gnugettext: scan-all}
 const
@@ -137,7 +142,7 @@ begin
   inherited;
 end;
 
-function THttpDownloader.Prepare: boolean;
+procedure THttpDownloader.ClearHttpData;
 begin
   {$IFDEF MULTIDOWNLOADS}
   NameList.Clear;
@@ -146,6 +151,11 @@ begin
   {$ENDIF}
   Referer := '';
   BytesTransferred := 0;
+end;
+
+function THttpDownloader.Prepare: boolean;
+begin
+  ClearHttpData;
   Result := inherited Prepare;
 end;
 

@@ -139,6 +139,7 @@ begin
   WriteColored(ccWhite, ' -k'); Writeln(_(' .......... Ask what to do with existing files (default).')); // CLI: Help for -k command line argument
   WriteColored(ccWhite, ' -l'); Writeln(_(' .......... List all available providers.')); // CLI: Help for -l command line argument
   WriteColored(ccWhite, ' -v'); Writeln(_(' .......... Test for updated version of YTD.')); // CLI: Help for -v command line argument
+  WriteColored(ccWhite, ' -ah[-]'); Writeln(_(' ...... [Don''t] Automatically try HTML parser for unknown URLs.')); // CLI: Help for -ah command line argument
   Writeln;
   WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.')); // CLI: Help for <url> command line argument
   Writeln;
@@ -246,6 +247,10 @@ begin
             Result := RESCODE_BADPARAMS;
             Break;
             end
+        else if (Param = '-ah') then
+          Options.AutoTryHtmlParser := True
+        else if (Param = '-ah-') then
+          Options.AutoTryHtmlParser := False
         else if (Param = '-s') then
           if ParamGetNext(Param) then
             begin
@@ -458,6 +463,16 @@ function TYTD.DownloadURL(const URL: string): boolean;
 begin
   UrlList.Add(URL);
   Result := DownloadUrlList > 0;
+  if not Result then
+    if Options.AutoTryHtmlParser then
+      begin
+      DownloadClassifier.Url := URL;
+      if DownloadClassifier.Downloader = nil then
+        begin
+        Writeln(_('Trying to parse as HTML page...'));
+        Result := DownloadURLsFromHTML(URL) > 0;
+        end;
+      end;
 end;
 
 function TYTD.DownloadURLsFromHTML(const Source: string): integer;

@@ -84,7 +84,7 @@ end;
 
 class function TDownloader_StupidVideos.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_StupidVideos.Create(const AMovieID: string);
@@ -92,9 +92,9 @@ begin
   inherited;
   InfoPageEncoding := peUnknown;
   RegExFreeAndNil(MovieTitleRegExp);
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   RegExFreeAndNil(MovieIdRegExp);
-  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
 destructor TDownloader_StupidVideos.Destroy;

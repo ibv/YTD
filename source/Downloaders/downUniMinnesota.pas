@@ -86,16 +86,16 @@ end;
 
 class function TDownloader_UniMinnesota.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_UniMinnesota.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID, [rcoIgnoreCase, rcoSingleLine]);
-  InstanceIdRegExp := RegExCreate(REGEXP_INSTANCE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
+  InstanceIdRegExp := RegExCreate(REGEXP_INSTANCE_ID);
 end;
 
 destructor TDownloader_UniMinnesota.Destroy;

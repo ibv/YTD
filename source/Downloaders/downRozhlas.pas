@@ -89,16 +89,16 @@ end;
 
 class function TDownloader_Rozhlas.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Rozhlas.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  TableRowsRegExp := RegExCreate(REGEXP_TABLE_ROWS, [rcoSingleLine, rcoIgnoreCase]);
-  StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
-  StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE, [rcoIgnoreCase]);
+  TableRowsRegExp := RegExCreate(REGEXP_TABLE_ROWS);
+  StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID);
+  StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE);
 end;
 
 destructor TDownloader_Rozhlas.Destroy;

@@ -1,6 +1,8 @@
 @echo off
 setlocal
 if "%~1"=="" goto syntax
+if /i "%2"=="zip" goto zip
+if /i "%2"=="7z" goto 7z
 rem goto 7z
 goto zip
 

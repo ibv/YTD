@@ -85,16 +85,16 @@ end;
 
 class function TDownloader_XHamster.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_XHamster.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER, [rcoIgnoreCase, rcoSingleLine]);
-  MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
+  MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME);
 end;
 
 destructor TDownloader_XHamster.Destroy;

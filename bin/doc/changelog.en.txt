@@ -1,6 +1,112 @@
 CHANGELOG
 ---------
 
+  v0.77:
+
+    * New provider: DancingBear.com (porno).
+
+    * New provider: Denik.cz.
+
+      - All regional variants are supported, too. Both video and audio are
+        supported.
+
+    * New provider: FunnyOrDie.com.
+
+    * New provider: iDnes.cz.
+
+      - The provider is implemented through another dirty hack: the streaming
+        server is entered as a constant string in the code, because the
+        officially requested server actually doesn't work.
+
+    * New provider: PBS.org.
+
+    * New provider: Sefka.cz, Sefka.sk.
+
+      - Adding future Prima-Joj joint projects will be a trivial matter.
+
+    * New provider: Sme.sk.
+
+    * New provider: Zakulisi.cz (porn).
+
+    * FreeCaster.tv: In addition to HTTP streams, RTMP streams are also
+      supported (some movies are streamed over one protocol, others over the
+      other).
+
+    * N-Joy.cz: Added support for audio download, for Right Now (both audio
+      and video), and for MMS/RTSP based streams (this last features hasn't
+      been tested yet, though, because I only found one such video and it
+      didn't work even in the browser).
+
+    * Nova.cz: Movie "Ordinace v rùžové zahradì 2, 250. díl" (and perhaps
+      some others) works now. The reason it hadn't worked was, there isn't
+      a high-quality version of the movie online, but the server still 
+      incorrectly reports that it was downloaded successfully. I solved the
+      issue by two changes:
+
+      1. You can now force YTD to download low-quality videos by modifying
+         the configuration file. Search the documentation for <nova_cz> for
+         details.
+
+      2. If "dirty hacks" are turned on (which is true in my releases), YTD
+         tries to detect this situation and automatically download the low
+         quality version. Note that this *really* is a dirty hack, so don't
+         be surprised if it behaves strangely (e.g. the movie's filename still
+         has an .mp4 extension, even though it is in fact a .flv).
+
+    * Servers which work again after their pages changed:
+      - Hasici150.tv.
+      - MTV.com (doesn't actually work, see the "handshake" note below).
+      - RedTube.com (porn).
+      - TotallyCrap.com.
+      - UStream.tv.
+      - WordPress.tv.
+
+    * Temporarily non-working servers:
+      - CrunchyRoll.com: requires Flash autentization.
+
+    * An increasing number of servers which use the RTMP protocol can't be
+      downloaded anymore - they write warning "HandShake: Type mismatch: 
+      client sent 6, server answered 9" into the log file and then quit with
+      error "handshake failed". This is caused by the fact that while these
+      servers require Flash version 10 now, RTMPDUMP only supports version 9
+      (see http://stream-recorder.com/forum/rtmpdump-does-not-start-error-handshake-type-t8603.html).
+      Until RTMPDUMP is updated with Flash 10 support, nothing can be done
+      about this problem.
+      
+    * Support for an automatic application of HTML parser to unknown URLs: If
+      you tell YTD to download an unknown URL, the program will try to find
+      known URLs as if you added the address using -s parameter (button "Add
+      URLs from HTML page"). That adds support for servers such as Zive.cz,
+      Vlaky.net and many others which embed other provider's video players.
+      The old behavior (YTD tries to locate a downloader and if it fails, it
+      returns an error) can be turned on by using argument -ah-, setting the
+      <auto_try_html_parser> option in the config file, or in GUI using the
+      appropriate checkbox in the Settings.
+
+    * Fixed the duplicated file extension when using nested downloaders.
+
+    * When task-switching using ALT+TAB, a correct icon is displayed.
+
+    * Support for YTD version numbers larger than 0.99.
+
+    * Recompiled the RTMPDUMP_DLL library to use a smaller (slightly butchered)
+      version of PolarSSL. That reduced the binary by about 27 KB while keeping
+      all relevant functionality (I removed mostly debug stuff, plus a few
+      ciphers which are not used by RTMPDUMP anyway). If you do encounter a
+      problem (other than the "handshake problem" above), you can use the old
+      RTMPDUMP_DLL from the older versions of YTD. But I don't expect any
+      trouble - I tried all RTMP-based servers, and except for the handshake
+      issue, they all worked fine.
+
+    * The main (portable) configuration file YTD.XML is now first searched for
+      in the current working directory, and only if not found, the file from
+      YTD.EXE's directory is used. This change enables you tu use multiple
+      configurations without having to have multiple copies of YTD's executable
+      files as well. There was no change for the secondary (non-portable)
+      configuration file, it is still located in the user's profile directory.
+
+
+
   v0.76:
 
     * CeskaTelevize.cz: The change in 0.75 blocked support for the alternative

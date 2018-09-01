@@ -85,15 +85,15 @@ end;
 
 class function TDownloader_Wat.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Wat.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  JSONTitleRegExp := RegExCreate(REGEXP_EXTRACT_JSONTITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieIdRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEID, [rcoIgnoreCase, rcoSingleLine]);
+  JSONTitleRegExp := RegExCreate(REGEXP_EXTRACT_JSONTITLE);
+  MovieIdRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEID);
 end;
 
 destructor TDownloader_Wat.Destroy;

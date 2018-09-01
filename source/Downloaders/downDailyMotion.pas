@@ -85,15 +85,15 @@ end;
 
 class function TDownloader_DailyMotion.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_DailyMotion.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
-  JSONVarsRegExp := RegExCreate(REGEXP_JSON_VARS, [rcoIgnoreCase, rcoSingleLine]);
+  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
+  JSONVarsRegExp := RegExCreate(REGEXP_JSON_VARS);
 end;
 
 destructor TDownloader_DailyMotion.Destroy;

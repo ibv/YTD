@@ -51,9 +51,10 @@ type
     private
       fRtmpDumpOptions: TRtmpDumpOptions;
     protected
-      procedure ClearRtmpDumpOptions; virtual;
-      procedure AddRtmpDumpOption(ShortOption: char; const Argument: string = ''); virtual;
-      procedure OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer); virtual;
+      procedure ClearRtmpDumpOptions; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure AddRtmpDumpOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetRtmpDumpOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions;
     public
       constructor Create(const AMovieID: string); override;
@@ -66,7 +67,7 @@ implementation
 
 uses
   uMessages;
-  
+
 procedure RtmpDumpDownloadProgressCallback(Tag: integer; DownloadedSize: integer; PercentDone: double; var DoAbort: integer); cdecl;
 begin
   TRtmpDownloader(Tag).OnRtmpDownloadProgress(DownloadedSize, PercentDone, DoAbort);
@@ -96,6 +97,19 @@ begin
   SetLength(fRtmpDumpOptions, Succ(n));
   fRtmpDumpOptions[n].ShortOption := AnsiChar(ShortOption);
   fRtmpDumpOptions[n].Argument := AnsiString(Argument);
+end;
+
+procedure TRtmpDownloader.SetRtmpDumpOption(ShortOption: char; const Argument: string);
+var i: integer;
+begin
+  for i := 0 to Pred(Length(fRtmpDumpOptions)) do
+    if fRtmpDumpOptions[i].ShortOption = AnsiChar(ShortOption) then
+      begin
+      fRtmpDumpOptions[i].ShortOption := AnsiChar(ShortOption);
+      fRtmpDumpOptions[i].Argument := AnsiString(Argument);
+      Exit;
+      end;
+  AddRtmpDumpOption(ShortOption, Argument);
 end;
 
 procedure TRtmpDownloader.OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer);

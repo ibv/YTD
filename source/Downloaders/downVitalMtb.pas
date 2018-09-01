@@ -83,14 +83,14 @@ end;
 
 class function TDownloader_VitalMtb.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_VitalMtb.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  XmlPathRegExp := RegExCreate(REGEXP_XML_PATH, [rcoIgnoreCase, rcoSingleLine]);
+  XmlPathRegExp := RegExCreate(REGEXP_XML_PATH);
 end;
 
 destructor TDownloader_VitalMtb.Destroy;

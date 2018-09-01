@@ -95,6 +95,7 @@ const
   IDC_BUTTON_DOWNLOADDIR = 1007;
   IDC_LABEL_CONVERTER = 1008;
   IDC_COMBO_CONVERTER = 1009;
+  IDC_CHECKBOX_AUTOTRYHTMLPARSER = 1010;
 
 const
   ACTION_DOWNLOADDIR = 40001;
@@ -134,6 +135,7 @@ begin
   fConverterIndex := SendMessage(ComboConverter, CB_GETCURSEL, 0, 0);
   // Make sure everything can be resized easily
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTOSTARTDOWNLOADS), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_COMBO_OVERWRITEMODE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_DOWNLOADDIR), [akTop, akLeft, akRight]);
@@ -209,7 +211,9 @@ const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   // Auto Start Downloads
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_AUTOSTARTDOWNLOADS, CheckboxConsts[Options.AutoStartDownloads]);
-  // Download subtitles
+  // Auto Try HTML Parser
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER, CheckboxConsts[Options.AutoTryHtmlParser]);
+  // Download Subtitles
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES, CheckboxConsts[Options.SubtitlesEnabled]);
   // Overwrite Mode
   SendMessage(ComboOverwriteMode, CB_RESETCONTENT, 0, 0);
@@ -242,7 +246,14 @@ begin
     BST_UNCHECKED:
       Options.AutoStartDownloads := False;
     end;
-  // Download subtitles
+  // Auto Try HTML Parser
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER) of
+    BST_CHECKED:
+      Options.AutoTryHtmlParser := True;
+    BST_UNCHECKED:
+      Options.AutoTryHtmlParser := False;
+    end;
+  // Download Subtitles
   case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES) of
     BST_CHECKED:
       Options.SubtitlesEnabled := True;

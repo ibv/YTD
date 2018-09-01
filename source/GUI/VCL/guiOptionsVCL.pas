@@ -47,7 +47,6 @@ uses
 
 type
   TFormOptions = class(TForm)
-    CheckAutoDownload: TCheckBox;
     LabelOverwriteMode: TLabel;
     ComboOverwriteMode: TComboBox;
     LabelDownloadDir: TLabel;
@@ -84,6 +83,8 @@ type
     actDesktopShortcut: TAction;
     actStartMenuShortcut: TAction;
     CheckMonitorClipboard: TCheckBox;
+    CheckAutoTryHtmlParser: TCheckBox;
+    CheckAutoDownload: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
     procedure actDownloadDirExecute(Sender: TObject);
@@ -123,6 +124,7 @@ begin
     EditLanguage.Text := Options.Language;
     // Download options
     CheckAutoDownload.Checked := Options.AutoStartDownloads;
+    CheckAutoTryHtmlParser.Checked := Options.AutoTryHtmlParser;
     CheckSubtitlesEnabled.Checked := Options.SubtitlesEnabled;
     EditDownloadDir.Text := Options.DestinationPath;
     ComboOverwriteMode.ItemIndex := OverwriteMode[Options.OverwriteMode];
@@ -157,6 +159,7 @@ begin
   Options.MonitorClipboard := CheckMonitorClipboard.Checked;
   // Download options
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
+  Options.AutoTryHtmlParser := CheckAutoTryHtmlParser.Checked;
   Options.SubtitlesEnabled := CheckSubtitlesEnabled.Checked;
   Options.DestinationPath := EditDownloadDir.Text;
   Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];

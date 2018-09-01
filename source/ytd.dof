@@ -21,7 +21,7 @@ S=0
 T=0
 U=0
 V=1
-W=0
+W=1
 X=1
 Y=1
 Z=1
@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.ceskatelevize.cz/ivysilani-jako-driv/21056226510-rozmarna-leta-ceskeho-filmu/?streamtype=WM3
+RunParams=http://www.mtv.com/videos/?id=1518072&vid=632387
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=74
+MinorVer=76
 Release=0
-Build=547
+Build=590
 Debug=0
 PreRelease=0
 Special=0
@@ -68,26 +68,27 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.74.0.547
+FileVersion=0.76.0.590
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
-ProductVersion=0.74.0.544
+ProductVersion=0.76.0.581
 Comments=http://www.pepak.net/download/youtube-downloader/
 [HistoryLists\hlDebugSourcePath]
 Count=2
 Item0=C:\Tmp\ytd\Source\Lib\NativeXml\
 Item1=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 [HistoryLists\hlConditionals]
-Count=6
+Count=7
 Item0=PEPAK;PEPAK_YTD;XXX;
 Item1=PEPAK;PEPAK_YTD;XXX;DEBUG
-Item2=PEPAK;PEPAK_YTD;XXX
-Item3=XXX;
-Item4=XXX;DEBUG
-Item5=XXX
+Item2=PEPAK;PEPAK_YTD;XXX;NONWORKING
+Item3=PEPAK;PEPAK_YTD;XXX
+Item4=XXX;
+Item5=XXX;DEBUG
+Item6=XXX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
@@ -117,7 +118,7 @@ Item0=..\Bin
 Item1=..\Exe
 Item2=Exe
 [Exception Log]
-EurekaLog Version=6101
+EurekaLog Version=6020
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -157,7 +158,7 @@ HTMLLine11="      %3C/tr%3E"
 HTMLLine12="    %3C/table%3E"
 HTMLLine13="  %3C/body%3E"
 HTMLLine14="%3C/html%3E"
-AutoCrashOperation=2
+AutoCrashOperation=0
 AutoCrashNumber=10
 AutoCrashMinutes=1
 WebURL=
@@ -270,14 +271,13 @@ boSaveCompressedCopyInCaseOfError=0
 boHandleSafeCallExceptions=1
 boCallRTLExceptionEvent=0
 boCatchHandledExceptions=1
-loCatchLeaks=0
+loCatchLeaks=1
 loGroupsSonLeaks=1
 loHideBorlandLeaks=1
 loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
-cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

@@ -83,14 +83,14 @@ end;
 
 class function TDownloader_GodTube.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_GodTube.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  PlaylistRegExp := RegExCreate(REGEXP_PLAYLIST, [rcoIgnoreCase]);
+  PlaylistRegExp := RegExCreate(REGEXP_PLAYLIST);
 end;
 
 destructor TDownloader_GodTube.Destroy;

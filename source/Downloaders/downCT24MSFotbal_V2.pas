@@ -99,7 +99,7 @@ const
 
 class function TDownloader_CT24MSFotbal_V2.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_CT24MSFotbal_V2.Create(const AMovieID: string);
@@ -107,7 +107,7 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   RegExFreeAndNil(MovieTitleRegExp);
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
 end;
 
 destructor TDownloader_CT24MSFotbal_V2.Destroy;

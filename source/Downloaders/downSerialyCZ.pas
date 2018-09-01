@@ -82,16 +82,16 @@ end;
 
 class function TDownloader_SerialyCZ.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_SerialyCZ.Create(const AMovieID: string);
 begin
   inherited;
   RegExFreeAndNil(MovieTitleRegExp);
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
   RegExFreeAndNil(MovieIDRegExp);
-  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID);
 end;
 
 destructor TDownloader_SerialyCZ.Destroy;

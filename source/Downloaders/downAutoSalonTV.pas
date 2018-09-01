@@ -85,7 +85,7 @@ end;
 
 class function TDownloader_AutoSalonTV.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_AutoSalonTV.Create(const AMovieID: string);
@@ -93,7 +93,7 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := nil;
-  MovieIdVarsRegExp := RegExCreate(REGEXP_MOVIEID_VARS, [rcoIgnoreCase, rcoSingleLine]);
+  MovieIdVarsRegExp := RegExCreate(REGEXP_MOVIEID_VARS);
 end;
 
 destructor TDownloader_AutoSalonTV.Destroy;
@@ -123,7 +123,7 @@ begin
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
   else
     begin
-    MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE_PATTERN, [Year, Week]), [rcoIgnoreCase, rcoSingleLine]);
+    MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE_PATTERN, [Year, Week]));
     if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
       SetName(Title);
     MovieUrl := Format('http://bcastd.livebox.cz/up/as/%s/%s%s.wmv', [Year, Week, Year]);

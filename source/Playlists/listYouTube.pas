@@ -85,15 +85,15 @@ end;
 
 class function TPlaylist_YouTube.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + ClassName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TPlaylist_YouTube.Create(const AMovieID: string);
 begin
   inherited;
-  //PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM, [rcoIgnoreCase, rcoSingleLine]);
-  PlayListItemRegExp := RegExCreate(Format(REGEXP_PLAYLIST_ITEM, [MovieID]), [rcoIgnoreCase, rcoSingleLine]);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE, [rcoIgnoreCase, rcoSingleLine]);
+  //PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
+  PlayListItemRegExp := RegExCreate(Format(REGEXP_PLAYLIST_ITEM, [MovieID]));
+  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
 
 destructor TPlaylist_YouTube.Destroy;

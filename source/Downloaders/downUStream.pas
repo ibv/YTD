@@ -75,10 +75,10 @@ const
 
 const
   AMF_REQUEST_PACKET =
-    'AAAAAAABAA9WaWV3ZXIuZ2V0VmlkZW8AAi8xAAAAhwoAAAABAwAEcnBpbgIAF3JwaW4uMC41' +
-    'NzQ0NTM4MjE2NTU2MjM1AAhhdXRvcGxheQEBAAdicmFuZElkAgABMQAHdmlkZW9JZAIABzcw' +
-    'MjI1NDAAB3BhZ2VVcmwCACZodHRwOi8vd3d3LnVzdHJlYW0udHYvcmVjb3JkZWQvNzAyMjU0' +
-    'MAAACQ==';
+    'AAAAAAABAA9WaWV3ZXIuZ2V0VmlkZW8AAi8xAAAAmAoAAAABAwAGbG9jYWxlAgAFZW5fVVMA' +
+    'B3BhZ2VVcmwCACZodHRwOi8vd3d3LnVzdHJlYW0udHYvcmVjb3JkZWQvNzAyMjU0MAAIYXV0' +
+    'b3BsYXkBAQAHYnJhbmRJZAIAATEABHJwaW4CABhycGluLjAuMDg0MTM5NzMzODk3MDAzMjcA' +
+    'B3ZpZGVvSWQCAAc3MDIyNTQwAAAJ';
 
 { TDownloader_UStream }
 
@@ -89,14 +89,14 @@ end;
 
 class function TDownloader_UStream.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_UStream.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
 end;
 
 destructor TDownloader_UStream.Destroy;
@@ -112,7 +112,7 @@ end;
 
 function TDownloader_UStream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var AMFRequest, AMFResponse: TAMFPacket;
-    Url: TAMFValue;
+    Url, ErrorMsg: TAMFValue;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -129,8 +129,11 @@ begin
       end;
     if DownloadAMF(Http, 'http://216.52.240.138/gateway.php', AMFRequest, AMFResponse) then
       try
+        AMFResponse.SaveToFile('ustream.amf');
         if AMFResponse.HasBody(0) then
-          if AMFResponse.Body[0].Content.FindValueByPath('flv', Url, TAMFString) then
+          if AMFResponse.Body[0].Content.FindValueByPath('error/message', ErrorMsg, TAMFString) then
+            SetLastErrorMsg(Format(_(ERR_SERVER_ERROR), [string(ErrorMsg)]))
+          else if AMFResponse.Body[0].Content.FindValueByPath('flv', Url, TAMFString) then
             begin
             MovieURL := string(Url);
             SetPrepared(True);

@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCrunchyRoll;
+unit downPBS;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,18 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TDownloader_CrunchyRoll = class(TRtmpDownloader)
+  TDownloader_PBS = class(TNestedDownloader)
     private
-      fFileNameExt: string;
     protected
-      InfoUrlRegExp: TRegExp;
-      property FileNameExt: string read fFileNameExt write fFileNameExt; 
+      MovieIDRegExp: TRegExp;
+      YouTubeIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -68,84 +66,74 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.crunchyroll.com/naruto/episode-193-the-man-who-died-twice-567104
+// http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*crunchyroll\.com/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*pbs\.org/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+property="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_INFO_URL = '"config_url"\s*:\s*"(?P<URL>.*?)"';
+  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
+  REGEXP_EXTRACT_ID = '\bEmbedVideo\s*\(\s*''(?P<ID>[0-9]+)''';
+  REGEXP_EXTRACT_YOUTUBE = '\bid_yt\s*=\s*"(?P<YOUTUBE>.+?)"';
 
-{ TDownloader_CrunchyRoll }
+{ TDownloader_PBS }
 
-class function TDownloader_CrunchyRoll.Provider: string;
+class function TDownloader_PBS.Provider: string;
 begin
-  Result := 'CrunchyRoll.com';
+  Result := 'PBS.org';
 end;
 
-class function TDownloader_CrunchyRoll.UrlRegExp: string;
+class function TDownloader_PBS.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_CrunchyRoll.Create(const AMovieID: string);
+constructor TDownloader_PBS.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MovieIDRegExp := RegExCreate(REGEXP_EXTRACT_ID);
+  YouTubeIDRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE);
 end;
 
-destructor TDownloader_CrunchyRoll.Destroy;
+destructor TDownloader_PBS.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(InfoUrlRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(YouTubeIDRegExp);
   inherited;
 end;
 
-function TDownloader_CrunchyRoll.GetMovieInfoUrl: string;
+function TDownloader_PBS.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.crunchyroll.com/' + MovieID;
+  Result := 'http://www.pbs.org/' + MovieID;
 end;
 
-function TDownloader_CrunchyRoll.GetFileNameExt: string;
-begin
-  Result := FileNameExt;
-end;
-
-function TDownloader_CrunchyRoll.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, FlvHost, FlvStream: string;
-    Xml: TXmlDoc;
+function TDownloader_PBS.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ID, MediaInfo, YouTubeID, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
+  else if not DownloadPage(Http, 'http://www.pbs.org/newshour/scripts2/FlashPlayerDetectionKit/db_info.php?id=' + ID, MediaInfo, peAnsi) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else if not GetRegExpVar(YouTubeIDRegExp, MediaInfo, 'YOUTUBE', YouTubeID) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT))
   else
-    try
-      if not GetXmlVar(Xml, 'default:preload/stream_info/host', FlvHost) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else if not GetXmlVar(Xml, 'default:preload/stream_info/file', FlvStream) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        MovieURL := FlvHost;
-        AddRtmpDumpOption('r', FlvHost);
-        AddRtmpDumpOption('y', FlvStream);
-        FileNameExt := ExtractFileExt(FlvStream);
-        Result := True;
-        SetPrepared(True);
-        end;
-    finally
-      Xml.Free;
+    begin
+    Url := 'http://www.youtube.com/watch?v=' + YouTubeID;
+    if CreateNestedDownloaderFromUrl(Url) then
+      begin
+      SetPrepared(True);
+      Result := True;
       end;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CrunchyRoll);
+  RegisterDownloader(TDownloader_PBS);
 
 end.

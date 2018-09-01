@@ -65,9 +65,9 @@ uses
   uMessages,
   uDownloadClassifier;
 
-// http://video.idnes.cz/webtv.asp?c=A100921_133647_domaci_hv&idvideo=V100921_125853_tv-zpravy_nep
+// http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.idnes\.cz/webtv\.asp\?';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.idnes\.cz/[^?]*\?';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -80,7 +80,7 @@ end;
 
 class function TDownloader_IDnes.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_IDnes.Create(const AMovieID: string);
@@ -121,9 +121,12 @@ begin
         if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
           if ItemType = 'video' then
             begin
+            {$IFNDEF DIRTYHACKS}
             if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
               SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['server']))
-            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
+            else
+            {$ENDIF}
+            if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
               SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['path']))
             else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
               SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['file']))
@@ -133,12 +136,16 @@ begin
               begin
               SetName(Title);
               Stream := 'mp4:' + Path + VideoFile;
-              MovieUrl := 'rtmp://' + Server + Stream;
-              AddRtmpDumpOption('r', MovieURL);
+              {$IFDEF DIRTYHACKS}
+              Server := 'stream7.idnes.cz/vod/'; // For some reason the "real" server does not work!
+              {$ENDIF}
+              MovieUrl := 'rtmpt://' + Server + Stream;
+              AddRtmpDumpOption('r', 'rtmpt://' + Server);
               AddRtmpDumpOption('y', Stream);
-              AddRtmpDumpOption('s', 'http://g.idnes.cz/swf/flv/test/playerE.swf');
-              AddRtmpDumpOption('t', 'rtmp://' + Server);
-              AddRtmpDumpOption('p', 'http://video.idnes.cz/webtv.asp?' + MovieID);
+              AddRtmpDumpOption('f', 'WIN 10,1,82,76');
+              AddRtmpDumpOption('s', 'http://g.idnes.cz/swf/flv/player.swf?v=20101103');
+              AddRtmpDumpOption('t', 'rtmpt://' + Server);
+              AddRtmpDumpOption('p', 'http://video.idnes.cz/?' + MovieID);
               Result := True;
               SetPrepared(True);
               end;

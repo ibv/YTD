@@ -84,14 +84,14 @@ end;
 
 class function TPlaylist_BlipTV.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + ClassName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TPlaylist_BlipTV.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM, [rcoIgnoreCase, rcoSingleLine]);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE, [rcoIgnoreCase, rcoSingleLine]);
+  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
+  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
 
 destructor TPlaylist_BlipTV.Destroy;

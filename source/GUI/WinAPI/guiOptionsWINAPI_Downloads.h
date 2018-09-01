@@ -11,4 +11,5 @@
 #define IDC_BUTTON_DOWNLOADDIR                  1007
 #define IDC_LABEL_CONVERTER                     1008
 #define IDC_COMBO_CONVERTER                     1009
+#define IDC_CHECKBOX_AUTOTRYHTMLPARSER          1010
 #define ACTION_DOWNLOADDIR                      40001

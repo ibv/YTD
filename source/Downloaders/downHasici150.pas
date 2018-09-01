@@ -66,14 +66,14 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.hasici150.tv/cz/Videogalerie/Slavnostni-vyhlaseni-Extraliga-CR-v-PU-2010_____93/
+// http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*hasici150\.tv/cz/Videogalerie/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*hasici150\.tv/cz/Media-galerie/Video/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(?:[^<]*\|\s*)?(?P<TITLE>.*?)</title>';
+  REGEXP_EXTRACT_TITLE = '<div\b[^>]*>(?P<TITLE>[^<>]*?)</div>\s*<div\s+id=''player''';
   REGEXP_EXTRACT_CONFIG = '\bsrc="(?P<CONFIG>https?://[^"]+/vod\.php\?stream=(?P<STREAM>.+?))"';
   REGEXP_EXTRACT_RTMP = '\bstreamhosting\s*:\s*\{[^}]*\bnetConnectionUrl\s*:\s*''(?P<RTMP>rtmpe?://.+?)''';
 
@@ -86,16 +86,16 @@ end;
 
 class function TDownloader_Hasici150.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Hasici150.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  ConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG, [rcoIgnoreCase, rcoSingleLine]);
-  RtmpRegExp := RegExCreate(REGEXP_EXTRACT_RTMP, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  ConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG);
+  RtmpRegExp := RegExCreate(REGEXP_EXTRACT_RTMP);
 end;
 
 destructor TDownloader_Hasici150.Destroy;
@@ -108,7 +108,7 @@ end;
 
 function TDownloader_Hasici150.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.hasici150.tv/cz/Videogalerie/' + MovieID + '/';
+  Result := 'http://www.hasici150.tv/cz/Media-galerie/Video/' + MovieID + '/';
 end;
 
 function TDownloader_Hasici150.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

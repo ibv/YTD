@@ -83,14 +83,14 @@ end;
 
 class function TDownloader_TodaysBigThing.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_TodaysBigThing.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID, [rcoIgnoreCase, rcoSingleLine]);
+  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
 end;
 
 destructor TDownloader_TodaysBigThing.Destroy;

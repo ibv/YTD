@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.76                                     (c) 2009-11 Pepak
+YouTube Downloader v0.77                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -23,6 +23,7 @@ SUPPORTED PROVIDERS
 
      Note: 1hd.ro seems to be a different front-end to prahovahd.ro. All notes
            for prahovahd.ro also apply to 1hd.ro.
+
  - 5min.com:
      - http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 
@@ -69,8 +70,8 @@ SUPPORTED PROVIDERS
      - http://thespoonyone.blip.tv
 
      Note: Preparation of a playlist may take a long time (with long playlists
-     such as http://thespoonyone.blip.tv) and doesn't provide any visual 
-     feedback. Please be patient.
+           such as http://thespoonyone.blip.tv) and doesn't provide any visual 
+           feedback. Please be patient.
 
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
@@ -142,6 +143,11 @@ SUPPORTED PROVIDERS
  - DeutscheBahn.com:
      - http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
 
+ - Denik.cz:
+     - http://www.denik.cz/multimedia/video/2857495.html
+     - http://www.denik.cz/multimedia/audio/2861648.html
+     - http://benesovsky.denik.cz/multimedia/video/1538221.html
+
  - DevilDucky.com:
      - http://www.devilducky.com/media/213159/
 
@@ -181,11 +187,12 @@ SUPPORTED PROVIDERS
      - http://fishki.net/comment.php?id=79682
 
      Note: While it is possible to capture movie title from the page, I am not
-     sure how to create a valid filename from it without compiling YTD with
-     Delphi 2009 (which would have several drawbacks, including program size
-     and incompatibility with old Windows). For now the original filename is
-     used and the video title is ignored. If you have a better solution for 
-     this problem, I will gladly implement it.
+           sure how to create a valid filename from it without compiling YTD 
+           with Delphi 2009 (which would have several drawbacks, including 
+           program size and incompatibility with old Windows). For now the 
+           original filename is used and the video title is ignored. If you 
+           have a better solution for this problem, I will gladly implement 
+           it.
 
  - Flickr.com:
      - http://www.flickr.com/photos/landersz/2403626167/
@@ -196,12 +203,18 @@ SUPPORTED PROVIDERS
  - FreeCaster.tv:
      - http://freecaster.tv/freeski/1012253
 
+    Note: This provider uses either HTTP and RTMP protocols, depending on
+          which video you choose to download. For notes on RTMP, see below.
+
  - FreeRide.cz:
      - http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
      - http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
 
  - FreeVideo.ru:
      - http://freevideo.ru/video/view/?id=v14445361101
+
+ - FunnyOrDie.com:
+     - http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
 
  - GameAnyone.com:
      - http://www.gameanyone.com/game/PC/936.html
@@ -217,7 +230,7 @@ SUPPORTED PROVIDERS
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 
  - Hasici150.tv:
-     - http://www.hasici150.tv/cz/Videogalerie/Slavnostni-vyhlaseni-Extraliga-CR-v-PU-2010_____93/
+     - http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
 
      Note: This provider uses RTMP protocol. See the note below.
 
@@ -227,6 +240,11 @@ SUPPORTED PROVIDERS
      Note: Some movies are hosted on third-part servers, e.g. YouTube. These
            can't be downloaded directly, but work if you use the "Add URLs
            from HTML page" function.
+
+ - iDnes.cz;
+     - http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - iHned.cz:
      - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
@@ -267,7 +285,7 @@ SUPPORTED PROVIDERS
      - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
 
      Note: Each movie can be made up of several files. In such a case, all
-     files are downloaded.
+           files are downloaded.
 
  - MediaSport.cz:
      - http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
@@ -331,6 +349,9 @@ SUPPORTED PROVIDERS
 
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+     - http://n-joy.cz/right-now/video/honza-b/psvfmt8b61ghlgg4
+     - http://n-joy.cz/right-now/audio/vera-spinarova/2zpSLkXoR5IteMyC
+     - http://n-joy.cz/audio/vera-spinarova/2zpSLkXoR5IteMyC
 
  - NaStojaka.cz:
      - http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
@@ -359,13 +380,16 @@ SUPPORTED PROVIDERS
      - http://www.overstream.net/view.php?oid=uinsn9n7uomx
      - http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
 
+ - PBS.org:
+     - http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
+
  - PCPlanets.com:
      - http://www.pcplanets.com/videos-225353-Bamboo.shtml
 
-     Note: The provider should work fine, but it keeps returning a HTTP error
-     403 (forbidden). The same error is produced by the flash player itself,
-     though, which makes it likely that the problem lies not in YTD but rather 
-     some bug or country restriction of PCPlanets.com.
+     Note: The provider should work fine, but it keeps returning a HTTP error 
+           403 (forbidden). The same error is produced by the flash player 
+           itself, though, which makes it likely that the problem lies not in 
+           YTD but rather some bug or country restriction of PCPlanets.com.
 
  - PrahovaHD.ro:
      - http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
@@ -400,19 +424,19 @@ SUPPORTED PROVIDERS
      - https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
 
      Note: Because this provider uses the HTTPS protocol, you must have the
-     OpenSSL libraries (LIBEAY32.DLL and SSLEAY32.DLL) in your path.
+           OpenSSL libraries (LIBEAY32.DLL and SSLEAY32.DLL) in your path.
 
  - Rozhlas.cz:
      - http://www.rozhlas.cz/vltava/porady/_zprava/676996
 
      Note: Each page can contain several files. In such a case, all files
-     are downloaded.
+           are downloaded.
 
  - RozzlobeniMuzi.com:
      - http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 
      Note: Because the site contains a substantial amount of porn, it is not
-     included in the Lite version of YouTube Downloader.
+           included in the Lite version of YouTube Downloader.
 
  - RTA.cz:
      - http://www.rta.cz/?article=140331
@@ -429,11 +453,19 @@ SUPPORTED PROVIDERS
  - RuTube.ru:
      - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
 
+ - Sefka.cz, Sefka.sk:
+     - http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
+     - http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
+
  - SerialyCZ.cz:
      - http://www.serialycz.cz/2011/01/chuck-04x12/
 
  - SevenLoad.com:
      - http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
+
+ - Sme.sk:
+     - http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
+     - http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
 
  - Snotr.com:
      - http://www.snotr.com/video/4280
@@ -461,13 +493,12 @@ SUPPORTED PROVIDERS
  - Stream.cz:
      - http://www.stream.cz/video/437197-meziplyn-30
 
-     Note: There is an unresolved bug with stream.cz, which sometimes 
-     prevents a download. The cause is not know yet, but it seems to be
-     related to some timing issue within Synapse library. A slight delay
-     inserted in the right place removes the bug, apparently.
-
-     Note: Stream.cz provides a content-delivery-network for a number of
-     other services, such as TV stations Ocko or Prima.
+     Note: There is an unresolved bug with stream.cz, which sometimes prevents 
+           a download. The cause is not know yet, but it seems to be related 
+           to some timing issue within Synapse library. A slight delay 
+           inserted in the right place removes the bug, apparently.
+     Note: Stream.cz provides a content-delivery-network for a number of other 
+           services, such as TV stations Ocko or Prima.
 
  - StreetFire.com:
      - http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
@@ -639,6 +670,7 @@ Supported porn providers:
  - YouJizz.com
  - YouPorn.com
  - Yuvutu.com
+ - Zakulisi.cz
 
 
 
@@ -783,11 +815,14 @@ CONFIGURATION
 -------------
 
 Since version 0.50 stores YouTube Downloader its configuration in a XML file
-"ytd.xml". This file can be found in two locations:
+"ytd.xml". This file can be found in three locations:
 
-1) The directory where YTD.exe resides. This is the primary location.
+1) Current working directory. This is the primary location.
 
-2) Directory "YouTube Downloader" in a user profile of Windows (%APPDATA%).
+2) The directory where YTD.exe resides. This location is used if it contains
+   an ytd.xml file and there is no such file in the primary location.
+
+3) Directory "YouTube Downloader" in a user profile of Windows (%APPDATA%).
    This location is only considered if the primary XML doesn't exist or
    if the primary XML doesn't require a portable mode.
 
@@ -861,6 +896,20 @@ except in file/directory names. Logical values (true-false) are stored as
         "rename" - rename the new file so that its name is unique; matches
                    -r on command line.
     - Default value is "ask" (ask the user).
+    - Can be overriden by command-line parameters -k (ask), -n (never),
+      -a (always) and -r (rename).
+
+  <auto_try_html_parser>
+    - Child of <config>; enables or disables support for automatic application
+      of HTML parser to unknown URLs; i.e., YTD tries to match an URL to one
+      of the supported downloaders, and if it fails, it downloads that URL as
+      a HTML page and tries to search that for known URLs (just like the -s
+      command-line parameter). That provides support for servers such as 
+      Zive.cz or Vlaky.net, which use third-party providers for their video
+      needs.
+    - Possible values are "1" (enable automatic HTML parser) and "0" (disable).
+    - Default value is "1" (enable automatic HTML parser).
+    - Can be overriden by parameters -ah and -ah- on command-line.
 
   <subtitle_support>
     - Child of <config>; provides you with the ability to turn subtitle support
@@ -954,6 +1003,17 @@ except in file/directory names. Logical values (true-false) are stored as
       - Possible values are "0" (download as file) and "1" (download as
         live stream).
       - Default value is "1" (download as live stream).
+
+  <Nova_cz>
+    - Child of <modules>; contains settings used by Nova.cz.
+
+    <low_quality>
+      - Child of <Nova_cz>; provides an option to download movies in low
+        quality rather than high. The reason is, some movies are not available
+        in high quality and it doesn't seem possible to reliably detect this
+        fact.
+      - Possible values are "0" (high quality) a "1" (low quality).
+      - Default value is "0" (high quality).
 
   <YouTube_com>
     - Child of <modules>; contains settings specific to YouTube.

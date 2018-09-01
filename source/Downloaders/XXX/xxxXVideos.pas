@@ -85,16 +85,16 @@ end;
 
 class function TDownloader_XVideos.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_XVideos.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
-  FlashMovieUrlRegExp := RegExCreate(REGEXP_FLASHMOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashMovieUrlRegExp := RegExCreate(REGEXP_FLASHMOVIEURL);
 end;
 
 destructor TDownloader_XVideos.Destroy;

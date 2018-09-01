@@ -93,10 +93,10 @@ if "%compver%"=="fpc" (
 ) else (
   call :%compiler% "%srcdir%lib\DxGetText\gnugettext.pas"
 )
-if "%compver%"=="d5" call :%compiler% "%srcdir%lib\Pepak\delphi5\*.pas"
 call :%compiler% "%srcdir%lib\PerlRegEx\*.pas"
 call :%compiler% "%srcdir%lib\lkJSON\uLkJSON.pas"
 call :%compiler% "%srcdir%lib\Pepak\*.pas"
+if "%compver%"=="d5" call :%compiler% "%srcdir%lib\Pepak\delphi5\*.pas"
 copy "%srcdir%lib\Pepak\*.res" "%srcdir%Units" >nul
 call :%compiler% "%srcdir%lib\Synapse\source\lib\SSL_OpenSSL.pas"
 call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"

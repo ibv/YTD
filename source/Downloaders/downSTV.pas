@@ -85,15 +85,15 @@ end;
 
 class function TDownloader_STV.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_STV.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
-  PlayListRegExp := RegExCreate(PLAYLIST_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP);
+  PlayListRegExp := RegExCreate(PLAYLIST_REGEXP);
 end;
 
 destructor TDownloader_STV.Destroy;

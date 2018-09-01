@@ -211,6 +211,8 @@ begin
   DownloadClassifier.Url := Url;
   if DownloadClassifier.Downloader <> nil then
     Result := AddNewItem(Url, DownloadClassifier.Downloader)
+  else if Options.AutoTryHtmlParser then
+    Result := AddFromHTML(Url)
   else
     Result := -1;
 end;

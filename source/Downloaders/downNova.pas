@@ -36,13 +36,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downNova;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE LOW_QUALITY}
 
 interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
+  uOptions,
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
@@ -50,20 +50,27 @@ type
     private
     protected
       MovieVariablesRegExp: TRegExp;
+      LowQuality: boolean;
+      FlvStream: string;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      function Download: boolean; override;
     end;
 
 implementation
 
 uses
+  {$IFDEF DIRTYHACKS}
+  uFiles,
+  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
@@ -85,14 +92,14 @@ end;
 
 class function TDownloader_Nova.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES, [rcoIgnoreCase, rcoSingleLine])
+  MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES)
 end;
 
 destructor TDownloader_Nova.Destroy;
@@ -103,7 +110,10 @@ end;
 
 function TDownloader_Nova.GetFileNameExt: string;
 begin
-  Result := {$IFDEF LOW_QUALITY} '.flv' {$ELSE} '.mp4' {$ENDIF};
+  if LowQuality then
+    Result := '.flv'
+  else
+    Result := '.mp4';
 end;
 
 function TDownloader_Nova.GetMovieInfoUrl: string;
@@ -116,11 +126,12 @@ var i: integer;
     Name, Value: string;
     MediaID, SiteID, SectionID, SessionID, UserAdID: string;
     ServersUrl, VideosUrl: string;
-    FlvServer, FlvStream, FlvName: string;
+    FlvServer, PlayPath, FlvName: string;
     Servers, Videos: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
+  FlvStream := '';
   SessionID := '';
   UserAdID := '';
   GetRegExpVarPairs(MovieVariablesRegExp, Page, ['media_id', 'site_id', 'section_id'], [@MediaID, @SiteID, @SectionID]);
@@ -180,12 +191,16 @@ begin
               else
                 begin
                 SetName(FlvName);
-                {$IFNDEF LOW_QUALITY}
-                FlvStream := 'mp4:' + FlvStream;
-                {$ENDIF}
-                MovieUrl := FlvServer + '/' + FlvStream;
+                if LowQuality then
+                  PlayPath := 'flv:' + FlvStream
+                else
+                  PlayPath := 'mp4:' + FlvStream;
+                MovieUrl := FlvServer + '/' + PlayPath;
                 AddRtmpDumpOption('r', MovieURL);
-                AddRtmpDumpOption('y', FlvStream);
+                AddRtmpDumpOption('y', PlayPath);
+                //AddRtmpDumpOption('f', 'WIN 10,1,82,76');
+                //AddRtmpDumpOption('W', 'http://voyo.nova.cz/static/shared/app/flowplayer/13-flowplayer.commercial-3.1.5-17-002.swf');
+                //AddRtmpDumpOption('t', FlvServer);
                 Result := True;
                 SetPrepared(True);
                 end;
@@ -197,6 +212,30 @@ begin
         Servers.Free;
         end;
     end;
+end;
+
+procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
+var s: string;
+begin
+  inherited;
+  if Value.ReadProviderOption(Provider, 'low_quality', s) then
+    LowQuality := StrToIntDef(s, 0) <> 0;
+end;
+
+function TDownloader_Nova.Download: boolean;
+begin
+  Result := inherited Download;
+  {$IFDEF DIRTYHACKS}
+  if Result then
+    if not LowQuality then
+      if FileExists(FileName) then
+        if FileGetSize(FileName) = 0 then
+          begin
+          DeleteFile(FileName);
+          SetRtmpDumpOption('y', 'flv:' + FlvStream);
+          Result := inherited Download;
+          end;
+  {$ENDIF}
 end;
 
 initialization

@@ -42,17 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TDownloader_FreeCaster = class(THttpDownloader)
+  TDownloader_FreeCaster = class(TNestedDownloader)
     private
     protected
       StreamIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetMediaInfoFromPage(const Page: string; Http: THttpSend; out Title: string; out SmilUrl: string): boolean;
-      function GetMediaUrlFromSmil(Http: THttpSend; const SmilUrl: string; out Url: string): boolean;
+      function GetMediaUrlFromSmil(Http: THttpSend; const SmilUrl: string; out Url: string; out Downloader: TDownloader): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -64,6 +64,8 @@ type
 implementation
 
 uses
+  uHttpDirectDownloader,
+  uRtmpDirectDownloader,
   uDownloadClassifier,
   uMessages;
 
@@ -76,6 +78,10 @@ const
 const
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="(?:[^"]*?&amp;)*id=(?P<ID>[^&"]+)';
 
+type
+  TDownloader_FreeCaster_HTTP = class(THttpDirectDownloader);
+  TDownloader_FreeCaster_RTMP = class(TRtmpDirectDownloader);
+
 { TDownloader_FreeCaster }
 
 class function TDownloader_FreeCaster.Provider: string;
@@ -85,14 +91,14 @@ end;
 
 class function TDownloader_FreeCaster.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_FreeCaster.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase, rcoSingleLine]);
+  StreamIdRegExp := RegExCreate(REGEXP_STREAM_ID);
 end;
 
 destructor TDownloader_FreeCaster.Destroy;
@@ -107,9 +113,8 @@ begin
 end;
 
 function TDownloader_FreeCaster.GetMediaInfoFromPage(const Page: string; Http: THttpSend; out Title, SmilUrl: string): boolean;
-const QualityStr: array[0..1] of string = ('SD', 'HD');
-var StreamID, BestUrl, Url, UrlBase, sQuality: string;
-    BestQuality, Quality, i: integer;
+var StreamID, BestUrl, Url, sBitrate, sQuality: string;
+    BestBitrate, Bitrate, i: integer;
     Xml: TXmlDoc;
     Node: TXmlNode;
 begin
@@ -122,31 +127,30 @@ begin
     try
       if not Xml.NodeByPath('streams', Node) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
-      else if not GetXmlAttr(Node, '', 'server', UrlBase) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
       else if not GetXmlVar(Xml, 'video/title', Title) then
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
       else
         begin
         BestUrl := '';
-        BestQuality := -1;
+        BestBitrate := -1;
         for i := 0 to Pred(Node.NodeCount) do
           if Node.Nodes[i].Name = 'stream' then
             if GetXmlVar(Node.Nodes[i], '', Url) then
-              if GetXmlAttr(Node.Nodes[i], '', 'quality', sQuality) then
+              begin
+              Bitrate := 0;
+              if GetXmlAttr(Node.Nodes[i], '', 'bitrate', sBitrate) then
+                Bitrate := StrToIntDef(sBitrate, 0)
+              else if GetXmlAttr(Node.Nodes[i], '', 'quality', sQuality) then
+                if sQuality = 'SD' then
+                  Bitrate := 1
+                else if sQuality = 'HD' then
+                  Bitrate := 1200;
+              if BestBitrate < Bitrate then
                 begin
-                Quality := High(QualityStr);
-                while Quality >= 0 do
-                  if QualityStr[Quality] = sQuality then
-                    Break
-                  else
-                    Dec(Quality);
-                if Quality > BestQuality then
-                  begin
-                  BestQuality := Quality;
-                  BestUrl := UrlDecode(Url);
-                  end;
+                BestBitrate := Bitrate;
+                BestUrl := Url;
                 end;
+              end;
         if BestUrl = '' then
           SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
         else
@@ -160,44 +164,51 @@ begin
       end;
 end;
 
-function TDownloader_FreeCaster.GetMediaUrlFromSmil(Http: THttpSend; const SmilUrl: string; out Url: string): boolean;
+function TDownloader_FreeCaster.GetMediaUrlFromSmil(Http: THttpSend; const SmilUrl: string; out Url: string; out Downloader: TDownloader): boolean;
 var Xml: TXmlDoc;
     Node: TXmlNode;
-    BaseUrl, BestUrl, Path, sBitrate: string;
-    i, BestBitrate, Bitrate: integer;
+    BaseUrl, Path, BestUrl, sBitrate: string;
+    i, Bitrate, BestBitrate: integer; 
 begin
   Result := False;
+  Downloader := nil;
   if DownloadXml(Http, SmilUrl, Xml) then
     try
-      BaseUrl := '';
-      if Xml.NodeByPathAndAttr('head/meta', 'name', 'httpBase', Node) then
-        if not GetXmlAttr(Node, '', 'content', BaseUrl) then
-          BaseUrl := '';
-      if Xml.NodeByPath('body/switch', Node) then
-        begin
-        BestUrl := '';
-        BestBitrate := 0;
-        for i := 0 to Pred(Node.NodeCount) do
-          if Node.Nodes[i].Name = 'video' then
-            if GetXmlAttr(Node.Nodes[i], '', 'src', Path) then
-              if GetXmlAttr(Node.Nodes[i], '', 'system-bitrate', sBitrate) then
-                begin
-                Bitrate := StrToIntDef(sBitrate, 0);
-                if Bitrate > BestBitrate then
-                  begin
-                  BestUrl := Path;
-                  BestBitrate := Bitrate;
-                  end;
-                end
-              else
-                if BestUrl = '' then
-                  BestUrl := Path;
-        if BestUrl <> '' then
+      if GetXmlAttr(Xml, 'head/meta', 'base', BaseUrl) then
+        if GetXmlAttr(Xml, 'body/video', 'src', Path) then
           begin
-          Url := BaseUrl + BestUrl;
-          result := True;
+          Url := BaseUrl + '/' + Path;
+          Downloader := TDownloader_FreeCaster_RTMP.Create(Url, '');
+          Result := True;
+          Exit;
           end;
-        end;
+      if Xml.NodeByPathAndAttr('head/meta', 'name', 'httpBase', Node) then
+        if GetXmlAttr(Node, '', 'content', BaseUrl) then
+          if Xml.NodeByPath('body/switch', Node) then
+            begin
+            BestUrl := '';
+            BestBitrate := -1;
+            for i := 0 to Pred(Node.NodeCount) do
+              if Node.Nodes[i].Name = 'video' then
+                if GetXmlAttr(Node.Nodes[i], '', 'src', Path) then
+                  begin
+                  Bitrate := 0;
+                  if GetXmlAttr(Node.Nodes[i], '', 'system-bitrate', sBitrate) then
+                    Bitrate := StrToIntDef(sBitrate, 0);
+                  if Bitrate > BestBitrate then
+                    begin
+                    BestUrl := Path;
+                    BestBitrate := Bitrate;
+                    end;
+                  end;
+            if BestUrl <> '' then
+              begin
+              Url := BaseUrl + BestUrl;
+              Downloader := TDownloader_FreeCaster_HTTP.Create(Url, '');
+              Result := True;
+              end;
+            end;
+
     finally
       Xml.Free;
       end;
@@ -205,16 +216,20 @@ end;
 
 function TDownloader_FreeCaster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Title, SmilUrl, Url: string;
+    Downloader: TDownloader;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if GetMediaInfoFromPage(Page, Http, Title, SmilUrl) then
-    if GetMediaUrlFromSmil(Http, SmilUrl, Url) then
+    if GetMediaUrlFromSmil(Http, SmilUrl, Url, Downloader) then
       begin
       SetName(Title);
       MovieUrl := Url;
-      SetPrepared(True);
-      Result := True;
+      if CreateNestedDownloaderFromDownloader(Downloader) then
+        begin
+        SetPrepared(True);
+        Result := True;
+        end;
       end;
 end;
 

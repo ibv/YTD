@@ -84,15 +84,15 @@ end;
 
 class function TDownloader_Bofunk.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Bofunk.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUnknown;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL);
 end;
 
 destructor TDownloader_Bofunk.Destroy;

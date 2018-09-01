@@ -82,13 +82,14 @@ end;
 
 class function TDownloader_MTVEmbed.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_MTVEmbed.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peXml;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_MTVEmbed.Destroy;
@@ -133,30 +134,27 @@ begin
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
       else
         begin
-        BestResolution := 0;
-        BestBitrate := 0;
+        BestResolution := -1;
+        BestBitrate := -1;
         BestUrl := '';
         for i := 0 to Pred(InfoNode.NodeCount) do
           if InfoNode.Nodes[i].Name = 'rendition' then
-            if GetXmlAttr(InfoNode.Nodes[i], '', 'width', sWidth) then
-              if GetXmlAttr(InfoNode.Nodes[i], '', 'height', sHeight) then
-                if GetXmlAttr(InfoNode.Nodes[i], '', 'bitrate', sBitrate) then
-                  begin
-                  try
-                    Resolution := StrToInt(sWidth) * StrToInt(sHeight);
-                    Bitrate := StrToInt(sBitrate);
-                  except
-                    Resolution := -1;
-                    Bitrate := -1;
-                    end;
-                  if (Resolution > BestResolution) or ((Resolution = BestResolution) and (Bitrate > BestBitrate)) then
-                    if GetXmlVar(InfoNode.Nodes[i], 'src', Url) then
-                      begin
-                      BestResolution := Resolution;
-                      BestBitrate := Bitrate;
-                      BestUrl := Url;
-                      end;
-                  end;
+            if GetXmlVar(InfoNode.Nodes[i], 'src', Url) then
+              begin
+              Resolution := 0;
+              if GetXmlAttr(InfoNode.Nodes[i], '', 'width', sWidth) then
+                if GetXmlAttr(InfoNode.Nodes[i], '', 'height', sHeight) then
+                  Resolution := StrToIntDef(sWidth, 0) * StrToIntDef(sHeight, 0);
+              Bitrate := 0;
+              if GetXmlAttr(InfoNode.Nodes[i], '', 'bitrate', sBitrate) then
+                Bitrate := StrToIntDef(sBitrate, 0);
+              if (Resolution > BestResolution) or ((Resolution = BestResolution) and (Bitrate > BestBitrate)) then
+                begin
+                BestResolution := Resolution;
+                BestBitrate := Bitrate;
+                BestUrl := Url;
+                end;
+              end;
         if BestUrl = '' then
           SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
         else

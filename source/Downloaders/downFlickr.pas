@@ -91,17 +91,17 @@ end;
 
 class function TDownloader_Flickr.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Flickr.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  VideoSrcRegExp := RegExCreate(REGEXP_VIDEO_SRC, [rcoIgnoreCase, rcoSingleLine]);
-  PhotoSecretRegexp := RegExCreate(REGEXP_PHOTOSECRET, [rcoIgnoreCase, rcoSingleLine]);
-  PhotoIdRegexp := RegExCreate(REGEXP_PHOTOID, [rcoIgnoreCase, rcoSingleLine]);
-  VideoExtensionRegExp := RegExCreate(REGEXP_EXTENSION, [rcoIgnoreCase, rcoSingleLine]);
+  VideoSrcRegExp := RegExCreate(REGEXP_VIDEO_SRC);
+  PhotoSecretRegexp := RegExCreate(REGEXP_PHOTOSECRET);
+  PhotoIdRegexp := RegExCreate(REGEXP_PHOTOID);
+  VideoExtensionRegExp := RegExCreate(REGEXP_EXTENSION);
 end;
 
 destructor TDownloader_Flickr.Destroy;

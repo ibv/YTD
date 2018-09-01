@@ -105,6 +105,8 @@ type
       procedure SetCheckForNewVersionOnStartup(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetMonitorClipboard: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetMonitorClipboard(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetAutoTryHtmlParser: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetAutoTryHtmlParser(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
         procedure SetSelectedConverterID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -151,6 +153,7 @@ type
       property AutoStartDownloads: boolean read GetAutoStartDownloads write SetAutoStartDownloads;
       property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
       property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
+      property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
       {$IFDEF CONVERTERS}
         property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
         property MaxConversionThreads: integer read GetMaxConversionThreads write SetMaxConversionThreads;
@@ -202,6 +205,7 @@ const
   XML_PATH_OVERWRITEMODE = 'config/overwrite_mode';
   XML_PATH_DESTINATIONPATH = 'config/destination_path';
   XML_PATH_ERRORLOG = 'config/error_log';
+  XML_PATH_AUTOTRYHTMLPARSER = 'config/auto_try_html_parser';
   XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
   XML_PATH_CHECKFORNEWVERSIONONSTARTUP = 'gui/check_for_new_version';
   XML_PATH_MONITORCLIPBOARD = 'gui/monitor_clipboard';
@@ -227,6 +231,7 @@ const
   XML_DEFAULT_OVERWRITEMODE = omAsk;
   XML_DEFAULT_DESTINATIONPATH = '';
   XML_DEFAULT_ERRORLOG = '';
+  XML_DEFAULT_AUTOTRYHTMLPARSER = True;
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
   XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
   XML_DEFAULT_MONITORCLIPBOARD = False;
@@ -246,10 +251,18 @@ const
 
 constructor TYTDOptions.Create;
 var PathBuf: array[0..MAX_PATH+1] of Char;
+    LocalXml, ExeXml: string;
 begin
   inherited Create;
   fXml := TXmlDoc.Create;
-  fMainXmlFileName := ChangeFileExt(ParamStr(0), '.xml');
+  LocalXml := ExtractFileName(ChangeFileExt(ParamStr(0), '.xml'));
+  ExeXml := ChangeFileExt(ParamStr(0), '.xml');
+  if FileExists(LocalXml) then
+    fMainXmlFileName := LocalXml
+  else if FileExists(ExeXml) then
+    fMainXmlFileName := ExeXml
+  else
+    fMainXmlFileName := LocalXml;
   fUserXmlFileName := '';
   if SHGetSpecialFolderPath(0, PathBuf, CSIDL_APPDATA, False) then
     fUserXmlFileName := PathBuf + '\YouTube Downloader\ytd.xml';
@@ -523,6 +536,16 @@ begin
   SetOption(XML_PATH_MONITORCLIPBOARD, BooleanToXml(Value));
 end;
 
+function TYTDOptions.GetAutoTryHtmlParser: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_AUTOTRYHTMLPARSER), XML_DEFAULT_AUTOTRYHTMLPARSER);
+end;
+
+procedure TYTDOptions.SetAutoTryHtmlParser(const Value: boolean);
+begin
+  SetOption(XML_PATH_AUTOTRYHTMLPARSER, BooleanToXml(Value));
+end;
+
 {$IFDEF SUBTITLES}
 function TYTDOptions.GetSubtitlesEnabled: boolean;
 begin
@@ -742,12 +765,18 @@ begin
           begin
           Ver := ChangeFileExt(Url, '');
           n := Length(Ver);
-          if n >= 4 then
-            if CharInSet(Ver[n-3], ['0'..'9']) and (Ver[n-2] = '.') and CharInSet(Ver[n-1], ['0'..'9']) and CharInSet(Ver[n], ['0'..'9']) then
-              begin
-              Version := Copy(Ver, n-3, 4);
-              Result := True;
-              end;
+          while (n >= 1) and CharInSet(Ver[n], ['0'..'9']) do
+            Dec(n);
+          if (n >= 1) and (Ver[n] = '.') then
+            repeat
+              Dec(n);
+              if (n < 1) or (not CharInSet(Ver[n], ['0'..'9'])) then
+                begin
+                Version := Copy(Ver, Succ(n), MaxInt);
+                Result := True;
+                Break;
+                end;
+            until False;
           end;
   finally
     Http.Free;

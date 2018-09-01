@@ -79,13 +79,14 @@ end;
 
 class function TDownloader_RtlNl.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_RtlNl.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peXml;
+  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_RtlNl.Destroy;

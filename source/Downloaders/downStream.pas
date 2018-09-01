@@ -105,20 +105,20 @@ end;
 
 class function TDownloader_Stream.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_Stream.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
-  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
   {
-  MovieIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PARAMS, [rcoIgnoreCase]);
-  MovieHDIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_HDID_FROM_PARAMS, [rcoIgnoreCase]);
-  MovieCdnIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_CDNID_FROM_PARAMS, [rcoIgnoreCase]);
+  MovieIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PARAMS);
+  MovieHDIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_HDID_FROM_PARAMS);
+  MovieCdnIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_CDNID_FROM_PARAMS);
   }
 end;
 

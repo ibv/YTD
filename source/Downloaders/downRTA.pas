@@ -77,14 +77,14 @@ const
 
 class function TDownloader_RTA.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_RTA.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  EmbedUrlRegExp := RegExCreate(REGEXP_EMBED_URL, [rcoIgnoreCase, rcoSingleLine]);
+  EmbedUrlRegExp := RegExCreate(REGEXP_EMBED_URL);
 end;
 
 destructor TDownloader_RTA.Destroy;

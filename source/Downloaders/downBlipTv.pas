@@ -83,7 +83,7 @@ end;
 
 class function TDownloader_BlipTv.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_BlipTv.Create(const AMovieID: string);
@@ -91,7 +91,7 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   InfoPageIsXml := True;
-  MovieIdFromUrlRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_URL, [rcoIgnoreCase]);
+  MovieIdFromUrlRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_URL);
 end;
 
 destructor TDownloader_BlipTv.Destroy;

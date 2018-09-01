@@ -94,17 +94,17 @@ end;
 
 class function TDownloader_NovaTN.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_NovaTN.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoListRegExp := RegExCreate(REGEXP_VIDEO_LIST, [rcoIgnoreCase, rcoSingleLine]);
-  VideoParamsRegExp := RegExCreate(REGEXP_VIDEO_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
-  ArticleDateRegExp := RegExCreate(REGEXP_ARTICLE_DATE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  VideoListRegExp := RegExCreate(REGEXP_VIDEO_LIST);
+  VideoParamsRegExp := RegExCreate(REGEXP_VIDEO_PARAMS);
+  ArticleDateRegExp := RegExCreate(REGEXP_ARTICLE_DATE);
 end;
 
 destructor TDownloader_NovaTN.Destroy;

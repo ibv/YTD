@@ -81,14 +81,14 @@ end;
 
 class function TDownloader_123VideoNL.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);
 end;
 
 constructor TDownloader_123VideoNL.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
 end;
 
 destructor TDownloader_123VideoNL.Destroy;
@@ -103,45 +103,28 @@ begin
 end;
 
 function TDownloader_123VideoNL.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Request, MediaIP: AnsiString;
+var MediaIP: string;
     Xml: TXmlDoc;
-    OldStream: TStream;
     n: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Http.Clear;
-  OldStream := Http.InputStream;
-  try
-    Http.InputStream := TMemoryStream.Create;
+  if not DownloadXml(Http, 'http://www.123video.nl/initialize_player_v3.asp', AnsiString('<movie><id>' + MovieID + '</id><memberid>0</memberid><cnt>1</cnt><nocache>32</nocache></movie>'), 'application/x-www-form-urlencoded', Xml, True) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else
     try
-      Request := '<movie><id>' + MovieID + '</id><memberid>0</memberid><cnt>1</cnt><nocache>32</nocache></movie>';
-      Http.InputStream.WriteBuffer(Request[1], Length(Request));
-      Http.InputStream.Position := 0;
-      Http.MimeType := 'application/x-www-form-urlencoded';
-      if not DownloadXml(Http, 'http://www.123video.nl/initialize_player_v3.asp', Xml, hmPOST, False) then
-        SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+      if not GetXmlAttr(Xml, '', 'MediaIP', MediaIP) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
-        try
-          if not GetXmlAttr(Xml, '', 'MediaIP', MediaIP) then
-            SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-          else
-            begin
-            n := Length(MovieID);
-            MovieURL := 'http://' + MediaIP + '/' + Copy(MovieID, 1, n-3) + '/' + MovieID + '.flv';
-            SetPrepared(True);
-            Result := True;
-            end;
-        finally
-          Xml.Free;
-          end;
+        begin
+        n := Length(MovieID);
+        MovieURL := 'http://' + MediaIP + '/' + Copy(MovieID, 1, n-3) + '/' + MovieID + '.flv';
+        SetPrepared(True);
+        Result := True;
+        end;
     finally
-      Http.InputStream.Free;
-      Http.InputStream := nil;
+      Xml.Free;
       end;
-  finally
-    Http.InputStream := OldStream;
-    end;
 end;
 
 initialization

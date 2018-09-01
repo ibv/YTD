@@ -88,17 +88,17 @@ end;
 
 class function TDownloader_FreeVideoRu.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_FreeVideoRu.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoContextRegExp := RegExCreate(REGEXP_VIDEO_CONTEXT, [rcoIgnoreCase, rcoSingleLine]);
-  HQVidUrlRegExp := RegExCreate(REGEXP_VIDEO_URL_HQ, [rcoIgnoreCase, rcoSingleLine]);
-  VidUrlRegExp := RegExCreate(REGEXP_VIDEO_URL, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  VideoContextRegExp := RegExCreate(REGEXP_VIDEO_CONTEXT);
+  HQVidUrlRegExp := RegExCreate(REGEXP_VIDEO_URL_HQ);
+  VidUrlRegExp := RegExCreate(REGEXP_VIDEO_URL);
 end;
 
 destructor TDownloader_FreeVideoRu.Destroy;

@@ -78,14 +78,15 @@ const
 
 class function TDownloader_MTV.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_MTV.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peAnsi;
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine])
+  InfoPageIsXml := False;
+  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS)
 end;
 
 destructor TDownloader_MTV.Destroy;

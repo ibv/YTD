@@ -317,10 +317,17 @@ begin
 end;
 
 procedure TFormYTD.WMDrawClipboard(var msg: TMessage);
+var OldAutoTryHtmlParser: boolean;
 begin
   if NextClipboardViewer <> 0 then
     SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
-  AddFromClipboard(True);
+  OldAutoTryHtmlParser := Options.AutoTryHtmlParser;
+  try
+    Options.AutoTryHtmlParser := False;
+    AddFromClipboard(True);
+  finally
+    Options.AutoTryHtmlParser := OldAutoTryHtmlParser;
+    end;
   msg.Result := 0;
 end;
 

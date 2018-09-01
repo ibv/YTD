@@ -80,14 +80,14 @@ const
 
 class function TDownloader_CT24.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_CT24.Create(const AMovieID: string);
 begin
   inherited;
-  PortToIVysilaniRegExp := RegExCreate(REGEXPCT24_TO_IVYSILANI, [rcoIgnoreCase, rcoSingleLine]);
-  PortTitleRegExp := RegExCreate(REGEXPCT24_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  PortToIVysilaniRegExp := RegExCreate(REGEXPCT24_TO_IVYSILANI);
+  PortTitleRegExp := RegExCreate(REGEXPCT24_TITLE);
 end;
 
 destructor TDownloader_CT24.Destroy;

@@ -42,19 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
 
 type
-  TDownloader_CSmaTalent = class(THttpDownloader)
+  TDownloader_CSmaTalent = class(TDownloader_Joj_Porady)
     private
     protected
-      VideoIdRegExp: TRegExp;
-    protected
-      function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetMovieInfoUrl: string; override;{*}
+      function TheServer: string; override;
     public
       class function Provider: string; override;
-      class function UrlRegExp: string; override;
+      class function UrlRegExp: string; override;{*}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -72,9 +70,6 @@ const
   URLREGEXP_ID =        '(cz|sk)/.+?\.html';
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_VIDEO_ID = '<link\s+rel="video_src"\s+href="(?:[^"]*&amp;)?videoId=(?P<ID>.+?)(?:&amp;|")';
-
 { TDownloader_CSmaTalent }
 
 class function TDownloader_CSmaTalent.Provider: string;
@@ -84,19 +79,16 @@ end;
 
 class function TDownloader_CSmaTalent.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_CSmaTalent.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUTF8;
-  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_CSmaTalent.Destroy;
 begin
-  RegExFreeAndNil(VideoIdRegExp);
   inherited;
 end;
 
@@ -105,30 +97,9 @@ begin
   Result := 'http://www.csmatalent.' + MovieID;
 end;
 
-function TDownloader_CSmaTalent.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Title, Path: string;
-    InfoXml: TXmlDoc;
-    Node: TXmlNode;
+function TDownloader_CSmaTalent.TheServer: string;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND), ['videoId']))
-  else if not DownloadXml(Http, 'http://www.csmatalent.cz/services/Video.php?clip=' + ID, InfoXml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else if not GetXmlAttr(InfoXml, '', 'title', Title) then
-    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
-  else if not (XmlNodeByPathAndAttr(InfoXml, 'files/file', 'quality', 'hi', Node) or XmlNodeByPath(InfoXml, 'files/file', Node)) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else if not GetXmlAttr(Node, '', 'path', Path) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
-    begin
-    SetName(Title);
-    MovieUrl := 'http://n06.joj.sk/' + Path;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'n03.joj.sk';
 end;
 
 initialization

@@ -79,14 +79,14 @@ const
 
 class function TDownloader_CT_Port.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_CT_Port.Create(const AMovieID: string);
 begin
   inherited;
-  PortToIVysilaniRegExp := RegExCreate(REGEXP_PORT_TO_IVYSILANI, [rcoIgnoreCase, rcoSingleLine]);
-  PortTitleRegExp := RegExCreate(REGEXP_PORT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  PortToIVysilaniRegExp := RegExCreate(REGEXP_PORT_TO_IVYSILANI);
+  PortTitleRegExp := RegExCreate(REGEXP_PORT_TITLE);
 end;
 
 destructor TDownloader_CT_Port.Destroy;

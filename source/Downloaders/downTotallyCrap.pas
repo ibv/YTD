@@ -36,16 +36,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downTotallyCrap;
 {$INCLUDE 'ytd.inc'}
+{.$DEFINE USE_RTMP}
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, {$IFDEF USE_RTMP} uRtmpDownloader {$ELSE} uHttpDownloader {$ENDIF} ;
 
 type
-  TDownloader_TotallyCrap = class(TRtmpDownloader)
+  TDownloader_TotallyCrap = class( {$IFDEF USE_RTMP} TRtmpDownloader {$ELSE} THttpDownloader {$ENDIF} )
     private
     protected
       InfoUrlRegExp: TRegExp;
@@ -84,15 +85,15 @@ end;
 
 class function TDownloader_TotallyCrap.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_TotallyCrap.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
-  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL);
 end;
 
 destructor TDownloader_TotallyCrap.Destroy;
@@ -108,7 +109,7 @@ begin
 end;
 
 function TDownloader_TotallyCrap.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, BasePath, PlayPath: string;
+var Url, {$IFDEF USE_RTMP} BasePath, {$ENDIF} PlayPath: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
@@ -119,15 +120,22 @@ begin
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
     try
+      {$IFDEF USE_RTMP}
       if not GetXmlVar(Xml, 'streamer', BasePath) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
-      else if not GetXmlVar(Xml, 'file', PlayPath) then
+      else
+      {$ENDIF}
+      if not GetXmlVar(Xml, 'file', PlayPath) then
         SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE))
       else
         begin
+        {$IFDEF USE_RTMP}
         MovieUrl := BasePath + '/mp4:' + PlayPath;
         AddRtmpDumpOption('r', MovieURL);
         AddRtmpDumpOption('y', 'mp4:' + PlayPath);
+        {$ELSE}
+        MovieUrl := PlayPath;
+        {$ENDIF}
         Result := True;
         SetPrepared(True);
         end;

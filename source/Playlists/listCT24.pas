@@ -82,13 +82,13 @@ end;
 
 class function TPlaylist_CT24.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + ClassName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TPlaylist_CT24.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM, [rcoIgnoreCase, rcoSingleLine]);
+  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
 end;
 
 destructor TPlaylist_CT24.Destroy;

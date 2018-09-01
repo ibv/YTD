@@ -100,7 +100,7 @@ constructor TNestedDownloader.Create(const AMovieID: string);
 begin
   inherited;
   fNestedDownloader := nil;
-  DirectUrlRegExp := RegExCreate(REGEXP_EXTRACT_DIRECTURL, [rcoIgnoreCase, rcoSingleLine]);
+  DirectUrlRegExp := RegExCreate(REGEXP_EXTRACT_DIRECTURL);
 end;
 
 destructor TNestedDownloader.Destroy;
@@ -141,7 +141,7 @@ begin
       end
     else if (DirectUrlRegExp <> nil) and GetRegExpVar(DirectUrlRegExp, Url, 'URL', Dummy) then
       begin
-      Downloader := THttpDirectDownloader.Create(Url, UnpreparedName);
+      Downloader := THttpDirectDownloader.Create(Url, Name);
       Result := CreateNestedDownloaderFromDownloader(Downloader);
       if Result then
         MovieURL := Url
@@ -163,7 +163,7 @@ begin
 end;
 
 function TNestedDownloader.GetFileName: string;
-var NestedFN: string;
+var NestedFN, Ext, NestedExt: string;
 begin
   Result := GetThisFileName;
   if NestedDownloader <> nil then
@@ -174,7 +174,12 @@ begin
       Result := NestedDownloader.FileName
     else
     {$ENDIF}
-      Result := {ChangeFileExt(}Result{, '')} + ExtractFileExt(NestedFN);
+      begin
+      NestedExt := ExtractFileExt(NestedFN);
+      Ext := ExtractFileExt(Result);
+      if AnsiCompareText(NestedExt, Ext) <> 0 then
+        Result := {ChangeFileExt(}Result{, '')} + NestedExt;
+      end;
     end;
 end;
 

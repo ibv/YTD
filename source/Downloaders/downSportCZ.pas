@@ -85,15 +85,15 @@ end;
 
 class function TDownloader_SportCZ.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor TDownloader_SportCZ.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
-  FlashVarsPartRegExp := RegExCreate(REGEXP_FLASHVARS_PART, [rcoIgnoreCase, rcoSingleLine]);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashVarsPartRegExp := RegExCreate(REGEXP_FLASHVARS_PART);
 end;
 
 destructor TDownloader_SportCZ.Destroy;
