@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.71                                     (c) 2009-11 Pepak
+YouTube Downloader v0.72                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -13,6 +13,12 @@ HD video, pokud je k dispozici.
 
 PODPOROVANÉ WEBY
 ----------------
+
+ - 1hd.ro:
+     - http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
+
+     Pozn.: 1hd.ro je podle všeho alternativním prostøedím k prahovahd.ro.
+            Všechny poznámky k prahovahd.ro platí i pro 1hd.ro.
 
  - 5min.com:
      - http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
@@ -95,8 +101,9 @@ PODPOROVANÉ WEBY
      - http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
      - http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/
 
-     Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
-     níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
+     Pozn.: Nìkteré typy poøádù používají ještì starší pøehrávaè na bázi
+            protokolu RTSP (viz níže).
 
  - CestyKSobe.cz:
      - http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
@@ -137,6 +144,9 @@ PODPOROVANÉ WEBY
 
  - DevilDucky.com:
      - http://www.devilducky.com/media/213159/
+
+ - DotSub.com:
+     - http://dotsub.com/view/5dcf5b79-c9f5-426f-8909-af6fef69f015
 
  - DoubleAgent.com:
      - http://www.doubleagent.com/agent/tiffany/video-blog/video-28
@@ -287,6 +297,9 @@ PODPOROVANÉ WEBY
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
+ - Music.Stream.cz:
+     - http://music.stream.cz/klip/268709-avril-lavigne-what-the-hell
+
  - MustWatch.cz:
      - http://www.mustwatch.cz/film/reel-bad-arabs
 
@@ -370,6 +383,13 @@ PODPOROVANÉ WEBY
  - RingTV.com:
      - http://www.ringtv.com/video/frankie_gomez_training/
 
+ - RockstarGames.com:
+     - https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
+
+     Pozn.: Tento poskytovatel funguje na šifrovaném protokolu HTTPS, proto
+     je nezbytné mít v cestì (PATH) OpenSSL knihovny (LIBEAY32.DLL a 
+     SSLEAY32.DLL).
+
  - Rozhlas.cz:
      - http://www.rozhlas.cz/vltava/porady/_zprava/676996
 
@@ -398,6 +418,9 @@ PODPOROVANÉ WEBY
  - RuTube.ru:
      - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
 
+ - SerialyCZ.cz:
+     - http://www.serialycz.cz/2011/01/chuck-04x12/
+
  - SevenLoad.com:
      - http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
 
@@ -406,6 +429,11 @@ PODPOROVANÉ WEBY
 
  - Spike.com:
      - http://www.spike.com/video/prince-of-persia/3355664
+
+ - SportStream.cz:
+     - http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
  - Stagevu.com:
      - http://stagevu.com/video/jomxdgbvxnip
@@ -494,6 +522,11 @@ PODPOROVANÉ WEBY
 
  - TVS.pl:
      - http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
+
+ - Tyzden.sk:
+     - http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
 
      Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 

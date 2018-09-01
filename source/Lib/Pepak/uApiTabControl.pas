@@ -4,7 +4,8 @@ interface
 {$INCLUDE 'uApi.inc'}
 
 uses
-  SysUtils, Classes, Consts, Windows, CommCtrl,
+  SysUtils, Classes, Windows, CommCtrl,
+  {$IFDEF DELPHI2009_UP} RtlConsts, {$ELSE} Consts, {$ENDIF}
   uApiCommon, uApiFunctions, uApiForm;
 
 type

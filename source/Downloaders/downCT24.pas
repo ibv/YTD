@@ -42,10 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend, SynaCode,
-  uDownloader, uCommonDownloader, uMSDownloader, downCT;
+  uDownloader, uCommonDownloader, uMSDownloader, downCT_old;
 
 type
-  TDownloader_CT24 = class(TDownloader_CT)
+  TDownloader_CT24 = class(TDownloader_CT_old)
     private
     protected
       PortToIVysilaniRegExp: TRegExp;

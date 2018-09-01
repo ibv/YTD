@@ -34,26 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit down1hdRo;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE LOW_QUALITY}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader, downPrahovaHD;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_1hdRo = class(TDownloader_PrahovaHD)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -67,81 +63,43 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
+// http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*live\.1hd\.ro/playondemand\.php';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXP_MOVIE_VARIABLES = '\.addVariable\s*\(\s*''(?P<VARNAME>[^'']+)''\s*,\s*''(?P<VARVALUE>[^'']*)''';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_1hdRo }
 
-class function TDownloader_CestyKSobe.Provider: string;
+class function TDownloader_1hdRo.Provider: string;
 begin
-  Result := 'CestyKSobe.sk';
+  Result := '1hd.ro';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_1hdRo.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_1hdRo.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2, [rcoIgnoreCase, rcoSingleLine]);
-end;
-
-destructor TDownloader_CestyKSobe.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+destructor TDownloader_1hdRo.Destroy;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
+  inherited;
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
+function TDownloader_1hdRo.GetMovieInfoUrl: string;
 begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
-end;
-
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var s: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if UnpreparedName = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
-    begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://live.1hd.ro/playondemand.php' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  RegisterDownloader(TDownloader_1hdRo);
 
 end.

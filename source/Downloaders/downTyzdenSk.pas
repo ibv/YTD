@@ -34,25 +34,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit downTyzdenSk;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE ALLOW_MDY_DATE} // Allow switching of day and month. Not recommended!
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_TyzdenSk = class(TRtmpDownloader)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
+      FlashVarsRegExp: TRegExp;
+      FlashVarsItemsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -67,81 +67,97 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
+// http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tyzden\.sk/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>(?:[^|]*\|)?[^|]*)[|<]';
+  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"(?P<FLASHVARS>.*?)"';
+  REGEXP_FLASHVARS_ITEMS = '(?P<VARNAME>[^="]+)=(?P<VARVALUE>.*?)(?:&amp;|$)';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_TyzdenSk }
 
-class function TDownloader_CestyKSobe.Provider: string;
+class function TDownloader_TyzdenSk.Provider: string;
 begin
-  Result := 'CestyKSobe.sk';
+  Result := 'Tyzden.sk';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_TyzdenSk.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_TyzdenSk.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS, [rcoIgnoreCase, rcoSingleLine]);
+  FlashVarsItemsRegExp := RegExCreate(REGEXP_FLASHVARS_ITEMS, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CestyKSobe.Destroy;
+destructor TDownloader_TyzdenSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarsItemsRegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+function TDownloader_TyzdenSk.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
+  Result := 'http://www.tyzden.sk/' + MovieID;
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
-begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
-end;
-
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var s: string;
+function TDownloader_TyzdenSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var FlashVars, Node, V: string;
+    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if UnpreparedName = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
+  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+  else if not GetRegExpVarPairs(FlashVarsItemsRegExp, FlashVars, ['node', 'v'], [@Node, @V]) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+  else if (Node = '') or (V = '') then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+  else
     begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
-    SetPrepared(True);
-    Result := True;
+    Node := UrlDecode(Node);
+    repeat
+      i := Pos(';', Node);
+      if i <= 0 then
+        Break
+      else if i > 1 then
+        begin
+        SetLength(Node, Pred(i));
+        Break;
+        end
+      else
+        System.Delete(Node, 1, 1);
+    until Node <> '';
+    V := UrlDecode(V);
+    if Node = '' then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    else
+      begin
+      MovieUrl := Node + V;
+      AddRtmpDumpOption('r', Node);
+      AddRtmpDumpOption('y', V); 
+      AddRtmpDumpOption('f', 'WIN 10,1,82,76');
+      AddRtmpDumpOption('W', 'http://www.tyzden.sk/fileadmin/template/swf/tyzden_player.swf?v=4');
+      AddRtmpDumpOption('p', GetMovieInfoUrl);
+      AddRtmpDumpOption('t', Node);
+      SetPrepared(True);
+      Result := True;
+      end;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  RegisterDownloader(TDownloader_TyzdenSk);
 
 end.

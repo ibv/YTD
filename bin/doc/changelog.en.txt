@@ -1,6 +1,35 @@
 CHANGELOG
 ---------
 
+  v0.72
+
+    * New provider: 1hd.ro.
+
+    * New provider: DotSub.com.
+
+    * New provider: Music.Stream.cz.
+
+    * New provider: RockstarGames.com.
+      Note: This provider requires that HTTPS is used. Because of that, you
+      need to have the OpenSSL libraries LIBEAY32.DLL and SSLEAY32.DLL in
+      your path.
+
+    * New provider: SerialyCZ.cz.
+
+    * New provider: SportStream.cz.
+
+    * New provider: Tyzden.sk.
+
+    * CeskaTelevize.cz: Updated to work with the new version of iVysilani.
+
+    * CestyKSobe.cz: Added support for an alternate video player code, as
+      seen at http://cestyksobe.cz/novinky/novinky/544.html.
+
+    * iPrima.cz: Support for movies which are hosted at Stream.cz, but don't
+      have a dedicated page (e.g. http://www.iprima.cz/videoarchiv/42037).
+
+
+
   v0.71
 
     * New provider: AdultLoop.com (porn).

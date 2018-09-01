@@ -1,6 +1,35 @@
 CHANGELOG
 ---------
 
+  v0.72
+
+    * Nový poskytovatel. 1hd.ro.
+
+    * Nový poskytovatel: DotSub.com.
+
+    * Nový poskytovatel: Music.Stream.cz.
+
+    * Nový poskytovatel: RockstarGames.com.
+      Pozor, poskytovatel vyžaduje použití protokolu HTTPS, tudíž musíte mít
+      v cestì (path) OpenSSL knihovny LIBEAY32.DLL and SSLEAY32.DLL.
+
+    * Nový poskytovatel: SerialyCZ.cz.
+
+    * Nový poskytovatel: SportStream.cz.
+
+    * Nový poskytovatel: Tyzden.sk.
+
+    * CeskaTelevize.cz: Aktualizováno na novou podobu iVysílání.
+
+    * CestyKSobe.cz: Podpora pro alternativní zpùsob vkládání video pøehrávaèe,
+      viz napø. http://cestyksobe.cz/novinky/novinky/544.html.
+
+    * iPrima.cz: Podpora pro poøady, které jsou na Stream.cz hostovány, ale
+      nemají tam samostatnì pøístupnou stránku (napø. 
+      http://www.iprima.cz/videoarchiv/42037).
+
+
+
   v0.71
 
     * Nový poskytovatel: AdultLoop.com (porno).
@@ -23,7 +52,7 @@ CHANGELOG
 
     * iPrima.cz: Opraven název videa.
 
-    * Nova.cz: Aktualizováno na novou podou archívu.
+    * Nova.cz: Aktualizováno na novou podobu archívu.
 
     * STV.sk: Pøepracováno na aktuální stav. Pozor, server je extrémnì
       nestabilní a víc nefunguje než funguje (i pro bìžné online sledování,

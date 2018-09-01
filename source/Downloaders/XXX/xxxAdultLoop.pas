@@ -40,7 +40,7 @@ unit xxxAdultLoop;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend, 
   uDownloader, uCommonDownloader, uHttpDownloader;
 

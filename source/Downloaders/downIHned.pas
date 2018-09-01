@@ -78,7 +78,7 @@ const
 
 class function TDownloader_IHned.Provider: string;
 begin
-  Result := 'IHned.com';
+  Result := 'iHned.cz';
 end;
 
 class function TDownloader_IHned.UrlRegExp: string;

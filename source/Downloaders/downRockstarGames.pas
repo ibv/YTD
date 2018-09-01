@@ -34,25 +34,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit downRockstarGames;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, SSL_OpenSSL,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_RockstarGames = class(THttpDownloader)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
+      InfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -67,81 +65,76 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
+// https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tv\.rockstargames\.com/videos/view/id/';
+  URLREGEXP_ID =        '[0-9A-F]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXP_INFO_URL = '\bplayerData\s*:\s*''(?P<URL>https?://.+?)''';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_RockstarGames }
 
-class function TDownloader_CestyKSobe.Provider: string;
+class function TDownloader_RockstarGames.Provider: string;
 begin
-  Result := 'CestyKSobe.sk';
+  Result := 'RockstarGames.com';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_RockstarGames.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_RockstarGames.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2, [rcoIgnoreCase, rcoSingleLine]);
+  InfoPageEncoding := peUtf8;
+  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CestyKSobe.Destroy;
+destructor TDownloader_RockstarGames.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
+  RegExFreeAndNil(InfoUrlRegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+function TDownloader_RockstarGames.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
+  Result := 'https://tv.rockstargames.com/videos/view/id/' + MovieID;
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
-begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
-end;
-
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var s: string;
+function TDownloader_RockstarGames.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, Url, InfoUrl: string;
+    Xml: TXmlDoc;
+    Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if UnpreparedName = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
-    begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
-    SetPrepared(True);
-    Result := True;
-    end;
+  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', InfoUrl) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  else if not DownloadXml(Http, InfoUrl, Xml) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+  else
+    try
+      if not Xml.NodeByPath('currentData/videos/video', Node) then
+      else if not GetXmlVar(Node, 'title', Title) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+      else if not GetXmlVar(Node, 'flv', Url) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      else
+        begin
+        SetName(Title);
+        MovieURL := Url;
+        Result := True;
+        SetPrepared(True);
+        end;
+    finally
+      Xml.Free;
+      end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  RegisterDownloader(TDownloader_RockstarGames);
 
 end.

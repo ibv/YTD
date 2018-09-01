@@ -52,6 +52,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
+      function GetMovieID(const Page: string; out ID: string): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -108,13 +109,18 @@ begin
   Result := 'http://www.zkouknito.cz/' + MovieID;
 end;
 
+function TDownloader_ZkoukniTo.GetMovieID(const Page: string; out ID: string): boolean;
+begin
+  Result := GetRegExpVar(MovieIDRegExp, Page, 'ID', ID);
+end;
+
 function TDownloader_ZkoukniTo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var ID, Url: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+  if not GetMovieID(Page, ID) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
   else if not DownloadXml(Http, 'http://www.zkouknito.cz/player/scripts/videoinfo.php?id=' + ID, Xml) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))

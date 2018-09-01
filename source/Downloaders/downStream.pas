@@ -51,6 +51,7 @@ type
     protected
       MovieParamsRegExp: TRegExp;
       FlashVarsParserRegExp: TRegExp;
+      ExternalCDNID: string;
       {
       MovieIdFromParamsRegExp: TRegExp;
       MovieHDIdFromParamsRegExp: TRegExp;
@@ -65,6 +66,7 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      function Prepare: boolean; override;
     end;
 
 implementation
@@ -80,7 +82,7 @@ uses
 // http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
 // http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*stream\.cz/(?:[^/]+/)*';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!\bmusic\.)stream\.cz/(?:[^/]+/)*';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -154,30 +156,39 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   Params := '';
-  if MovieParamsRegExp.Match(Page) then
-    if not MovieParamsRegExp.SubexpressionByName('PARAM', Params) then
-      Params := MovieParamsRegExp.SubexpressionByName('PARAM2');
-  if Params = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
-  else if not GetRegExpVarPairs(FlashVarsParserRegExp, Params,
-                 ['id', 'cdnLQ', 'cdnHQ', 'cdnHD'],
-                 [@ID,  @CdnLQ,  @CdnHQ,  @CdnHD ])
-  then
-  //else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  CdnID := '';
+  if ExternalCDNID <> '' then
+    CdnID := ExternalCDNID
   else
     begin
-    if CdnHD <> '' then
-      CdnID := CdnHD
-    else if CdnHQ <> '' then
-      CdnID := CdnHQ
-    else if CdnLQ <> '' then
-      CdnID := CdnLQ
-    else
-      CdnID := '';
-    if CdnID = '' then
+    if MovieParamsRegExp.Match(Page) then
+      if not MovieParamsRegExp.SubexpressionByName('PARAM', Params) then
+        Params := MovieParamsRegExp.SubexpressionByName('PARAM2');
+    if Params = '' then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO))
+    else if not GetRegExpVarPairs(FlashVarsParserRegExp, Params,
+                   ['id', 'cdnLQ', 'cdnHQ', 'cdnHD'],
+                   [@ID,  @CdnLQ,  @CdnHQ,  @CdnHD ])
+    then
+    //else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
       SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
     else
+      begin
+      if CdnHD <> '' then
+        CdnID := CdnHD
+      else if CdnHQ <> '' then
+        CdnID := CdnHQ
+      else if CdnLQ <> '' then
+        CdnID := CdnLQ
+      else
+        begin
+        CdnID := '';
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+        end;
+      end;
+    end;
+  if CdnID <> '' then
+    begin
     {$IFDEF XMLINFO}
     if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
       try
@@ -199,6 +210,12 @@ begin
       SetPrepared(True);
       end;
     end;
+end;
+
+function TDownloader_Stream.Prepare: boolean;
+begin
+  ExternalCDNID := '';
+  Result := inherited Prepare;
 end;
 
 initialization

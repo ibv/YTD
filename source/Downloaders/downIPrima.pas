@@ -49,8 +49,10 @@ type
     private
     protected
       StreamIDRegExp: TRegExp;
+      StreamCDNIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -71,8 +73,9 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h1\s+id="video_header">(?P<TITLE>.*?)</h1>';
+  REGEXP_MOVIE_TITLE = '<h3\s+id="videoTitle">(?P<TITLE>.*?)</h3>';
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
+  REGEXP_STREAM_CDNID = '<param\s+name="flashvars"\s+value="[^"]*&cdnID=(?P<STREAMID>[0-9]+)';
 
 { TDownloader_iPrima }
 
@@ -93,28 +96,39 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   StreamIDRegExp := RegExCreate(REGEXP_STREAM_ID, [rcoIgnoreCase]);
+  StreamCDNIDRegExp := RegExCreate(REGEXP_STREAM_CDNID, [rcoIgnoreCase]);
 end;
 
 destructor TDownloader_iPrima.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(StreamIDRegExp);
+  RegExFreeAndNil(StreamCDNIDRegExp);
   inherited;
 end;
 
 function TDownloader_iPrima.GetMovieInfoUrl: string;
-var Info: THttpSend;
-    Url, Page, ID: string;
 begin
-  Result := '';
-  Info := CreateHttp;
-  try
-    Url := 'http://www.iprima.cz/videoarchiv/' + MovieID + '/all/all';
-    if DownloadPage(Info, Url, Page, peUTF8) then
-      if GetRegExpVar(StreamIDRegExp, Page, 'STREAMID', ID) then
-        Result := GetMovieInfoUrlForID(ID);
-  finally
-    Info.Free;
+  Result := 'http://www.iprima.cz/videoarchiv/' + MovieID + '/all/all';
+end;
+
+function TDownloader_iPrima.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Url, ID: string;
+begin
+  Result := False;
+  if GetRegExpVar(StreamCDNIDRegExp, Page, 'STREAMID', ID) then
+    begin
+    ExternalCDNID := ID;
+    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
+    end
+  else if GetRegExpVar(StreamIDRegExp, Page, 'STREAMID', ID) then
+    begin
+    Url := GetMovieInfoUrlForID(ID);
+    FreeAndNil(PageXml);
+    if not GetMovieInfoContent(Http, Url, Page, PageXml) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    else
+      Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
     end;
 end;
 

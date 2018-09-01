@@ -1,5 +1,6 @@
 Prot.	Zdr.naz	Zdr.URL	Nazev
 
+RTMP	-	HTML	down1hdRo (<-downPrahovaHD)
 HTTP	HTML	HTML	down5min
 HTTP	HTML	HTML	downAktualne
 HTTP	HTML	HTML	downAngryAlien
@@ -23,7 +24,8 @@ HTTP	XML	XML	downClipfish
 HTTP	XML	XML	downCollegeHumor
 RTMP	HTML	XML	downCrunchyRoll
 HTTP	XML	XML	downCSmaTalent
-MS	HTML	XML	downCT
+RTMP	HTML	XML	downCT
+MS	HTML	XML	downCT_old
 MS	HTML	XML	downCT_Port
 MS	HTML	XML	downCT_Program
 MS	HTML	XML	downCT24
@@ -33,6 +35,7 @@ HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion
 HTTP	HTML	HTML	downDeutscheBahn
 HTTP	HTML	Nested	downDevilDucky
+HTTP	JSON	JSON	downDotSub
 HTTP	HTML	HTML	downDoubleAgent
 HTTP	HTML	Nested	downDrsnySvet
 HTTP	HTML	HTML	downDub
@@ -90,13 +93,16 @@ HTTP	HTML	Nested	downPrimaCool
 HTTP	-	HTML	downQipRu_Embed
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)
+HTTP	XML	XML	downRockstarGames
 HTTP	HTML	HTML	downRozhlas
 MS	XML	XML	downRTA (<-downRTA_Embed)
 MS	XML	XML	downRTA_Embed
 MS	XML	XML	downRtlNl
+HTTP	HTML	XML	downSerialyCZ (<-downZkoukniTo)
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
 HTTP	XML	XML	downSpike
+RTMP	HTML	HTML	downSportStream
 HTTP	HTML	HTML	downStagevu
 HTTP	HTML	Nested	downStastneVdovy
 HTTP	HTML	HTML	downStickam
@@ -116,6 +122,7 @@ HTTP	HTML	HTML	downTV7
 MS	HTML	XML	downTVcom
 HTTP	XML	XML	downTVNoe
 RTMP	XML	XML	downTVSpl
+HTTP	HTML	XML	downTyzdenSk
 RTMP	HTML	XML	downUniMinnesota
 HTTP	HTML	HTML+AMF	downUStream
 HTTP	HTML	Nested	downVideaCesky

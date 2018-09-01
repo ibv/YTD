@@ -98,6 +98,7 @@ call :%compiler% "%srcdir%lib\PerlRegEx\*.pas"
 call :%compiler% "%srcdir%lib\lkJSON\uLkJSON.pas"
 call :%compiler% "%srcdir%lib\Pepak\*.pas"
 copy "%srcdir%lib\Pepak\*.res" "%srcdir%Units" >nul
+call :%compiler% "%srcdir%lib\Synapse\source\lib\SSL_OpenSSL.pas"
 call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"
 call :%compiler% "%srcdir%lib\NativeXml\NativeXml.pas"
 call :%compiler% "%srcdir%lib\RtmpDump\rtmpdump_dll.pas"

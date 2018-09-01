@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit downSportStream;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,14 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_SportStream = class(TRtmpDownloader)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
+      PlayPathRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
@@ -67,81 +66,75 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
+// http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)sportstream\.cz/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXP_EXTRACT_TITLE = '<h1>\s*(?P<TITLE>.*?)\s*</h1>';
+  REGEXP_EXTRACT_PATH = '''flashvars''\s*,\s*''[^'']*&rtv_h=(?P<PATH>[^''&]+)';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_SportStream }
 
-class function TDownloader_CestyKSobe.Provider: string;
+class function TDownloader_SportStream.Provider: string;
 begin
-  Result := 'CestyKSobe.sk';
+  Result := 'SportStream.cz';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_SportStream.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_SportStream.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2, [rcoIgnoreCase, rcoSingleLine]);
+  PlayPathRegExp := RegExCreate(REGEXP_EXTRACT_PATH, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CestyKSobe.Destroy;
+destructor TDownloader_SportStream.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
+  RegExFreeAndNil(PlayPathRegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+function TDownloader_SportStream.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
+  Result := 'http://www.sportstream.cz/' + MovieID;
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
+function TDownloader_SportStream.GetFileNameExt: string;
 begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
+  Result := '.flv';
 end;
 
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var s: string;
+function TDownloader_SportStream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const TCURL = 'rtmp://ssfms.sportstream.cz/vod';
+var PlayPath: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if UnpreparedName = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
+  if not GetRegExpVar(PlayPathRegExp, Page, 'PATH', PlayPath) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  else
     begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
+    MovieUrl := TCURL + PlayPath;
+    AddRtmpDumpOption('r', TCURL);
+    AddRtmpDumpOption('y', PlayPath);
+    AddRtmpDumpOption('f', 'WIN 10,1,82,76');
+    AddRtmpDumpOption('W', 'http://www.sportstream.cz/sport_player.swf');
+    AddRtmpDumpOption('t', TCURL);
     SetPrepared(True);
     Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  RegisterDownloader(TDownloader_SportStream);
 
 end.

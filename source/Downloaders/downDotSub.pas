@@ -34,25 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit downDotSub;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TDownloader_DotSub = class(THttpDownloader)
     private
     protected
-      MovieTitle2RegExp: TRegExp;
-      MovieUrl2RegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -67,81 +63,68 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
+// http://dotsub.com/view/b9715a32-0bd5-4ad1-80b0-2b1e4832daf2
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*cestyksobe\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[^/?&]+/[0-9]+\.html';
-  URLREGEXP_AFTER_ID =  '';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*dotsub\.com/[^/]+/';
+  URLREGEXP_ID =        '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+  URLREGEXP_AFTER_ID =  '(?:[/?]|$)';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_TITLE2 = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_MOVIEURL = '\bflashvars\s*:\s*"[^"]*&streamscript=(?P<URL>/[^"&]+)';
-  REGEXP_EXTRACT_MOVIEURL2 = '\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>/.+?)''';
+  REGEXP_MOVIE_TITLE = '[{,]\s*"title"\s*:\s*"(?P<TITLE>[^"]+?)"';
+  REGEXP_MOVIE_URL = '[{,]\s*"mediaURI"\s*:\s*"(?P<URL>https?://.+?)"';
 
-{ TDownloader_CestyKSobe }
+{ TDownloader_DotSub }
 
-class function TDownloader_CestyKSobe.Provider: string;
+class function TDownloader_DotSub.Provider: string;
 begin
-  Result := 'CestyKSobe.sk';
+  Result := 'DotSub.com';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TDownloader_DotSub.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TDownloader_DotSub.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  MovieTitle2RegExp := RegExCreate(REGEXP_EXTRACT_TITLE2, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL, [rcoIgnoreCase, rcoSingleLine]);
-  MovieUrl2RegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL2, [rcoIgnoreCase, rcoSingleLine]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_CestyKSobe.Destroy;
+destructor TDownloader_DotSub.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieTitle2RegExp);
   RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrl2RegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
+function TDownloader_DotSub.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.cestyksobe.cz/' + MovieID + '?quality=high';
+  Result := 'http://dotsub.com/api/media/' + MovieID + '/metadata';
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
-begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
-end;
-
-function TDownloader_CestyKSobe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_DotSub.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+{$IFDEF DIRTYHACKS}
 var s: string;
+    i: integer;
+{$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if MovieURL = '' then
-    if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
-      MovieURL := s;
-  if UnpreparedName = '' then
-    if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
-      SetName(s);
-  if MovieURL <> '' then
+  Result := Prepared;
+  if Result then
     begin
-    MovieURL := 'http://www.cestyksobe.cz' + MovieURL;
-    SetPrepared(True);
-    Result := True;
+    {$IFDEF DIRTYHACKS}
+    s := MovieID + '/media/';
+    i := Pos(s, MovieUrl);
+    if i > 0 then
+      MovieUrl := Copy(MovieUrl, 1, i+Length(MovieID)+1) + Copy(MovieUrl, i+Length(s)-1, MaxInt);
+    {$ENDIF}
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
+  RegisterDownloader(TDownloader_DotSub);
 
 end.

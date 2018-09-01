@@ -1,3 +1,5 @@
+{$INCLUDE 'jedi.inc'}
+
 {$DEFINE APIFORM_ANCHORS}
   // Allows easy resizing of forms through something similar to Delphi's anchors
 

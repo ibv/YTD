@@ -12,6 +12,6 @@ del /s /q *.dsk >nul 2>&1
 del /s /q *.drc >nul 2>&1
 del /s /q *.exe >nul 2>&1
 del /s /q *.map >nul 2>&1
-del /q ytd.res.bak >nul 2>&1
+del /q %project%.res.bak >nul 2>&1
 del /q %project%.dproj.local >nul 2>&1
 del /q %project%.identcache >nul 2>&1

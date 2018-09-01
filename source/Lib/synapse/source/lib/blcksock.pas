@@ -1169,14 +1169,14 @@ type
     FSSHChannelArg1: string;
     FSSHChannelArg2: string;
     procedure ReturnError;
-    function CreateSelfSignedCert(Host: string): Boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function CreateSelfSignedCert(Host: string): Boolean; virtual;
   public
     {: Create plugin class. it is called internally from @link(TTCPBlockSocket)}
-    constructor Create(const Value: TTCPBlockSocket); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    constructor Create(const Value: TTCPBlockSocket); virtual;
 
     {: Assign settings (certificates and configuration) from another SSL plugin
      class.}
-    procedure Assign(const Value: TCustomSSL); {$IFNDEF PEPAK} virtual; {$ENDIF}
+    procedure Assign(const Value: TCustomSSL); virtual;
 
     {: return description of used plugin. It usually return name and version
      of used SSL library.}
@@ -1188,76 +1188,76 @@ type
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for start SSL connection.}
-    function Connect: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function Connect: boolean; virtual;
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for acept new SSL connection.}
-    function Accept: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function Accept: boolean; virtual;
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for hard shutdown of SSL connection. (for example,
      before socket is closed)}
-    function Shutdown: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function Shutdown: boolean; virtual;
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for soft shutdown of SSL connection. (for example,
      when you need to continue with unprotected connection.)}
-    function BiShutdown: boolean; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function BiShutdown: boolean; virtual;
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for sending some datas by SSL connection.}
-    function SendBuffer(Buffer: TMemory; Len: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function SendBuffer(Buffer: TMemory; Len: Integer): Integer; virtual;
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for receiving some datas by SSL connection.}
-    function RecvBuffer(Buffer: TMemory; Len: Integer): Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function RecvBuffer(Buffer: TMemory; Len: Integer): Integer; virtual;
 
     {: Do not call this directly. It is used internally by @link(TTCPBlockSocket)!
 
      Here is needed code for getting count of datas what waiting for read.
      If SSL plugin not allows this, then it should return 0.}
-    function WaitingData: Integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function WaitingData: Integer; virtual;
 
     {:Return string with identificator of SSL/TLS version of existing
      connection.}
-    function GetSSLVersion: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetSSLVersion: string; virtual;
 
     {:Return subject of remote SSL peer.}
-    function GetPeerSubject: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetPeerSubject: string; virtual;
 
     {:Return issuer certificate of remote SSL peer.}
-    function GetPeerIssuer: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetPeerIssuer: string; virtual;
 
     {:Return peer name from remote side certificate. This is good for verify,
      if certificate is generated for remote side IP name.}
-    function GetPeerName: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetPeerName: string; virtual;
 
     {:Return fingerprint of remote SSL peer.}
-    function GetPeerFingerprint: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetPeerFingerprint: string; virtual;
 
     {:Return all detailed information about certificate from remote side of
      SSL/TLS connection. Result string can be multilined! Each plugin can return
      this informations in different format!}
-    function GetCertInfo: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetCertInfo: string; virtual;
 
     {:Return currently used Cipher.}
-    function GetCipherName: string; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetCipherName: string; virtual;
 
     {:Return currently used number of bits in current Cipher algorythm.}
-    function GetCipherBits: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetCipherBits: integer; virtual;
 
     {:Return number of bits in current Cipher algorythm.}
-    function GetCipherAlgBits: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetCipherAlgBits: integer; virtual;
 
     {:Return result value of verify remote side certificate. Look to OpenSSL
      documentation for possible values. For example 0 is successfuly verified
      certificate, or 18 is self-signed certificate.}
-    function GetVerifyCert: integer; {$IFNDEF PEPAK} virtual; {$ENDIF}
+    function GetVerifyCert: integer; virtual;
 
     {: Resurn @true if SSL mode is enabled on existing cvonnection.}
     property SSLEnabled: Boolean read FSSLEnabled;

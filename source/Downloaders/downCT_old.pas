@@ -34,8 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCT;
+unit downCT_old;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE PREFER_REALMEDIA}
 
 interface
 
@@ -43,23 +44,27 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TDownloader_CT = class(TRtmpDownloader)
+  TDownloader_CT_old = class(TMSDownloader)
     private
+      fRealMedia: boolean;
     protected
       MovieObjectRegExp: TRegExp;
       IVysilaniUrlRegExp: TRegExp;
     protected
+      function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      property RealMedia: boolean read fRealMedia write fRealMedia;
     end;
 
 implementation
@@ -68,41 +73,41 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
 // http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/?online=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/(?:ivysilani|porady(?:/[^/]+)?)/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/porady(?:/[^/]+)?/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE = '<h2>\s*(?P<TITLE>.*?)\s*</h2>';
-  //REGEXP_MOVIE_OBJECT = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="(?:url|src)"\s+value)="(?P<OBJURL>[^"]+)"';
-  REGEXP_MOVIE_OBJECT = '\bflashvars\.playlistURL\s*=\s*"(?P<OBJURL>https?://.+?)"';
+  REGEXP_MOVIE_OBJECT = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="(?:url|src)"\s+value)="(?P<OBJURL>[^"]+)"';
+  //REGEXP_IVYSILANI_URL = '^(?P<URL>rtsp://[^/]+/iVysilani\.hash\?.*)$';
   REGEXP_IVYSILANI_URL = '(?P<URL>(?:https?|rtsp)://[^/]+/iVysilani\.(?:hash\?|archive).*)';
 
-{ TDownloader_CT }
+{ TDownloader_CT_old }
 
-class function TDownloader_CT.Provider: string;
+class function TDownloader_CT_old.Provider: string;
 begin
   Result := 'CeskaTelevize.cz';
 end;
 
-class function TDownloader_CT.UrlRegExp: string;
+class function TDownloader_CT_old.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_CT.Create(const AMovieID: string);
+constructor TDownloader_CT_old.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT, [rcoIgnoreCase, rcoSingleLine]);
   IVysilaniUrlRegExp := RegExCreate(REGEXP_IVYSILANI_URL, [rcoIgnoreCase]);
+  RealMedia := {$IFDEF PREFER_REALMEDIA} True {$ELSE} False {$ENDIF};
 end;
 
-destructor TDownloader_CT.Destroy;
+destructor TDownloader_CT_old.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
@@ -110,75 +115,91 @@ begin
   inherited;
 end;
 
-function TDownloader_CT.GetMovieInfoUrl: string;
+procedure TDownloader_CT_old.SetOptions(const Value: TYTDOptions);
+var s: string;
 begin
-  Result := 'http://www.ceskatelevize.cz/ivysilani/' + MovieID + '/';
+  inherited;
+  if Value.ReadProviderOption(Provider, 'prefer_real_media', s) then
+    RealMedia := StrToIntDef(s, Integer(RealMedia)) <> 0;
 end;
 
-function TDownloader_CT.GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean;
+function TDownloader_CT_old.GetFileNameExt: string;
+begin
+  if RealMedia then
+    Result := '.rm'
+  else
+    Result := '.asf';
+end;
+
+function TDownloader_CT_old.GetMovieInfoUrl: string;
+begin
+  Result := 'http://www.ceskatelevize.cz/ivysilani/' + MovieID + '/?streamtype=';
+  if RealMedia then
+    Result := Result + 'RL3'
+  else
+    Result := Result + 'WM3';
+end;
+
+function TDownloader_CT_old.GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean;
 begin
   Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', Url);
 end;
 
-function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const REKLAMA = '-AD-';
+function TDownloader_CT_old.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const REKLAMA = 'Reklama:';
       REKLAMA_LENGTH = Length(REKLAMA);
-var Url, ID, BaseUrl, BestStream, Stream, sBitrate: string;
+var HREF, URL, ObjectDef, Title: string;
     Xml: TXmlDoc;
-    Body, Node: TXmlNode;
-    i, j, Bitrate, BestBitrate: integer;
+    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetMovieObjectUrl(Http, Page, Url) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, URL, Xml) then
+  else if not DownloadPage(Http, URL, ObjectDef) then
     SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    try
-      if Xml.NodeByPath('smilRoot/body', Body) then
-        for i := 0 to Pred(Body.NodeCount) do
-          if Body.Nodes[i].Name = 'switchItem' then
-            begin
-            Node := Body.Nodes[i];
-            if GetXmlAttr(Node, '', 'id', ID) then
-              if Pos(REKLAMA, ID) <= 0 then
-                if GetXmlAttr(Node, '', 'base', BaseUrl) then
-                  begin
-                  BestStream := '';
-                  BestBitrate := -1;
-                  for j := 0 to Pred(Node.NodeCount) do
-                    if Node.Nodes[j].Name = 'video' then
-                      if GetXmlAttr(Node.Nodes[j], '', 'src', Stream) then
-                        begin
-                        if GetXmlAttr(Node.Nodes[j], '', 'system-bitrate', sBitrate) then
-                          Bitrate := StrToIntDef(sBitrate, 0)
-                        else
-                          Bitrate := 0;
-                        if Bitrate > BestBitrate then
-                          begin
-                          BestStream := Stream;
-                          BestBitrate := Bitrate;
-                          end;
-                        end;
-                  if BestStream = '' then
-                    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-                  else
+    begin
+    // Jsou dve varianty. Pro ASF stream prijde XML, pro RM stream textak
+    ObjectDef := Trim(ObjectDef);
+    if ObjectDef = '' then
+      SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
+    else if ObjectDef[1] = '<' then
+      begin
+      Xml := TXmlDoc.Create;
+      try
+        Xml.LoadFromStream(Http.Document);
+        Http.Document.Seek(0, 0);
+        for i := 0 to Pred(Xml.Root.NodeCount) do
+          if Xml.Root.Nodes[i].Name = 'ENTRY' then
+            if GetXmlAttr(Xml.Root.Nodes[i], 'REF', 'HREF', HREF) then
+              if GetXmlVar(Xml.Root.Nodes[i], 'TITLE', Title) then
+                if AnsiCompareText(REKLAMA, Copy(Title, 1, REKLAMA_LENGTH)) <> 0 then
+                  //if GetRegExpVar(IVysilaniUrlRegExp, HREF, 'URL', Url) then
                     begin
-                    MovieURL := BestStream;
-                    AddRtmpDumpOption('r', BaseUrl);
-                    AddRtmpDumpOption('y', Stream);
-                    SetPrepared(True);
+                    //if GetXmlVar(Xml.childNode[i], 'TITLE', Title) then
+                    //  SetName(Title);
+                    MovieUrl := HREF;
                     Result := True;
+                    SetPrepared(True);
+                    Exit;
                     end;
-                  end;
-            end;
-    finally
-      Xml.Free;
+      finally
+        Xml.Free;
+        end;
+      end
+    else if not GetRegExpVar(IVysilaniUrlRegExp, ObjectDef, 'URL', Url) then
+      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+    else
+      begin
+      MovieURL := Url;
+      Result := True;
+      SetPrepared(True);
       end;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CT);
+  //RegisterDownloader(TDownloader_CT_old);
 
 end.
