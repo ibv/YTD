@@ -5,7 +5,8 @@ interface
 uses
   SysUtils, Classes, FileCtrl,
   PCRE,
-  uConsoleApp, uDownloader, uDownloadClassifier;
+  uConsoleApp,
+  uDownloader, uCommonDownloader, uDownloadClassifier;
 
 type
   TYTD = class(TConsoleApp)
@@ -204,6 +205,8 @@ begin
       begin
       Write('    Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
       Write('      File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
+      if Downloader is TCommonDownloader then
+        Write('    Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
       Result := Downloader.Download;
       if fLastProgressPercentage >= 0 then
         Writeln;

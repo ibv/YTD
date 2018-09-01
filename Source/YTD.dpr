@@ -20,7 +20,8 @@ uses
   uDownloadListItem in 'uDownloadListItem.pas',
   uDownloadThread in 'uDownloadThread.pas',
   uYTDGUI in 'uYTDGUI.pas' {FormYTD},
-  uDownloadList in 'uDownloadList.pas';
+  uDownloadList in 'uDownloadList.pas',
+  uStreamDownloader in 'uStreamDownloader.pas';
 
 begin
   if (ParamCount <= 0) then
@@ -29,7 +30,7 @@ begin
     Application.Initialize;
     Application.Title := 'YouTube Downloader';
     Application.CreateForm(TFormYTD, FormYTD);
-    Application.Run;
+  Application.Run;
     end
   else
     begin

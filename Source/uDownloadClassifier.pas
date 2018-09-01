@@ -29,12 +29,13 @@ type
 implementation
 
 uses
-  uYTDregexp,
   uCommonDownloader,
-  uYouTubeDownloader,
-  uNJoyDownloader,
-  uBlipTvDownloader,
-  uBlipTvDownloaderV2;
+  uYouTubeDownloader,  // YouTube.com
+  uNJoyDownloader,     // N-joy.cz
+  uBlipTvDownloader,   // Blip.tv
+  uBlipTvDownloaderV2, // Blip.tv
+  uStreamDownloader,   // Stream.cz
+  uYTDregexp;
 
 { TDownloadClassifier }
 
@@ -92,6 +93,12 @@ begin
           if Value <> '' then
             begin
             fDownloader := TBlipTvDownloaderV2.Create(Value);
+            Break;
+            end;
+        with Match.Groups.ItemsByName['STREAM'] do
+          if Value <> '' then
+            begin
+            fDownloader := TStreamDownloader.Create(Value);
             Break;
             end;
       until True;

@@ -15,8 +15,12 @@ const
     // Blip.tv:
     //     http://blip.tv/play/hIVV4sNUAg
     //     http://blip.tv/file/108391
-    + '(?:^https?://(?:[a-z0-9-]+.)?blip\.tv/play/(?P<BLIPTV>[^/&?]+))|'
-    + '(?:^https?://(?:[a-z0-9-]+.)?blip\.tv/file/(?P<BLIPTVV2>[0-9]+))|'
+    + '(?:^https?://(?:[a-z0-9-]+\.)?blip\.tv/play/(?P<BLIPTV>[^/&?]+))|'
+    + '(?:^https?://(?:[a-z0-9-]+\.)?blip\.tv/file/(?P<BLIPTVV2>[0-9]+))|'
+    // Stream.cz:
+    //     http://www.stream.cz/reklamozrouti/410282-reklamozrouti-medvedi-reklama
+    //     http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
+    + '(?:^https?://(?:[a-z0-9-]+\.)?stream\.cz/(?:[^/]+/)*(?P<STREAM>[0-9]+))|'
     ;
 
 implementation

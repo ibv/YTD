@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.12                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.13                                  (C) 2009, 2010 Pepak
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -20,6 +20,14 @@ Podporované weby a formáty URL:
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
      - http://thespoonyone.blip.tv/file/1607673/
+ - Stream.cz:
+     - http://www.stream.cz/video/437197-meziplyn-30
+       Pozn.: V obsluze stream.cz je chyba, kvùli které nìkdy video stáhnout
+       jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjakı èasovací
+       problém pøímo u Stream.cz protoe staèí vloit na vhodné místo breakpoint
+       a hned problém zmizí; také mírná prodleva vloená do kódu HTTP
+       komponenty problém zdá se odstraní. Pøípadnì pomùe nìkolik dalších
+       pokusù o stáhnutí tého videa.
 
 
 SYNTAXE
@@ -36,6 +44,16 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.13:
+
+    * Pøidána podpora pro Stream.cz. Je v tom ale zatím neodhalená chyba,
+      viz vıše v sekci "podporované weby a formáty."
+
+    * Kromì názvu videa a souboru se nyní zobrazuje i adresa, ze které
+      lze video stáhnout "ruènì" (napø. WGETem).
+
+
 
   v0.12:
 

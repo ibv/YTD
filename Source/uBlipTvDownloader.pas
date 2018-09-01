@@ -16,7 +16,7 @@ type
       function GetMovieInfoUrl: string; override;
       function GetProvider: string; override;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      function AfterPrepareFromPage(var Page: string): boolean; override;
+      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -74,11 +74,11 @@ begin
   Page := WideToAnsi(Utf8ToWide(Page));
 end;
 
-function TBlipTvDownloader.AfterPrepareFromPage(var Page: string): boolean;
+function TBlipTvDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Xml: TjanXmlParser2;
     TitleNode, ContentNode: TjanXmlNode2;
 begin
-  inherited AfterPrepareFromPage(Page);
+  inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   Xml := TjanXmlParser2.create;
   try

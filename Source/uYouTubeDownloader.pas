@@ -21,7 +21,7 @@ type
       function GetFileNameExt: string; override;
       function GetProvider: string; override;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
-      function AfterPrepareFromPage(var Page: string): boolean; override;
+      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function BeforeDownload(Http: THttpSend): boolean; override;
       function GetBestVideoFormat(const FormatList: string): string; virtual;
       property Cookies: TStringList read fCookies;
@@ -88,13 +88,13 @@ begin
   Http.Cookies.Assign(Cookies);
 end;
 
-function TYouTubeDownloader.AfterPrepareFromPage(var Page: string): boolean;
+function TYouTubeDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var JSONtext, VideoFormat: string;
     Matches: IMatchCollection;
     JSON, JSONobj: TlkJSONObject;
     i: integer;
 begin
-  inherited AfterPrepareFromPage(Page);
+  inherited AfterPrepareFromPage(Page, Http);
   Result := False;
   Matches := YouTubeConfigRegExp.Matches(Page);
   for i := 0 to Pred(Matches.Count) do

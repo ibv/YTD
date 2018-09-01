@@ -18,7 +18,7 @@ type
       function GetFileNameExt: string; override;
       procedure SetMovieID(const Value: string); virtual;
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
-      function AfterPrepareFromPage(var Page: string): boolean; virtual;
+      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function BeforeDownload(Http: THttpSend): boolean; virtual;
       function GetMovieInfoUrl: string; virtual; abstract;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
@@ -28,6 +28,7 @@ type
       function Prepare: boolean; override;
       function Download: boolean; override;
       property MovieID: string read fMovieID write SetMovieID;
+      property ContentUrl: string read fMovieUrl;
     end;
 
 implementation
@@ -93,7 +94,7 @@ begin
             end;
           if (MovieUrl <> '') then
             SetPrepared(True);
-          if not AfterPrepareFromPage(Page) then
+          if not AfterPrepareFromPage(Page, Info) then
             SetPrepared(False);
           if not Prepared then
             SetLastErrorMsg('Failed to locate video info.');
@@ -111,7 +112,8 @@ end;
 
 function TCommonDownloader.Download: boolean;
 begin
-  Result := inherited Download;
+  inherited Download;
+  Result := False;
   if MovieURL <> '' then
     begin
     VideoDownloader := CreateHttp;
@@ -123,7 +125,8 @@ begin
           try
             VideoDownloader.Sock.OnStatus := SockStatusMonitor;
             BytesTransferred := 0;
-            Result := DownloadPage(VideoDownloader, MovieURL);
+            if DownloadPage(VideoDownloader, MovieURL) then
+              Result := VideoDownloader.OutputStream.Size > 0;
           finally
             VideoDownloader.Sock.OnStatus := nil;
             VideoDownloader.OutputStream.Free;
@@ -147,7 +150,7 @@ begin
   Result := True;
 end;
 
-function TCommonDownloader.AfterPrepareFromPage(var Page: string): boolean;
+function TCommonDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 begin
   Result := True;
 end;

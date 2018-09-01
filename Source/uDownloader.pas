@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils,
-  HttpSend, blcksock;
+  HttpSend, blcksock, synautil;
 
 type
   EDownloader = class(Exception);
@@ -34,7 +34,7 @@ type
       function GetDownloadedSize: int64; virtual;
       procedure DoProgress; virtual;
       function CreateHttp: THttpSend; virtual;
-      function CheckRedirect(Http: THttpSend; out Url: string): boolean; virtual;
+      function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
       function DownloadPage(Http: THttpSend; Url: string): boolean; overload; virtual;
       function DownloadPage(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
       procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); virtual;
@@ -175,17 +175,42 @@ begin
   Result.ProxyPass := DefaultHttp.ProxyPass;
 end;
 
-function TDownloader.CheckRedirect(Http: THttpSend; out Url: string): boolean;
+function TDownloader.CheckRedirect(Http: THttpSend; var Url: string): boolean;
 const Location = 'Location:';
 var i: integer;
+    Redirect: string;
+    RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara: string;
+    OldURL, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara: string;
 begin
   Result := False;
   if (Http.ResultCode >= 300) and (Http.ResultCode < 400) then
     for i := 0 to Pred(Http.Headers.Count) do
       if AnsiCompareText(Location, Copy(Http.Headers[i], 1, Length(Location))) = 0 then
         begin
-        Url := Trim(Copy(Http.Headers[i], Length(Location)+1, MaxInt));
-        Result := True;
+        Redirect := Trim(Copy(Http.Headers[i], Length(Location)+1, MaxInt));
+        ParseUrl(Redirect, RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara);
+        ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
+        if RedirProtocol = '' then
+          RedirProtocol := UrlProtocol;
+        if RedirUser = '' then
+          RedirUser := UrlUser;
+        if RedirPass = '' then
+          RedirPass := UrlPass;
+        if (RedirHost = '') or (AnsiCompareText(RedirHost, 'localhost') = 0) then
+          RedirHost := UrlHost;
+        if RedirPort = '' then
+          RedirPort := UrlPort;
+        OldUrl := Url;
+        Url := RedirProtocol + '://';
+        if RedirUser <> '' then
+          begin
+          Url := Url + RedirUser;
+          if RedirPass <> '' then
+            Url := Url + ':' + RedirPass;
+          Url := Url + '@';
+          end;
+        Url := Url + RedirHost + ':' + RedirPort + RedirPath { + RedirPara} ;
+        Result := Url <> OldUrl;
         Break;
         end;
 end;
