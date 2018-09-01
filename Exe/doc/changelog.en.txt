@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.30
+
+    * Experimental support for Joj.sk. Due to the fact that URL geenrator
+      makes a number of unwarranted assumptions, it is to be expected that
+      some movies will not download. I will need to know their URLs to fix
+      them.
+
+    * Support for Metropol TV (tvpraha11.cz).
+
+    * Support for VideaCesky.cz. The same method can be used for downloads
+      from other secondary providers (who don't host their videos, but instead
+      use someone else's servers).
+
+
+
   v0.29
 
     * More compatibility fixes for Free Pascal. GUI version won't work for

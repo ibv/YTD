@@ -72,6 +72,8 @@ begin
     else
       Url := Copy(MovieUrl, 1, Pred(i));
     Result := ExtractFileExt(Url);
+    if Pos('/', Result) > 0 then
+      Result := '';
     end
   else
     NotPreparedError;

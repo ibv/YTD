@@ -569,7 +569,8 @@ begin
     { upload content }
     if sending then
     begin
-      if {$IFDEF PEPAK} True {$ELSE} FDocument.Size >= c64k {$ENDIF} then
+//      if {$IFDEF PEPAK} True {$ELSE} FDocument.Size >= c64k {$ENDIF} then
+      if {$IFDEF PEPAK} InputDocument {$ELSE} FDocument {$ENDIF}.Size >= c64k then
       begin
         FSock.SendString(PrepareHeaders);
         {$IFDEF PEPAK}
@@ -582,7 +583,7 @@ begin
       end
       else
       begin
-        s := PrepareHeaders + ReadStrFromStream(FDocument, FDocument.Size);
+        s := PrepareHeaders + ReadStrFromStream({$IFDEF PEPAK} InputDocument, InputDocument.Size {$ELSE} FDocument, FDocument.Size {$ENDIF});
         FUploadSize := Length(s);
         FSock.SendString(s);
       end;

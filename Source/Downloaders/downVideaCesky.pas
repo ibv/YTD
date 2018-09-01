@@ -1,24 +1,25 @@
 unit downVideaCesky;
 {$INCLUDE 'ytd.inc'}
-{$DEFINE SUBTITLES}
+{.DEFINE SUBTITLES}
 
 interface
 
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_VideaCesky = class(THttpDownloader)
+  TDownloader_VideaCesky = class(TNestedDownloader)
     private
     protected
-      YouTubeIDRegExp: IRegEx;
       {$IFDEF SUBTITLES}
       SubtitlesRegExp: IRegEx;
       {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
+      procedure CreateNestedDownloader(const MovieID: string); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -40,8 +41,8 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
-  REGEXP_EXTRACT_YOUTUBE_ID = '<param\s+name="flashvars"\s+value="file=https?://www\.youtube\.com/watch\?v=(?P<YOUTUBEID>[^&"]+)';
-  {$DEFINE SUBTITLES}
+  REGEXP_EXTRACT_YOUTUBE_ID = '\sflashvars="[^"]*&amp;file=(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/watch\?v=(?P<ID>[^"]+?))&amp;';
+  {$IFDEF SUBTITLES}
   REGEXP_EXTRACT_SUBTITLES = '<param\s+name="flashvars"\s+value="[^"]*&amp;captions.file=(?P<SUBTITLES>[^&"]+)';
   {$ENDIF}
 
@@ -62,8 +63,9 @@ begin
   inherited Create(AMovieID);
   SetInfoPageEncoding(peUTF8);
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  YouTubeIDRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
-  {$DEFINE SUBTITLES}
+  NestedIDRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_YOUTUBE_ID, [rcoIgnoreCase, rcoSingleLine]);
+  {$IFDEF SUBTITLES}
   SubtitlesRegExp := RegExCreate(REGEXP_EXTRACT_SUBTITLES, [rcoIgnoreCase, rcoSingleLine]);
   {$ENDIF}
 end;
@@ -71,8 +73,9 @@ end;
 destructor TDownloader_VideaCesky.Destroy;
 begin
   MovieTitleRegExp := nil;
-  YouTubeIDRegExp := nil;
-  {$DEFINE SUBTITLES}
+  NestedIDRegExp := nil;
+  NestedUrlRegExp := nil;
+  {$IFDEF SUBTITLES}
   SubtitlesRegExp := nil;
   {$ENDIF}
   inherited;
@@ -81,6 +84,12 @@ end;
 function TDownloader_VideaCesky.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.videacesky.cz/dummy/' + MovieID;
+end;
+
+procedure TDownloader_VideaCesky.CreateNestedDownloader(const MovieID: string);
+begin
+  inherited;
+  NestedDownloader := TDownloader_YouTube.Create(MovieID);
 end;
 
 initialization

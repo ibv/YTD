@@ -30,6 +30,7 @@ type
       fFileName: string;
       fLastUrl: string;
       fOnFileNameValidate: TDownloaderFileNameValidateEvent;
+      fOptions: TYTDOptions;
     protected
       function GetName: string; virtual;
       procedure SetName(const Value: string); virtual;
@@ -37,7 +38,9 @@ type
       procedure SetLastErrorMsg(const Value: string); virtual;
       procedure SetMovieID(const Value: string); virtual;
       procedure SetLastUrl(const Value: string); virtual;
+      procedure SetOptions(const Value: TYTDOptions); virtual;
       property LastURL: string read fLastUrl;
+      property Options: TYTDOptions read fOptions write SetOptions;
     protected
       function GetDefaultFileName: string; virtual;
       function GetFileName: string; virtual;
@@ -48,12 +51,13 @@ type
       procedure DoProgress; virtual;
       function CreateHttp: THttpSend; virtual;
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
-      function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet): boolean; overload; virtual;
-      function DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet): boolean; overload; virtual;
+      function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; virtual;
+      function DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; virtual;
       function ValidateFileName(var FileName: string): boolean; overload; virtual;
       function ConvertString(const Text: string; Encoding: TPageEncoding): string; virtual;
       function HtmlDecode(const Text: string): string; virtual;
       function UrlDecode(const Text: string): string; virtual;
+      function Base64Decode(const Text: string): string; virtual;
       function StripSlashes(const Text: string): string; virtual;
       {$IFDEF DEBUG}
       procedure Log(const Text: string; Overwrite: boolean = False); virtual;
@@ -272,12 +276,13 @@ begin
         end;
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod; Clear: boolean): boolean;
 var MethodStr: string;
 begin
   repeat
     SetLastUrl(Url);
-    Http.Clear;
+    if Clear then
+      Http.Clear;
     case Method of
       hmGET:  MethodStr := 'GET';
       hmPOST: MethodStr := 'POST';
@@ -288,10 +293,10 @@ begin
   until (not Result) or (not CheckRedirect(Http, Url));
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding; Method: THttpMethod): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding; Method: THttpMethod; Clear: boolean): boolean;
 begin
   Page := '';
-  Result := DownloadPage(Http, Url, Method);
+  Result := DownloadPage(Http, Url, Method, Clear);
   if Result then
     begin
     SetLength(Page, Http.Document.Size);
@@ -326,6 +331,11 @@ end;
 procedure TDownloader.SetLastUrl(const Value: string);
 begin
   fLastURL := Value;
+end;
+
+procedure TDownloader.SetOptions(const Value: TYTDOptions);
+begin
+  fOptions := Value;
 end;
 
 function TDownloader.ValidateFileName(var FileName: string): boolean;
@@ -387,6 +397,11 @@ begin
   Result := DecodeUrl(StringReplace(Text, '+', ' ', [rfReplaceAll]));
 end;
 
+function TDownloader.Base64Decode(const Text: string): string;
+begin
+  Result := DecodeBase64(Text);
+end;
+
 function TDownloader.ConvertString(const Text: string; Encoding: TPageEncoding): string;
 begin
   case Encoding of
@@ -422,6 +437,7 @@ end;
 
 procedure TDownloader.InitOptions(Options: TYTDOptions);
 begin
+  SetOptions(Options);
 end;
 
 end.

@@ -167,6 +167,12 @@ SUPPORTED PROVIDERS
 
      Note: This provider uses RTSP over HTTP protocol. See the note below.
 
+ - TVPraha11.cz (Metropol TV):
+     - http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
+
+ - VideaCesky.cz:
+     - http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
+
  - VideoAlbumy.azet.sk:
      - http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
 

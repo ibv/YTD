@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.30
+
+    * Experimentání podpora pro Joj.sk. Používám hodnì pochybný zpùsob pro 
+      získávání adresy videa i jeho stahování, proto se dá oèekávat, že to
+      nebude fungovat na všechny poøady. Až na takový pøípad narazíte, budu
+      potøebovat jeho URL.
+
+    * Podpora pro Metropol TV (tvpraha11.cz; pokud jsou i jiné adresy, budu
+      je potøebovat znát).
+
+    * Podpora pro VideaCesky.cz. Obdobným zpùsobem jde snadno doplòovat
+      další sekundární zdroje (nemají vlastní videa, odkazují na cizí stránky).
+
+
+
   v0.29
 
     * Další oprasvy pro kompatibilitu s FreePascalem. GUI verze s ním hned

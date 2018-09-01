@@ -12,7 +12,6 @@ type
   TDownloader_MySpace = class(TRtmpDownloader)
     private
     protected
-    protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
