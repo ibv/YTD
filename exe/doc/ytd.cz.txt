@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.58                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.59                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -76,6 +76,7 @@ PODPOROVANÉ WEBY
      - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
      - http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
      - http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
+     - http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/
 
      Pozn.: Jde o streamovanı formát podle protokolu RTSP over HTTP. Viz
      níe v poznámkách ke knihovnì MSDL_DLL.DLL.
@@ -229,8 +230,8 @@ PODPOROVANÉ WEBY
      Pozn.: Skuteènım poskytovatelem je Èeská televize a platí proto všechno,
             co pro CeskaTelevize.cz.
 
- - MustWatch.hztz.cz:
-     - http://mustwatch.hztz.cz/film/lecba-rakoviny-zevnitr-healing-cancer-from-inside-out/
+ - MustWatch.cz:
+     - http://www.mustwatch.cz/film/reel-bad-arabs
 
  - Muzu.tv:
      - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
@@ -659,6 +660,11 @@ a "0" (ne).
     - Odpovídá parametrùm -k (ask), -n (never), -a (always), -r (rename) na
       pøíkazové øádce.
 
+  <subtitle_support>
+    - Potomek <config>; umoòuje vypnout podporu titulkù v celé aplikaci.
+    - Moné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).
+    - Vıchozí hodnota je "1" (povolit stahování titulkù).
+
   <proxy_server>
     - Potomek <config>; umoòuje nastavit proxy server pro vaši sí. Proxy 
       server je v souèasné dobì podporován a ovìøen pro protokoly HTTP a 
@@ -729,6 +735,49 @@ a "0" (ne).
       - Moné hodnoty jsou "0" (pouívat formáty Microsoftu) a "1" (pouívat
         formáty Real Media).
       - Vıchozí hodnotou je "0" (stahovat ve formátech Microsoft).
+
+  <YouTube_com>
+    - Potomek <modules>; obsahuje nastavení pro YouTube.
+
+    <max_video_width>
+      - Potomek <YouTube_com>; urèuje maximální horizontální rozlišení videa,
+        které se mùe stahovat. Videa s vyšším rozlišením budou ignorována.
+      - Monou hodnotou je libovolné celé èíslo. Pokud je toto èíslo záporné
+        nebo nula, budou se stahovat videa s libovolnım rozlišením.
+      - Vıchozí hodnotou je "0" (neomezovat rozlišení).
+
+    <max_video_height>
+      - Potomek <YouTube_com>; urèuje maximální vertikální rozlišení videa,
+        které se mùe stahovat. Videa s vyšším rozlišením budou ignorována.
+      - Monou hodnotou je libovolné celé èíslo. Pokud je toto èíslo záporné
+        nebo nula, budou se stahovat videa s libovolnım rozlišením.
+      - Vıchozí hodnotou je "0" (neomezovat rozlišení).
+
+    <preferred_languages>
+      - Potomek <YouTube_com>; urèuje preferované jazyky pro stahování titulkù
+        a jejich prioritu. Pokud jsou v nìm k dispozici, stahují se titulky 
+        z nejvíce preferovaného (prvního v poøadí) jazyka, jinak z druhého,
+        atd., a pokud neuspìje ádnı preferovanı jazyk, stáhnou se první
+        dostupné titulky bez ohledu na jazyk.
+      - Oèekává se hodnota ve tvaru "jazyk1,jazyk2,jazyk3" - tzn. øetìzec
+        zkratek jazykù oddìlenıch èárkou (pouze èárkou, bez mezer!). Zkratky
+        jsou pravdìpodobnì ve formátu ISO, ovìøeno je "cs" pro èeštinu a "en"
+        pro angliètinu. Pøíkladem tedy mùe bıt hodnota "cs,en".
+      - Vıchozí hodnotou je "en" (preferovat titulky v angliètinì).
+
+    <convert_subtitles>
+      - Potomek <YouTube_com>; øíká, jestli se titulky mají nebo nemají
+        konvertovat z formátu YouTube do formátu .srt.
+      - Moné hodnoty jsou "1" (povolit konverzi) nebo "0" (zakázat).
+      - Vıchozí hodnota je "1" (povolit konverzi).
+
+  - Všichni poskytovatelé mají následující nastavení:
+
+   <subtitle_support>
+     - Potomek konkrétního poskytovatele; umoòuje vypnout podporu titulkù 
+       pro tohoto konkrétního poskytovatele.
+     - Moné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).
+     - Vıchozí hodnota je "1" (povolit stahování titulkù).
 
 <converters>
   - Potomek <ytd>. V této sekci jsou nadefinovány parametry jednotlivıch 

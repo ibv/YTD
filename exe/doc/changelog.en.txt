@@ -1,6 +1,44 @@
 CHANGELOG
 ---------
 
+  v0.59
+
+    * CeskaTelevize.cz: Support for URLs such as http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/.
+      Note that not all pages in this format actually contain a video!
+
+    * MustWatch.cz: Provider moved to a new domain.
+
+    * YouTube.com: Support for downloading in other than highest-available
+      quality. There are special settings in the config file that control
+      this functionality. Their use is noted in the documentation
+      (<max_video_width>, <max_video_height>).
+
+      User pages (http://www.youtube.com/user/titanicpiano14) work again.
+
+      Playlists (http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E)
+      work again.
+
+      Support for subtitles. The first subtitles are downloaded by default,
+      but you may select preferred languages and their priority in the config
+      file. The subtitles are converted to .srt format by default, because
+      YouTube uses a special format, but you can turn the conversion off. See 
+      the documentation for details (<preferred_languages>, <convert_subtitles>).
+
+    * Changed the way subtitles are downloaded: Now they are downloaded
+      before the movie, not after it. Quite a few other changes were made,
+      especially to providers without their own infrastructure (such as
+      VideaCesky.cz); please report if you notice non-working subtitles where
+      they used to work in previous versions.
+
+      Subtitle support can now be turned on or off either globally or on
+      per-provider basis. See the documenation for details (<subtitle_support>).
+
+    * Location of provider-specific settings in the configuration file didn't
+      match either documentation or sample config files. Fixed so that reality
+      matches both documentation and examples (<modules>).
+
+
+
   v0.58
 
     * New provider: PrazdninyVTelci.cz.

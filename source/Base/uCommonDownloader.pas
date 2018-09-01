@@ -36,14 +36,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit uCommonDownloader;
 {$INCLUDE 'ytd.inc'}
-{$DEFINE SUBTITLES}
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXML, HttpSend, blcksock,
-  uDownloader;
+  uDownloader, uOptions;
 
 type
   TCommonDownloader = class(TDownloader)
@@ -67,12 +66,18 @@ type
       function BuildMovieUrl(out Url: string): boolean; virtual;
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
+      procedure SetOptions(const Value: TYTDOptions); override;
       {$IFDEF SUBTITLES}
     protected
-      SubtitleUrlRegExps: array of TRegExp;
-      SubtitleRegExps: array of TRegExp;
-      Subtitles: string;
-      SubtitlesExt: string;
+      fSubtitleUrlRegExps: array of TRegExp;
+      fSubtitleRegExps: array of TRegExp;
+      fSubtitlesEnabled: boolean;
+      fSubtitles: AnsiString;
+      fSubtitlesExt: string;
+    public
+      property SubtitlesEnabled: boolean read fSubtitlesEnabled {write fSubtitlesEnabled};
+      property Subtitles: AnsiString read fSubtitles {write fSubtitles};
+      property SubtitlesExt: string read fSubtitlesExt {write fSubtitlesExt};
       function GetSubtitlesFileName: string; virtual;
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; virtual;
       function WriteSubtitles: boolean; virtual;
@@ -109,8 +114,9 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   {$IFDEF SUBTITLES}
-  SetLength(SubtitleUrlRegExps, 0);
-  SetLength(SubtitleRegExps, 0);
+  SetLength(fSubtitleUrlRegExps, 0);
+  SetLength(fSubtitleRegExps, 0);
+  fSubtitlesEnabled := True;
   {$ENDIF}
 end;
 
@@ -122,12 +128,12 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(SubtitleUrlRegExps)) do
-    RegExFreeAndNil(SubtitleUrlRegExps[i]);
-  SetLength(SubtitleUrlRegExps, 0);
-  for i := 0 to Pred(Length(SubtitleRegExps)) do
-    RegExFreeAndNil(SubtitleRegExps[i]);
-  SetLength(SubtitleRegExps, 0);
+  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
+    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
+  SetLength(fSubtitleUrlRegExps, 0);
+  for i := 0 to Pred(Length(fSubtitleRegExps)) do
+    RegExFreeAndNil(fSubtitleRegExps[i]);
+  SetLength(fSubtitleRegExps, 0);
   {$ENDIF}
   inherited;
 end;
@@ -175,33 +181,40 @@ begin
 end;
 
 {$IFDEF SUBTITLES}
+function TCommonDownloader.GetSubtitlesFileName: string;
+begin
+  Result := ChangeFileExt(GetFileName, fSubtitlesExt);
+end;
+
 function TCommonDownloader.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var i: integer;
     Url: string;
+    s: AnsiString;
 begin
   Result := False;
-  Subtitles := '';
-  SubtitlesExt := '';
-  for i := 0 to Pred(Length(SubtitleUrlRegExps)) do
-    if GetRegExpVar(SubtitleUrlRegExps[i], Page, 'SUBTITLES', Url) then
-      if DownloadPage(Http, Url) then
-        begin
-        SetLength(Subtitles, Http.Document.Size);
-        Http.Document.Seek(0, 0);
-        Http.Document.ReadBuffer(Subtitles[1], Http.Document.Size);
-        Http.Document.Seek(0, 0);
-        SubtitlesExt := ExtractFileExt(Url);
-        Result := True;
-        Break;
-        end;
-  if not Result then
-    for i := 0 to Pred(Length(SubtitleRegExps)) do
-      if GetRegExpVar(SubtitleRegExps[i], Page, 'SUBTITLES', Subtitles) then
-        begin
-        //SubtitlesExt := '.txt';
-        Result := True;
-        Break;
-        end;
+  fSubtitles := '';
+  fSubtitlesExt := '';
+  if SubtitlesEnabled then
+    begin
+    for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
+      if GetRegExpVar(fSubtitleUrlRegExps[i], Page, 'SUBTITLES', Url) then
+        if DownloadBinary(Http, Url, s) then
+          begin
+          fSubtitles := s;
+          fSubtitlesExt := ExtractFileExt(Url);
+          Result := True;
+          Break;
+          end;
+    if not Result then
+      for i := 0 to Pred(Length(fSubtitleRegExps)) do
+        if GetRegExpVar(fSubtitleRegExps[i], Page, 'SUBTITLES', s) then
+          begin
+          fSubtitles := s;
+          //fSubtitlesExt := '.txt';
+          Result := True;
+          Break;
+          end;
+    end;
 end;
 
 function TCommonDownloader.WriteSubtitles: boolean;
@@ -209,22 +222,23 @@ var Overwrite: boolean;
     SubtitlesFileName: string;
 begin
   Result := False;
-  if Subtitles <> '' then
-    begin
-    Overwrite := True;
-    SubtitlesFileName := GetSubtitlesFileName;
-    if FileExists(SubtitlesFileName) then
-      if Assigned(OnFileNameValidate) then
-        OnFileNameValidate(Self, SubtitlesFileName, Overwrite);
-    if Overwrite then
-      with TFileStream.Create(SubtitlesFileName, fmCreate) do
-        try
-          WriteBuffer(Subtitles[1], Length(Subtitles) * Sizeof(Subtitles[1]));
-          Result := True;
-        finally
-          Free;
-          end;
-    end;
+  if SubtitlesEnabled then
+    if fSubtitles <> '' then
+      begin
+      Overwrite := True;
+      SubtitlesFileName := GetSubtitlesFileName;
+      if FileExists(SubtitlesFileName) then
+        if Assigned(OnFileNameValidate) then
+          OnFileNameValidate(Self, SubtitlesFileName, Overwrite);
+      if Overwrite then
+        with TFileStream.Create(SubtitlesFileName, fmCreate) do
+          try
+            WriteBuffer(fSubtitles[1], Length(fSubtitles) * Sizeof(fSubtitles[1]));
+            Result := True;
+          finally
+            Free;
+            end;
+      end;
 end;
 
 {$ENDIF}
@@ -257,8 +271,8 @@ begin
           SetName('');
           MovieURL := '';
           {$IFDEF SUBTITLES}
-          Subtitles := '';
-          SubtitlesExt := '';
+          fSubtitles := '';
+          fSubtitlesExt := '';
           {$ENDIF}
           // If regular expression for TITLE is set, use it to get title.
           if MovieTitleRegExp <> nil then
@@ -294,20 +308,12 @@ begin
     end;
 end;
 
-{$IFDEF SUBTITLES}
-function TCommonDownloader.GetSubtitlesFileName: string;
-begin
-  Result := ChangeFileExt(GetFileName, SubtitlesExt);
-end;
-{$ENDIF}
-
 function TCommonDownloader.Download: boolean;
 begin
-  Result := inherited Download;
   {$IFDEF SUBTITLES}
-  if Result then
-    WriteSubtitles;
+  WriteSubtitles;
   {$ENDIF}
+  Result := inherited Download;
 end;
 
 function TCommonDownloader.BuildMovieUrl(out Url: string): boolean;
@@ -404,6 +410,20 @@ end;
 function TCommonDownloader.GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean;
 begin
   Result := GetXmlAttr(Xml.Root, Path, Attribute, VarValue);
+end;
+
+procedure TCommonDownloader.SetOptions(const Value: TYTDOptions);
+{$IFDEF SUBTITLES}
+var s: string;
+{$ENDIF}
+begin
+  inherited;
+  {$IFDEF SUBTITLES}
+  fSubtitlesEnabled := Value.SubtitlesEnabled;
+  if fSubtitlesEnabled then
+    if Value.ReadProviderOption(Provider, 'subtitles_enabled', s) then
+      fSubtitlesEnabled := StrToIntDef(s, 0) <> 0;
+  {$ENDIF}
 end;
 
 end.

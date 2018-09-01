@@ -66,7 +66,7 @@ uses
 // http://www.youtube.com/user/titanicpiano14
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_ID =        '(?:user/)?[^/?&]+';
   URLREGEXP_AFTER_ID =  '$';
 
 const

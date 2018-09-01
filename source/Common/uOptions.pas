@@ -102,14 +102,18 @@ type
       function GetCheckForNewVersionOnStartup: boolean; virtual;
       procedure SetCheckForNewVersionOnStartup(const Value: boolean); virtual;
       {$IFDEF CONVERTERS}
-      function GetSelectedConverterID: string; virtual;
-      procedure SetSelectedConverterID(const Value: string); virtual;
-      function GetMaxConversionThreads: integer; virtual;
-      procedure SetMaxConversionThreads(const Value: integer); virtual;
-      {$IFDEF CONVERTERSMUSTBEACTIVATED}
-      function GetConvertersActivated: boolean; virtual;
-      procedure SetConvertersActivated(const Value: boolean); virtual;
+        function GetSelectedConverterID: string; virtual;
+        procedure SetSelectedConverterID(const Value: string); virtual;
+        function GetMaxConversionThreads: integer; virtual;
+        procedure SetMaxConversionThreads(const Value: integer); virtual;
+        {$IFDEF CONVERTERSMUSTBEACTIVATED}
+        function GetConvertersActivated: boolean; virtual;
+        procedure SetConvertersActivated(const Value: boolean); virtual;
+        {$ENDIF}
       {$ENDIF}
+      {$IFDEF SUBTITLES}
+      function GetSubtitlesEnabled: boolean; virtual;
+      procedure SetSubtitlesEnabled(const Value: boolean); virtual;
       {$ENDIF}
     public
       constructor Create; virtual;
@@ -143,11 +147,14 @@ type
       property AutoStartDownloads: boolean read GetAutoStartDownloads write SetAutoStartDownloads;
       property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
       {$IFDEF CONVERTERS}
-      property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
-      property MaxConversionThreads: integer read GetMaxConversionThreads write SetMaxConversionThreads;
-      {$IFDEF CONVERTERSMUSTBEACTIVATED}
-      property ConvertersActivated: boolean read GetConvertersActivated write SetConvertersActivated;
+        property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
+        property MaxConversionThreads: integer read GetMaxConversionThreads write SetMaxConversionThreads;
+        {$IFDEF CONVERTERSMUSTBEACTIVATED}
+        property ConvertersActivated: boolean read GetConvertersActivated write SetConvertersActivated;
+        {$ENDIF}
       {$ENDIF}
+      {$IFDEF SUBTITLES}
+      property SubtitlesEnabled: boolean read GetSubtitlesEnabled write SetSubtitlesEnabled;
       {$ENDIF}
     end;
 
@@ -179,7 +186,7 @@ const
   {$ENDIF}
 
 const
-  XML_PATH_PROVIDEROPTION = 'config/modules/%s/%s';
+  XML_PATH_PROVIDEROPTION = 'modules/%s/%s';
   XML_PATH_PORTABLEMODE = 'config/portable_mode';
   XML_PATH_PROXYACTIVE = 'config/proxy_server/active';
   XML_PATH_PROXYHOST = 'config/proxy_server/host';
@@ -199,6 +206,9 @@ const
   XML_PATH_CONVERTERSACTIVATED = XML_PATH_CONVERTERLIST + '/activated';
   {$ENDIF}
   XML_PATH_MAXCONVERSIONTHREADS = XML_PATH_CONVERTERLIST + '/max_threads';
+  {$IFDEF SUBTITLES}
+  XML_PATH_SUBTITLESENABLED = 'config/subtitles_enabled';
+  {$ENDIF}
 
 const
   XML_DEFAULT_PORTABLEMODE = False;
@@ -220,6 +230,9 @@ const
   XML_DEFAULT_MAXCONVERSIONTHREADS = 1;
   {$IFDEF CONVERTERS}
   XML_DEFAULT_CONVERTERVISIBILITY = cvMinimized;
+  {$ENDIF}
+  {$IFDEF SUBTITLES}
+  XML_DEFAULT_SUBTITLESENABLED = True;
   {$ENDIF}
 
 { TYTDOptions }
@@ -485,6 +498,18 @@ procedure TYTDOptions.SetCheckForNewVersionOnStartup(const Value: boolean);
 begin
   SetOption(XML_PATH_CHECKFORNEWVERSIONONSTARTUP, BooleanToXml(Value));
 end;
+
+{$IFDEF SUBTITLES}
+function TYTDOptions.GetSubtitlesEnabled: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_SUBTITLESENABLED), XML_DEFAULT_SUBTITLESENABLED);
+end;
+
+procedure TYTDOptions.SetSubtitlesEnabled(const Value: boolean);
+begin
+  SetOption(XML_PATH_SUBTITLESENABLED, BooleanToXml(Value));
+end;
+{$ENDIF}
 
 procedure TYTDOptions.ReadUrlList(List: TStringList);
 var Node: TXmlNode;

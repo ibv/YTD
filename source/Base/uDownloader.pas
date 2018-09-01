@@ -94,6 +94,7 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
@@ -348,6 +349,19 @@ begin
     Page := ConvertString(Http.Document, Encoding);
     Http.Document.Seek(0, 0);
     end;
+end;
+
+function TDownloader.DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod; Clear: boolean): boolean;
+begin
+  Result := DownloadPage(Http, Url, Method, Clear);
+  if Result and (Http.Document.Size > 0) then
+    begin
+    SetLength(Data, Http.Document.Size);
+    Http.Document.ReadBuffer(Data[1], Http.Document.Size);
+    Http.Document.Seek(0, 0);
+    end
+  else
+    Data := '';
 end;
 
 function TDownloader.DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean;

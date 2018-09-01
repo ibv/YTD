@@ -72,7 +72,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_PLAYLIST_ITEM = '<a[^>]*\sid="video-long-title-(?P<ID>[^"]+)[^>]*>(?P<NAME>[^<]+)</a>';
+  //REGEXP_PLAYLIST_ITEM = '<a[^>]*\sid="video-long-title-(?P<ID>[^"]+)[^>]*>(?P<NAME>[^<]+)</a>';
+  REGEXP_PLAYLIST_ITEM = '<a\s+href="/watch\?v=(?P<ID>[^&"]+)&amp;p=%s"[^>]*>(?P<NAME>[^<]+)</a>';
   REGEXP_NEXT_PAGE = '<a\s+href="(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=[^"&]+&sort_field=[^&"]*&page=[0-9]+)"\s+class="yt-uix-pager-link"\s+data-page="(?P<PAGE>[0-9]+)"';
 
 { TPlaylist_YouTube }
@@ -90,7 +91,8 @@ end;
 constructor TPlaylist_YouTube.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM, [rcoIgnoreCase, rcoSingleLine]);
+  //PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM, [rcoIgnoreCase, rcoSingleLine]);
+  PlayListItemRegExp := RegExCreate(Format(REGEXP_PLAYLIST_ITEM, [MovieID]), [rcoIgnoreCase, rcoSingleLine]);
   NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE, [rcoIgnoreCase, rcoSingleLine]);
 end;
 

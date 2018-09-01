@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.58                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.59                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -76,6 +76,7 @@ SUPPORTED PROVIDERS
      - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
      - http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
      - http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
+     - http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/
 
      Note: This provider uses RTSP over HTTP protocol. See the note below.
 
@@ -228,8 +229,8 @@ SUPPORTED PROVIDERS
      Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
            CT24.cz as well.
 
- - MustWatch.hztz.cz:
-     - http://mustwatch.hztz.cz/film/lecba-rakoviny-zevnitr-healing-cancer-from-inside-out/
+ - MustWatch.cz:
+     - http://www.mustwatch.cz/film/reel-bad-arabs
 
  - Muzu.tv:
      - http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
@@ -660,6 +661,12 @@ except in file/directory names. Logical values (true-false) are stored as
                    -r on command line.
     - Default value is "ask" (ask the user).
 
+  <subtitle_support>
+    - Child of <config>; provides you with the ability to turn subtitle support
+      on or off in the whole application.
+    - Possible values are "1" (enable subtitle support) and "0" (disable).
+    - Default value is "1" (enable subtitle support).
+
   <proxy_server>
     - Child of <config>; let's you specify a proxy server if your network
       uses one (or if you want to overcome regional restrictions of some
@@ -730,6 +737,52 @@ except in file/directory names. Logical values (true-false) are stored as
       - Possible values are "0" (use Microsoft's formats) and "1" (use Real
         Media's formats).
       - Default value is "0" (use Microsoft's formats).
+
+  <YouTube_com>
+    - Child of <modules>; contains settings specific to YouTube.
+
+    <max_video_width>
+      - Child of <YouTube_com>; determines the maximum horizontal resolution 
+        of movies downloaded by YTD; movies with larger resolution will be
+        ignored.
+      - Possible value is any integer number. If that number is negative
+        or a zero, there will be no limit on video resolution.
+      - Default value is "0" (no limit on video resolution).
+
+    <max_video_height>
+      - Child of <YouTube_com>; determines the maximum vertical resolution 
+        of movies downloaded by YTD; movies with larger resolution will be
+        ignored.
+      - Possible value is any integer number. If that number is negative
+        or a zero, there will be no limit on video resolution.
+      - Default value is "0" (no limit on video resolution).
+
+    <preferred_languages>
+      - Child of <YouTube_com>; determines the preferred subtitle languages
+        and their priority. If the value exists, YTD will attempt to first
+        download subtitles in the first listed language, then the second,
+        etc. If no preferred language succeeded, the first available subtitles
+        will be downloaded instead, regardless of their language.
+      - The expected value is in the form "language1,language2,language3" -
+        that is, a string of language shortcodes separated by a comma (and
+        only a comma, no spaces!). The shortcodes are probably in the ISO
+        format, at least the tested values "cs" (Czech) and "en" (English)
+        followed this rule. An example value would be "en,cs".
+      - Default value is "en" - download english subtitles first.
+
+    <convert_subtitles>
+      - Child of <YouTube_com>; let's you specify whether you want to convert
+        the subtitles from YouTube format to .srt format.
+      - Possible values are "1" (enable conversion) and "0" (disable).
+      - Default value is "1" (enable conversion).
+
+  - All providers have these settings:
+
+  <subtitle_support>
+    - Child of a provider; gives you with the ability to turn subtitle support
+      on or off for that provider.
+    - Possible values are "1" (enable subtitle support) and "0" (disable).
+    - Default value is "1" (enable subtitle support).
 
 <converters>
   - Child of <ytd>. This section defines a list of converters (applications

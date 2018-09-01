@@ -74,8 +74,9 @@ uses
   uMessages;
 
 // http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+// http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/?online=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/ivysilani/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/(?:ivysilani|porady(?:/[^/]+)?)/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 

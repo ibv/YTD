@@ -1,6 +1,45 @@
 CHANGELOG
 ---------
 
+  v0.59
+
+    * CeskaTelevize.cz: Podpora pro videa na stránkách Poøadù (URL ve tvaru
+      http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/)
+      - ovšem pozor, zdaleka ne každá stránka poøadù video obsahuje.
+
+    * MustWatch.cz: Poskytovatel se pøesunul na vlastní doménu.
+
+    * YouTube.com: Podpora pro stahování videa v jiném než nejvyšším možném
+      rozlišení. Nastavení je øešeno položkami v konfiguraèním souboru, popis 
+      je uveden v dokumentaci (<max_video_width>, <max_video_height>).
+
+      Opìt funkèní uživatelské stránky (http://www.youtube.com/user/titanicpiano14).
+
+      Opìt funkèní playlisty (http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E).
+
+      Podpora pro stahování titulkù. Standardnì se stahují první nalezené
+      titulky, v konfiguraèním souboru ale mùžete urèit preferované jazyky
+      a jejich poøadí. Titulky jsou standardnì konvertovány do formátu .srt,
+      protože YouTube používá vlastní speciální formát, ale tuto konverzi
+      lze vypnout. Popis je v dokumentaci (<preferred_languages>, 
+      <convert_subtitles>).
+
+    * Zmìnìna práce s titulky: Titulky se nyní stahují pøed videem, ne až po
+      nìm. Kromì toho probìhla øada dalších interních zmìn zejména u 
+      poskytovatelù bez vlastní infrastruktury (VideaCesky.cz atd.), proto
+      prosím hlaštì pøípady, kdy se pøestaly stahovat titulky tam, kde døíve
+      fungovaly.
+
+      Titulky jde nyní zakázat nebo povolit, jak globálnì pro celou aplikaci,
+      tak pro jednotlivé poskytovatele. Detaily jsou v dokumentaci
+      (<subtitle_support>).
+
+    * Umístìní specifických nastavení poskytovatelù v konfiguraèním souboru
+      neodpovídalo dokumentaci ani vzorovým konfiguracím. Opraveno tak, aby 
+      realita odpovídala dokumentaci i pøíkladùm (<modules>).
+
+
+
   v0.58
 
     * Nový poskytovatel: PrazdninyVTelci.cz.

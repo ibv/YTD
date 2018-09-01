@@ -36,7 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downMustWatch;
 {$INCLUDE 'ytd.inc'}
-{$DEFINE SUBTITLES}
 
 interface
 
@@ -69,10 +68,9 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://mustwatch.hztz.cz/film/lecba-rakoviny-zevnitr-healing-cancer-from-inside-out/
-// http://mustwatch.hztz.cz/film/swirled-order-kruhy-v-obili/
+// http://www.mustwatch.cz/film/reel-bad-arabs
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.hztz\.cz/film/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mustwatch\.cz/film/';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -91,7 +89,7 @@ const
 
 class function TDownloader_MustWatch.Provider: string;
 begin
-  Result := 'MustWatch.hztz.cz';
+  Result := 'MustWatch.cz';
 end;
 
 class function TDownloader_MustWatch.UrlRegExp: string;
@@ -110,9 +108,9 @@ begin
   for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
     NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
   {$IFDEF SUBTITLES}
-  SetLength(SubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
+  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
   for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    SubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
+    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
   {$ENDIF}
 end;
 
@@ -124,16 +122,16 @@ begin
   for i := 0 to Pred(Length(NestedUrlRegExps)) do
     RegExFreeAndNil(NestedUrlRegExps[i]);
   {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(SubtitleUrlRegExps)) do
-    RegExFreeAndNil(SubtitleUrlRegExps[i]);
-  SetLength(SubtitleUrlRegExps, 0);
+  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
+    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
+  SetLength(fSubtitleUrlRegExps, 0);
   {$ENDIF}
   inherited;
 end;
 
 function TDownloader_MustWatch.GetMovieInfoUrl: string;
 begin
-  Result := 'http://mustwatch.hztz.cz/film/' + MovieID;
+  Result := 'http://www.mustwatch.cz/film/' + MovieID;
 end;
 
 function TDownloader_MustWatch.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

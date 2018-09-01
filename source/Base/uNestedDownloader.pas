@@ -64,12 +64,14 @@ type
       function CreateNestedDownloaderFromDownloader(Downloader: TDownloader): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
-      {$IFDEF SUBTITLES}
-      function GetSubtitlesFileName: string; override;
-      {$ENDIF}
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
       {$IFDEF MULTIDOWNLOADS}
       property FirstItem: boolean read fFirstItem write fFirstItem;
+      {$ENDIF}
+      {$IFDEF SUBTITLES}
+    public
+      function GetSubtitlesFileName: string; override;
+      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       {$ENDIF}
     public
       constructor Create(const AMovieID: string); override;
@@ -167,7 +169,24 @@ end;
 {$IFDEF SUBTITLES}
 function TNestedDownloader.GetSubtitlesFileName: string;
 begin
-  Result := ChangeFileExt(GetThisFileName, SubtitlesExt);
+  Result := ChangeFileExt(GetThisFileName, fSubtitlesExt);
+end;
+
+function TNestedDownloader.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  Result := False;
+  if NestedDownloader <> nil then
+    if NestedDownloader is TCommonDownloader then
+      begin
+      Result := TCommonDownloader(NestedDownloader).ReadSubtitles(Page, PageXml, Http);
+      if Result then
+        begin
+        fSubtitles := TCommonDownloader(NestedDownloader).Subtitles;
+        fSubtitlesExt := TCommonDownloader(NestedDownloader).SubtitlesExt;
+        end;
+      end;
+  if not Result then
+    Result := inherited ReadSubtitles(Page, PageXml, Http);
 end;
 {$ENDIF}
 
@@ -186,14 +205,13 @@ begin
   Result := False;
   if NestedDownloader <> nil then
     begin
+    {$IFDEF SUBTITLES}
+    //WriteSubtitles;
+    {$ENDIF}
     NestedDownloader.Options := Options;
     NestedDownloader.OnProgress := OnProgress;
     NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
     Result := NestedDownloader.ValidateFileName and NestedDownloader.Download;
-    {$IFDEF SUBTITLES}
-    if Result then
-      WriteSubtitles;
-      {$ENDIF}
     end;
 end;
 

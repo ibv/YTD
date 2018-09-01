@@ -114,9 +114,9 @@ begin
   for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
     NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
   {$IFDEF SUBTITLES}
-  SetLength(SubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
+  SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
   for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
-    SubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
+    fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i], [rcoIgnoreCase, rcoSingleLine]);
   {$ENDIF}
 end;
 
@@ -128,9 +128,9 @@ begin
   for i := 0 to Pred(Length(NestedUrlRegExps)) do
     RegExFreeAndNil(NestedUrlRegExps[i]);
   {$IFDEF SUBTITLES}
-  for i := 0 to Pred(Length(SubtitleUrlRegExps)) do
-    RegExFreeAndNil(SubtitleUrlRegExps[i]);
-  SetLength(SubtitleUrlRegExps, 0);
+  for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
+    RegExFreeAndNil(fSubtitleUrlRegExps[i]);
+  SetLength(fSubtitleUrlRegExps, 0);
   {$ENDIF}
   inherited;
 end;

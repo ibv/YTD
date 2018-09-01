@@ -45,12 +45,14 @@ unit downYouTube;
   // Otherwise use HTML video page.
 {$DEFINE FMT_URL_MAP}
   // Use fmt_url_map object rather than timestamps
+{$DEFINE CONVERTSUBTITLES}
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
+  uOptions,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -70,8 +72,15 @@ type
       ExtractVideoIdRegExp: TRegExp;
       {$ENDIF}
       Extension: string;
+      MaxWidth, MaxHeight: integer;
       {$IFDEF FMT_URL_MAP}
       FmtUrlMapRegExp: TRegExp;
+      {$ENDIF}
+      {$IFDEF SUBTITLES}
+        PreferredLanguages: string;
+        {$IFDEF CONVERTSUBTITLES}
+        ConvertSubtitles: boolean;
+        {$ENDIF}
       {$ENDIF}
       function GetBestVideoFormat(const FormatList: string): string; virtual;
       {$IFDEF FMT_URL_MAP}
@@ -81,6 +90,11 @@ type
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      {$IFDEF SUBTITLES}
+    public
+      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      {$ENDIF}
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -157,6 +171,12 @@ begin
   {$IFDEF FMT_URL_MAP}
   FmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP, [rcoIgnoreCase]);
   {$ENDIF}
+  {$IFDEF SUBTITLES}
+    PreferredLanguages := 'en';
+    {$IFDEF CONVERTSUBTITLES}
+    ConvertSubtitles := True;
+    {$ENDIF}
+  {$ENDIF}
 end;
 
 destructor TDownloader_YouTube.Destroy;
@@ -191,6 +211,110 @@ begin
   {$ENDIF}
   Result := 'http://www.youtube.com/watch?v=' + MovieID;
 end;
+
+{$IFDEF SUBTITLES}
+function TDownloader_YouTube.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const SECONDS_PER_DAY = 60 * 60 * 24;
+var Xml: TXmlDoc;
+    CurLanguage, WantedLanguages, BestLanguage, BestLanguageName: string;
+    CurLanguagePos, BestLanguagePos: integer;
+    Url: string;
+    s: AnsiString;
+    i: integer;
+    {$IFDEF CONVERTSUBTITLES}
+    SrtXml: TXmlDoc;
+    Srt: string;
+    n, Code: integer;
+    StartStr, DurationStr, Content: string;
+    Start, Duration: double;
+    {$ENDIF}
+begin
+  Result := False;
+  if DownloadXml(Http, 'http://video.google.com/timedtext?type=list&v=' + MovieID, Xml) then
+    try
+      WantedLanguages := ',' + PreferredLanguages + ',';
+      BestLanguage := '';
+      BestLanguageName := '';
+      BestLanguagePos := MaxInt;
+      for i := 0 to Pred(Xml.Root.NodeCount) do
+        if Xml.Root.Nodes[i].Name = 'track' then
+          if GetXmlAttr(Xml.Root.Nodes[i], '', 'lang_code', CurLanguage) then
+            begin
+            if CurLanguage = '' then
+              CurLanguagePos := Pred(MaxInt)
+            else
+              begin
+              CurLanguagePos := Pos(',' + CurLanguage + ',', WantedLanguages);
+              if CurLanguagePos <= 0 then
+                if BestLanguagePos = MaxInt then
+                  CurLanguagePos := Pred(MaxInt)
+                else
+                  CurLanguagePos := MaxInt;
+              end;
+            if CurLanguagePos < BestLanguagePos then
+              begin
+              BestLanguagePos := CurLanguagePos;
+              BestLanguage := CurLanguage;
+              GetXmlAttr(Xml.Root.Nodes[i], '', 'name', BestLanguageName);
+              end;
+            end;
+//      if BestLanguagePos < MaxInt then
+        begin
+        Url := 'http://video.google.com/timedtext?type=track';
+        if BestLanguageName <> '' then
+          Url := Url + '&name=' + EncodeUrl(AnsiString(StringToUtf8(BestLanguageName)));
+        if BestLanguage <> '' then
+          Url := Url + '&lang=' + EncodeUrl(AnsiString(StringToUtf8(BestLanguage)));
+        Url := Url + '&v=' + MovieID;
+        if DownloadBinary(Http, Url, s) then
+          begin
+          fSubtitles := s;
+          fSubtitlesExt := '.xml';
+          Result := True;
+          {$IFDEF CONVERTSUBTITLES}
+          if ConvertSubtitles then
+            try
+              SrtXml := TXmlDoc.Create;
+              try
+                SrtXml.LoadFromStream(Http.Document);
+                Http.Document.Seek(0, 0);
+                n := 0;
+                Srt := '';
+                for i := 0 to Pred(SrtXml.Root.NodeCount) do
+                  if SrtXml.Root.Nodes[i].Name = 'text' then
+                    if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'start', StartStr) then
+                      if GetXmlAttr(SrtXml.Root.Nodes[i], '', 'dur', DurationStr) then
+                        if GetXmlVar(SrtXml.Root.Nodes[i], '', Content) then
+                          begin
+                          Inc(n);
+                          Val(StringReplace(StartStr, ',', '.', []), Start, Code);
+                          if Code <> 0 then
+                            Abort;
+                          Val(StringReplace(DurationStr, ',', '.', []), Duration, Code);
+                          if Code <> 0 then
+                            Abort;
+                          Srt := Srt + Format('%d'#13#10'%s --> %s'#13#10'%s'#13#10#13#10, [n, FormatDateTime('hh":"nn":"ss"."zzz', Start/SECONDS_PER_DAY), FormatDateTime('hh":"nn":"ss"."zzz', (Start + Duration)/SECONDS_PER_DAY), Content]);
+                          end;
+                if Srt <> '' then
+                  begin
+                  fSubtitles := StringToUtf8(Srt, True);
+                  fSubtitlesExt := '.srt';
+                  end;
+              finally
+                SrtXml.Free;
+                end;
+            except
+              on EAbort do
+                ;
+              end;
+          {$ENDIF}
+          end;
+        end;
+    finally
+      Xml.Free;
+      end;
+end;
+{$ENDIF}
 
 function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 {$IFDEF GET_VIDEO_INFO}
@@ -314,7 +438,7 @@ end;
 {$ENDIF}
 
 function TDownloader_YouTube.GetBestVideoFormat(const FormatList: string): string;
-var MaxVideoQuality, MaxAudioQuality: integer;
+var MaxVideoQuality, MaxAudioQuality, Width, Height: integer;
     VideoQuality, AudioQuality: integer;
 begin
   Result := '';
@@ -324,13 +448,35 @@ begin
     repeat
       VideoQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('VIDEOQUALITY'), 0);
       AudioQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('AUDIOQUALITY'), 0);
+      Width := StrToIntDef(FormatListRegExp.SubexpressionByName('WIDTH'), 0);
+      Height := StrToIntDef(FormatListRegExp.SubexpressionByName('HEIGHT'), 0);
       if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
-        begin
-        Result := FormatListRegExp.SubexpressionByName('FORMAT');
-        MaxVideoQuality := VideoQuality;
-        MaxAudioQuality := AudioQuality;
-        end;
+        if (Width <= MaxWidth) or (MaxWidth <= 0) then
+          if (Height <= MaxHeight) or (MaxHeight <= 0) then
+            begin
+            Result := FormatListRegExp.SubexpressionByName('FORMAT');
+            MaxVideoQuality := VideoQuality;
+            MaxAudioQuality := AudioQuality;
+            end;
     until not FormatListRegExp.MatchAgain;
+end;
+
+procedure TDownloader_YouTube.SetOptions(const Value: TYTDOptions);
+var s: string;
+begin
+  inherited;
+  if Value.ReadProviderOption(Provider, 'max_video_width', s) then
+    MaxWidth := StrToIntDef(s, -1);
+  if Value.ReadProviderOption(Provider, 'max_video_height', s) then
+    MaxHeight := StrToIntDef(s, -1);
+  {$IFDEF SUBTITLES}
+    if Value.ReadProviderOption(Provider, 'preferred_languages', s) then
+      PreferredLanguages := s;
+    {$IFDEF CONVERTSUBTITLES}
+    if Value.ReadProviderOption(Provider, 'convert_subtitles', s) then
+      ConvertSubtitles := StrToIntDef(s, 0) <> 0;
+    {$ENDIF}
+  {$ENDIF}
 end;
 
 initialization

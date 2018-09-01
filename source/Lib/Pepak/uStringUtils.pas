@@ -25,7 +25,7 @@ function Utf8ToWide(Value: Pointer; Length: integer): WideString; overload;
 function Utf8ToWide(const Value: Utf8String): WideString; overload;
 
 function Utf8ToString(const Value: Utf8String): string;
-function StringToUtf8(const Value: string): Utf8String;
+function StringToUtf8(const Value: string; BOM: boolean = False): Utf8String;
 
 function StrTr(const Kde, Co, Cim: string): string;
 
@@ -151,13 +151,15 @@ begin
   {$ENDIF}
 end;
 
-function StringToUtf8(const Value: string): Utf8String;
+function StringToUtf8(const Value: string; BOM: boolean): Utf8String;
 begin
   {$IFDEF UNICODE}
   Result := WideToUtf8(Value);
   {$ELSE}
-  Result := WideToUtf8(WideToUtf8(Value));
+  Result := WideToUtf8(AnsiToWide(Value));
   {$ENDIF}
+  if BOM then
+    Result := #$ef#$bb#$bf + Result;
 end;
 
 function StrTr(const Kde, Co, Cim: string): string;

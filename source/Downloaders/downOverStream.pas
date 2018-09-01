@@ -50,6 +50,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       {$IFDEF SUBTITLES}
+    public
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       {$ENDIF}
     public
@@ -63,6 +64,7 @@ implementation
 
 uses
   {$IFDEF SUBTITLES}
+  uStringUtils,
   uAMF,
   {$ENDIF}
   uDownloadClassifier,
@@ -140,8 +142,8 @@ begin
               Oml := TAMFCommonArray(Res).NamedItems['oml'];
               if Oml <> nil then
                 begin
-                Subtitles := Oml.Value;
-                SubtitlesExt := '.oml';
+                fSubtitles := AnsiString(StringToUtf8(Oml.Value));
+                fSubtitlesExt := '.oml';
                 Result := True;
                 end;
               end;
