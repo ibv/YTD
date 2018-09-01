@@ -1,6 +1,18 @@
 CHANGELOG
 ---------
 
+  v0.55
+
+    * Komponenta TNativeXml mìla nesprávnou výchozí hodnotu pro kódování,
+      což vedlo k nesprávným názvùm filmù na èeských webech, na kterých
+      se informace ètou z XML.
+
+    * Úpravy pro kompatibilitu s Delphi 2009 zpùsobily neoèekávanou chybu
+      pøi práci s pamìtí, která se projevila napø. pøi stahování z TV Nova. 
+      Nelze vylouèit, že jsou v programu ještì nìjaké další podobné chyby.
+
+
+
   v0.54
 
     * iPrima.cz: Opìt funguje. Navíc je podporován další formát URL.

@@ -5683,7 +5683,7 @@ begin
       raise EStreamError.Create(sxeCodecStreamNotAssigned);
 
     // Determine encoding
-    FEncoding := seAnsi;
+    FEncoding := {$IFDEF PEPAK} seUTF8 {$ELSE} seAnsi {$ENDIF};
     BytesRead := FStream.Read(BOM, 4);
     for i := 0 to cBomInfoCount - 1 do
     begin
@@ -5706,7 +5706,7 @@ begin
     end else
     begin
       // Unknown.. default to this
-      FEncoding := seAnsi;
+      FEncoding := {$IFDEF PEPAK} seUTF8 {$ELSE} seAnsi {$ENDIF};
       FWriteBom := False;
     end;
 

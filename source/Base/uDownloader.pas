@@ -99,7 +99,7 @@ type
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function ValidateFileName(var FileName: string): boolean; overload; virtual;
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
-      function ConvertString(const Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
+      function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
@@ -532,7 +532,7 @@ begin
   Result := ConvertString(s, Encoding);
 end;
 
-function TDownloader.ConvertString(const Text: AnsiString; Encoding: TPageEncoding): string;
+function TDownloader.ConvertString(Text: AnsiString; Encoding: TPageEncoding): string;
 var n: integer;
 begin
   case Encoding of

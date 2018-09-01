@@ -1,6 +1,18 @@
 CHANGELOG
 ---------
 
+  v0.55
+
+    * Incorrect default value for encoding in TNativeXml caused invalid names 
+      in XML-based providers.
+
+    * The Delphi 2009 compatibility fixes caused a strange memory allocation
+      bug, which manifested e.g. when downloading from TV Nova. It has been
+      fixed, but it is possible the bug may still exist in other parts of the
+      program.
+
+
+
   v0.54
 
     * iPrima.cz: Works again. New URL format supported.

@@ -120,7 +120,6 @@ begin
     SetLastErrorMsg(Format(_(ERR_VARIABLE_NOT_FOUND) , ['streamname']))
   else
     begin
-    Title := Utf8ToString(Title); // Barrandov ma vadna XML
     SetName(Title);
     MovieUrl := 'rtmp://' + HostName + '/' + StreamName;
     AddRtmpDumpOption('r', MovieURL);
