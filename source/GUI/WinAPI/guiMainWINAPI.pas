@@ -2,12 +2,12 @@
 
 ______________________________________________________________________________
 
-YouTube Downloader                                        (C) 2009, 2010 Pepak
+YouTube Downloader                                           (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 
-Copyright (c) 2010, Pepak (http://www.pepak.net)
+Copyright (c) 2011, Pepak (http://www.pepak.net)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -493,6 +493,7 @@ function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
 
 var DlItem: TDownloadListItem;
 begin
+try
   Result := False;
   if DownloadList <> nil then
     begin
@@ -522,6 +523,10 @@ begin
       LISTVIEW_SUBITEM_PROGRESS:
         Result := ListViewSetVirtualItemText(DispInfo, GetProgress(DlItem));
       end;
+    end;
+except
+  on Exception do
+    Result := False;
     end;
 end;
 

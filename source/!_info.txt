@@ -39,27 +39,18 @@ Delphi 5
 --------
 
 - Main development platform, should always work, with all features.
-- Use the "delphi5" argument with build.bat.
 
 
 
 Delphi 2009
 -----------
 
-- Not yet ready for use. I intend to get it working one day, though.
-- Use the "delphi2009" argument with build.bat.
-
+- Works, but is only tested from time to time.
 
 
 Free Pascal
 -----------
 
-- Works, but is not recommended since many of the features will be lost:
-  GUI is not available at all, probably forever, and GetText (support for 
-  localizations) is removed pending appearance of an implementation that 
-  actually works. Also, the executables are MUCH larger than those made by
-  Delphi. But if you want to build YouTube Downloader using free tools only,
-  you can.
-- Executable files compiled by FreePascal require pcrelib.dll. It is located
-  in Source\Lib\PerlRegEx.
-- Use the "fpc nogui" argument.
+- Works, but is tested even less often than Delphi 2009.
+- Can only use the WinAPI GUI, VCL is not supported.
+- Use the "fpc" argument.

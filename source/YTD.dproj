@@ -273,7 +273,7 @@
 						<VersionInfoKeys Name="FileDescription">YouTube Downloader</VersionInfoKeys>
 						<VersionInfoKeys Name="FileVersion">0.65.0.464</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName">YouTube Downloader</VersionInfoKeys>
-						<VersionInfoKeys Name="LegalCopyright">(c) 2010 Pepak</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalCopyright">(c) 2010-11 Pepak</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalTrademarks"/>
 						<VersionInfoKeys Name="OriginalFilename">ytd.exe</VersionInfoKeys>
 						<VersionInfoKeys Name="ProductName">YouTube Downloader</VersionInfoKeys>

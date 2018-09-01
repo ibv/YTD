@@ -102,7 +102,8 @@ call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"
 call :%compiler% "%srcdir%lib\NativeXml\NativeXml.pas"
 call :%compiler% "%srcdir%lib\RtmpDump\rtmpdump_dll.pas"
 call :%compiler% "%srcdir%lib\msdl\src\msdl_dll.pas"
-rem call :%compiler% "%srcdir%Tools\AmfView.dpr"
+rem call :%compiler% "%srcdir%Tools\AMFview\AmfView.dpr"
+updver.exe -b "%srcdir%YTD.res"
 call :%compiler% "%srcdir%ytd.dpr"
 
 ren "%srcdir%ytd.cfg._" ytd.cfg

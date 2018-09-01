@@ -219,7 +219,7 @@ begin
   Attr := TextAttribute;
   try
     TextColor := ccWhite;
-    Write(Format('%-42.42s (c) 2010 Pepak, ', [AppTitle + ' v' + AppVersion]));
+    Write(Format('%-42.42s (c) 2011 Pepak, ', [AppTitle + ' v' + AppVersion]));
     WriteColored(ccLightCyan, 'http://www.pepak.net');
     Writeln;
     Writeln(StringOfChar('-', 79));

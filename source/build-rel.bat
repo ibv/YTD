@@ -20,6 +20,7 @@ goto build
 :build
 set version=%1
 
+updver.exe -v %version% "%srcdir%YTD.res"
 if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
 if exist ..\ytd-%version%-source.%packext% del ..\ytd-%version%-source.%packext%
 if exist ..\ytd-%version%-lite.%packext% del ..\ytd-%version%-lite.%packext%

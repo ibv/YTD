@@ -213,11 +213,23 @@ begin
   Result := SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_FOCUSED or LVNI_SELECTED);
 end;
 
+const LISTVIEW_TEXT_BUFFER_SIZE = 16;
+      LISTVIEW_TEXT_BUFFER_ITEMSIZE = 260;
+type TListViewTextBufferItem = array[0..LISTVIEW_TEXT_BUFFER_ITEMSIZE-1] of Char;
+var ListViewTextBuffer: array[0..LISTVIEW_TEXT_BUFFER_SIZE-1] of TListViewTextBufferItem;
+    ListViewTextBufferIndex: integer = 0;
+    
 function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
 begin
-  Result := (DispInfo^.item.pszText <> nil) and (DispInfo^.item.cchTextMax > 0);
-  if Result then
-    StrPLCopy(DispInfo^.item.pszText, Text, DispInfo^.item.cchTextMax-1);
+  Result := Longbool(DispInfo^.item.mask and LVIF_TEXT) and (DispInfo^.item.pszText <> nil) and (DispInfo^.item.cchTextMax > 0);
+  if not Result then
+    begin
+    DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
+    DispInfo^.item.pszText := @ListViewTextBuffer[ListViewTextBufferIndex, 0];
+    DispInfo^.item.cchTextMax := LISTVIEW_TEXT_BUFFER_ITEMSIZE;
+    ListViewTextBufferIndex := Succ(ListViewTextBufferIndex) mod LISTVIEW_TEXT_BUFFER_SIZE;
+    end;
+  StrPLCopy(DispInfo^.item.pszText, Text, DispInfo^.item.cchTextMax-1);
 end;
 
 procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);

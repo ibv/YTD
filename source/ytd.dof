@@ -49,32 +49,32 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://video.markiza.sk/archiv-tv-markiza/112/8723
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=69
+MinorVer=70
 Release=0
-Build=500
+Build=517
 Debug=0
 PreRelease=0
 Special=0
 Private=0
 DLL=0
 Locale=1029
-CodePage=1250
+CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.69.0.500
+FileVersion=0.70.0.517
 InternalName=YouTube Downloader
-LegalCopyright=(c) 2010 Pepak
+LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
-ProductVersion=1.0.0.0
+ProductVersion=0.70.0.515
 Comments=http://www.pepak.net/download/youtube-downloader/
 [Excluded Packages]
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
