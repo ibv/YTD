@@ -115,10 +115,13 @@ end;
 function THttpDownloader.First: boolean;
 begin
   if Prepared then
-    begin
-    DownloadIndex := -1;
-    Result := Next;
-    end
+    if UrlList.Count <= 0 then
+      Result := MovieURL <> ''
+    else
+      begin
+      DownloadIndex := -1;
+      Result := Next;
+      end
   else
     Result := False;
 end;

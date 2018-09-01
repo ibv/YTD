@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.20                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.21                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -148,6 +148,13 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.21
+
+    * Podpora pro Markízu a spol. znefunkènila YouTube a ostatní providery
+      fungující na bázi protokolu HTTP.
+
+
 
   v0.20
 
