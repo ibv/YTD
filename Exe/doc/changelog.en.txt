@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+  v0.31
+
+    * Invalid date format in Joj.sk handling caused downloading of a wrong
+      movie.
+
+
+
   v0.30
 
     * Experimental support for Joj.sk. Due to the fact that URL geenrator

@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+  v0.31
+
+    * V implementaci televize Joj bylo prohozené datum, takže se stahoval
+      špatný soubor.
+
+
+
   v0.30
 
     * Experimentání podpora pro Joj.sk. Používám hodnì pochybný zpùsob pro 
@@ -18,7 +25,7 @@ CHANGELOG
 
   v0.29
 
-    * Další oprasvy pro kompatibilitu s FreePascalem. GUI verze s ním hned
+    * Další opravy pro kompatibilitu s FreePascalem. GUI verze s ním hned
       tak fungovat nebude, pokud vùbec nìkdy.
 
     * Opravena chyba v RTMPDUMP (používá ho napø. TV Nova nebo Barrandov),

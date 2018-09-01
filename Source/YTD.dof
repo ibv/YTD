@@ -49,15 +49,15 @@ Conditionals=XXX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
+RunParams=http://televizia.joj.sk/tv-archiv/odsudene/05-11-2010.html
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=30
+MinorVer=31
 Release=0
-Build=182
+Build=183
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.30.0.182
+FileVersion=0.31.0.183
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=

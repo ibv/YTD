@@ -37,7 +37,10 @@ const
   URLREGEXP_AFTER_ID =  '/?$';
 
 const
-  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"basePath=[^"]*?&amp;relationId=(?P<RELATIONID>[0-9]+)&amp;date=(?P<DAY>[0-9]{2})-(?P<MONTH>[0-9]{2})-(?P<YEAR>[0-9]{4})&amp;calendar=(?P<CALENDARURL>https?%3A%2F%2F[^"]*?)&amp;';
+  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"basePath=[^"]*?&amp;relationId=(?P<RELATIONID>[0-9]+)&amp;date=(?P<MONTH>[0-9]{2})-(?P<DAY>[0-9]{2})-(?P<YEAR>[0-9]{4})&amp;';
+
+const
+  CALENDAR_URL = 'http://www.joj.sk/services/ArchivCalendar.xml?channel=1&relation=';
 
 { TDownloader_Joj }
 
@@ -90,8 +93,7 @@ begin
       Day := StrToInt(Match.Groups.ItemsByName['DAY'].Value);
       Month := StrToInt(Match.Groups.ItemsByName['MONTH'].Value);
       Year := StrToInt(Match.Groups.ItemsByName['YEAR'].Value);
-      CalendarUrl := UrlDecode(Match.Groups.ItemsByName['CALENDARURL'].Value);
-      if not DownloadPage(Http, CalendarUrl + '&relation=' + RelationId, CalendarXml, peUTF8) then
+      if not DownloadPage(Http, CALENDAR_URL + RelationId, CalendarXml, peUTF8) then
         SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
       else
         begin
