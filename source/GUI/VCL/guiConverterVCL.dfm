@@ -21,7 +21,8 @@ object FormSelectConverter: TFormSelectConverter
     Top = 8
     Width = 49
     Height = 13
-    Caption = 'Converter:'
+    Caption = '&Converter:'
+    FocusControl = comboConverter
   end
   object comboConverter: TComboBox
     Left = 88
@@ -33,7 +34,7 @@ object FormSelectConverter: TFormSelectConverter
     TabOrder = 0
   end
   object Button1: TButton
-    Left = 232
+    Left = 152
     Top = 40
     Width = 75
     Height = 25
@@ -43,7 +44,7 @@ object FormSelectConverter: TFormSelectConverter
     TabOrder = 1
   end
   object Button2: TButton
-    Left = 152
+    Left = 232
     Top = 40
     Width = 75
     Height = 25

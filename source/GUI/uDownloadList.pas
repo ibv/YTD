@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  {$IFDEF GUI_WINAPI} CommDlg, {$ELSE} Dialogs, {$ENDIF}
+  {$IFDEF GUI_WINAPI} uDialogs, {$ELSE} Dialogs, {$ENDIF}
   uCompatibility, uDownloadListItem, uDownloadThread,
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
@@ -260,17 +260,13 @@ procedure TDownloadList.DownloadItemFileNameValidate(Sender: TObject; var FileNa
         FileNameExt := ExtractFileExt(FileName);
         FileNameBase := ChangeFileExt(FileName, '');
         repeat
-          FileName := Format('%s%s.%d%s', [FileNameBase, Index, FileNameExt]);
+          FileName := Format('%s.%d%s', [FileNameBase, Index, FileNameExt]);
           Inc(Index);
         until not FileExists(FileName);
         Result := True;
       end;
 
-{$IFDEF GUI_WINAPI}
-var OpenFile: TOpenFilename;
-    FileNameBuf: array of char;
-    FileNameBufSize: DWORD;
-{$ELSE}
+{$IFNDEF GUI_WINAPI}
 var D: TSaveDialog;
 {$ENDIF}
 begin
@@ -285,22 +281,7 @@ begin
       else
         begin
         {$IFDEF GUI_WINAPI}
-        FileNameBufSize := Succ(Length(FileName));
-        if FileNameBufSize < MAX_PATH then
-          FileNameBufSize := Succ(MAX_PATH);
-        SetLength(FileNameBuf, FileNameBufSize);
-        StrPCopy(PChar(FileNameBuf), FileName);
-        FillChar(OpenFile, Sizeof(OpenFile), 0);
-        OpenFile.lStructSize := Sizeof(OpenFile);
-        OpenFile.lpstrFile := PChar(FileNameBuf);
-        OpenFile.nMaxFile := FileNameBufSize;
-        OpenFile.lpstrInitialDir := PChar(ExcludeTrailingPathDelimiter(ExtractFilePath(FileName)));
-        OpenFile.lpstrTitle := PChar(_('File already exists.')); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-        OpenFile.Flags := OFN_ENABLESIZING or OFN_EXPLORER or OFN_NOCHANGEDIR or OFN_NOREADONLYRETURN or OFN_OVERWRITEPROMPT or OFN_PATHMUSTEXIST;
-        OpenFile.lpstrDefExt := PChar(Copy(ExtractFileExt(FileName), 2, MaxInt));
-        Valid := GetSaveFileName(OpenFile);
-        if Valid then
-          FileName := OpenFile.lpstrFile;
+        Valid := SaveDialog(FileName, ExcludeTrailingPathDelimiter(ExtractFilePath(FileName)), PChar(_('File already exists.'))); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
         {$ELSE}
         D := TSaveDialog.Create(nil);
         try
@@ -417,7 +398,7 @@ begin
       begin
       CanStart := True;
       for j := 0 to Pred(DownloadingCount) do
-        if Item.Downloader.UltimateProvider = DownloadingItems[j].Downloader.UltimateProvider then
+        if Item.Downloader.Provider = DownloadingItems[j].Downloader.Provider then
           begin
           CanStart := False;
           Break;

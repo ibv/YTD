@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit guiAboutVCL;
+{$INCLUDE 'ytd.inc'}
 
 interface
 
@@ -110,7 +111,9 @@ begin
 end;
 
 procedure TFormAbout.DoFirstShow;
+{$IFNDEF THREADEDVERSION}
 var Version, Url: string;
+{$ENDIF}
 begin
   {$IFDEF FPC}
   inherited;
@@ -122,7 +125,7 @@ begin
   // Providers
   LoadProviders;
   // Show available version
-  LabelNewestVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found'); {$ENDIF} // GUI: Check for a new version wasn't made yet - or failed.
+  LabelNewestVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found') {$ENDIF} ; // GUI: Check for a new version wasn't made yet - or failed.
   Application.ProcessMessages;
   if Options <> nil then
     {$IFDEF THREADEDVERSION}

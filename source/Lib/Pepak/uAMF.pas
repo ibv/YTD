@@ -684,7 +684,7 @@ end;
 
 procedure TAMFString.SetValue(const AValue: Variant);
 begin
-  Native := Value;
+  Native := AValue;
 end;
 
 { TAMFCommonArray }

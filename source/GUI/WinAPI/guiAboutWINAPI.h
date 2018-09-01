@@ -14,3 +14,4 @@
 #define IDC_LIST_PROVIDERS                      1006
 #define IDC_LABEL_NEWESTVERSION                 1007
 #define IDC_LABEL_HOMEPAGE                      1008
+#define ACTION_CLOSE                            40000

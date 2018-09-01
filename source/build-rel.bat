@@ -8,13 +8,13 @@ goto zip
 rem set pack=7z a -tzip -mx -r
 set pack=kzip /r
 set packext=zip
-set build=delphi5 upx
+set build=delphi upx
 goto build
 
 :7z
 set pack=7z a -t7z -mx=9 -r
 set packext=7z
-set build=delphi5 noupx
+set build=delphi noupx
 goto build
 
 :build

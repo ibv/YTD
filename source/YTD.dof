@@ -43,21 +43,21 @@ OutputDir=..\Exe
 UnitOutputDir=Units
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
+SearchPath=lib\pepak\delphi5;lib\pepak;lib\synapse\source\lib;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml;Units
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
 Conditionals=PEPAK;PEPAK_YTD;XXX
-DebugSourceDirs=C:\Tmp\ytd\Source\Lib\NativeXml\
+DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=62
+MinorVer=63
 Release=0
-Build=343
+Build=381
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.62.0.343
+FileVersion=0.63.0.381
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -94,18 +94,20 @@ Item5=XXX
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=11
-Item0=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
-Item1=$(DELPHI)\Lib\Debug;lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
-Item2=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5
-Item3=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5
-Item4=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext
-Item5=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon
-Item6=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src
-Item7=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump
-Item8=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2
-Item9=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67
-Item10=lib\lkjson;lib\regexpr;lib\synapse\source\lib
+Count=13
+Item0=lib\pepak\delphi5;lib\pepak;lib\synapse\source\lib;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml;Units
+Item1=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml;Units
+Item2=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
+Item3=$(DELPHI)\Lib\Debug;lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5;lib\NativeXml
+Item4=lib\synapse\source\lib;lib\pepak;lib\perlregex;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5
+Item5=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext\delphi5
+Item6=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon;lib\dxgettext
+Item7=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon
+Item8=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src
+Item9=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump
+Item10=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2
+Item11=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67
+Item12=lib\lkjson;lib\regexpr;lib\synapse\source\lib
 [HistoryLists\hlUnitOutputDirectory]
 Count=2
 Item0=Units
@@ -115,7 +117,7 @@ Count=2
 Item0=..\Exe
 Item1=Exe
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6023
 Activate=0
 Activate Handle=1
 Save Log File=1

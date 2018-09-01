@@ -150,7 +150,7 @@ begin
     for i := 0 to Pred(ProviderCount) do
       begin
       DC := Providers[i];
-      if UrlClassifier.SubexpressionByName(DC.MovieIDParamName, ID) and (ID <> '') then
+      if UrlClassifier.SubexpressionByName(DC.ClassName, ID) and (ID <> '') then
         begin
         fDownloader := DC.Create(ID);
         Break;

@@ -1,44 +1,34 @@
 unit uApiForm;
 
 interface
-{.DEFINE USE_PROP}
-{$DEFINE ANCHORS} // Allows easy resizing of forms
+{$INCLUDE 'uApi.inc'}
 
 uses
-  SysUtils, Windows, Messages, CommCtrl,
-  {$IFDEF ANCHORS} Contnrs, {$ENDIF}
-  uApiGraphics;
+  SysUtils, Classes, Windows, Messages, CommCtrl,
+  {$IFDEF APIFORM_ANCHORS} Contnrs, {$ENDIF}
+  uApiCommon, uApiFunctions, uApiGraphics, uCompatibility;
 
 type
   TApiForm = class;
 
-  EApiError = class(Exception);
-
-  TAlignment = (alLeft, alRight, alCenter);
-
-  {$IFDEF ANCHORS}
-  TAnchorKind = (akTop, akLeft, akRight, akBottom);
-  TAnchors = set of TAnchorKind;
-
-  TAnchorDesc = class
-    Handle: THandle;
-    Anchors: TAnchors;
-    Rect: TRect;
-    Margins: TRect;
-    end;
-  {$ENDIF}
-
-  // Returns TRUE if the message was handled (should not be passed to the parent window procedure)
   TApiFormSubclassFn = function (Handle: THandle; Form: TApiForm; var Msg: TMessage): boolean; stdcall;
-
+    // Returns TRUE if the message was handled (should not be passed to the parent window procedure)
+    
   TApiForm = class
     private
       fDialogResourceName: string;
       fHandle: HWND;
       fModalResult: integer;
-      {$IFDEF ANCHORS}
+      {$IFDEF APIFORM_ANCHORS}
       fAnchorList: TObjectList;
       {$ENDIF}
+      {$IFDEF APIFORM_ACCELERATORS}
+      fAccelerators: HACCEL;
+      {$ENDIF}
+      fOwner: TApiForm;
+      fMenu: HMENU;
+      fPopupMenu: HMENU;
+      procedure SetMenu(Value: HMENU);
     protected // Message handlers
       // Message handler for all messages
       function DialogProc(var Msg: TMessage): boolean; virtual;
@@ -46,36 +36,56 @@ type
       function DoInitDialog: boolean; virtual;
       // Message handler for WM_CLOSE - form is being destroyed
       function DoClose: boolean; virtual;
+//      // Message handler for WM_SHOWWINDOW
+//      function DoShowWindow: boolean; virtual;
       // Message handler for WM_COMMAND - shortcuts, menus, control-specific codes...
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; virtual;
       // Message handler for WM_NOTIFY - something happens to a control
-      function DoNotify(Control: THandle; ControlID: DWORD; Code, WParam, LParam: integer; out NotifyResult: integer): boolean; virtual;
+      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; virtual;
       // Message handler for WM_SIZE - form was resized
       function DoSize(ResizeType, NewWidth, NewHeight: integer): boolean; virtual;
+      // Message handler for WM_LBUTTONDOWN, WM_RBUTTONDOWN, WM_MBUTTONDOWN
+      function DoMouseButtonDown(Button: TMouseButton; Keys: WPARAM; Point: TPoint): boolean; virtual;
+      // Message handled for WM_CONTEXTMENU
+      function DoContextMenu(Control: THandle; Point: TPoint): boolean; virtual;
     protected // Support for message handlers
       function CanClose: boolean; virtual;
+      function AfterInitDialog: boolean; virtual;
     protected // Support functions for descendants
       // Add your own message handler to the specified window. Note: Each window may only be subclassed once.
       procedure SubClassAWindow(AHandle: THandle; AWndProc: TApiFormSubclassFn);
-    protected // ListView functions
-      // Add a column to a listview.
-      function ListViewInsertColumn(ListView: THandle; Index, Subitem: integer; Alignment: TAlignment; Width: integer; const Title: string): integer; virtual;
+      {$IFDEF APIFORM_TRANSLATIONS}
+      function TranslateControl(Control: THandle): boolean; virtual;
+      function TranslateMenu(Control: THandle): boolean; virtual;
+      function Translate: boolean; virtual;
+      {$ENDIF}
+      function GetControlText(ControlID: integer): string;
+      function GetOwnerHandle: HWND;
+      procedure ErrorMessageBox(const Msg, Title: string); virtual;
     protected // Properties
       procedure SetModalResult(const Value: integer);
       property DialogResourceName: string read fDialogResourceName;
-      {$IFDEF ANCHORS}
+      {$IFDEF APIFORM_ANCHORS}
       function FindControlAnchorIndex(Control: THandle): integer;
       function FindControlAnchor(Control: THandle): TAnchorDesc;
       property AnchorList: TObjectList read fAnchorList;
       {$ENDIF}
+      {$IFDEF APIFORM_ACCELERATORS}
+      property Accelerators: HACCEL read fAccelerators write fAccelerators;
+      {$ENDIF}
+      property Menu: HMENU read fMenu write SetMenu;
+      property PopupMenu: HMENU read fPopupMenu write fPopupMenu;
       class function DefaultResourceName: string; virtual;
     public
-      constructor Create(const ADialogResourceName: string); overload; virtual;
+      constructor Create(AOwner: TApiForm; const ADialogResourceName: string); overload; virtual;
+      constructor Create(AOwner: TApiForm); overload; virtual;
       constructor Create; overload; virtual;
       destructor Destroy; override;
-      procedure Show; virtual;
       function ShowModal: integer; virtual;
-      {$IFDEF ANCHORS}
+      procedure Show; virtual;
+      function Close: boolean; overload; virtual;
+      function Close(ModalResult: integer): boolean; overload; virtual;
+      {$IFDEF APIFORM_ANCHORS}
         // Simulate anchors from VCL, to achieve easy resizing. If no anchor is defined
         // for a control, it behaves as if [akLeft, akTop] was assigned to it.
         procedure SetControlAnchors(Control: THandle; Anchors: TAnchors);
@@ -85,115 +95,140 @@ type
       {$ENDIF}
       property ModalResult: integer read fModalResult;
       property Handle: HWND read fHandle;
+      property OwnerHandle: HWND read GetOwnerHandle;
+      property Owner: TApiForm read fOwner write fOwner;
     end;
 
-procedure ShowApiError(IsError: boolean); overload;
-procedure ShowApiError(LastError: DWORD); overload;
+{$IFDEF APIFORM_TRANSLATIONS}
+type
+  TTranslateFunction = function (const Msg: WideString): string;
+
+var
+  ApiFormTranslateFunction: TTranslateFunction = nil;
+{$ENDIF}
 
 implementation
 
-procedure ShowApiError(IsError: boolean);
-begin
-  if IsError then
-    ShowApiError(GetLastError);
-end;
+// Use SetProp instead of SetWindowLong(DWL_USER) to link dialog with ApiForm. It's slow
+{.DEFINE USE_PROP}
 
-procedure ShowApiError(LastError: DWORD);
-var Buf: array[0..32768] of char;
-    n: DWORD;
-    Msg: string;
-begin
-  if LastError <> NO_ERROR then
-    begin
-    n := FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, LastError, 0, Buf, Sizeof(Buf), nil);
-    if n = 0 then
-      Msg := Format('Unknown error (%u, %08.8x).', [LastError, LastError])
-    else
-      begin
-      Buf[n] := #0;
-      Msg := string(Buf);
-      end;
-    Raise EApiError.Create(Msg);
-    end;
-end;
-
-{$IFDEF USE_PROP}
+// Storing ApiForm's address in Dialog's data
 const
   APIFORM_SELF_PROPERTY = '9AF510CC-C253-4F9E-9ACE-C39E533AD206';
-{$ELSE}
-const
   SELF_INDEX = DWL_USER;
-{$ENDIF}
 
+// Storing subclassing information
 const
   APIFORM_SUBCLASS_OLDWNDPROC = '1634CAB6-8ECA-4ADF-890F-CA0C57A2B3E5';
   APIFORM_SUBCLASS_APIFORM = '19DD5893-5D7D-4251-A2A0-C792B70ED578';
   APIFORM_SUBCLASS_HANDLER = '22B34AE3-EE7E-4107-899D-D770E8D9D664';
 
-function ApiFormDialogProc(Handle: HWND; Msg: Cardinal; wParam, lParam: integer): integer; stdcall;
+{$IFDEF APIFORM_ACCELERATORS}
+var
+  ApiFormKeyboardMessageHook: HHOOK = 0;
+
+function ApiFormKeyboardMessageHookProc(nCode: integer; wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall;
+var Handled: boolean;
+    Msg: PMsg;
+    Handle: HWND;
+    F: TApiForm;
+begin
+  Handled := False;
+  Result := 0;
+  // Is msg. intended for a dialog?
+  if nCode = MSGF_DIALOGBOX then
+    begin
+    Msg := PMsg(lParam);
+    // Is msg. a keyboard event?
+    if (Msg.message >= WM_KEYFIRST) and (Msg.message <= WM_KEYLAST) then
+      begin
+      // Is it my dialog?
+      Handle := Msg.hwnd;
+      while Handle <> 0 do
+        begin
+        F := TApiForm(GetProp(Handle, APIFORM_SELF_PROPERTY));
+        if F <> nil then
+          // Are there any accelerators?
+          if F.Accelerators <> 0 then
+            // Try to perform the translation
+            if TranslateAccelerator(F.Handle, F.Accelerators, Msg^) <> 0 then
+              begin
+              Handled := True;
+              Result := 1;
+              Break;
+              end;
+        Handle := GetParent(Handle);
+        end;
+      end;
+    end;
+  if not Handled then
+    Result := CallNextHookEx(ApiFormKeyboardMessageHook, nCode, wParam, lParam);
+end;
+{$ENDIF}
+
+function ApiFormDialogProc(Handle: HWND; Msg: Cardinal; wParam: WPARAM; lParam: LPARAM): integer; stdcall;
 var F: TApiForm;
     M: TMessage;
     Handled: boolean;
 begin
-  M.Msg := Msg;
-  M.wParam := wParam;
-  M.lParam := lParam;
-  M.Result := 0;
-  // Ulozim si ukazatel na Self pro pozdejsi pouziti
-  if Msg = WM_INITDIALOG then
-    begin
-    {$IFDEF USE_PROP}
-    SetProp(Handle, APIFORM_SELF_PROPERTY, lParam);
-    {$ELSE}
-    SetWindowLong(Handle, SELF_INDEX, lParam);
-    {$ENDIF}
-    F := TApiForm(lParam);
-    F.fHandle := Handle;
-    F.DialogProc(M);
-    Result := 1;
-    end
-  else
-    begin
-    {$IFDEF USE_PROP}
-    F := TApiForm(GetProp(Handle, APIFORM_SELF_PROPERTY));
-    {$ELSE}
-    F := TApiForm(GetWindowLong(Handle, SELF_INDEX));
-    {$ENDIF}
-    if F = nil then
-      Result := 0
+  try
+    M.Msg := Msg;
+    M.wParam := wParam;
+    M.lParam := lParam;
+    M.Result := 0;
+    // Ulozim si ukazatel na Self pro pozdejsi pouziti
+    if Msg = WM_INITDIALOG then
+      begin
+      SetProp(Handle, APIFORM_SELF_PROPERTY, lParam);
+      SetWindowLong(Handle, SELF_INDEX, lParam);
+      F := TApiForm(lParam);
+      F.fHandle := Handle;
+      F.DialogProc(M);
+      Result := 1;
+      end
     else
       begin
-      Handled := F.DialogProc(M);
-      if Handled then
-        begin
-        if False
-           or (Msg = WM_CHARTOITEM) or (Msg = WM_COMPAREITEM) or (Msg = WM_CTLCOLORBTN) or (Msg = WM_CTLCOLORDLG)
-           or (Msg = WM_CTLCOLOREDIT) or (Msg = WM_CTLCOLORLISTBOX) or (Msg = WM_CTLCOLORSCROLLBAR) or (Msg = WM_CTLCOLORSTATIC)
-           or (Msg = WM_INITDIALOG) or (Msg = WM_QUERYDRAGICON) or (Msg = WM_CTLCOLORBTN) or (Msg = WM_VKEYTOITEM)
-        then
-          Result := M.Result
-        else
-          begin
-          SetWindowLong(Handle, DWL_MSGRESULT, M.Result);
-          if Msg = WM_CLOSE then
-            begin
-            F.fHandle := 0;
-            {$IFDEF USE_PROP}
-            SetProp(Handle, APIFORM_SELF_PROPERTY, 0);
-            {$ELSE}
-            SetWindowLong(Handle, SELF_INDEX, 0);
-            {$ENDIF}
-            end;
-          Result := 1;
-          end;
-        end
+      {$IFDEF USE_PROP}
+      F := TApiForm(GetProp(Handle, APIFORM_SELF_PROPERTY));
+      {$ELSE}
+      F := TApiForm(GetWindowLong(Handle, SELF_INDEX));
+      {$ENDIF}
+      if F = nil then
+        Result := 0
       else
-        Result := 0;
+        begin
+        Handled := F.DialogProc(M);
+        if Handled then
+          begin
+          if False
+             or (Msg = WM_CHARTOITEM) or (Msg = WM_COMPAREITEM) or (Msg = WM_CTLCOLORBTN) or (Msg = WM_CTLCOLORDLG)
+             or (Msg = WM_CTLCOLOREDIT) or (Msg = WM_CTLCOLORLISTBOX) or (Msg = WM_CTLCOLORSCROLLBAR) or (Msg = WM_CTLCOLORSTATIC)
+             or (Msg = WM_INITDIALOG) or (Msg = WM_QUERYDRAGICON) or (Msg = WM_CTLCOLORBTN) or (Msg = WM_VKEYTOITEM)
+          then
+            Result := M.Result
+          else
+            begin
+            SetWindowLong(Handle, DWL_MSGRESULT, M.Result);
+            if Msg = WM_CLOSE then
+              begin
+              F.fHandle := 0;
+              SetProp(Handle, APIFORM_SELF_PROPERTY, 0);
+              SetWindowLong(Handle, SELF_INDEX, 0);
+              end;
+            Result := 1;
+            end;
+          end
+        else
+          Result := 0;
+        end;
       end;
+  except
+    SysUtils.ShowException(ExceptObject, ExceptAddr);
+    Result := 0;
     end;
 end;
 
-function ApiFormSubclassWndProc(Handle: HWND; Msg: Cardinal; wParam, lParam: integer): integer; stdcall;
+function ApiFormSubclassWndProc(Handle: HWND; Msg: Cardinal; wParam: WPARAM; lParam: LPARAM): integer; stdcall;
 var OldWndProc: TFNWndProc;
     Form: TApiForm;
     Handler: TApiFormSubclassFn;
@@ -227,19 +262,25 @@ begin
   Result := ClassName;
 end;
 
-constructor TApiForm.Create(const ADialogResourceName: string);
+constructor TApiForm.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin
   inherited Create;
   fDialogResourceName := ADialogResourceName;
+  fOwner := AOwner;
   fHandle := 0;
-  {$IFDEF ANCHORS}
+  {$IFDEF APIFORM_ANCHORS}
   fAnchorList := TObjectList.Create(True);
   {$ENDIF}
 end;
 
+constructor TApiForm.Create(AOwner: TApiForm);
+begin
+  Create(AOwner, DefaultResourceName);
+end;
+
 constructor TApiForm.Create;
 begin
-  Create(DefaultResourceName);
+  Create(nil);
 end;
 
 destructor TApiForm.Destroy;
@@ -247,7 +288,7 @@ begin
   if fHandle <> 0 then
     SendMessage(Handle, WM_CLOSE, 0, 0);
   fHandle := 0;
-  {$IFDEF ANCHORS}
+  {$IFDEF APIFORM_ANCHORS}
   FreeAndNil(fAnchorList);
   {$ENDIF}
   inherited Destroy;
@@ -259,7 +300,7 @@ begin
   Msg.Result := 0;
   case Msg.Msg of
     WM_INITDIALOG:
-      Result := DoInitDialog;
+      Result := DoInitDialog and AfterInitDialog;
     WM_CLOSE:
       Result := DoClose;
     WM_COMMAND:
@@ -267,7 +308,20 @@ begin
     WM_NOTIFY:
       Result := DoNotify(PNMHdr(Msg.LParam)^.hwndFrom, PNMHdr(Msg.LParam)^.idFrom, PNMHdr(Msg.LParam)^.code, Msg.WParam, Msg.LParam, Msg.Result);
     WM_SIZE:
-      Result := DoSize(Msg.wParam, Msg.lParam and $ffff, Msg.lParam shr 16); 
+      Result := DoSize(Msg.wParam, Msg.lParam and $ffff, Msg.lParam shr 16);
+    WM_LBUTTONDOWN:
+      Result := DoMouseButtonDown(mbLeft, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_RBUTTONDOWN:
+      Result := DoMouseButtonDown(mbRight, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_MBUTTONDOWN:
+      Result := DoMouseButtonDown(mbMiddle, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_XBUTTONDOWN:
+      if (Msg.wParam shr 16) = XBUTTON1 then
+        Result := DoMouseButtonDown(mbExtra1, Msg.wParam and $ffff, MakePoints(Msg.lParam))
+      else if (Msg.wParam shr 16) = XBUTTON2 then
+        Result := DoMouseButtonDown(mbExtra2, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_CONTEXTMENU:
+      Result := DoContextMenu(THandle(Msg.wParam), MakePoints(Msg.lParam));
     end;
 end;
 
@@ -276,10 +330,20 @@ begin
   Result := True;
 end;
 
+function TApiForm.AfterInitDialog: boolean;
+begin
+  Result := True;
+end;
+
 function TApiForm.DoClose: boolean;
 begin
-  if CanClose then
+  Result := CanClose;
+  if Result then
     EndDialog(Handle, ModalResult);
+end;
+
+function TApiForm.CanClose: boolean;
+begin
   Result := True;
 end;
 
@@ -288,21 +352,21 @@ begin
   Result := False;
 end;
 
-function TApiForm.DoNotify(Control: THandle; ControlID: DWORD; Code, WParam, LParam: integer; out NotifyResult: integer): boolean;
+function TApiForm.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean;
 begin
   Result := False;
   NotifyResult := 0;
 end;
 
 function TApiForm.DoSize(ResizeType, NewWidth, NewHeight: integer): boolean;
-{$IFDEF ANCHORS}
+{$IFDEF APIFORM_ANCHORS}
 var i, NewX, NewY, NewW, NewH: integer;
     AnchorItem: TAnchorDesc;
     OwnerRect: TRect;
 {$ENDIF}
 begin
   Result := False;
-  {$IFDEF ANCHORS}
+  {$IFDEF APIFORM_ANCHORS}
   if GetClientRect(Self.Handle, OwnerRect) then
     for i := 0 to Pred(AnchorList.Count) do
       if AnchorList[i] <> nil then
@@ -362,10 +426,135 @@ begin
   {$ENDIF}
 end;
 
-function TApiForm.CanClose: boolean;
+function TApiForm.DoMouseButtonDown(Button: TMouseButton; Keys: WPARAM; Point: TPoint): boolean;
 begin
-  Result := True;
+  Result := False;
 end;
+
+function TApiForm.DoContextMenu(Control: THandle; Point: TPoint): boolean;
+var Menu: HMENU;
+begin
+  Result := False;
+  if PopupMenu <> 0 then
+    begin
+    Menu := GetSubMenu(PopupMenu, 0);
+    if Menu <> 0 then
+      if TrackPopupMenu(Menu, TPM_LEFTALIGN or TPM_LEFTBUTTON, Point.x, Point.y, 0, Self.Handle, nil) then
+        Result := True;
+    end;
+end;
+
+{$IFDEF APIFORM_TRANSLATIONS}
+function TranslateEnumFunc(hwnd: HWND; lParam: LPARAM): BOOL; stdcall;
+var F: TApiForm;
+begin
+  Result := False;
+  F := TApiForm(lParam);
+  if F <> nil then
+    Result := F.TranslateControl(hwnd);
+end;
+
+function TApiForm.TranslateMenu(Control: THandle): boolean;
+var i, n, TitleLen, TabStart: integer;
+    Item: TMenuItemInfo;
+    OldTitle, Title: string;
+    TitleBuf: array of char;
+    OK: boolean;
+begin
+  Result := False;
+  n := GetMenuItemCount(Control);
+  if n >= 0 then
+    begin
+    Result := True;
+    for i := 0 to Pred(n) do
+      begin
+      OK := False;
+      FillChar(Item, Sizeof(Item), 0);
+      Item.cbSize := Sizeof(Item);
+      Item.fMask := MIIM_STRING or MIIM_SUBMENU;
+      Item.dwTypeData := nil;
+      if GetMenuItemInfo(Control, i, True, Item) then
+        begin
+        TitleLen := Item.cch;
+        SetLength(TitleBuf, Succ(TitleLen));
+        Item.dwTypeData := PChar(TitleBuf);
+        Item.cch := Succ(TitleLen);
+        if GetMenuItemInfo(Control, i, True, Item) then
+          begin
+          if TitleLen > 0 then
+            begin
+            SetString(OldTitle, PChar(TitleBuf), TitleLen);
+            Title := ApiFormTranslateFunction(WideString(OldTitle));
+            if OldTitle = Title then
+              begin
+              TabStart := Pos(#9, OldTitle);
+              if TabStart > 0 then
+                Title := ApiFormTranslateFunction(WideString(Copy(OldTitle, 1, Pred(TabStart)))) + Copy(OldTitle, TabStart, MaxInt);
+              end;
+            if OldTitle = Title then
+              OK := True
+            else
+              begin
+              TitleLen := Length(Title);
+              SetLength(TitleBuf, Succ(TitleLen));
+              StrPCopy(PChar(TitleBuf), Title);
+              Item.fMask := MIIM_STRING;
+              Item.dwTypeData := PChar(TitleBuf);
+              Item.cch := Succ(TitleLen);
+              if SetMenuItemInfo(Control, i, True, Item) then
+                OK := True;
+              end;
+            end;
+          if Item.hSubMenu <> 0 then
+            if not TranslateMenu(Item.hSubMenu) then
+              OK := False;
+          end;
+        end;
+      if not OK then
+        Result := False;
+      end;
+    end;
+end;
+
+function TApiForm.TranslateControl(Control: THandle): boolean;
+var Buf: array of char;
+    n: integer;
+    s: string;
+begin
+  Result := False;
+  if Control <> 0 then
+    begin
+    n := GetWindowTextLength(Control);
+    if n > 0 then
+      begin
+      Inc(n);
+      SetLength(Buf, n);
+      n := GetWindowText(Control, PChar(Buf), n);
+      if n > 0 then
+        begin
+        SetString(s, PChar(Buf), n);
+        s := ApiFormTranslateFunction(WideString(s));
+        SetWindowText(Control, PChar(s));
+        end;
+      end;
+    Result := True;
+    end;
+end;
+
+function TApiForm.Translate: boolean;
+begin
+  Result := False;
+  if Assigned(ApiFormTranslateFunction) then
+    begin
+    TranslateEnumFunc(Self.Handle, Integer(Self));
+    EnumChildWindows(Self.Handle, @TranslateEnumFunc, Integer(Self));
+    if Menu <> 0 then
+      TranslateMenu(Menu);
+    if PopupMenu <> 0 then
+      TranslateMenu(PopupMenu);
+    end;
+end;
+{$ENDIF}
 
 procedure TApiForm.SetModalResult(const Value: integer);
 begin
@@ -376,7 +565,7 @@ function TApiForm.ShowModal: integer;
 begin
   SetModalResult(0);
   //fHandle := CreateDialogParam(hInstance, PChar(DialogResourceName), 0, @ApiFormDialogProc, Integer(Self));
-  Result := DialogBoxParam(hInstance, PChar(DialogResourceName), 0, @ApiFormDialogProc, Integer(Self));
+  Result := DialogBoxParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, Integer(Self));
   ShowApiError(Result = -1);
   SetModalResult(Result);
 end;
@@ -384,7 +573,18 @@ end;
 procedure TApiForm.Show;
 begin
   SetModalResult(0);
-  ShowApiError(CreateDialogParam(hInstance, PChar(DialogResourceName), 0, @ApiFormDialogProc, Integer(Self)) = 0);
+  ShowApiError(CreateDialogParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, Integer(Self)) = 0);
+end;
+
+function TApiForm.Close: boolean;
+begin
+  Result := EndDialog(Self.Handle, ModalResult);
+end;
+
+function TApiForm.Close(ModalResult: integer): boolean;
+begin
+  SetModalResult(ModalResult);
+  Result := Close;
 end;
 
 procedure TApiForm.SubClassAWindow(AHandle: THandle; AWndProc: TApiFormSubclassFn);
@@ -402,7 +602,7 @@ begin
     end;
 end;
 
-{$IFDEF ANCHORS}
+{$IFDEF APIFORM_ANCHORS}
 function TApiForm.FindControlAnchorIndex(Control: THandle): integer;
 var i: integer;
 begin
@@ -488,20 +688,42 @@ begin
 end;
 {$ENDIF}
 
-function TApiForm.ListViewInsertColumn(ListView: THandle; Index, Subitem: integer; Alignment: TAlignment; Width: integer; const Title: string): integer;
-const Alignments: array[TAlignment] of integer = (LVCFMT_LEFT, LVCFMT_RIGHT, LVCFMT_CENTER);
-var Column: LV_COLUMN;
+function TApiForm.GetControlText(ControlID: integer): string;
 begin
-  Column.mask := LVCF_FMT or LVCF_TEXT;
-  if Width > 0 then
-    Column.mask := Column.mask or LVCF_WIDTH;
-  if Subitem > 0 then
-    Column.mask := Column.mask or LVCF_SUBITEM;
-  Column.fmt := Alignments[Alignment];
-  Column.cx := Width;
-  Column.pszText := PChar(Title);
-  Column.cchTextMax := 0;
-  Result := SendMessage(ListView, LVM_INSERTCOLUMN, Index, integer(@Column));
+  Result := GetWindowTextAsString(GetDlgItem(Self.Handle, ControlID));
 end;
+
+function TApiForm.GetOwnerHandle: HWND;
+begin
+  if Owner = nil then
+    Result := 0
+  else
+    Result := Owner.Handle;
+end;
+
+procedure TApiForm.ErrorMessageBox(const Msg, Title: string);
+begin
+  MessageBox(Self.Handle, PChar(Msg), PChar(Title), MB_OK or MB_ICONERROR or MB_APPLMODAL);
+end;
+
+procedure TApiForm.SetMenu(Value: HMENU);
+begin
+  Windows.SetMenu(Self.Handle, Value);
+  fMenu := Value;
+end;
+
+initialization
+  {$IFDEF APIFORM_ACCELERATORS}
+  ApiFormKeyboardMessageHook := SetWindowsHookEx(WH_MSGFILTER, @ApiFormKeyboardMessageHookProc, 0, GetCurrentThreadId);
+  {$ENDIF}
+
+finalization
+  {$IFDEF APIFORM_ACCELERATORS}
+  if ApiFormKeyboardMessageHook <> 0 then
+    begin
+    UnhookWindowsHookEx(ApiFormKeyboardMessageHook);
+    ApiFormKeyboardMessageHook := 0;
+    end;
+  {$ENDIF}
 
 end.

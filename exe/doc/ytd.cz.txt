@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.62                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.63                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -146,6 +146,17 @@ PODPOROVANÉ WEBY
  - FileCabi.net:
      - http://www.filecabi.net/video/hiddendogstopsrobbery.html
 
+ - Fishki.net:
+     - http://fishki.net/comment.php?id=79682
+
+     Pozn.: Je sice možné detekovat název, jak je napsaný ve stránce, ale
+     vznikl by problém, jak z nìj udìlat funkèní název souboru - na to by
+     musel YTD být zkompilovaný pomocí Delphi 2009, což má øadu nevýhod
+     (velikost programu, nepodpora pro stará Windows atd.). Proto se zatím
+     pøebírá pùvodní název souboru a titulek videa se ignoruje. Pokud máte
+     nìjaký nápad, jak ruštinu jednoduše a spolehlivì pøevést do latinky,
+     rád ho implementuji.
+
  - Flickr.com:
      - http://www.flickr.com/photos/landersz/2403626167/
 
@@ -175,8 +186,15 @@ PODPOROVANÉ WEBY
  - Guba.com:
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 
+ - Hasici150.tv:
+     - http://www.hasici150.tv/cz/Videogalerie/Slavnostni-vyhlaseni-Extraliga-CR-v-PU-2010_____93/
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
+
  - iHned.cz:
      - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
  - ima.umn.edu:
      - http://www.ima.umn.edu/videos/?id=1187
@@ -202,6 +220,9 @@ PODPOROVANÉ WEBY
 
  - LiveVideo.com:
      - http://www.livevideo.com/liveshow/brian3maria
+
+ - Loupak.cz:
+     - http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
 
  - Markiza.sk:
      - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
@@ -254,8 +275,16 @@ PODPOROVANÉ WEBY
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
 
+ - NaStojaka.cz:
+     - http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
+
  - NavratDoReality.cz:
      - http://navratdoreality.cz/?p=view&id=5766
+
+ - NBC.com:
+     - http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
+
+     Pozn.: Jde o streamovaný formát podle protokolu RTMP. Viz níže.
 
  - NothingToxic.com:
      - http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
@@ -287,6 +316,9 @@ PODPOROVANÉ WEBY
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
      níže v poznámkách ke knihovnì MSDL_DLL.DLL.
 
+ - Prima-Cool.cz:
+     - http://www.prima-cool.cz/video/drsnejsi-simpsonovi
+
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
      - http://www.publictv.cz/videoarchiv/535/1718/
@@ -308,8 +340,13 @@ PODPOROVANÉ WEBY
 
      Pozn.: Poøady mohou být tvoøeny nìkolika rùznými audio soubory.
 
- - RTA.cz:
+ - RozzlobeniMuzi.com:
+     - http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 
+     Pozn.: Protože server obsahuje znaèné množství porno materiálu, nebyl
+     zaøazen do Lite verze YouTube Downloaderu.
+
+ - RTA.cz:
      - http://www.rta.cz/?article=140331
      - http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 
@@ -451,6 +488,8 @@ PODPOROVANÉ WEBY
 
 Podporované porno weby:
 
+ - Beeg.com
+ - Brazzers.com
  - Dachix.com
  - EmpFlix.com
  - ExtremeTube.com
@@ -987,6 +1026,62 @@ Podporu naleznete na následujících stránkách:
   http://www.pepak.net/download/youtube-downloader/
 - Stránka YouTube Downloader - podpora: 
   http://www.pepak.net/download/youtube-downloader-podpora/
+
+
+
+KOMPILACE
+---------
+
+Na domácí stránce programu naleznete i jeho zdrojový kód, který si mùžete sami
+zkompilovat. Kód je zcela sobìstaèný v tom smyslu, že nevyžaduje nainstalovanou
+žádnou komponentu tøetích stran - vystaèí si s komponentami, které jsou dodány
+ve standardní instalaci pøíslušného programovacího jazyka. 
+
+Podporovány jsou následující kompilátory:
+
+- Delphi 5.0
+- Delphi 2009
+- FreePascal
+
+Program by mìl jít s minimálními úpravami zkompilovat i na ostatních verzích
+Delphi od 5.0 výše, protože ale tyto verze nemám k dispozici, nemohl jsem je
+vyzkoušet.
+
+Doporuèeným zpùsobem, jak YouTube Downloader zkompilovat, je skript BUILD.BAT
+v adresáøi SOURCE, který se postará o všechny závislosti a specifika 
+jednotlivých verzí kompilátorù (více o tom níže). Skript pøijímá (volitelnì)
+následující parametry:
+
+  -? ............ Zobrazit nápovìdu.
+  -h ............ Zobrazit nápovìdu.
+
+  -delphi ....... Pro kompilaci použít Delphi (obecnou verzi). Kompiluje se 
+                  pøíkazem DCC32, který musí být v cestì (PATH).
+  -fpc .......... Pro kompilaci použít FreePascal. Kompiluje se pøíkazem FPC,
+                  který musí být v cestì (PATH).
+
+  -cli .......... Do programu bude zahrnuta command-line verze.
+  -nocli ........ Do programu nebude zahrnuta command-line verze.
+  -gui .......... Do programu bude zahrnuta grafická verze.
+  -nogui ........ Do programu nebude zahrnuta grafická verze.
+  -xxx .......... Do programu bude zahrnuta podpora pro porno providery.
+  -noxxx ........ Do programu nebude zahrnuta podpora pro porno providery.
+
+  (a nìkolik dalších parametrù, které jsou nedokumentované a nedoporuèené)
+
+Pokud chcete YouTube Downloader zkompilovat pøímo z Delphi IDE, napø. za úèelem
+ladìní, je to také možné, ale pro každou verzi Delphi je tøeba ponìkud odlišné
+nastavení adresáøù v Project Options; Search path se liší v nìkolika položkách:
+
+- Cesta "lib\pepak\delphi5" MUSÍ být na prvním místì v Delphi 5.0 (a podle
+  diskusí na webu i Delphi 6.0) a NESMÍ být vùbec uvedena ve vyšších verzích.
+- Cesta ke knihovnì DxGetText se liší podle kompilátoru:
+  - Delphi 5.0 - "lib\dxgettext\delphi5"
+  - Delphi 2009 - "lib\dxgettext\delphi2009"
+  - FreePascal - "lib\dxgettext\fpc"
+  - ostatní - buï "lib\dxgettext" (verze mezi 5.0 a 2009) nebo jako Delphi 2009
+
+Pro FreePascal není podporováno grafické prostøedí (DEFINE NO_GUI v ytd.inc).
 
 
 

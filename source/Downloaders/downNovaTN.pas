@@ -155,7 +155,7 @@ begin
             repeat
               Host := Format('vid%d.tn.cz', [i]);
               Inc(i);
-              if GetHostByName(PChar(Host)) = nil then
+              if GetHostByName(PAnsiChar(AnsiString(Host))) = nil then
                 Break
               else
                 begin

@@ -38,6 +38,7 @@ HTTP	HTML	XML	downESPN
 HTTP	HTML	HTML	downEVTV1
 HTTP	HTML	HTML	downFacebook
 HTTP	HTML	HTML	downFileCabi
+HTTP	HTML	HTML	downFishki
 HTTP	XML	XML	downFlickr
 HTTP	XML	XML	downFreeCaster
 HTTP	HTML	XML	downFreeRide
@@ -46,6 +47,7 @@ HTTP	HTML	Nested	downGameAnyone
 HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
 HTTP	HTML	HTML	downGuba
+RTMP	HTML	HTML	downHasici150
 RTMP	XML	XML	downIDnes
 RTMP	HTML	HTML	downIHned
 HTTP	HTML	HTML	downIPrima
@@ -55,6 +57,7 @@ HTTP	HTML	HTML	downKukaj
 HTTP	HTML	HTML	downLibimSeTi
 HTTP	HTML	XML	downLiveLeak
 HTTP	XML	XML	downLiveVideo
+HTTP	HTML	HTML	downLoupak
 HTTP	XML	XML	downMarkiza
 HTTP	HTML	HTML	downMediaSport
 HTTP	XML	XML	downMegaVideo
@@ -67,6 +70,8 @@ HTTP	HTML	Nested	downMustWatch
 HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace
 HTTP	HTML	HTML	downMyUbo
+HTTP	HTML	HTML	downNaStojaka
+RTMP	AMF	AMF	downNBC
 HTTP	HTML	HTML	downNJoy
 HTTP	HTML	HTML	downNothingToxic
 HTTP	HTML	HTML	downNovinky
@@ -74,6 +79,7 @@ RTMP	XML	XML	downNova
 HTTP	HTML	Nested	downOverStream
 HTTP	XML	XML	downPCPlanets
 MS	HTML	XML	downPrazdninyVTelci
+HTTP	HTML	Nested	downPrimaCool
 HTTP	-	HTML	downQipRu_Embed
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)

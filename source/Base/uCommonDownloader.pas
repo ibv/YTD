@@ -57,6 +57,7 @@ type
       MovieUrlRegExp: TRegExp;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; virtual;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; virtual;
+      function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZEVIRTUAL} virtual; {$ENDIF}
       property MovieUrl: string read fMovieUrl write fMovieUrl;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
@@ -147,6 +148,11 @@ begin
 end;
 
 function TCommonDownloader.ExtractUrlExt(const Url: string): string;
+begin
+  Result := ExtractFileExt(ExtractUrlFileName(Url));
+end;
+
+function TCommonDownloader.ExtractUrlFileName(const Url: string): string;
 var i: integer;
 begin
   i := Pos('?', Url);
@@ -154,9 +160,12 @@ begin
     Result := Url
   else
     Result := Copy(Url, 1, Pred(i));
-  Result := ExtractFileExt(Result);
-  if Pos('/', Result) > 0 then
-    Result := '';
+  for i := Length(Result) downto 1 do
+    if Result[i] = '/' then
+      begin
+      Result := Copy(Result, Succ(i), MaxInt);
+      Break;
+      end;
 end;
 
 function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
@@ -188,7 +197,7 @@ end;
 
 function TCommonDownloader.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var i: integer;
-    Url: string;
+    Url, Subs: string;
     s: AnsiString;
 begin
   Result := False;
@@ -207,9 +216,9 @@ begin
           end;
     if not Result then
       for i := 0 to Pred(Length(fSubtitleRegExps)) do
-        if GetRegExpVar(fSubtitleRegExps[i], Page, 'SUBTITLES', s) then
+        if GetRegExpVar(fSubtitleRegExps[i], Page, 'SUBTITLES', Subs) then
           begin
-          fSubtitles := s;
+          fSubtitles := Subs;
           //fSubtitlesExt := '.txt';
           Result := True;
           Break;

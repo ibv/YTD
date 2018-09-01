@@ -36,15 +36,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit guiAboutWINAPI;
 {$INCLUDE 'ytd.inc'}
+
+{$DEFINE OVERRIDETITLEANDURL}
+  // Title will always be APPLICATION_TITLE and homepage will always be APPLICATION_URL,
+  // regardless what's written in the resource file.
 {.DEFINE STATICPROVIDERLIST}
+  // Provider list is static, not virtual. This is mostly for testing.
 
 interface
 
-{$RESOURCE guiAboutWINAPI.res guiAboutWINAPI.rc}
-
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
-  uApiForm, uApiGraphics,
+  uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
   uLanguages, uMessages, uDownloadClassifier, uDownloader, uOptions;
 
 type
@@ -55,7 +58,7 @@ type
       function DoClose: boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
       {$IFNDEF STATICPROVIDERLIST}
-      function DoNotify(Control: THandle; ControlID: DWORD; Code, WParam, LParam: integer; out NotifyResult: integer): boolean; override;
+      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; override;
       {$ENDIF}
     protected
       function DoCtlColorStatic(DeviceContext: HDC; Control: THandle; out Brush: THandle): boolean; virtual;
@@ -67,8 +70,8 @@ type
       Font_Title: THandle;
       Font_Info: THandle;
       Font_Link: THandle;
-      procedure CreateGdiObjects;
-      procedure DestroyGdiObjects;
+      procedure CreateObjects;
+      procedure DestroyObjects;
     private
       fDownloadClassifier: TDownloadClassifier;
       fOptions: TYTDOptions;
@@ -85,13 +88,15 @@ type
     protected
       class function DefaultResourceName: string; override;
     public
-      constructor Create(const ADialogResourceName: string); override;
+      constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
       property Options: TYTDOptions read fOptions write fOptions;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier write fDownloadClassifier;
     end;
 
 implementation
+
+{$RESOURCE guiAboutWINAPI.res}
 
 // from resource.h
 const
@@ -103,6 +108,8 @@ const
   IDC_LABEL_NEWESTVERSION = 1007;
   IDC_LABEL_HOMEPAGE = 1008;
   IDC_LIST_PROVIDERS = 1006;
+
+  ACTION_CLOSE = 40000;
 
 //
 const
@@ -116,7 +123,7 @@ begin
   Result := 'guiAboutWinAPI';
 end;
 
-constructor TFormAbout.Create(const ADialogResourceName: string);
+constructor TFormAbout.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin
   inherited;
 end;
@@ -126,7 +133,7 @@ begin
   inherited;
 end;
 
-procedure TFormAbout.CreateGdiObjects;
+procedure TFormAbout.CreateObjects;
 var hdc: THandle;
     ly: integer;
     FontBuf: TLogFont;
@@ -167,7 +174,7 @@ begin
     end;
 end;
 
-procedure TFormAbout.DestroyGdiObjects;
+procedure TFormAbout.DestroyObjects;
 begin
   FreeGDIObject(Cursor_Hand); Cursor_Hand := 0;
   FreeGDIObject(Brush_Form); Brush_Form := 0;
@@ -202,25 +209,27 @@ end;
 function TFormAbout.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
-  CreateGDIObjects;
-  // Caption
-  SetWindowText(Self.Handle, PChar(_('About YouTube Downloader')));
+  CreateObjects;
+  Self.Translate;
   // Label "YouTube Downloader"
+  {$IFDEF OVERRIDETITLEANDURL}
   SetDlgItemText(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER, APPLICATION_TITLE);
+  {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_YOUTUBEDOWNLOADER, WM_SETFONT, Font_Title, 1);
   // Label "Version:" and version number
-  SetDlgItemText(Self.Handle, IDC_LABEL_VERSIONCAPTION, PChar(_('Version:')));
   SetDlgItemText(Self.Handle, IDC_LABEL_VERSION, {$INCLUDE 'ytd.version'});
   SendDlgItemMessage(Handle, IDC_LABEL_VERSION, WM_SETFONT, Font_Info, 1);
   // Label "Newest version:"
   fNewestVersionColor := {$IFDEF THREADEDVERSION} clBlack {$ELSE} clRed {$ENDIF} ;
   fNewestVersionUrl := '';
-  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSIONCAPTION, PChar(_('Newest version:')));
-  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar( {$IFDEF THREADEDVERSION}_('checking...') {$ELSE} _('not found') {$ENDIF} ));
+  {$IFDEF THREADEDVERSION}
+  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_('checking...')));
+  {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Info, 1);
   // Label "Homepage:"
-  SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGECAPTION, PChar(_('Homepage:')));
+  {$IFDEF OVERRIDETITLEANDURL}
   SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGE, APPLICATION_URL);
+  {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_HOMEPAGE, WM_SETFONT, Font_Link, 1);
   // Get the newest version info
   if Options <> nil then
@@ -236,19 +245,26 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_LABEL_HOMEPAGE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_LIST_PROVIDERS), [akTop, akLeft, akRight, akBottom]);
+  // Accelerators
+  Accelerators := LoadAccelerators(hInstance, 'ABOUT_ACTIONS');
 end;
 
 function TFormAbout.DoClose: boolean;
 begin
   Result := inherited DoClose;
   if Result then
-    DestroyGdiObjects;
+    DestroyObjects;
 end;
 
 function TFormAbout.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
 begin
   Result := False;
   case NotificationCode of
+    1:
+      case Identifier of
+        ACTION_CLOSE:
+          Close;
+        end;
     STN_CLICKED: // Click on a label
       case Identifier of
         IDC_LABEL_HOMEPAGE:
@@ -268,7 +284,7 @@ begin
 end;
 
 {$IFNDEF STATICPROVIDERLIST}
-function TFormAbout.DoNotify(Control: THandle; ControlID: DWORD; Code, WParam, LParam: integer; out NotifyResult: integer): boolean;
+function TFormAbout.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; WParam: WPARAM; LParam: LPARAM; out NotifyResult: integer): boolean;
 begin
   if (ControlID = IDC_LIST_PROVIDERS) and (Code = LVN_GETDISPINFO) then
     Result := ListProvidersGetDisplayInfo(PLVDispInfo(LParam))
@@ -336,21 +352,21 @@ end;
 var StaticDisplayInfoText: string;
 
 function TFormAbout.ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
+
+  function ShowStatic(const Text: string): boolean;
+    begin
+      StaticDisplayInfoText := Text;
+      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
+      Result := True;
+    end;
+
 begin
   Result := False;
   case DispInfo^.item.iSubItem of
     LISTVIEW_SUBITEM_PROVIDER:
-      begin
-      StaticDisplayInfoText := DownloadClassifier.Names[DispInfo^.item.iItem];
-      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
-      Result := True;
-      end;
+      Result := ShowStatic(DownloadClassifier.Names[DispInfo^.item.iItem]);
     LISTVIEW_SUBITEM_COMPONENTS:
-      begin
-      StaticDisplayInfoText := DownloadClassifier.NameClasses[DispInfo^.item.iItem];
-      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
-      Result := True;
-      end;
+      Result := ShowStatic(DownloadClassifier.NameClasses[DispInfo^.item.iItem]);
     end;
 end;
 {$ENDIF}

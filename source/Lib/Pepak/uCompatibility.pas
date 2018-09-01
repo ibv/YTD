@@ -27,6 +27,14 @@ const
 const
   FILE_ATTRIBUTE_REPARSE_POINT = $400;
 
+  LVS_EX_DOUBLEBUFFER     = $00010000;
+  LVS_EX_LABELTIP         = $00004000; { listview unfolds partly hidden labels if it does not have infotip text }
+
+  WM_XBUTTONDOWN          = $020B;
+
+  XBUTTON1                = 1;
+  XBUTTON2                = 2;
+
 const
   HoursPerDay = 24;
   MinsPerHour = 60;

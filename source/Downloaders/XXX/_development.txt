@@ -1,5 +1,7 @@
 Prot.	Zdr.naz	Zdr.URL	Nazev
 
+HTTP	HTML	HTML	xxxBeeg
+HTTP	HTML	HTML	xxxBrazzers
 HTTP	HTML	HTML	xxxDachix
 HTTP	HTML	XML	xxxEmpFlix
 HTTP	HTML	HTML	xxxExtremeTube
@@ -11,6 +13,7 @@ HTTP	HTML	HTML	xxxPornHub
 HTTP	XML	XML	xxxPornHubEmbed
 HTTP	HTML	HTML1	xxxPornoTube
 HTTP	HTML	HTML	xxxRedTube
+HTTP	HTML	HTML	xxxRozzlobeniMuzi
 HTTP	XML	XML	xxxRude
 HTTP	HTML	HTML	xxxSexDoma
 HTTP	HTML	HTML	xxxShufuni

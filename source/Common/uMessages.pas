@@ -40,9 +40,15 @@ unit uMessages;
 interface
 
 const
-  EOLN = #10;
+  EOLN = #13#10;
   APPLICATION_TITLE = 'YouTube Downloader';
+  APPLICATION_CAPTION = APPLICATION_TITLE + ' v' + {$INCLUDE 'ytd.version'} ;
   APPLICATION_URL = 'http://www.pepak.net/download/youtube-downloader/';
+
+const
+  DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
+  BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&url=%s&error=%s';
+
 
 {gnugettext: scan-all}
 const
@@ -73,8 +79,9 @@ const
   ERR_HTTP_NO_DATA_READ = 'No data read from the connection.';
 
   ERR_VARIABLE_NOT_FOUND = 'Variable "%s" not found.';
-
   ERR_SEE_LOGFILE = 'Error message listed in file "%s".';
+  ERR_MEDIA_REMOVED = 'Media file was removed from the server.';
+  ERR_SERVER_ERROR = 'Server returned an error: %s';
 
   ERR_FAILED_TO_LOAD_DLL = 'Failed to load library "%s" or its prerequisites.';
 

@@ -50,6 +50,7 @@ uses
   uLanguages in 'Common\uLanguages.pas',
   SysUtils,
   Windows,
+  CommCtrl,
   {$IFDEF FPC}
     Interfaces,
   {$ENDIF}
@@ -80,16 +81,18 @@ uses
   // GUI version
   {$IFDEF GUI}
     {$IFDEF GUI_WINAPI}
-      guiMainWINAPI in 'GUI\WinAPI\guiMainWINAPI.pas' {FormYTD},
-      guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas' {FormAbout},
+      guiMainWINAPI in 'GUI\WinAPI\guiMainWINAPI.pas',
+      guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas',
     {$ELSE}
       guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
       guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
+      guiOptionsVCL in 'GUI\VCL\guiOptionsVCL.pas' {FormOptions},
       {$IFDEF CONVERTERS}
       guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas', {FormSelectConverter}
       {$ENDIF}
     {$ENDIF}
     guiConsts in 'GUI\guiConsts.pas',
+    guiFunctions in 'GUI\guiFunctions.pas',
     guiOptions in 'GUI\guiOptions.pas',
     uDownloadList in 'GUI\uDownloadList.pas',
     uDownloadListItem in 'GUI\uDownloadListItem.pas',
@@ -138,6 +141,7 @@ uses
   downEVTV1 in 'Downloaders\downEVTV1.pas',
   downFacebook in 'Downloaders\downFacebook.pas',
   downFileCabi in 'Downloaders\downFileCabi.pas',
+  downFishki in 'Downloaders\downFishki.pas',
   downFlickr in 'Downloaders\downFlickr.pas',
   downFreeCaster in 'Downloaders\downFreeCaster.pas',
   downFreeSk in 'Downloaders\downFreeSk.pas',
@@ -147,6 +151,7 @@ uses
   downGodTube in 'Downloaders\downGodTube.pas',
   downGuba in 'Downloaders\downGuba.pas',
   downGrindTV in 'Downloaders\downGrindTV.pas',
+  downHasici150 in 'Downloaders\downHasici150.pas',
   downiHned in 'Downloaders\downIHned.pas',
   downiPrima in 'Downloaders\downIPrima.pas',
   downJoj in 'Downloaders\downJoj.pas',
@@ -156,6 +161,7 @@ uses
   downLiveLeak in 'Downloaders\downLiveLeak.pas',
   downLiveLeakEmbedded in 'Downloaders\downLiveLeakEmbedded.pas',
   downLiveVideo in 'Downloaders\downLiveVideo.pas',
+  downLoupak in 'Downloaders\downLoupak.pas',
   downMarkiza in 'Downloaders\downMarkiza.pas',
   downMediaSport in 'Downloaders\downMediaSport.pas',
   downMegaVideo in 'Downloaders\downMegaVideo.pas',
@@ -168,6 +174,8 @@ uses
   downMuzu in 'Downloaders\downMuzu.pas',
   downMySpace in 'Downloaders\downMySpace.pas',
   downMyUbo in 'Downloaders\downMyUbo.pas',
+  downNaStojaka in 'Downloaders\downNaStojaka.pas',
+  downNBC in 'Downloaders\downNBC.pas',
   downNavratDoReality in 'Downloaders\downNavratDoReality.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
@@ -179,6 +187,7 @@ uses
   downOverStream in 'Downloaders\downOverStream.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
+  downPrimaCool in 'Downloaders\downPrimaCool.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downQipRu_Embed in 'Downloaders\downQipRu_Embed.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
@@ -219,6 +228,8 @@ uses
   downZ1TV in 'Downloaders\downZ1TV.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',
   {$IFDEF XXX}
+    xxxBeeg in 'Downloaders\XXX\xxxBeeg.pas',
+    xxxBrazzers in 'Downloaders\XXX\xxxBrazzers.pas',
     xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
     xxxEmpFlix in 'Downloaders\XXX\xxxEmpFlix.pas',
     xxxExtremeTube in 'Downloaders\XXX\xxxExtremeTube.pas',
@@ -230,6 +241,7 @@ uses
     xxxPornHubEmbed in 'Downloaders\XXX\xxxPornHubEmbed.pas',
     xxxPornoTube in 'Downloaders\XXX\xxxPornoTube.pas',
     xxxRedTube in 'Downloaders\XXX\xxxRedTube.pas',
+    xxxRozzlobeniMuzi in 'Downloaders\XXX\xxxRozzlobeniMuzi.pas',
     xxxRude in 'Downloaders\XXX\xxxRude.pas',
     xxxSexDoma in 'Downloaders\XXX\xxxSexDoma.pas',
     xxxShufuni in 'Downloaders\XXX\xxxShufuni.pas',
@@ -273,12 +285,14 @@ var
 begin
   try
     ExitCode := 0;
+    InitCommonControls; // Needed because of the manifest file
     {$IFDEF GUI}
       if (ParamCount <= 0) then
         begin
         {$IFNDEF DEBUG}
           {$IFNDEF FPC}
             FreeConsole;
+            IsConsole := False;
           {$ENDIF}
         {$ENDIF}
         {$IFDEF GUI_WINAPI}
@@ -328,7 +342,7 @@ begin
           Writeln(ErrorMsg)
         else
         {$ENDIF}
-          MessageBox(0, PChar(ErrorMsg), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR);
+          MessageBox(0, PChar(ErrorMsg), APPLICATION_TITLE, MB_OK or MB_ICONERROR or MB_APPLMODAL);
       {$ENDIF}
       ExitCode := 255;
       end;

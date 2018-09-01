@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: YouTube Downloader 0.41\n"
-"POT-Creation-Date: 2010-11-22 18:14\n"
-"PO-Revision-Date: 2010-11-22 18:16+0100\n"
+"Project-Id-Version: YouTube Downloader 0.62\n"
+"POT-Creation-Date: 2010-11-27 12:26\n"
+"PO-Revision-Date: 2010-11-27 12:27+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,11 +18,7 @@ msgstr ""
 "X-Poedit-Country: CZECH REPUBLIC\n"
 
 #. FormAbout..Caption
-#. Caption
-#. Programmer's name: CAPTION
 #: GUI/VCL/guiAboutVCL.dfm:6
-#: GUI/WinAPI/guiAboutWINAPI.pas:207
-#: GUI/WinAPI/guiAboutWINAPI.rc:20
 msgid "About YouTube Downloader"
 msgstr "O aplikaci YouTube Downloader"
 
@@ -33,6 +29,7 @@ msgstr "O aplikaci YouTube Downloader"
 #. FormAbout..LabelHomepage..Font.Name
 #. FormSelectConverter..Font.Name
 #. FormYTD..Font.Name
+#. FormOptions..Font.Name
 #: GUI/VCL/guiAboutVCL.dfm:11
 #: GUI/VCL/guiAboutVCL.dfm:27
 #: GUI/VCL/guiAboutVCL.dfm:48
@@ -40,24 +37,19 @@ msgstr "O aplikaci YouTube Downloader"
 #: GUI/VCL/guiAboutVCL.dfm:91
 #: GUI/VCL/guiConverterVCL.dfm:12
 #: GUI/VCL/guiMainVCL.dfm:11
+#: GUI/VCL/guiOptionsVCL.dfm:12
 msgid "MS Sans Serif"
 msgstr "MS Sans Serif"
 
 #. FormAbout..LabelYTD..Caption
-#. Programmer's name: LTEXT
-#. Programmer's name: CAPTION
+#. FormYTD..Caption
 #: GUI/VCL/guiAboutVCL.dfm:23
-#: GUI/WinAPI/guiAboutWINAPI.rc:23
-#: GUI/WinAPI/guiMainWINAPI.rc:20
+#: GUI/VCL/guiMainVCL.dfm:6
 msgid "YouTube Downloader"
 msgstr "YouTube Downloader"
 
 #. FormAbout..LabelVersionLabel..Caption
-#. Label "Version:" and version number
-#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:36
-#: GUI/WinAPI/guiAboutWINAPI.pas:212
-#: GUI/WinAPI/guiAboutWINAPI.rc:24
 msgid "Version:"
 msgstr "Verze:"
 
@@ -67,36 +59,23 @@ msgid "LabelVersion"
 msgstr "LabelVersion"
 
 #. FormAbout..LabelNewestVersionLabel..Caption
-#. Label "Newest version:"
-#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:57
-#: GUI/WinAPI/guiAboutWINAPI.pas:218
-#: GUI/WinAPI/guiAboutWINAPI.rc:25
 msgid "Newest version:"
 msgstr "Nejnovější verze:"
 
 #. FormAbout..LabelNewestVersion..Caption
-#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:65
-#: GUI/VCL/guiAboutVCL.pas:125
-#: GUI/WinAPI/guiAboutWINAPI.pas:219
-#: GUI/WinAPI/guiAboutWINAPI.rc:28
+#: GUI/VCL/guiAboutVCL.pas:128
 msgid "not found"
 msgstr "nenalezena"
 
 #. FormAbout..LabelHomepageLabel..Caption
-#. Label "Homepage:"
-#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:79
-#: GUI/WinAPI/guiAboutWINAPI.pas:222
-#: GUI/WinAPI/guiAboutWINAPI.rc:26
 msgid "Homepage:"
 msgstr "Domovská stránka:"
 
 #. FormAbout..LabelHomepage..Caption
-#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:87
-#: GUI/WinAPI/guiAboutWINAPI.rc:29
 msgid "http://www.pepak.net/download/youtube-downloader"
 msgstr "http://www.pepak.net/download/youtube-downloader"
 
@@ -109,14 +88,15 @@ msgstr "Poskytovatelé médií:"
 #. FormYTD..Downloads......Caption
 #. Create columns
 #: GUI/VCL/guiAboutVCL.dfm:111
-#: GUI/VCL/guiMainVCL.dfm:185
-#: GUI/WinAPI/guiAboutWINAPI.pas:367
+#: GUI/VCL/guiMainVCL.dfm:170
+#: GUI/WinAPI/guiAboutWINAPI.pas:383
+#: GUI/WinAPI/guiMainWINAPI.pas:273
 msgid "Provider"
 msgstr "Poskytovatel"
 
 #. FormAbout..ListProviders......Caption
 #: GUI/VCL/guiAboutVCL.dfm:115
-#: GUI/WinAPI/guiAboutWINAPI.pas:368
+#: GUI/WinAPI/guiAboutWINAPI.pas:384
 msgid "Components"
 msgstr "Komponenty"
 
@@ -126,297 +106,316 @@ msgid "Select converter"
 msgstr "Vyberte si konvertor"
 
 #. FormSelectConverter..LabelConverter..Caption
+#. FormOptions..LabelConverter..Caption
 #: GUI/VCL/guiConverterVCL.dfm:24
-msgid "Converter:"
-msgstr "Konvertor:"
+#: GUI/VCL/guiOptionsVCL.dfm:41
+msgid "&Converter:"
+msgstr "&Konvertor:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
-#: GUI/VCL/guiConverterVCL.dfm:59
+#. FormOptions..ActionList..actOK..Caption
+#: GUI/VCL/guiConverterVCL.dfm:60
+#: GUI/VCL/guiOptionsVCL.dfm:122
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
-#: GUI/VCL/guiConverterVCL.dfm:63
+#. FormOptions..ActionList..actCancel..Caption
+#: GUI/VCL/guiConverterVCL.dfm:64
+#: GUI/VCL/guiOptionsVCL.dfm:127
 msgid "&Cancel"
 msgstr "&Storno"
 
-#. FormYTD..Caption
-#: GUI/VCL/guiMainVCL.dfm:6
-msgid "FormYTD"
-msgstr "FormYTD"
-
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:181
+#. Download list
+#: GUI/VCL/guiMainVCL.dfm:166
+#: GUI/WinAPI/guiMainWINAPI.pas:272
 msgid "URL"
 msgstr "URL"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:190
+#: GUI/VCL/guiMainVCL.dfm:175
+#: GUI/WinAPI/guiMainWINAPI.pas:274
 msgid "Status"
 msgstr "Status"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:194
+#: GUI/VCL/guiMainVCL.dfm:179
+#: GUI/WinAPI/guiMainWINAPI.pas:275
 msgid "Title"
 msgstr "Název"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:199
+#: GUI/VCL/guiMainVCL.dfm:184
+#: GUI/WinAPI/guiMainWINAPI.pas:276
 msgid "Size"
 msgstr "Velikost"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:204
+#: GUI/VCL/guiMainVCL.dfm:189
+#: GUI/WinAPI/guiMainWINAPI.pas:277
 msgid "Progress"
 msgstr "Průběh stahování"
 
 #. FormYTD..YTDActions..actAddNewUrl..Caption
-#: GUI/VCL/guiMainVCL.dfm:233
+#: GUI/VCL/guiMainVCL.dfm:218
 msgid "Add new URL"
 msgstr "Přidat URL"
 
 #. FormYTD..YTDActions..actAddNewUrl..Hint
-#: GUI/VCL/guiMainVCL.dfm:234
+#: GUI/VCL/guiMainVCL.dfm:219
 msgid "Add new URL to the list"
 msgstr "Přidat nové URL do seznamu"
 
 #. FormYTD..YTDActions..actDeleteURL..Caption
-#: GUI/VCL/guiMainVCL.dfm:240
+#: GUI/VCL/guiMainVCL.dfm:225
 msgid "Delete URL"
 msgstr "Smazat URL"
 
 #. FormYTD..YTDActions..actDeleteURL..Hint
-#: GUI/VCL/guiMainVCL.dfm:241
+#: GUI/VCL/guiMainVCL.dfm:226
 msgid "Delete selected URL(s)"
 msgstr "Smazat vybrané URL"
 
 #. FormYTD..YTDActions..actStart..Caption
-#: GUI/VCL/guiMainVCL.dfm:247
+#: GUI/VCL/guiMainVCL.dfm:232
 msgid "Start/Pause/Resume"
 msgstr "Start/Pauza/Pokračovat"
 
 #. FormYTD..YTDActions..actStart..Hint
-#: GUI/VCL/guiMainVCL.dfm:248
+#: GUI/VCL/guiMainVCL.dfm:233
 msgid "Start downloading selected  URL(s)"
 msgstr "Spustit stahování vybraných URL"
 
 #. FormYTD..YTDActions..actStop..Caption
-#: GUI/VCL/guiMainVCL.dfm:254
+#: GUI/VCL/guiMainVCL.dfm:239
 msgid "Stop"
 msgstr "Zastavit"
 
 #. FormYTD..YTDActions..actStop..Hint
-#: GUI/VCL/guiMainVCL.dfm:255
+#: GUI/VCL/guiMainVCL.dfm:240
 msgid "Stop downloading selected  URL(s)"
 msgstr "Přerušit stahování vybraných URL"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
-#: GUI/VCL/guiMainVCL.dfm:261
-#: GUI/VCL/guiMainVCL.dfm:268
+#: GUI/VCL/guiMainVCL.dfm:246
+#: GUI/VCL/guiMainVCL.dfm:253
 msgid "Add URLs from Clipboard"
 msgstr "Přidat URL ze schránky"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
-#: GUI/VCL/guiMainVCL.dfm:262
-#: GUI/VCL/guiMainVCL.dfm:269
+#: GUI/VCL/guiMainVCL.dfm:247
+#: GUI/VCL/guiMainVCL.dfm:254
 msgid "Add URLs from Clipboard to the list"
 msgstr "Přidat nové URL ze schránky do seznamu"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
-#: GUI/VCL/guiMainVCL.dfm:275
-#: GUI/VCL/guiMainVCL.dfm:282
+#: GUI/VCL/guiMainVCL.dfm:260
+#: GUI/VCL/guiMainVCL.dfm:267
 msgid "Copy URLs to Clipboard"
 msgstr "Zkopírovat URL do schránky"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
-#: GUI/VCL/guiMainVCL.dfm:276
-#: GUI/VCL/guiMainVCL.dfm:283
+#: GUI/VCL/guiMainVCL.dfm:261
+#: GUI/VCL/guiMainVCL.dfm:268
 msgid "Copy URLs from the list to Clipboard"
 msgstr "Zkopírovat URL ze seznamu do schránky"
 
 #. FormYTD..YTDActions..actSelectAll..Caption
-#: GUI/VCL/guiMainVCL.dfm:289
+#: GUI/VCL/guiMainVCL.dfm:274
 msgid "Select all"
 msgstr "Vybrat vše"
 
 #. FormYTD..YTDActions..actSelectAll..Hint
-#: GUI/VCL/guiMainVCL.dfm:290
+#: GUI/VCL/guiMainVCL.dfm:275
 msgid "Select all URLs"
 msgstr "Vybrat všechny URL"
 
 #. FormYTD..YTDActions..actRefresh..Caption
-#: GUI/VCL/guiMainVCL.dfm:295
+#: GUI/VCL/guiMainVCL.dfm:280
 msgid "Refresh"
 msgstr "Obnovit"
 
 #. FormYTD..YTDActions..actRefresh..Hint
-#: GUI/VCL/guiMainVCL.dfm:296
+#: GUI/VCL/guiMainVCL.dfm:281
 msgid "Refresh display"
 msgstr "Překreslit formulář"
 
-#. FormYTD..YTDActions..actAutoDownload..Caption
-#: GUI/VCL/guiMainVCL.dfm:302
-msgid "Autodownload"
-msgstr "Autodownload"
-
-#. FormYTD..YTDActions..actAutoDownload..Hint
-#: GUI/VCL/guiMainVCL.dfm:304
-msgid "Automatically start new downloads"
-msgstr "Automaticky spouštět nové downloady"
-
-#. FormYTD..YTDActions..actDownloadDirectory..Caption
-#: GUI/VCL/guiMainVCL.dfm:310
-msgid "Set download directory"
-msgstr "Adresář pro downloady"
-
-#. FormYTD..YTDActions..actDownloadDirectory..Hint
-#: GUI/VCL/guiMainVCL.dfm:311
-msgid "Choose download directory"
-msgstr "Vyberte cílový adresář pro downloady"
-
-#. FormYTD..YTDActions..actAutoOverwrite..Caption
-#: GUI/VCL/guiMainVCL.dfm:317
-msgid "Auto-Overwrite"
-msgstr "Automaticky přepisovat"
-
-#. FormYTD..YTDActions..actAutoOverwrite..Hint
-#: GUI/VCL/guiMainVCL.dfm:318
-msgid "Automatically overwrite existing files"
-msgstr "Automaticky přepisovat existující soubory"
-
 #. FormYTD..YTDActions..actAddUrlsFromHTML..Caption
-#: GUI/VCL/guiMainVCL.dfm:324
+#: GUI/VCL/guiMainVCL.dfm:287
 msgid "Add URLs from HTML page"
 msgstr "Přidat URL z HTML stránky"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTML..Hint
-#: GUI/VCL/guiMainVCL.dfm:325
+#: GUI/VCL/guiMainVCL.dfm:288
 msgid "Get a list of URLs from HTML page"
 msgstr "Načíst seznam URL z HTML stránky"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Caption
-#: GUI/VCL/guiMainVCL.dfm:331
+#: GUI/VCL/guiMainVCL.dfm:294
 msgid "Add URLs from HTML file"
 msgstr "Přidat URL z HTML souboru"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Hint
-#: GUI/VCL/guiMainVCL.dfm:332
+#: GUI/VCL/guiMainVCL.dfm:295
 msgid "Get a list of URLs from HTML file"
 msgstr "Načíst seznam URL z HTML souboru"
 
 #. FormYTD..YTDActions..actAddUrlsFromFile..Caption
-#: GUI/VCL/guiMainVCL.dfm:338
+#: GUI/VCL/guiMainVCL.dfm:301
 msgid "Add URLs from file"
 msgstr "Přidat URL ze souboru"
 
 #. FormYTD..YTDActions..actAddUrlsFromFile..Hint
-#: GUI/VCL/guiMainVCL.dfm:339
+#: GUI/VCL/guiMainVCL.dfm:302
 msgid "Get a list of URLs from file"
 msgstr "Načíst seznam URL ze souboru"
 
 #. FormYTD..YTDActions..actSaveUrlList..Caption
-#: GUI/VCL/guiMainVCL.dfm:345
+#: GUI/VCL/guiMainVCL.dfm:308
 msgid "Save URL list"
 msgstr "Uložit seznam URL"
 
 #. FormYTD..YTDActions..actSaveUrlList..Hint
-#: GUI/VCL/guiMainVCL.dfm:346
+#: GUI/VCL/guiMainVCL.dfm:309
 msgid "Save list of unfinished URLs to a list file"
 msgstr "Uložit seznam nedokončených URL do souboru"
 
 #. FormYTD..YTDActions..actAbout..Caption
-#: GUI/VCL/guiMainVCL.dfm:352
+#: GUI/VCL/guiMainVCL.dfm:315
 msgid "About"
 msgstr "O aplikaci"
 
 #. FormYTD..YTDActions..actAbout..Hint
-#: GUI/VCL/guiMainVCL.dfm:353
+#: GUI/VCL/guiMainVCL.dfm:316
 msgid "About this program"
 msgstr "O programu YouTube Downloader"
 
 #. FormYTD..YTDActions..actConvert..Caption
-#: GUI/VCL/guiMainVCL.dfm:359
+#: GUI/VCL/guiMainVCL.dfm:322
 msgid "Convert"
 msgstr "Zkonvertovat"
 
 #. FormYTD..YTDActions..actConvert..Hint
-#: GUI/VCL/guiMainVCL.dfm:360
+#: GUI/VCL/guiMainVCL.dfm:323
 msgid "Convert the selected file"
 msgstr "Zkonvertovat zvolený soubor"
 
-#. FormYTD..YTDActions..actSelectConverter..Caption
-#: GUI/VCL/guiMainVCL.dfm:366
-msgid "Choose a converter"
-msgstr "Vybrat konvertor"
-
-#. FormYTD..YTDActions..actSelectConverter....Hint
-#: GUI/VCL/guiMainVCL.dfm:369
-msgid "Choose a converter which will be automatically applied to all downloaded movies."
-msgstr "Vybrat konvertor, který bude automaticky použit na všechny stáhnuté soubory."
-
 #. FormYTD..YTDActions..actReportBug..Caption
-#: GUI/VCL/guiMainVCL.dfm:375
+#: GUI/VCL/guiMainVCL.dfm:329
 msgid "Report a bug"
 msgstr "Nahlásit chybu"
 
 #. FormYTD..YTDActions..actReportBug..Hint
-#: GUI/VCL/guiMainVCL.dfm:376
+#: GUI/VCL/guiMainVCL.dfm:330
 msgid "Report a bug for selected URL."
 msgstr "Nahlásit chybu ve stahování vybrané URL."
 
 #. FormYTD..YTDActions..actDonate..Caption
-#: GUI/VCL/guiMainVCL.dfm:382
+#: GUI/VCL/guiMainVCL.dfm:336
 msgid "Donate"
 msgstr "Přispět"
 
 #. FormYTD..YTDActions..actDonate..Hint
-#: GUI/VCL/guiMainVCL.dfm:383
+#: GUI/VCL/guiMainVCL.dfm:337
 msgid "Donate some money to further YTD's development."
 msgstr "Poslat finanční dar na další rozvoj YTD."
 
 #. FormYTD..YTDActions..actEditConfigFile..Caption
-#: GUI/VCL/guiMainVCL.dfm:389
+#: GUI/VCL/guiMainVCL.dfm:343
 msgid "Edit config file"
 msgstr "Upravit konfigurační soubor"
 
 #. FormYTD..YTDActions..actEditConfigFile..Hint
-#: GUI/VCL/guiMainVCL.dfm:390
+#: GUI/VCL/guiMainVCL.dfm:344
 msgid "Open the active configuration file in the editor"
 msgstr "Otevřít aktivní konfigurační soubor v editoru"
 
+#. FormYTD..YTDActions..actOptions..Caption
+#. FormOptions..Caption
+#: GUI/VCL/guiMainVCL.dfm:350
+#: GUI/VCL/guiOptionsVCL.dfm:5
+msgid "Options"
+msgstr "Nastavení"
+
+#. FormYTD..YTDActions..actOptions..Hint
+#: GUI/VCL/guiMainVCL.dfm:351
+msgid "Change program's options"
+msgstr "Změnit základní nastavení programu"
+
 #. FormYTD..DownloadsPopup..N4..Caption
 #. FormYTD..DownloadsPopup..N2..Caption
-#. FormYTD..DownloadsPopup..N1..Caption
 #. FormYTD..DownloadsPopup..N3..Caption
-#. FormYTD..DownloadsPopup..N5..Caption
-#: GUI/VCL/guiMainVCL.dfm:1628
-#: GUI/VCL/guiMainVCL.dfm:1640
-#: GUI/VCL/guiMainVCL.dfm:1652
-#: GUI/VCL/guiMainVCL.dfm:1673
-#: GUI/VCL/guiMainVCL.dfm:1679
+#. FormYTD..DownloadsPopup..N1..Caption
+#: GUI/VCL/guiMainVCL.dfm:1457
+#: GUI/VCL/guiMainVCL.dfm:1469
+#: GUI/VCL/guiMainVCL.dfm:1481
+#: GUI/VCL/guiMainVCL.dfm:1487
 msgid "-"
 msgstr "-"
 
 #. FormYTD..OpenHtmlFile..Filter
-#: GUI/VCL/guiMainVCL.dfm:1692
+#: GUI/VCL/guiMainVCL.dfm:1506
+#: GUI/WinAPI/guiMainWINAPI.pas:482
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
 
 #. FormYTD..OpenUrlList..Filter
 #. FormYTD..SaveUrlList..Filter
-#: GUI/VCL/guiMainVCL.dfm:1698
-#: GUI/VCL/guiMainVCL.dfm:1705
+#: GUI/VCL/guiMainVCL.dfm:1512
+#: GUI/VCL/guiMainVCL.dfm:1519
+#: GUI/WinAPI/guiMainWINAPI.pas:459
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
 
 #. FormYTD..SaveUrlList..DefaultExt
-#: GUI/VCL/guiMainVCL.dfm:1704
+#: GUI/VCL/guiMainVCL.dfm:1518
 msgid "lst"
 msgstr "lst"
+
+#. FormOptions..LabelOverwriteMode..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:25
+msgid "&Existing files:"
+msgstr "&Existující soubory:"
+
+#. FormOptions..LabelDownloadDir..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:33
+msgid "&Download directory:"
+msgstr "Adresář pro &downloady"
+
+#. FormOptions..CheckAutoDownload..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:50
+msgid "&Automatically start downloads"
+msgstr "&Automaticky spouštět downloady"
+
+#. FormOptions..ComboOverwriteMode....Items.Strings
+#: GUI/VCL/guiOptionsVCL.dfm:63
+msgid "Ask user"
+msgstr "Zeptat se uživatele"
+
+#. FormOptions..ComboOverwriteMode....Items.Strings
+#: GUI/VCL/guiOptionsVCL.dfm:64
+msgid "Overwrite"
+msgstr "Přepisovat"
+
+#. FormOptions..ComboOverwriteMode....Items.Strings
+#: GUI/VCL/guiOptionsVCL.dfm:65
+msgid "Skip"
+msgstr "Přeskočit"
+
+#. FormOptions..ComboOverwriteMode....Items.Strings
+#: GUI/VCL/guiOptionsVCL.dfm:66
+msgid "Rename automatically"
+msgstr "Automaticky přejmenovat"
+
+#. FormOptions..ActionList..actDownloadDir..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:131
+msgid "..."
+msgstr "..."
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
@@ -751,7 +750,7 @@ msgstr "Nespravna odpoved."
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
-#: Common/uMessages.pas:49
+#: Common/uMessages.pas:55
 msgid ""
 "Exception %s with message:\n"
 "%s"
@@ -761,109 +760,119 @@ msgstr ""
 
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:51
+#: Common/uMessages.pas:57
 msgid "Press any key to quit."
 msgstr "Stiskněte klávesu pro ukončení programu."
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:52
+#: Common/uMessages.pas:58
 msgid "Playlist item %d"
 msgstr "%d. položka seznamu"
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:55
+#: Common/uMessages.pas:61
 msgid "Downloader is not prepared!"
 msgstr "Downloader není připraven!"
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:56
+#: Common/uMessages.pas:62
 msgid "Download of this content is not implemented."
 msgstr "Stahování tohoto obsahu není podporováno."
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:57
+#: Common/uMessages.pas:63
 msgid "Download to file \"%s\" was not allowed."
 msgstr "Stahování do souboru \"%s\" nebylo povoleno."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:59
+#: Common/uMessages.pas:65
 msgid "Failed to locate embedded object."
 msgstr "Nepodařilo se nalézt vložený objekt."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:60
+#: Common/uMessages.pas:66
 msgid "Failed to locate media info page."
 msgstr "Nepodařilo se najít stránku informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:61
+#: Common/uMessages.pas:67
 msgid "Failed to download media info page."
 msgstr "Nepodařilo se stáhnout stránku informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:62
+#: Common/uMessages.pas:68
 msgid "Failed to prepare media info page."
 msgstr "Nepodařilo se připravit stránku informací o médiu."
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:63
+#: Common/uMessages.pas:69
 msgid "Invalid media info page."
 msgstr "Chybná stránka informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:64
+#: Common/uMessages.pas:70
 msgid "Failed to download server list."
 msgstr "Nepodařilo se stáhnout seznam serverů."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:66
+#: Common/uMessages.pas:72
 msgid "Failed to locate media info."
 msgstr "Nepodařilo se najít informace o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:67
+#: Common/uMessages.pas:73
 msgid "Failed to find media title."
 msgstr "Nepodařilo se najít název média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:68
+#: Common/uMessages.pas:74
 msgid "Failed to find media URL."
 msgstr "Nepodařilo se najít adresu média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:69
+#: Common/uMessages.pas:75
 msgid "Failed to find media server."
 msgstr "Nepodařilo se najít server média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:70
+#: Common/uMessages.pas:76
 msgid "Failed to find media stream."
 msgstr "Nepodařilo se najít stream média."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:78
 msgid "HTTP request failed with error code %d."
 msgstr "HTTP požadavek selhal s chybou %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:79
 msgid "No data read from the connection."
 msgstr "Nepodařilo se přečíst žádná data."
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:81
 msgid "Variable \"%s\" not found."
 msgstr "Proměnná \"%s\" nebyla nalezena."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:77
+#: Common/uMessages.pas:82
 msgid "Error message listed in file \"%s\"."
 msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
 
+#. Programmer's name for it: ERR_MEDIA_REMOVED
+#: Common/uMessages.pas:83
+msgid "Media file was removed from the server."
+msgstr "Soubor byl ze serveru smazán."
+
+#. Programmer's name for it: ERR_SERVER_ERROR
+#: Common/uMessages.pas:84
+msgid "Server returned an error: %s"
+msgstr "Server hlásí chybu: %s"
+
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:86
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 
@@ -897,44 +906,50 @@ msgstr "Chyba"
 msgid "Aborted"
 msgstr "Přerušeno"
 
+#. GUI: Download thread state: Download was paused by user
+#. Programmer's name for it: THREADSTATE_PAUSED
+#: GUI/guiConsts.pas:53
+msgid "Paused"
+msgstr "Pozastaveno"
+
 #. GUI: Convert thread state: Waiting for its turn
 #. Programmer's name for it: CONVERTTHREADSTATE_WAITING
-#: GUI/guiConsts.pas:56
+#: GUI/guiConsts.pas:57
 msgid "Awaiting conversion"
 msgstr "Čeká se konverzi"
 
 #. GUI: Convert thread state: Converting
 #. Programmer's name for it: CONVERTTHREADSTATE_CONVERTING
-#: GUI/guiConsts.pas:57
+#: GUI/guiConsts.pas:58
 msgid "Converting"
 msgstr "Konvertuje se"
 
 #. GUI: Convert thread state: Conversion finishes successfully
 #. Programmer's name for it: CONVERTTHREADSTATE_FINISHED
-#: GUI/guiConsts.pas:58
+#: GUI/guiConsts.pas:59
 msgid "Converted"
 msgstr "Konverze dokončena"
 
 #. GUI: Convert thread state: Conversion failed
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILED
-#: GUI/guiConsts.pas:59
+#: GUI/guiConsts.pas:60
 msgid "Conversion failed"
 msgstr "Konverze selhala"
 
 #. GUI: Convert thread state: Failed to start the converter
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
-#: GUI/guiConsts.pas:60
+#: GUI/guiConsts.pas:61
 msgid "Converter not found"
 msgstr "Konvertor nebyl nalezen"
 
 #. GUI: description of a "no converter"
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:63
+#: GUI/guiConsts.pas:64
 msgid "** None **"
 msgstr "** Žádný **"
 
-#. Programmer's name for it: CONVERTERS_INACTIVE_WARNING
-#: GUI/guiConsts.pas:74
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:76
 msgid ""
 "Converters are not activated.\n"
 "\n"
@@ -957,6 +972,93 @@ msgstr ""
 "být správně nastaveny podle dokumentace, ale\n"
 "mnoho lidí tu dokumentaci vůbec nečetlo a hned\n"
 "si stěžovalo, že konvertování nefunguje."
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:86
+msgid ""
+"Config file will open now, but please do not edit\n"
+"it right away: YouTube Downloader will overwrite\n"
+"the file before it quits, so any changes made would\n"
+"be lost. First quit YTD and only then start editing\n"
+"the file."
+msgstr ""
+"Nyní se otevře konfigurační soubor, ale prosím\n"
+"nezapisujte do něj zatím: YouTube Downloader\n"
+"před svým ukončením tento soubor přepíše, takže\n"
+"by se všechny vaše ruční změny ztratily. Napřed\n"
+"ukončete YTD a teprve potom začněte konfigurační\n"
+"soubor upravovat."
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:89
+msgid ""
+"There are downloads in progress\n"
+"Do you really want to quit?"
+msgstr ""
+"Jsou aktivní downloady.\n"
+"Opravdu chcete program ukončit?"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:92
+msgid ""
+"A newer version (%s) is available.\n"
+"Do you want to download it?"
+msgstr ""
+"K dispozici je nová verze (%s).\n"
+"Chcete ji stáhnout?"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:94
+msgid "Enter video URL:"
+msgstr "Zadejte URL videa:"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:96
+msgid "Enter page URL:"
+msgstr "Zadejte URL stránky:"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:99
+msgid ""
+"This URL is not supported.\n"
+"See the documenation for supported URLs."
+msgstr ""
+"Tato URL není podporována.\n"
+"Seznam podporovaných URL je uveden v dokumentaci."
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:102
+msgid ""
+"No supported URLs found.\n"
+"See the documenation for supported URLs."
+msgstr ""
+"Nebyla nalezena žádná podporovaná URL.\n"
+"Seznam podporovaných URL je uveden v dokumentaci."
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:104
+msgid "Do you really want to delete selected transfer(s)?"
+msgstr "Opravdu chcete smazat vybrané přenosy?"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:106
+msgid "Do you really want to stop selected transfer(s)?"
+msgstr "Opravdu chcete zastavit vybrané přenosy?"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:108
+msgid "Do you really want to report a bug for this transfer?"
+msgstr "Opravdu chcete pro tento odkaz nahlásit chybu?"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:110
+msgid "Convert selected files with"
+msgstr "Zkonvertovat zvolené soubory pomocí"
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:112
+msgid "Automatically convert with"
+msgstr "Automaticky konvertovat pomocí"
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
 #: GUI/guiOptions.pas:99
@@ -1045,110 +1147,123 @@ msgstr "Zkonvertovat film do AVIPH264"
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:298
-#: GUI/uDownloadList.pas:313
+#: GUI/uDownloadList.pas:284
+#: GUI/uDownloadList.pas:294
 msgid "File already exists."
 msgstr "Soubor už existuje."
 
 #. GUI: Check for a new version wasn't made yet - or failed.
-#: GUI/VCL/guiAboutVCL.pas:125
-#: GUI/WinAPI/guiAboutWINAPI.pas:219
+#. Label "Newest version:"
+#: GUI/VCL/guiAboutVCL.pas:128
+#: GUI/WinAPI/guiAboutWINAPI.pas:226
 msgid "checking..."
 msgstr "zjišťuji..."
 
-#. GUI: confirmation before quitting YTD
-#: GUI/VCL/guiMainVCL.pas:302
-msgid ""
-"There are downloads in progress\n"
-"Do you really want to quit?"
-msgstr ""
-"Jsou aktivní downloady.\n"
-"Opravdu chcete program ukončit?"
-
-#: GUI/VCL/guiMainVCL.pas:332
-msgid ""
-"A newer version (%s) is available.\n"
-"Do you want to download it?"
-msgstr ""
-"K dispozici je nová verze (%s).\n"
-"Chcete ji stáhnout?"
-
-#. Download thread state: Paused
-#. Download thread state: Paused
-#: GUI/VCL/guiMainVCL.pas:419
-#: GUI/VCL/guiMainVCL.pas:430
-msgid "Paused"
-msgstr "Pozastaveno"
-
-#. GUI: User wants to add a new URL
-#: GUI/VCL/guiMainVCL.pas:484
-msgid "Enter video URL:"
-msgstr "Zadejte URL videa:"
-
-#: GUI/VCL/guiMainVCL.pas:486
-msgid ""
-"This URL is not supported.\n"
-"See the documenation for supported URLs."
-msgstr ""
-"Tato URL není podporována.\n"
-"Seznam podporovaných URL je uveden v dokumentaci."
-
-#. GUI: User wants to delete URL(s)
-#: GUI/VCL/guiMainVCL.pas:494
-msgid "Do you really want to delete selected transfer(s)?"
-msgstr "Opravdu chcete smazat vybrané přenosy?"
-
-#. GUI: User wants to abort transfers
-#: GUI/VCL/guiMainVCL.pas:522
-msgid "Do you really want to stop selected transfer(s)?"
-msgstr "Opravdu chcete zastavit vybrané přenosy?"
-
-#: GUI/VCL/guiMainVCL.pas:536
-msgid "Do you really want to report a bug for this transfer?"
-msgstr "Opravdu chcete pro tento odkaz nahlásit chybu?"
-
-#: GUI/VCL/guiMainVCL.pas:566
-msgid "Convert selected files with"
-msgstr "Zkonvertovat zvolené soubory pomocí"
-
-#: GUI/VCL/guiMainVCL.pas:595
-msgid "Automatically convert with"
-msgstr "Automaticky konvertovat pomocí"
-
-#: GUI/VCL/guiMainVCL.pas:619
-#: GUI/VCL/guiMainVCL.pas:804
-msgid ""
-"No supported URLs found.\n"
-"See the documenation for supported URLs."
-msgstr ""
-"Nebyla nalezena žádná podporovaná URL.\n"
-"Seznam podporovaných URL je uveden v dokumentaci."
-
-#. GUI: User wants to add links from a HTML page
-#: GUI/VCL/guiMainVCL.pas:834
-msgid "Enter page URL:"
-msgstr "Zadejte URL stránky:"
-
 #. Programmer's name for it: SSelectDirectory
-#: Lib/Pepak/uDialogs.pas:17
+#: Lib/Pepak/uDialogs.pas:119
 msgid "Select a directory"
 msgstr "Zvolte adresář pro downloady"
 
-#. Programmer's name: FONT 8
-#. Programmer's name: FONT 8
-#: GUI/WinAPI/guiAboutWINAPI.rc:21
-#: GUI/WinAPI/guiMainWINAPI.rc:21
-msgid "Ms Shell Dlg"
-msgstr "Ms Shell Dlg"
+#~ msgid "Ms Shell Dlg"
+#~ msgstr "Ms Shell Dlg"
+#~ msgid "0.60"
+#~ msgstr "0.60"
 
-#. Programmer's name: LTEXT
-#: GUI/WinAPI/guiAboutWINAPI.rc:27
-msgid "0.60"
-msgstr "0.60"
+#, fuzzy
+#~ msgid "Add new URL\tIns"
+#~ msgstr "Přidat URL"
+
+#, fuzzy
+#~ msgid "Add URLs from Clipboard\tCTRL+V"
+#~ msgstr "Přidat URL ze schránky"
+
+#, fuzzy
+#~ msgid "Add URLs from file\tCtrl+O"
+#~ msgstr "Přidat URL ze souboru"
+
+#, fuzzy
+#~ msgid "Add URLs from HTML file\tCtrl+H"
+#~ msgstr "Přidat URL z HTML souboru"
+
+#, fuzzy
+#~ msgid "Add URLs from HTML page\tCtrl+P"
+#~ msgstr "Přidat URL z HTML stránky"
+
+#, fuzzy
+#~ msgid "Save URL list to file\tCtrl+S"
+#~ msgstr "Uložit seznam URL"
+
+#, fuzzy
+#~ msgid "Start/Pause/Resume\tSpace"
+#~ msgstr "Start/Pauza/Pokračovat"
+
+#, fuzzy
+#~ msgid "Stop\tEsc"
+#~ msgstr "Zastavit"
+
+#, fuzzy
+#~ msgid "Convert\tCtrl+N"
+#~ msgstr "Konvertor:"
+
+#, fuzzy
+#~ msgid "Delete URL\tDel"
+#~ msgstr "Smazat URL"
+
+#, fuzzy
+#~ msgid "Copy URLs to Clipboard\tCtrl+C"
+#~ msgstr "Zkopírovat URL do schránky"
+
+#, fuzzy
+#~ msgid "Select All\tCtrl+A"
+#~ msgstr "Vybrat vše"
+
+#, fuzzy
+#~ msgid "Refresh\tF5"
+#~ msgstr "Obnovit"
+
+#, fuzzy
+#~ msgid "Report a bug\tCtrl+Alt+B"
+#~ msgstr "Nahlásit chybu"
+
+#, fuzzy
+#~ msgid "About\tF1"
+#~ msgstr "O aplikaci"
+
+#, fuzzy
+#~ msgid "LabelPrompt"
+#~ msgstr "LabelVersion"
+
+#, fuzzy
+#~ msgid "OK"
+#~ msgstr "&OK"
+
+#, fuzzy
+#~ msgid "Cancel"
+#~ msgstr "&Storno"
+
+#, fuzzy
+#~ msgid "Invalid property value"
+#~ msgstr "Chybná stránka informací o médiu."
 
 #, fuzzy
 #~ msgid "Invalid method name"
 #~ msgstr "Chybná stránka informací o médiu."
+#~ msgid "FormYTD"
+#~ msgstr "FormYTD"
+#~ msgid "Autodownload"
+#~ msgstr "Autodownload"
+#~ msgid "Choose download directory"
+#~ msgstr "Vyberte cílový adresář pro downloady"
+#~ msgid "Automatically overwrite existing files"
+#~ msgstr "Automaticky přepisovat existující soubory"
+#~ msgid "Choose a converter"
+#~ msgstr "Vybrat konvertor"
+#~ msgid ""
+#~ "Choose a converter which will be automatically applied to all downloaded "
+#~ "movies."
+#~ msgstr ""
+#~ "Vybrat konvertor, který bude automaticky použit na všechny stáhnuté "
+#~ "soubory."
 #~ msgid "ToolButton2"
 #~ msgstr "ToolButton2"
 #~ msgid "Failed to find embedded object."

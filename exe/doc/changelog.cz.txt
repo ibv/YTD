@@ -1,6 +1,54 @@
 CHANGELOG
 ---------
 
+  v0.63
+
+    * Nový poskytovatel: Beeg.com (porno).
+
+    * Nový poskytovatel: Brazzers.com (porno).
+
+    * Nový poskytovatel: Fishki.ru.
+
+      Pozn.: Je sice možné detekovat název, jak je napsaný ve stránce, ale
+      vznikl by problém, jak z nìj udìlat funkèní název souboru - na to by
+      musel YTD být zkompilovaný pomocí Delphi 2009, což má øadu nevýhod
+      (velikost programu, nepodpora pro stará Windows atd.). Proto se zatím
+      pøebírá pùvodní název souboru a titulek videa se ignoruje. Pokud máte
+      nìjaký nápad, jak ruštinu jednoduše a spolehlivì pøevést do latinky,
+      rád ho implementuji.
+
+    * Nový poskytovatel: Hasici150.tv.
+
+    * Nový poskytovatel: Loupak.cz.
+
+    * Nový poskytovatel: NaStojaka.cz.
+
+    * Nový poskytovatel: NBC.com.
+
+    * Nový poskytovatel: Prima-Cool.cz.
+
+    * Nový poskytovatel: RozzlobeniMuzi.com (server obsahuje i porno materiál).
+
+    * Nova.cz: Pøidána detekce pøípadu, kdy bylo video ze serveru odstranìno
+      (napø. http://archiv.nova.cz/multimedia/pribehy-bez-scenare-zivot-na-vlasku-sedmy-dil.html).
+
+    * GUI: Odstranìny ikonky pro jednotlivá nastavení; místo nich je nový
+      samostatný formuláø, na kterém jsou všechna grafická nastavení na 
+      jednom místì (existuje spousta dalších nastavení, která nejdou mìnit
+      graficky a jsou uvedena v dokumentaci). 
+      
+      Vedlejším efektem je, že i v grafické verzi je nyní možné nastavit 
+      režim "automaticky pøejmenovávat" pro pøípad, že soubor se stejným 
+      názvem už existuje.
+
+    * Dokumentace doplnìna o instrukce ke kompilaci programu ze zdrojových
+      kódù. Kompilaèní skripty byly pøi té pøíležitosti vyèištìny (napø. už
+      není potøeba øíkat, jakou verzi Delphi chcete použít).
+
+    * Opravena chyba v AMFString.
+
+
+
   v0.62
 
     * Upravena komponenta pro práci s XML soubory, aby správnì (podle XML

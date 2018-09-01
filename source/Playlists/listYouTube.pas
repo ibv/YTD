@@ -85,7 +85,7 @@ end;
 
 class function TPlaylist_YouTube.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + ClassName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
 constructor TPlaylist_YouTube.Create(const AMovieID: string);

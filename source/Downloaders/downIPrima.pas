@@ -52,7 +52,6 @@ type
     protected
       function GetMovieInfoUrl: string; override;
     public
-      class function UltimateProvider: string; override;
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -75,11 +74,6 @@ const
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
 
 { TDownloader_iPrima }
-
-class function TDownloader_iPrima.UltimateProvider: string;
-begin
-  Result := inherited Provider;
-end;
 
 class function TDownloader_iPrima.Provider: string;
 begin

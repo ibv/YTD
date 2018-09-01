@@ -50,6 +50,7 @@ const
   THREADSTATE_FINISHED = 'Finished'; // GUI: Download thread state: Download finished successfully
   THREADSTATE_FAILED = 'Failed'; // GUI: Download thread state: Download failed
   THREADSTATE_ABORTED = 'Aborted'; // GUI: Download thread state: Download was aborted by user
+  THREADSTATE_PAUSED = 'Paused'; // GUI: Download thread state: Download was paused by user
 
 {$IFDEF CONVERTERS}
 const
@@ -64,7 +65,8 @@ const
 
 {$IFDEF CONVERTERSMUSTBEACTIVATED}
 const
-  CONVERTERS_INACTIVE_WARNING = 'Converters are not activated.'#10#10 +
+  CONVERTERS_INACTIVE_WARNING =
+    'Converters are not activated.'#10#10 +
     'You must activate them through manually editing'#10 +
     'the configuration file. You can find the steps'#10 +
     'needed in the documenation.'#10#10 +
@@ -74,6 +76,41 @@ const
     'and instead complained that converters don''t work.';
 {$ENDIF}
 {$ENDIF}
+
+const
+  MAINFORM_EDIT_CONFIG =
+    'Config file will open now, but please do not edit'#10 +
+    'it right away: YouTube Downloader will overwrite'#10 +
+    'the file before it quits, so any changes made would'#10 +
+    'be lost. First quit YTD and only then start editing'#10 +
+    'the file.';
+  MAINFORM_CAN_CLOSE =
+    'There are downloads in progress'#10 +
+    'Do you really want to quit?';
+  MAINFORM_NEW_VERSION_AVAILABLE =
+    'A newer version (%s) is available.'#10 +
+    'Do you want to download it?';
+  MAINFORM_ENTER_VIDEO_URL =
+    'Enter video URL:';
+  MAINFORM_ENTER_PAGE_URL =
+    'Enter page URL:';
+  MAINFORM_URL_NOT_SUPPORTED =
+    'This URL is not supported.'#10 +
+    'See the documenation for supported URLs.';
+  MAINFORM_NO_SUPPORTED_URL =
+    'No supported URLs found.'#10 +
+    'See the documenation for supported URLs.';
+  MAINFORM_DELETE_TRANSFERS =
+    'Do you really want to delete selected transfer(s)?';
+  MAINFORM_STOP_TRANSFERS =
+    'Do you really want to stop selected transfer(s)?';
+  MAINFORM_REPORT_BUG =
+    'Do you really want to report a bug for this transfer?';
+  MAINFORM_CONVERT_WITH =
+    'Convert selected files with';
+  MAINFORM_AUTOCONVERT_WITH =
+    'Automatically convert with';
+
 
 {gnugettext: reset}
 
@@ -86,6 +123,17 @@ const
   ConvertThreadStates: array[TConvertThreadState] of string
               = (CONVERTTHREADSTATE_WAITING, CONVERTTHREADSTATE_CONVERTING, CONVERTTHREADSTATE_FINISHED, CONVERTTHREADSTATE_FAILED, CONVERTTHREADSTATE_FAILEDRUN);
 {$ENDIF}
+
+const
+  ThreadStateImgs: array[TDownloadThreadState] of integer
+                 = (-1, 3, 3, 2, 1, 0);
+
+{$IFDEF CONVERTERS}
+const
+  ConvertThreadStateImgs: array[TConvertThreadState] of integer
+                 = (4, 6, 5, 1, 1);
+{$ENDIF}
+
 
 implementation
 

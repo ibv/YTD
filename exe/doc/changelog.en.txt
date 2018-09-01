@@ -1,6 +1,53 @@
 CHANGELOG
 ---------
 
+  v0.63
+
+    * New provider: Beeg.com (porn).
+
+    * New provider: Brazzers.com (porn).
+
+    * New provider: Fishki.ru.
+
+      Note: While it is possible to capture movie title from the page, I am not
+      sure how to create a valid filename from it without compiling YTD with
+      Delphi 2009 (which would have several drawbacks, including program size
+      and incompatibility with old Windows). For now the original filename is
+      used and the video title is ignored. If you have a better solution for 
+      this problem, I will gladly implement it.
+
+    * New provider: Hasici150.tv.
+
+    * New provider: Loupak.cz.
+
+    * New provider: NaStojaka.cz.
+
+    * New provider: NBC.com.
+
+    * New provider: Prima-Cool.cz.
+
+    * New provider: RozzlobeniMuzi.com (some porn).
+
+    * Nova.cz: Media removed from the servers are now detected as such (e.g.
+      (http://archiv.nova.cz/multimedia/pribehy-bez-scenare-zivot-na-vlasku-sedmy-dil.html).
+
+    * GUI: The separate icons for different options were removed; instead,
+      a brand new Options dialog is available, where you'll find all options
+      at one place (that is, all graphically-editable options; there are many
+      other options described in the documentation). 
+      
+      One side-effect of this change is that the graphical version now has the
+      same "automatically rename" action to be used if an existing filename
+      is found as the CLI version.
+
+    * Notes about compiling from source code were added to the documentation.
+      The compile scripts were cleaned up (e.g. it's no longer necessary to
+      tell the script which version of Delphi should be used for building).
+
+    * Fixed a bug in AMFString.
+
+
+
   v0.62
 
     * Fixed a XML component to correctly (as per XML specs) handle character

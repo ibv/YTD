@@ -164,26 +164,31 @@ begin
           SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
         else
           try
-            GetXmlAttr(Servers, 'flvserver', 'url', FlvServer);
-            GetXmlAttr(Videos, 'item', 'src', FlvStream);
-            GetXmlAttr(Videos, 'item', 'txt', FlvName);
-            if FlvName = '' then
-              FlvName := MediaID;
-            if FlvServer = '' then
-              SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
-            else if FlvStream = '' then
-              SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_STREAM))
+            if Videos.Root.Name = 'error' then
+              SetLastErrorMsg(_(ERR_MEDIA_REMOVED))
             else
               begin
-              SetName(FlvName);
-              {$IFNDEF LOW_QUALITY}
-              FlvStream := 'mp4:' + FlvStream;
-              {$ENDIF}
-              MovieUrl := FlvServer + '/' + FlvStream;
-              AddRtmpDumpOption('r', MovieURL);
-              AddRtmpDumpOption('y', FlvStream);
-              Result := True;
-              SetPrepared(True);
+              GetXmlAttr(Servers, 'flvserver', 'url', FlvServer);
+              GetXmlAttr(Videos, 'item', 'src', FlvStream);
+              GetXmlAttr(Videos, 'item', 'txt', FlvName);
+              if FlvName = '' then
+                FlvName := MediaID;
+              if FlvServer = '' then
+                SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_SERVER))
+              else if FlvStream = '' then
+                SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_STREAM))
+              else
+                begin
+                SetName(FlvName);
+                {$IFNDEF LOW_QUALITY}
+                FlvStream := 'mp4:' + FlvStream;
+                {$ENDIF}
+                MovieUrl := FlvServer + '/' + FlvStream;
+                AddRtmpDumpOption('r', MovieURL);
+                AddRtmpDumpOption('y', FlvStream);
+                Result := True;
+                SetPrepared(True);
+                end;
               end;
           finally
             Videos.Free;

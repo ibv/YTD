@@ -42,10 +42,10 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList, ActnList,
-  ToolWin, CommDlg, ShellApi,
+  ToolWin, CommDlg, ShellApi, CommCtrl,
   SynaCode,
-  uLanguages, uMessages, uOptions, uStringUtils,
-  guiOptions, uDialogs,
+  uLanguages, uMessages, uOptions, uStringUtils, uCompatibility,
+  guiOptions, guiFunctions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
 {$IFDEF SYSTRAY}
@@ -68,7 +68,6 @@ type
     actCopyUrlsToClipboard: TAction;
     actCopyUrlsToClipboard2: TAction;
     actRefresh: TAction;
-    actAutoDownload: TAction;
     actSelectAll: TAction;
     DownloadsPopup: TPopupMenu;
     mnuAddNewUrl: TMenuItem;
@@ -78,7 +77,6 @@ type
     mnuStart: TMenuItem;
     mnuStop: TMenuItem;
     mnuSelectAll: TMenuItem;
-    mnuAutoDownload: TMenuItem;
     mnuRefresh: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -91,16 +89,9 @@ type
     ToolDelete: TToolButton;
     ToolCopy: TToolButton;
     ToolButton9: TToolButton;
-    ToolAutodownload: TToolButton;
     ToolRefresh: TToolButton;
     StatusBar1: TStatusBar;
-    actDownloadDirectory: TAction;
     N3: TMenuItem;
-    mnuSetDownloadDir: TMenuItem;
-    ToolDownloadDir: TToolButton;
-    actAutoOverwrite: TAction;
-    ToolAutooverwrite: TToolButton;
-    mnuAutoOverwrite: TMenuItem;
     actAddUrlsFromHTML: TAction;
     OpenHtmlFile: TOpenDialog;
     actAddUrlsFromHTMLfile: TAction;
@@ -122,14 +113,12 @@ type
     actAbout: TAction;
     ToolButton3: TToolButton;
     ToolAbout: TToolButton;
-    N5: TMenuItem;
     mnuAbout: TMenuItem;
     actConvert: TAction;
     ToolConvert: TToolButton;
     mnuConvert: TMenuItem;
-    actSelectConverter: TAction;
-    ToolSelectConverter: TToolButton;
-    mnuSelectConverter: TMenuItem;
+    ToolOptions: TToolButton;
+    mnuOptions: TMenuItem;
     actReportBug: TAction;
     ToolReportBug: TToolButton;
     actDonate: TAction;
@@ -140,6 +129,7 @@ type
     ToolEditConfigFile: TToolButton;
     ToolButton4: TToolButton;
     Editconfigfile1: TMenuItem;
+    actOptions: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -169,6 +159,7 @@ type
     procedure actReportBugExecute(Sender: TObject);
     procedure actDonateExecute(Sender: TObject);
     procedure actEditConfigFileExecute(Sender: TObject);
+    procedure actOptionsExecute(Sender: TObject);
   protected
     fLoading: boolean;
     {$IFDEF SYSTRAY}
@@ -190,13 +181,11 @@ type
     procedure DownloadListChange(Sender: TObject); virtual;
     procedure DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem); virtual;
     procedure DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem); virtual;
-    function PrettySize(Size: int64): string; virtual;
     function AddTask(const Url: string): boolean; virtual;
     procedure AddTaskFromHTML(const Source: string); virtual;
     procedure DeleteTask(Index: integer); virtual;
     procedure StartPauseResumeTask(Index: integer); virtual;
     procedure StopTask(Index: integer); virtual;
-    procedure ReportBug(Index: integer); virtual;
     {$IFDEF CONVERTERS}
     procedure ConvertTask(Index: integer; const ConverterID: string); virtual;
     {$ENDIF}
@@ -206,31 +195,14 @@ type
   public
   end;
 
-var
-  FormYTD: TFormYTD;
+var FormYTD: TFormYTD;
 
 implementation
 
 {$R *.DFM}
 
 uses
-  guiConsts, guiAboutVCL, guiConverterVCL;
-
-{$IFNDEF FPC}
-const
-  ThreadStateImgs: array[TDownloadThreadState] of integer
-                 = (-1, 3, 3, 2, 1, 0);
-
-  {$IFDEF CONVERTERS}
-  ConvertThreadStateImgs: array[TConvertThreadState] of integer
-                 = (4, 6, 5, 1, 1);
-  {$ENDIF}
-
-{$ENDIF}
-
-const
-  DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
-  BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&url=%s&error=%s';
+  guiConsts, guiAboutVCL, guiConverterVCL, guiOptionsVCL;
 
 { TFormYTD }
 
@@ -238,7 +210,7 @@ procedure TFormYTD.FormCreate(Sender: TObject);
 begin
   fLoading := True;
   try
-    Caption := Application.Title + ' v' + {$INCLUDE 'ytd.version'} ;
+    Caption := APPLICATION_CAPTION;
     Options := TYTDOptionsGUI.Create;
     UseLanguage(Options.Language);
     {$IFDEF GETTEXT}
@@ -252,7 +224,6 @@ begin
     DownloadList.OnFinished := DownloadListItemChange;
     {$IFDEF CONVERTERS}
     DownloadList.OnConverted := DownloadListItemChange;
-    actSelectConverter.Checked := Options.SelectedConverterID <> '';
     {$ELSE}
     actConvert.Visible := False;
     actConvert.Enabled := False;
@@ -261,8 +232,6 @@ begin
     {$ENDIF}
     DownloadList.Options := Options;
     LoadSettings;
-    actAutoDownload.Checked := DownloadList.Options.AutoStartDownloads;
-    actAutoOverwrite.Checked := DownloadList.Options.OverwriteMode = omAlways;
     {$IFDEF SYSTRAY}
     Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
     fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
@@ -275,6 +244,8 @@ begin
     Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
     Application.OnMinimize := ApplicationMinimize;
     {$ENDIF}
+    // Use double-buffered listview (removes flickering)
+    SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
   finally
     fLoading := False;
     end;
@@ -299,7 +270,7 @@ begin
   if DownloadList.DownloadingCount <= 0 then
     CanClose := True
   else
-    CanClose := (MessageDlg(_('There are downloads in progress'#10'Do you really want to quit?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes); // GUI: confirmation before quitting YTD
+    CanClose := (MessageDlg(_(MAINFORM_CAN_CLOSE), mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes);
 end;
 
 procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -329,7 +300,7 @@ begin
   if Version > {$INCLUDE 'YTD.version'} then
     begin
     actReportBug.Enabled := False;
-    if MessageDlg(Format(_('A newer version (%s) is available.'#10'Do you want to download it?'), [Version]), mtInformation, [mbYes, mbNo], 0) = mrYes then
+    if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version]), mtInformation, [mbYes, mbNo], 0) = mrYes then
       ShellExecute(Handle, 'open', PChar(Url), nil, nil, SW_SHOWNORMAL);
     end;
 end;
@@ -370,120 +341,94 @@ begin
 end;
 
 procedure TFormYTD.DownloadsData(Sender: TObject; Item: TListItem);
-
-  function GetProgressStr(Item: TDownloadListItem): string;
-    var n: int64;
-    begin
-      Result := PrettySize(Item.DownloadedSize);
-      if Item.TotalSize > 0 then
-        begin
-        n := 1000*Item.DownloadedSize div Item.TotalSize;
-        Result := Format('%s (%d.%d%%)', [Result, n div 10, n mod 10]);
-        end
-    end;
-
 var DlItem: TDownloadListItem;
     sState, sTitle, sSize, sProgress: string;
     {$IFNDEF FPC}
     iStateImage: integer;
     {$ENDIF}
 begin
-  if Item.Index < DownloadList.Count then
-    begin
-    DlItem := DownloadList[Item.Index];
-    Item.Caption := DownloadList.Urls[Item.Index];
-    {$IFNDEF FPC}
-    Item.StateIndex := Integer(DlItem.State);
-    {$ENDIF}
-    Item.SubItems.Add(DlItem.Downloader.Provider);
-    sState := _(ThreadStates[DlItem.State]);
-    {$IFNDEF FPC}
-    iStateImage := ThreadStateImgs[DlItem.State];
-    {$ENDIF}
-    sTitle := '';
-    sSize := '';
-    sProgress := '';
-    if DlItem.Downloader.Prepared then
+  if DownloadList <> nil then
+    if Item.Index < DownloadList.Count then
       begin
-      sTitle := DlItem.Downloader.Name;
-      if DlItem.TotalSize >= 0 then
-        sSize := PrettySize(DlItem.TotalSize);
-      end;
-    case DlItem.State of
-      dtsWaiting:
-        ;
-      dtsPreparing:
+      DlItem := DownloadList[Item.Index];
+      Item.Caption := DownloadList.Urls[Item.Index];
+      {$IFNDEF FPC}
+      Item.StateIndex := Integer(DlItem.State);
+      {$ENDIF}
+      Item.SubItems.Add(DlItem.Downloader.Provider);
+      sState := _(ThreadStates[DlItem.State]);
+      {$IFNDEF FPC}
+      iStateImage := ThreadStateImgs[DlItem.State];
+      {$ENDIF}
+      sTitle := '';
+      sSize := '';
+      sProgress := '';
+      if DlItem.Downloader.Prepared then
         begin
-        if DlItem.Paused then
-          begin
-          sState := _('Paused'); // Download thread state: Paused
-          {$IFNDEF FPC}
-          iStateImage := 4;
-          {$ENDIF}
-          end;
+        sTitle := DlItem.Downloader.Name;
+        if DlItem.TotalSize >= 0 then
+          sSize := PrettySize(DlItem.TotalSize);
         end;
-      dtsDownloading:
-        begin
-        sProgress := GetProgressStr(DlItem);
-        if DlItem.Paused then
+      case DlItem.State of
+        dtsWaiting:
+          ;
+        dtsPreparing:
           begin
-          sState := _('Paused'); // Download thread state: Paused
-          {$IFNDEF FPC}
-          iStateImage := 4;
-          {$ENDIF}
-          end;
-        end;
-      dtsFinished:
-        begin
-        {$IFDEF CONVERTERS}
-          if (DlItem.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
+          if DlItem.Paused then
             begin
-            sState := _(ConvertThreadStates[DlItem.ConvertState]);
+            sState := _(THREADSTATE_PAUSED); // Download thread state: Paused
             {$IFNDEF FPC}
-            iStateImage := ConvertThreadStateImgs[DlItem.ConvertState];
+            iStateImage := 4;
             {$ENDIF}
             end;
-        {$ENDIF}
+          end;
+        dtsDownloading:
+          begin
+          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize);
+          if DlItem.Paused then
+            begin
+            sState := _(THREADSTATE_PAUSED); // Download thread state: Paused
+            {$IFNDEF FPC}
+            iStateImage := 4;
+            {$ENDIF}
+            end;
+          end;
+        dtsFinished:
+          begin
+          {$IFDEF CONVERTERS}
+            if (DlItem.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
+              begin
+              sState := _(ConvertThreadStates[DlItem.ConvertState]);
+              {$IFNDEF FPC}
+              iStateImage := ConvertThreadStateImgs[DlItem.ConvertState];
+              {$ENDIF}
+              end;
+          {$ENDIF}
+          end;
+        dtsFailed:
+          sProgress := DlItem.ErrorMessage + ' (' + DlItem.ErrorClass + ')';
+        dtsAborted:
+          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize);
         end;
-      dtsFailed:
-        sProgress := DlItem.ErrorMessage + ' (' + DlItem.ErrorClass + ')';
-      dtsAborted:
-        sProgress := GetProgressStr(DlItem);
+      {$IFNDEF FPC}
+      Item.StateIndex := iStateImage;
+      {$ENDIF}
+      Item.SubItems.Add(sState);
+      Item.SubItems.Add(sTitle);
+      Item.SubItems.Add(sSize);
+      Item.SubItems.Add(sProgress);
       end;
-    {$IFNDEF FPC}
-    Item.StateIndex := iStateImage;
-    {$ENDIF}
-    Item.SubItems.Add(sState);
-    Item.SubItems.Add(sTitle);
-    Item.SubItems.Add(sSize);
-    Item.SubItems.Add(sProgress);
-    end;
-end;
-
-function TFormYTD.PrettySize(Size: int64): string;
-begin
-  if Size <= 0 then
-    Result := ''
-  else if Size < 10*1e3 then
-    Result := IntToStr(Size) + ' B'
-  else if Size < 10*1e6 then
-    Result := IntToStr(Size div (1 shl 10)) + ' KiB'
-  else if Size < 10*1e9 then
-    Result := IntToStr(Size div (1 shl 20)) + ' MiB'
-  else if Size < 10*1e12 then
-    Result := IntToStr(Size div (1 shl 30)) + ' GiB'
-  else
-    Result := IntToStr(Size div (1 shl 40)) + ' TiB';
 end;
 
 procedure TFormYTD.actAddNewUrlExecute(Sender: TObject);
 var Url: string;
 begin
+  Url := '';
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
-  if InputQuery(APPLICATION_TITLE, _('Enter video URL:'), Url) then // GUI: User wants to add a new URL
+  if InputQuery(APPLICATION_TITLE, _(MAINFORM_ENTER_VIDEO_URL), Url) then
     if not AddTask(Url) then
-      MessageDlg(_('This URL is not supported.'#10'See the documenation for supported URLs.'), mtError, [mbOK], 0);
+      MessageDlg(_(MAINFORM_URL_NOT_SUPPORTED), mtError, [mbOK], 0);
 end;
 
 procedure TFormYTD.actDeleteURLExecute(Sender: TObject);
@@ -491,7 +436,7 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_('Do you really want to delete selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then // GUI: User wants to delete URL(s)
+  if MessageDlg(_(MAINFORM_DELETE_TRANSFERS), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   if Downloads.SelCount = 1 then
     DeleteTask(Downloads.Selected.Index)
@@ -519,7 +464,7 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_('Do you really want to stop selected transfer(s)?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then // GUI: User wants to abort transfers
+  if MessageDlg(_(MAINFORM_STOP_TRANSFERS), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then 
     Exit;
   if Downloads.SelCount = 1 then
     StopTask(Downloads.Selected.Index)
@@ -533,9 +478,9 @@ procedure TFormYTD.actReportBugExecute(Sender: TObject);
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_('Do you really want to report a bug for this transfer?'), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if MessageDlg(_(MAINFORM_REPORT_BUG), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
-  ReportBug(Downloads.Selected.Index);  
+  ReportBug(DownloadList, Downloads.Selected.Index);  
 end;
 
 procedure TFormYTD.actDonateExecute(Sender: TObject);
@@ -563,7 +508,7 @@ begin
     ConverterID := Options.SelectedConverterID
   else
     ConverterID := LastConverterID;
-  if SelectConverter(Options, ConverterID, Self, _('Convert selected files with')) then
+  if SelectConverter(Options, ConverterID, Self, _(MAINFORM_CONVERT_WITH)) then
     begin
     LastConverterID := ConverterID;
     if Downloads.SelCount = 1 then
@@ -590,14 +535,10 @@ begin
     end;
   {$ENDIF}
   ConverterID := Options.SelectedConverterID;
-  actSelectConverter.Checked := ConverterID = '';
-  actSelectConverter.Checked := ConverterID <> '';
-  if SelectConverter(Options, ConverterID, Self, _('Automatically convert with')) then
+  if SelectConverter(Options, ConverterID, Self, _(MAINFORM_AUTOCONVERT_WITH)) then
     begin
     LastConverterID := ConverterID;
     Options.SelectedConverterID := ConverterID;
-    actSelectConverter.Checked := ConverterID = '';
-    actSelectConverter.Checked := ConverterID <> '';
     end;
   {$ENDIF}
 end;
@@ -616,7 +557,7 @@ begin
         if AddTask(L[i]) then
           Inc(n);
       if n = 0 then
-        MessageDlg(_('No supported URLs found.'#10'See the documenation for supported URLs.'), mtError, [mbOK], 0);
+        MessageDlg(_(MAINFORM_NO_SUPPORTED_URL), mtError, [mbOK], 0);
     finally
       L.Free;
       end;
@@ -723,17 +664,6 @@ begin
   DownloadList.Items[Index].Stop;
 end;
 
-procedure TFormYTD.ReportBug(Index: integer);
-var BugReportUrl: string;
-begin
-  BugReportUrl := Format(BUGREPORT_URL,
-                       [ {$INCLUDE 'YTD.version'} ,
-                         EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
-                         EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
-                       ]);
-  ShellExecute(0, 'open', PChar(BugReportUrl), nil, nil, SW_SHOWNORMAL);
-end;
-
 {$IFDEF CONVERTERS}
 procedure TFormYTD.ConvertTask(Index: integer; const ConverterID: string);
 begin
@@ -749,7 +679,6 @@ end;
 procedure TFormYTD.actAutoDownloadExecute(Sender: TObject);
 begin
   DownloadList.Options.AutoStartDownloads := not DownloadList.Options.AutoStartDownloads;
-  actAutoDownload.Checked := DownloadList.Options.AutoStartDownloads;
   SaveSettings;
   if DownloadList.Options.AutoStartDownloads then
     DownloadList.StartAll;
@@ -782,7 +711,6 @@ begin
     DownloadList.Options.OverwriteMode := omAsk
   else
     DownloadList.Options.OverwriteMode := omAlways;
-  actAutoOverwrite.Checked := DownloadList.Options.OverwriteMode = omAlways;
   SaveSettings;
 end;
 
@@ -801,7 +729,7 @@ begin
           if AddTask(L[i]) then
             Inc(n);
       if n = 0 then
-        MessageDlg(_('No supported URLs found.'#10'See the documenation for supported URLs.'), mtError, [mbOK], 0);
+        MessageDlg(_(MAINFORM_NO_SUPPORTED_URL), mtError, [mbOK], 0);
     finally
       L.Free;
       end;
@@ -831,7 +759,7 @@ var Url: string;
 begin
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
-  if InputQuery(APPLICATION_TITLE, _('Enter page URL:'), Url) then // GUI: User wants to add links from a HTML page
+  if InputQuery(APPLICATION_TITLE, _(MAINFORM_ENTER_PAGE_URL), Url) then
     AddTaskFromHTML(Url);
 end;
 
@@ -867,7 +795,25 @@ end;
 procedure TFormYTD.actEditConfigFileExecute(Sender: TObject);
 begin
   Options.Save;
+  MessageDlg(_(MAINFORM_EDIT_CONFIG), mtWarning, [mbOK], 0);
   ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TFormYTD.actOptionsExecute(Sender: TObject);
+var F: TFormOptions;
+begin
+  F := TFormOptions.Create(Self);
+  try
+    F.Options := Options;
+    if F.ShowModal = mrOK then
+      begin
+      SaveSettings;
+      if DownloadList.Options.AutoStartDownloads then
+        DownloadList.StartAll;
+      end;
+  finally
+    F.Free;
+    end;
 end;
 
 end.

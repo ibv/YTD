@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.62                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.63                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -144,6 +144,16 @@ SUPPORTED PROVIDERS
  - FileCabi.net:
      - http://www.filecabi.net/video/hiddendogstopsrobbery.html
 
+ - Fishki.net:
+     - http://fishki.net/comment.php?id=79682
+
+     Note: While it is possible to capture movie title from the page, I am not
+     sure how to create a valid filename from it without compiling YTD with
+     Delphi 2009 (which would have several drawbacks, including program size
+     and incompatibility with old Windows). For now the original filename is
+     used and the video title is ignored. If you have a better solution for 
+     this problem, I will gladly implement it.
+
  - Flickr.com:
      - http://www.flickr.com/photos/landersz/2403626167/
 
@@ -173,8 +183,15 @@ SUPPORTED PROVIDERS
  - Guba.com:
      - http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 
+ - Hasici150.tv:
+     - http://www.hasici150.tv/cz/Videogalerie/Slavnostni-vyhlaseni-Extraliga-CR-v-PU-2010_____93/
+
+     Note: This provider uses RTMP protocol. See the note below.
+
  - iHned.cz:
      - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - ima.umn.edu:
      - http://www.ima.umn.edu/videos/?id=1187
@@ -200,6 +217,9 @@ SUPPORTED PROVIDERS
 
  - LiveVideo.com:
      - http://www.livevideo.com/liveshow/brian3maria
+
+ - Loupak.cz:
+     - http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
 
  - Markiza.sk:
      - http://video.markiza.sk/archiv-tv-markiza/dnes/36829
@@ -253,8 +273,16 @@ SUPPORTED PROVIDERS
  - N-joy.cz:
      - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
 
+ - NaStojaka.cz:
+     - http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
+
  - NavratDoReality.cz:
      - http://navratdoreality.cz/?p=view&id=5766
+
+ - NBC.com:
+     - http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
+
+     Note: This provider uses RTMP protocol. See the note below.
 
  - NothingToxic.com:
      - http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
@@ -282,7 +310,10 @@ SUPPORTED PROVIDERS
  - PrazdninyVTelci.cz:
      - http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
 
-     Note: This provider uses  over HTTP protocol. See the note below.
+     Note: This provider uses RTSP over HTTP protocol. See the note below.
+
+ - Prima-Cool.cz:
+     - http://www.prima-cool.cz/video/drsnejsi-simpsonovi
 
  - PublicTV.cz:
      - http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
@@ -306,8 +337,13 @@ SUPPORTED PROVIDERS
      Note: Each page can contain several files. In such a case, all files
      are downloaded.
 
- - RTA.cz:
+ - RozzlobeniMuzi.com:
+     - http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 
+     Note: Because the site contains a substantial amount of porn, it is not
+     included in the Lite version of YouTube Downloader.
+
+ - RTA.cz:
      - http://www.rta.cz/?article=140331
      - http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 
@@ -446,6 +482,8 @@ SUPPORTED PROVIDERS
 
 Supported porn providers:
 
+ - Beeg.com
+ - Brazzers.com
  - Dachix.com
  - EmpFlix.com
  - ExtremeTube.com
@@ -995,6 +1033,62 @@ Support is provided at:
   http://www.pepak.net/download/youtube-downloader/
 - YouTube Downloader Support page: 
   http://www.pepak.net/download/youtube-downloader-podpora/
+
+
+
+COMPILING
+---------
+
+Source code to YouTube Downloader can be downloaded from the program's
+homepage. The code is completely self-contained in the sense that it doesn't
+require any third-party components to be installed - it is created to make do
+with default components.
+
+These compilers are supported:
+
+- Delphi 5.0
+- Delphi 2009
+- FreePascal
+
+It should be possible to compile the program with other versions of Delphi
+(newer than 5.0), but some minor modifications to the source code may be
+necessary.
+
+The recommended way to build YouTube Downloader is by running the BUILD.BAT
+script in SOURCE directory. This script will handle all dependencies and
+compiler-specific requirements. It can accept a number of arguments:
+
+  -? ............ Show the help screen.
+  -h ............ Show the help screen.
+
+  -delphi ....... Compile with Delphi (any version). DCC32 must be in the PATH.
+  -fpc .......... Compile with FreePascal. FPC must be in the PATH.
+
+  -cli .......... Include the command-line version in YTD.
+  -nocli ........ Remove the command-line version from YTD.
+  -gui .......... Include the graphical version in YTD.
+  -nogui ........ Remove the graphical version from YTD.
+  -xxx .......... Include support for porn providers in YTD.
+  -noxxx ........ Remove support for porn providers from YTD.
+
+  (and several others, which are undocumented and unsupported)
+
+Compiling from Delphi IDE is also possible, e.g. to facilitate debuging, but
+each version of Delphi requires somewhat different settings of directories
+in Project Options; specifically, the Search Path must be updated according
+to your version of Delphi:
+
+- Directory "lib\pepak\delphi5" MUST be the first path in Delphi 5.0 (and,
+  untested but likely, Delphi 6.0) and MUST NOT be used at all in newer
+  versions.
+- Path to the DxGetText library must be:
+  - Delphi 5.0 - "lib\dxgettext\delphi5"
+  - Delphi 2009 - "lib\dxgettext\delphi2009"
+  - FreePascal - "lib\dxgettext\fpc"
+  - others - either "lib\dxgettext" (versions between 5.0 and 2009), or the
+    same as with Delphi 2009 (Delphi 2010 and newer).
+
+The graphical interface is not supported for FreePascal.
 
 
 
