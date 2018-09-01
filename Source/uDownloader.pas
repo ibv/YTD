@@ -11,6 +11,8 @@ type
   EDownloaderError = class(Exception);
 
   TDownloaderProgressEvent = procedure(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean) of object;
+  TDownloaderFileNameValidateEvent = procedure(Sender: TObject; var FileName: string; var Valid: boolean) of object;
+  TDownloaderMoreUrlsEvent = procedure(Sender: TObject; const Url: string) of object;
 
   TDownloaderClass = class of TDownloader;
   TDownloader = class
@@ -22,6 +24,9 @@ type
       fHttp: THttpSend;
       fDestinationPath: string;
       fMovieID: string;
+      fFileName: string;
+      fOnFileNameValidate: TDownloaderFileNameValidateEvent;
+      fOnMoreUrls: TDownloaderMoreUrlsEvent;
     protected
       function GetName: string; virtual;
       procedure SetName(const Value: string); virtual;
@@ -29,7 +34,9 @@ type
       procedure SetLastErrorMsg(const Value: string); virtual;
       procedure SetMovieID(const Value: string); virtual;
     protected
+      function GetDefaultFileName: string; virtual;
       function GetFileName: string; virtual;
+      procedure SetFileName(const Value: string); virtual;
       function GetFileNameExt: string; virtual;
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
@@ -38,6 +45,8 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
       function DownloadPage(Http: THttpSend; Url: string; UsePost: boolean = False): boolean; overload; virtual;
       function DownloadPage(Http: THttpSend; Url: string; out Page: string; UsePost: boolean = False): boolean; overload; virtual;
+      function ValidateFileName(var FileName: string): boolean; overload; virtual;
+      procedure AddUrlToDownloadList(const Url: string); virtual;
     public
       class function Provider: string; virtual; abstract;
       class function UrlRegExp: string; virtual; abstract;
@@ -46,6 +55,7 @@ type
       constructor Create(const AMovieID: string); virtual;
       destructor Destroy; override;
       function Prepare: boolean; virtual; abstract;
+      function ValidateFileName: boolean; overload; virtual;
       function Download: boolean; virtual;
       procedure AbortTransfer; virtual;
       {$IFDEF MULTIDOWNLOADS}
@@ -64,6 +74,8 @@ type
       property MovieID: string read fMovieID write SetMovieID;
       property DestinationPath: string read fDestinationPath write fDestinationPath;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
+      property OnFileNameValidate: TDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
+      property OnMoreUrls: TDownloaderMoreUrlsEvent read fOnMoreUrls write fOnMoreUrls;
     end;
 
 implementation
@@ -126,11 +138,24 @@ begin
       until j <= 0;
 end;
 
-function TDownloader.GetFileName: string;
+function TDownloader.GetDefaultFileName: string;
 begin
   Result := {AnsiToOem}(StrTr(Name, '\/:*?"<>|', '--;..''--!') + GetFileNameExt);
   if DestinationPath <> '' then
     Result := IncludeTrailingBackslash(DestinationPath) + Result;
+end;
+
+function TDownloader.GetFileName: string;
+begin
+  if fFileName <> '' then
+    Result := fFileName
+  else
+    Result := GetDefaultFileName;
+end;
+
+procedure TDownloader.SetFileName(const Value: string);
+begin
+  fFileName := Value;
 end;
 
 function TDownloader.GetFileNameExt: string;
@@ -271,6 +296,35 @@ procedure TDownloader.SetMovieID(const Value: string);
 begin
   fMovieID := Value;
   SetPrepared(False);
+end;
+
+function TDownloader.ValidateFileName(var FileName: string): boolean;
+begin
+  Result := (FileName <> '') and (not FileExists(FileName));
+  if Assigned(OnFileNameValidate) then
+    OnFileNameValidate(Self, FileName, Result);
+end;
+
+function TDownloader.ValidateFileName: boolean;
+var FN: string;
+begin
+  Result := False;
+  if Prepared then
+    begin
+    SetFileName('');
+    FN := GetFileName;
+    Result := ValidateFileName(FN);
+    if Result then
+      SetFileName(FN)
+    else
+      SetLastErrorMsg(Format('Forbidden to download to file "%s".', [FN]));
+    end;
+end;
+
+procedure TDownloader.AddUrlToDownloadList(const Url: string);
+begin
+  if Assigned(OnMoreUrls) then
+    OnMoreUrls(Self, Url);
 end;
 
 end.

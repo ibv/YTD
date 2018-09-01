@@ -7,7 +7,15 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, ExtCtrls, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList,
   ActnList, Registry, ToolWin,
+  {$IFDEF SYSTRAY}
+  ShellApi,
+  {$ENDIF}
   uDownloadList, uDownloadListItem, uDownloadThread;
+
+{$IFDEF SYSTRAY}
+const
+  WM_NOTIFYICON  = WM_USER + 1;
+{$ENDIF}
 
 type
   TFormYTD = class(TForm)
@@ -42,21 +50,24 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
+    ToolAddNew: TToolButton;
+    ToolAddClipboard: TToolButton;
+    ToolStart: TToolButton;
+    ToolStop: TToolButton;
     ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton7: TToolButton;
+    ToolDelete: TToolButton;
+    ToolCopy: TToolButton;
     ToolButton9: TToolButton;
-    ToolButton10: TToolButton;
-    ToolButton11: TToolButton;
+    ToolAutodownload: TToolButton;
+    ToolRefresh: TToolButton;
     StatusBar1: TStatusBar;
     actDownloadDirectory: TAction;
     N3: TMenuItem;
     Setdownloaddirectory1: TMenuItem;
-    ToolButton8: TToolButton;
+    ToolDownloadDir: TToolButton;
+    actAutoOverwrite: TAction;
+    ToolAutooverwrite: TToolButton;
+    AutoOverwrite1: TMenuItem;
     procedure DownloadsData(Sender: TObject; Item: TListItem);
     procedure actAddNewUrlExecute(Sender: TObject);
     procedure actDeleteURLExecute(Sender: TObject);
@@ -75,7 +86,13 @@ type
     procedure actSelectAllExecute(Sender: TObject);
     procedure actDownloadDirectoryExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure actAutoOverwriteExecute(Sender: TObject);
   private
+    {$IFDEF SYSTRAY}
+    fNotifyIconData: TNotifyIconData;
+    procedure CMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
+    procedure ApplicationMinimize(Sender: TObject);
+    {$ENDIF}
   protected
     DownloadList: TDownloadList;
     ProgressChanged: boolean;
@@ -122,12 +139,28 @@ begin
   DownloadList.AutoStart := True;
   LoadSettings;
   actAutoDownload.Checked := DownloadList.AutoStart;
+  actAutoOverwrite.Checked := DownloadList.AutoOverwrite;
+  {$IFDEF SYSTRAY}
+  Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+  fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
+  fNotifyIconData.Wnd := Self.Handle;
+  fNotifyIconData.uID := Integer(Self);
+  fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
+  fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
+  fNotifyIconData.hIcon := Application.Icon.Handle;
+  StrPCopy(fNotifyIconData.szTip, Copy(Caption, 1, Pred(Length(fNotifyIconData.szTip))));
+  Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
+  Application.OnMinimize := ApplicationMinimize;
+  {$ENDIF}
 end;
 
 procedure TFormYTD.FormDestroy(Sender: TObject);
 begin
   RedrawDelay.Enabled := False;
   FreeAndNil(DownloadList);
+  {$IFDEF SYSTRAY}
+  Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+  {$ENDIF}
 end;
 
 procedure TFormYTD.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -142,6 +175,21 @@ procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   SaveSettings;
 end;
+
+{$IFDEF SYSTRAY}
+procedure TFormYTD.CMClickIcon(var msg: TMessage);
+begin
+  case Msg.lParam of
+    {WM_LBUTTONDBLCLK} WM_LBUTTONDOWN:
+      Show;
+    end;
+end;
+
+procedure TFormYTD.ApplicationMinimize(Sender: TObject);
+begin
+  Hide;
+end;
+{$ENDIF}
 
 procedure TFormYTD.DownloadListChange(Sender: TObject);
 begin
@@ -421,6 +469,7 @@ end;
 const REGISTRY_KEY = '\Software\Pepak\YouTube Downloader';
       REGISTRY_DOWNLOADDIR = 'Download directory';
       REGISTRY_AUTOSTART = 'Autostart downloads';
+      REGISTRY_AUTOOVERWRITE = 'Automatically overwrite existing files';
 
 procedure TFormYTD.LoadSettings;
 var Reg: TRegistry;
@@ -435,6 +484,8 @@ begin
         DownloadList.DestinationPath := Reg.ReadString(REGISTRY_DOWNLOADDIR);
       if Reg.ValueExists(REGISTRY_AUTOSTART) then
         DownloadList.AutoStart := Reg.ReadInteger(REGISTRY_AUTOSTART) <> 0;
+      if Reg.ValueExists(REGISTRY_AUTOOVERWRITE) then
+        DownloadList.AutoOverwrite := Reg.ReadInteger(REGISTRY_AUTOOVERWRITE) <> 0;
       end;
   finally
     Reg.Free;
@@ -443,7 +494,6 @@ end;
 
 procedure TFormYTD.SaveSettings;
 var Reg: TRegistry;
-    AutoSt: integer;
 begin
   Reg := TRegistry.Create;
   try
@@ -452,15 +502,18 @@ begin
     if Reg.OpenKey(REGISTRY_KEY, True) then
       begin
       Reg.WriteString(REGISTRY_DOWNLOADDIR, DownloadList.DestinationPath);
-      if DownloadList.AutoStart then
-        AutoSt := 1
-      else
-        AutoSt := 0;
-      Reg.WriteInteger(REGISTRY_AUTOSTART, AutoSt);
+      Reg.WriteInteger(REGISTRY_AUTOSTART, Integer(DownloadList.AutoStart));
+      Reg.WriteInteger(REGISTRY_AUTOOVERWRITE, Integer(DownloadList.AutoOverwrite));
       end;
   finally
     Reg.Free;
     end;
+end;
+
+procedure TFormYTD.actAutoOverwriteExecute(Sender: TObject);
+begin
+  DownloadList.AutoOverwrite := not DownloadList.AutoOverwrite;
+  actAutoOverwrite.Checked := DownloadList.AutoOverwrite;
 end;
 
 end.

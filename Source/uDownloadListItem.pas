@@ -18,6 +18,7 @@ type
       fErrorClass: string;
       fErrorMessage: string;
       fOnDownloadProgress: TNotifyEvent;
+      fOnFileNameValidate: TDownloaderFileNameValidateEvent;
       fOnError: TNotifyEvent;
       fOnStateChange: TNotifyEvent;
       fOnThreadFinished: TNotifyEvent;
@@ -37,6 +38,7 @@ type
       procedure InitStatus; virtual;
       procedure ThreadStateChange(Sender: TDownloadThread; State: TDownloadThreadState); virtual;
       procedure ThreadDownloadProgress(Sender: TDownloadThread; TotalSize, DownloadedSize: int64); virtual;
+      procedure ThreadFileNameValidate(Sender: TDownloadThread; var FileName: string; var Valid: boolean); virtual;
       procedure ThreadException(Sender: TDownloadThread; Error: Exception); virtual;
       procedure ThreadTerminate(Sender: TObject); virtual;
       property Thread: TDownloadThread read fThread;
@@ -62,6 +64,7 @@ type
       property DownloaderOwned: boolean read fDownloaderOwned write fDownloaderOwned;
       property OnStateChange: TNotifyEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TNotifyEvent read fOnDownloadProgress write fOnDownloadProgress;
+      property OnFileNameValidate: TDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
       property OnError: TNotifyEvent read fOnError write fOnError;
       property OnThreadFinished: TNotifyEvent read fOnThreadFinished write fOnThreadFinished;
     end;
@@ -146,6 +149,7 @@ begin
   fThread := TDownloadThread.Create(Downloader, True);
   Thread.OnStateChange := ThreadStateChange;
   Thread.OnDownloadProgress := ThreadDownloadProgress;
+  Thread.OnFileNameValidate := ThreadFileNameValidate;
   Thread.OnException := ThreadException;
   Thread.OnTerminate := ThreadTerminate;
   Thread.FreeOnTerminate := False;
@@ -195,6 +199,12 @@ begin
   SetDownloadedSize(DownloadedSize);
   if Assigned(OnDownloadProgress) then
     OnDownloadProgress(Self);
+end;
+
+procedure TDownloadListItem.ThreadFileNameValidate(Sender: TDownloadThread; var FileName: string; var Valid: boolean);
+begin
+  if Assigned(OnFileNameValidate) then
+    OnFileNameValidate(Self, FileName, Valid);
 end;
 
 procedure TDownloadListItem.ThreadException(Sender: TDownloadThread; Error: Exception);

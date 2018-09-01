@@ -45,10 +45,6 @@ begin
   inherited;
 end;
 
-{function TRtmpDownloader.DownloadStream(const Url, PlayPath, FileName: string): boolean;
-begin
-end;}
-
 procedure TRtmpDownloader.OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer);
 begin
   DownloadedBytes := DownloadedSize;

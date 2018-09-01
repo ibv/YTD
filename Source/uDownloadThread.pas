@@ -16,6 +16,7 @@ type
 
   TDTStateChangeEvent = procedure(Sender: TDownloadThread; State: TDownloadThreadState) of object;
   TDTDownloadProgressEvent = procedure(Sender: TDownloadThread; TotalSize, DownloadedSize: int64) of object;
+  TDTDownloaderFileNameValidateEvent = procedure(Sender: TDownloadThread; var FileName: string; var Valid: boolean) of object;
   TDTExceptionEvent = procedure(Sender: TDownloadThread; Error: Exception) of object;
 
   TDownloadThread = class(TThread)
@@ -24,17 +25,24 @@ type
       fState: TDownloadThreadState;
       fOnStateChange: TDTStateChangeEvent;
       fOnDownloadProgress: TDTDownloadProgressEvent;
+      fOnFileNameValidate: TDTDownloaderFileNameValidateEvent;
       fOnException: TDTExceptionEvent;
     protected
       procedure SetState(Value: TDownloadThreadState); virtual;
       procedure ReportState; virtual;
     protected
       CallersDownloaderProgressEvent: TDownloaderProgressEvent;
+      CallersDownloaderFileNameValidateEvent: TDownloaderFileNameValidateEvent;
       ReportSender: TObject;
       ReportTotalSize: int64;
       ReportDownloadedSize: int64;
+      ValidateSender: TObject;
+      ValidateFileName: string;
+      ValidateValid: boolean;
       procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); virtual;
-      procedure ReportProgress; virtual;
+      procedure DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
+      procedure SyncReportProgress; virtual;
+      procedure SyncValidate; virtual;
     protected
       ReportException: Exception;
       procedure ReportError; virtual;
@@ -48,6 +56,7 @@ type
     published
       property OnStateChange: TDTStateChangeEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDTDownloadProgressEvent read fOnDownloadProgress write fOnDownloadProgress;
+      property OnFileNameValidate: TDTDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
       property OnException: TDTExceptionEvent read fOnException write fOnException;
     end;
 
@@ -71,8 +80,10 @@ procedure TDownloadThread.Execute;
 begin
   try
     CallersDownloaderProgressEvent := Downloader.OnProgress;
+    CallersDownloaderFileNameValidateEvent := Downloader.OnFileNameValidate;
     try
       Downloader.OnProgress := DownloaderProgress;
+      Downloader.OnFileNameValidate := DownloaderFileNameValidate;
       repeat
         if Terminated then
           Break;
@@ -85,7 +96,7 @@ begin
         {$IFDEF MULTIDOWNLOADS}
         repeat
         {$ENDIF}
-        if not Downloader.Download then
+        if (not Downloader.ValidateFileName) or (not Downloader.Download) then
           if Terminated then
             Break
           else
@@ -104,6 +115,7 @@ begin
         end;
     finally
       Downloader.OnProgress := CallersDownloaderProgressEvent;
+      Downloader.OnFileNameValidate := CallersDownloaderFileNameValidateEvent;
       end;
   except
     on E: Exception do
@@ -137,13 +149,13 @@ begin
     ReportSender := Sender;
     ReportTotalSize := TotalSize;
     ReportDownloadedSize := DownloadedSize;
-    Synchronize(ReportProgress);
+    Synchronize(SyncReportProgress);
     end;
   if Terminated then
     DoAbort := True;
 end;
 
-procedure TDownloadThread.ReportProgress;
+procedure TDownloadThread.SyncReportProgress;
 var DoAbort: boolean;
 begin
   DoAbort := False;
@@ -153,6 +165,27 @@ begin
     OnDownloadProgress(Self, ReportTotalSize, ReportDownloadedSize);
   if DoAbort then
     Terminate;
+end;
+
+procedure TDownloadThread.DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
+begin
+  if Assigned(CallersDownloaderFileNameValidateEvent) or Assigned(OnFileNameValidate) then
+    begin
+    ValidateSender := Sender;
+    ValidateFileName := FileName;
+    ValidateValid := Valid;
+    Synchronize(SyncValidate);
+    FileName := ValidateFileName;
+    Valid := ValidateValid;
+    end;
+end;
+
+procedure TDownloadThread.SyncValidate;
+begin
+  if Assigned(CallersDownloaderFileNameValidateEvent) then
+    CallersDownloaderFileNameValidateEvent(ValidateSender, ValidateFileName, ValidateValid);
+  if Assigned(OnFileNameValidate) then
+    OnFileNameValidate(Self, ValidateFileName, ValidateValid);
 end;
 
 procedure TDownloadThread.ReportError;

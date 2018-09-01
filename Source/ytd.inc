@@ -2,6 +2,7 @@
 {.DEFINE NO_CLI} // Don't compile command-line version
 
 {$DEFINE MULTIDOWNLOADS} // Allow multiple downloads per URL (needed for some downloaders)
+{$DEFINE SYSTRAY}        // Minimize to systray
 
 
 

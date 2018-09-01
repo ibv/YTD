@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.21                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.22                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -83,6 +83,7 @@ Podporované weby a formáty URL:
      - http://www.youtube.com/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch?v=b5AWQ5aBjgE
+     - http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
 
 
 
@@ -136,11 +137,21 @@ SYNTAXE
 
   ytd.exe <param> [<param>] [<param>] ...
 
-  kde <param> je buï URL, nebo -i <soubor> (<soubor> je obyèejný textový
-  soubor, obsahující na každém øádku jedno URL).
-  
+  kde <param> je buï URL, nebo jedna z následujících možností:
+
+    -i <soubor> ... Stáhne všechna URL z textového souboru <soubor>, kde
+                    každý øádek reprezentuje jednu URL.
+    -o <cesta> .... Soubory se budou stahovat do adresáøe <cesta>. Výchozí
+                    hodnotou je aktuální pracovní adresáø.
+    -n ............ Nikdy nepøepisovat existující soubory.
+    -a ............ Vždy pøepsat existující soubory.
+    -r ............ Pokud soubor se stejným názvem existuje, automaticky
+                    vygenerovat nový název, který už bude jedineèný.
+    -k ............ Pokud soubor existuje, zeptat se uživatele (výchozí).
+
   Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
          ytd.exe -i c:\temp\seznam.txt
+         ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
 
@@ -148,6 +159,27 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.22
+
+    * V grafickém prostøedí se zobrazuje nápovìda pro jednotlivá tlaèítka.
+
+    * Zmìnìna výchozí reakce na existující soubor. Starší verze tento soubor
+      bez ptaní pøepsaly. Verze 0.22 se uživatele zeptá na požadovanou akci,
+      je možné též použít parametry -n (nepøepisovat), -a (pøepisovat),
+      -r (automaticky pøejmenovávat) a -k (ptát se uživatele).
+
+      Grafická verze se ptá pokaždé, když narazí na existující soubor, kromì
+      pøípadu, kdy je zaškrtnuta volba "Auto-overwrite" - pak se automaticky
+      pøepisuje jako v pøedchozích verzích.
+
+    * Grafická verze se minimalizuje do traye.
+
+    * Pro stahování z YouTube jsou podporovány playlisty (ve formátu
+      http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E) - stáhne
+      se vždy celý playlist.
+
+
 
   v0.21
 

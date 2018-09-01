@@ -4,8 +4,8 @@ unit uDownloadList;
 interface
 
 uses
-  SysUtils, Classes,
-  uDownloadClassifier, uDownloadListItem;
+  SysUtils, Classes, Dialogs,
+  uDownloadClassifier, uDownloader, uDownloadListItem;
 
 type
   TDownloadList = class;
@@ -23,6 +23,7 @@ type
       fOnError: TDownloadListNotifyEvent;
       fOnFinished: TDownloadListNotifyEvent;
       fAutoStart: boolean;
+      fAutoOverwrite: boolean;
       fDestinationPath: string;
     protected
       function GetCount: integer; virtual;
@@ -35,8 +36,10 @@ type
       procedure Notify(Event: TDownloadListNotifyEvent; Item: TDownloadListItem); virtual;
       procedure DownloadItemStateChange(Sender: TObject); virtual;
       procedure DownloadItemDownloadProgress(Sender: TObject); virtual;
+      procedure DownloadItemFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       procedure DownloadItemError(Sender: TObject); virtual;
       procedure DownloadItemThreadFinished(Sender: TObject); virtual;
+      procedure DownloaderMoreUrls(Sender: TObject; const Url: string); virtual;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
       property List: TStringList read fList;
       property DownloadingList: TList read fDownloadingList;
@@ -61,6 +64,7 @@ type
       property DownloadingItems[Index: integer]: TDownloadListItem read GetDownloadingItem;
     published
       property AutoStart: boolean read fAutoStart write fAutoStart;
+      property AutoOverwrite: boolean read fAutoOverwrite write fAutoOverwrite;
       property DestinationPath: string read fDestinationPath write SetDestinationPath;
       property OnStateChange: TDownloadListNotifyEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDownloadListNotifyEvent read fOnDownloadProgress write fOnDownloadProgress;
@@ -80,6 +84,8 @@ begin
   fDownloadClassifier.OwnsDownloader := False;
   fList := TStringList.Create;
   fDownloadingList := TList.Create;
+  fAutoStart := True;
+  fAutoOverwrite := False;
 end;
 
 destructor TDownloadList.Destroy;
@@ -150,8 +156,10 @@ begin
     begin
     Item := TDownloadListItem.Create(DownloadClassifier.Downloader, True);
     Item.Downloader.DestinationPath := DestinationPath;
+    Item.Downloader.OnMoreUrls := DownloaderMoreUrls;
     Item.OnStateChange := DownloadItemStateChange;
     Item.OnDownloadProgress := DownloadItemDownloadProgress;
+    Item.OnFileNameValidate := DownloadItemFileNameValidate;
     Item.OnError := DownloadItemError;
     Item.OnThreadFinished := DownloadItemThreadFinished;
     Result := List.AddObject(Url, Item);
@@ -184,6 +192,32 @@ end;
 procedure TDownloadList.DownloadItemDownloadProgress(Sender: TObject);
 begin
   Notify(OnDownloadProgress, TDownloadListItem(Sender));
+end;
+
+procedure TDownloadList.DownloadItemFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
+var D: TSaveDialog;
+begin
+  if FileExists(DestinationPath + FileName) then
+    if AutoOverwrite then
+      Valid := True
+    else
+      begin
+      D := TSaveDialog.Create(nil);
+      try
+        D.DefaultExt := Copy(ExtractFileExt(FileName), 2, MaxInt);
+        D.FileName := FileName;
+        D.InitialDir := DestinationPath;
+        if D.InitialDir = '' then
+          D.InitialDir := GetCurrentDir;
+        D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
+        D.Title := 'File already exists.';
+        Valid := D.Execute;
+        if Valid then
+          FileName := ExtractFileName(D.FileName);
+      finally
+        D.Free;
+        end;
+      end;
 end;
 
 procedure TDownloadList.DownloadItemError(Sender: TObject);
@@ -291,6 +325,11 @@ var i: integer;
 begin
   for i := 0 to Pred(DownloadingCount) do
     Pause(DownloadingItems[i]);
+end;
+
+procedure TDownloadList.DownloaderMoreUrls(Sender: TObject; const Url: string);
+begin
+  Add(Url);
 end;
 
 end.

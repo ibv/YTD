@@ -10,20 +10,28 @@ uses
   uDownloader, uCommonDownloader, uDownloadClassifier;
 
 type
+  TOverwriteMode = (omNever, omAlways, omRename, omAsk);
+  
   TYTD = class(TConsoleApp)
     private
       fLastProgressPercentage: int64;
       fDownloadClassifier: TDownloadClassifier;
       fDestinationPath: string;
+      fOverwriteMode: TOverwriteMode;
+      fUrlList: TStringList;
     protected
       function AppTitle: string; override;
       function AppVersion: string; override;
       function DoExecute: boolean; override;
       procedure ShowSyntax(const Error: string = ''); override;
       procedure ParamInitialize; override;
+      property UrlList: TStringList read fUrlList;
     protected
       function DoDownload(Downloader: TDownloader): boolean; virtual;
       procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); virtual;
+      procedure DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
+      procedure DownloaderMoreUrls(Sender: TObject; const Url: string); virtual;
+      function DownloadUrlList: integer; virtual;
       function DownloadURL(const URL: string): boolean; virtual;
       function DownloadURLsFromFileList(const FileName: string): integer; virtual;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
@@ -31,6 +39,7 @@ type
       constructor Create; override;
       destructor Destroy; override;
       property DestinationPath: string read fDestinationPath write fDestinationPath;
+      property OverwriteMode: TOverwriteMode read fOverwriteMode write fOverwriteMode;
     end;
 
 implementation
@@ -41,11 +50,14 @@ constructor TYTD.Create;
 begin
   inherited;
   fDownloadClassifier := TDownloadClassifier.Create;
+  fOverwriteMode := omAsk;
+  fUrlList := TStringList.Create;
 end;
 
 destructor TYTD.Destroy;
 begin
   FreeAndNil(fDownloadClassifier);
+  FreeAndNil(fUrlList);
   inherited;
 end;
 
@@ -69,6 +81,10 @@ begin
   WriteColored(ccWhite, ' -h, -?'); Writeln(' ...... Show this help screen.');
   WriteColored(ccWhite, ' -i <file>'); Writeln(' ... Load URL list from <file> (one URL per line).');
   WriteColored(ccWhite, ' -o <path>'); Writeln(' ... Store files to <path> (default is current directory).');
+  WriteColored(ccWhite, ' -n'); Writeln(' .......... Never overwrite existing files.');
+  WriteColored(ccWhite, ' -a'); Writeln(' .......... Always overwrite existing files.');
+  WriteColored(ccWhite, ' -r'); Writeln(' .......... Rename files to a new name if they already exist.');
+  WriteColored(ccWhite, ' -k'); Writeln(' .......... Ask what to do with existing files (default).');
   Writeln;
   WriteColored(ccWhite, ' <url>'); Writeln(' ....... URL to download.');
   {
@@ -103,6 +119,14 @@ begin
         begin
         if (Param = '-?') or (Param = '-h') then
           ShowSyntax
+        else if (Param = '-n') then
+          OverwriteMode := omNever
+        else if (Param = '-a') then
+          OverwriteMode := omAlways
+        else if (Param = '-r') then
+          OverwriteMode := omRename
+        else if (Param = '-k') then
+          OverwriteMode := omAsk
         else if (Param = '-i') then
           if ParamGetNext(Param) then
             if FileExists(Param) then
@@ -179,27 +203,6 @@ begin
     end;
 end;
 
-function TYTD.DownloadURLsFromFileList(const FileName: string): integer;
-var T: TextFile;
-    s: string;
-begin
-  Result := 0;
-  AssignFile(T, FileName);
-  Reset(T);
-  try
-    while not Eof(T) do
-      begin
-      Readln(T, s);
-      s := Trim(s);
-      if s <> '' then
-        if DownloadURL(s) then
-          Inc(Result);
-      end;
-  finally
-    CloseFile(T);
-    end;
-end;
-
 function TYTD.DoDownload(Downloader: TDownloader): boolean;
 begin
   Result := False;
@@ -207,6 +210,8 @@ begin
     fLastProgressPercentage := -1;
     Downloader.DestinationPath := DestinationPath;
     Downloader.OnProgress := DownloaderProgress;
+    Downloader.OnFileNameValidate := DownloaderFileNameValidate;
+    Downloader.OnMoreUrls := DownloaderMoreUrls;
     if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
       begin
       {$IFDEF MULTIDOWNLOADS}
@@ -216,7 +221,7 @@ begin
       Write('    File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
       if Downloader is TCommonDownloader then
         Write('  Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
-      Result := Downloader.Download;
+      Result := Downloader.ValidateFileName and Downloader.Download;
       if fLastProgressPercentage >= 0 then
         Writeln;
       if Result then
@@ -228,7 +233,7 @@ begin
       else
         ShowError('  ERROR: ' + Downloader.LastErrorMsg);
       {$IFDEF MULTIDOWNLOADS}
-      until not Downloader.Next;
+      until (not Result) or (not Downloader.Next);
       {$ENDIF}
       end
     else
@@ -247,17 +252,128 @@ begin
     end;
 end;
 
+function TYTD.DownloadUrlList: integer;
+begin
+  Result := 0;
+  while UrlList.Count > 0 do
+    begin
+    WriteColored(ccLightCyan, UrlList[0]);
+    Writeln;
+    DownloadClassifier.URL := UrlList[0];
+    if DownloadClassifier.Downloader = nil then
+      ShowError('Unknown URL.')
+    else
+      if DoDownload(DownloadClassifier.Downloader) then
+        Inc(Result);
+    UrlList.Delete(0);
+    end;
+end;
+
 function TYTD.DownloadURL(const URL: string): boolean;
 begin
-  Result := False;
-  //Write('Url: ');
-  WriteColored(ccLightCyan, URL);
-  Writeln;
-  DownloadClassifier.URL := URL;
-  if DownloadClassifier.Downloader <> nil then
-    Result := DoDownload(DownloadClassifier.Downloader)
-  else
-    ShowError('Unknown URL.');
+  UrlList.Add(URL);
+  Result := DownloadUrlList > 0;
+end;
+
+function TYTD.DownloadURLsFromFileList(const FileName: string): integer;
+var T: TextFile;
+    s: string;
+begin
+  AssignFile(T, FileName);
+  Reset(T);
+  try
+    while not Eof(T) do
+      begin
+      Readln(T, s);
+      s := Trim(s);
+      if s <> '' then
+        UrlList.Add(s);
+      end;
+  finally
+    CloseFile(T);
+    end;
+  Result := DownloadUrlList;
+end;
+
+procedure TYTD.DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
+var FilePath, Answer: string;
+
+    function AutoRename(var FileName: string): boolean;
+      var FileNameBase, FileNameExt: string;
+          Index: integer;
+      begin
+        Index := 1;
+        FileNameExt := ExtractFileExt(FileName);
+        FileNameBase := ChangeFileExt(FileName, '');
+        repeat
+          FileName := Format('%s%s.%d%s', [FilePath, FileNameBase, Index, FileNameExt]);
+          Inc(Index);
+        until not FileExists(FileName);
+        Result := True;
+      end;
+
+begin
+  FilePath := (Sender as TDownloader).DestinationPath;
+  if FileExists(FilePath + FileName) then
+    case OverwriteMode of
+      omNever:
+        Valid := False;
+      omAlways:
+        Valid := True;
+      omRename:
+        begin
+        Valid := AutoRename(FileName);
+        if Valid then
+          begin
+          Write('    File name: '); WriteColored(ccWhite, FileName); Writeln;
+          end;
+        end;
+      omAsk:
+        begin
+        repeat
+          Write('  File ');
+          WriteColored(ccWhite, FileName);
+          Writeln(' already exists.');
+          Write('  Do you want to: ');
+          WriteColored(ccLightCyan, '[S]'); Write('kip it, ');
+          WriteColored(ccLightCyan, '[O]'); Write('verwrite it, or ');
+          WriteColored(ccLightCyan, '[R]'); Write('ename it? ');
+          Readln(Answer);
+          if Answer <> '' then
+            case Upcase(Answer[1]) of
+              'S':
+                begin
+                Valid := False;
+                Break;
+                end;
+              'O':
+                begin
+                Valid := True;
+                Break;
+                end;
+              'R':
+                begin
+                Write('  New filename: ');
+                Readln(Answer);
+                if Answer <> '' then
+                  begin
+                  FileName := Answer;
+                  Valid := True;
+                  if not FileExists(FilePath + Answer) then
+                    Break;
+                  end;
+                end;
+              else
+                ShowError('Incorrect answer.');
+              end;
+        until False;
+        end;
+      end;
+end;
+
+procedure TYTD.DownloaderMoreUrls(Sender: TObject; const Url: string);
+begin
+  UrlList.Add(Url);
 end;
 
 end.

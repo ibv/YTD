@@ -38,7 +38,9 @@ uses
   uDownloader_TVcom in 'uDownloader_TVcom.pas',
   uDownloader_Markiza in 'uDownloader_Markiza.pas',
   uDownloader_Rozhlas in 'uDownloader_Rozhlas.pas',
-  uDownloader_CT_Port in 'uDownloader_CT_Port.pas';
+  uDownloader_CT_Port in 'uDownloader_CT_Port.pas',
+  uDownloader_Playlist_YouTube in 'uDownloader_Playlist_YouTube.pas',
+  uPlaylistDownloader in 'uPlaylistDownloader.pas';
 
 begin
   {$IFNDEF NO_GUI}
