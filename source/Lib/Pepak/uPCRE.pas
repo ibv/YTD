@@ -6,6 +6,8 @@ uses
   PerlRegEx;
 
 type
+  PCREString = PerlRegEx.PCREString;
+  
   TRegExp = class(TPerlRegEx)
     public
       function Match(const Subject: PCREString): boolean; overload;

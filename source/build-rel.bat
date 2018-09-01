@@ -19,24 +19,26 @@ goto build
 
 :build
 set version=%1
-shift
 
 if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
 if exist ..\ytd-%version%-source.%packext% del ..\ytd-%version%-source.%packext%
 if exist ..\ytd-%version%-lite.%packext% del ..\ytd-%version%-lite.%packext%
-rd /s /q ..\exe\locale
-md ..\exe\locale
-xcopy locale\*.mo ..\exe\locale /s /i
+rd /s /q ..\bin\locale
+md ..\bin\locale
+xcopy locale\*.mo ..\bin\locale /s /i
+del /q ..\bin\ytd.xml >nul 2>&1
 call clean.bat
-call build.bat release noxxx %build% %*
+call build.bat release noxxx %build% %2 %3 %4 %5 %6 %7 %8 %9
+call sign "YouTube Downloader Lite" http://www.pepak.net/download/youtube-downloader/ ..\bin\ytd.exe
 call clean.bat
-pushd ..\exe
+pushd ..\bin
 %pack% ..\ytd-%version%-lite.%packext%
 popd
 call clean.bat
-call build.bat release %build% %*
+call build.bat release %build% %2 %3 %4 %5 %6 %7 %8 %9
+call sign "YouTube Downloader" http://www.pepak.net/download/youtube-downloader/ ..\bin\ytd.exe
 call clean.bat
-pushd ..\exe
+pushd ..\bin
 %pack% ..\ytd-%version%.%packext%
 popd
 pushd ..
@@ -45,7 +47,7 @@ popd
 goto konec
 
 :syntax
-echo build-all ^<version^> [arguments]
+echo build-rel ^<version^> [build-arguments]
 goto konec
 
 :konec

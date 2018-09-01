@@ -66,6 +66,8 @@ type
     private
       fXml: TXmlDoc;
       fXmlFileName: string;
+      fMainXmlFileName: string;
+      fUserXmlFileName: string;
     protected
       function Load(IgnoreErrors: boolean = True): boolean; virtual;
       function TranslateNodeName(const Name: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -238,9 +240,14 @@ const
 { TYTDOptions }
 
 constructor TYTDOptions.Create;
+var PathBuf: array[0..MAX_PATH+1] of Char;
 begin
   inherited Create;
   fXml := TXmlDoc.Create;
+  fMainXmlFileName := ChangeFileExt(ParamStr(0), '.xml');
+  fUserXmlFileName := '';
+  if SHGetSpecialFolderPath(0, PathBuf, CSIDL_APPDATA, False) then
+    fUserXmlFileName := PathBuf + '\YouTube Downloader\ytd.xml';
   Init;
 end;
 
@@ -251,22 +258,16 @@ begin
 end;
 
 procedure TYTDOptions.Init;
-var PathBuf: array[0..MAX_PATH+1] of Char;
-    Path: string;
 begin
-  XmlFileName := ChangeFileExt(ParamStr(0), '.xml');
+  XmlFileName := fMainXmlFileName;
   Xml.Clear;
   Xml.Root.Name := XML_ROOTNAME;
   if (not Load(False)) or (not PortableMode) then
-    if SHGetSpecialFolderPath(0, PathBuf, CSIDL_APPDATA, False) then
+    if (fUserXmlFileName <> '') and FileExists(fUserXmlFileName) then
       begin
-      Path := PathBuf + '\YouTube Downloader';
-      XmlFileName := Path + '\ytd.xml';
-      if FileExists(XmlFileName) then
-        begin
-        Load(False);
-        PortableMode := True;
-        end;
+      XmlFileName := fUserXmlFileName;
+      Load(False);
+      PortableMode := False;
       end;
 end;
 
@@ -376,6 +377,14 @@ end;
 procedure TYTDOptions.SetPortableMode(const Value: boolean);
 begin
   SetOption(XML_PATH_PORTABLEMODE, BooleanToXml(Value));
+  if Value then
+    XmlFileName := fMainXmlFileName
+  else
+    begin
+    if XmlFileName = fMainXmlFileName then
+      Save;
+    XmlFileName := fUserXmlFileName;
+    end;
 end;
 
 function TYTDOptions.GetProxyActive: boolean;
@@ -656,7 +665,11 @@ begin
       begin
       fVersion := Version;
       fUrl := Url;
+      {$IFDEF DELPHITHREADS}
       Synchronize(SyncReportVersion);
+      {$ELSE}
+      SyncReportVersion;
+      {$ENDIF}
       end;
 end;
 

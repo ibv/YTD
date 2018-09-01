@@ -76,6 +76,7 @@ const
   REGEXP_MOVIE_TITLE = '<h3\s+class="video_title\s+datawrap">(?P<TITLE>.*?)</h3>';
   REGEXP_MOVIE_URL_HQ = '\bswf_id_[0-9a-f]+\.addVariable\s*\(\s*"highqual_src"\s*,\s*"(?P<URL>.*?)"';
   REGEXP_MOVIE_URL_LQ = '\bswf_id_[0-9a-f]+\.addVariable\s*\(\s*"lowqual_src"\s*,\s*"(?P<URL>.*?)"';
+  REGEXP_MOVIE_URL = '\bswf_id_[0-9a-f]+\.addVariable\s*\(\s*"video_src"\s*,\s*"(?P<URL>.*?)"';
 
 { TDownloader_Facebook }
 
@@ -94,6 +95,7 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlHQRegExp := RegExCreate(REGEXP_MOVIE_URL_HQ, [rcoIgnoreCase, rcoSingleLine]);
   MovieUrlLQRegExp := RegExCreate(REGEXP_MOVIE_URL_LQ, [rcoIgnoreCase, rcoSingleLine]);
 end;
@@ -101,6 +103,7 @@ end;
 destructor TDownloader_Facebook.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   RegExFreeAndNil(MovieUrlHQRegExp);
   RegExFreeAndNil(MovieUrlLQRegExp);
   inherited;
@@ -116,7 +119,7 @@ var Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not (GetRegExpVar(MovieUrlHQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlLQRegExp, Page, 'URL', Url)) then
+  if not (GetRegExpVar(MovieUrlHQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlLQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlRegExp, Page, 'URL', Url)) then
     SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
   else
     begin

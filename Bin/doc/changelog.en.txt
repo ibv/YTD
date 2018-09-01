@@ -1,6 +1,46 @@
 CHANGELOG
 ---------
 
+  v0.69
+
+    * New provider: AutoSalonTV.cz.
+
+    * Blip.tv: Support for playlists.
+
+      Note: Preparation of a playlist may take a long time (with long playlists
+      such as http://thespoonyone.blip.tv) and doesn't provide any visual 
+      feedback. Please be patient.
+
+    * Facebook.com: Added support for movies without quality mark.
+
+    * Markiza.sk: Updated to support the new video player.
+
+    * Novinky.cz: Improved support for movies within articles.
+
+    * Significantly improved the "Options" dialog (F9). It can now edit most
+      of the configuration options from the GUI, including proxy server
+      settings or the ability to turn new version notification on and off.
+
+      Buttons for creating shortcuts to YouTube Downloader in Start menu or
+      on the desktop are also available in the Options dialog.
+
+    * Fixed several incompatibilities with Delphi 2009 (only those who compile
+      YTD themselves need to worry about this change, since the production
+      version is compiled by Delphi 5):
+
+      - Application crashes with Access Violation or other error if the WinAPI
+        version of GUI is enabled.
+
+      - Reading of the newest version number never completes.
+
+    * The "Stop" button of the GUI version of YouTube Downloader behaved in 
+      fact like "Pause" - it just paused the transfer, not stopped it.
+
+    * The portable mode was rather more prolific than expected - it could, in
+      some situations, override the "non-portable" mode.
+
+
+
   v0.68
 
     * FreeCaster.tv: Fixed to support the new page layout.

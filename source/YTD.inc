@@ -46,7 +46,6 @@
 
 {$DEFINE GUI_WINAPI} 
   // GUI is created with WinAPI. Otherwise GUI is created with VCL.
-  // At the moment, WinAPI GUI only works in Delphi 5 for an unknown reason.
 
 {$DEFINE DELPHITHREADS}
   // Use Delphi's implementation of TThread. This implementation seems to
@@ -59,6 +58,12 @@
   //     the application's. "Fixed" by removing all Synchronize's.
   //   - WaitFor fails with an error. No idea why.
   //   - OnTerminate doesn't get called. No idea why. So I call it manually.
+
+{.DEFINE JSON}
+  // Many providers use JSON for their data storage. While it may be a good idea
+  // to use a JSON parser for this data, in fact it is often better to simply
+  // use regular expressions: One, it is shorter, and two, it turns out LkJSON
+  // has bugs which may prevent the parsing.
 
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
@@ -97,19 +102,6 @@
 
 {$IFNDEF NO_XXX}
   {$DEFINE XXX}
-{$ENDIF}
-
-
-
-// There's a strange bug with WinAPI version of the GUI that manifests itself
-// in Delphi 2009: Displaying any text in the downloads ListView very quickly
-// eats up all available memory and/or handles and YTD crashes soon after. It
-// doesn't happen with Delphi 5 or FreePascal.
-
-{$IFDEF DELPHI2009_UP}
-  {$IFNDEF DEBUG}
-    {$UNDEF GUI_WINAPI}
-  {$ENDIF}
 {$ENDIF}
 
 
@@ -153,7 +145,7 @@
 // In the debug mode, FASTMM is used to detect memory leaks.
 
 {$IFDEF DEBUG}
-  {$DEFINE FASTMM}
+  {.$DEFINE FASTMM}
 {$ENDIF}
 
 

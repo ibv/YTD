@@ -28,6 +28,7 @@ function ListViewIsItemSelected(ListView: THandle; Index: integer): boolean;
 function ListViewSelectItem(ListView: THandle; Index: integer; Selected: boolean): boolean;
 function ListViewGetSelectedItems(ListView: THandle; out Indexes: TList; MaxCount: integer = 0): boolean;
 function ListViewGetSelectedItem(ListView: THandle): integer;
+function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
 
 //----- Toolbar ----------------------------------------------------------------
 procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);
@@ -210,6 +211,13 @@ end;
 function ListViewGetSelectedItem(ListView: THandle): integer;
 begin
   Result := SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_FOCUSED or LVNI_SELECTED);
+end;
+
+function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
+begin
+  Result := (DispInfo^.item.pszText <> nil) and (DispInfo^.item.cchTextMax > 0);
+  if Result then
+    StrPLCopy(DispInfo^.item.pszText, Text, DispInfo^.item.cchTextMax-1);
 end;
 
 procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);

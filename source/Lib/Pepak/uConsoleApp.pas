@@ -45,7 +45,7 @@ type
       procedure DoneConsole; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetTextAttribute(const Text, Background: TConsoleColor); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure WriteColored(Color: TConsoleColor; const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF} 
+      procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); virtual;
       property StdIn: THandle read fStdIn;
       property StdOut: THandle read fStdOut;
       property StdOutRedirected: boolean read fStdOutRedirected;

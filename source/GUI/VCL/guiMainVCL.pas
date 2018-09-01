@@ -291,7 +291,7 @@ end;
 {$IFDEF THREADEDVERSION}
 procedure TFormYTD.NewVersionEvent(Sender: TObject; const Version, Url: string);
 begin
-  if Version > {$INCLUDE 'YTD.version'} then
+  if IsNewerVersion(Version) then
     begin
     actReportBug.Enabled := False;
     if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version]), mtInformation, [mbYes, mbNo], 0) = mrYes then

@@ -40,9 +40,10 @@ unit uFunctions;
 interface
 
 uses
-  SysUtils;
+  SysUtils, uMessages;
   
 function PrettySize(Size: int64): string;
+function IsNewerVersion(const OnlineVersion: string): boolean;
 
 implementation
 
@@ -67,6 +68,11 @@ begin
     Result := PrettySizeInternal(Size, 30, 'G')
   else
     Result := PrettySizeInternal(Size, 40, 'T')
+end;
+
+function IsNewerVersion(const OnlineVersion: string): boolean;
+begin
+  Result := OnlineVersion > APPLICATION_VERSION;
 end;
 
 end.

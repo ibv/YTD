@@ -42,8 +42,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ActnList,
-  uLanguages, uMessages, uOptions, uDialogs, guiConsts;
+  StdCtrls, ActnList, ComCtrls, ShlObj, 
+  uLanguages, uMessages, uOptions, uDialogs, guiConsts, guiFunctions;
 
 type
   TFormOptions = class(TForm)
@@ -61,11 +61,35 @@ type
     actOK: TAction;
     actCancel: TAction;
     actDownloadDir: TAction;
+    PageOptions: TPageControl;
+    TabMain: TTabSheet;
+    CheckPortableMode: TCheckBox;
+    CheckCheckNewVersions: TCheckBox;
+    LabelLanguage: TLabel;
+    EditLanguage: TEdit;
+    TabDownloadOptions: TTabSheet;
+    CheckSubtitlesEnabled: TCheckBox;
+    TabNetworkOptions: TTabSheet;
+    CheckUseProxy: TCheckBox;
+    LabelProxyHost: TLabel;
+    EditProxyHost: TEdit;
+    EditProxyPort: TEdit;
+    LabelProxyPort: TLabel;
+    EditProxyUser: TEdit;
+    LabelProxyUser: TLabel;
+    EditProxyPass: TEdit;
+    LabelProxyPass: TLabel;
+    BtnDesktopShortcut: TButton;
+    BtnStartMenuShortcut: TButton;
+    actDesktopShortcut: TAction;
+    actStartMenuShortcut: TAction;
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
     procedure actDownloadDirExecute(Sender: TObject);
     procedure ComboConverterChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure actDesktopShortcutExecute(Sender: TObject);
+    procedure actStartMenuShortcutExecute(Sender: TObject);
   private
     fLoading: boolean;
     fOptions: TYTDOptions;
@@ -91,9 +115,15 @@ const OverwriteMode: array [TOverwriteMode] of integer = (2, 1, 3, 0);
 begin
   fLoading := True;
   try
+    // Main options
+    CheckPortableMode.Checked := Options.PortableMode;
+    CheckCheckNewVersions.Checked := Options.CheckForNewVersionOnStartup;
+    EditLanguage.Text := Options.Language;
+    // Download options
     CheckAutoDownload.Checked := Options.AutoStartDownloads;
-    ComboOverwriteMode.ItemIndex := OverwriteMode[Options.OverwriteMode];
+    CheckSubtitlesEnabled.Checked := Options.SubtitlesEnabled;
     EditDownloadDir.Text := Options.DestinationPath;
+    ComboOverwriteMode.ItemIndex := OverwriteMode[Options.OverwriteMode];
     {$IFDEF CONVERTERS}
     PrepareConverterComboBox(ComboConverter, Options, Options.SelectedConverterID);
     fConverterIndex := ComboConverter.ItemIndex;
@@ -101,6 +131,12 @@ begin
     LabelConverter.Visible := False;
     ComboConverter.Visible := False;
     {$ENDIF}
+    // Network
+    CheckUseProxy.Checked := Options.ProxyActive;
+    EditProxyHost.Text := Options.ProxyHost;
+    EditProxyPort.Text := Options.ProxyPort;
+    EditProxyUser.Text := Options.ProxyUser;
+    EditProxyPass.Text := Options.ProxyPassword;
   finally
     fLoading := False;
     end;
@@ -112,14 +148,26 @@ const OverwriteMode: array[0..3] of TOverwriteMode = (omAsk, omAlways, omNever, 
 var NewID: string;
 {$ENDIF}
 begin
+  // Main options
+  Options.PortableMode := CheckPortableMode.Checked;
+  Options.CheckForNewVersionOnStartup := CheckCheckNewVersions.Checked;
+  Options.Language := EditLanguage.Text;
+  // Download options
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
-  Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];
+  Options.SubtitlesEnabled := CheckSubtitlesEnabled.Checked;
   Options.DestinationPath := EditDownloadDir.Text;
+  Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];
   {$IFDEF CONVERTERS}
   if Options.ConvertersActivated then
     if DecodeConverterComboBox(ComboConverter, Options, NewID) then
       Options.SelectedConverterID := NewID;
   {$ENDIF}
+  // Network
+  Options.ProxyActive := CheckUseProxy.Checked;
+  Options.ProxyHost := EditProxyHost.Text;
+  Options.ProxyPort := EditProxyPort.Text;
+  Options.ProxyUser := EditProxyUser.Text;
+  Options.ProxyPassword := EditProxyPass.Text;
 end;
 
 procedure TFormOptions.actDownloadDirExecute(Sender: TObject);
@@ -148,6 +196,17 @@ begin
   {$IFDEF GETTEXT}
   TranslateProperties(self);
   {$ENDIF}
+  PageOptions.ActivePageIndex := 0;
+end;
+
+procedure TFormOptions.actDesktopShortcutExecute(Sender: TObject);
+begin
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY);
+end;
+
+procedure TFormOptions.actStartMenuShortcutExecute(Sender: TObject);
+begin
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS);
 end;
 
 end.

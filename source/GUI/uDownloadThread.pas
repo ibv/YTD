@@ -131,7 +131,10 @@ begin
         Downloader.OnFileNameValidate := DownloaderFileNameValidate;
         repeat
           if Terminated then
+            begin
+            State := dtsAborted;
             Break;
+            end;
           State := dtsPreparing;
           if Downloader is TPlaylistDownloader then
             begin

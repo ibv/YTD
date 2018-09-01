@@ -48,8 +48,13 @@ type
   TDownloader_Markiza = class(THttpDownloader)
     private
     protected
-      FileInfoRegExp: TRegExp;
-      FileInfo2RegExp: TRegExp;
+      {$IFDEF JSON}
+      JSONSourceRegExp: TRegExp;
+      {$ELSE}
+      PlaylistItemRegExp: TRegExp;
+      NotAnAdRegExp: TRegExp;
+      DescriptionRegExp: TRegExp;
+      {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -63,18 +68,27 @@ type
 implementation
 
 uses
+  {$IFDEF JSON}
+  uJSON, uLkJSON,
+  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
-// http://video.markiza.sk/archiv-tv-markiza/dnes/36829
+// http://video.markiza.sk/archiv-tv-markiza/112/8723
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*markiza\.sk/archiv-tv-markiza/';
-  URLREGEXP_ID =        '.+?';
-  URLREGEXP_AFTER_ID =  '/?$';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*markiza\.sk/archiv-tv-markiza/[^/]+/';
+  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_AFTER_ID =  '';
 
+{$IFDEF JSON}
 const
-  REGEXP_FILEINFO = '"(?P<URL>https?://(?:[a-z0-9-]+\.)?markiza\.sk/xml/video/parts\.rss\?ID_entity=[0-9]+&page=.+?)"';
-  REGEXP_FILEINFO2 = '''(?P<URL>/xml/video/parts_flowplayer\.rss\?ID_entity=[0-9]+.*?)''';
+  JSON_SOURCE_REGEXP = '(?P<JSON>\{.*\})';
+{$ELSE}
+const
+  PLAYLIST_ITEM_REGEXP = '\{\s*"provider"\s*:(?P<INSIDE>.*?)"url"\s*:\s*"(?P<URL>https?://[^"]+)"';
+  NOTANAD_REGEXP = '"notanadd"\s*:\s*(?P<TRUE>true)\b';
+  DESCRIPTION_REGEXP = '"description"\s*:\s*"(?P<DESC>[^"]*)"';
+{$ENDIF}
 
 { TDownloader_Markiza }
 
@@ -92,75 +106,95 @@ constructor TDownloader_Markiza.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  FileInfoRegExp := RegExCreate(REGEXP_FILEINFO, [rcoIgnoreCase]);
-  FileInfo2RegExp := RegExCreate(REGEXP_FILEINFO2, [rcoIgnoreCase]);
+  {$IFDEF JSON}
+  JSONSourceRegExp := RegExCreate(JSON_SOURCE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  {$ELSE}
+  PlaylistItemRegExp := RegExCreate(PLAYLIST_ITEM_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  NotAnAdRegExp := RegExCreate(NOTANAD_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  DescriptionRegExp := RegExCreate(DESCRIPTION_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
+  {$ENDIF}
 end;
 
 destructor TDownloader_Markiza.Destroy;
 begin
-  RegExFreeAndNil(FileInfoRegExp);
-  RegExFreeAndNil(FileInfo2RegExp);
+  {$IFDEF JSON}
+  RegExFreeAndNil(JSONSourceRegExp);
+  {$ELSE}
+  RegExFreeAndNil(PlaylistItemRegExp);
+  RegExFreeAndNil(NotAnAdRegExp);
+  RegExFreeAndNil(DescriptionRegExp);
+  {$ENDIF}
   inherited;
 end;
 
 function TDownloader_Markiza.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.markiza.sk/archiv-tv-markiza/' + MovieID;
+  Result := 'http://www.markiza.sk/js/flowplayer/config.js?&media=' + MovieID;
 end;
 
 function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, Description: string;
-    Xml: TXmlDoc;
-    Channel, ContentNode: TXmlNode;
+{$IFDEF JSON_SOURCE_REGEXP}
+var JSON, Playlist, NotAnAd, UrlNode, TitleNode: TJSON;
+    JSONsrc: string;
     i: integer;
+{$ELSE}
+var Url, Inside, NotAnAd, Title: string;
+{$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(FileInfoRegExp, Page, 'URL', Url) then
-    if not GetRegExpVar(FileInfo2RegExp, Page, 'URL', Url) then
-      Url := ''
-    else
-      Url := 'http://video.markiza.sk' + Url;
-  if Url = '' then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
-  else if not DownloadXml(Http, URL, Xml) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
-  else
-    try
-      if Xml.NodeByPath('channel', Channel) then
-        for i := 0 to Pred(Channel.NodeCount) do
-          if Channel.Nodes[i].Name = 'item' then
-            if GetXmlVar(Channel.Nodes[i], 'description', Description) then
-              if XmlNodeByPath(Channel.Nodes[i], 'media:content', ContentNode) then
-                if ContentNode.AttributeByName['list'] <> 'false' then
-                  if GetXmlAttr(ContentNode, '', 'url', Url) then
-                    if Url <> '' then
-                      begin
-                      {$IFDEF MULTIDOWNLOADS}
-                      NameList.Add(Description);
-                      UrlList.Add(Url);
-                      {$ELSE}
-                      SetName(Description);
-                      MovieURL := Url;
-                      Result := True;
-                      SetPrepared(True);
-                      Exit;
-                      {$ENDIF}
-                      end;
-      {$IFDEF MULTIDOWNLOADS}
-      if UrlList.Count <= 0 then
-        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-      else
-        begin
-        SetPrepared(True);
-        Result := First;
-        end;
-      {$ELSE}
-      SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL));
+  {$IFDEF JSON}
+    {$IFDEF FPC}
+      {$MESSAGE WARN 'LkJSON fails on Markiza.sk'}
+    {$ELSE}
+      {$IFDEF DELPHI6_UP}
+        {$MESSAGE WARN 'LkJSON fails on Markiza.sk'}
       {$ENDIF}
-    finally
-      Xml.Free;
+    {$ENDIF}
+    SetLastErrorMsg(_(ERR_INVALID_MEDIA_INFO_PAGE));
+    if GetRegExpVar(JSONSourceRegExp, Page, 'JSON', JSONsrc) then
+      begin
+      JSON := JSONCreate(JSONsrc);
+      if JSON <> nil then
+        try
+          if JSONNodeByPath(JSON, 'playlist', Playlist) then
+            for i := 0 to Pred(Playlist.Count) do
+              if Playlist.Child[i] <> nil then
+                if Playlist.Child[i] is TlkJSONobject then
+                  if JSONNodeByPath(Playlist.Child[i], 'customProperties/notanadd', NotAnAd) then
+                    if (NotAnAd is TlkJSONboolean) and TlkJSONboolean(NotAnAd).Value then
+                      begin
+                      if JSONNodeByPath(Playlist.Child[i], 'url', UrlNode) then
+                        begin
+                        MovieUrl := UrlNode.Value;
+                        SetPrepared(True);
+                        Result := True;
+                        end;
+                      if JSONNodeByPath(Playlist.Child[i], 'customProperties/description', TitleNode) then
+                        SetName(TitleNode.Value);
+                      Exit;
+                      end;
+
+        finally
+          JSONFreeAndNil(JSON);
+          end;
       end;
+  {$ELSE ~JSON}
+    if PlaylistItemRegExp.Match(Page) then
+      repeat
+        if PlaylistItemRegExp.SubexpressionByName('URL', Url) then
+          if PlaylistItemRegExp.SubexpressionByName('INSIDE', Inside) then
+            if GetRegExpVar(NotAnAdRegExp, Inside, 'TRUE', NotAnAd) then
+              begin
+              MovieUrl := Url;
+              if GetRegExpVar(DescriptionRegExp, Inside, 'DESC', Title) then
+                SetName(Trim(Title));
+              SetPrepared(True);
+              Result := True;
+              Break;
+              end;
+      until not PlaylistItemRegExp.MatchAgain;
+  {$ENDIF ~JSON}
 end;
 
 initialization

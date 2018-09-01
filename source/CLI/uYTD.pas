@@ -120,7 +120,7 @@ end;
 
 function TYTD.AppVersion: string;
 begin
-  Result := {$INCLUDE 'ytd.version'} ;
+  Result := APPLICATION_VERSION;
 end;
 
 procedure TYTD.ShowSyntax(const Error: string);
@@ -170,13 +170,13 @@ begin
   Write(_('Newest version:  ')); // CLI: Note: pad with spaces to the same length as "Current version:"
   if not Options.GetNewestVersion(Version, Url) then
     WriteColored(ccLightRed, _('check failed')) // CLI: Couldn't check for a newer version
-  else if Version <= AppVersion then
-    WriteColored(ccWhite, Version)
-  else
+  else if IsNewerVersion(Version) then
     begin
     WriteColored(ccLightCyan, Version); Writeln;
     Write(_('Download URL:    ')); WriteColored(ccWhite, Url); // CLI: Note: pad with spaces to the same length as "Current version:"
-    end;
+    end
+  else
+    WriteColored(ccWhite, Version);
   Writeln;
   Writeln;
 end;

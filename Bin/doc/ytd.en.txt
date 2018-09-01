@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.68                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.69                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -32,6 +32,11 @@ SUPPORTED PROVIDERS
  - AngryAlien.com:
      - http://www.angryalien.com/0605/freddyjasonbuns.asp
 
+ - AutoSalonTV.cz:
+     - http://autosalontv.cz/?year=2010&week=50
+
+     Note: This provider uses RTSP over HTTP protocol. See the note below.
+
  - AutoTube.cz:
      - http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 
@@ -50,6 +55,11 @@ SUPPORTED PROVIDERS
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
      - http://thespoonyone.blip.tv/file/1607673/
+     - http://thespoonyone.blip.tv
+
+     Note: Preparation of a playlist may take a long time (with long playlists
+     such as http://thespoonyone.blip.tv) and doesn't provide any visual 
+     feedback. Please be patient.
 
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
@@ -713,7 +723,7 @@ except in file/directory names. Logical values (true-false) are stored as
     - Possible values are "1" (run in portable mode) and "0" (regular mode).
     - Default value is "0" (regular mode).
 
-  <language_mode>
+  <language>
     - Child of <config>; let's you choose the language for texts displayed
       by the program.
     - Possible values are two-letter ISO codes of languages (see the
@@ -1141,6 +1151,12 @@ Used libraries and their licenses:
   - license: GNU LGPL 2.1 / Mozilla Public License 1.1
   - description: A fast memory manager (used only in the DEBUG mode because it
                  can detect memory leaks)
+
+- lkJSON
+  - author: Leonid Koninin
+  - source: http://sourceforge.net/projects/lkjson/files
+  - license: BSD
+  - description: Library providing JSON support
 
 - MSDL
   - author: Jun "metro" Oyama (me_t_ro@yahoo.com)

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.68                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.69                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -31,6 +31,12 @@ PODPOROVANÉ WEBY
  - AngryAlien.com:
      - http://www.angryalien.com/0605/freddyjasonbuns.asp
 
+ - AutoSalonTV.cz:
+     - http://autosalontv.cz/?year=2010&week=50
+
+     Pozn.: Jde o streamovanı formát podle protokolu RTSP over HTTP. Viz
+     níe v poznámkách ke knihovnì MSDL_DLL.DLL.
+
  - AutoTube.cz:
      - http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 
@@ -50,6 +56,11 @@ PODPOROVANÉ WEBY
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
      - http://thespoonyone.blip.tv/file/1607673/
+     - http://thespoonyone.blip.tv
+
+     Pozn.: Naèítání obsahu playlistu probíhá bez jakéhokoliv vıstupu a mùe
+     u nìkterıch playlistù (napø. http://thespoonyone.blip.tv) trvat i dost
+     dlouho. Nenechte se znervóznit tím, e se zdánlivì nic nedìje.
 
  - Bofunk.com:
      - http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
@@ -713,7 +724,7 @@ a "0" (ne).
     - Moné hodnoty jsou "1" (zapnout portable reim) a "0" (vypnout).
     - Vıchozí hodnota je "0".
 
-  <language_mode>
+  <language>
     - Potomek <config>; urèuje, jakı jazyk má bıt pouit pro zobrazení textù
       programu. 
     - Monımi hodnotami jsou dvouznakové ISO kódy jazykù, viz sekce Lokalizace
@@ -1141,6 +1152,12 @@ Knihovny a jejich licence:
   - licence: GNU LGPL 2.1 / Mozilla Public License 1.1
   - popis: Rychlejší pamìovı manaer (pouívá se jen v DEBUG reimu kvùli
            schopnosti odhalit chybné alokace a dealokace pamìti).
+
+- lkJSON
+  - autor: Leonid Koninin
+  - zdroj: http://sourceforge.net/projects/lkjson/files
+  - licence: BSD
+  - popis: Knihovna pro práci s JSON
 
 - MSDL
   - autor: Jun "metro" Oyama (me_t_ro@yahoo.com)

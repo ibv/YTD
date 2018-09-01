@@ -75,7 +75,7 @@ function DecodeConverterComboBox(Combo: THandle; Options: TYTDOptions; out Selec
 
 implementation
 
-{$RESOURCE guiConverterWINAPI.res}
+{$RESOURCE *.res}
 
 function SelectConverter(Options: TYTDOptions; var SelectedID: string; Owner: TApiForm = nil; const Caption: string = ''): boolean;
 var F: TFormSelectConverter;

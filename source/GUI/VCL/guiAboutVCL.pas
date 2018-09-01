@@ -119,7 +119,7 @@ begin
   inherited;
   {$ENDIF}
   // Show current version
-  LabelVersion.Caption := {$INCLUDE 'YTD.version'};
+  LabelVersion.Caption := APPLICATION_VERSION;
   // Homepage
   SetUrlStyle(LabelHomepage);
   // Providers
@@ -140,7 +140,7 @@ procedure TFormAbout.NewVersionEvent(Sender: TObject; const Version, Url: string
 begin
   LabelNewestVersion.Caption := Version;
   NewVersionUrl := Url;
-  if Version > {$INCLUDE 'YTD.version'} then
+  if IsNewerVersion(Version) then
     SetUrlStyle(LabelNewestVersion);
 end;
 

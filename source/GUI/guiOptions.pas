@@ -148,8 +148,6 @@ begin
     {$ELSE}
     PortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}
-    if PortableMode then
-      XmlFileName := ChangeFileExt(ParamStr(0), '.xml');
     {$IFDEF GUI_WINAPI}
     CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}

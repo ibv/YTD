@@ -3,6 +3,7 @@ Prot.	Zdr.naz	Zdr.URL	Nazev
 HTTP	HTML	HTML	down5min
 HTTP	HTML	HTML	downAktualne
 HTTP	HTML	HTML	downAngryAlien
+MS	HTML	HTML	downAutoSalonTV
 HTTP	HTML	XML	downAutoTube
 RTMP	XML	XML	downBarrandov
 HTTP	HTML	Nested	downBlennus
@@ -59,7 +60,7 @@ HTTP	HTML	HTML	downLibimSeTi
 HTTP	HTML	XML	downLiveLeak
 HTTP	XML	XML	downLiveVideo
 HTTP	HTML	HTML	downLoupak
-HTTP	XML	XML	downMarkiza
+HTTP	JSON	JSON	downMarkiza
 HTTP	HTML	HTML	downMediaSport
 HTTP	XML	XML	downMegaVideo
 HTTP	HTML	HTML	downMetaCafe

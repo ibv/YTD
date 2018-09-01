@@ -1,6 +1,46 @@
 CHANGELOG
 ---------
 
+  v0.69
+
+    * Novı posktyovatel: AutoSalonTV.cz.
+
+    * Blip.tv: Podpora pro playlisty.
+
+      Pozn.: Naèítání obsahu playlistu probíhá bez jakéhokoliv vıstupu a mùe
+      u nìkterıch playlistù (napø. http://thespoonyone.blip.tv) trvat i dost
+      dlouho. Nenechte se znervóznit tím, e se zdánlivì nic nedìje.
+
+    * Facebook.com: Pøidána podpora pro videa, u kterıch není uvedena kvalita.
+
+    * Markiza.sk: Aktualizováno na novı webovı pøehrávaè.
+
+    * Novinky.cz: Upravena podpora pro videa uvnitø èlánkù.
+
+    * Formuláø "Nastavení" (F9) byl podstatnì rozšíøen. Nyní u obsahuje
+      skoro všechna nastavení, která jsou v konfiguraèním souboru k dispozici,
+      mimo jiné nastavení proxy serveru nebo monost dodateènì zapnout nebo
+      vypnout zjišování novıch verzí pøi startu programu. 
+      
+      Na formuláøi nastavení jsou také k dispozici tlaèítka pro vytvoøení
+      zástupce na ploše nebo ve Start menu.
+
+    * Opraveny nekompatibility s Delphi 2009 (tıká se to jen tìch, kdo si 
+      YTD kompilují sami, protoe produkèní verze je kompilována Delphi 5):
+
+      - Aplikace spadne s Access Violation nebo jinou chybou, pokud je zapnuta
+        WinAPI verze grafického prostøedí.
+
+      - Nefunguje zjišování, jaká verze YTD je k dispozici na internetu.
+
+    * Tlaèítko "Stop" v grafické verzi programu fungovalo ve skuteènosti jako
+      pauza, ne jako zastavení.
+
+    * Pøenosnı reim v øadì situací "pøebil" reim nepøenosnı. Nyní u by mìl
+      vdy bìet skuteènì ten reim, kterı si uivatel vybral.
+
+
+
   v0.68
 
     * FreeCaster.tv: Upraveno na novou podobu stránek.

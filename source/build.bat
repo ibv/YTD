@@ -13,7 +13,7 @@ set fastmm=0
 set upx=0
 set map=0
 
-set exedir=..\Exe\
+set exedir=..\Bin\
 set srcdir=
 
 rem --- Read command-line parameters ------------------------------------------
@@ -95,6 +95,7 @@ if "%compver%"=="fpc" (
 )
 if "%compver%"=="d5" call :%compiler% "%srcdir%lib\Pepak\delphi5\*.pas"
 call :%compiler% "%srcdir%lib\PerlRegEx\*.pas"
+call :%compiler% "%srcdir%lib\lkJSON\uLkJSON.pas"
 call :%compiler% "%srcdir%lib\Pepak\*.pas"
 copy "%srcdir%lib\Pepak\*.res" "%srcdir%Units" >nul
 call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"

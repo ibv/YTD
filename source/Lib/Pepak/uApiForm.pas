@@ -5,7 +5,6 @@ interface
 
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl,
-  {$IFDEF APIFORM_ANCHORS} Contnrs, {$ENDIF}
   uApiCommon, uApiFunctions, uApiGraphics, uCompatibility;
 
 type
@@ -20,7 +19,7 @@ type
       fHandle: HWND;
       fModalResult: integer;
       {$IFDEF APIFORM_ANCHORS}
-      fAnchorList: TObjectList;
+      fAnchorList: TList;
       {$ENDIF}
       {$IFDEF APIFORM_ACCELERATORS}
       fAccelerators: HACCEL;
@@ -69,7 +68,7 @@ type
       {$IFDEF APIFORM_ANCHORS}
       function FindControlAnchorIndex(Control: THandle): integer;
       function FindControlAnchor(Control: THandle): TAnchorDesc;
-      property AnchorList: TObjectList read fAnchorList;
+      property AnchorList: TList read fAnchorList;
       {$ENDIF}
       {$IFDEF APIFORM_ACCELERATORS}
       property Accelerators: HACCEL read fAccelerators write fAccelerators;
@@ -83,7 +82,8 @@ type
       constructor Create; overload; virtual;
       destructor Destroy; override;
       function ShowModal: integer; virtual;
-      procedure Show; virtual;
+      function Show: THandle; virtual;
+      function ShowFrame(Parent: THandle): THandle; virtual;
       function Close: boolean; overload; virtual;
       function Close(ModalResult: integer): boolean; overload; virtual;
       {$IFDEF APIFORM_ANCHORS}
@@ -264,9 +264,6 @@ begin
   fDialogResourceName := ADialogResourceName;
   fOwner := AOwner;
   fHandle := 0;
-  {$IFDEF APIFORM_ANCHORS}
-  fAnchorList := TObjectList.Create(True);
-  {$ENDIF}
   fIcon := LoadIcon(hInstance, 'MAINICON');
 end;
 
@@ -286,9 +283,6 @@ begin
   if fHandle <> 0 then
     SendMessage(Handle, WM_CLOSE, 0, 0);
   fHandle := 0;
-  {$IFDEF APIFORM_ANCHORS}
-  FreeAndNil(fAnchorList);
-  {$ENDIF}
   inherited Destroy;
 end;
 
@@ -329,6 +323,9 @@ begin
   // Ikona
   if Icon <> 0 then
     SendMessage(Self.Handle, WM_SETICON, 0, Icon);
+  {$IFDEF APIFORM_ANCHORS}
+  fAnchorList := TList.Create;
+  {$ENDIF}
 end;
 
 function TApiForm.AfterInitDialog: boolean;
@@ -337,10 +334,21 @@ begin
 end;
 
 function TApiForm.DoClose: boolean;
+{$IFDEF APIFORM_ANCHORS}
+var i: integer;
+{$ENDIF}
 begin
   Result := CanClose;
   if Result then
+    begin
+    {$IFDEF APIFORM_ANCHORS}
+    for i := 0 to Pred(AnchorList.Count) do
+      if AnchorList[i] <> nil then
+        TObject(AnchorList[i]).Free;
+    FreeAndNil(fAnchorList);
+    {$ENDIF}
     EndDialog(Handle, ModalResult);
+    end;
 end;
 
 function TApiForm.CanClose: boolean;
@@ -371,7 +379,7 @@ begin
   if GetClientRect(Self.Handle, OwnerRect) then
     for i := 0 to Pred(AnchorList.Count) do
       if AnchorList[i] <> nil then
-        if AnchorList[i] is TAnchorDesc then
+        if TObject(AnchorList[i]) is TAnchorDesc then
           begin
           AnchorItem := TAnchorDesc(AnchorList[i]);
           // Horizontal anchors:
@@ -571,10 +579,18 @@ begin
   SetModalResult(Result);
 end;
 
-procedure TApiForm.Show;
+function TApiForm.Show: THandle;
 begin
   SetModalResult(0);
-  ShowApiError(CreateDialogParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, Integer(Self)) = 0);
+  Result := CreateDialogParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, Integer(Self));
+  ShowApiError(Result = 0);
+end;
+
+function TApiForm.ShowFrame(Parent: THandle): THandle;
+begin
+  SetModalResult(0);
+  Result := CreateDialogParam(hInstance, PChar(DialogResourceName), Parent, @ApiFormDialogProc, Integer(Self));
+  ShowApiError(Result = 0);
 end;
 
 function TApiForm.Close: boolean;
@@ -610,7 +626,7 @@ begin
   Result := -1;
   for i := 0 to Pred(AnchorList.Count) do
     if AnchorList[i] <> nil then
-      if AnchorList[i] is TAnchorDesc then
+      if TObject(AnchorList[i]) is TAnchorDesc then
         if TAnchorDesc(AnchorList[i]).Handle = Control then
           begin
           Result := i;
@@ -633,7 +649,10 @@ var Index: integer;
 begin
   Index := FindControlAnchorIndex(Control);
   if Index >= 0 then
+    begin
+    TObject(AnchorList[Index]).Free;
     AnchorList.Delete(Index);
+    end;
 end;
 
 function TApiForm.GetControlAnchors(Control: THandle; out Anchors: TAnchors): boolean;

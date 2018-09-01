@@ -42,8 +42,10 @@ interface
 const
   EOLN = #13#10;
   APPLICATION_TITLE = 'YouTube Downloader';
-  APPLICATION_CAPTION = APPLICATION_TITLE + ' v' + {$INCLUDE 'ytd.version'} ;
+  APPLICATION_VERSION = {$INCLUDE 'ytd.version'};
+  APPLICATION_CAPTION = APPLICATION_TITLE + ' v' + APPLICATION_VERSION;
   APPLICATION_URL = 'http://www.pepak.net/download/youtube-downloader/';
+  APPLICATION_SHORTCUT = APPLICATION_TITLE + '.lnk';
 
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';

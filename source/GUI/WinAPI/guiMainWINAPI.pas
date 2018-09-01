@@ -38,10 +38,6 @@ unit guiMainWINAPI;
 {$INCLUDE 'ytd.inc'}
 {$DEFINE PREPARETRANSLATIONS}
 
-{$IFDEF DELPHI2009_UP}
-  {$DEFINE LISTVIEWOVERFLOW}
-{$ENDIF}
-
 interface
 
 uses
@@ -119,6 +115,7 @@ type
       procedure AddTaskFromHTML(const Source: string); virtual;
       procedure DeleteTask(Index: integer); virtual;
       procedure StartPauseResumeTask(Index: integer); virtual;
+      procedure StopTask(Index: integer); virtual;
       {$IFDEF CONVERTERS}
       procedure ConvertTask(Index: integer; const ConverterID: string); virtual;
       {$ENDIF}
@@ -139,7 +136,7 @@ type
 
 implementation
 
-{$RESOURCE guiMainWINAPI.res}
+{$RESOURCE *.res}
 
 uses
   guiConsts, guiAboutWINAPI, {$IFDEF CONVERTERS} guiConverterWINAPI, {$ENDIF} guiOptionsWINAPI;
@@ -445,21 +442,7 @@ begin
     Result := inherited DoNotify(Control, ControlID, Code, WParam, LParam, NotifyResult);
 end;
 
-var StaticDisplayInfoText: string;
-
 function TFormMain.DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
-
-  function ShowStatic(const Text: string): boolean;
-    begin
-      {$IFDEF LISTVIEWOVERFLOW}
-        {$MESSAGE WARN 'Showing text in the listview leads to Access Violation. Function disabled.'}
-        Exit;
-      {$ENDIF}
-      StaticDisplayInfoText := Text;
-      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
-      DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
-      Result := True;
-    end;
 
   function GetStateImageIndex(Item: TDownloadListItem): integer;
     begin
@@ -517,27 +500,27 @@ begin
     case DispInfo^.item.iSubItem of
       LISTVIEW_SUBITEM_URL:
         begin
-        Result := ShowStatic(DownloadList.Urls[DispInfo^.item.iItem]);
+        Result := ListViewSetVirtualItemText(DispInfo, DownloadList.Urls[DispInfo^.item.iItem]);
         DispInfo^.item.iImage := GetStateImageIndex(DlItem);
         if DispInfo^.item.iImage >= 0 then
           DispInfo^.item.mask := DispInfo^.item.mask or LVIF_IMAGE;
         end;
       LISTVIEW_SUBITEM_PROVIDER:
-        Result := ShowStatic(DlItem.Downloader.Provider);
+        Result := ListViewSetVirtualItemText(DispInfo, DlItem.Downloader.Provider);
       LISTVIEW_SUBITEM_STATUS:
-        Result := ShowStatic(GetStateText(DlItem));
+        Result := ListViewSetVirtualItemText(DispInfo, GetStateText(DlItem));
       LISTVIEW_SUBITEM_TITLE:
         if DlItem.Downloader.Prepared then
-          Result := ShowStatic(DlItem.Downloader.Name)
+          Result := ListViewSetVirtualItemText(DispInfo, DlItem.Downloader.Name)
         else
-          Result := ShowStatic('');
+          Result := ListViewSetVirtualItemText(DispInfo, '');
       LISTVIEW_SUBITEM_SIZE:
         if DlItem.Downloader.Prepared and (DlItem.TotalSize >= 0) then
-          Result := ShowStatic(PrettySize(DlItem.TotalSize))
+          Result := ListViewSetVirtualItemText(DispInfo, PrettySize(DlItem.TotalSize))
         else
-          Result := ShowStatic('');
+          Result := ListViewSetVirtualItemText(DispInfo, '');
       LISTVIEW_SUBITEM_PROGRESS:
-        Result := ShowStatic(GetProgress(DlItem));
+        Result := ListViewSetVirtualItemText(DispInfo, GetProgress(DlItem));
       end;
     end;
 end;
@@ -813,7 +796,7 @@ begin
     try
       if MessageBox(0, PChar(_(MAINFORM_STOP_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
         for i := 0 to Pred(L.Count) do
-          StartPauseResumeTask(Integer(L[i]));
+          StopTask(Integer(L[i]));
     finally
       L.Free;
       end;
@@ -822,7 +805,7 @@ end;
 {$IFDEF THREADEDVERSION}
 procedure TFormMain.NewVersionEvent(Sender: TObject; const Version, Url: string);
 begin
-  if Version > {$INCLUDE 'YTD.version'} then
+  if IsNewerVersion(Version) then
     begin
     fBugReportDisabled := True;
     EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
@@ -892,6 +875,11 @@ begin
       Item.Pause
   else
     Item.Start;
+end;
+
+procedure TFormMain.StopTask(Index: integer);
+begin
+  DownloadList.Items[Index].Stop;
 end;
 
 {$IFDEF CONVERTERS}

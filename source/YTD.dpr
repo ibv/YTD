@@ -88,6 +88,9 @@ uses
       guiMainWINAPI in 'GUI\WinAPI\guiMainWINAPI.pas',
       guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas',
       guiOptionsWINAPI in 'GUI\WinAPI\guiOptionsWINAPI.pas',
+      guiOptionsWINAPI_Main in 'GUI\WinAPI\guiOptionsWINAPI_Main.pas',
+      guiOptionsWINAPI_Downloads in 'GUI\WinAPI\guiOptionsWINAPI_Downloads.pas',
+      guiOptionsWINAPI_Network in 'GUI\WinAPI\guiOptionsWINAPI_Network.pas',
       {$IFDEF CONVERTERS}
       guiConverterWINAPI in 'GUI\WinAPI\guiConverterWINAPI.pas',
       {$ENDIF}
@@ -111,6 +114,7 @@ uses
   downAktualne in 'Downloaders\downAktualne.pas',
   downAlternativaTV in 'Downloaders\downAlternativaTV.pas',
   downAngryAlien in 'Downloaders\downAngryAlien.pas',
+  downAutoSalonTV in 'Downloaders\downAutoSalonTV.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
   downBlennus in 'Downloaders\downBlennus.pas',
@@ -286,6 +290,7 @@ uses
     downWat in 'Downloaders\Non-working\downWat.pas',
   {$ENDIF}
   // Playlist handlers
+  listBlipTV in 'Playlists\listBlipTV.pas',
   listCT24 in 'Playlists\listCT24.pas',
   listGameAnyone in 'Playlists\listGameAnyone.pas',
   listHTML in 'Playlists\listHTML.pas',

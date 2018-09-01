@@ -68,7 +68,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>\s*(?P<TITLE>.*?)(?:&nbsp;|&ndash;|\s*Novinky.cz|</title>)';
+  REGEXP_EXTRACT_TITLE = '<param\s+name="FlashVars"\s+value="(?:[^"]*&amp;)*gemius_name=(?P<TITLE>.*?)(?:&amp|")';
+  REGEXP_EXTRACT_URL = '<param\s+name="FlashVars"\s+value="(?:[^"]*&amp;)*video_src=(?P<URL>https?://.+?)(?:&amp|")';
 
 { TDownloader_NovinkyV2 }
 
@@ -81,7 +82,10 @@ constructor TDownloader_NovinkyV2.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
 destructor TDownloader_NovinkyV2.Destroy;

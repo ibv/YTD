@@ -36,16 +36,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit guiFunctions;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE COMOBJ}
 
 interface
 
 uses
-  SysUtils, Windows, ShellApi,
+  SysUtils, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
   SynaCode,
   uFunctions, uDownloadList, uMessages, uStringUtils;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
+function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0): boolean;
 
 implementation
 
@@ -64,11 +66,49 @@ procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 var BugReportUrl: string;
 begin
   BugReportUrl := Format(BUGREPORT_URL,
-                       [ {$INCLUDE 'YTD.version'} ,
+                       [ APPLICATION_VERSION,
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
                        ]);
   ShellExecute(0, 'open', PChar(BugReportUrl), nil, nil, SW_SHOWNORMAL);
+end;
+
+function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer): boolean;
+var IObject: IUnknown;
+    PIDL : PItemIDList;
+    Dir, FileName: string;
+    DirBuf: array[0..MAX_PATH] of char;
+begin
+  {$IFDEF COMOBJ}
+  IObject := CreateComObject(CLSID_ShellLink);
+  {$ELSE}
+  Result := False;
+  if (CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER or CLSCTX_LOCAL_SERVER, IUnknown, IObject) and $80000000) = 0 then
+  {$ENDIF}
+    try
+      with IObject as IShellLink do
+        begin
+        SetPath(PChar(ParamStr(0)));
+        SetWorkingDirectory(PChar(ExtractFilePath(ParamStr(0))));
+        end;
+      if WhereCSIDL = 0 then
+        Dir := Where
+      else
+        begin
+        SHGetSpecialFolderLocation(0, WhereCSIDL, PIDL);
+        SHGetPathFromIDList(PIDL, DirBuf);
+        Dir := string(DirBuf);
+        end;
+      if Dir = '' then
+        FileName := ShortcutName
+      else
+        FileName := Dir + '\' + ShortcutName;
+      with IObject as IPersistFile do
+        Save(PWideChar(WideString(FileName)), False);
+      Result := True;
+    finally
+      IObject := nil;
+      end;
 end;
 
 end.

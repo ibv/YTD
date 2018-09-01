@@ -48,7 +48,7 @@ interface
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
-  uLanguages, uMessages, uDownloadClassifier, uDownloader, uOptions;
+  uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions;
 
 type
   TFormAbout = class(TApiForm)
@@ -94,7 +94,7 @@ type
 
 implementation
 
-{$RESOURCE guiAboutWINAPI.res}
+{$RESOURCE *.res}
 
 // from resource.h
 const
@@ -200,6 +200,9 @@ begin
 end;
 
 function TFormAbout.DoInitDialog: boolean;
+{$IFNDEF THREADEDVERSION}
+var fVersion, fUrl: string;
+{$ENDIF}
 begin
   Result := inherited DoInitDialog;
   CreateObjects;
@@ -210,7 +213,7 @@ begin
   {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_YOUTUBEDOWNLOADER, WM_SETFONT, Font_Title, 1);
   // Label "Version:" and version number
-  SetDlgItemText(Self.Handle, IDC_LABEL_VERSION, {$INCLUDE 'ytd.version'});
+  SetDlgItemText(Self.Handle, IDC_LABEL_VERSION, APPLICATION_VERSION);
   SendDlgItemMessage(Handle, IDC_LABEL_VERSION, WM_SETFONT, Font_Info, 1);
   // Label "Newest version:"
   fNewestVersionColor := {$IFDEF THREADEDVERSION} clBlack {$ELSE} clRed {$ENDIF} ;
@@ -229,8 +232,8 @@ begin
     {$IFDEF THREADEDVERSION}
     Options.GetNewestVersionInBackground(NewVersionEvent);
     {$ELSE}
-    if Options.GetNewestVersion(Version, Url) then
-      NewVersionEvent(Options, Version, Url);
+    if Options.GetNewestVersion(fVersion, fUrl) then
+      NewVersionEvent(Options, fVersion, fUrl);
     {$ENDIF}
   // ListView with provider info
   LoadProviders;
@@ -320,7 +323,7 @@ procedure TFormAbout.NewVersionEvent(Sender: TObject; const Version, Url: string
 begin
   fNewestVersionUrl := Url;
   SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_( Version )));
-  if Version > {$INCLUDE 'YTD.version'} then
+  if IsNewerVersion(Version) then
     begin
     fNewestVersionColor := clBlue;
     SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Link, 1);
@@ -339,26 +342,14 @@ begin
 end;
 
 {$IFNDEF STATICPROVIDERLIST}
-var StaticDisplayInfoText: string;
-
 function TFormAbout.ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
-
-  function ShowStatic(const Text: string): boolean;
-    begin
-      StaticDisplayInfoText := Text;
-      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
-      DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
-      Result := True;
-    end;
-
 begin
   Result := False;
-  DispInfo^.item.mask := 0;
   case DispInfo^.item.iSubItem of
     LISTVIEW_SUBITEM_PROVIDER:
-      Result := ShowStatic(DownloadClassifier.Names[DispInfo^.item.iItem]);
+      Result := ListViewSetVirtualItemText(DispInfo, DownloadClassifier.Names[DispInfo^.item.iItem]);
     LISTVIEW_SUBITEM_COMPONENTS:
-      Result := ShowStatic(DownloadClassifier.NameClasses[DispInfo^.item.iItem]);
+      Result := ListViewSetVirtualItemText(DispInfo, DownloadClassifier.NameClasses[DispInfo^.item.iItem]);
     end;
 end;
 {$ENDIF}
