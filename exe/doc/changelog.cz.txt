@@ -1,6 +1,30 @@
 CHANGELOG
 ---------
 
+  v0.61
+
+    * Nový poskytovatel: RTA.cz.
+
+    * Nový poskytovatel: Sex-Doma.cz (porno).
+
+    * Nový poskytovatel: TN.Nova.cz.
+
+      Pozor: Nepodaøilo se mi plnì dekódovat zpùsob, jak se z URL èlánku dostat
+      k URL videa. Z tohoto dùvodu jsem použil velmi prasácký hack, který 
+      postupnì vyzkouší všechny servery, na kterých by video mohlo být. To je 
+      za prvé pomalé, za druhé nespolehlivé a za tøetí se snadno mùže stát, že 
+      vás Nova za tento zpùsob útoku na jejich servery zabanuje.
+
+    * Nový poskytovatel: Z1TV.cz.
+
+    * CT24.cz: Podpora pro URL ve formátu
+      http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
+
+    * MojeVideo.sk: Nároky na URL byly pøíliš vysoké, v dùsledku toho nìkterá
+      videa nešla stáhnout (napø. http://www.mojevideo.sk/video/654a/eduard_mila_tomasovi_gen.html).
+
+
+
   v0.60
 
     * Nový poskytovatel: DrsnySvet.cz (jen nìkteré zdroje).

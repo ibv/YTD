@@ -66,9 +66,10 @@ uses
   uMessages;
 
 // http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
+// http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ct24\.cz/';
-  URLREGEXP_ID =        '[^/?&]+/[0-9]+-[^/?&]*/video/[0-9]+';
+  URLREGEXP_ID =        '([^/?&]+/[0-9]+-[^/?&]*/video/[0-9]+|vysilani/[0-9]+[^?]*)';
   URLREGEXP_AFTER_ID =  '';
 
 const

@@ -78,6 +78,8 @@ HTTP	-	HTML	downQipRu_Embed
 HTTP	HTML	HTML+XML	downRaajje
 HTTP	HTML	HTML	downRingTV (<-downGrindTV)
 HTTP	HTML	HTML	downRozhlas
+MS	XML	XML	downRTA (<-downRTA_Embed)
+MS	XML	XML	downRTA_Embed
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
 HTTP	XML	XML	downSpike
@@ -107,6 +109,7 @@ HTTP	XML	XML	downVitalMtb
 HTTP	HTML	HTML	downWimp
 HTTP	HTML	HTML	downWrzuta
 HTTP	HTML	HTML1	downYouTube
+HTTP	HTML	HTML	downZ1TV
 HTTP	HTML	XML	downZkoukniTo
 
 *HTTP1 ... Multiple vars parsing

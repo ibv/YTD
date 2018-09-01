@@ -12,6 +12,7 @@ HTTP	XML	XML	xxxPornHubEmbed
 HTTP	HTML	HTML1	xxxPornoTube
 HTTP	HTML	HTML	xxxRedTube
 HTTP	XML	XML	xxxRude
+HTTP	HTML	HTML	xxxSexDoma
 HTTP	HTML	HTML	xxxShufuni
 HTTP	HTML	XML	xxxSpankingTube
 HTTP	HTML	XML	xxxTnaFlix

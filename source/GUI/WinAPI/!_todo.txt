@@ -1,0 +1,8 @@
+- Kurzor na LABEL_HOMEPAGE by mel byt "ruka"
+- Kurzor na LABEL_NEWESTVERSION by mel byt v pripade, ze existuje novejsi
+  verze, "ruka"
+- Zobrazit seznam provideru.
+- Zaridit, aby se okno dalo zvetsovat a zmensovat a aby se controly na nem
+  prislusne resizovaly
+- Klik na LABEL_HOMEPAGE by mel otevrit homepage
+- Klik na LABEL_NEWESTVERSION by mel stahnout aktualni verzi

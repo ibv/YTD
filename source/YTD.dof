@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX
 DebugSourceDirs=C:\Tmp\ytd\Source\Lib\NativeXml\
 UsePackages=0
 [Parameters]
-RunParams=http://www.tipovani.cz/online-live-stream-TV/sla-vs-ceb-24-10-2010.aspx
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=60
+MinorVer=61
 Release=0
-Build=300
+Build=321
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.60.0.300
+FileVersion=0.61.0.321
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -115,7 +115,7 @@ Count=2
 Item0=..\Exe
 Item1=Exe
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6023
 Activate=0
 Activate Handle=1
 Save Log File=1

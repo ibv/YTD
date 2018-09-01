@@ -9,3 +9,6 @@ del /s /q *.dsk >nul 2>&1
 del /s /q *.drc >nul 2>&1
 del /s /q *.exe >nul 2>&1
 del /s /q *.map >nul 2>&1
+del /q YTD.dproj >nul 2>&1
+del /q YTD.identcache >nul 2>&1
+del /q YTD.dproj.* >nul 2>&1

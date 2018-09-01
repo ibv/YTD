@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.60                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.61                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -99,6 +99,7 @@ SUPPORTED PROVIDERS
  - CT24.cz:
      - http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
      - http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
+     - http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
 
      Note: The "real" provider is CeskaTelevize.cz, so its notes apply to
            CT24.cz as well.
@@ -305,6 +306,13 @@ SUPPORTED PROVIDERS
      Note: Each page can contain several files. In such a case, all files
      are downloaded.
 
+ - RTA.cz:
+
+     - http://www.rta.cz/?article=140331
+     - http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
+
+     Note: This provider uses RTSP over HTTP protocol. See the note below.
+
  - RuTube.ru:
      - http://rutube.ru/tracks/3201791.html?v=ee2f0d03562f2cf3b28e6cad55f353e4
 
@@ -356,6 +364,16 @@ SUPPORTED PROVIDERS
 
  - TeacherTube.com:
      - http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
+
+ - TN.Nova.cz:
+     - http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
+
+     Note: I couldn't properly decode, how to get a video URL from a given
+           article URL. In order to get this provider to work, I had to resort
+           to a very dirty hack, which sequentially tries a number of possible
+           servers to see if it can find the real one. That's slow, unreliable
+           and above all the provider could ban you for this kind of abuse of
+           his servers.
 
  - TodaysBigThing.com:
      - http://www.todaysbigthing.com/2010/06/01
@@ -418,6 +436,9 @@ SUPPORTED PROVIDERS
      - http://www.youtube.com/titanicpiano14
      - http://www.youtube.com/user/titanicpiano14
 
+ - Z1TV.cz:
+     - http://www.z1tv.cz/interview-z1/interview-z1-kobzanova-diana-1972.html?page=1
+
  - ZkoukniTo.cz:
      - http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
 
@@ -436,6 +457,7 @@ Supported porn providers:
  - PornoTube.com
  - RedTube.com
  - Rude.com
+ - Sex-Doma.cz
  - Shufuni.com
  - SlutLoad.com
  - SpankingTube.com

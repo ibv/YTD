@@ -34,21 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMojeVideoSk;
+unit downRTA_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uPCRE, uXml, uCompatibility, HttpSend,
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TDownloader_MojeVideoSk = class(THttpDownloader)
+  TDownloader_RTA_Embed = class(TMSDownloader)
     private
     protected
-      VideoIdRegExp: TRegExp;
+      ConfigXmlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -62,67 +62,79 @@ type
 implementation
 
 uses
+  uStringUtils,
   uDownloadClassifier,
   uMessages;
 
-// http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+// http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mojevideo\.sk/video/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rta\.cz/rta_stream_wmv/.*?[?&]id_item=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
+  REGEXP_CONFIG_XML = '<param\s+value="(?P<PATH>[^"]+)"\s+name="URL"';
 
-{ TDownloader_MojeVideoSk }
+{ TDownloader_RTA_Embed }
 
-class function TDownloader_MojeVideoSk.Provider: string;
+class function TDownloader_RTA_Embed.Provider: string;
 begin
-  Result := 'MojeVideoSk.com';
+  Result := 'RTA.cz';
 end;
 
-class function TDownloader_MojeVideoSk.UrlRegExp: string;
+class function TDownloader_RTA_Embed.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
+constructor TDownloader_RTA_Embed.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  inherited;
+  InfoPageEncoding := peUTF8;
+  ConfigXmlRegExp := RegExCreate(REGEXP_CONFIG_XML, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MojeVideoSk.Destroy;
+destructor TDownloader_RTA_Embed.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(ConfigXmlRegExp);
   inherited;
 end;
 
-function TDownloader_MojeVideoSk.GetMovieInfoUrl: string;
+function TDownloader_RTA_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mojevideo.sk/video/' + MovieID;
+  Result := 'http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=' + MovieID;
 end;
 
-function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID: string;
+function TDownloader_RTA_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Path, Url, Title: string;
+    Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+  if not GetRegExpVar(ConfigXmlRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE))
+  else if not DownloadXml(Http, 'http://www.rta.cz' + Path, Xml) then
+    SetLastErrorMsg(_(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE))
   else
-    begin
-    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.flv';
-    SetPrepared(True);
-    Result := True;
-    end;
+    try
+      if not GetXmlVar(Xml, 'entry/title', Title) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_TITLE))
+      else if not GetXmlAttr(Xml, 'entry/ref', 'href', Url) then
+        SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
+      else
+        begin
+        // Note: TNativeXml incorrectly determines input encoding
+        SetName(Utf8ToString(Utf8String(Title)));
+        MovieURL := URL;
+        Result := True;
+        SetPrepared(True);
+        end;
+    finally
+      Xml.Free;
+      end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MojeVideoSk);
+  RegisterDownloader(TDownloader_RTA_Embed);
 
 end.

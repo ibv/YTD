@@ -169,6 +169,9 @@ uses
   downNJoy in 'Downloaders\downNJoy.pas',
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
   downNova in 'Downloaders\downNova.pas',
+  {$IFDEF DIRTYHACKS}
+  downNovaTN in 'Downloaders\downNovaTN.pas',
+  {$ENDIF}
   downNovinky in 'Downloaders\downNovinky.pas',
   downOverStream in 'Downloaders\downOverStream.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
@@ -179,6 +182,8 @@ uses
   downRevver in 'Downloaders\downRevver.pas',
   downRingTV in 'Downloaders\downRingTV.pas',
   downRozhlas in 'Downloaders\downRozhlas.pas',
+  downRTA in 'Downloaders\downRTA.pas',
+  downRTA_Embed in 'Downloaders\downRTA_Embed.pas',
   downSevenLoad in 'Downloaders\downSevenLoad.pas',
   downSnotr in 'Downloaders\downSnotr.pas',
   downSpike in 'Downloaders\downSpike.pas',
@@ -208,6 +213,7 @@ uses
   downWimp in 'Downloaders\downWimp.pas',
   downWrzuta in 'Downloaders\downWrzuta.pas',
   downYouTube in 'Downloaders\downYouTube.pas',
+  downZ1TV in 'Downloaders\downZ1TV.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',
   {$IFDEF XXX}
     xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
@@ -222,6 +228,7 @@ uses
     xxxPornoTube in 'Downloaders\XXX\xxxPornoTube.pas',
     xxxRedTube in 'Downloaders\XXX\xxxRedTube.pas',
     xxxRude in 'Downloaders\XXX\xxxRude.pas',
+    xxxSexDoma in 'Downloaders\XXX\xxxSexDoma.pas',
     xxxShufuni in 'Downloaders\XXX\xxxShufuni.pas',
     xxxSlutLoad in 'Downloaders\XXX\xxxSlutLoad.pas',
     xxxSpankingTube in 'Downloaders\XXX\xxxSpankingTube.pas',

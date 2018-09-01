@@ -214,7 +214,7 @@ implementation
 {$R *.DFM}
 
 uses
-  guiConsts, {$IFDEF GUI_WINAPI} guiAboutWINAPI, {$ELSE} guiAboutVCL, {$ENDIF} guiConverterVCL;
+  guiConsts, {$IFDEF GUI_WINAPI} guiAboutWinAPI, {$ELSE} guiAboutVCL, {$ENDIF} guiConverterVCL;
 
 {$IFNDEF FPC}
 const
@@ -843,7 +843,7 @@ end;
 
 procedure TFormYTD.actAboutExecute(Sender: TObject);
 begin
-  with TFormAbout.Create(Self) do
+  with {$IFDEF GUI_WINAPI} TFormAbout.Create('guiAboutWinAPI') {$ELSE} TFormAbout.Create(Self) {$ENDIF} do
     try
       DownloadClassifier := Self.DownloadList.DownloadClassifier;
       Options := Self.Options;

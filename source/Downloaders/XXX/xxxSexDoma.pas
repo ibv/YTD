@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMojeVideoSk;
+unit xxxSexDoma;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MojeVideoSk = class(THttpDownloader)
+  TDownloader_SexDoma = class(THttpDownloader)
     private
     protected
-      VideoIdRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,64 +62,48 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mojevideo\.sk/video/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*sex-doma\.cz/new_movie_result\.php\?(?:[^&]*&)*id=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
+  REGEXP_EXTRACT_TITLE = '<span\s+id="name_1">(?P<TITLE>.*?)</span>';
+  REGEXP_EXTRACT_URL = '\bflashvars\s*:\s*"file=(?P<URL>https?://[^&"]+)';
 
-{ TDownloader_MojeVideoSk }
+{ TDownloader_SexDoma }
 
-class function TDownloader_MojeVideoSk.Provider: string;
+class function TDownloader_SexDoma.Provider: string;
 begin
-  Result := 'MojeVideoSk.com';
+  Result := 'Sex-Doma.cz';
 end;
 
-class function TDownloader_MojeVideoSk.UrlRegExp: string;
+class function TDownloader_SexDoma.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
+constructor TDownloader_SexDoma.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MojeVideoSk.Destroy;
+destructor TDownloader_SexDoma.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_MojeVideoSk.GetMovieInfoUrl: string;
+function TDownloader_SexDoma.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mojevideo.sk/video/' + MovieID;
-end;
-
-function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
-    begin
-    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.flv';
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.sex-doma.cz/new_movie_result.php?id=' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MojeVideoSk);
+  RegisterDownloader(TDownloader_SexDoma);
 
 end.

@@ -1,6 +1,30 @@
 CHANGELOG
 ---------
 
+  v0.61
+
+    * New provider: RTA.cz.
+
+    * New provider: Sex-Doma.cz (porn).
+
+    * New provider: TN.Nova.cz.
+      Note: I couldn't properly decode, how to get a video URL from a given
+      article URL. In order to get this provider to work, I had to resort to 
+      a very dirty hack, which sequentially tries a number of possible servers 
+      to see if it can find the real one. That's slow, unreliable and above 
+      all the provider could ban you for this kind of abuse of his servers.
+
+    * New provider: Z1TV.cz.
+
+    * CT24.cz: Support for URL format
+      http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
+
+    * MojeVideo.sk: The requirements for movie URLs were too strict, preventing
+      some videos from being downloaded (for example 
+      http://www.mojevideo.sk/video/654a/eduard_mila_tomasovi_gen.html).
+
+
+
   v0.60
 
     * New provider: DrsnySvet.cz (some sources only).

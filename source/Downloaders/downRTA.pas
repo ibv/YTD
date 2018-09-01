@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMojeVideoSk;
+unit downRTA;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,18 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uMSDownloader, downRTA_Embed;
 
 type
-  TDownloader_MojeVideoSk = class(THttpDownloader)
+  TDownloader_RTA = class(TDownloader_RTA_Embed)
     private
     protected
-      VideoIdRegExp: TRegExp;
+      EmbedUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -65,64 +64,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+// http://www.rta.cz/?article=140331
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mojevideo\.sk/video/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rta\.cz/.*?[?&]article=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
+  REGEXP_EMBED_URL = '<a\s+target="tvscreen_ifs"\s+href="(?P<URL>.+?)"';
 
-{ TDownloader_MojeVideoSk }
+{ TDownloader_RTA }
 
-class function TDownloader_MojeVideoSk.Provider: string;
-begin
-  Result := 'MojeVideoSk.com';
-end;
-
-class function TDownloader_MojeVideoSk.UrlRegExp: string;
+class function TDownloader_RTA.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
+constructor TDownloader_RTA.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  inherited;
+  InfoPageEncoding := peUTF8;
+  EmbedUrlRegExp := RegExCreate(REGEXP_EMBED_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MojeVideoSk.Destroy;
+destructor TDownloader_RTA.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(EmbedUrlRegExp);
   inherited;
 end;
 
-function TDownloader_MojeVideoSk.GetMovieInfoUrl: string;
+function TDownloader_RTA.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mojevideo.sk/video/' + MovieID;
+  Result := 'http://www.rta.cz/?article=' + MovieID;
 end;
 
-function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID: string;
+function TDownloader_RTA.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
-    begin
-    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.flv';
-    SetPrepared(True);
-    Result := True;
-    end;
+  if DownloadPage(Http, Url, Page, InfoPageEncoding) then
+    if GetRegExpVar(EmbedUrlRegExp, Page, 'URL', Url) then
+      Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MojeVideoSk);
+  RegisterDownloader(TDownloader_RTA);
 
 end.

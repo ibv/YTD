@@ -38,6 +38,9 @@
 {$DEFINE SUBTITLES}
   // Global supportfor subtitles
 
+{$DEFINE DIRTYHACKS}
+  // Allow providers which only work due to dirty hacks
+
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
 

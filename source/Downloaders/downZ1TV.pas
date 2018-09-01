@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMojeVideoSk;
+unit downZ1TV;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MojeVideoSk = class(THttpDownloader)
+  TDownloader_Z1TV = class(THttpDownloader)
     private
     protected
-      VideoIdRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,64 +62,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+// http://www.z1tv.cz/interview-z1/interview-z1-kobzanova-diana-1972.html?page=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mojevideo\.sk/video/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*Z1TV\.cz/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
+  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)(?:\s*-[^-<]*)?</title>';
+  REGEXP_EXTRACT_URL = '\bcreatePlayer\s*\(\s*''[^'']*''\s*,\s*''(?P<URL>.*?)''';
 
-{ TDownloader_MojeVideoSk }
+{ TDownloader_Z1TV }
 
-class function TDownloader_MojeVideoSk.Provider: string;
+class function TDownloader_Z1TV.Provider: string;
 begin
-  Result := 'MojeVideoSk.com';
+  Result := 'Z1TV.cz';
 end;
 
-class function TDownloader_MojeVideoSk.UrlRegExp: string;
+class function TDownloader_Z1TV.UrlRegExp: string;
 begin
   Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
+constructor TDownloader_Z1TV.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE, [rcoIgnoreCase, rcoSingleLine]);
-  VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID, [rcoIgnoreCase, rcoSingleLine]);
+  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_MojeVideoSk.Destroy;
+destructor TDownloader_Z1TV.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_MojeVideoSk.GetMovieInfoUrl: string;
+function TDownloader_Z1TV.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mojevideo.sk/video/' + MovieID;
-end;
-
-function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
-  else
-    begin
-    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.flv';
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.z1tv.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MojeVideoSk);
+  RegisterDownloader(TDownloader_Z1TV);
 
 end.
