@@ -1,6 +1,28 @@
 CHANGELOG
 ---------
 
+  v0.34
+
+    * Removed the forgotten console window in GUI version.
+
+    * Updated support for MySpace. Note: Only movies hosted on MySpace servers
+      can be downloaded. Movies hosted elsewhere (e.g. Hulu.com) can't.
+
+    * Support for TV Noe (http://tvnoe.tbsystem.cz).
+
+    * Support for FreeCaster.tv.
+
+    * Support for Mpora.com.
+
+    * Support for VitalMtb.com.
+
+    * If an output file already exists and the user agreed to overwrite, YTD
+      tries to delete the file first and only after that start writing to it.
+      It's an attempt to solve a strange behavior of Windows 7, which won't
+      let YTD write to a pre-existing file.
+
+
+
   v0.33
 
     * Stream.cz: support for HQ video.

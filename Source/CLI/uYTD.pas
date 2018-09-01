@@ -505,6 +505,8 @@ begin
         until False;
         end;
       end;
+  if Valid and FileExists(FilePath + FileName) then
+    DeleteFile(FilePath + FileName);
 end;
 
 end.

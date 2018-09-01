@@ -1,15 +1,16 @@
 unit downMySpace;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE MYSPACE_USES_RTMP}
 
 interface
 
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, {$IFDEF MYSPACE_USES_RTMP} uRtmpDownloader {$ELSE} uHttpDownloader {$ENDIF} ;
 
 type
-  TDownloader_MySpace = class(TRtmpDownloader)
+  TDownloader_MySpace = class( {$IFDEF MYSPACE_USES_RTMP} TRtmpDownloader {$ELSE} THttpDownloader {$ENDIF} )
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -73,15 +74,19 @@ begin
     Xml.Xml := Page;
     if not GetXmlVar(Xml, 'channel/item/title', Title) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-    else if not GetXmlAttr(Xml, 'channel/item/myspace:RTMPE', 'url', Url) then
+    else if not GetXmlAttr(Xml, {$IFDEF MYSPACE_USES_RTMP} 'channel/item/myspace:RTMPE' {$ELSE} 'channel/item/media:content' {$ENDIF} , 'url', Url) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       SetName(Title);
-      // Note: Url is somewhat incorrect, MySpace uses protocol "rtmp" while in fact it should be "rtmpe"
-      MovieURL := StringReplace(Url, 'rtmp://', 'rtmpe://', [rfIgnoreCase]);
-      // Download
-      AddRtmpDumpOption('r', MovieURL);
+      {$IFDEF MYSPACE_USES_RTMP}
+        // Note: Url is somewhat incorrect, MySpace uses protocol "rtmp" while in fact it should be "rtmpe"
+        MovieURL := StringReplace(Url, 'rtmp://', 'rtmpe://', [rfIgnoreCase]);
+        // Download
+        AddRtmpDumpOption('r', MovieURL);
+      {$ELSE}
+        MovieURL := Url;
+      {$ENDIF}
       Result := True;
       SetPrepared(True);
       end;

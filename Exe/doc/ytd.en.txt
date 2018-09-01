@@ -70,6 +70,9 @@ SUPPORTED PROVIDERS
  - Free.Zoznam.sk:
      - http://free.zoznam.sk/video/Splhajuci-buldozer
 
+ - FreeCaster.tv:
+     - http://freecaster.tv/freeski/1012253
+
  - FreeRide.cz:
      - http://www.freeride.cz/snowboard/clanky/trix/tricktip-fs-grind-fs-revert-by-honza-smekal--9323/
      - http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
@@ -109,6 +112,9 @@ SUPPORTED PROVIDERS
 
  - MojeVideo.cz:
      - http://mojevideo.cz/view.php?id=5332
+
+ - Mpora.com:
+     - http://video.mpora.com/watch/xfnGGmZDC/
 
  - MySpace.com
      - http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
@@ -167,6 +173,9 @@ SUPPORTED PROVIDERS
  - Tontuyau.com:
      - http://www.tontuyau.com/v.asp?id=21715
 
+ - TV Noe:
+     - http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
+
  - TVcom.cz:
      - http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
 
@@ -192,6 +201,9 @@ SUPPORTED PROVIDERS
 
  - Vimeo.com:
      - http://www.vimeo.com/10777111
+
+ - VitalMtb.com:
+     - http://www.vitalmtb.com/videos/member/Practice-at-the-bmx-track,2631/bubb120491,1836
 
  - Wimp.com:
      - http://www.wimp.com/frazilice/

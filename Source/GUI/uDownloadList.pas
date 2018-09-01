@@ -239,6 +239,8 @@ begin
         D.Free;
         end;
       end;
+  if Valid and FileExists(DestinationPath + FileName) then
+    DeleteFile(DestinationPath + FileName);
 end;
 
 procedure TDownloadList.DownloadItemError(Sender: TObject);

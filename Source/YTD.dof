@@ -45,19 +45,19 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=lib\lkjson;lib\regexpr;lib\synapse\source\lib;lib\pepak;lib\dpcre67;lib\janXmlParser2;lib\rtmpdump;lib\msdl\src;lib\CoolTrayIcon
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
-Conditionals=XXX;DEBUG
+Conditionals=XXX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.videacesky.cz/parodie/key-of-awesome-batman
+RunParams=http://freecaster.tv/freeski/1012253
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=33
+MinorVer=34
 Release=0
-Build=188
+Build=190
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.33.0.188
+FileVersion=0.34.0.190
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -83,8 +83,8 @@ Count=1
 Item0=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 [HistoryLists\hlConditionals]
 Count=2
-Item0=XXX;DEBUG
-Item1=XXX
+Item0=XXX
+Item1=XXX;DEBUG
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -79,8 +79,8 @@ begin
       begin
       SetName(Title);
       MovieUrl := Url;
-      Result := True;
       SetPrepared(True);
+      Result := True;
       end;
   finally
     Xml.Free;

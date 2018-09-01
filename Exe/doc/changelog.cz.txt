@@ -1,6 +1,29 @@
 CHANGELOG
 ---------
 
+  v0.34
+
+    * Odstranìno zapomenuté konzolové okno pøi spouštìní GUI verze.
+
+    * Aktualizována podpora MySpace. Pozor, týká se pouze videí hostovaných
+      pøímo na serveru MySpace - jsou i taková, co jsou hostována jinde (napø.
+      na Hulu.com), a ta stáhnout nejdou.
+
+    * Podpora pro TV Noe (http://tvnoe.tbsystem.cz).
+
+    * Podpora pro FreeCaster.tv.
+
+    * Podpora pro Mpora.com.
+
+    * Podpora pro VitalMtb.com.
+
+    * Pokud uživatel odsouhlasí pøepsání existujícího souboru, pokusí se YTD
+      tento soubor smazat a teprve potom do nìj zaène zapisovat. (Jde o pokus,
+      jak obejít zvláštní chování Windows 7, které nechtìjí dovolit zápis do
+      existujícího souboru).
+
+
+
   v0.33
 
     * Stream.cz: Podpora pro HQ videa.
