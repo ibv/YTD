@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.37                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.38                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -46,6 +46,9 @@ PODPOROVANÉ WEBY
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
      níže v poznámkách ke knihovnì MSDL_DLL.DLL.
+
+ - CestyKSobe.cz:
+     - http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
 
  - Clipfish.de:
      - http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
@@ -152,6 +155,8 @@ PODPOROVANÉ WEBY
 
  - MSFotbal.CT24.cz:
      - http://msfotbal.ct24.cz/article.asp?id=339
+     - http://msfotbal.ct24.cz/video.asp?video_id=95
+     - http://msfotbal.ct24.cz/video.asp
 
      Pozn.: Skuteèným poskytovatelem je Èeská televize a platí proto všechno,
             co pro CeskaTelevize.cz.

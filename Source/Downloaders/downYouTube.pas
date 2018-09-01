@@ -75,7 +75,8 @@ const
   REGEXP_FLASHVARS_TOKEN = '&t=(?P<TOKEN>.*?)(?:&|$)';
   REGEXP_FLASHVARS_VIDEOID = '&video_id=(?P<VIDEOID>.*?)(?:&|$)';
   {$ENDIF}
-  REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
+  //REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)';
+  REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
 
 { TDownloader_YouTube }
 
@@ -221,7 +222,7 @@ begin
       Extension := '.flv'
     else
       Extension := '.mp4';
-    MovieURL := 'http://www.youtube.com/get_video.php?fmt=' + VideoFormat + '&video_id=' + VideoID + '&t=' + Token;
+    MovieURL := 'http://www.youtube.com/get_video?fmt=' + VideoFormat + '&video_id=' + VideoID + '&t=' + Token;
     Result := True;
     SetPrepared(True);
     end;

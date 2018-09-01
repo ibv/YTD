@@ -1,6 +1,19 @@
 CHANGELOG
 ---------
 
+  v0.38
+
+    * Support for alternate form of URLs for msfotbal.ct24.cz.
+
+    * Updated YouTube support to changes from Jun 17, 2010.
+
+    * GUI: Double click on a downloaded video plays that video in the default
+      player (according to its extension).
+
+    * New provider: CestyKSobe.cz
+
+
+
   v0.37
 
     * Some changes in the code result shortening of the command-line-only 

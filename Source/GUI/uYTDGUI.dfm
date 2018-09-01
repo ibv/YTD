@@ -193,6 +193,7 @@ object FormYTD: TFormYTD
     TabOrder = 1
     ViewStyle = vsReport
     OnData = DownloadsData
+    OnDblClick = DownloadsDblClick
   end
   object StatusBar1: TStatusBar
     Left = 0

@@ -49,15 +49,15 @@ Conditionals=XXX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=37
+MinorVer=38
 Release=0
-Build=206
+Build=207
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.37.0.206
+FileVersion=0.38.0.207
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=

@@ -117,6 +117,7 @@ type
     procedure actAddUrlsFromFileExecute(Sender: TObject);
     procedure actSaveUrlListExecute(Sender: TObject);
     procedure actAboutExecute(Sender: TObject);
+    procedure DownloadsDblClick(Sender: TObject);
   private
     {$IFDEF SYSTRAY}
     fNotifyIconData: TNotifyIconData;
@@ -137,6 +138,7 @@ type
     procedure DeleteTask(Index: integer); virtual;
     procedure StartPauseResumeTask(Index: integer); virtual;
     procedure StopTask(Index: integer); virtual;
+    procedure PlayMedia(Index: integer); virtual;
     procedure LoadSettings; virtual;
     procedure SaveSettings; virtual;
   public
@@ -535,6 +537,15 @@ begin
   DownloadList.Items[Index].Stop;
 end;
 
+procedure TFormYTD.PlayMedia(Index: integer);
+var Item: TDownloadListItem;
+begin
+  Item := DownloadList.Items[Index];
+  if Item.Finished then
+    if FileExists(Item.Downloader.DestinationPath + Item.Downloader.FileName) then
+      ShellExecute(Handle, 'open', PChar(Item.Downloader.FileName), nil, nil, SW_SHOWNORMAL);
+end;
+
 procedure TFormYTD.actAutoDownloadExecute(Sender: TObject);
 begin
   DownloadList.AutoStart := not DownloadList.AutoStart;
@@ -684,6 +695,17 @@ begin
     finally
       Free;
       end;
+end;
+
+procedure TFormYTD.DownloadsDblClick(Sender: TObject);
+//var CursorPos: TPoint;
+//    HitTestInfo: THitTests;
+begin
+//  CursorPos := Downloads.ScreenToClient(Mouse.CursorPos);
+//  HitTestInfo := Downloads.GetHitTestInfoAt(CursorPos.X, CursorPos.Y);
+//  if HitTestInfo <= [htOnIcon, htOnItem, htOnLabel, htOnStateIcon] then
+    if Downloads.Selected <> nil then
+      PlayMedia(Downloads.Selected.Index);
 end;
 
 end.

@@ -1,6 +1,19 @@
 CHANGELOG
 ---------
 
+  v0.38
+
+    * Pøidána podpora pro další varianty URL u msfotbal.ct24.cz.
+
+    * Aktualizována podpora YouTube na zmìnìnou strukturu z 17.6.2010.
+
+    * GUI: Dvojklikem na stáhnutém videu se toto video spustí ve výchozím
+      pøehrávaèi (podle formátu).
+
+    * Nový zdroj: CestyKSobe.cz
+
+
+
   v0.37
 
     * Nìkolik úprav v kódu výraznì zkracuje command-line verzi YTD - pokud
