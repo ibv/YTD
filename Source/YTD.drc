@@ -7,7 +7,7 @@
   produced executable.
 */
 
-#define ComStrs_sInvalidOwner 65312
+#define ComConst_SVarNotObject 65312
 #define Consts_SInvalidClipFmt 65328
 #define Consts_SIconToClipboard 65329
 #define Consts_SCannotOpenClipboard 65330
@@ -21,9 +21,9 @@
 #define Consts_SDockZoneNotFound 65338
 #define Consts_SDockZoneHasNoCtl 65339
 #define Consts_SDuplicateItem 65340
-#define ComConst_SOleError 65341
-#define ComConst_SNoMethod 65342
-#define ComConst_SVarNotObject 65343
+#define ComStrs_sInvalidOwner 65341
+#define ComConst_SOleError 65342
+#define ComConst_SNoMethod 65343
 #define Consts_SmkcDown 65344
 #define Consts_SmkcIns 65345
 #define Consts_SmkcDel 65346
@@ -218,7 +218,7 @@
 #define SysConst_SZeroDivide 65535
 STRINGTABLE
 BEGIN
-	ComStrs_sInvalidOwner,	"Invalid owner"
+	ComConst_SVarNotObject,	"Variant does not reference an automation object"
 	Consts_SInvalidClipFmt,	"Invalid clipboard format"
 	Consts_SIconToClipboard,	"Clipboard does not support Icons"
 	Consts_SCannotOpenClipboard,	"Cannot open clipboard"
@@ -232,9 +232,9 @@ BEGIN
 	Consts_SDockZoneNotFound,	" - Dock zone not found"
 	Consts_SDockZoneHasNoCtl,	" - Dock zone has no control"
 	Consts_SDuplicateItem,	"List does not allow duplicates ($0%x)"
+	ComStrs_sInvalidOwner,	"Invalid owner"
 	ComConst_SOleError,	"OLE error %.8x"
 	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
-	ComConst_SVarNotObject,	"Variant does not reference an automation object"
 	Consts_SmkcDown,	"Down"
 	Consts_SmkcIns,	"Ins"
 	Consts_SmkcDel,	"Del"

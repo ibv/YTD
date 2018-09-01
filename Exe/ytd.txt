@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.15                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.16                                  (C) 2009, 2010 Pepak
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -10,21 +10,33 @@ HD video, pokud je k dispozici.
 
 Podporované weby a formáty URL:
 
- - Youtube.com:
+ - Barrandov.tv:
 
-     - http://www.youtube.com/v/b5AWQ5aBjgE
-     - http://www.youtube.com/watch/v/b5AWQ5aBjgE
-     - http://www.youtube.com/watch?v=b5AWQ5aBjgE
+     - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 
- - N-joy.cz:
-
-     - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+       Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
+       Pøehrát jde napøíklad programem The KMPlayer.
 
  - Blip.tv:
 
      - http://blip.tv/play/hIVV4tIUAg
      - http://blip.tv/file/1607673/
      - http://thespoonyone.blip.tv/file/1607673/
+
+ - iPrima.cz:
+
+     - http://www.iprima.cz/videoarchiv/44524/all/all
+
+ - N-joy.cz:
+
+     - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+
+ - Nova.cz:
+
+     - http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+
+       Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
+       Pøehrát jde napøíklad programem The KMPlayer.
 
  - Stream.cz:
 
@@ -35,16 +47,11 @@ Podporované weby a formáty URL:
        problém v knihovnì Synapse, protoe staèí vloit na vhodné místo 
        breakpoint nebo prodlevu a hned problém zmizí.
 
- - iPrima.cz:
+ - Youtube.com:
 
-     - http://www.iprima.cz/videoarchiv/44524/all/all
-
- - Barrandov.tv:
-
-     - http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
-
-       Pozn.: Jde o streamovanı formát podle protokolu RTMP. Viz níe.
-       Pøehrát jde napøíklad programem The KMPlayer.
+     - http://www.youtube.com/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch?v=b5AWQ5aBjgE
 
 
 Od verze 0.15 program zahrnuje podporu pro streamované video podle protokolu
@@ -87,6 +94,15 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.16
+
+    * Zkráceny vıpisy v command-line verzi programu, aby se pøi stahování
+      souborù vìtších ne 100 MB nemnoily øádky s prùbìhem.
+
+    * Podpora pro videa televize Nova (nova.cz).
+
+
 
   v0.15:
   

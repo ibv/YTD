@@ -90,6 +90,8 @@ begin
     if TempDir <> '' then
       TempDir := IncludeTrailingBackslash(TempDir);
     LogFileName := TempDir + ExtractFileName(FileName) + '.log';
+    if FileExists(LogFileName) then
+      DeleteFile(PChar(LogFileName));
     SetLastErrorMsg('See error log in "' + LogFileName + '"');
     VideoFileName := FileName;
     Url := RtmpUrl;

@@ -53,7 +53,7 @@ end;
 class function TDownloader_BarrandovTV.UrlRegExp: string;
 begin
   // http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
-  Result := '^https?://(?:[a-z0-9-]+\.)?barrandov\.tv/(?P<' + MovieIDParamName + '>[0-9+]+)';
+  Result := '^https?://(?:[a-z0-9-]+\.)?barrandov\.tv/(?P<' + MovieIDParamName + '>[0-9]+)';
 end;
 
 function TDownloader_BarrandovTV.GetMovieInfoUrl: string;

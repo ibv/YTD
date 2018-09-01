@@ -500,7 +500,6 @@ Download(RTMP * rtmp,		// connected RTMP object
   lastUpdate = now - 1000;
   do
     {
-
       nRead = RTMP_Read(rtmp, buffer, bufferSize);
       //RTMP_LogPrintf("nRead: %d\n", nRead);
       if (nRead > 0)
@@ -715,7 +714,6 @@ parseAMF(AMFObject *obj, const char *arg, int *depth)
 int
 main(int argc, char **argv)
 {
-
   extern char *optarg;
 
   int nStatus = RD_SUCCESS;
@@ -858,7 +856,7 @@ main(int argc, char **argv)
 	    ("\nThis program dumps the media content streamed over RTMP.\n\n");
 	  RTMP_LogPrintf("--help|-h               Prints this help screen.\n");
 	  RTMP_LogPrintf
-	    ("--rtmp|-r url           URL (e.g. rtmp//host[:port]/path)\n");
+	    ("--rtmp|-r url           URL (e.g. rtmp://host[:port]/path)\n");
 	  RTMP_LogPrintf
 	    ("--host|-n hostname      Overrides the hostname in the rtmp url\n");
 	  RTMP_LogPrintf
@@ -1452,4 +1450,3 @@ clean:
 #endif
   return nStatus;
 }
-

@@ -158,7 +158,7 @@ var Proc: int64;
     i, n: integer;
     ProgressBar: string;
 begin
-  if TotalSize > 1 then
+  if TotalSize >= 1 then
     begin
     Proc := 1000 * DownloadedSize div TotalSize;
     if (not StdOutRedirected) and (Proc <> fLastProgressPercentage) then
@@ -168,7 +168,7 @@ begin
       ProgressBar := EmptyProgressBar;
       for i := 1 to n do
         ProgressBar[i] := '#';     
-      Write(Format('    Downloading: <%s> %d.%d%% (%s/%s)'#13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
+      Write(Format('  Downloading: <%s> %d.%d%% (%s/%s)'#13, [ProgressBar, Proc div 10, Proc mod 10, Int64ToStrF(DownloadedSize), Int64ToStrF(TotalSize)]));
       end;
     end;
 end;
@@ -203,28 +203,28 @@ begin
     Downloader.OnProgress := DownloaderProgress;
     if Downloader.Prepare then
       begin
-      Write('    Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
-      Write('      File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
+      Write('  Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
+      Write('    File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
       if Downloader is TCommonDownloader then
-        Write('    Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
+        Write('  Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
       Result := Downloader.Download;
       if fLastProgressPercentage >= 0 then
         Writeln;
       if Result then
         begin
-        WriteColored(ccWhite, '    SUCCESS.');
+        WriteColored(ccWhite, '  SUCCESS.');
         Writeln;
         Writeln;
         end
       else
-        ShowError('    ERROR: ' + Downloader.LastErrorMsg);
+        ShowError('  ERROR: ' + Downloader.LastErrorMsg);
       end
     else
-      ShowError('    ERROR: ' + Downloader.LastErrorMsg);
+      ShowError('  ERROR: ' + Downloader.LastErrorMsg);
   except
     on E: EAbort do
       begin
-      ShowError('    ABORTED BY USER');
+      ShowError('  ABORTED BY USER');
       Raise;
       end;
     on E: Exception do
@@ -238,7 +238,7 @@ end;
 function TYTD.DownloadURL(const URL: string): boolean;
 begin
   Result := False;
-  Write('Url: ');
+  //Write('Url: ');
   WriteColored(ccLightCyan, URL);
   Writeln;
   DownloadClassifier.URL := URL;

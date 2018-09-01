@@ -30,7 +30,8 @@ uses
   uDownloader_iPrima in 'uDownloader_iPrima.pas',
   uRtmpDownloader in 'uRtmpDownloader.pas',
   uDownloader_BarrandovTV in 'uDownloader_BarrandovTV.pas',
-  uHttpDownloader in 'uHttpDownloader.pas';
+  uHttpDownloader in 'uHttpDownloader.pas',
+  uDownloader_Nova in 'uDownloader_Nova.pas';
 
 begin
   {$IFNDEF NO_GUI}

@@ -35,8 +35,8 @@ type
       procedure DoProgress; virtual;
       function CreateHttp: THttpSend; virtual;
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
-      function DownloadPage(Http: THttpSend; Url: string): boolean; overload; virtual;
-      function DownloadPage(Http: THttpSend; Url: string; out Page: string): boolean; overload; virtual;
+      function DownloadPage(Http: THttpSend; Url: string; UsePost: boolean = False): boolean; overload; virtual;
+      function DownloadPage(Http: THttpSend; Url: string; out Page: string; UsePost: boolean = False): boolean; overload; virtual;
     public
       class function Provider: string; virtual; abstract;
       class function UrlRegExp: string; virtual; abstract;
@@ -220,18 +220,23 @@ begin
         end;
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; UsePost: boolean): boolean;
+var Method: string;
 begin
   repeat
     Http.Clear;
-    Result := Http.HttpMethod('GET', Url);
+    if UsePost then
+      Method := 'POST'
+    else
+      Method := 'GET';
+    Result := Http.HttpMethod(Method, Url);
   until (not Result) or (not CheckRedirect(Http, Url));
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string; out Page: string): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; out Page: string; UsePost: boolean): boolean;
 begin
   Page := '';
-  Result := DownloadPage(Http, Url);
+  Result := DownloadPage(Http, Url, UsePost);
   if Result then
     begin
     SetLength(Page, Http.Document.Size);

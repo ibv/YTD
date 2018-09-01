@@ -97,7 +97,7 @@ begin
             SetPrepared(True);
           if not AfterPrepareFromPage(Page, Info) then
             SetPrepared(False);
-          if not Prepared then
+          if (not Prepared) and (LastErrorMsg = '') then
             SetLastErrorMsg('Failed to locate video info.');
           end;
         end
