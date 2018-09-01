@@ -93,6 +93,8 @@ begin
   TotalBytes := -1;
   Aborted := False;
   Result := False;
+  if Options.ProxyHost <> '' then
+    AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
   AddRtmpDumpOption('o', FileName);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then

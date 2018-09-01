@@ -1,6 +1,29 @@
 CHANGELOG
 ---------
 
+  v0.33
+
+    * Stream.cz: Podpora pro HQ videa.
+
+    * Joj.sk: Adresa poøadu detekuje další dva možné zpùsoby, jak se u Joj
+      zapisují informace o poøadu. Dosavadní poøady se tak dokonce mohly
+      (a nemusely) stahovat špatnì - mohlo se stáhnout nìco jiného, než co
+      jste stáhnout chtìli. Doporuèuji downloady z Joj.sk dùkladnì sledovat
+      a hlásit pøípadné chyby, protože není vylouèeno, že Joj bude mít ve 
+      svých kódech nìjakou další divoèárnu.
+
+      Tím by mìlo být opravené i pøípadné nestahování HQ verze.
+
+    * VideaCesky.cz: Spolu s filmem se stahují i titulky.
+
+    * Ve zdrojovém kódu knihovny MSDL chybìly soubory .po potøebné pro
+      kompilaci.
+
+    * Podpora pro proxy servery. V INI souboru jsou pro nì položky ProxyHost,
+      ProxyPort, ProxyUser a ProxyPassword. Viz dokumentace.
+
+
+
   v0.32
 
     * Mírnì pøeuspoøádány ikonky v GUI verzi, aby byly v logiètìjších celcích.

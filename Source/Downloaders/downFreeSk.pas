@@ -12,7 +12,6 @@ type
   TDownloader_FreeSk = class(THttpDownloader)
     private
     protected
-    protected
       function GetMovieInfoUrl: string; override;
     public
       class function Provider: string; override;

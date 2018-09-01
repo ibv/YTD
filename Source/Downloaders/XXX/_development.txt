@@ -1,0 +1,20 @@
+Prot.	Zdr.naz	Zdr.URL	Nazev
+
+HTTP	XML	XML	xxxMegaPorn
+HTTP	HTML	HTML	xxxPornHost
+HTTP	HTML	XML	xxxPornHub
+HTTP	HTML	HTML1	xxxPornoTube
+HTTP	HTML	HTML	xxxRedTube
+HTTP	XML	XML	xxxRude
+HTTP	HTML	HTML	xxxShufuni
+HTTP	HTML	XML	xxxSpankingTube
+HTTP	HTML	HTML	xxxTube8
+HTTP	HTML	XML	xxxXHamster
+HTTP	HTML	HTML	xxxXNXX
+HTTP	HTML	HTML1	xxxXTube
+HTTP	HTML	HTML	xxxXVideoHost
+HTTP	HTML	HTML	xxxXVideos
+HTTP	HTML	XML	xxxYouPorn
+HTTP	HTML	HTML	xxxYuvutu
+
+*HTTP1 ... Multiple vars parsing

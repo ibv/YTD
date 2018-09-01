@@ -371,6 +371,10 @@ end;
 procedure TDownloader.SetOptions(const Value: TYTDOptions);
 begin
   fOptions := Value;
+  fHttp.ProxyHost := Value.ProxyHost;
+  fHttp.ProxyPort := Value.ProxyPort;
+  fHttp.ProxyUser := Value.ProxyUser;
+  fHttp.ProxyPass := Value.ProxyPassword;
 end;
 
 function TDownloader.ValidateFileName(var FileName: string): boolean;

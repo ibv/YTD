@@ -15,10 +15,10 @@ type
     protected
       MovieParamsRegExp: IRegEx;
       MovieIdFromParamsRegExp: IRegEx;
+      MovieHDIdFromParamsRegExp: IRegEx;
       MovieCdnIdFromParamsRegExp: IRegEx;
       function GetMovieInfoUrlForID(const ID: string): string; virtual;
     protected
-      function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
     public
@@ -49,6 +49,7 @@ const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)\s+-[^<-]+</title>';
   REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.*?)"|\swriteSWF\s*\((?P<PARAM2>.*?)\)\s*;';
   REGEXP_MOVIE_ID_FROM_PARAMS = '[&'']id=(?P<ID>[0-9]+)';
+  REGEXP_MOVIE_HDID_FROM_PARAMS = '[&'']hdID=(?P<ID>[0-9]+)';
   REGEXP_MOVIE_CDNID_FROM_PARAMS = '[&'']cdnID=(?P<ID>[0-9]+)';
 
 { TDownloader_Stream }
@@ -70,6 +71,7 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase]);
   MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS, [rcoIgnoreCase, rcoSingleLine]);
   MovieIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_PARAMS, [rcoIgnoreCase]);
+  MovieHDIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_HDID_FROM_PARAMS, [rcoIgnoreCase]);
   MovieCdnIdFromParamsRegExp := RegExCreate(REGEXP_MOVIE_CDNID_FROM_PARAMS, [rcoIgnoreCase]);
 end;
 
@@ -78,13 +80,9 @@ begin
   MovieTitleRegExp := nil;
   MovieParamsRegExp := nil;
   MovieIdFromParamsRegExp := nil;
+  MovieHDIdFromParamsRegExp := nil;
   MovieCdnIdFromParamsRegExp := nil;
   inherited;
-end;
-
-function TDownloader_Stream.GetFileNameExt: string;
-begin
-  Result := '.flv';
 end;
 
 function TDownloader_Stream.GetMovieInfoUrl: string;
@@ -99,12 +97,12 @@ end;
 
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var {$IFDEF XMLINFO}
-    ID, Info, Title: string;
+    Info, Title: string;
     Xml: TjanXmlParser2;
     TitleNode, ContentNode: TjanXmlNode2;
     {$ENDIF}
     ParamMatch: IMatch;
-    Params, CdnID: string;
+    Params, CdnID, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, Http);
   Result := False;
@@ -126,6 +124,8 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
+    if GetRegExpVar(MovieHDIdFromParamsRegExp, Params, 'ID', ID) then
+      CdnID := ID;
     {$IFDEF XMLINFO}
     if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
       try
@@ -144,9 +144,12 @@ begin
         ;
         end;
     {$ENDIF}
-    MovieURL := 'http://cdn-dispatcher.stream.cz/?id=' + CdnID;
-    Result := True;
-    SetPrepared(True);
+    if DownloadPage(Http, 'http://cdn-dispatcher.stream.cz/?id=' + CdnID, hmHEAD) then
+      begin
+      MovieURL := LastUrl;
+      Result := True;
+      SetPrepared(True);
+      end;
     end;
 end;
 

@@ -1,6 +1,28 @@
 CHANGELOG
 ---------
 
+  v0.33
+
+    * Stream.cz: support for HQ video.
+
+    * Joj.sk: Implemented two more ways to detect video address. This should
+      fix the three problems of some movies not downloading at all, other 
+      movies being replaced by some other movies and some movies not being
+      downloaded in HQ. Please make sure you check any downloads from Joj
+      carefully, as Joj's backend is apparently rather shoddy and it is
+      quite possible there are even more possible storage formats.
+
+    * VideaCesky.cz: Subtitles are also downloaded.
+
+    * Fixed missing .po files in the source of MSDL library. Those are only
+      needed for clean build, of no interest for end-users.
+
+    * Support for proxy servers. There are new settings ProxyHost, ProxyPort, 
+      ProxyUser and ProxyPassword in the INI file. See documentation for
+      details.
+
+
+
   v0.32
 
     * Slightly rearranged icons in the GUI version.

@@ -1,0 +1,212 @@
+mmst.o mmst.o: mmst.c \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/errno.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsock2.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windows.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windef.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnt.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winerror.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetsd.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack4.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/poppack.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wincon.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winbase.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wingdi.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winuser.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnls.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winver.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnetwk.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winreg.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsvc.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cderr.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dde.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ddeml.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dlgs.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/imm.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/lzexpand.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/mmsystem.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/nb30.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpc.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdce.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetyps.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdcep.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsi.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnterr.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/shellapi.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack2.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winperf.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/commdlg.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unknwn.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objfwd.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wtypes.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcndr.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsip.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/prsht.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winspool.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ole2.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objbase.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objidl.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cguid.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/olectlid.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleauto.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oaidl.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleidl.h \
+  msdl.h \
+  D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h \
+  msdllib.h display.h network.h url.h asf.h mmst.h
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdio.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/_mingw.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stddef.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/include/stdarg.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/sys/types.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdlib.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/string.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unistd.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/io.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/process.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/stdint.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/getopt.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/errno.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ctype.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsock2.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windows.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/windef.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnt.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winerror.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetsd.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack4.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/poppack.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wincon.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winbase.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wingdi.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winuser.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnls.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winver.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winnetwk.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winreg.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winsvc.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cderr.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dde.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ddeml.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/dlgs.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/imm.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/lzexpand.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/mmsystem.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/nb30.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpc.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdce.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/basetyps.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcdcep.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsi.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnterr.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/shellapi.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/pshpack2.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winperf.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/commdlg.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/unknwn.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objfwd.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/wtypes.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcndr.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/rpcnsip.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/prsht.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/winspool.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/ole2.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objbase.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/objidl.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/cguid.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/olectlid.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleauto.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oaidl.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/oleidl.h:
+
+msdl.h:
+
+D:/progs/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/inttypes.h:
+
+msdllib.h:
+
+display.h:
+
+network.h:
+
+url.h:
+
+asf.h:
+
+mmst.h:

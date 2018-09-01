@@ -3,6 +3,10 @@ OverwriteMode=always
 DestinationPath=C:\Downloads
 ErrorLog=C:\Downloads\!_error.log
 DontUseRegistry=1
+ProxyHost=proxy.server.com
+ProxyPort=3128
+ProxyUser=
+ProxyPassword=
 
 [CeskaTelevize.cz]
 PreferRealMedia=1

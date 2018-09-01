@@ -284,6 +284,12 @@ static struct list_h *set_options(struct options_t *options,int argc,char **argv
 	    target_count++;
             break;
 
+        case 'y': /* HTTP proxy - custom parameter, no present in MSDL */
+       	    if (options->http_proxy)
+       	        free(options->http_proxy);
+       	    options->http_proxy = strdup(env);
+       	    break;
+
 #else
     while(1) {
 

@@ -18,6 +18,10 @@ type
       fErrorLog: string;
       fDontUseRegistry: boolean;
       fSections: TStringList;
+      fProxyHost: string;
+      fProxyPort: string;
+      fProxyUser: string;
+      fProxyPassword: string;
     protected
       function IniFileName(out FileName: string): boolean; overload; virtual;
       function IniFileName: string; overload; virtual;
@@ -34,6 +38,10 @@ type
       property DestinationPath: string read fDestinationPath write fDestinationPath;
       property ErrorLog: string read fErrorLog write fErrorLog;
       property DontUseRegistry: boolean read fDontUseRegistry write fDontUseRegistry;
+      property ProxyHost: string read fProxyHost write fProxyHost;
+      property ProxyPort: string read fProxyPort write fProxyPort;
+      property ProxyUser: string read fProxyUser write fProxyUser;
+      property ProxyPassword: string read fProxyPassword write fProxyPassword;
     end;
 
 implementation
@@ -66,6 +74,10 @@ begin
   fDestinationPath := '';
   fErrorLog := '';
   fDontUseRegistry := True;
+  fProxyHost := '';
+  fProxyPort := '3128';
+  fProxyUser := '';
+  fProxyPassword := '';
   {$IFDEF INIFILE}
   ReadFromIniFile;
   {$ENDIF}
@@ -119,6 +131,10 @@ begin
           fDestinationPath := ReadString('YTD', 'DestinationPath', DestinationPath);
           fErrorLog := ReadString('YTD', 'ErrorLog', ErrorLog);
           fDontUseRegistry := ReadBool('YTD', 'DontUseRegistry', DontUseRegistry);
+          fProxyHost := ReadString('YTD', 'ProxyHost', ProxyHost);
+          fProxyPort := ReadString('YTD', 'ProxyPort', ProxyPort);
+          fProxyUser := ReadString('YTD', 'ProxyUser', ProxyUser);
+          fProxyPassword := ReadString('YTD', 'ProxyPassword', ProxyPassword);
         finally
          Free;
          end;
@@ -142,6 +158,10 @@ begin
         WriteString('YTD', 'OverwriteMode', OverwriteModeStrings[OverwriteMode]);
         WriteString('YTD', 'DestinationPath', DestinationPath);
         WriteString('YTD', 'ErrorLog', ErrorLog);
+        WriteString('YTD', 'ProxyHost', ProxyHost);
+        WriteString('YTD', 'ProxyPort', ProxyPort);
+        WriteString('YTD', 'ProxyUser', ProxyUser);
+        WriteString('YTD', 'ProxyPassword', ProxyPassword);
       finally
         Free;
         end;

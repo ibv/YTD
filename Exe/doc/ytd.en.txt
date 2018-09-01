@@ -331,6 +331,29 @@ In section [YTD] these settings are available:
     - Possible values are "0" (use registry) and "1" (don't use registry).
     - Default value is "1".
 
+  ProxyHost=localhost
+    - Address of a proxy server. If empty, proxy server won't be used.
+    - Note: Proxy support works with providers using HTTP and MMS/RTSP
+      protocols. Support for RTMP-based providers is built in YTD, but
+      hasn't been tested.
+    - The value should be an IP address or a host name.
+    - Default value is an empty string (don't use proxy server).
+
+  ProxyPort=3128
+    - Port, on which the proxy server listens.
+    - Default value is 3128.
+
+  ProxyUser=username
+    - If used, user will authenticate to proxy server with this name.
+    - Authentization does not and will not work for RTMP protocol.
+    - Authentization hasn't been tested at all.
+    - Default value is an empty string (no authentization, anonymous access).
+
+  ProxyPassword=password
+    - Password for proxy authentization.
+    - This value is only used if ProxyUser is set.
+    - Default value is an empty string (no password).
+
 In section [CeskaTelevize.cz] these settings are available:
 
   PreferRealMedia=1

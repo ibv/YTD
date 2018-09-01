@@ -88,6 +88,9 @@ PODPOROVANÉ WEBY
  - iPrima.cz:
      - http://www.iprima.cz/videoarchiv/44524/all/all
 
+ - Joj.sk:
+     - http://televizia.joj.sk/tv-archiv/krimi-noviny/22-05-2010.html
+
  - Kukaj.sk:
      - http://www.kukaj.sk/videa/5860/
 
@@ -333,6 +336,33 @@ V sekci [YTD] jsou následující nastavení:
       pøípadì, že chcete aplikaci používat jako portable.
     - Možné hodnoty jsou "0" (používat registry) a "1" (nepoužívat registry).
     - Výchozí hodnota je "1".
+
+  ProxyHost=localhost
+    - Adresa proxy serveru. Pokud není vyplnìna, proxy server se nebude 
+      používat.
+    - Pozn.: Proxy server funguje pro servery používající protokoly HTTP
+      a MMS/RTSP. Kod pro servery používající RTMP je napsán a zkompilován
+      do aplikace, ale není ovìøen.
+    - Možnou hodnotou je IP adresa nebo doménové jméno.
+    - Výchozí hodnota je prázdný øetìzec (nepoužívat proxy).
+
+  ProxyPort=3128
+    - Port, na kterém poslouchá proxy server ProxyHost.
+    - Možnou hodnotou je èíslo portu.
+    - Výchozí hodnota je 3128.
+
+  ProxyUser=uživatel
+    - Pokud je vyplnìno, bude uživatel na proxy serveru autentizován svým
+      jménem a heslem.
+    - Autentizace jménem a heslem nefunguje a nebude fungovat u protokolu
+      RTMP.
+    - Funkènost není ovìøena.
+    - Výchozí hodnota je prázdná (nepoužívat autentizaci).
+
+  ProxyPassword=heslo
+    - Heslo pro autentizaci uživatele na proxy serveru.
+    - Použije se jen v pøípadì, že je vyplnìn ProxyUser.
+    - Výchozí hodnotou je prázdný øetìzec (bez hesla).
 
 V sekci [CeskaTelevize.cz] jsou následující nastavení:
 

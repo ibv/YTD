@@ -21,9 +21,11 @@ type
       NestedUrlRegExp: IRegEx;
     protected
       function GetFileName: string; override;
+      function GetThisFileName: string; virtual;
       procedure SetNestedDownloader(Value: TDownloader); virtual;
       procedure CreateNestedDownloader(const MovieID: string); virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
       {$IFDEF MULTIDOWNLOADS}
       property FirstItem: boolean read fFirstItem write fFirstItem;
@@ -73,7 +75,7 @@ end;
 function TNestedDownloader.GetFileName: string;
 var NestedFN: string;
 begin
-  Result := inherited GetFileName;
+  Result := GetThisFileName;
   if NestedDownloader <> nil then
     begin
     NestedFN := NestedDownloader.FileName;
@@ -86,15 +88,18 @@ begin
     end;
 end;
 
+function TNestedDownloader.GetThisFileName: string;
+begin
+  Result := inherited GetFileName;
+end;
+
 function TNestedDownloader.Prepare: boolean;
 begin
   NestedDownloader := nil;
   Result := False;
   if inherited Prepare then
     if NestedDownloader <> nil then
-      begin
       Result := NestedDownloader.Prepare;
-      end;
 end;
 
 function TNestedDownloader.Download: boolean;
@@ -106,7 +111,7 @@ begin
     NestedDownloader.InitOptions(Options);
     NestedDownloader.DestinationPath := DestinationPath;
     NestedDownloader.OnProgress := OnProgress;
-    NestedDownloader.OnFileNameValidate := OnFileNameValidate;
+    NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
     Result := NestedDownloader.ValidateFileName and NestedDownloader.Download;
     end;
 end;
@@ -147,6 +152,12 @@ begin
       SetPrepared(True);
       Result := True;
       end;
+end;
+
+procedure TNestedDownloader.NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
+begin
+  FileName := GetThisFileName;
+  Valid := ValidateFileName(FileName);
 end;
 
 end.

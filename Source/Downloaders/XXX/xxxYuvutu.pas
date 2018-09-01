@@ -23,7 +23,6 @@ type
 implementation
 
 uses
-  janXmlParser2,
   uDownloadClassifier,
   uMessages;
 

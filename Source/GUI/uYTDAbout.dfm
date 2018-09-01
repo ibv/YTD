@@ -1,8 +1,8 @@
 object FormAbout: TFormAbout
   Left = 208
   Top = 104
-  Width = 425
-  Height = 291
+  Width = 430
+  Height = 300
   Caption = 'About YouTube Downloader'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

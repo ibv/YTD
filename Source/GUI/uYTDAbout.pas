@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, HttpSend, ShellApi, ComCtrls,
-  uDownloadClassifier, uDownloader, uOptions;
+  uDownloadClassifier, uDownloader, uOptions, ExtCtrls;
 
 const
   WM_FIRSTSHOW = WM_USER + 1;

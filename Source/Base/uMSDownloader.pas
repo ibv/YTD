@@ -74,7 +74,7 @@ begin
 end;
 
 function TMSDownloader.Download: boolean;
-var LogFileName: string;
+var LogFileName, ProxyString: string;
     RetCode: integer;
 begin
   inherited Download;
@@ -82,6 +82,16 @@ begin
   TotalBytes := -1;
   Aborted := False;
   Result := False;
+  if Options.ProxyHost <> '' then
+    begin
+    ProxyString := Options.ProxyHost + ':' + Options.ProxyPort;
+    if Options.ProxyUser <> '' then
+      if Options.ProxyPassword <> '' then
+        ProxyString := Options.ProxyUser + ':' + Options.ProxyPassword + '@' + ProxyString
+      else
+        ProxyString := Options.ProxyUser + '@' + ProxyString;
+    AddMsdlOption('y', ProxyString); // Note: MSDL has no option 'y', it's an extra option of MSDL_DLL
+    end;
   AddMsdlOption('o', FileName);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
