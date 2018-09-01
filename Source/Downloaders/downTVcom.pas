@@ -1,4 +1,4 @@
-unit uDownloader_TVcom;
+unit downTVcom;
 {$INCLUDE 'ytd.inc'}
 
 interface

@@ -1,4 +1,4 @@
-unit uDownloader_BlipTv;
+unit downBlipTv;
 {$INCLUDE 'ytd.inc'}
 
 interface

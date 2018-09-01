@@ -1,4 +1,4 @@
-unit uDownloader_BarrandovTV;
+unit downBarrandovTV;
 {$INCLUDE 'ytd.inc'}
 
 interface

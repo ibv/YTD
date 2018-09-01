@@ -1,4 +1,4 @@
-unit uDownloader_Nova;
+unit downNova;
 {$INCLUDE 'ytd.inc'}
 
 interface

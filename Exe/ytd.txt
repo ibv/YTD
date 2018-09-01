@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.25                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.26                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -88,6 +88,7 @@ Podporované weby a formáty URL:
      - http://www.youtube.com/watch/v/b5AWQ5aBjgE
      - http://www.youtube.com/watch?v=b5AWQ5aBjgE
      - http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+     - http://www.youtube.com/titanicpiano14
 
 
 

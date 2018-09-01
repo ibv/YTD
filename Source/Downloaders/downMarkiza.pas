@@ -1,4 +1,4 @@
-unit uDownloader_Markiza;
+unit downMarkiza;
 {$INCLUDE 'ytd.inc'}
 
 interface

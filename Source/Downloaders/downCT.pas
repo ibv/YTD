@@ -1,4 +1,4 @@
-unit uDownloader_CT;
+unit downCT;
 {$INCLUDE 'ytd.inc'}
 
 interface

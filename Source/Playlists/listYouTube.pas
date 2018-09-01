@@ -1,4 +1,4 @@
-unit uPlaylist_YouTube;
+unit listYouTube;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -64,7 +64,6 @@ end;
 class function TPlaylist_YouTube.UrlRegExp: string;
 begin
   // http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
-  //Result := '^https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=(?P<' + MovieIDParamName + '>[^"&]+)$';
   Result := '^https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=(?P<' + MovieIDParamName + '>[^"&]+)';
 end;
 

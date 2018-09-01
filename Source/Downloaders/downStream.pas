@@ -1,4 +1,4 @@
-unit uDownloader_Stream;
+unit downStream;
 {$INCLUDE 'ytd.inc'}
 {.DEFINE XMLINFO}
 

@@ -1,6 +1,14 @@
 CHANGELOG
 ---------
 
+  v0.26
+
+    * Podpora pro "stránky" na YouTube - seznam videí jednoho tvùrce (napø.
+      http://www.youtube.com/titanicpiano14). Chovají se obdobnì jako 
+      playlisty.
+
+
+
   v0.25
 
     * Podpora pro Snotr.com.

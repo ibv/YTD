@@ -1,4 +1,4 @@
-unit uDownloader_Rozhlas;
+unit downRozhlas;
 {$INCLUDE 'ytd.inc'}
 
 interface

@@ -1,4 +1,4 @@
-unit uDownloader_BlipTvV2;
+unit downBlipTvV2;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -6,7 +6,7 @@ interface
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uDownloader_BlipTv;
+  uDownloader, downBlipTv;
 
 type
   TDownloader_BlipTvV2 = class(TDownloader_BlipTv)

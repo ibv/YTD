@@ -8,7 +8,7 @@ uses
   PCRE,
   uConsoleApp,
   uDownloader, uCommonDownloader,
-  uPlaylistDownloader, uPlaylist_HTML, uPlaylist_HTMLfile,
+  uPlaylistDownloader, listHTML, listHTMLfile,
   uDownloadClassifier;
 
 type

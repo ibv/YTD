@@ -1,4 +1,4 @@
-unit uDownloader_iPrima;
+unit downIPrima;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -6,7 +6,7 @@ interface
 uses
   SysUtils, Classes, Windows,
   HttpSend, PCRE,
-  uDownloader, uHttpDownloader, uDownloader_Stream;
+  uDownloader, uHttpDownloader, downStream;
 
 type
   TDownloader_iPrima = class(TDownloader_Stream)

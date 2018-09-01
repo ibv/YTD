@@ -6,7 +6,7 @@ interface
 uses
   SysUtils, Classes, Dialogs,
   uDownloadClassifier, uDownloader,
-  uPlaylistDownloader, uPlaylist_HTML, uPlaylist_HTMLfile,
+  uPlaylistDownloader, listHTML, listHTMLfile,
   uDownloadListItem, uDownloadThread;
 
 type

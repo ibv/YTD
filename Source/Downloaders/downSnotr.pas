@@ -1,4 +1,4 @@
-unit uDownloader_Snotr;
+unit downSnotr;
 {$INCLUDE 'ytd.inc'}
 
 interface

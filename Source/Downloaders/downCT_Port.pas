@@ -1,4 +1,4 @@
-unit uDownloader_CT_Port;
+unit downCT_Port;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -6,7 +6,7 @@ interface
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uCommonDownloader, uMSDownloader, uDownloader_CT;
+  uDownloader, uCommonDownloader, uMSDownloader, downCT;
 
 type
   TDownloader_CT_Port = class(TDownloader_CT)

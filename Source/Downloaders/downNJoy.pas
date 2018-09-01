@@ -1,4 +1,4 @@
-unit uDownloader_NJoy;
+unit downNJoy;
 {$INCLUDE 'ytd.inc'}
 
 interface

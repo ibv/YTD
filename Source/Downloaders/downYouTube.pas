@@ -1,4 +1,4 @@
-unit uDownloader_YouTube;
+unit downYouTube;
 {$INCLUDE 'ytd.inc'}
 {$DEFINE FLASHVARS_PARSER}
   // Use a common parser for flashvars rather than a specific regexp for each variable.
