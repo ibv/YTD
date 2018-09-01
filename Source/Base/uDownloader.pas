@@ -4,9 +4,9 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   HttpSend, SynaUtil, SynaCode,
-  uOptions;
+  uOptions, uAMF;
 
 type
   EDownloaderError = class(Exception);
@@ -53,6 +53,7 @@ type
       function CheckRedirect(Http: THttpSend; var Url: string): boolean; virtual;
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; virtual;
       function DownloadPage(Http: THttpSend; Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; virtual;
+      function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; virtual;
       function ValidateFileName(var FileName: string): boolean; overload; virtual;
       function ConvertString(const Text: string; Encoding: TPageEncoding): string; virtual;
       function HtmlDecode(const Text: string): string; virtual;
@@ -303,6 +304,40 @@ begin
     Http.Document.Seek(0, 0);
     Http.Document.ReadBuffer(Page[1], Http.Document.Size);
     Page := ConvertString(Page, Encoding);
+    end;
+end;
+
+function TDownloader.DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean;
+var OldInputStr: TStream;
+begin
+  Result := False;
+  Response := nil;
+  Http.Clear;
+  OldInputStr := Http.InputStream;
+  try
+    Http.InputStream := TMemoryStream.Create;
+    try
+      Http.MimeType := 'application/x-amf';
+      Request.SaveToStream(Http.InputStream);
+      Http.InputStream.Position := 0;
+      if DownloadPage(Http, Url, hmPOST, False) then
+        if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
+          begin
+          Response := TAMFPacket.Create;
+          try
+            Http.Document.Position := 0;
+            Response.LoadFromStream(Http.Document);
+            Result := True;
+          except
+            Response.Free;
+            Response := nil;
+            end;
+          end;
+    finally
+      Http.OutputStream.Free;
+      end;
+  finally
+    Http.InputStream := OldInputStr;
     end;
 end;
 

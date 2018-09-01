@@ -186,7 +186,10 @@ end;
 function TCommonDownloader.GetXmlAttr(Xml: TjanXmlNode2; const Path, Attribute: string; out VarValue: string): boolean;
 var Node: TjanXmlNode2;
 begin
-  Node := Xml.GetChildByPath(Path);
+  if Path = '' then
+    Node := Xml
+  else
+    Node := Xml.GetChildByPath(Path);
   Result := (Node <> nil) and Node.hasAttribute(Attribute);
   if Result then
     VarValue := Node.Attribute[Attribute]

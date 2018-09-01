@@ -1,6 +1,22 @@
 CHANGELOG
 ---------
 
+  v0.32
+
+    * Slightly rearranged icons in the GUI version.
+
+    * Support for MegaVideo.com and MegaPorn.com.
+
+    * Support for Wimp.com.
+
+    * Support for UStream.tv.
+
+      Note for developers: The AMF support is incomplete as of yet - it does
+      not handle AMF3 at all, for starters. The support will be expanded as
+      (and when needed).
+
+
+
   v0.31
 
     * Invalid date format in Joj.sk handling caused downloading of a wrong

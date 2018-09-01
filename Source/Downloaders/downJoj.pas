@@ -74,7 +74,7 @@ end;
 
 function TDownloader_Joj.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Match: IMatch;
-    RelationID, CalendarUrl, CalendarXml: string;
+    RelationID, CalendarXml: string;
     Day, Month, Year: integer;
     WantedDay, WantedMonth, Title, Path: string;
     Xml: TjanXmlParser2;

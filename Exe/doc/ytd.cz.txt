@@ -9,6 +9,8 @@ z pøíkazové øádky, odkud pøijme libovolný poèet URL ke stažení, pøípadnì
 soubor se seznamem URL. Soubory ukládá pod název z YouTube, preferuje
 HD video, pokud je k dispozici.
 
+
+
 PODPOROVANÉ WEBY
 ----------------
 
@@ -103,6 +105,9 @@ PODPOROVANÉ WEBY
 
      Pozn.: Poøady mohou být tvoøeny nìkolika rùznými video soubory.
 
+ - MegaVideo.com:
+     - http://www.megavideo.com/?v=2MJBY4HB
+
  - MetaCafe.com:
      - http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
 
@@ -175,6 +180,9 @@ PODPOROVANÉ WEBY
  - TVPraha11.cz (Metropol TV):
      - http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
 
+ - UStream.tv:
+     - http://www.ustream.tv/recorded/7022540
+
  - VideaCesky.cz:
      - http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
 
@@ -189,6 +197,9 @@ PODPOROVANÉ WEBY
 
  - Vimeo.com:
      - http://www.vimeo.com/10777111
+
+ - Wimp.com:
+     - http://www.wimp.com/frazilice/
 
  - Wrzuta.pl:
      - http://w772.wrzuta.pl/film/7KI3ZUDHrUK/
@@ -208,6 +219,7 @@ PODPOROVANÉ WEBY
 
 Podporované porno weby:
 
+ - MegaPorn.com
  - PornHost.com
  - PornHub.com
  - PornoTube.com

@@ -1,17 +1,32 @@
 @echo off
-if exist ytd-%1.zip del ytd-%1.zip
-if exist ytd-%1-source.zip del ytd-%1-source.zip
-if exist ytdlite-%1.zip del ytdlite-%1.zip
+setlocal
+if "%~1"=="" goto syntax
+
+set version=%1
+shift
+
+if exist ytd-%version%.zip del ytd-%version%.zip
+if exist ytd-%version%-source.zip del ytd-%version%-source.zip
+if exist ytdlite-%version%.zip del ytdlite-%version%.zip
 call clean.bat
-call build.bat noxxx
+call build.bat noxxx %*
+del exe\amfview.exe
 call clean.bat
 pushd exe
-7z a -tzip -r ..\ytdlite-%1.zip
+7z a -tzip -r ..\ytdlite-%version%.zip
 popd
 call clean.bat
-call build.bat
+call build.bat %*
+del exe\amfview.exe
 call clean.bat
 pushd exe
-7z a -tzip -r ..\ytd-%1.zip
+7z a -tzip -r ..\ytd-%version%.zip
 popd
-7z a -tzip -r -x!units\* -x!todo ytd-%1-source.zip *
+7z a -tzip -r -x!units\* -x!todo -x!*.zip ytd-%version%-source.zip *
+goto konec
+
+:syntax
+echo build-all ^<version^> [arguments]
+goto konec
+
+:konec

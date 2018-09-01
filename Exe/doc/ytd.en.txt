@@ -10,6 +10,8 @@ where it accepts any number of URLs or a text file with a list of URLs. It
 saves the movies under their "human-readable" name from YouTube. When a movie
 has several variants, the highest-quality one is downloaded.
 
+
+
 SUPPORTED PROVIDERS
 -------------------
 
@@ -99,6 +101,9 @@ SUPPORTED PROVIDERS
      Note: Each movie can be made up of several files. In such a case, all
      files are downloaded.
 
+ - MegaVideo.com:
+     - http://www.megavideo.com/?v=2MJBY4HB
+
  - MetaCafe.com:
      - http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
 
@@ -170,6 +175,9 @@ SUPPORTED PROVIDERS
  - TVPraha11.cz (Metropol TV):
      - http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
 
+ - UStream.tv:
+     - http://www.ustream.tv/recorded/7022540
+
  - VideaCesky.cz:
      - http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
 
@@ -184,6 +192,9 @@ SUPPORTED PROVIDERS
 
  - Vimeo.com:
      - http://www.vimeo.com/10777111
+
+ - Wimp.com:
+     - http://www.wimp.com/frazilice/
 
  - Wrzuta.pl:
      - http://w772.wrzuta.pl/film/7KI3ZUDHrUK/
@@ -203,6 +214,7 @@ SUPPORTED PROVIDERS
 
 Supported porn providers:
 
+ - MegaPorn.com
  - PornHost.com
  - PornHub.com
  - PornoTube.com

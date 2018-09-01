@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.32
+
+    * Mírnì pøeuspoøádány ikonky v GUI verzi, aby byly v logiètìjších celcích.
+
+    * Podpora pro MegaVideo.com a MegaPorn.com.
+
+    * Podpora pro Wimp.com.
+
+    * Podpora pro UStream.tv.
+
+      Poznámka pro vývojáøe: Podpora AMF je nekompletní, mimo jiné chybí
+      komplet všechno kolem AMF3. Podpora bude doplnìna, až/pokud bude potøeba.
+
+
+
   v0.31
 
     * V implementaci televize Joj bylo prohozené datum, takže se stahoval

@@ -56,26 +56,31 @@ object FormYTD: TFormYTD
         Top = 2
         Action = actAddUrlsFromHTML
       end
-      object ToolButton2: TToolButton
+      object ToolAddClipboard: TToolButton
         Left = 92
+        Top = 2
+        Action = actAddUrlsFromClipboard
+      end
+      object ToolButton2: TToolButton
+        Left = 115
         Top = 2
         Width = 8
         Caption = 'ToolButton2'
         ImageIndex = 9
         Style = tbsSeparator
       end
+      object ToolCopy: TToolButton
+        Left = 123
+        Top = 2
+        Action = actCopyUrlsToClipboard
+      end
       object ToolSave: TToolButton
-        Left = 100
+        Left = 146
         Top = 2
         Action = actSaveUrlList
       end
-      object ToolAddClipboard: TToolButton
-        Left = 123
-        Top = 2
-        Action = actAddUrlsFromClipboard
-      end
       object ToolButton1: TToolButton
-        Left = 146
+        Left = 169
         Top = 2
         Width = 8
         Caption = 'ToolButton1'
@@ -83,17 +88,17 @@ object FormYTD: TFormYTD
         Style = tbsSeparator
       end
       object ToolStart: TToolButton
-        Left = 154
+        Left = 177
         Top = 2
         Action = actStart
       end
       object ToolStop: TToolButton
-        Left = 177
+        Left = 200
         Top = 2
         Action = actStop
       end
       object ToolButton5: TToolButton
-        Left = 200
+        Left = 223
         Top = 2
         Width = 8
         Caption = 'ToolButton5'
@@ -101,14 +106,9 @@ object FormYTD: TFormYTD
         Style = tbsSeparator
       end
       object ToolDelete: TToolButton
-        Left = 208
-        Top = 2
-        Action = actDeleteURL
-      end
-      object ToolCopy: TToolButton
         Left = 231
         Top = 2
-        Action = actCopyUrlsToClipboard
+        Action = actDeleteURL
       end
       object ToolButton9: TToolButton
         Left = 254
@@ -157,7 +157,7 @@ object FormYTD: TFormYTD
     Left = 0
     Top = 33
     Width = 719
-    Height = 323
+    Height = 324
     Align = alClient
     Columns = <
       item
@@ -201,7 +201,7 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 356
+    Top = 357
     Width = 719
     Height = 19
     AutoHint = True
