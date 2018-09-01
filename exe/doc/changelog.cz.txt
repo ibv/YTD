@@ -1,6 +1,24 @@
 CHANGELOG
 ---------
 
+  v0.62
+
+    * Upravena komponenta pro práci s XML soubory, aby správnì (podle XML
+      specifikace) pracovala s kódováním souborù. To by mìlo øešit všechny
+      pøípady, kdy bylo video ukládáno se špatnou èeštinou (poslednì to mám
+      hlášeno u http://archiv.nova.cz/multimedia/foto/okresni-prebor-8-dil-schuze.html).
+      Je možné, že úprava nìco rozhodí; když na nìjaký takový pøípad narazíte,
+      dejte mi vìdìt.
+
+    * Nalezena a opravena pøíèina, která za jistých okolností (typicky pokud
+      byl urèen adresáø pro downloady a v nìm už existoval soubor se stejným
+      názvem) vedla k chybì "Stahování do souboru XYZ nebylo povoleno". Hlášení
+      samo existuje i nadále, protože signalizuje naprosto legitimní situaci,
+      ale teï už by se mìlo objevovat jedinì v pøípadì, že operaèní systém
+      skuteènì nedovolí zápis do souboru.
+
+
+
   v0.61
 
     * Nový poskytovatel: RTA.cz.

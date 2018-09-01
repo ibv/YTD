@@ -54,7 +54,9 @@ uses
     Interfaces,
   {$ENDIF}
   {$IFDEF GUI}
-    Forms,
+    {$IFNDEF GUI_WINAPI}
+      Forms,
+    {$ENDIF}
   {$ENDIF}
   // Base objects and units
   uMessages in 'Common\uMessages.pas',
@@ -77,14 +79,15 @@ uses
   {$ENDIF}
   // GUI version
   {$IFDEF GUI}
-    guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
     {$IFDEF GUI_WINAPI}
-    guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas' {FormAbout},
+      guiMainWINAPI in 'GUI\WinAPI\guiMainWINAPI.pas' {FormYTD},
+      guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas' {FormAbout},
     {$ELSE}
-    guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
-    {$ENDIF}
-    {$IFDEF CONVERTERS}
-    guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas', {FormSelectConverter}
+      guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
+      guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
+      {$IFDEF CONVERTERS}
+      guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas', {FormSelectConverter}
+      {$ENDIF}
     {$ENDIF}
     guiConsts in 'GUI\guiConsts.pas',
     guiOptions in 'GUI\guiOptions.pas',
@@ -278,10 +281,19 @@ begin
             FreeConsole;
           {$ENDIF}
         {$ENDIF}
-        Application.Initialize;
-        Application.Title := 'YouTube Downloader';
-        Application.CreateForm(TFormYTD, FormYTD);
-        Application.Run;
+        {$IFDEF GUI_WINAPI}
+          with TFormMain.Create do
+            try
+              ShowModal;
+            finally
+              Free;
+              end;
+        {$ELSE}
+          Application.Initialize;
+          Application.Title := 'YouTube Downloader';
+          Application.CreateForm(TFormYTD, FormYTD);
+          Application.Run;
+        {$ENDIF}
         end
       else
     {$ENDIF}

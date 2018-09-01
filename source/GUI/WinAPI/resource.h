@@ -2,10 +2,4 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDC_LABEL_VERSIONCAPTION                1000
-#define IDC_LABEL_NEWESTVERSIONCAPTION          1001
-#define IDC_LABEL_HOMEPAGECAPTION               1002
-#define IDC_LABEL_YOUTUBEDOWNLOADER             1003
-#define IDC_LABEL_VERSION                       1004
-#define IDC_LABEL_NEWESTVERSION                 1007
-#define IDC_LABEL_HOMEPAGE                      1008
+#define IDC_REBAR1                              1001

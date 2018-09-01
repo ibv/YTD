@@ -40,8 +40,9 @@ unit guiOptions;
 interface
 
 uses
-  SysUtils, Classes, Windows, Dialogs,
-  uOptions, uLanguages;
+  SysUtils, Classes, Windows,
+  {$IFNDEF GUI_WINAPI} Dialogs, {$ENDIF}
+  uOptions, uLanguages, uMessages;
 
 type
   TYTDOptionsGUI = class(TYTDOptions)
@@ -134,14 +135,26 @@ begin
   inherited;
   if not fLoadSuccessful then
     begin
+    {$IFDEF GUI_WINAPI}
+    MessageBox(0, PChar(_(INITIALRUN_WELCOMEMSG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_APPLMODAL);
+    {$ELSE}
     MessageDlg(_(INITIALRUN_WELCOMEMSG), mtWarning, [mbOK], 0);
+    {$ENDIF}
     {$IFDEF CONVERTERS}
     Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
     {$ENDIF}
+    {$IFDEF GUI_WINAPI}
+    PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_APPLMODAL) = idYes;
+    {$ELSE}
     PortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
+    {$ENDIF}
     if PortableMode then
       XmlFileName := ChangeFileExt(ParamStr(0), '.xml');
+    {$IFDEF GUI_WINAPI}
+    CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_APPLMODAL) = idYes;
+    {$ELSE}
     CheckForNewVersionOnStartup := MessageDlg(_(INITIALRUN_WANTNEWVERSIONCHECK), mtConfirmation, [mbYes, mbNo], 0) = idYes;
+    {$ENDIF}
     end;
 end;
 

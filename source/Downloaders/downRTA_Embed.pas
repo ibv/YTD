@@ -123,8 +123,7 @@ begin
         SetLastErrorMsg(_(ERR_FAILED_TO_LOCATE_MEDIA_URL))
       else
         begin
-        // Note: TNativeXml incorrectly determines input encoding
-        SetName(Utf8ToString(Utf8String(Title)));
+        SetName(Title);
         MovieURL := URL;
         Result := True;
         SetPrepared(True);

@@ -333,7 +333,7 @@ type
     procedure AttributeExchange(Index1, Index2: integer);
     // Use this method to find the index of an attribute with name AName.
     function AttributeIndexByname(const AName: UTF8String): integer;
-    // \Clear all attributes from the current node.
+    // Clear all attributes from the current node.
     procedure AttributesClear; virtual;
     // Use this method to read binary data from the node into Buffer with a length of Count.
     procedure BufferRead(var Buffer{$IFDEF CLR}: TBytes{$ENDIF}; Count: Integer); virtual;
@@ -5390,11 +5390,40 @@ procedure TNativeXml.ReadFromStream(S: TStream);
 var
   i: integer;
   Node: TXmlNode;
+  {$IFNDEF PEPAK}
   Enc: UTF8String;
+  {$ENDIF}
   NormalCount, DeclarationCount,
   DoctypeCount, CDataCount: integer;
   NormalPos, DoctypePos: integer;
+  {$IFDEF PEPAK}
+  StreamStart: integer;
+  EncodingNode: TXmlNode;
+  AutodetectedEncoding: TStringEncodingType;
+  {$ENDIF}
 begin
+  {$IFDEF PEPAK}
+    // TNativeXml has a serious bug with XML files without XML declaration: It defaults
+    // to assuming the encoding is ANSI, while XML specs say it should be UTF-8.
+    EncodingNode := TXmlNode.Create(Self);
+    try
+      // Note: Stream seeking is totally fucked up in TsdCodecStream if I just want to
+      // record current position and return back. I had to publish the real stream and
+      // work with it.
+      StreamStart := FCodecStream.FStream.Position;
+      EncodingNode.ReadFromStream(S);
+      FCodecStream.FStream.Position := StreamStart;
+      AutodetectedEncoding := FCodecStream.Encoding;
+      FCodecStream.Encoding := seUTF8;
+      if EncodingNode.ElementType = xeDeclaration then
+        if EncodingNode.HasAttribute('encoding') then
+          if AnsiCompareText(string(EncodingNode.AttributeByName['encoding']), 'utf-8') <> 0 then
+            FCodecStream.Encoding := AutodetectedEncoding;
+    finally
+      FreeAndNil(EncodingNode);
+      end;
+  {$ENDIF}
+
   FAbortParsing := False;
   with FRootNodes do
   begin
@@ -5408,6 +5437,7 @@ begin
         exit;
 
       // XML declaration
+      {$IFNDEF PEPAK}
       if Node.ElementType = xeDeclaration then
       begin
         if Node.HasAttribute('encoding') then
@@ -5418,6 +5448,7 @@ begin
         if assigned(FCodecStream) and (AnsiUpperCase(string(Enc)) = 'UTF-8') then
           FCodecStream.Encoding := seUTF8;
       end;
+      {$ENDIF}
       // Skip clear nodes
       if Node.IsClear then
         NodeDelete(NodeCount - 1);

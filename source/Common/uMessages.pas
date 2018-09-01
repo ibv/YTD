@@ -42,6 +42,7 @@ interface
 const
   EOLN = #10;
   APPLICATION_TITLE = 'YouTube Downloader';
+  APPLICATION_URL = 'http://www.pepak.net/download/youtube-downloader/';
 
 {gnugettext: scan-all}
 const

@@ -3,7 +3,6 @@
 {.DEFINE NO_GUI} // Don't compile GUI version
 {.DEFINE NO_CLI} // Don't compile command-line version
 {.DEFINE NO_XXX} // Don't compile support for porn providers
-{.DEFINE KOL}    // Use Key Objects Library (http://kolmck.net). Not supported.
 
 {.DEFINE GUI_WINAPI} // GUI is created with WinAPI. Otherwise GUI is created with VCL
 

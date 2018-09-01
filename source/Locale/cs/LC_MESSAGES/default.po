@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.41\n"
-"POT-Creation-Date: 2010-08-14 09:23\n"
-"PO-Revision-Date: 2010-08-14 09:27+0100\n"
+"POT-Creation-Date: 2010-11-22 18:14\n"
+"PO-Revision-Date: 2010-11-22 18:16+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,11 @@ msgstr ""
 "X-Poedit-Country: CZECH REPUBLIC\n"
 
 #. FormAbout..Caption
+#. Caption
+#. Programmer's name: CAPTION
 #: GUI/VCL/guiAboutVCL.dfm:6
+#: GUI/WinAPI/guiAboutWINAPI.pas:207
+#: GUI/WinAPI/guiAboutWINAPI.rc:20
 msgid "About YouTube Downloader"
 msgstr "O aplikaci YouTube Downloader"
 
@@ -40,12 +44,20 @@ msgid "MS Sans Serif"
 msgstr "MS Sans Serif"
 
 #. FormAbout..LabelYTD..Caption
+#. Programmer's name: LTEXT
+#. Programmer's name: CAPTION
 #: GUI/VCL/guiAboutVCL.dfm:23
+#: GUI/WinAPI/guiAboutWINAPI.rc:23
+#: GUI/WinAPI/guiMainWINAPI.rc:20
 msgid "YouTube Downloader"
 msgstr "YouTube Downloader"
 
 #. FormAbout..LabelVersionLabel..Caption
+#. Label "Version:" and version number
+#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:36
+#: GUI/WinAPI/guiAboutWINAPI.pas:212
+#: GUI/WinAPI/guiAboutWINAPI.rc:24
 msgid "Version:"
 msgstr "Verze:"
 
@@ -55,23 +67,36 @@ msgid "LabelVersion"
 msgstr "LabelVersion"
 
 #. FormAbout..LabelNewestVersionLabel..Caption
+#. Label "Newest version:"
+#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:57
+#: GUI/WinAPI/guiAboutWINAPI.pas:218
+#: GUI/WinAPI/guiAboutWINAPI.rc:25
 msgid "Newest version:"
 msgstr "Nejnovější verze:"
 
 #. FormAbout..LabelNewestVersion..Caption
+#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:65
 #: GUI/VCL/guiAboutVCL.pas:125
+#: GUI/WinAPI/guiAboutWINAPI.pas:219
+#: GUI/WinAPI/guiAboutWINAPI.rc:28
 msgid "not found"
 msgstr "nenalezena"
 
 #. FormAbout..LabelHomepageLabel..Caption
+#. Label "Homepage:"
+#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:79
+#: GUI/WinAPI/guiAboutWINAPI.pas:222
+#: GUI/WinAPI/guiAboutWINAPI.rc:26
 msgid "Homepage:"
 msgstr "Domovská stránka:"
 
 #. FormAbout..LabelHomepage..Caption
+#. Programmer's name: LTEXT
 #: GUI/VCL/guiAboutVCL.dfm:87
+#: GUI/WinAPI/guiAboutWINAPI.rc:29
 msgid "http://www.pepak.net/download/youtube-downloader"
 msgstr "http://www.pepak.net/download/youtube-downloader"
 
@@ -82,25 +107,28 @@ msgstr "Poskytovatelé médií:"
 
 #. FormAbout..ListProviders......Caption
 #. FormYTD..Downloads......Caption
+#. Create columns
 #: GUI/VCL/guiAboutVCL.dfm:111
 #: GUI/VCL/guiMainVCL.dfm:185
+#: GUI/WinAPI/guiAboutWINAPI.pas:367
 msgid "Provider"
 msgstr "Poskytovatel"
 
 #. FormAbout..ListProviders......Caption
 #: GUI/VCL/guiAboutVCL.dfm:115
+#: GUI/WinAPI/guiAboutWINAPI.pas:368
 msgid "Components"
 msgstr "Komponenty"
 
 #. FormSelectConverter..Caption
 #: GUI/VCL/guiConverterVCL.dfm:5
 msgid "Select converter"
-msgstr "Vyberte si konvertovač"
+msgstr "Vyberte si konvertor"
 
 #. FormSelectConverter..LabelConverter..Caption
 #: GUI/VCL/guiConverterVCL.dfm:24
 msgid "Converter:"
-msgstr "Konvertovač:"
+msgstr "Konvertor:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
 #: GUI/VCL/guiConverterVCL.dfm:59
@@ -323,12 +351,12 @@ msgstr "Zkonvertovat zvolený soubor"
 #. FormYTD..YTDActions..actSelectConverter..Caption
 #: GUI/VCL/guiMainVCL.dfm:366
 msgid "Choose a converter"
-msgstr "Vybrat konvertovač"
+msgstr "Vybrat konvertor"
 
 #. FormYTD..YTDActions..actSelectConverter....Hint
 #: GUI/VCL/guiMainVCL.dfm:369
 msgid "Choose a converter which will be automatically applied to all downloaded movies."
-msgstr "Vybrat konvertovač, který bude automaticky použit na všechny stáhnuté soubory."
+msgstr "Vybrat konvertor, který bude automaticky použit na všechny stáhnuté soubory."
 
 #. FormYTD..YTDActions..actReportBug..Caption
 #: GUI/VCL/guiMainVCL.dfm:375
@@ -654,7 +682,7 @@ msgstr "  Nazev média: "
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #. CLI: File already exists, renaming it to a new filename
 #: CLI/uYTD.pas:436
-#: CLI/uYTD.pas:560
+#: CLI/uYTD.pas:559
 msgid "    File name: "
 msgstr "Nazev souboru: "
 
@@ -684,46 +712,46 @@ msgid "Unknown URL."
 msgstr "Neznama URL."
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:566
+#: CLI/uYTD.pas:565
 msgid "  File "
 msgstr "  Soubor "
 
-#: CLI/uYTD.pas:568
+#: CLI/uYTD.pas:567
 msgid " already exists."
 msgstr " uz existuje."
 
-#: CLI/uYTD.pas:569
+#: CLI/uYTD.pas:568
 msgid "  Do you want to: "
 msgstr "Chcete ho:"
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:570
+#: CLI/uYTD.pas:569
 msgid "kip it, "
 msgstr " preskocit, "
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:571
+#: CLI/uYTD.pas:570
 msgid "verwrite it, or "
 msgstr " prepsat, nebo "
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:572
+#: CLI/uYTD.pas:571
 msgid "ename it? "
 msgstr " prejmenovat?"
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:588
+#: CLI/uYTD.pas:587
 msgid "  New filename: "
 msgstr "  Novy nazev: "
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:599
+#: CLI/uYTD.pas:598
 msgid "Incorrect answer."
 msgstr "Nespravna odpoved."
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
-#: Common/uMessages.pas:48
+#: Common/uMessages.pas:49
 msgid ""
 "Exception %s with message:\n"
 "%s"
@@ -733,109 +761,109 @@ msgstr ""
 
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:50
+#: Common/uMessages.pas:51
 msgid "Press any key to quit."
 msgstr "Stiskněte klávesu pro ukončení programu."
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:51
+#: Common/uMessages.pas:52
 msgid "Playlist item %d"
 msgstr "%d. položka seznamu"
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:54
+#: Common/uMessages.pas:55
 msgid "Downloader is not prepared!"
 msgstr "Downloader není připraven!"
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:55
+#: Common/uMessages.pas:56
 msgid "Download of this content is not implemented."
 msgstr "Stahování tohoto obsahu není podporováno."
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:56
+#: Common/uMessages.pas:57
 msgid "Download to file \"%s\" was not allowed."
 msgstr "Stahování do souboru \"%s\" nebylo povoleno."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:58
+#: Common/uMessages.pas:59
 msgid "Failed to locate embedded object."
 msgstr "Nepodařilo se nalézt vložený objekt."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:59
+#: Common/uMessages.pas:60
 msgid "Failed to locate media info page."
 msgstr "Nepodařilo se najít stránku informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:60
+#: Common/uMessages.pas:61
 msgid "Failed to download media info page."
 msgstr "Nepodařilo se stáhnout stránku informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:61
+#: Common/uMessages.pas:62
 msgid "Failed to prepare media info page."
 msgstr "Nepodařilo se připravit stránku informací o médiu."
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:62
+#: Common/uMessages.pas:63
 msgid "Invalid media info page."
 msgstr "Chybná stránka informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:63
+#: Common/uMessages.pas:64
 msgid "Failed to download server list."
 msgstr "Nepodařilo se stáhnout seznam serverů."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:65
+#: Common/uMessages.pas:66
 msgid "Failed to locate media info."
 msgstr "Nepodařilo se najít informace o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:66
+#: Common/uMessages.pas:67
 msgid "Failed to find media title."
 msgstr "Nepodařilo se najít název média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:67
+#: Common/uMessages.pas:68
 msgid "Failed to find media URL."
 msgstr "Nepodařilo se najít adresu média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:68
+#: Common/uMessages.pas:69
 msgid "Failed to find media server."
 msgstr "Nepodařilo se najít server média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:69
+#: Common/uMessages.pas:70
 msgid "Failed to find media stream."
 msgstr "Nepodařilo se najít stream média."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:72
 msgid "HTTP request failed with error code %d."
 msgstr "HTTP požadavek selhal s chybou %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:73
 msgid "No data read from the connection."
 msgstr "Nepodařilo se přečíst žádná data."
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:75
 msgid "Variable \"%s\" not found."
 msgstr "Proměnná \"%s\" nebyla nalezena."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:77
 msgid "Error message listed in file \"%s\"."
 msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:79
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 
@@ -897,7 +925,7 @@ msgstr "Konverze selhala"
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
 #: GUI/guiConsts.pas:60
 msgid "Converter not found"
-msgstr "Konvertovač nebyl nalezen"
+msgstr "Konvertor nebyl nalezen"
 
 #. GUI: description of a "no converter"
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
@@ -919,7 +947,7 @@ msgid ""
 "but too many people failed to read the documentation\n"
 "and instead complained that converters don't work."
 msgstr ""
-"Konvertovače nejsou aktivovány.\n"
+"Konvertory nejsou aktivovány.\n"
 "\n"
 "Musíte je aktivovat ručně v konfiguračním\n"
 "souboru. Popis kroků potřebných pro aktivaci\n"
@@ -931,8 +959,9 @@ msgstr ""
 "si stěžovalo, že konvertování nefunguje."
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:98
-#: GUI/guiOptions.pas:128
+#: GUI/guiOptions.pas:99
+#: GUI/guiOptions.pas:139
+#: GUI/guiOptions.pas:141
 msgid ""
 "This is the first time you are running the GUI version\n"
 "of YouTube Downloader, or the configuration file isn't\n"
@@ -946,7 +975,7 @@ msgstr ""
 "která mají na soukromí vliv."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:106
+#: GUI/guiOptions.pas:107
 msgid ""
 "Would you like to run YouTube Downloader in portable mode?\n"
 "\n"
@@ -966,11 +995,10 @@ msgstr ""
 "se nastavení ukládají do souboru v profilu přihlášeného\n"
 "uživatele.\n"
 "\n"
-"YES = přenositelný režim, NO = normální režim"
+"ANO = přenositelný režim, NE = normální režim"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:118
-#: GUI/guiOptions.pas:132
+#: GUI/guiOptions.pas:119
 msgid ""
 "Would you like YouTube Downloader to check for new versions\n"
 "on GUI startup?\n"
@@ -998,25 +1026,33 @@ msgstr ""
 "\n"
 "Má YTD automaticky zjišťovat nové verze?"
 
-#: GUI/guiOptions.pas:130
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:122
 msgid "Change container to .AVI"
 msgstr "Změnit kontejner na .AVI"
 
-#: GUI/guiOptions.pas:130
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:125
 msgid "Convert movie to AVI/XVID"
 msgstr "Zkonvertovat film do AVI/XVID"
 
-#: GUI/guiOptions.pas:130
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:128
+#: GUI/guiOptions.pas:147
+#: GUI/guiOptions.pas:149
 msgid "Convert movie to AVI/H264"
 msgstr "Zkonvertovat film do AVIPH264"
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:288
+#. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+#: GUI/uDownloadList.pas:298
+#: GUI/uDownloadList.pas:313
 msgid "File already exists."
 msgstr "Soubor už existuje."
 
 #. GUI: Check for a new version wasn't made yet - or failed.
 #: GUI/VCL/guiAboutVCL.pas:125
+#: GUI/WinAPI/guiAboutWINAPI.pas:219
 msgid "checking..."
 msgstr "zjišťuji..."
 
@@ -1094,9 +1130,21 @@ msgid "Enter page URL:"
 msgstr "Zadejte URL stránky:"
 
 #. Programmer's name for it: SSelectDirectory
-#: Lib/Pepak/FileCtrlGUI.pas:17
+#: Lib/Pepak/uDialogs.pas:17
 msgid "Select a directory"
 msgstr "Zvolte adresář pro downloady"
+
+#. Programmer's name: FONT 8
+#. Programmer's name: FONT 8
+#: GUI/WinAPI/guiAboutWINAPI.rc:21
+#: GUI/WinAPI/guiMainWINAPI.rc:21
+msgid "Ms Shell Dlg"
+msgstr "Ms Shell Dlg"
+
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:27
+msgid "0.60"
+msgstr "0.60"
 
 #, fuzzy
 #~ msgid "Invalid method name"

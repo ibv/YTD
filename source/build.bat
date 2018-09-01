@@ -6,7 +6,6 @@ set params=
 set debug=0
 set cli=1
 set gui=1
-set kol=0
 set lvcl=0
 set xxx=1
 set upx=0
@@ -25,8 +24,6 @@ if /i "%~1"=="cli" set cli=1
 if /i "%~1"=="nocli" set cli=0
 if /i "%~1"=="gui" set gui=1
 if /i "%~1"=="nogui" set gui=0
-if /i "%~1"=="kol" set kol=1
-if /i "%~1"=="nokol" set kol=0
 if /i "%~1"=="lvcl" set lvcl=1
 if /i "%~1"=="nolvcl" set lvcl=0
 if /i "%~1"=="xxx" set xxx=1
@@ -49,11 +46,6 @@ if not "%xxx%"=="1" set defs=%defs% -dNO_XXX
 if "%debug%"=="1" set defs=%defs% -dDEBUG
 
 del /q "%srcdir%Units\*.*"
-
-if "%kol%"=="1" (
-  set defs=%defs% -dKOL
-  call :%compiler% "%srcdir%lib\KOL\*.pas"
-)
 
 if "%lvcl%"=="1" (
   set defs=%defs% -dLVCL

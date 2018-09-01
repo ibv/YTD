@@ -36,44 +36,54 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit guiAboutWINAPI;
 {$INCLUDE 'ytd.inc'}
-{$DEFINE OVERRIDETITLEANDURL}
+{.DEFINE STATICPROVIDERLIST}
 
 interface
 
+{$RESOURCE guiAboutWINAPI.res guiAboutWINAPI.rc}
+
 uses
-  SysUtils, Classes, Windows, Messages, ShellApi,
+  SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiForm, uApiGraphics,
-  uLanguages, uDownloadClassifier, uDownloader, uOptions;
+  uLanguages, uMessages, uDownloadClassifier, uDownloader, uOptions;
 
 type
   TFormAbout = class(TApiForm)
-    private
-      fDownloadClassifier: TDownloadClassifier;
-      fOptions: TYTDOptions;
-      fNewestVersionColor: TColor;
-      fNewestVersionUrl: string;
     protected
       function DialogProc(var Msg: TMessage): boolean; override;
       function DoInitDialog: boolean; override;
       function DoClose: boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
+      {$IFNDEF STATICPROVIDERLIST}
+      function DoNotify(Control: THandle; ControlID: DWORD; Code, WParam, LParam: integer; out NotifyResult: integer): boolean; override;
+      {$ENDIF}
     protected
       function DoCtlColorStatic(DeviceContext: HDC; Control: THandle; out Brush: THandle): boolean; virtual;
       function DoSetCursor(Control: THandle; HitTestCode, Identifier: Word): boolean; virtual;
     private
-      Cursor_Default: THandle;
       Cursor_Hand: THandle;
       Brush_Form: THandle;
       Font_Default: THandle;
       Font_Title: THandle;
       Font_Info: THandle;
       Font_Link: THandle;
-      procedure PrepareGdiObjects;
+      procedure CreateGdiObjects;
+      procedure DestroyGdiObjects;
     private
+      fDownloadClassifier: TDownloadClassifier;
+      fOptions: TYTDOptions;
+      fNewestVersionColor: TColor;
+      fNewestVersionUrl: string;
     protected
       procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
       procedure LabelHomepageClick; virtual;
       procedure LabelNewestVersionClick; virtual;
+      {$IFNDEF STATICPROVIDERLIST}
+      function ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean; virtual;
+      {$ENDIF}
+      procedure LoadProviders; virtual;
+    protected
+      class function DefaultResourceName: string; override;
     public
       constructor Create(const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -82,8 +92,6 @@ type
     end;
 
 implementation
-
-{$RESOURCE guiAboutWINAPI.res guiAboutWINAPI.rc}
 
 // from resource.h
 const
@@ -94,13 +102,19 @@ const
   IDC_LABEL_VERSION = 1004;
   IDC_LABEL_NEWESTVERSION = 1007;
   IDC_LABEL_HOMEPAGE = 1008;
+  IDC_LIST_PROVIDERS = 1006;
 
-// Built-in:
+//
 const
-  YTD_TITLE = 'YouTube Downloader';
-  YTD_HOMEPAGE = 'http://www.pepak.net/download/youtube-downloader/';
+  LISTVIEW_SUBITEM_PROVIDER = 0;
+  LISTVIEW_SUBITEM_COMPONENTS = 1;
 
 { TFormAbout }
+
+class function TFormAbout.DefaultResourceName: string;
+begin
+  Result := 'guiAboutWinAPI';
+end;
 
 constructor TFormAbout.Create(const ADialogResourceName: string);
 begin
@@ -112,13 +126,11 @@ begin
   inherited;
 end;
 
-procedure TFormAbout.PrepareGdiObjects;
+procedure TFormAbout.CreateGdiObjects;
 var hdc: THandle;
     ly: integer;
     FontBuf: TLogFont;
 begin
-  // Create default cursor
-  Cursor_Default := LoadCursor(0, IDC_ARROW);
   // Create hand cursor
   Cursor_Hand := LoadCursor(0, IDC_HAND);
   // Create brush for form background
@@ -155,6 +167,16 @@ begin
     end;
 end;
 
+procedure TFormAbout.DestroyGdiObjects;
+begin
+  FreeGDIObject(Cursor_Hand); Cursor_Hand := 0;
+  FreeGDIObject(Brush_Form); Brush_Form := 0;
+  FreeGDIObject(Font_Default); Font_Default := 0;
+  FreeGDIObject(Font_Title); Font_Title := 0;
+  FreeGDIObject(Font_Info); Font_Info := 0;
+  FreeGDIObject(Font_Link); Font_Link := 0;
+end;
+
 function TFormAbout.DialogProc(var Msg: TMessage): boolean;
 var H: THandle;
 begin
@@ -165,7 +187,8 @@ begin
         begin
         H := Msg.Result;
         Result := DoCtlColorStatic(Msg.wParam, Msg.lParam, H);
-        Msg.Result := H;
+        if Result then
+          Msg.Result := H;
         end;
       WM_SETCURSOR:
         begin
@@ -179,11 +202,11 @@ end;
 function TFormAbout.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
-  PrepareGDIObjects;
+  CreateGDIObjects;
+  // Caption
+  SetWindowText(Self.Handle, PChar(_('About YouTube Downloader')));
   // Label "YouTube Downloader"
-  {$IFDEF OVERRIDETITLEANDURL}
-  SetDlgItemText(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER, YTD_TITLE);
-  {$ENDIF}
+  SetDlgItemText(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER, APPLICATION_TITLE);
   SendDlgItemMessage(Handle, IDC_LABEL_YOUTUBEDOWNLOADER, WM_SETFONT, Font_Title, 1);
   // Label "Version:" and version number
   SetDlgItemText(Self.Handle, IDC_LABEL_VERSIONCAPTION, PChar(_('Version:')));
@@ -193,13 +216,11 @@ begin
   fNewestVersionColor := {$IFDEF THREADEDVERSION} clBlack {$ELSE} clRed {$ENDIF} ;
   fNewestVersionUrl := '';
   SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSIONCAPTION, PChar(_('Newest version:')));
-  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_( {$IFDEF THREADEDVERSION} 'checking...' {$ELSE} 'not found' {$ENDIF} )));
+  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar( {$IFDEF THREADEDVERSION}_('checking...') {$ELSE} _('not found') {$ENDIF} ));
   SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Info, 1);
   // Label "Homepage:"
   SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGECAPTION, PChar(_('Homepage:')));
-  {$IFDEF OVERRIDETITLEANDURL}
-  SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGE, YTD_HOMEPAGE);
-  {$ENDIF}
+  SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGE, APPLICATION_URL);
   SendDlgItemMessage(Handle, IDC_LABEL_HOMEPAGE, WM_SETFONT, Font_Link, 1);
   // Get the newest version info
   if Options <> nil then
@@ -209,18 +230,19 @@ begin
     if Options.GetNewestVersion(Version, Url) then
       NewVersionEvent(Options, Version, Url);
     {$ENDIF}
+  // ListView with provider info
+  LoadProviders;
+  // Make sure everything can be resized easily
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_LABEL_HOMEPAGE), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_LIST_PROVIDERS), [akTop, akLeft, akRight, akBottom]);
 end;
 
 function TFormAbout.DoClose: boolean;
 begin
   Result := inherited DoClose;
   if Result then
-    begin
-    FreeGDIObject(Font_Title);
-    FreeGDIObject(Font_Info);
-    FreeGDIObject(Font_Link);
-    FreeGDIObject(Brush_Form);
-    end;
+    DestroyGdiObjects;
 end;
 
 function TFormAbout.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
@@ -244,6 +266,16 @@ begin
   if not Result then
     Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
 end;
+
+{$IFNDEF STATICPROVIDERLIST}
+function TFormAbout.DoNotify(Control: THandle; ControlID: DWORD; Code, WParam, LParam: integer; out NotifyResult: integer): boolean;
+begin
+  if (ControlID = IDC_LIST_PROVIDERS) and (Code = LVN_GETDISPINFO) then
+    Result := ListProvidersGetDisplayInfo(PLVDispInfo(LParam))
+  else
+    Result := inherited DoNotify(Control, ControlID, Code, WParam, LParam, NotifyResult);
+end;
+{$ENDIF}
 
 function TFormAbout.DoCtlColorStatic(DeviceContext: HDC; Control: THandle; out Brush: THandle): boolean;
 begin
@@ -269,14 +301,13 @@ begin
 end;
 
 function TFormAbout.DoSetCursor(Control: THandle; HitTestCode, Identifier: Word): boolean;
-var Cur: THandle;
 begin
-  Result := True;
+  Result := False;
   if (Control = GetDlgItem(Self.Handle, IDC_LABEL_HOMEPAGE)) or ((Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTVERSION)) and (fNewestVersionUrl <> '')) then
-    Cur := Cursor_Hand
-  else
-    Cur := Cursor_Default;
-  SetCursor(Cur);
+    begin
+    SetCursor(Cursor_Hand);
+    Result := True;
+    end;
 end;
 
 procedure TFormAbout.NewVersionEvent(Sender: TObject; const Version, Url: string);
@@ -292,7 +323,7 @@ end;
 
 procedure TFormAbout.LabelHomepageClick;
 begin
-  ShellExecute(Handle, 'open', YTD_HOMEPAGE, nil, nil, 0);
+  ShellExecute(Handle, 'open', APPLICATION_URL, nil, nil, 0);
 end;
 
 procedure TFormAbout.LabelNewestVersionClick;
@@ -300,5 +331,66 @@ begin
   if fNewestVersionUrl <> '' then
     ShellExecute(Handle, 'open', PChar(fNewestVersionUrl), nil, nil, 0);
 end;
+
+{$IFNDEF STATICPROVIDERLIST}
+var StaticDisplayInfoText: string;
+
+function TFormAbout.ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean;
+begin
+  Result := False;
+  case DispInfo^.item.iSubItem of
+    LISTVIEW_SUBITEM_PROVIDER:
+      begin
+      StaticDisplayInfoText := DownloadClassifier.Names[DispInfo^.item.iItem];
+      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
+      Result := True;
+      end;
+    LISTVIEW_SUBITEM_COMPONENTS:
+      begin
+      StaticDisplayInfoText := DownloadClassifier.NameClasses[DispInfo^.item.iItem];
+      DispInfo^.item.pszText := PChar(StaticDisplayInfoText);
+      Result := True;
+      end;
+    end;
+end;
+{$ENDIF}
+
+procedure TFormAbout.LoadProviders;
+var ListViewHandle: THandle;
+{$IFDEF STATICPROVIDERLIST}
+var i: integer;
+    Item: LV_ITEM;
+{$ENDIF}
+begin
+  ListViewHandle := GetDlgItem(Self.Handle, IDC_LIST_PROVIDERS);
+  // Create columns
+  ListViewInsertColumn(ListViewHandle, 0, LISTVIEW_SUBITEM_PROVIDER, alLeft, 100, _('Provider'));
+  ListViewInsertColumn(ListViewHandle, 1, LISTVIEW_SUBITEM_COMPONENTS, alLeft, 264, _('Components'));
+  // Create items
+  SendMessage(ListViewHandle, LVM_DELETEALLITEMS, 0, 0);
+  if DownloadClassifier <> nil then
+    if DownloadClassifier.NameCount > 0 then
+      begin
+      ShowApiError(SendMessage(ListViewHandle, LVM_SETITEMCOUNT, DownloadClassifier.NameCount, 0) = 0);
+      {$IFDEF STATICPROVIDERLIST}
+      for i := 0 to Pred(DownloadClassifier.NameCount) do
+        begin
+        Item.mask := LVIF_TEXT;
+        Item.iItem := i;
+        Item.iSubItem := LISTVIEW_SUBITEM_PROVIDER;
+        Item.pszText := PChar(DownloadClassifier.Names[i]);
+        ShowApiError(SendMessage(ListViewHandle, LVM_INSERTITEM, 0, integer(@Item)) = 0);
+        Item.mask := LVIF_TEXT;
+        Item.iItem := i;
+        Item.iSubItem := LISTVIEW_SUBITEM_COMPONENTS;
+        Item.pszText := PChar(DownloadClassifier.NameClasses[i]);
+        ShowApiError(SendMessage(ListViewHandle, LVM_SETITEM, 0, integer(@Item)) = 0);
+        end;
+      {$ENDIF}
+      end;
+end;
+
+initialization
+   InitCommonControls;
 
 end.

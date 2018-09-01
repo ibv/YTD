@@ -528,7 +528,7 @@ begin
 end;
 
 procedure TYTD.DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
-var FilePath, Answer: string;
+var Answer: string;
 
     function AutoRename(var FileName: string): boolean;
       var FileNameBase, FileNameExt: string;
@@ -538,15 +538,14 @@ var FilePath, Answer: string;
         FileNameExt := ExtractFileExt(FileName);
         FileNameBase := ChangeFileExt(FileName, '');
         repeat
-          FileName := Format('%s%s.%d%s', [FilePath, FileNameBase, Index, FileNameExt]);
+          FileName := Format('%s.%d%s', [FileNameBase, Index, FileNameExt]);
           Inc(Index);
         until not FileExists(FileName);
         Result := True;
       end;
 
 begin
-  FilePath := (Sender as TDownloader).Options.DestinationPath;
-  if FileExists(FilePath + FileName) then
+  if FileExists(FileName) then
     case Options.OverwriteMode of
       omNever:
         Valid := False;
@@ -589,9 +588,9 @@ begin
                 Readln(Answer);
                 if Answer <> '' then
                   begin
-                  FileName := Answer;
+                  FileName := ExtractFilePath(FileName) + Answer;
                   Valid := True;
-                  if not FileExists(FilePath + Answer) then
+                  if not FileExists(FileName) then
                     Break;
                   end;
                 end;
@@ -601,8 +600,8 @@ begin
         until False;
         end;
       end;
-  if Valid and FileExists(FilePath + FileName) then
-    DeleteFile(FilePath + FileName);
+  if Valid and FileExists(FileName) then
+    DeleteFile(FileName);
 end;
 
 end.

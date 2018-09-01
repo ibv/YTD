@@ -1,4 +1,4 @@
-unit FileCtrlGUI;
+unit uDialogs;
 
 interface
 
@@ -6,7 +6,7 @@ type
   TSelectDirOpt = (sdAllowCreate, sdPerformCreate, sdPrompt);
   TSelectDirOpts = set of TSelectDirOpt;
 
-function SelectDirectory(var Directory: string; Options: TSelectDirOpts; HelpCtx: Longint): Boolean; 
+function SelectDirectory(var Directory: string; Options: TSelectDirOpts; HelpCtx: Longint): Boolean;
 
 implementation
 

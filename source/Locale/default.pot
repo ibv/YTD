@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2010-08-14 09:23\n"
-"PO-Revision-Date: 2010-08-14 09:23\n"
+"POT-Creation-Date: 2010-11-22 18:14\n"
+"PO-Revision-Date: 2010-11-22 18:14\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +17,10 @@ msgstr ""
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
+#. Caption
+#: GUI/WinAPI/guiAboutWINAPI.pas:207
+#. Programmer's name: CAPTION
+#: GUI/WinAPI/guiAboutWINAPI.rc:20
 msgid "About YouTube Downloader"
 msgstr ""
 
@@ -39,11 +43,19 @@ msgstr ""
 
 #. FormAbout..LabelYTD..Caption
 #: GUI/VCL/guiAboutVCL.dfm:23
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:23
+#. Programmer's name: CAPTION
+#: GUI/WinAPI/guiMainWINAPI.rc:20
 msgid "YouTube Downloader"
 msgstr ""
 
 #. FormAbout..LabelVersionLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:36
+#. Label "Version:" and version number
+#: GUI/WinAPI/guiAboutWINAPI.pas:212
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:24
 msgid "Version:"
 msgstr ""
 
@@ -54,22 +66,35 @@ msgstr ""
 
 #. FormAbout..LabelNewestVersionLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:57
+#. Label "Newest version:"
+#: GUI/WinAPI/guiAboutWINAPI.pas:218
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:25
 msgid "Newest version:"
 msgstr ""
 
 #. FormAbout..LabelNewestVersion..Caption
 #: GUI/VCL/guiAboutVCL.dfm:65
 #: GUI/VCL/guiAboutVCL.pas:125
+#: GUI/WinAPI/guiAboutWINAPI.pas:219
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:28
 msgid "not found"
 msgstr ""
 
 #. FormAbout..LabelHomepageLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:79
+#. Label "Homepage:"
+#: GUI/WinAPI/guiAboutWINAPI.pas:222
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:26
 msgid "Homepage:"
 msgstr ""
 
 #. FormAbout..LabelHomepage..Caption
 #: GUI/VCL/guiAboutVCL.dfm:87
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:29
 msgid "http://www.pepak.net/download/youtube-downloader"
 msgstr ""
 
@@ -82,11 +107,14 @@ msgstr ""
 #: GUI/VCL/guiAboutVCL.dfm:111
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:185
+#. Create columns
+#: GUI/WinAPI/guiAboutWINAPI.pas:367
 msgid "Provider"
 msgstr ""
 
 #. FormAbout..ListProviders......Caption
 #: GUI/VCL/guiAboutVCL.dfm:115
+#: GUI/WinAPI/guiAboutWINAPI.pas:368
 msgid "Components"
 msgstr ""
 
@@ -665,7 +693,7 @@ msgstr ""
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #: CLI/uYTD.pas:436
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:560
+#: CLI/uYTD.pas:559
 msgid "    File name: "
 msgstr ""
 
@@ -695,156 +723,156 @@ msgid "Unknown URL."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:566
+#: CLI/uYTD.pas:565
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:568
+#: CLI/uYTD.pas:567
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:569
+#: CLI/uYTD.pas:568
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:570
+#: CLI/uYTD.pas:569
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:571
+#: CLI/uYTD.pas:570
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:572
+#: CLI/uYTD.pas:571
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:588
+#: CLI/uYTD.pas:587
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:599
+#: CLI/uYTD.pas:598
 msgid "Incorrect answer."
 msgstr ""
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
-#: Common/uMessages.pas:48
+#: Common/uMessages.pas:49
 msgid "Exception %s with message:\n"
 "%s"
 msgstr ""
 
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:50
+#: Common/uMessages.pas:51
 msgid "Press any key to quit."
 msgstr ""
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:51
+#: Common/uMessages.pas:52
 msgid "Playlist item %d"
 msgstr ""
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:54
+#: Common/uMessages.pas:55
 msgid "Downloader is not prepared!"
 msgstr ""
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:55
+#: Common/uMessages.pas:56
 msgid "Download of this content is not implemented."
 msgstr ""
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:56
+#: Common/uMessages.pas:57
 msgid "Download to file \"%s\" was not allowed."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:58
+#: Common/uMessages.pas:59
 msgid "Failed to locate embedded object."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:59
+#: Common/uMessages.pas:60
 msgid "Failed to locate media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:60
+#: Common/uMessages.pas:61
 msgid "Failed to download media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:61
+#: Common/uMessages.pas:62
 msgid "Failed to prepare media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:62
+#: Common/uMessages.pas:63
 msgid "Invalid media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:63
+#: Common/uMessages.pas:64
 msgid "Failed to download server list."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:65
+#: Common/uMessages.pas:66
 msgid "Failed to locate media info."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:66
+#: Common/uMessages.pas:67
 msgid "Failed to find media title."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:67
+#: Common/uMessages.pas:68
 msgid "Failed to find media URL."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:68
+#: Common/uMessages.pas:69
 msgid "Failed to find media server."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:69
+#: Common/uMessages.pas:70
 msgid "Failed to find media stream."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:72
 msgid "HTTP request failed with error code "
 "%d."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:73
 msgid "No data read from the connection."
 msgstr ""
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:75
 msgid "Variable \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:77
 msgid "Error message listed in file \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:79
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr ""
 
@@ -928,8 +956,9 @@ msgid "Converters are not activated.\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:98
-#: GUI/guiOptions.pas:128
+#: GUI/guiOptions.pas:99
+#: GUI/guiOptions.pas:139
+#: GUI/guiOptions.pas:141
 msgid "This is the first time you are running the GUI version\n"
 "of YouTube Downloader, or the configuration file isn't\n"
 "available. To protect your privacy, the program will now\n"
@@ -938,7 +967,7 @@ msgid "This is the first time you are running the GUI version\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:106
+#: GUI/guiOptions.pas:107
 msgid "Would you like to run YouTube Downloader in portable mode?\n"
 "\nIn portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
@@ -949,8 +978,7 @@ msgid "Would you like to run YouTube Downloader in portable mode?\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:118
-#: GUI/guiOptions.pas:132
+#: GUI/guiOptions.pas:119
 msgid "Would you like YouTube Downloader to check for new versions\n"
 "on GUI startup?\n"
 "\nIn order to perform the check, YouTube Downloader's server\n"
@@ -965,25 +993,33 @@ msgid "Would you like YouTube Downloader to check for new versions\n"
 "versions?"
 msgstr ""
 
-#: GUI/guiOptions.pas:130
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:122
 msgid "Change container to .AVI"
 msgstr ""
 
-#: GUI/guiOptions.pas:130
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:125
 msgid "Convert movie to AVI/XVID"
 msgstr ""
 
-#: GUI/guiOptions.pas:130
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:128
+#: GUI/guiOptions.pas:147
+#: GUI/guiOptions.pas:149
 msgid "Convert movie to AVI/H264"
 msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:288
+#: GUI/uDownloadList.pas:298
+#. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+#: GUI/uDownloadList.pas:313
 msgid "File already exists."
 msgstr ""
 
 #. GUI: Check for a new version wasn't made yet - or failed.
 #: GUI/VCL/guiAboutVCL.pas:125
+#: GUI/WinAPI/guiAboutWINAPI.pas:219
 msgid "checking..."
 msgstr ""
 
@@ -1052,7 +1088,19 @@ msgid "Enter page URL:"
 msgstr ""
 
 #. Programmer's name for it: SSelectDirectory
-#: Lib/Pepak/FileCtrlGUI.pas:17
+#: Lib/Pepak/uDialogs.pas:17
 msgid "Select a directory"
+msgstr ""
+
+#. Programmer's name: FONT 8
+#: GUI/WinAPI/guiAboutWINAPI.rc:21
+#. Programmer's name: FONT 8
+#: GUI/WinAPI/guiMainWINAPI.rc:21
+msgid "Ms Shell Dlg"
+msgstr ""
+
+#. Programmer's name: LTEXT
+#: GUI/WinAPI/guiAboutWINAPI.rc:27
+msgid "0.60"
 msgstr ""
 

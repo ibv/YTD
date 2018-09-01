@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.62
+
+    * Fixed a XML component to correctly (as per XML specs) handle character
+      encoding. That should fix all filenames with international characters
+      (http://archiv.nova.cz/multimedia/foto/okresni-prebor-8-dil-schuze.html).
+      This fix may break something else; if you notice such a case, please let
+      me know.
+
+    * Found and fixed a cause for a number of "Download to file XYZ was not
+      allowed" messages. The message itself remains, because the operating
+      system may indeed prevent writing to a file, but now it should only
+      appear if the OS is indeed preventing the writes.
+
+
+
   v0.61
 
     * New provider: RTA.cz.

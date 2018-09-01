@@ -45,7 +45,7 @@ uses
   ToolWin, CommDlg, ShellApi,
   SynaCode,
   uLanguages, uMessages, uOptions, uStringUtils,
-  guiOptions, FileCtrlGUI,
+  guiOptions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
 {$IFDEF SYSTRAY}
@@ -214,7 +214,7 @@ implementation
 {$R *.DFM}
 
 uses
-  guiConsts, {$IFDEF GUI_WINAPI} guiAboutWinAPI, {$ELSE} guiAboutVCL, {$ENDIF} guiConverterVCL;
+  guiConsts, guiAboutVCL, guiConverterVCL;
 
 {$IFNDEF FPC}
 const
@@ -843,7 +843,7 @@ end;
 
 procedure TFormYTD.actAboutExecute(Sender: TObject);
 begin
-  with {$IFDEF GUI_WINAPI} TFormAbout.Create('guiAboutWinAPI') {$ELSE} TFormAbout.Create(Self) {$ENDIF} do
+  with TFormAbout.Create(Self) do
     try
       DownloadClassifier := Self.DownloadList.DownloadClassifier;
       Options := Self.Options;

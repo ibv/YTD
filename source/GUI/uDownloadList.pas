@@ -40,7 +40,8 @@ unit uDownloadList;
 interface
 
 uses
-  SysUtils, Classes, Dialogs,
+  SysUtils, Classes, Windows,
+  {$IFDEF GUI_WINAPI} CommDlg, {$ELSE} Dialogs, {$ENDIF}
   uCompatibility, uDownloadListItem, uDownloadThread,
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
@@ -259,15 +260,21 @@ procedure TDownloadList.DownloadItemFileNameValidate(Sender: TObject; var FileNa
         FileNameExt := ExtractFileExt(FileName);
         FileNameBase := ChangeFileExt(FileName, '');
         repeat
-          FileName := Format('%s%s.%d%s', [Options.DestinationPath, FileNameBase, Index, FileNameExt]);
+          FileName := Format('%s%s.%d%s', [FileNameBase, Index, FileNameExt]);
           Inc(Index);
         until not FileExists(FileName);
         Result := True;
       end;
 
+{$IFDEF GUI_WINAPI}
+var OpenFile: TOpenFilename;
+    FileNameBuf: array of char;
+    FileNameBufSize: DWORD;
+{$ELSE}
 var D: TSaveDialog;
+{$ENDIF}
 begin
-  if FileExists(Options.DestinationPath + FileName) then
+  if FileExists(FileName) then
     case Options.OverwriteMode of
       omAlways:
         Valid := True;
@@ -277,25 +284,44 @@ begin
         Valid := AutoRename(FileName);
       else
         begin
+        {$IFDEF GUI_WINAPI}
+        FileNameBufSize := Succ(Length(FileName));
+        if FileNameBufSize < MAX_PATH then
+          FileNameBufSize := Succ(MAX_PATH);
+        SetLength(FileNameBuf, FileNameBufSize);
+        StrPCopy(PChar(FileNameBuf), FileName);
+        FillChar(OpenFile, Sizeof(OpenFile), 0);
+        OpenFile.lStructSize := Sizeof(OpenFile);
+        OpenFile.lpstrFile := PChar(FileNameBuf);
+        OpenFile.nMaxFile := FileNameBufSize;
+        OpenFile.lpstrInitialDir := PChar(ExcludeTrailingPathDelimiter(ExtractFilePath(FileName)));
+        OpenFile.lpstrTitle := PChar(_('File already exists.')); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+        OpenFile.Flags := OFN_ENABLESIZING or OFN_EXPLORER or OFN_NOCHANGEDIR or OFN_NOREADONLYRETURN or OFN_OVERWRITEPROMPT or OFN_PATHMUSTEXIST;
+        OpenFile.lpstrDefExt := PChar(Copy(ExtractFileExt(FileName), 2, MaxInt));
+        Valid := GetSaveFileName(OpenFile);
+        if Valid then
+          FileName := OpenFile.lpstrFile;
+        {$ELSE}
         D := TSaveDialog.Create(nil);
         try
           D.DefaultExt := Copy(ExtractFileExt(FileName), 2, MaxInt);
           D.FileName := FileName;
-          D.InitialDir := ExcludeTrailingPathDelimiter(Options.DestinationPath);
+          D.InitialDir := ExcludeTrailingPathDelimiter(ExtractFilePath(FileName));
           if D.InitialDir = '' then
             D.InitialDir := GetCurrentDir;
           D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
           D.Title := _('File already exists.'); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
           Valid := D.Execute;
           if Valid then
-            FileName := ExtractFileName(D.FileName);
+            FileName := D.FileName;
         finally
           D.Free;
           end;
+        {$ENDIF}
         end;
       end;
-  if Valid and FileExists(Options.DestinationPath + FileName) then
-    DeleteFile(Options.DestinationPath + FileName);
+  if Valid and FileExists(FileName) then
+    SysUtils.DeleteFile(FileName);
 end;
 
 procedure TDownloadList.DownloadItemError(Sender: TObject);
