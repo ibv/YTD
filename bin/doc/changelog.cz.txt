@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+  v0.76:
+
+    * CeskaTelevize.cz: Pøedchozí úprava znefunkènila staré iVysílání a další
+      alternativní pøehrávací mechanismy.
+
+
+
   v0.75:
 
     * CeskaTelevize.cz: Pøidána podpora pro poøady, které bìží v IFRAME (napø.

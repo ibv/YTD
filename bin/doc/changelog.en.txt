@@ -1,6 +1,13 @@
 CHANGELOG
 ---------
 
+  v0.76:
+
+    * CeskaTelevize.cz: The change in 0.75 blocked support for the alternative
+      media sources such as the old iVysilani.
+
+
+
   v0.75:
 
     * CeskaTelevize.cz: Added support for movies which run in an IFRAME
