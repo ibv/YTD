@@ -32,7 +32,7 @@ uses
   uStringUtils,
   janXmlParser2;
   
-const MOVIE_OBJECT_REGEXP = '<object\s+id="programmeObject"(?:\s+data|.*?<param\s+name="url"\s+value)="(?P<OBJURL>[^"]+)"';
+const MOVIE_OBJECT_REGEXP = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="url"\s+value)="(?P<OBJURL>[^"]+)"';
 
 { TDownloader_CT }
 

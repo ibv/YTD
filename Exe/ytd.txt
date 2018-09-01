@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.19                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.20                                  (C) 2009, 2010 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -27,6 +27,7 @@ Podporované weby a formáty URL:
  - CeskaTelevize.cz
 
      - http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+     - http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
 
      Pozn.: Jde o streamovaný formát podle protokolu RTSP over HTTP. Viz
      níže v poznámkách ke knihovnì MSDL_DLL.DLL.
@@ -147,6 +148,12 @@ SYNTAXE
 
 CHANGELOG
 ---------
+
+  v0.20
+
+    * Èeská televize: Podpora pro poøady programu PORT.
+
+
 
   v0.19
 

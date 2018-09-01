@@ -37,7 +37,8 @@ uses
   uExternalDownloader in 'uExternalDownloader.pas',
   uDownloader_TVcom in 'uDownloader_TVcom.pas',
   uDownloader_Markiza in 'uDownloader_Markiza.pas',
-  uDownloader_Rozhlas in 'uDownloader_Rozhlas.pas';
+  uDownloader_Rozhlas in 'uDownloader_Rozhlas.pas',
+  uDownloader_CT_Port in 'uDownloader_CT_Port.pas';
 
 begin
   {$IFNDEF NO_GUI}
