@@ -1,0 +1,100 @@
+INTRODUCTION
+------------
+
+I have put in this directory a compiled version of Philip Hazel's PCRE library
+version 6.x (with some minor modifications needed to make it fully accessible
+from Borland Delphi), my Delphi import units for the PCRE and PCRE POSIX APIs,
+and a Delphi unit (PCRE.pas) containing my own Delphi wrapper
+interfaces around Philip's PCRE engine.
+
+I am releasing my Delphi units under the same conditions as Philip Hazel's PCRE library.
+You can find a copy of the original PCRE LICENCE in this directory (see the file
+PCRE_LICENCE).
+
+Documentation about PCRE regular expression syntax, as well as PCRE's original
+C source files, can be downloaded from the Cambridge University FTP site at:
+
+	ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
+
+PCRE docs are essential if you want to make good use of PCRE! :)
+
+The sources of my customised version of PCRE can instead be downloaded
+from my web site (http://www.renatomancuso.com).
+
+These Delphi wrapper interfaces and classes have been losely modeled on the
+Microsoft .NET 1.x regular expression classes contained in the
+System.Text.RegularExpressions namespace.
+Please refer to the MSDN library website for more information
+about the .NET classes and interfaces (http://msdn.microsoft.com/library/).
+
+A little UML diagram illustrating the relationships among the various interfaces
+can be found in the classdiagram.gif file.
+
+FILES
+-----
+
+pcre.dll                - PCRE 5.0 compiled with MS Visual C++.NET 7.1
+pcre_dll.pas            - Delphi import unit for PCRE
+pcre.pas                - Delphi wrapper around PCRE
+
+LICENCE                 - licence
+PCRE_LICENCE            - PCRE licence
+classdiagram.gif        - UML Class Diagram of my Delphi interface
+
+
+USAGE NOTE
+------------------------------
+
+If you want to use these interface in your Delphi projects, follow
+these steps:
+
+1) Add the following files to your project:
+
+		pcre_dll.pas
+		pcre.pas
+
+
+2) Copy the pcre.dll file in the same directory which contains your
+   executable (for most small projects this is often the same directory
+   which contains your sources)
+
+3) Add the pcre unit to the uses clause
+
+
+SOME (SHORT) TECHNICAL BITS
+--------------------------
+
+The pcre.dll has been compiled using MS Visual C++.Net 2003 (MSVC 7.1).
+The C runtime has been linked statically to ensure that the resulting .dll
+is completely self contained. The multithread safe version of the C runtime
+has been used.
+
+
+NOTICE
+------
+
+Regular expression support is provided by the PCRE library package,
+which is open source software, written by Philip Hazel, and copyright
+by the University of Cambridge, England.
+
+The latest release of PCRE is always available from:
+
+  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-xxx.tar.gz
+
+The original PCRE LICENCE file can be found in the root directory of this
+distribution with the name of PCRE_LICENCE.
+
+
+DISCLAIMER
+----------
+
+This software is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+
+
+February 2008
+
+Renato Mancuso <mancuso@renatomancuso.com>
+

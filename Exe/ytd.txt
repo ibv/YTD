@@ -1,0 +1,72 @@
+______________________________________________________________________________
+
+YouTube Downloader v0.10                                  (C) 2009, 2010 Pepak
+______________________________________________________________________________
+
+Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
+z pøíkazové øádky, odkud pøijme libovolnı poèet URL ke staení, pøípadnì
+soubor se seznamem URL. Soubory ukládá pod název z YouTube, preferuje
+HD video, pokud je k dispozici.
+
+Podporované weby a formáty URL:
+
+ - Youtube.com:
+     - http://www.youtube.com/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch/v/b5AWQ5aBjgE
+     - http://www.youtube.com/watch?v=b5AWQ5aBjgE
+ - N-joy.cz
+     - http://n-joy.cz/video/shank-5-minut-hrani/il18d8bbuynet5gk
+ - Blip.tv
+     - http://blip.tv/play/hIVV4tIUAg
+     - http://blip.tv/file/1607673/
+     - http://thespoonyone.blip.tv/file/1607673/
+
+
+SYNTAXE
+-------
+
+  ytd.exe <param> [<param>] [<param>] ...
+
+  kde <param> je buï URL, nebo -i <soubor> (<soubor> je obyèejnı textovı
+  soubor, obsahující na kadém øádku jedno URL).
+  
+  Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+         ytd.exe -i c:\temp\seznam.txt
+
+
+CHANGELOG
+---------
+
+  v0.10:
+
+    * Kompletnì restrukturalizováno, aby se daly snadno pøidávat další
+      zdroje videa.
+
+    * Zmìnìn tvar všech vıstupù, aby byl pøehlednìjší.
+
+    * Podpora pro n-joy.cz.
+
+    * Podpora pro blip.tv.
+
+    * Podpora pro seznam URL v souboru (pomocí parametru -i).
+
+    * Pozor, program nyní potøebuje knihovnu pcre.dll (pøiloena).
+
+    * Pøidány informace o aplikaci pro GetFileVersionEx. Pøidána ikonka.
+
+    * Pøidáno jednoduché grafické rozhraní, které se zobrazí, pokud program
+      spustíte bez parametrù.
+
+
+
+  v0.06:
+
+    * Podpora pro URL ve tvaru http://www.youtube.com/v/(id)
+
+
+
+  v0.05:
+
+    * Pøeuspoøádány zdrojové kódy a buildovací dávka.
+
+    * Podpora pro URL ve tvaru http://www.youtube.com/watch/v/(id)
