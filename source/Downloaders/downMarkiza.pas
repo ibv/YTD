@@ -181,19 +181,33 @@ begin
       end;
   {$ELSE ~JSON}
     if PlaylistItemRegExp.Match(Page) then
+      begin
       repeat
         if PlaylistItemRegExp.SubexpressionByName('URL', Url) then
           if PlaylistItemRegExp.SubexpressionByName('INSIDE', Inside) then
             if GetRegExpVar(NotAnAdRegExp, Inside, 'TRUE', NotAnAd) then
               begin
-              MovieUrl := Url;
               if GetRegExpVar(DescriptionRegExp, Inside, 'DESC', Title) then
+              {$IFDEF MULTIDOWNLOADS}
+                NameList.Add(Title);
+              UrlList.Add(Url);
+              {$ELSE}
                 SetName(Trim(Title));
+              MovieUrl := Url;
               SetPrepared(True);
               Result := True;
               Break;
+              {$ENDIF}
               end;
       until not PlaylistItemRegExp.MatchAgain;
+      {$IFDEF MULTIDOWNLOADS}
+      if UrlList.Count > 0 then
+        begin
+        SetPrepared(True);
+        Result := True;
+        end;
+      {$ENDIF}
+      end;
   {$ENDIF ~JSON}
 end;
 

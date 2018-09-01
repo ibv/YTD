@@ -1,6 +1,48 @@
 CHANGELOG
 ---------
 
+  v0.74
+
+    * New provider: 123Video.nl.
+
+    * New provider: Hrej.cz.
+
+      - Some movies are hosted on third-part servers, e.g. YouTube. These
+        can't be downloaded directly, but work if you use the "Add URLs from 
+        HTML page" function.
+
+    * New provider: MojeTelevize.cz.
+
+      - The downloader is generic enough to work with all (hopefully) projects
+        hosted at MojeTelevize.cz, e.g. Adra.MojeTelevize.cz.
+
+    * New provider: Sport.cz.
+
+    * New provider: TV4Play.se.
+
+      - Only free (non-paid) content is supported.
+
+    * New provider: Video.Tiscali.cz.
+
+    * CeskaTelevize.cz: Changed the download to run in "live stream" mode
+      by default. The "live stream" mode takes a much longer time to download,
+      but the resulting video files seem to play OK. It is possible to switch
+      to "download as file" mode, which is much faster, but until the server
+      side is fixed, will result in faulty video files. The configuration
+      option is decribed in the documenation (search for <live_stream>).
+
+    * Joj.sk: Fixed to the current player format.
+
+    * Markiza.sk: Support for multipart videos (e.g.
+      http://video.markiza.sk/archiv-tv-markiza/parti269-ka/54516).
+
+    * StreetFire.net: Temporarily non-functional.
+
+    * YouTube.com: Updated the subtitle converter to use a proper decimal
+      separator for seconds (should be a comma, was a dot).
+
+
+
   v0.73
 
     * CeskaTelevize.cz:

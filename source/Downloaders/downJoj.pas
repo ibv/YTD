@@ -143,7 +143,7 @@ begin
                         SetName(Format('%s (%04.4d-%02.2d-%02.2d)', [Title, Year, Month, Day]));
                         {$IFDEF DIRTYHACKS}
                         // Note: I don't really know whether the domain is fixed or not! It seems to be, though
-                        MovieURL := 'http://n03.joj.sk' + Base64Decode(Path);
+                        MovieURL := 'http://n03.joj.sk/' + Path;
                         SetPrepared(True);
                         Result := True;
                         {$ENDIF}

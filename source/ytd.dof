@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.stream.cz/ceskatelevize/516069-vypravej-21-dil-mdz
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=71
+MinorVer=74
 Release=0
-Build=528
+Build=541
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +68,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.71.0.528
+FileVersion=0.74.0.541
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
-ProductVersion=0.70.0.519
+ProductVersion=0.74.0.541
 Comments=http://www.pepak.net/download/youtube-downloader/
 [HistoryLists\hlDebugSourcePath]
 Count=2
@@ -117,7 +117,7 @@ Item0=..\Bin
 Item1=..\Exe
 Item2=Exe
 [Exception Log]
-EurekaLog Version=6101
+EurekaLog Version=6020
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -277,7 +277,6 @@ loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
-cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

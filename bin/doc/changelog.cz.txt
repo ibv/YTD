@@ -1,6 +1,49 @@
 CHANGELOG
 ---------
 
+  v0.74:
+
+    * Nový poskytovatel: 123Video.nl.
+
+    * Nový poskytovatel: Hrej.cz.
+
+      - Nìkterá videa jsou hostovaná na jiných serverech, napø. na YouTube, 
+        a nelze je stahovat pøímo. Mùžete ale použít funkci "Pøidat URL z 
+        HTML stránky".
+
+    * Nový poskytovatel: MojeTelevize.cz.
+
+      - Fungovat by mìly všechny projekty hostované na serveru, vèetnì napø.
+        Adra.MojeTelevize.cz a dalších.
+
+    * Nový poskytovatel: Sport.cz.
+
+    * Nový poskytovatel: TV4Play.se.
+
+      - Podporován je pouze zdarma dostupný obsah.
+
+    * Nový poskytovatel: Video.Tiscali.cz.
+
+    * Èeská televize: Stahování nyní ve výchozím stavu probíhá v režimu 
+      "živé video", kdy se sice stahuje mnohem pomaleji, ale stáhnutý soubor
+      se zdá být v poøádku. V konfiguraèním souboru lze pøepnout zpátky na
+      stahování "jako soubor", které bìží podstatnì rychleji, ale dokud bude
+      serverová èást ÈT napsaná tak, jak je teï, tak povede k porušeným
+      souborùm. Popis je uveden v dokumentaci (hledejte <live_stream>).
+
+    * Joj.sk: Upraveno na aktuální tvar pøehrávaèe.
+
+    * Markiza.sk: Podpora pro videa tvoøená více èástmi (napø.
+      http://video.markiza.sk/archiv-tv-markiza/parti269-ka/54516).
+
+    * StreetFire.net: Doèasnì nefunkèní.
+
+    * YouTube.com: Upraven formát titulkù - formát èasu vyžaduje, aby 
+      oddìlovaèem desetinných míst u sekund byla èárka a ne teèka, kterou
+      jsem tam mìl pùvodnì.
+
+
+
   v0.73
 
     * Èeská televize:

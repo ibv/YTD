@@ -90,11 +90,11 @@ type
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
       {$IFDEF SUBTITLES}
     public
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       {$ENDIF}
-      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -295,7 +295,7 @@ begin
                             Val(StringReplace(DurationStr, ',', '.', []), Duration, Code);
                             if Code <> 0 then
                               Abort;
-                            Srt := Srt + Format('%d'#13#10'%s --> %s'#13#10'%s'#13#10#13#10, [n, FormatDateTime('hh":"nn":"ss"."zzz', Start/SECONDS_PER_DAY), FormatDateTime('hh":"nn":"ss"."zzz', (Start + Duration)/SECONDS_PER_DAY), Content]);
+                            Srt := Srt + Format('%d'#13#10'%s --> %s'#13#10'%s'#13#10#13#10, [n, FormatDateTime('hh":"nn":"ss","zzz', Start/SECONDS_PER_DAY), FormatDateTime('hh":"nn":"ss","zzz', (Start + Duration)/SECONDS_PER_DAY), Content]);
                             end;
                   if Srt <> '' then
                     begin

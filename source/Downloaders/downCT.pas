@@ -50,10 +50,12 @@ type
     private
     protected
       MovieObjectRegExp: TRegExp;
+      LiveStream: boolean;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       function GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean; virtual;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -97,6 +99,7 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT, [rcoIgnoreCase, rcoSingleLine]);
+  LiveStream := True;
 end;
 
 destructor TDownloader_CT.Destroy;
@@ -164,6 +167,8 @@ begin
                     MovieURL := BestStream;
                     AddRtmpDumpOption('r', BaseUrl);
                     AddRtmpDumpOption('y', Stream);
+                    if LiveStream then
+                      AddRtmpDumpOption('v', '');
                     SetPrepared(True);
                     Result := True;
                     end;
@@ -172,6 +177,14 @@ begin
     finally
       Xml.Free;
       end;
+end;
+
+procedure TDownloader_CT.SetOptions(const Value: TYTDOptions);
+var s: string;
+begin
+  inherited;
+  if Value.ReadProviderOption(Provider, 'live_stream', s) then
+    LiveStream := StrToIntDef(s, 0) <> 0;
 end;
 
 initialization

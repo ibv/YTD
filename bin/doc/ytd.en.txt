@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.73                                     (c) 2009-11 Pepak
+YouTube Downloader v0.74                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -14,6 +14,9 @@ has several variants, the highest-quality one is downloaded.
 
 SUPPORTED PROVIDERS
 -------------------
+
+ - 123Video.nl:
+     - http://www.123video.nl/playvideos.asp?MovieID=949808
 
  - 1hd.ro:
      - http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
@@ -218,6 +221,13 @@ SUPPORTED PROVIDERS
 
      Note: This provider uses RTMP protocol. See the note below.
 
+ - Hrej.cz:
+     - http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
+
+     Note: Some movies are hosted on third-part servers, e.g. YouTube. These
+           can't be downloaded directly, but work if you use the "Add URLs
+           from HTML page" function.
+
  - iHned.cz:
      - http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
 
@@ -270,6 +280,14 @@ SUPPORTED PROVIDERS
 
  - MetaCafe.com:
      - http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
+
+ - MojeTelevize.cz:
+     - http://mojetelevize.mojetelevize.cz/
+     - http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
+     - http://adra.mojetelevize.cz/
+     - http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
+
+     Note: All other projects hosted at MojeTelevize.cz should work, too.
 
  - MojeVideo.cz:
      - http://mojevideo.cz/view.php?id=5332
@@ -423,6 +441,9 @@ SUPPORTED PROVIDERS
  - Spike.com:
      - http://www.spike.com/video/prince-of-persia/3355664
 
+ - Sport.cz:
+     - http://fotbal.sport.cz/clanek/183261-video-wenger-si-oddechl-rosicky-mel-jen-slaby-otres-mozku.html
+
  - SportStream.cz:
      - http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
 
@@ -498,6 +519,12 @@ SUPPORTED PROVIDERS
 
      Note: This provider uses RTMP protocol. See the note below.
 
+ - TV4Play.se:
+     - http://www.tv4play.se/sport/alpint?title=inga_svenska_skidskyttemedaljer&videoid=1295009
+
+     Note: Only free (non-paid) content is supported.
+     Note: This provider uses RTMP protocol. See the note below.
+
  - TV7.cz:
      - http://www.tv7.cz/?vid=1062
 
@@ -527,6 +554,9 @@ SUPPORTED PROVIDERS
 
  - VideaCesky.cz:
      - http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
+
+ - Video.Tiscali.cz:
+     - http://video.tiscali.cz/the-duty-calls-trailer-283
 
  - VideoAlbumy.azet.sk:
      - http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
@@ -915,6 +945,15 @@ except in file/directory names. Logical values (true-false) are stored as
       - Possible values are "0" (use Microsoft's formats) and "1" (use Real
         Media's formats).
       - Default value is "0" (use Microsoft's formats).
+
+    <live_stream>
+      - Child of <CeskaTelevize_cz>; gives you an option to choose, whether
+        you want to download videos as files (faster download, but with 
+        the current CT's server software causes faulty files) or as live
+        streams (slower, but the files seem to play OK).
+      - Possible values are "0" (download as file) and "1" (download as
+        live stream).
+      - Default value is "1" (download as live stream).
 
   <YouTube_com>
     - Child of <modules>; contains settings specific to YouTube.

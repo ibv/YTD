@@ -1,5 +1,6 @@
 Prot.	Zdr.naz	Zdr.URL	Nazev
 
+HTTP	HTML	XML	down123VideoNL
 RTMP	-	HTML	down1hdRo (<-downPrahovaHD)
 HTTP	HTML	HTML	down5min
 HTTP	HTML	HTML	downAktualne
@@ -7,7 +8,7 @@ HTTP	HTML	HTML	downAngryAlien
 MS	HTML	HTML	downAutoSalonTV
 HTTP	HTML	XML	downAutoTube
 HTTP	HTML	Nested	downBandZone
-RTMP	XML	XML	downBarrandov
+RTMP	XML	XML	downBarrandovTV
 HTTP	HTML	Nested	downBlennus
 HTTP	XML	XML	downBlipTv
 HTTP	HTML	XML	downBofunk
@@ -70,6 +71,7 @@ HTTP	HTML	HTML	downMediaSport
 HTTP	XML	XML	downMegaVideo
 HTTP	HTML	HTML	downMetaCafe
 HTTP	HTML	XML	downMetropolTV
+HTTP	HTML	HTML	downMojeTelevize
 HTTP	HTML	HTML	downMojeVideo
 HTTP	HTML	HTML	downMojeVideoSk
 HTTP	XML	XML	downMpora
@@ -102,6 +104,7 @@ HTTP	HTML	XML	downSerialyCZ (<-downZkoukniTo)
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
 HTTP	XML	XML	downSpike
+HTTP	HTML	HTML	downSportCZ
 RTMP	HTML	HTML	downSportStream
 HTTP	HTML	HTML	downStagevu
 HTTP	HTML	Nested	downStastneVdovy
@@ -128,6 +131,7 @@ HTTP	HTML	HTML+AMF	downUStream
 HTTP	HTML	Nested	downVideaCesky
 HTTP	HTML	XML	downVideoAlbumyAzet
 HTTP	HTML	HTML	downVideoClipsDump
+HTTP	HTML	HTML	downVideoTiscaliCZ
 HTTP	HTML	XML	downVideu
 HTTP	XML	XML	downVimeo
 HTTP	XML	XML	downVitalMtb
