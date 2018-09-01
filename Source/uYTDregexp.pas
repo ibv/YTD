@@ -20,7 +20,11 @@ const
     // Stream.cz:
     //     http://www.stream.cz/reklamozrouti/410282-reklamozrouti-medvedi-reklama
     //     http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
+    //     http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
     + '(?:^https?://(?:[a-z0-9-]+\.)?stream\.cz/(?:[^/]+/)*(?P<STREAM>[0-9]+))|'
+    // iPrima.cz:
+    //     http://www.iprima.cz/videoarchiv/44524/all/all
+    + '(?:^https?://(?:[a-z0-9-]+\.)?iprima.cz/videoarchiv/(?P<IPRIMA>[0-9]+))|'
     ;
 
 implementation

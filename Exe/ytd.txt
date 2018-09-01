@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.13                                  (C) 2009, 2010 Pepak
+YouTube Downloader v0.14                                  (C) 2009, 2010 Pepak
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
@@ -24,10 +24,11 @@ Podporované weby a formáty URL:
      - http://www.stream.cz/video/437197-meziplyn-30
        Pozn.: V obsluze stream.cz je chyba, kvùli které nìkdy video stáhnout
        jde a jindy nejde. Pøíèina není známa, vypadá ale na nìjakı èasovací
-       problém pøímo u Stream.cz protoe staèí vloit na vhodné místo breakpoint
-       a hned problém zmizí; také mírná prodleva vloená do kódu HTTP
-       komponenty problém zdá se odstraní. Pøípadnì pomùe nìkolik dalších
-       pokusù o stáhnutí tého videa.
+       problém v knihovnì Synapse, protoe staèí vloit na vhodné místo 
+       breakpoint nebo prodlevu a hned problém zmizí.
+ - iPrima.cz:
+     - http://www.iprima.cz/videoarchiv/44524/all/all
+
 
 
 SYNTAXE
@@ -41,9 +42,33 @@ SYNTAXE
   Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
          ytd.exe -i c:\temp\seznam.txt
 
+  Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
+
+
 
 CHANGELOG
 ---------
+
+  v0.14:
+
+    * Podpora pro Stream.cz z minulé verze rozhodila ostatní zdroje
+      videa, které kvùli tomu nefungovaly. To je nyní opraveno.
+
+    * Upraveno grafické rozhraní (ikonky, tlaèítka atd.).
+
+    * Pøidána monost zkompilovat jen CLI nebo jen GUI verzi programu:
+      Pøi spouštìní BUILD.BAT mùete pouít parametr "CLI" (jen command
+      line verze) resp. "GUI" (jen grafická verze) (v obou pøípadech bez
+      uvozovek). "CLI" vıraznì zmenší vıslednı EXE soubor, "GUI" odstraní
+      okno konzole. Ve vıchozím stavu se kompiluje verze s CLI i GUI
+      souèasnì.
+
+    * Knihovna Synapse aktualizována na release 39. Problém se Stream.cz
+      (viz upozornìní vıše) ale stále trvá.
+
+    * Podpora pro download z iPrima.cz (pouívá Stream.cz).
+
+
 
   v0.13:
 

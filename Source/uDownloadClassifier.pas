@@ -35,6 +35,7 @@ uses
   uBlipTvDownloader,   // Blip.tv
   uBlipTvDownloaderV2, // Blip.tv
   uStreamDownloader,   // Stream.cz
+  uIPrimaDownloader,   // iPrima.cz
   uYTDregexp;
 
 { TDownloadClassifier }
@@ -99,6 +100,12 @@ begin
           if Value <> '' then
             begin
             fDownloader := TStreamDownloader.Create(Value);
+            Break;
+            end;
+        with Match.Groups.ItemsByName['IPRIMA'] do
+          if Value <> '' then
+            begin
+            fDownloader := TIPrimaDownloader.Create(Value);
             Break;
             end;
       until True;

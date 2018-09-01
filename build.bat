@@ -1,6 +1,11 @@
 @echo off
 setlocal
+
 set delphi=call dcc32 -B -E..\Exe -N..\Units -U..\Units
+
+if /i "%~1"=="gui" set delphi=%delphi% -DNO_CLI
+if /i "%~1"=="cli" set delphi=%delphi% -DNO_GUI
+
 del /q Units\*.*
 pushd Source
 %delphi% lib\lkJSON\uLkJSON.pas

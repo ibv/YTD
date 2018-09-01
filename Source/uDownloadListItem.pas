@@ -6,10 +6,6 @@ uses
   SysUtils, Classes,
   uDownloader, uDownloadThread;
 
-const
-  States: array[TDownloadThreadState] of string
-        = ('Waiting', 'Preparing', 'Downloading', 'Finished', 'Failed', 'Aborted');
-
 type
   TDownloadListItem = class
     private

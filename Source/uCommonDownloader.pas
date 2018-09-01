@@ -111,6 +111,7 @@ begin
 end;
 
 function TCommonDownloader.Download: boolean;
+var Stream: TFileStream;
 begin
   inherited Download;
   Result := False;
@@ -120,8 +121,8 @@ begin
     try
       if BeforeDownload(VideoDownloader) then
         begin
-        VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate);
         try
+          VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate);
           try
             VideoDownloader.Sock.OnStatus := SockStatusMonitor;
             BytesTransferred := 0;

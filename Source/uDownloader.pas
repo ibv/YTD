@@ -187,29 +187,36 @@ begin
     for i := 0 to Pred(Http.Headers.Count) do
       if AnsiCompareText(Location, Copy(Http.Headers[i], 1, Length(Location))) = 0 then
         begin
+        OldUrl := Url;
         Redirect := Trim(Copy(Http.Headers[i], Length(Location)+1, MaxInt));
         ParseUrl(Redirect, RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara);
-        ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
-        if RedirProtocol = '' then
-          RedirProtocol := UrlProtocol;
-        if RedirUser = '' then
-          RedirUser := UrlUser;
-        if RedirPass = '' then
-          RedirPass := UrlPass;
         if (RedirHost = '') or (AnsiCompareText(RedirHost, 'localhost') = 0) then
-          RedirHost := UrlHost;
-        if RedirPort = '' then
-          RedirPort := UrlPort;
-        OldUrl := Url;
-        Url := RedirProtocol + '://';
-        if RedirUser <> '' then
           begin
-          Url := Url + RedirUser;
-          if RedirPass <> '' then
-            Url := Url + ':' + RedirPass;
-          Url := Url + '@';
-          end;
-        Url := Url + RedirHost + ':' + RedirPort + RedirPath { + RedirPara} ;
+          ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
+          if RedirProtocol = '' then
+            RedirProtocol := UrlProtocol;
+          if RedirUser = '' then
+            RedirUser := UrlUser;
+          if RedirPass = '' then
+            RedirPass := UrlPass;
+          if (RedirHost = '') or (AnsiCompareText(RedirHost, 'localhost') = 0) then
+            RedirHost := UrlHost;
+          if RedirPort = '' then
+            RedirPort := UrlPort;
+          Url := RedirProtocol + '://';
+          if RedirUser <> '' then
+            begin
+            Url := Url + RedirUser;
+            if RedirPass <> '' then
+              Url := Url + ':' + RedirPass;
+            Url := Url + '@';
+            end;
+          Url := Url + RedirHost + ':' + RedirPort + RedirPath;
+          if RedirPara <> '' then
+            Url := Url + '?' + RedirPara ;
+          end
+        else
+          Url := Redirect;
         Result := Url <> OldUrl;
         Break;
         end;

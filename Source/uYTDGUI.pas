@@ -48,7 +48,6 @@ type
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
-    ToolButton8: TToolButton;
     ToolButton9: TToolButton;
     ToolButton10: TToolButton;
     ToolButton11: TToolButton;
@@ -56,6 +55,7 @@ type
     actDownloadDirectory: TAction;
     N3: TMenuItem;
     Setdownloaddirectory1: TMenuItem;
+    ToolButton8: TToolButton;
     procedure DownloadsData(Sender: TObject; Item: TListItem);
     procedure actAddNewUrlExecute(Sender: TObject);
     procedure actDeleteURLExecute(Sender: TObject);
@@ -98,6 +98,13 @@ var
 implementation
 
 {$R *.DFM}
+
+const
+  States: array[TDownloadThreadState] of string
+        = ('Waiting', 'Preparing', 'Downloading', 'Finished', 'Failed', 'Aborted');
+
+  StateImgs: array[TDownloadThreadState] of integer
+        = (-1, 3, 3, 2, 1, 0);
 
 { TFormYTD }
 
@@ -178,6 +185,7 @@ procedure TFormYTD.DownloadsData(Sender: TObject; Item: TListItem);
 
 var DlItem: TDownloadListItem;
     sState, sTitle, sSize, sProgress: string;
+    iStateImage: integer;
 begin
   if Item.Index < DownloadList.Count then
     begin
@@ -186,6 +194,7 @@ begin
     Item.StateIndex := Integer(DlItem.State);
     Item.SubItems.Add(DlItem.Downloader.Provider);
     sState := States[DlItem.State];
+    iStateImage := StateImgs[DlItem.State];
     sTitle := '';
     sSize := '';
     sProgress := '';
@@ -201,13 +210,19 @@ begin
       dtsPreparing:
         begin
         if DlItem.Paused then
+          begin
           sState := 'Paused';
+          iStateImage := 4;
+          end;
         end;
       dtsDownloading:
         begin
         sProgress := GetProgressStr(DlItem);
         if DlItem.Paused then
+          begin
           sState := 'Paused';
+          iStateImage := 4;
+          end;
         end;
       dtsFinished:
         ;
@@ -216,6 +231,7 @@ begin
       dtsAborted:
         sProgress := GetProgressStr(DlItem);
       end;
+    Item.StateIndex := iStateImage;
     Item.SubItems.Add(sState);
     Item.SubItems.Add(sTitle);
     Item.SubItems.Add(sSize);
@@ -252,6 +268,8 @@ procedure TFormYTD.actDeleteURLExecute(Sender: TObject);
 var i: integer;
 begin
   if Downloads.SelCount < 1 then
+    Exit;
+  if MessageDlg('Do you really want to delete selected transfer(s)?', mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   if Downloads.SelCount = 1 then
     DeleteTask(Downloads.Selected.Index)

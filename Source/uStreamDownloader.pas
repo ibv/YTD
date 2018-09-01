@@ -20,6 +20,7 @@ type
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function GetProvider: string; override;
+      function GetMovieInfoUrlForID(const ID: string): string; virtual;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -63,9 +64,14 @@ begin
   Result := 'Stream.cz';
 end;
 
+function TStreamDownloader.GetMovieInfoUrlForID(const ID: string): string;
+begin
+  Result := 'http://www.stream.cz/video/' + ID;
+end;
+
 function TStreamDownloader.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.stream.cz/video/' + MovieID;
+  Result := GetMovieInfoUrlForID(MovieID);
 end;
 
 function TStreamDownloader.BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean;
