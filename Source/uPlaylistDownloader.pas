@@ -6,24 +6,33 @@ interface
 uses
   SysUtils, Classes,
   PCRE, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader;
 
 type
-  TPlaylistDownloader = class(THttpDownloader)
+  TPlaylistDownloader = class(TCommonDownloader)
     private
+      fUrlList: TStringList;
+      fNameList: TStringList;
     protected
       PlayListItemRegExp: IRegEx;
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
       function GetPlayListItemName(Match: IMatch; Index: integer): string; virtual;
       function GetPlayListItemURL(Match: IMatch; Index: integer): string; virtual;
-      function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; override;
+      function GetItemCount: integer; virtual;
+      function GetItemUrl(Index: integer): string; virtual;
+      function GetItemName(Index: integer): string; virtual;
+      property UrlList: TStringList read fUrlList;
+      property NameList: TStringList read fNameList;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       class function MovieIDParamName: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Download: boolean; override;
+      property Count: integer read GetItemCount;
+      property Urls[Index: integer]: string read GetItemUrl; default;
+      property Names[Index: integer]: string read GetItemName;
     end;
 
 implementation
@@ -33,10 +42,14 @@ implementation
 constructor TPlaylistDownloader.Create(const AMovieID: string);
 begin
   inherited;
+  fUrlList := TStringList.Create;
+  fNameList := TStringList.Create;
 end;
 
 destructor TPlaylistDownloader.Destroy;
 begin
+  FreeAndNil(fUrlList);
+  FreeAndNil(fNameList);
   PlayListItemRegExp := nil;
   inherited;
 end;
@@ -61,13 +74,37 @@ begin
   Result := MovieID;
 end;
 
-function TPlaylistDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TPlaylistDownloader.GetItemCount: integer;
+begin
+  Result := UrlList.Count;
+end;
+
+function TPlaylistDownloader.GetItemUrl(Index: integer): string;
+begin
+  Result := UrlList[Index];
+end;
+
+function TPlaylistDownloader.GetItemName(Index: integer): string;
+begin
+  Result := NameList[Index];
+end;
+
+function TPlaylistDownloader.GetPlayListItemName(Match: IMatch; Index: integer): string;
+begin
+  Result := 'Playlist Item ' + IntToStr(Index);
+end;
+
+function TPlaylistDownloader.GetPlayListItemURL(Match: IMatch; Index: integer): string;
+begin
+  Result := Match.Groups.ItemsByName['URL'].Value;
+end;
+
+function TPlayListDownloader.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Urls: IMatchCollection;
+    Url: string;
     i: integer;
 begin
   inherited AfterPrepareFromPage(Page, Http);
-  Result := False;
-  {$IFDEF MULTIDOWNLOADS}
   SetLastErrorMsg('No URLs specified.');
   if PlayListItemRegExp <> nil then
     begin
@@ -77,32 +114,17 @@ begin
     else
       for i := 0 to Pred(Urls.Count) do
         begin
-        UrlList.Add(GetPlayListItemURL(Urls[i], i));
-        NameList.Add(GetPlayListItemName(Urls[i], i));
+        Url := GetPlayListItemURL(Urls[i], i);
+        if (Url <> '') and (UrlList.IndexOf(Url) < 0) then
+          begin
+          UrlList.Add(Url);
+          NameList.Add(GetPlayListItemName(Urls[i], i));
+          end;
         end;
     end;
-  {$ELSE}
-  SetLastErrorMsg('Playlist downloader needs MULTIDOWNLOADS');
-  {$ENDIF}
   Result := UrlList.Count > 0;
   if Result then
     SetPrepared(True);
-end;
-
-function TPlaylistDownloader.GetPlayListItemName(Match: IMatch; Index: integer): string;
-begin
-  Result := Match.Groups.ItemsByName['URL'].Value;
-end;
-
-function TPlaylistDownloader.GetPlayListItemURL(Match: IMatch; Index: integer): string;
-begin
-  Result := 'Playlist Item ' + IntToStr(Index);
-end;
-
-function TPlaylistDownloader.Download: boolean;
-begin
-  AddUrlToDownloadList(MovieURL);
-  Result := True;
 end;
 
 end.

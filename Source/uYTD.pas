@@ -7,7 +7,9 @@ uses
   SysUtils, Classes, FileCtrl,
   PCRE,
   uConsoleApp,
-  uDownloader, uCommonDownloader, uDownloadClassifier;
+  uDownloader, uCommonDownloader,
+  uPlaylistDownloader, uPlaylist_HTML, uPlaylist_HTMLfile,
+  uDownloadClassifier;
 
 type
   TOverwriteMode = (omNever, omAlways, omRename, omAsk);
@@ -16,7 +18,10 @@ type
     private
       fLastProgressPercentage: int64;
       fDownloadClassifier: TDownloadClassifier;
+      fHtmlPlaylist: TPlaylist_HTML;
+      fHtmlFilePlaylist: TPlaylist_HTMLfile;
       fDestinationPath: string;
+      fErrorLog: string;
       fOverwriteMode: TOverwriteMode;
       fUrlList: TStringList;
     protected
@@ -27,18 +32,21 @@ type
       procedure ParamInitialize; override;
       property UrlList: TStringList read fUrlList;
     protected
-      function DoDownload(Downloader: TDownloader): boolean; virtual;
+      function DoDownload(const Url: string; Downloader: TDownloader): boolean; virtual;
       procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); virtual;
       procedure DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
-      procedure DownloaderMoreUrls(Sender: TObject; const Url: string); virtual;
       function DownloadUrlList: integer; virtual;
       function DownloadURL(const URL: string): boolean; virtual;
       function DownloadURLsFromFileList(const FileName: string): integer; virtual;
+      function DownloadURLsFromHTML(const Source: string): integer; virtual;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
+      property HtmlPlaylist: TPlaylist_HTML read fHtmlPlaylist;
+      property HtmlFilePlaylist: TPlaylist_HTMLfile read fHtmlFilePlaylist;
     public
       constructor Create; override;
       destructor Destroy; override;
       property DestinationPath: string read fDestinationPath write fDestinationPath;
+      property ErrorLog: string read fErrorLog write fErrorLog;
       property OverwriteMode: TOverwriteMode read fOverwriteMode write fOverwriteMode;
     end;
 
@@ -50,6 +58,8 @@ constructor TYTD.Create;
 begin
   inherited;
   fDownloadClassifier := TDownloadClassifier.Create;
+  fHtmlPlaylist := TPlaylist_HTML.Create('');
+  fHtmlFilePlaylist := TPlaylist_HTMLfile.Create('');
   fOverwriteMode := omAsk;
   fUrlList := TStringList.Create;
 end;
@@ -57,6 +67,8 @@ end;
 destructor TYTD.Destroy;
 begin
   FreeAndNil(fDownloadClassifier);
+  FreeAndNil(fHtmlPlaylist);
+  FreeAndNil(fHtmlFilePlaylist);
   FreeAndNil(fUrlList);
   inherited;
 end;
@@ -81,6 +93,8 @@ begin
   WriteColored(ccWhite, ' -h, -?'); Writeln(' ...... Show this help screen.');
   WriteColored(ccWhite, ' -i <file>'); Writeln(' ... Load URL list from <file> (one URL per line).');
   WriteColored(ccWhite, ' -o <path>'); Writeln(' ... Store files to <path> (default is current directory).');
+  WriteColored(ccWhite, ' -e <file>'); Writeln(' ... Save failed URLs to <file>.');
+  WriteColored(ccWhite, ' -s <src>'); Writeln(' .... Load links from a HTML source. <src> can be a file or an URL.');
   WriteColored(ccWhite, ' -n'); Writeln(' .......... Never overwrite existing files.');
   WriteColored(ccWhite, ' -a'); Writeln(' .......... Always overwrite existing files.');
   WriteColored(ccWhite, ' -r'); Writeln(' .......... Rename files to a new name if they already exist.');
@@ -102,11 +116,14 @@ end;
 procedure TYTD.ParamInitialize;
 begin
   inherited;
+  OverwriteMode := omAsk;
   DestinationPath := '';
+  ErrorLog := '';
 end;
 
 function TYTD.DoExecute: boolean;
 var Param: string;
+    n: integer;
 begin
   Result := False;
   if ParamCount = 0 then
@@ -127,6 +144,28 @@ begin
           OverwriteMode := omRename
         else if (Param = '-k') then
           OverwriteMode := omAsk
+        else if (Param = '-e') then
+          if ParamGetNext(Param) then
+            begin
+            ErrorLog := Param;
+            if FileExists(Param) then
+              DeleteFile(Param);
+            end
+          else
+            ShowSyntax('With -e a filename must be provided.')
+        else if (Param = '-s') then
+          if ParamGetNext(Param) then
+            begin
+            n := DownloadURLsFromHTML(Param);
+            if n > 0 then
+              Result := True
+            else if n = 0 then
+              ShowSyntax('HTML source "%s" doesn''t contain any useful links.', [Param])
+            else
+              ShowSyntax('HTML source "%s" not found.', [Param]);
+            end
+          else
+            ShowSyntax('With -h a filename or an URL must be provided.')
         else if (Param = '-i') then
           if ParamGetNext(Param) then
             if FileExists(Param) then
@@ -203,41 +242,76 @@ begin
     end;
 end;
 
-function TYTD.DoDownload(Downloader: TDownloader): boolean;
+function TYTD.DoDownload(const Url: string; Downloader: TDownloader): boolean;
+
+  procedure ShowDownloadError(const Url, Msg: string);
+    begin
+      ShowError('  ERROR: ' + Msg);
+      if ErrorLog <> '' then
+        Log(ErrorLog, 'FAILED "%s": %s', [Url, Msg]);
+    end;
+
+var Playlist: TPlaylistDownloader;
+    i: integer;
 begin
   Result := False;
   try
-    fLastProgressPercentage := -1;
-    Downloader.DestinationPath := DestinationPath;
-    Downloader.OnProgress := DownloaderProgress;
-    Downloader.OnFileNameValidate := DownloaderFileNameValidate;
-    Downloader.OnMoreUrls := DownloaderMoreUrls;
-    if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
+    if Downloader is TPlaylistDownloader then
       begin
-      {$IFDEF MULTIDOWNLOADS}
-      repeat
-      {$ENDIF}
-      Write('  Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
-      Write('    File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
-      if Downloader is TCommonDownloader then
-        Write('  Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
-      Result := Downloader.ValidateFileName and Downloader.Download;
-      if fLastProgressPercentage >= 0 then
-        Writeln;
-      if Result then
+      PlayList := TPlaylistDownloader(Downloader);
+      if Playlist.Prepare then
         begin
-        WriteColored(ccWhite, '  SUCCESS.');
-        Writeln;
-        Writeln;
+        for i := 0 to Pred(Playlist.Count) do
+          begin
+          Result := True;
+          UrlList.Add(Playlist[i]);
+          Write('  Playlist item: ');
+          if Playlist.Names[i] <> '' then
+            begin
+            WriteColored(ccWhite, Playlist.Names[i]);
+            Writeln;
+            Write('            URL: ');
+            end;
+          WriteColored(ccWhite, Playlist[i]);
+          Writeln;
+          end;
         end
       else
-        ShowError('  ERROR: ' + Downloader.LastErrorMsg);
-      {$IFDEF MULTIDOWNLOADS}
-      until (not Result) or (not Downloader.Next);
-      {$ENDIF}
+        ShowDownloadError(Url, Downloader.LastErrorMsg);
       end
     else
-      ShowError('  ERROR: ' + Downloader.LastErrorMsg);
+      begin
+      fLastProgressPercentage := -1;
+      Downloader.DestinationPath := DestinationPath;
+      Downloader.OnProgress := DownloaderProgress;
+      Downloader.OnFileNameValidate := DownloaderFileNameValidate;
+      if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
+        begin
+        {$IFDEF MULTIDOWNLOADS}
+        repeat
+        {$ENDIF}
+        Write('  Video title: '); WriteColored(ccWhite, Downloader.Name); Writeln;
+        Write('    File name: '); WriteColored(ccWhite, Downloader.FileName); Writeln;
+        if Downloader is TCommonDownloader then
+          Write('  Content URL: '); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln;
+        Result := Downloader.ValidateFileName and Downloader.Download;
+        if fLastProgressPercentage >= 0 then
+          Writeln;
+        if Result then
+          begin
+          WriteColored(ccWhite, '  SUCCESS.');
+          Writeln;
+          Writeln;
+          end
+        else
+          ShowDownloadError(Url, Downloader.LastErrorMsg);
+        {$IFDEF MULTIDOWNLOADS}
+        until (not Result) or (not Downloader.Next);
+        {$ENDIF}
+        end
+      else
+        ShowDownloadError(Url, Downloader.LastErrorMsg);
+      end;
   except
     on E: EAbort do
       begin
@@ -263,7 +337,7 @@ begin
     if DownloadClassifier.Downloader = nil then
       ShowError('Unknown URL.')
     else
-      if DoDownload(DownloadClassifier.Downloader) then
+      if DoDownload(DownloadClassifier.URL, DownloadClassifier.Downloader) then
         Inc(Result);
     UrlList.Delete(0);
     end;
@@ -273,6 +347,22 @@ function TYTD.DownloadURL(const URL: string): boolean;
 begin
   UrlList.Add(URL);
   Result := DownloadUrlList > 0;
+end;
+
+function TYTD.DownloadURLsFromHTML(const Source: string): integer;
+const HTTP_PREFIX = 'http://';
+      HTTPS_PREFIX = 'https://';
+var Playlist: TPlaylist_HTML;
+begin
+  if (AnsiCompareText(Copy(Source, 1, Length(HTTP_PREFIX)), HTTP_PREFIX) = 0) or (AnsiCompareText(Copy(Source, 1, Length(HTTPS_PREFIX)), HTTPS_PREFIX) = 0) then
+    Playlist := HtmlPlaylist
+  else
+    Playlist := HtmlFilePlaylist;
+  Playlist.MovieID := Source;
+  if DoDownload(Source, Playlist) then
+    Result := DownloadUrlList
+  else
+    Result := -1;
 end;
 
 function TYTD.DownloadURLsFromFileList(const FileName: string): integer;
@@ -369,11 +459,6 @@ begin
         until False;
         end;
       end;
-end;
-
-procedure TYTD.DownloaderMoreUrls(Sender: TObject; const Url: string);
-begin
-  UrlList.Add(Url);
 end;
 
 end.

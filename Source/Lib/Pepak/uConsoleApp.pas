@@ -48,6 +48,8 @@ type
       procedure ShowError(const Msg: string; const Params: array of const); overload; virtual;
       procedure ShowSyntax(const Error: string = ''); overload; virtual;
       procedure ShowSyntax(const Error: string; const Params: array of const); overload; virtual;
+      procedure Log(const LogFileName: string; const Msg: string); overload; virtual;
+      procedure Log(const LogFileName: string; const Msg: string; const Params: array of const); overload; virtual;
     protected // Files
       function ProcessWildCardFile(const FileName: string; const SearchRec: TSearchRec): boolean; virtual; abstract;
       function ProcessWildCard(const WildCard: string; Recursive: boolean): integer; virtual;
@@ -195,6 +197,31 @@ begin
   finally
     TextAttribute := Attr;
     end;
+end;
+
+procedure TConsoleApp.Log(const LogFileName: string; const Msg: string);
+var T: TextFile;
+begin
+  try
+    AssignFile(T, LogFileName);
+    if FileExists(LogFileName) then
+      Append(T)
+    else
+      Rewrite(T);
+    try
+      Writeln(T, Msg);
+    finally
+      CloseFile(T);
+      end;
+  except
+    on Exception do
+      ;
+    end;
+end;
+
+procedure TConsoleApp.Log(const LogFileName: string; const Msg: string; const Params: array of const);
+begin
+  Log(LogFileName, Format(Msg, Params));
 end;
 
 procedure TConsoleApp.ShowError(const Msg: string; const Params: array of const);

@@ -39,8 +39,10 @@ uses
   uDownloader_Markiza in 'uDownloader_Markiza.pas',
   uDownloader_Rozhlas in 'uDownloader_Rozhlas.pas',
   uDownloader_CT_Port in 'uDownloader_CT_Port.pas',
-  uDownloader_Playlist_YouTube in 'uDownloader_Playlist_YouTube.pas',
-  uPlaylistDownloader in 'uPlaylistDownloader.pas';
+  uPlaylist_YouTube in 'uPlaylist_YouTube.pas',
+  uPlaylistDownloader in 'uPlaylistDownloader.pas',
+  uPlaylist_HTML in 'uPlaylist_HTML.pas',
+  uPlaylist_HTMLfile in 'uPlaylist_HTMLfile.pas';
 
 begin
   {$IFNDEF NO_GUI}

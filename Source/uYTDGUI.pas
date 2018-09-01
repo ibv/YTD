@@ -68,6 +68,24 @@ type
     actAutoOverwrite: TAction;
     ToolAutooverwrite: TToolButton;
     AutoOverwrite1: TMenuItem;
+    actAddUrlsFromHTML: TAction;
+    OpenHtmlFile: TOpenDialog;
+    actAddUrlsFromHTMLfile: TAction;
+    OpenUrlList: TOpenDialog;
+    actAddUrlsFromFile: TAction;
+    ToolAddFromFile: TToolButton;
+    ToolButton1: TToolButton;
+    ToolAddFromHTML: TToolButton;
+    ToolAddFromHTMLfile: TToolButton;
+    AddURLsfromfile1: TMenuItem;
+    AddURLsfromHTMLpage1: TMenuItem;
+    AddURLsfromHTMLfile1: TMenuItem;
+    N4: TMenuItem;
+    actSaveUrlList: TAction;
+    SaveURLlist1: TMenuItem;
+    ToolSave: TToolButton;
+    SaveUrlList: TSaveDialog;
+    ToolButton2: TToolButton;
     procedure DownloadsData(Sender: TObject; Item: TListItem);
     procedure actAddNewUrlExecute(Sender: TObject);
     procedure actDeleteURLExecute(Sender: TObject);
@@ -87,6 +105,10 @@ type
     procedure actDownloadDirectoryExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actAutoOverwriteExecute(Sender: TObject);
+    procedure actAddUrlsFromHTMLExecute(Sender: TObject);
+    procedure actAddUrlsFromHTMLfileExecute(Sender: TObject);
+    procedure actAddUrlsFromFileExecute(Sender: TObject);
+    procedure actSaveUrlListExecute(Sender: TObject);
   private
     {$IFDEF SYSTRAY}
     fNotifyIconData: TNotifyIconData;
@@ -102,6 +124,7 @@ type
     procedure DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem); virtual;
     function PrettySize(Size: int64): string; virtual;
     procedure AddTask(const Url: string); virtual;
+    procedure AddTaskFromHTML(const Source: string); virtual;
     procedure DeleteTask(Index: integer); virtual;
     procedure StartPauseResumeTask(Index: integer); virtual;
     procedure StopTask(Index: integer); virtual;
@@ -428,6 +451,11 @@ begin
   DownloadList.Add(Url);
 end;
 
+procedure TFormYTD.AddTaskFromHTML(const Source: string);
+begin
+  DownloadList.AddFromHTML(Source);
+end;
+
 procedure TFormYTD.DeleteTask(Index: integer);
 begin
   DownloadList.Delete(Index);
@@ -514,6 +542,57 @@ procedure TFormYTD.actAutoOverwriteExecute(Sender: TObject);
 begin
   DownloadList.AutoOverwrite := not DownloadList.AutoOverwrite;
   actAutoOverwrite.Checked := DownloadList.AutoOverwrite;
+end;
+
+procedure TFormYTD.actAddUrlsFromFileExecute(Sender: TObject);
+var L: TStringList;
+    i: integer;
+begin
+  if OpenUrlList.Execute then
+    begin
+    L := TStringList.Create;
+    try
+      L.LoadFromFile(OpenUrlList.FileName);
+      for i := 0 to Pred(L.Count) do
+        if L[i] <> '' then
+          AddTask(L[i]);
+    finally
+      L.Free;
+      end;
+    end;
+end;
+
+procedure TFormYTD.actSaveUrlListExecute(Sender: TObject);
+var L: TStringList;
+    i: integer;
+begin
+  if SaveUrlList.Execute then
+    begin
+    L := TStringList.Create;
+    try
+      for i := 0 to Pred(DownloadList.Count) do
+        if DownloadList[i].State <> dtsFinished then
+          L.Add(DownloadList.Urls[i]);
+      L.SaveToFile(SaveUrlList.FileName);
+    finally
+      L.Free;
+      end;
+    end;
+end;
+
+procedure TFormYTD.actAddUrlsFromHTMLExecute(Sender: TObject);
+var Url: string;
+begin
+  if Clipboard.HasFormat(CF_TEXT) then
+    Url := Clipboard.AsText;
+  if InputQuery('YouTube Downloader', 'Enter page URL:', Url) then
+    AddTaskFromHTML(Url);
+end;
+
+procedure TFormYTD.actAddUrlsFromHTMLfileExecute(Sender: TObject);
+begin
+  if OpenHtmlFile.Execute then
+    AddTaskFromHTML(OpenHtmlFile.FileName);
 end;
 
 end.

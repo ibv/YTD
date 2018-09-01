@@ -12,7 +12,6 @@ type
 
   TDownloaderProgressEvent = procedure(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean) of object;
   TDownloaderFileNameValidateEvent = procedure(Sender: TObject; var FileName: string; var Valid: boolean) of object;
-  TDownloaderMoreUrlsEvent = procedure(Sender: TObject; const Url: string) of object;
 
   TDownloaderClass = class of TDownloader;
   TDownloader = class
@@ -26,7 +25,6 @@ type
       fMovieID: string;
       fFileName: string;
       fOnFileNameValidate: TDownloaderFileNameValidateEvent;
-      fOnMoreUrls: TDownloaderMoreUrlsEvent;
     protected
       function GetName: string; virtual;
       procedure SetName(const Value: string); virtual;
@@ -46,7 +44,6 @@ type
       function DownloadPage(Http: THttpSend; Url: string; UsePost: boolean = False): boolean; overload; virtual;
       function DownloadPage(Http: THttpSend; Url: string; out Page: string; UsePost: boolean = False): boolean; overload; virtual;
       function ValidateFileName(var FileName: string): boolean; overload; virtual;
-      procedure AddUrlToDownloadList(const Url: string); virtual;
     public
       class function Provider: string; virtual; abstract;
       class function UrlRegExp: string; virtual; abstract;
@@ -75,7 +72,6 @@ type
       property DestinationPath: string read fDestinationPath write fDestinationPath;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
       property OnFileNameValidate: TDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
-      property OnMoreUrls: TDownloaderMoreUrlsEvent read fOnMoreUrls write fOnMoreUrls;
     end;
 
 implementation
@@ -319,12 +315,6 @@ begin
     else
       SetLastErrorMsg(Format('Forbidden to download to file "%s".', [FN]));
     end;
-end;
-
-procedure TDownloader.AddUrlToDownloadList(const Url: string);
-begin
-  if Assigned(OnMoreUrls) then
-    OnMoreUrls(Self, Url);
 end;
 
 end.

@@ -22,6 +22,7 @@ type
       function BeforePrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean; virtual;
       function GetMovieInfoUrl: string; virtual; abstract;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; UsePost: boolean = False): boolean; virtual;
       function GetRegExpVar(RegExp: IRegEx; const Text, VarName: string; out VarValue: string): boolean; virtual;
       property MovieUrl: string read fMovieUrl write fMovieUrl;
     public
@@ -57,6 +58,11 @@ begin
     Raise EDownloaderError.Create('Downloader is not prepared!');
 end;
 
+function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; UsePost: boolean): boolean;
+begin
+  Result := DownloadPage(Http, Url, Page, UsePost);
+end;
+
 function TCommonDownloader.Prepare: boolean;
 var Info: THttpSend;
     URL, Page, s: string;
@@ -67,7 +73,7 @@ begin
   try
     URL := GetMovieInfoUrl;
     if URL <> '' then
-      if DownloadPage(Info, URL, Page) then
+      if GetMovieInfoContent(Info, URL, Page) then
         begin
         case GetInfoPageEncoding of
           peUnknown:

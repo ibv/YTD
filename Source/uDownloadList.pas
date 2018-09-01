@@ -5,7 +5,9 @@ interface
 
 uses
   SysUtils, Classes, Dialogs,
-  uDownloadClassifier, uDownloader, uDownloadListItem;
+  uDownloadClassifier, uDownloader,
+  uPlaylistDownloader, uPlaylist_HTML, uPlaylist_HTMLfile,
+  uDownloadListItem, uDownloadThread;
 
 type
   TDownloadList = class;
@@ -39,7 +41,6 @@ type
       procedure DownloadItemFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       procedure DownloadItemError(Sender: TObject); virtual;
       procedure DownloadItemThreadFinished(Sender: TObject); virtual;
-      procedure DownloaderMoreUrls(Sender: TObject; const Url: string); virtual;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
       property List: TStringList read fList;
       property DownloadingList: TList read fDownloadingList;
@@ -54,6 +55,7 @@ type
       procedure Stop(Item: TDownloadListItem); virtual;
       procedure Pause(Item: TDownloadListItem); virtual;
       function Add(const Url: string): integer; virtual;
+      function AddFromHTML(const Source: string): integer; virtual;
       function IndexOf(Item: TDownloadListItem): integer; virtual;
       procedure Delete(Item: TDownloadListItem); overload; virtual;
       procedure Delete(Index: integer); overload; virtual;
@@ -156,7 +158,6 @@ begin
     begin
     Item := TDownloadListItem.Create(DownloadClassifier.Downloader, True);
     Item.Downloader.DestinationPath := DestinationPath;
-    Item.Downloader.OnMoreUrls := DownloaderMoreUrls;
     Item.OnStateChange := DownloadItemStateChange;
     Item.OnDownloadProgress := DownloadItemDownloadProgress;
     Item.OnFileNameValidate := DownloadItemFileNameValidate;
@@ -169,6 +170,29 @@ begin
     end
   else
     Result := -1;
+end;
+
+function TDownloadList.AddFromHTML(const Source: string): integer;
+const HTTP_PREFIX = 'http://';
+      HTTPS_PREFIX = 'https://';
+var Downloader: TPlaylist_HTML;
+    Item: TDownloadListItem;
+begin
+  if (AnsiCompareText(Copy(Source, 1, Length(HTTP_PREFIX)), HTTP_PREFIX) = 0) or (AnsiCompareText(Copy(Source, 1, Length(HTTPS_PREFIX)), HTTPS_PREFIX) = 0) then
+    Downloader := TPlaylist_HTML.Create(Source)
+  else
+    Downloader := TPlaylist_HTMLfile.Create(Source);
+  Item := TDownloadListItem.Create(Downloader, True);
+  Item.Downloader.DestinationPath := DestinationPath;
+  Item.OnStateChange := DownloadItemStateChange;
+  Item.OnDownloadProgress := DownloadItemDownloadProgress;
+  Item.OnFileNameValidate := DownloadItemFileNameValidate;
+  Item.OnError := DownloadItemError;
+  Item.OnThreadFinished := DownloadItemThreadFinished;
+  Result := List.AddObject(Source, Item);
+  NotifyList;
+  if AutoStart then
+    StartAll;
 end;
 
 function TDownloadList.IndexOf(Item: TDownloadListItem): integer;
@@ -231,9 +255,19 @@ begin
 end;
 
 procedure TDownloadList.DownloadItemThreadFinished(Sender: TObject);
+var Item: TDownloadListItem;
+    Playlist: TPlaylistDownloader;
+    i: integer;
 begin
-  Notify(OnFinished, TDownloadListItem(Sender));
-  Stop(TDownloadListItem(Sender));
+  Item := TDownloadListItem(Sender);
+  Notify(OnFinished, Item);
+  Stop(Item);
+  if (Item.Downloader is TPlaylistDownloader) and (Item.State = dtsFinished) then
+    begin
+    Playlist := TPlaylistDownloader(Item.Downloader);
+    for i := 0 to Pred(Playlist.Count) do
+      Add(Playlist[i]);
+    end;
   if AutoStart then
     StartAll;
 end;
@@ -325,11 +359,6 @@ var i: integer;
 begin
   for i := 0 to Pred(DownloadingCount) do
     Pause(DownloadingItems[i]);
-end;
-
-procedure TDownloadList.DownloaderMoreUrls(Sender: TObject; const Url: string);
-begin
-  Add(Url);
 end;
 
 end.

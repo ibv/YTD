@@ -49,15 +49,15 @@ Conditionals=
 DebugSourceDirs=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\
 UsePackages=0
 [Parameters]
-RunParams=http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=22
+MinorVer=23
 Release=0
-Build=163
+Build=164
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=1250
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.22.0.163
+FileVersion=0.23.0.164
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2010 Pepak
 LegalTrademarks=
@@ -76,8 +76,6 @@ OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
 ProductVersion=0.13
 Comments=http://www.pepak.net/download/youtube-downloader/
-[Excluded Packages]
-$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlDebugSourcePath]
 Count=1
 Item0=D:\Tmp\ytd\Source\Lib\dpcre67\;C:\Tmp\YouTube\Source\Lib\Synapse\source\lib\

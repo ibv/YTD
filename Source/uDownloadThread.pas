@@ -5,7 +5,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uDownloader;
+  uDownloader, uPlaylistDownloader;
 
 type
   TDownloadThread = class;
@@ -88,25 +88,35 @@ begin
         if Terminated then
           Break;
         State := dtsPreparing;
-        if (not Downloader.Prepare) {$IFDEF MULTIDOWNLOADS} or (not Downloader.First) {$ENDIF} then
-          Raise EDownloadThreadError.Create('Failed to prepare a download.');
-        if Terminated then
-          Break;
-        State := dtsDownloading;
-        {$IFDEF MULTIDOWNLOADS}
-        repeat
-        {$ENDIF}
-        if (not Downloader.ValidateFileName) or (not Downloader.Download) then
-          if Terminated then
-            Break
+        if Downloader is TPlaylistDownloader then
+          begin
+          if Downloader.Prepare then
+            State := dtsFinished
           else
-            Raise EDownloadThreadError.Create('Download failed.');
-        if Terminated then
-          Break;
-        {$IFDEF MULTIDOWNLOADS}
-        until not Downloader.Next;
-        {$ENDIF}  
-        State := dtsFinished;
+            Raise EDownloadThreadError.Create('Failed to process the playlist.');
+          end
+        else
+          begin
+          if (not Downloader.Prepare) {$IFDEF MULTIDOWNLOADS} or (not Downloader.First) {$ENDIF} then
+            Raise EDownloadThreadError.Create('Failed to prepare a download.');
+          if Terminated then
+            Break;
+          State := dtsDownloading;
+          {$IFDEF MULTIDOWNLOADS}
+          repeat
+          {$ENDIF}
+          if (not Downloader.ValidateFileName) or (not Downloader.Download) then
+            if Terminated then
+              Break
+            else
+              Raise EDownloadThreadError.Create('Download failed.');
+          if Terminated then
+            Break;
+          {$IFDEF MULTIDOWNLOADS}
+          until not Downloader.Next;
+          {$ENDIF}
+          State := dtsFinished;
+          end;
       until True;
       if Terminated then
         begin

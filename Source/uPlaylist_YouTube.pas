@@ -1,4 +1,4 @@
-unit uDownloader_Playlist_YouTube;
+unit uPlaylist_YouTube;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -9,7 +9,7 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
 
 type
-  TDownloader_YouTube_Playlist = class(TPlaylistDownloader)
+  TPlaylist_YouTube = class(TPlaylistDownloader)
     private
     protected
       NextPageRegExp: IRegEx;
@@ -35,55 +35,55 @@ const PLAYLIST_URL_REGEXP = '';
 const PLAYLIST_ITEM_REGEXP = '<a\s+id="video-long-title-(?P<ID>[^"]+)[^>]*>(?P<NAME>[^<]+)</a>';
 const NEXT_PAGE_REGEXP = '<a\s+href="(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=[^"&]+&sort_field=[^&"]*&page=[0-9]+)"\s+class="yt-uix-pager-link"\s+data-page="(?P<PAGE>[0-9]+)"';
 
-{ TDownloader_YouTube_Playlist }
+{ TPlaylist_YouTube }
 
-constructor TDownloader_YouTube_Playlist.Create(const AMovieID: string);
+constructor TPlaylist_YouTube.Create(const AMovieID: string);
 begin
   inherited;
   PlayListItemRegExp := RegExCreate(PLAYLIST_ITEM_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
   NextPageRegExp := RegExCreate(NEXT_PAGE_REGEXP, [rcoIgnoreCase, rcoSingleLine]);
 end;
 
-destructor TDownloader_YouTube_Playlist.Destroy;
+destructor TPlaylist_YouTube.Destroy;
 begin
   PlayListItemRegExp := nil;
   NextPageRegExp := nil;
   inherited;
 end;
 
-class function TDownloader_YouTube_Playlist.Provider: string;
+class function TPlaylist_YouTube.Provider: string;
 begin
-  Result := 'YouTube';
+  Result := 'YouTube Playlist';
 end;
 
-class function TDownloader_YouTube_Playlist.MovieIDParamName: string;
+class function TPlaylist_YouTube.MovieIDParamName: string;
 begin
   Result := 'YOUTUBEPLAYLIST';
 end;
 
-class function TDownloader_YouTube_Playlist.UrlRegExp: string;
+class function TPlaylist_YouTube.UrlRegExp: string;
 begin
   // http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
   //Result := '^https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=(?P<' + MovieIDParamName + '>[^"&]+)$';
   Result := '^https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=(?P<' + MovieIDParamName + '>[^"&]+)';
 end;
 
-function TDownloader_YouTube_Playlist.GetMovieInfoUrl: string;
+function TPlaylist_YouTube.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.youtube.com/view_play_list?p=' + MovieID;
 end;
 
-function TDownloader_YouTube_Playlist.GetPlayListItemName(Match: IMatch; Index: integer): string;
+function TPlaylist_YouTube.GetPlayListItemName(Match: IMatch; Index: integer): string;
 begin
   Result := Trim(Match.Groups.ItemsByName['NAME'].Value);
 end;
 
-function TDownloader_YouTube_Playlist.GetPlayListItemURL(Match: IMatch; Index: integer): string;
+function TPlaylist_YouTube.GetPlayListItemURL(Match: IMatch; Index: integer): string;
 begin
   Result := 'http://www.youtube.com/watch?v=' + Match.Groups.ItemsByName['ID'].Value;
 end;
 
-function TDownloader_YouTube_Playlist.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
+function TPlaylist_YouTube.AfterPrepareFromPage(var Page: string; Http: THttpSend): boolean;
 var Again: boolean;
     Url: string;
     i, PageNumber: integer;
@@ -110,8 +110,6 @@ begin
 end;
 
 initialization
-  {$IFDEF MULTIDOWNLOADS}
-  RegisterDownloader(TDownloader_YouTube_Playlist);
-  {$ENDIF}
+  RegisterDownloader(TPlaylist_YouTube);
 
 end.
