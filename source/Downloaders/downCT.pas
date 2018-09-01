@@ -50,6 +50,7 @@ type
     private
     protected
       MovieObjectRegExp: TRegExp;
+      IFrameRegExp: TRegExp;
       LiveStream: boolean;
     protected
       function GetMovieInfoUrl: string; override;
@@ -72,14 +73,15 @@ uses
 // http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
 // http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/?online=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/(?:ivysilani|porady(?:/[^/]+)?)/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ceskatelevize\.cz/';
+  URLREGEXP_ID =        '(?:ivysilani|porady).+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2>\s*(?P<TITLE>.*?)\s*</h2>';
+  REGEXP_MOVIE_TITLE = '<title>\s*(?P<TITLE>.*?)\s*</title>';
   //REGEXP_MOVIE_OBJECT = '<object\s+id="(?:programmeObject|WMP)"(?:\s+data|.*?<param\s+name="(?:url|src)"\s+value)="(?P<OBJURL>[^"]+)"';
   REGEXP_MOVIE_OBJECT = '\bflashvars\.playlistURL\s*=\s*"(?P<OBJURL>https?://.+?)"';
+  REGEXP_IFRAME_TO_IVYSILANI = '<iframe\s+src="(?P<PATH>/ivysilani/embed/.*?)"';
 
 { TDownloader_CT }
 
@@ -99,6 +101,7 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE, [rcoIgnoreCase, rcoSingleLine]);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT, [rcoIgnoreCase, rcoSingleLine]);
+  IFrameRegExp := RegExCreate(REGEXP_IFRAME_TO_IVYSILANI, [rcoIgnoreCase, rcoSingleLine]);
   LiveStream := True;
 end;
 
@@ -106,17 +109,24 @@ destructor TDownloader_CT.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
+  RegExFreeAndNil(IFrameRegExp);
   inherited;
 end;
 
 function TDownloader_CT.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.ceskatelevize.cz/ivysilani/' + MovieID + '/';
+  // http://www.ceskatelevize.cz/porady/1095946610-diagnoza/84-alzheimerova-choroba/video/?pridat=84
+  Result := 'http://www.ceskatelevize.cz/' + MovieID;
 end;
 
 function TDownloader_CT.GetMovieObjectUrl(Http: THttpSend; const Page: string; out Url: string): boolean;
+var Path, Frame: string;
 begin
   Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJURL', Url);
+  if not Result then
+    if GetRegExpVar(IFrameRegExp, Page, 'PATH', Path) then
+      if DownloadPage(Http, 'http://www.ceskatelevize.cz' + UrlEncode(HtmlDecode(Path)), Frame, InfoPageEncoding) then
+        Result := GetRegExpVar(MovieObjectRegExp, Frame, 'OBJURL', Url);
 end;
 
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

@@ -1,6 +1,22 @@
 CHANGELOG
 ---------
 
+  v0.75:
+
+    * CeskaTelevize.cz: Pøidána podpora pro poøady, které bìží v IFRAME (napø.
+      Diagnóza).
+
+    * YouTube.com: Pøidána podpora pro videa, u kterých majitel autorských
+      práv vyhradil pøehrávání jen pro urèité servery (mnoho hudebních klipù
+      je vydaných právì v tomto formátu).
+
+      Podpora playlistù upravena na aktuální tvar stránek.
+
+    * Opraveno nefunkèní CTRL+C (zkopírovat URL do schránky) v grafickém 
+      rozhraní.
+
+
+
   v0.74:
 
     * Nový poskytovatel: 123Video.nl.

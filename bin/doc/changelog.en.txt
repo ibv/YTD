@@ -1,6 +1,21 @@
 CHANGELOG
 ---------
 
+  v0.75:
+
+    * CeskaTelevize.cz: Added support for movies which run in an IFRAME
+      (e.g. Diagnoza).
+
+    * YouTube.com: Support for videos, which have playback restricted to 
+      certain sites by the copyright owner (this is the case with many music
+      clips).
+
+      Playlist support fixed to work with current page layout.
+
+    * Fixed the non-working CTRL+C (Copy URLs to clipboard) in the GUI.
+
+
+
   v0.74
 
     * New provider: 123Video.nl.

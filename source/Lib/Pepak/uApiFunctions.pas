@@ -132,6 +132,7 @@ begin
   Result := 0;
   if OpenClipboard(Owner) then
     try
+      EmptyClipboard;
       s := Text + #0;
       Data := GlobalAlloc(GMEM_MOVEABLE, Length(s) * sizeof(Char));
       if Data <> 0 then
