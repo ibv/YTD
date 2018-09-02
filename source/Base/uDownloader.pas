@@ -512,7 +512,7 @@ var
   Request: TXmlDoc;
   Node: TXmlNode;
   RequestStr: AnsiString;
-  Namespace: Utf8String;
+  Namespace: string;
 begin
   Response := nil;
   ResponseHeader := nil;

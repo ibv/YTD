@@ -223,7 +223,7 @@ var
   Name: string;
   ix: integer;
 begin
-  Name := Node.Name;
+  Name := {$IFDEF DELPHI5_UP} string {$ENDIF} (Node.Name);
   ix := Pos(':', Name);
   if ix > 0 then
     Result := Copy(Name, 1, ix)

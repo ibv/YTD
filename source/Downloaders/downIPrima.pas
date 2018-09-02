@@ -121,7 +121,8 @@ const
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
   REGEXP_STREAM_CDNID = '<param\s+name="flashvars"\s+value="[^"]*&cdnID=(?P<STREAMID>[0-9]+)';
   {$IFDEF PRIMA_LIVEBOX}
-  REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,)\s*width\s*,\s*height\s*,\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
+  //REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,)\s*width\s*,\s*height\s*,\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
+  REGEXP_LIVEBOX = '''hq_id''\s*:\s*''(?P<HQ>[^'']*)''\s*,\s*''lq_id''\s*:\s*''(?P<LQ>[^'']*)''';
   {$ENDIF}
 
 const

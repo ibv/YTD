@@ -103,7 +103,7 @@ var
 begin
   Http := CreateHttp;
   try
-    if DownloadPage(Http, 'http://leveltv.hrej.cz/include/loginOvereni.php', 'login=' + UrlEncode(UserName), HTTP_FORM_URLENCODING) then
+    if DownloadPage(Http, 'http://leveltv.hrej.cz/include/loginOvereni.php', {$IFDEF UNICODE} AnsiString {$ENDIF} ('login=' + UrlEncode(UserName)), HTTP_FORM_URLENCODING) then
       begin
       Cookies.Assign(Http.Cookies);
       Result := inherited Prepare;

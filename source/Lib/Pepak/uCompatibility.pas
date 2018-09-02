@@ -82,14 +82,16 @@ function ExcludeTrailingPathDelimiter(const Path: string): string;
 function StartsText(const SubStr, Str: string): boolean; 
 {$ENDIF}
 
-{$IFNDEF DELPHI2010_UP}
 const
   WM_XBUTTONDOWN          = $020B;
   WM_XBUTTONDBLCLK        = $020D;
 
+const
   XBUTTON1                = 1;
   XBUTTON2                = 2;
 
+{$IFNDEF DELPHI2010_UP}
+const
   CSIDL_PROGRAM_FILES = 38;
 {$ENDIF}
 

@@ -171,7 +171,7 @@ begin
           Sub := HtmlDecode(UrlDecode(SubtitlesRegExp.SubexpressionByName('CAPTION')), True);
           SubStart := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('START'), '.', DecimalSeparator, []));
           SubEnd := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('END'), '.', DecimalSeparator, []));
-          fSubtitles := fSubtitles + SubtitlesToSrt(n, SubStart*ONE_SECOND, SubEnd*ONE_SECOND, Sub);
+          fSubtitles := fSubtitles + {$IFDEF UNICODE} AnsiString {$ENDIF} (SubtitlesToSrt(n, SubStart*ONE_SECOND, SubEnd*ONE_SECOND, Sub));
         until not SubtitlesRegExp.MatchAgain;
         fSubtitlesExt := '.srt';
         Result := fSubtitles <> '';

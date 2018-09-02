@@ -43,6 +43,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
   {$IFDEF GUI}
@@ -319,7 +320,7 @@ begin
         // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
       end
     else if GetRegExpVar(JavascriptPlayerRegExp, Page, 'PARAM', Param) then
-      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + UrlEncode(PARAM), HTTP_FORM_URLENCODING, ['X-client: 127.0.0.1'], NewPage) then
+      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + {$IFDEF UNICODE} AnsiString {$ENDIF} (UrlEncode(PARAM)), HTTP_FORM_URLENCODING, ['X-client: 127.0.0.1'], NewPage) then
         if GetRegExpVar(VideoPlayerUrlRegExp, NewPage, 'URL', Url) then
           Url := StripSlashes(Url);
     if Url <> '' then

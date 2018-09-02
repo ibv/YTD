@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://poker.nova.cz/clanek/videa/big-game/serial-the-big-game-35-dil-v-cestine-dnes-naposledy.html
+RunParams=http://www.iprima.cz/videoarchiv/227458/1187/all
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -93,7 +93,7 @@ Item0=Units
 Count=1
 Item0=..\Bin
 [Exception Log]
-EurekaLog Version=6101
+EurekaLog Version=6020
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -253,7 +253,6 @@ loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
-cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

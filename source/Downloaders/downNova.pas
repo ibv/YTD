@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend, SynaCode,
-  uOptions,
+  uOptions, uCompatibility,
   {$IFDEF GUI}
     guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
@@ -275,7 +275,7 @@ begin
     begin
     Timestamp := FormatDateTime('yyyymmddhhnnss', Now);
     ID := UrlEncode(NOVA_APP_ID + '|' + Media_ID);
-    Signature := UrlEncode(Base64Encode(MD5(NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret)));
+    Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (EncodeBase64(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret)))));
     Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&h=0&c=%s&s=%s', [Timestamp, ID, Signature]);
     if not DownloadXml(Http, Url, InfoXml) then
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
@@ -351,7 +351,7 @@ end;
 
 function TDownloader_Nova_MS.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const
-  NAMESPACE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://streaming.kitd.cz/cdn/nova';
+  NAMESPACE {$IFDEF MINIMIZESIZE} : Utf8String {$ENDIF} = 'http://streaming.kitd.cz/cdn/nova';
   SOAP_ACTION = '"http://streaming.kitd.cz/cdn/nova/GetContentUrl"';
   QUALITY_STR: array[boolean] of WideString = ('LQ', 'HQ');
 var

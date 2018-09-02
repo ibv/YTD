@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, uCompatibility,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -104,12 +104,13 @@ function TDownloader_NHL.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc
 var
   Xml: TXmlDoc;
   Node: TXmlNode;
-  NodeName, Url: string;
+  NodeName: Utf8String;
+  Url: string;
   i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not DownloadXml(Http, 'http://video.nhl.com/videocenter/highlights', 'xml=2&id=' + MovieID + '&ps=9&pn=1&pm=0&ptrs=3', HTTP_FORM_URLENCODING, Xml) then
+  if not DownloadXml(Http, 'http://video.nhl.com/videocenter/highlights', {$IFDEF UNICODE} AnsiString {$ENDIF} ('xml=2&id=' + MovieID + '&ps=9&pn=1&pm=0&ptrs=3'), HTTP_FORM_URLENCODING, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
