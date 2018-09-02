@@ -128,6 +128,7 @@ var
 begin
   Item := Match.SubexpressionByName('ITEM');
   GetRegExpVar(ItemTitleRegExp, Item, 'TITLE', Result);
+  Result := HtmlDecode(Result);
 end;
 
 function TPlaylist_YouTube.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;

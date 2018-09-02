@@ -5,7 +5,7 @@ unit uFAR;
 interface
 
 uses
-  SysUtils, Windows, Classes, Generics.Collections,
+  SysUtils, Windows, Classes, {$IFDEF FPC} Contnrs, {$ELSE} Generics.Collections, {$ENDIF}
   {$IFDEF FAR3} Plugin3, {$ELSE} PluginW, {$ENDIF} FarKeysW, FarColor,
   uSystem, uCompatibility, uLog;
 

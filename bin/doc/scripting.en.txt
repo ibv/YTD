@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.50+                                                   (c) 2009-15 Pepak
+YTD v1.51+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -425,6 +425,20 @@ error.
             <condition type="regexp_match" id="title" content="data">
               <debug>Regexp with id="title" matched the data in variable "data"</debug>
             </condition>
+
+
+3.14 <pause>
+------------
+
+    This command is intended to be used only rarely, for servers which measure
+    the amount of time taken between loading a page and requiring a video
+    playback and failing if the delay is too short.
+
+    It can be used in two variants, with a fixed delay or with a random delay:
+      - Fixed delay:  <pause value="12345"/>
+      - Random delay: <pause from="100" to "200"/>
+
+    In either case, the values are in milliseconds.
 
 
 

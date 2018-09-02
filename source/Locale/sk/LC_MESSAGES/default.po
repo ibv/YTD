@@ -1,21 +1,11 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: YTD 1.47\n"
-"POT-Creation-Date: 2015-03-29 17:24\n"
-"PO-Revision-Date: 2015-05-01 11:39+0100\n"
-"Last-Translator: Vladimír Kubala <kubala.v@gmail.com>\n"
-"Language-Team: \n"
-"Language: sk_SK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.6\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: YTD\n"
+"Language: sk\n"
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
@@ -404,13 +394,28 @@ msgstr "&Skontrolovať novú verziu pri spustení"
 
 #. FormOptions..PageOptions..TabMain..CheckMonitorClipboard..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:109
-msgid "&Monitor clipboard for downloadable URLs"
-msgstr "&Sledovať schránku pre podporované URL"
+msgid "Mo&nitor clipboard for downloadable URLs"
+msgstr "Sledovať schránku pre podporované URL"
 
 #. FormOptions..PageOptions..TabMain..CheckIgnoreOpenSSLWarning..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:118
-msgid "&Disable OpenSSL warning"
+msgid "Disable &OpenSSL warning"
 msgstr "Zakázať upozornenie na chýbajúcu knižnicu OpenSSL"
+
+#. FormOptions..PageOptions..TabMain..CheckIgnoreRtmpDumpWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:127
+msgid "Disable &RtmpDump warning"
+msgstr "Zakázať upozornenie na chýbajúcu knižnicu RTMPdump"
+
+#. FormOptions..PageOptions..TabMain..CheckIgnoreMSDLWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:136
+msgid "Disable &MSDL warning"
+msgstr "Zakázať upozornenie na chýbajúcu knižnicu MSDL"
+
+#. FormOptions..PageOptions..TabMain..CheckMinimizeToTray..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:145
+msgid "Minimize to system &tray"
+msgstr "Minimalizovať do oblasti oznámení"
 
 #. FormOptions..PageOptions..TabDownloadOptions..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:123 GUI/WinAPI/guiOptionsWINAPI.pas:129
@@ -432,35 +437,15 @@ msgstr "Adresár na DL:"
 msgid "&Retry count:"
 msgstr "Počet opakovaní"
 
+#. FormOptions..PageOptions..TabDownloadOptions..Label1..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:189
+msgid "Append &index to playlist items:"
+msgstr "Pridať index k názvu:"
+
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:163
 msgid "&Automatically start downloads"
 msgstr "Automaticky spustiť nové sťahovanie"
-
-#. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#. Overwrite mode
-#: GUI/VCL/guiOptionsVCL.dfm:176
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:240
-msgid "Ask user"
-msgstr "Opýtať sa používateľa"
-
-#. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:177
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:241
-msgid "Overwrite"
-msgstr "Prepísať"
-
-#. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:178
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:242
-msgid "Skip"
-msgstr "Preskočiť"
-
-#. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:179
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:243
-msgid "Rename automatically"
-msgstr "Premenovať automaticky"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
@@ -483,6 +468,11 @@ msgstr "Pridať príponu .part počas sťahovania"
 #: GUI/VCL/guiOptionsVCL.dfm:242
 msgid "Store media into su&bdirectories according to their providers"
 msgstr "Uložiť súbory do podpriečinkov podľa poskytovateľov"
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDeleteFinishedDownloads..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:299
+msgid "Automatically delete &finished downloads"
+msgstr "Automaticky mazať ukončené sťahovania"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:255 GUI/WinAPI/guiOptionsWINAPI.pas:130
@@ -637,6 +627,10 @@ msgstr "Maximálna &výška videa:"
 msgid "&Avoid .webm format"
 msgstr "&Nesťahovať .webm formát"
 
+#: Base/uPlaylistDownloader.pas:205
+msgid "[%*.*d of %d]"
+msgstr "[%*.*d z %d]"
+
 #: Base/uScriptedDownloader.pas:172
 msgid "TScriptedDownloader.UrlRegExp may not be called."
 msgstr "TScriptedDownloader.UrlRegExp nemôže byť volaná."
@@ -647,12 +641,8 @@ msgstr "Neplatné MovieID - musíte definovať skript a ID"
 
 #. Downloader: TMSDirectDownloader;
 #: Base/uScriptedDownloader.pas:500
-msgid ""
-"SmoothStream is not supported, because I don't know how to programmatically "
-"mux MP4 streams. Can you help?"
-msgstr ""
-"SmoothStream nie je podporovaný, pretože neviem programom pripojiť MP4 "
-"streamy. Viete mi s tým pomôcť?"
+msgid "SmoothStream is not supported, because I don't know how to programmatically mux MP4 streams. Can you help?"
+msgstr "SmoothStream nie je podporovaný, pretože neviem programom pripojiť MP4 streamy. Viete mi s tým pomôcť?"
 
 #. Intentionally no _(...) - this should not be translated
 #: CLI/uYTD.pas:141
@@ -722,9 +712,7 @@ msgstr " .......... Vyhľadať aktualizáciu a aktualizovať, ak sa dá."
 #. CLI: Help for -ah command line argument
 #: CLI/uYTD.pas:156
 msgid " ...... [Don't] Automatically try HTML parser for unknown URLs."
-msgstr ""
-" ...... [Ne-] pokúšať sa automaticky používať HTML analyzátor pre neznáme "
-"URL."
+msgstr " ...... [Ne-] pokúšať sa automaticky používať HTML analyzátor pre neznáme URL."
 
 #. CLI: Help for -nd command line argument
 #: CLI/uYTD.pas:157
@@ -1044,11 +1032,9 @@ msgstr "Chyba soketu"
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
 #: Common/uMessages.pas:58
-msgid ""
-"Exception %s with message:\n"
+msgid "Exception %s with message:\n"
 "%s"
-msgstr ""
-"Výnimka %s s chybovou správou:\n"
+msgstr "Výnimka %s s chybovou správou:\n"
 "%s"
 
 #. Shown when installation failed
@@ -1076,13 +1062,11 @@ msgstr "Položka zoznamu %d"
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
 #: Common/uMessages.pas:62
-msgid ""
-"Do you want to upgrade (YES)\n"
+msgid "Do you want to upgrade (YES)\n"
 "or just download the newest version (NO)?\n"
 "\n"
 "Note: Upgrade will stop all transfers."
-msgstr ""
-"Chcete program automaticky aktualizovať (ÁNO)\n"
+msgstr "Chcete program automaticky aktualizovať (ÁNO)\n"
 "alebo iba stiahnuť najnovšiu verziu (NIE)?\n"
 "\n"
 "Poznámka: Aktualizácia zastaví všetky prenosy."
@@ -1122,23 +1106,79 @@ msgstr "Nepodarilo sa stiahnuť definície skriptov."
 
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
-#: Common/uMessages.pas:68
-msgid ""
-"You don't seem to have the OpenSSL library installed.\n"
+#: Common/uMessages.pas:72
+#: Common/uMessages.pas:72
+msgid "You don't seem to have the OpenSSL library (32bit) installed.\n"
 "YTD uses OpenSSL to enable the SSL protocol.\n"
 "Without SSL, you won't be able to download\n"
 "from YouTube any many other sites."
-msgstr ""
-"Zdá sa, že nemáte nainštalovanú knižnicu OpenSSL.\n"
+msgstr "Zdá sa, že nemáte nainštalovanú knižnicu OpenSSL.\n"
 "YTD používa OpenSSL na sprístupnenie SSL protokolu.\n"
-"Bez SSL nebudete môcť sťahovať \n"
-"z YouTube ďalších mnohých stránok."
+"Bez SSL nebudete môcť sťahovať\n"
+"z YouTube a z ďalších mnohých stránok."
 
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
 #: Common/uMessages.pas:69
 msgid "Would you like to download and install OpenSSL?"
 msgstr "Chcete stiahnuť a nainštalovať OpenSSL?"
+
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND
+#: Common/uMessages.pas:74
+#: Common/uMessages.pas:74
+msgid "You don't seem to have the RtmpDump library installed.\n"
+"YTD uses RtmpDump to handle the RTMP protocol.\n"
+"Without RTMP, you won't be able to download\n"
+"from many sites."
+msgstr "Zdá sa, že nemáte nainštalovanú knižnicu RTMPDump.\n"
+"YTD používa RTMPDump na sprístupnenie RTMP protokolu.\n"
+"Bez RTMP nebudete môcť sťahovať\n"
+"z mnohých stránok."
+
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX
+#. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX
+#: Common/uMessages.pas:75
+#: Common/uMessages.pas:75
+msgid "Would you like to download and install RtmpDump?"
+msgstr "Chcete stiahnuť a nainštalovať RTMPDump?"
+
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND
+#: Common/uMessages.pas:76
+#: Common/uMessages.pas:76
+msgid "You don't seem to have the MSDL library installed.\n"
+"YTD uses MSDL to handle various Microsoft protocols.\n"
+"Without them, you won't be able to download\n"
+"from some sites."
+msgstr "Zdá sa, že nemáte nainštalovanú knižnicu MSDL.\n"
+"YTD používa MSDL na sprístupnenie protokolov\n"
+"Microsoftu.\n"
+"Bez RTMP nebudete môcť sťahovať\n"
+"z mnohých stránok."
+
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND_ACTION_SUFFIX
+#. Programmer's name for it: MSG_MSDL_NOT_FOUND_ACTION_SUFFIX
+#: Common/uMessages.pas:77
+#: Common/uMessages.pas:77
+msgid "Would you like to download and install MSDL?"
+msgstr "Chcete stiahnuť a nainštalovať MSDL?"
+
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_DOWNLOAD
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_DOWNLOAD
+#: Common/uMessages.pas:78
+#: Common/uMessages.pas:78
+msgid "Download URL:"
+msgstr "URL pre sťahovanie:"
+
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_WERE_DOWNLOADED
+#. Programmer's name for it: MSG_EXTERNAL_LIBS_WERE_DOWNLOADED
+#: Common/uMessages.pas:79
+#: Common/uMessages.pas:79
+msgid "External libraries have been downloaded and installed.\n"
+"Please restart YTD to activate them."
+msgstr "Externé knižnice boli stiahnuté a nainštalované.\n"
+"Pre ich aktiváciu reštartujte YTD, prosím."
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
@@ -1407,6 +1447,13 @@ msgstr "Atribút \"%s\" má neplatnú hodnotu \"%s\"."
 msgid "Unknown command."
 msgstr "Neznámy príkaz."
 
+#. Programmer's name for it: MSG_SCRIPTS_UNKNOWN_COMMAND_NAMED
+#. Programmer's name for it: MSG_SCRIPTS_UNKNOWN_COMMAND_NAMED
+#: Common/uMessages.pas:133
+#: Common/uMessages.pas:133
+msgid "Unknown command \"%s\"."
+msgstr "Neznámy príkaz \"%s\"."
+
 #. Programmer's name for it: MSG_SCRIPTS_DOWNLOAD_FAILED
 #. Programmer's name for it: MSG_SCRIPTS_DOWNLOAD_FAILED
 #: Common/uMessages.pas:123
@@ -1418,6 +1465,27 @@ msgstr "Sťahovanie zlyhalo: %s"
 #: Common/uMessages.pas:124
 msgid "Unexpected node type."
 msgstr "Neočakávaný typ uzla."
+
+#. Programmer's name for it: MSG_SCRIPTS_MULTIPLE_ELSE
+#. Programmer's name for it: MSG_SCRIPTS_MULTIPLE_ELSE
+#: Common/uMessages.pas:136
+#: Common/uMessages.pas:136
+msgid "Multiple <else> tags encountered."
+msgstr "Nájdený niekoľkonásobný výskyt <else>."
+
+#. Programmer's name for it: MSG_SCRIPTS_IF_NOT_SATISFIED
+#. Programmer's name for it: MSG_SCRIPTS_IF_NOT_SATISFIED
+#: Common/uMessages.pas:137
+#: Common/uMessages.pas:137
+msgid "No satisfied condition found."
+msgstr "Žiadna podmienka nebola splnená."
+
+#. Programmer's name for it: MSG_SCRIPTS_UNKNOWN_CONDITION
+#. Programmer's name for it: MSG_SCRIPTS_UNKNOWN_CONDITION
+#: Common/uMessages.pas:138
+#: Common/uMessages.pas:138
+msgid "Unknown condition."
+msgstr "Neznáma podmienka."
 
 #. Programmer's name for it: ERR_XML_ELEMENT_NOT_FOUND
 #. Programmer's name for it: ERR_XML_ELEMENT_NOT_FOUND
@@ -1523,8 +1591,7 @@ msgstr "** Žiadny **"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:75
-msgid ""
-"Converters are not activated.\n"
+msgid "Converters are not activated.\n"
 "\n"
 "You must activate them through manually editing\n"
 "the configuration file. You can find the steps\n"
@@ -1534,8 +1601,7 @@ msgid ""
 "NEED to be configured properly, as documented,\n"
 "but too many people failed to read the documentation\n"
 "and instead complained that converters don't work."
-msgstr ""
-"Konvertory nie sú aktivované.\n"
+msgstr "Konvertory nie sú aktivované.\n"
 "\n"
 "Musíte ich ručne aktivovať editovaním konfiguračného\n"
 "súboru. Potrebné kroky nájdete v dokumentácii.\n"
@@ -1545,144 +1611,164 @@ msgstr ""
 "ale mnoho ľudí si ju neprečítalo a teraz si sťažujú,\n"
 "že konvertovanie nefunguje."
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: OVERWRITEMODE_ASKUSER
+#: GUI/VCL/guiOptionsVCL.dfm:176
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:240
+msgid "Ask user"
+msgstr "Opýtať sa používateľa"
+
+#. Programmer's name for it: OVERWRITEMODE_OVERWRITE
+#: GUI/VCL/guiOptionsVCL.dfm:177
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:241
+msgid "Overwrite"
+msgstr "Prepísať"
+
+#. Programmer's name for it: OVERWRITEMODE_SKIP
+#: GUI/VCL/guiOptionsVCL.dfm:178
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:242
+msgid "Skip"
+msgstr "Preskočiť"
+
+#. Programmer's name for it: OVERWRITEMODE_RENAME
+#: GUI/VCL/guiOptionsVCL.dfm:179
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:243
+msgid "Rename automatically"
+msgstr "Premenovať automaticky"
+
+#. Programmer's name for it: ADDINDEXTONAMES_NONE
+#: GUI/guiConsts.pas:86
+msgid "Don't add index to names"
+msgstr "Nepridať index k názvu"
+
+#. Programmer's name for it: ADDINDEXTONAMES_START
+#: GUI/guiConsts.pas:87
+msgid "Put the index at the start of a name"
+msgstr "Pridať index pred názov"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
+#: GUI/guiConsts.pas:88
+msgid "Put the index at the end of a name"
+msgstr "Pridať index za názov"
+
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:84
-msgid ""
-"Config file will open now, but please do not edit\n"
+msgid "Config file will open now, but please do not edit\n"
 "it right away: YTD will overwrite the file before\n"
 "it quits, so any changes made would be lost.\n"
 "First quit YTD and only then start editing the file."
-msgstr ""
-"Teraz sa otvorí konfiguračný súbor, ale prosím\n"
+msgstr "Teraz sa otvorí konfiguračný súbor, ale prosím\n"
 "neupravujte ho zatiaľ: YTD ho prepíše\n"
 "pred svojim ukončením, takže všetky vaše zmeny by sa\n"
 "stratili. Najprv ukončite YTD a až potom začnite editovať\n"
 "konfiguračný súbor."
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:87
-msgid ""
-"There are downloads in progress\n"
+msgid "There are downloads in progress\n"
 "Do you really want to quit?"
-msgstr ""
-"Práve prebieha sťahovanie.\n"
+msgstr "Práve prebieha sťahovanie.\n"
 "Naozaj chcete program ukončiť?"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:90
-msgid ""
-"A newer version (%s) is available.\n"
+msgid "A newer version (%s) is available.\n"
 "Do you want to download it?"
-msgstr ""
-"Je dostupná novšia verzia (%s)\n"
+msgstr "Je dostupná novšia verzia (%s)\n"
 "Chcete ju teraz stiahnuť?"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:94
-msgid ""
-"A newer version (%s) of script definitions\n"
+msgid "A newer version (%s) of script definitions\n"
 "is available.\n"
 "Do you want to download it?"
-msgstr ""
-"Je k dispozícii nová verzia (%s)\n"
+msgstr "Je k dispozícii nová verzia (%s)\n"
 "Chcete ju stiahnuť?"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:96
 msgid "Enter video URL:"
 msgstr "Vložte URL videa:"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:98
 msgid "Enter page URL:"
 msgstr "Zadajte URL:"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:101
-msgid ""
-"This URL is not supported.\n"
+msgid "This URL is not supported.\n"
 "See the documenation for supported URLs."
-msgstr ""
-"Táto URL nie je podporovaná\n"
+msgstr "Táto URL nie je podporovaná\n"
 "Podporované URL nájdete v priloženej dokumentácii."
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:104
-msgid ""
-"No supported URLs found.\n"
+msgid "No supported URLs found.\n"
 "See the documenation for supported URLs."
-msgstr ""
-"Žiadna podporovaná URL nebola nájdená\n"
+msgstr "Žiadna podporovaná URL nebola nájdená\n"
 "Podporované URL nájdete v priloženej dokumentácii."
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:106
 msgid "Do you really want to delete selected transfer(s)?"
 msgstr "Naozaj chcete vymazať označené prenos(y)?"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:108
 msgid "Do you really want to stop selected transfer(s)?"
 msgstr "Naozaj chcete zastaviť vybrané prenosy?"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:110
 msgid "Do you really want to report a bug for this transfer?"
 msgstr "Naozaj chcete nahlásiť chybu pre tento prenos?"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:116
-msgid ""
-"Bugreport is not available for this video.\n"
+msgid "Bugreport is not available for this video.\n"
 "After the download has successfully started,\n"
 "its completion is dependent on the goowill\n"
 "of the server and the quality of your network\n"
 "connection. The program can't influence it."
-msgstr ""
-"Nahlásenie chyby pre toto video nie je dostupné.\n"
+msgstr "Nahlásenie chyby pre toto video nie je dostupné.\n"
 "Keď sa video začne úspešne sťahovať,\n"
 "jeho dokončenie potom závisí výhradne\n"
 "od serveru a kvality vášho pripojenia.\n"
 "Program to neovplyvní."
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:120
-msgid ""
-"Bugreport is not available for your computer\n"
+msgid "Bugreport is not available for your computer\n"
 "because you don't have OpenSSL installed.\n"
 "Please install OpenSSL and try again."
-msgstr ""
-"Bugreport is not available for your computer\n"
+msgstr "Bugreport is not available for your computer\n"
 "because you don't have OpenSSL installed.\n"
 "Please install OpenSSL and try again."
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:122
 msgid "Convert selected files with"
 msgstr "Konvertovať vybrané súbory s"
 
-#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#. Programmer's name for it: ADDINDEXTONAMES_END
 #: GUI/guiConsts.pas:124
 msgid "Automatically convert with"
 msgstr "Automaticky konvertovať s"
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
 #: GUI/guiOptions.pas:92 GUI/guiOptions.pas:152 GUI/guiOptions.pas:154
-msgid ""
-"This is the first time you are running the GUI version\n"
+msgid "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
 "To protect your privacy, the program will now ask you\n"
 "about some default values which may influence it."
-msgstr ""
-"Toto je prvýkrát, čo ste spustili GUI verziu\n"
+msgstr "Toto je prvýkrát, čo ste spustili GUI verziu\n"
 "YTD alebo konfiguračný súbor nie je\n"
 "dostupný. Na ochranu Vášho súkromia sa Vás teraz program\n"
 "spýta na predvolené hodnoty, ktoré ho môžu ovplyvniť."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:100
-msgid ""
-"Would you like to run YTD in portable mode?\n"
+msgid "Would you like to run YTD in portable mode?\n"
 "\n"
 "In portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
@@ -1690,8 +1776,7 @@ msgid ""
 "the settings are stored in the current user's profile.\n"
 "\n"
 "YES = portable mode, NO = normal mode"
-msgstr ""
-"Chcete spustiť YTD v portable móde?\n"
+msgstr "Chcete spustiť YTD v portable móde?\n"
 "\n"
 "V portable móde YTD ukladá nastavenia v súbore \"ytd.xml\"\n"
 "v adresári s programom (do ktorého sa dá zapisovať,\n"
@@ -1702,8 +1787,7 @@ msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:112
-msgid ""
-"Would you like YTD to check for new versions\n"
+msgid "Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
 "\n"
 "In order to perform the check, YTD's server must\n"
@@ -1715,9 +1799,7 @@ msgid ""
 "the program's website or by entering the About window.\n"
 "\n"
 "Should YTD automatically check for new versions?"
-msgstr ""
-"Chcete zistiť, či je k dispozícii nová verzia programu YTD pri spustení GUI "
-"verzie?\n"
+msgstr "Chcete zistiť, či je k dispozícii nová verzia programu YTD pri spustení GUI verzie?\n"
 "\n"
 "Aby sa kontrola mohla vykonať, server YTD\n"
 "musí byť kontaktovaný, a to znamená že Vaša IP adresa bude\n"
@@ -1752,12 +1834,10 @@ msgstr "Konvertovať film do MP3"
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #. {$ENDIF}
 #: GUI/guiOptions.pas:128 GUI/guiOptions.pas:161 GUI/guiOptions.pas:163
-msgid ""
-"Error loading configuration file. Error %s:\n"
+msgid "Error loading configuration file. Error %s:\n"
 "%s\n"
 "Default config file will be created."
-msgstr ""
-"Chyba pri načítaní konfiguračného súboru. Chyba %s:\n"
+msgstr "Chyba pri načítaní konfiguračného súboru. Chyba %s:\n"
 "%s\n"
 "Bude vytvorený nový konfiguračný súbor."
 
@@ -1952,21 +2032,15 @@ msgstr "^-{10}[- ]+$"
 
 #. Programmer's name for it: re7zListItem
 #: Lib/Pepak/uSystem.pas:570
-msgid ""
-"^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]"
-"{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
-msgstr ""
-"^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]"
-"{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
+msgid "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
+msgstr "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
 #: Lib/Pepak/ApiForm/uApiFunctions.pas:80
-msgid ""
-"Windows error %u = %08.8x\n"
+msgid "Windows error %u = %08.8x\n"
 "%s"
-msgstr ""
-"Chyba systému %u = %08.8x\n"
+msgstr "Chyba systému %u = %08.8x\n"
 "%s"
 
 #. error code, error code
@@ -1980,8 +2054,25 @@ msgstr "Neznáma chyba %u = %08.8x."
 msgid "Select a directory"
 msgstr "Vyberte adresár"
 
-#~ msgid "&Avoid HD content"
-#~ msgstr "&Nehľadať HD videá"
+#. FormOptions..PageOptions..TabMain..CheckMonitorClipboard..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:109
+msgid "&Monitor clipboard for downloadable URLs"
+msgstr "&Sledovať schránku pre podporované URL"
 
-#~ msgid "Failed to upgrade. Upgrade file: %s"
-#~ msgstr "Aktualizácia zlyhala. Súbor: %s"
+#. FormOptions..PageOptions..TabMain..CheckIgnoreOpenSSLWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:118
+msgid "&Disable OpenSSL warning"
+msgstr "Zakázať upozornenie na chýbajúcu knižnicu OpenSSL"
+
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
+#: Common/uMessages.pas:68
+msgid "You don't seem to have the OpenSSL library installed.\n"
+"YTD uses OpenSSL to enable the SSL protocol.\n"
+"Without SSL, you won't be able to download\n"
+"from YouTube any many other sites."
+msgstr "Zdá sa, že nemáte nainštalovanú knižnicu OpenSSL.\n"
+"YTD používa OpenSSL na sprístupnenie SSL protokolu.\n"
+"Bez SSL nebudete môcť sťahovať \n"
+"z YouTube ďalších mnohých stránok."
+

@@ -45,11 +45,11 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\nativexml;lib\lkjson;lib\scizipfile;Units
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
-Conditionals=PEPAK;PEPAK_YTD;
+Conditionals=PEPAK;PEPAK_YTD;DEBUG
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://video.aktualne.cz/48-hodin-v/cozumel-karibsky-ostrov-plodnosti/r~6a3d47a23d2211e5a896002590604f2e/
+RunParams=http://www.ceskatelevize.cz/porady/10123572632-alotria-michala-nesvadby/207552110530001/
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=49
 Release=0
-Build=1206
+Build=1209
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.49.0.1206
+FileVersion=1.49.0.1209
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
@@ -80,8 +80,8 @@ Comments=http://www.pepak.net/ytd
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlConditionals]
 Count=9
-Item0=PEPAK;PEPAK_YTD;
-Item1=PEPAK;PEPAK_YTD;DEBUG
+Item0=PEPAK;PEPAK_YTD;DEBUG
+Item1=PEPAK;PEPAK_YTD;
 Item2=PEPAK;PEPAK_YTD;DEBUG;
 Item3=PEPAK;PEPAK_YTD;NO_XXX;
 Item4=PEPAK;PEPAK_YTD;XXX;

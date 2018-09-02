@@ -54,12 +54,14 @@ type
     protected
       IFrameRegExp: TRegExp;
       JavaScriptRegExp: TRegExp;
+      DivRegExp: TRegExp;
       IFrameFromAjaxRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function FindNestedUrl(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean; override;
       function GetUrlFromIFRAME(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
       function GetUrlFromJS(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
+      function GetUrlFromDIV(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -84,6 +86,7 @@ const
   REGEXP_MOVIE_TITLE = '<div\s+id="mainPanel".*' + REGEXP_TITLE_H1;
   //REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(https?://[^/]+)?/ivysilani/[^"]+)"';
   REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc)="(?P<URL>(https?://[^/]+)?/ivysilani/[^"]+)"';
+  REGEXP_DIV_URL = '<div\b[^>]*\sclass="video-player">.*?<span\b[^>]*\sdata-url="(?P<URL>(https?://[^/]+)?/ivysilani/[^"]+)"';
   REGEXP_JAVASCRIPT_ID = '\shref="javascript:void\s*\(\s*q\s*=\s*''(?P<ID>.+?)''';
   REGEXP_JAVASCRIPT_URL = '"videoPlayerUrl"\s*:\s*"(?P<URL>.+?)"';
 
@@ -105,6 +108,7 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   IFrameRegExp := RegExCreate(REGEXP_IFRAME_URL);
+  DivRegExp := RegExCreate(REGEXP_DIV_URL);
   JavaScriptRegExp := RegExCreate(REGEXP_JAVASCRIPT_ID);
   IFrameFromAjaxRegExp := RegExCreate(REGEXP_JAVASCRIPT_URL);
 end;
@@ -114,6 +118,7 @@ begin
   inherited;
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(IFrameRegExp);
+  RegExFreeAndNil(DivRegExp);
   RegExFreeAndNil(JavaScriptRegExp);
   RegExFreeAndNil(IFrameFromAjaxRegExp);
 end;
@@ -147,9 +152,22 @@ begin
         end;
 end;
 
+function TDownloader_CT_wrapper.GetUrlFromDIV(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
+begin
+  Result := False;
+  if GetRegExpVar(DivRegExp, Page, 'URL', Url) and (Url <> '') then
+    begin
+    Url := UrlEncode(UrlDecode(HtmlDecode(GetRelativeUrl(GetMovieInfoUrl, Url))));
+    Result := True;
+    end;
+end;
+
 function TDownloader_CT_wrapper.FindNestedUrl(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
 begin
-  Result := GetUrlFromIFRAME(Page, PageXml, Http, Url) or GetUrlFromJS(Page, PageXml, Http, Url);
+  Result := GetUrlFromIFRAME(Page, PageXml, Http, Url)
+         or GetUrlFromJS(Page, PageXml, Http, Url)
+         or GetUrlFromDIV(Page, PageXml, Http, Url)
+         ;
 end;
 
 initialization

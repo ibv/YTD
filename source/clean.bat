@@ -1,8 +1,6 @@
 @echo off
 setlocal
-set exedir=..\Bin\
-set project=ytd
-set ext=.exe
+call info.bat info
 rem del /q %exedir%%project%%ext% >nul 2>&1
 del /q %exedir%%project%.map >nul 2>&1
 del /q %exedir%%project%.map.sorted >nul 2>&1
@@ -14,10 +12,12 @@ del /s /q *.~* >nul 2>&1
 del /s /q *.dcu >nul 2>&1
 del /s /q *.dsk >nul 2>&1
 del /s /q *.drc >nul 2>&1
+del /q %project%.rc.bak >nul 2>&1
 del /q %project%.res.bak >nul 2>&1
 del /q %project%.dproj.2007 >nul 2>&1
 del /q %project%.dproj.local >nul 2>&1
 del /q %project%.identcache >nul 2>&1
+del /q %project%.skincfg >nul 2>&1
 del /q %project%.x64.dproj.local >nul 2>&1
 del /q %project%.x64.identcache >nul 2>&1
 call :history .

@@ -1,8 +1,6 @@
 @echo off
 setlocal
-set project=YTD
-set project_title=YTD
-set project_url=http://www.pepak.net/ytd
+call info.bat info
 
 if "%~1"=="" goto syntax
 if /i "%2"=="zip" goto zip
@@ -34,6 +32,7 @@ goto build
 :build
 set version=%1
 
+if exist "%srcdir%%project%.rc" updver.exe -v %version% "%srcdir%%project%.rc"
 if exist "%srcdir%%project%.res" updver.exe -v %version% "%srcdir%%project%.res"
 if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
 if exist ..\ytd-%version%.zip del ..\ytd-%version%.zip
@@ -65,19 +64,19 @@ popd
 pushd ..
 call :pack-zip ytd-%version%-source.zip bin\* source\*
 popd
-goto konec
+goto :eof
 
 :syntax
 echo build-rel ^<version^> [build-arguments]
-goto konec
+goto :eof
 
 :pack-zip
 kzip /r %*
-goto konec
+goto :eof
 
 :pack-7z
 7z a -t7z -mx=9 -r %*
-goto konec
+goto :eof
 
 :pack-exe
 setlocal
@@ -87,7 +86,4 @@ if exist "%tempytd%" del "%tempytd%"
 "%packdir%\7zr.exe" a "%tempytd%" -t7z -m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
 if not errorlevel 1 copy /b "%packdir%7zS2.sfx" + "%tempytd%" "%~1"
 if exist "%tempytd%" del "%tempytd%"
-goto konec  
-
-
-:konec
+goto :eof  

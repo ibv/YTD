@@ -129,6 +129,9 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DISABLERTMPDUMPWARNING), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DISABLEMSDLWARNING), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY), [akTop, akLeft, akRight]);
+  {$IFNDEF SYSTRAY}
+  ShowWindow(GetDlgItem(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY), SW_HIDE);
+  {$ENDIF}
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'OPTIONS_MAIN_ACTIONS');
 end;
@@ -180,7 +183,9 @@ begin
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLEOPENSSLWARNING, CheckboxConsts[Options.IgnoreMissingOpenSSL]);
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLERTMPDUMPWARNING, CheckboxConsts[Options.IgnoreMissingRtmpDump]);
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLEMSDLWARNING, CheckboxConsts[Options.IgnoreMissingMSDL]);
+  {$IFDEF SYSTRAY}
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY, CheckboxConsts[Options.MinimizeToTray]);
+  {$ENDIF}
   SetWindowText(EditLanguage, PChar(Options.Language));
 end;
 
@@ -229,12 +234,14 @@ begin
       Options.IgnoreMissingMSDL := False;
     end;
   // Minimize to tray
+  {$IFDEF SYSTRAY}
   case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY) of
     BST_CHECKED:
       Options.MinimizeToTray := True;
     BST_UNCHECKED:
       Options.MinimizeToTray := False;
     end;
+  {$ENDIF}
   // Language
   Options.Language := GetWindowTextAsString(EditLanguage);
 end;

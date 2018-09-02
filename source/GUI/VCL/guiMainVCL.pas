@@ -49,6 +49,9 @@ uses
   {$IFDEF DELPHIXE4_UP}
   UITypes,
   {$ENDIF}
+  {$IFDEF DELPHIX_SEATTLE_UP}
+  Types,
+  {$ENDIF}
   SynaCode,
   uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
   guiOptions, guiFunctions, uDialogs, uUpgrade,

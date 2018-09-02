@@ -52,6 +52,7 @@ type
 
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
+function DirectoryExists(const Directory: string): boolean;
 {$ENDIF}
 
 {$IFNDEF DELPHI2009_UP}
@@ -240,6 +241,15 @@ function ExcludeTrailingPathDelimiter(const Path: string): string;
 begin
   Result := ExcludeTrailingBackslash(Path);
 end;
+
+function DirectoryExists(const Directory: string): boolean;
+var
+  Attr: Cardinal;
+begin
+  Attr := GetFileAttributes(PChar(Directory));
+  Result := (Attr <> INVALID_FILE_ATTRIBUTES) and ((FILE_ATTRIBUTE_DIRECTORY and Attr) <> 0);
+end;
+
 {$ENDIF}
 
 {$IFNDEF DELPHI2009_UP}

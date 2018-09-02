@@ -100,6 +100,11 @@ function ZipCRC32(const Data: ansistring): longword;
 
 implementation
 
+{$IFDEF FPC}
+uses
+  zstream;
+{$ENDIF}
+
 { TZipFile }
 
 procedure TZipFile.SaveToFile(const filename: TFileName);

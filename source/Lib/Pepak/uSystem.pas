@@ -1284,7 +1284,9 @@ begin
       for i := 0 to Pred(SystemTempFileList.Count) do
         begin
         FN := SystemTempFileList[i];
-        if FileExists(FN) then
+        if DirectoryExists(FN) then
+          ForceDeleteDirectory(FN)
+        else if FileExists(FN) then
           DeleteFile(PChar(FN));
         end;
     finally
@@ -1675,7 +1677,7 @@ begin
     DeviceID := Info.szDevice;
     Name := DeviceID;
     Disp.cb := Sizeof(Disp);
-    if EnumDisplayDevices(PChar(DeviceID), 0, Disp, 0) then
+    if EnumDisplayDevices(PChar(DeviceID), 0, {$IFDEF FPC} @ {$ENDIF} Disp, 0) then
       Name := Disp.DeviceString;
     Result := True;
     end;

@@ -81,6 +81,7 @@ type
       procedure ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessIf(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessPause(Node: TXmlNode; Vars: TScriptVariables);
       function TestCondition(Node: TXmlNode; Vars: TScriptVariables): boolean;
       procedure ProcessCommonDownload(Node: TXmlNode; Vars: TScriptVariables; out Url, Title, FileNameExt: string);
       procedure ProcessHttpDownload(Node: TXmlNode; Vars: TScriptVariables);
@@ -402,8 +403,10 @@ begin
         ProcessMultiRegExp(ChildNode, Vars)
       else if ChildNode.Name = 'if' then
         ProcessIf(ChildNode, Vars)
+      else if ChildNode.Name = 'pause' then
+        ProcessPause(ChildNode, Vars)
       else
-        ScriptError(MSG_SCRIPTS_UNKNOWN_COMMAND, ChildNode);
+        ScriptError(ERR_SCRIPTS_UNKNOWN_COMMAND, ChildNode);
     end;
 end;
 
@@ -717,13 +720,13 @@ begin
           else if ChildNode.Name = 'relative_url' then
             Result := Result + ProcessRelativeUrl(ChildNode, Vars)
           else
-            ScriptError(MSG_SCRIPTS_UNKNOWN_COMMAND, ChildNode)
+            ScriptError(ERR_SCRIPTS_UNKNOWN_COMMAND, ChildNode)
         else
           Result := Result + ProcessNodeContent(ChildNode, Vars);
         end;
       end;
     else
-      ScriptError(MSG_SCRIPTS_UNEXPECTED_NODE_TYPE, Node);
+      ScriptError(ERR_SCRIPTS_UNEXPECTED_NODE_TYPE, Node);
     end;
 end;
 
@@ -835,7 +838,7 @@ begin
       else
         OK := DownloadPage(Http, Url, Result, Encoding, Method);
     if not OK then
-     ScriptError(Format(MSG_SCRIPTS_DOWNLOAD_FAILED, [Url]), Node)
+     ScriptError(Format(ERR_SCRIPTS_DOWNLOAD_FAILED, [Url]), Node)
     else
       begin
       Vars[SCRIPTVAR_LAST_URL] := Self.LastURL;
@@ -1033,15 +1036,15 @@ begin
         if ElseNode = nil then
           ElseNode := ChildNode
         else
-          ScriptError(MSG_SCRIPTS_MULTIPLE_ELSE, Node)
+          ScriptError(ERR_SCRIPTS_MULTIPLE_ELSE, Node)
       else
-        ScriptError(Format(MSG_SCRIPTS_UNKNOWN_COMMAND_NAMED, [ChildNode.Name]), Node)
+        ScriptError(Format(ERR_SCRIPTS_UNKNOWN_COMMAND_NAMED, [ChildNode.Name]), Node)
     end;
   if not SomeConditionSatisfied then
     if ElseNode <> nil then
       ProcessScript(ElseNode, Vars)
     else
-      ScriptError(MSG_SCRIPTS_IF_NOT_SATISFIED, Node);
+      ScriptError(ERR_SCRIPTS_IF_NOT_SATISFIED, Node);
 end;
 
 function TScriptedDownloader.TestCondition(Node: TXmlNode; Vars: TScriptVariables): boolean;
@@ -1053,7 +1056,36 @@ begin
   if ConditionType = 'regexp_match' then
     Result := ProcessRegExp(Node, Vars, Dummy)
   else
-    ScriptError(MSG_SCRIPTS_UNKNOWN_CONDITION, Node);
+    ScriptError(ERR_SCRIPTS_UNKNOWN_CONDITION, Node);
+end;
+
+procedure TScriptedDownloader.ProcessPause(Node: TXmlNode; Vars: TScriptVariables);
+var
+  ValueFrom, ValueTo, Value: integer;
+  s1, s2: string;
+begin
+  Value := 0;
+  ValueFrom := 0;
+  ValueTo := 0;
+  if XmlAttribute(Node, 'value', s1) then
+    begin
+    ValueFrom := StrToInt(s1);
+    ValueTo := ValueFrom;
+    end
+  else if XmlAttribute(Node, 'from', s1) and XmlAttribute(Node, 'to', s2) then
+    begin
+    ValueFrom := StrToInt(s1);
+    ValueTo := StrToInt(s2);
+    end
+  else
+    ScriptError(ERR_SCRIPTS_INVALID_PAUSE, Node);
+  if ValueTo > ValueFrom then
+    Value := ValueFrom + Random(ValueTo - ValueFrom + 1)
+  else if ValueTo = ValueFrom then
+    Value := ValueFrom
+  else
+    ScriptError(ERR_SCRIPTS_INVALID_PAUSE, Node);
+  Sleep(Value);
 end;
 
 function TScriptedDownloader.ProcessCopy(Node: TXmlNode; Vars: TScriptVariables): string;

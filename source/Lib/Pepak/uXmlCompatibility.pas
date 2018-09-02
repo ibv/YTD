@@ -25,6 +25,8 @@ type
   TXmlNode = NativeXml.TXmlNode;
 {$ENDIF}
 
+function XmlCreateFromStream(Owner: TComponent; Stream: TStream; out Doc: TXmlDoc; const RootName: string = ''): boolean;
+function XmlCreateFromFile(Owner: TComponent; const FileName: string; out Doc: TXmlDoc; const RootName: string = ''): boolean;
 function XmlCreateFromString(Owner: TComponent; const Xml: AnsiString; out Doc: TXmlDoc; const RootName: string = ''): boolean;
 function XmlRoot(Doc: TXmlDoc): TXmlNode;
 function XmlNodeName(Node: TXmlNode): string;
@@ -36,7 +38,8 @@ procedure XmlSetAttribute(Node: TXmlNode; const Name, Value: string);
 function XmlChildCount(Node: TXmlNode): integer;
 function XmlChild(Node: TXmlNode; Index: integer): TXmlNode;
 function XmlAddChild(Node: TXmlNode; const Name: string): TXmlNode;
-function XmlFindNode(Root: TXmlNode; Path: string; out Node: TXmlNode): boolean;
+function XmlFindNode(Root: TXmlNode; Path, AttrName, AttrValue: string; out Node: TXmlNode): boolean; overload;
+function XmlFindNode(Root: TXmlNode; Path: string; out Node: TXmlNode): boolean; overload;
 function XmlSave(Doc: TXmlDoc): Utf8String;
 
 implementation
@@ -111,6 +114,32 @@ begin
   Result := {$IFDEF DELPHIXML} Node.AddChild(Name) {$ELSE} Node.NodeNew(Name) {$ENDIF} ;
 end;
 
+function XmlCreateFromFile(Owner: TComponent; const FileName: string; out Doc: TXmlDoc; const RootName: string = ''): boolean;
+var
+  Stream: TFileStream;
+begin
+  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  try
+    Result := XmlCreateFromStream(Owner, Stream, Doc, RootName);
+  finally
+    FreeAndNil(Stream);
+    end;
+end;
+
+function XmlCreateFromStream(Owner: TComponent; Stream: TStream; out Doc: TXmlDoc; const RootName: string = ''): boolean;
+var
+  XmlData: AnsiString;
+  n: integer;
+begin
+  n := Stream.Size - Stream.Position;
+  if n < 0 then
+    n := 0;
+  SetLength(XmlData, n);
+  if n > 0 then
+    Stream.ReadBuffer(XmlData[1], n);
+  Result := XmlCreateFromString(Owner, XmlData, Doc, RootName);
+end;
+
 function XmlCreateFromString(Owner: TComponent; const Xml: AnsiString; out Doc: TXmlDoc; const RootName: string = ''): boolean;
 {$IFNDEF DELPHIXML}
 var Stream: TMemoryStream;
@@ -145,18 +174,24 @@ begin
     end;
 end;
 
-function XmlFindNode(Root: TXmlNode; Path: string; out Node: TXmlNode): boolean;
-var N: TXmlNode;
-    i: integer;
-    NodeName: string;
-    Found: boolean;
+function XmlFindNode(Root: TXmlNode; Path, AttrName, AttrValue: string; out Node: TXmlNode): boolean;
+var
+  i: integer;
+  TestNode: TXmlNode;
+  NodeName: string;
 begin
   Result := False;
   Node := nil;
   if Root <> nil then
-    begin
-    N := Root;
-    while Path <> '' do
+    if Path = '' then
+      begin
+      if (AttrName = '') or (XmlAttribute(Root, AttrName) = AttrValue) then
+        begin
+        Node := Root;
+        Result := True;
+        end;
+      end
+    else
       begin
       i := Pos('/', Path);
       if i <= 0 then
@@ -169,25 +204,22 @@ begin
         NodeName := Copy(Path, 1, Pred(i));
         Path := Copy(Path, Succ(i), MaxInt);
         end;
-      if NodeName = '' then
-        Continue;
-      Found := False;
-      for i := 0 to XmlChildCount(N) - 1 do
-        if XmlNodeName(XmlChild(N, i)) = NodeName then
+      for i := 0 to XmlChildCount(Root) - 1 do
+        begin
+        TestNode := XmlChild(Root, i);
+        if XmlNodeName(TestNode) = NodeName then
           begin
-          N := XmlChild(N, i);
-          Found := True;
-          Break;
+          Result := XmlFindNode(TestNode, Path, AttrName, AttrValue, Node);
+          if Result then
+            Break;
           end;
-      if not Found then
-        Exit;
+        end;
       end;
-    if Path = '' then
-      begin
-      Node := N;
-      Result := True;
-      end;
-    end;
+end;
+
+function XmlFindNode(Root: TXmlNode; Path: string; out Node: TXmlNode): boolean;
+begin
+  Result := XmlFindNode(Root, Path, '', '', Node);
 end;
 
 function XmlSave(Doc: TXmlDoc): Utf8String;

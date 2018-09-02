@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.50+                                                   (c) 2009-15 Pepak
+YTD v1.51+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -125,6 +125,7 @@ HokejCb.cz          | HTTP     |       | http://www.hokejcb.cz/clanek.asp?id=VID
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
 HudebniVideoKlipy.cz| HTTP     |       | http://www.hudebnivideoklipy.cz/chinaski-kerka-119555.html
 i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
+iConcerts.com       | HTTP     |       | http://www3.iconcerts.com/en/concert/coldplay-how-we-saw-world-part-one
 iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
                     |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
 iHned.cz            | RTMP     |       | http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
@@ -276,6 +277,7 @@ Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
 SteamPowered.com    | HTTP     |       | http://store.steampowered.com/video/220
 Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
+Streamin.to         | RTMP     |       | http://streamin.to/wpgpkcf4d3f1
 StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
@@ -300,6 +302,7 @@ TVcom.cz            | MS       |       | http://bojove-sporty.tvcom.cz/video/545
                     | MS       |       | http://basketbal.tvcom.cz/Zapas/Soutez-U19-Extraliga/Cast-Zakladni/Pohlavi-Muzi/Sezona-2011-2012/10952-BC-Vysocina-BK-Kondori-Liberec.htm
 TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
 TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
+TVNoe.cz            | HTTP     |       | http://www.tvnoe.cz/video/5638
 TVNoviny.sk         | HTTP     | 8     | http://tvnoviny.sk/video/videospravy/televizne-noviny/2432970
 TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
 TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
@@ -365,6 +368,7 @@ FreeVideo.cz        | HTTP     | F     |
 Gavin.xxx           | HTTP     | F     |
 Grinvi.com          | HTTP     | F     |
 HardSexTube.com     | HTTP     | F     |
+ItsAllGay.eu        | HTTP     | F     |
 JenProMuze.cz       | HTTP     | F     |
 KeezMovies.com      | HTTP     | F     |
                     | HTTP     | F,9   | http://www.keezmovies.com/embed_player.php?vid=...
@@ -378,6 +382,7 @@ PornHub.com         | HTTP     | F     |
 PornoTube.com       | HTTP     | F     |
 PornoZdarma.cz      | HTTP     | F     |
 PornTube.com        | HTTP     | F     |
+RandyBlue.com       | HLS      | F     |
 RawTube.com         | HTTP     | F     |
 RedTube.com         | HTTP     | F     |
 Rude.com            | HTTP     | F     |

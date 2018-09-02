@@ -42,6 +42,9 @@ interface
 
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
+  {$IFDEF DELPHIX_SEATTLE_UP}
+  Types,
+  {$ENDIF}
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
   HttpSend, SynaCode,
   uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
@@ -160,7 +163,6 @@ uses
   guiConsts, guiAboutWINAPI, {$IFDEF CONVERTERS} guiConverterWINAPI, {$ENDIF} guiOptionsWINAPI,
   uScriptedDownloader;
 
-
 // from resource.h
 const
   IDC_LIST_DOWNLOADS = 1000;
@@ -190,7 +192,6 @@ const
   ACTION_PLAY = 40025;
   ACTION_MENU = 40026;
 
-
 //
 const
   LISTVIEW_SUBITEM_URL = 0;
@@ -199,6 +200,14 @@ const
   LISTVIEW_SUBITEM_TITLE = 3;
   LISTVIEW_SUBITEM_SIZE = 4;
   LISTVIEW_SUBITEM_PROGRESS = 5;
+
+{$IFDEF FPC}
+function Point(X, Y: integer): TPoint;
+begin
+  Result.X := X;
+  Result.Y := Y;
+end;
+{$ENDIF}
 
 {$IFDEF PREPARETRANSLATIONS}
 var

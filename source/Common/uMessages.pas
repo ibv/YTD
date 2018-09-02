@@ -129,13 +129,14 @@ resourcestring
   ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY = 'Variable name may not be empty.';
   ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY = 'Attribute "%s" may not be empty.';
   ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE = 'Attribute "%s" has invalid value "%s".';
-  MSG_SCRIPTS_UNKNOWN_COMMAND = 'Unknown command.';
-  MSG_SCRIPTS_UNKNOWN_COMMAND_NAMED = 'Unknown command "%s".';
-  MSG_SCRIPTS_DOWNLOAD_FAILED = 'Download failed: %s';
-  MSG_SCRIPTS_UNEXPECTED_NODE_TYPE = 'Unexpected node type.';
-  MSG_SCRIPTS_MULTIPLE_ELSE = 'Multiple <else> tags encountered.';
-  MSG_SCRIPTS_IF_NOT_SATISFIED = 'No satisfied condition found.';
-  MSG_SCRIPTS_UNKNOWN_CONDITION = 'Unknown condition.';
+  ERR_SCRIPTS_UNKNOWN_COMMAND = 'Unknown command.';
+  ERR_SCRIPTS_UNKNOWN_COMMAND_NAMED = 'Unknown command "%s".';
+  ERR_SCRIPTS_DOWNLOAD_FAILED = 'Download failed: %s';
+  ERR_SCRIPTS_UNEXPECTED_NODE_TYPE = 'Unexpected node type.';
+  ERR_SCRIPTS_MULTIPLE_ELSE = 'Multiple <else> tags encountered.';
+  ERR_SCRIPTS_IF_NOT_SATISFIED = 'No satisfied condition found.';
+  ERR_SCRIPTS_UNKNOWN_CONDITION = 'Unknown condition.';
+  ERR_SCRIPTS_INVALID_PAUSE = 'Invalid <pause> settings.';
   ERR_XML_ELEMENT_NOT_FOUND = 'XML element not found.';
 
 {gnugettext: reset}

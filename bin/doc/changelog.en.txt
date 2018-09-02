@@ -1,11 +1,31 @@
 ﻿______________________________________________________________________________
 
-YTD v1.50                                                    (c) 2009-15 Pepak
+YTD v1.51                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.51:
+
+    * Updated the slovak translation, thanks to Vladimír Kubala.
+
+    * New providers:
+      - iConcerts.com
+      - ItsAllGay.com
+      - RandyBlue.com (porn)
+      - Streamin.to
+
+    * Updated providers:
+      - CeskaTelevize.cz
+      - DrsnySvet.cz
+      - PornHub.com (porno)
+      - RedTube.com (porno)
+      - TVNoe.cz
+      - YouTube.com
+
+
 
   v1.50:
 

@@ -43,7 +43,7 @@ uses
   SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uRtmpDownloader,
-  uHttpDownloader, downStream;
+  uHttpDownloader;
 
 type
   TDownloader_iPrima = class(TRtmpDownloader)
