@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -49,12 +49,14 @@ type
     private
     protected
       VideoIdRegExp: TRegExp;
+      TimestampRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -73,8 +75,9 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
+  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_TITLE;
   REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
+  REGEXP_EXTRACT_TIMESTAMP = '\bplv\s*\(.*?,\s*(?P<TS>[0-9]+)\s*\)\s*;';
 
 { TDownloader_MojeVideoSk }
 
@@ -88,18 +91,25 @@ begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
+class function TDownloader_MojeVideoSk.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRequireSecureToken];
+end;
+
 constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
   VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID);
+  TimestampRegExp := RegExCreate(REGEXP_EXTRACT_TIMESTAMP);
 end;
 
 destructor TDownloader_MojeVideoSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(TimestampRegExp);
   inherited;
 end;
 
@@ -109,15 +119,23 @@ begin
 end;
 
 function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID: string;
+const
+  Server {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://fs5.mojevideo.sk';
+var
+  ID, Signature, Timestamp, Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else if not GetRegExpVar(TimestampRegExp, Page, 'TS', Timestamp) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
   else
     begin
-    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.mp4';
+    Stream := Format('/%s.mp4', [ID]);
+    Timestamp := LowerCase(IntToHex({UnixTimestamp} StrToInt(Timestamp), 8));
+    Signature := HexEncode(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (Self.Token + Stream + Timestamp)));
+    MovieUrl := Format('%s/dl/%s/%s%s', [Server, Signature, Timestamp, Stream]);
     SetPrepared(True);
     Result := True;
     end;

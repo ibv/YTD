@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.08                                                    (c) 2009-12 Pepak
+YTD v1.09                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -137,6 +137,7 @@ KanalTurk.com.tr    | HTTP     |       | http://www.kanalturk.com.tr/video/?vId=
 Kinobox.cz          | HTTP     |       | http://www.kinobox.cz/porady/video/6273-prednaska-henriho-monforta-21112011
 Kontraband.com      | HTTP     |       | http://www.kontraband.com/videos/23388/Failed-Slam-Dunks/
 Kukaj.sk            | HTTP     |       | http://www.kukaj.sk/videa/5860/
+Laola1.tv           | RTMP     |       | http://www.laola1.tv/en/int/volleyball/cev-mens-olympic-qualification/cev-oq-men-sofia-italy-germany/video/353-2021-84517.html
 LenkaFilipova.cz    | HTTP     |       | http://www.lenkafilipova.cz/lf/kytarova_skola18.html
 LevelTV.Hrej.cz     | HTTP     | 9,10  | http://leveltv.hrej.cz/include/2012/leden/3/213_rec_serioussam.mp4
 LibimSeTi.cz        | HTTP     |       | http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
@@ -160,7 +161,7 @@ Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/2
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
 MojeVideo.cz        | HTTP     |       | http://mojevideo.cz/view.php?id=5332
-MojeVideo.sk        | HTTP     |       | http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+MojeVideo.sk        | HTTP     | 8     | http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
 Mpora.com           | HTTP     |       | http://video.mpora.com/watch/xfnGGmZDC/
 MTV.com             | RTMP     |       | http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
                     |          |       | http://media.mtvnservices.com/mgid:uma:video:mtv.com:602324
@@ -177,6 +178,7 @@ N-joy.cz            | HTTP     |       | http://n-joy.cz/video/shank-5-minut-hra
 NaStojaka.cz        | HTTP     |       | http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
 NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=5766
 NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
+NebickoVPapulke.sk  | HTTP     |       | http://www.nebickovpapulke.sk/epizoda/epizoda-26-sisi-bardejov
 News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
 NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
@@ -260,6 +262,7 @@ TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/
 TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
 TV-Vysocina.cz      | MS       | 9     | http://www.tv-vysocina.cz/index.php?page=2&datum=2011-12-16%2018:10:00&vselect1=4927&jednotlive=1
 Tyzden.sk           | HTTP     |       | http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
+Uloz.to             | HTTP     |       | http://www.uloz.to/live/xZT8KZZ/harry-potter-a-sexy-hermiona-avi
 UStream.tv          | HTTP     |       | http://www.ustream.tv/recorded/7022540
 VeeHD.com           | HTTP     |       | http://veehd.com/video/4639434_Solar-Sinter
 VideaCesky.cz       | HTTP     |       | http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild

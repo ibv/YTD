@@ -80,7 +80,8 @@ const
 
 const
   REGEXP_MOVIE_TITLE = '<span\s+id="albumName">(?P<TITLE>.*?)</span>';
-  REGEXP_PLAYLIST = '\{\s*photoID\s*:\s*"(?P<ID>[0-9]+)"\s*,\s*date\s*:\s*"[^"]*"\s*,\s*name\s*:\s*"(?P<TITLE>[^"]*)"\s*,\s*isVideo\s*:\s*true\s*,\s*desc\s*:\s*"[^"]*"\s*,\s*info\s*:\s*"(?P<FILENAME>[^"|\s]+)[^"]*"';
+  //REGEXP_PLAYLIST = '\{\s*photoID\s*:\s*"(?P<ID>[0-9]+)"\s*,\s*date\s*:\s*"[^"]*"\s*,\s*name\s*:\s*"(?P<TITLE>[^"]*)"\s*,\s*isVideo\s*:\s*true\s*,\s*desc\s*:\s*"[^"]*"\s*,\s*info\s*:\s*"(?P<FILENAME>[^"|\s]+)[^"]*"';
+  REGEXP_PLAYLIST = '\{\s*photoID\s*:\s*"(?P<ID>[0-9]+)"\s*,\s*date\s*:\s*"[^"]*"\s*,\s*name\s*:\s*"(?P<TITLE>[^"]*)"\s*,\s*version\s*:\s*[0-9]*\s*,\s*isVideo\s*:\s*true\s*,\s*desc\s*:\s*"[^"]*"\s*,\s*info\s*:\s*"(?P<FILENAME>[^"|\s]+)[^"]*"';
 
 { TDownloader_Rajce }
 

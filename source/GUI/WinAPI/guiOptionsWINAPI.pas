@@ -60,7 +60,7 @@ type
       function DoClose: boolean; override;
       function DoSize(ResizeType, NewWidth, NewHeight: integer): boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
-      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; override;
+      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean; override;
     protected
       procedure LoadFromOptions;
       procedure SaveToOptions;
@@ -205,7 +205,7 @@ begin
     Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
 end;
 
-function TFormOptions.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean;
+function TFormOptions.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean;
 begin
   if (ControlID = IDC_PAGE_OPTIONS) and (Code = TCN_SELCHANGE) then
     begin

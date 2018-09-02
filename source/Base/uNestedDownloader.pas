@@ -159,12 +159,16 @@ begin
     end;
 end;
 
+type
+  TDownloaderHack = class(TDownloader);
+
 function TNestedDownloader.CreateNestedDownloaderFromDownloader(Downloader: TDownloader): boolean;
 begin
   NestedDownloader := Downloader;
   NestedDownloader.Options := Options;
   NestedDownloader.OnProgress := OnProgress;
   NestedDownloader.OnFileNameValidate := NestedFileNameValidate;
+  TDownloaderHack(NestedDownloader).Referer := Referer;
   Result := True;
 end;
 

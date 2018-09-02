@@ -66,12 +66,14 @@ type
       property UserName: string read fUserName;
       property Password: string read fPassword;
     protected
+      Token: string;
       function GetFileNameExt: string; override;
       function GetContentUrl: string; override;
       function BuildMovieUrl(out Url: string): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); override;
+      function PrepareToken: boolean;
       {$IFDEF SUBTITLES}
     protected
       fSubtitleUrlRegExps: array of TRegExp;
@@ -104,6 +106,8 @@ const
     OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'convert_subtitles';
     OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT = True;
   {$ENDIF}
+  OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'live_stream';
+  OPTION_COMMONDOWNLOADER_SECURETOKEN {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secure_token';
 
 implementation
 
@@ -256,6 +260,12 @@ begin
   Result := False;
   SetPrepared(False);
   PageXml := nil;
+  if not PrepareToken then
+    begin
+    SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET);
+    Result := False;
+    Exit;
+    end;
   Info := CreateHttp;
   try
     // Download the media info page.
@@ -347,6 +357,15 @@ begin
     fUserName := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_USERNAME, '');
     fPassword := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_PASSWORD, '');
     end;
+end;
+
+function TCommonDownloader.PrepareToken: boolean;
+begin
+  Token := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, '');
+  if dfRequireSecureToken in Features then
+    Result := Token <> ''
+  else
+    Result := True;
 end;
 
 end.

@@ -82,13 +82,13 @@ function CreateProcessAsync(lpApplicationName: PChar; lpCommandLine: PChar;
   OnProcessFinished: TProcessFinishedEvent
   ): BOOL;
 
-{$IFNDEF DELPHI8_UP}
+{$IFNDEF DELPHI2009_UP}
 function UnregisterWait(WaitHandle: THandle): BOOL; stdcall;
 {$ENDIF}
 
 implementation
 
-{$IFNDEF DELPHI8_UP}
+{$IFNDEF DELPHI2009_UP}
 const
   WT_EXECUTEONLYONCE = $8;
 
@@ -174,7 +174,13 @@ begin
   hThread := AThread;
   OnProcessFinished := AOnProcessFinished;
   FreeOnTerminate := True;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED OFF}
+  {$ENDIF}
   Resume;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED ON}
+  {$ENDIF}
 end;
 
 procedure TWaitForProcessEndThread.Execute;
@@ -218,7 +224,7 @@ begin
   if Result then
     begin
     {$IFDEF REGISTERWAITFORSINGLEOBJECT}
-    {$IFNDEF DELPHI8_UP}
+    {$IFNDEF DELPHI2009_UP}
     if Assigned(RegisterWaitForSingleObject) then
     {$ENDIF}
       begin
@@ -245,7 +251,7 @@ begin
 end;
 
 initialization
-  {$IFNDEF DELPHI8_UP}
+  {$IFNDEF DELPHI2009_UP}
   KernelDll := LoadLibrary('kernel32.dll');
   if KernelDll <> 0 then
     begin
@@ -260,7 +266,7 @@ initialization
   {$ENDIF}
 
 finalization
-  {$IFNDEF DELPHI8_UP}
+  {$IFNDEF DELPHI2009_UP}
   if KernelDll <> 0 then
     begin
     FreeLibrary(KernelDll);

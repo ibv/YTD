@@ -58,6 +58,12 @@ if "%compiler%"=="fpc" (
     if not errorlevel 1 set compver=d5
     dcc32 | find /i "Version 20.0"
     if not errorlevel 1 set compver=d2009
+    dcc32 | find /i "Version 21.0"
+    if not errorlevel 1 set compver=d2009
+    dcc32 | find /i "Version 22.0"
+    if not errorlevel 1 set compver=d2009
+    dcc32 | find /i "Version 23.0"
+    if not errorlevel 1 set compver=dxe2
   )
 )
 
@@ -79,6 +85,7 @@ if not "%setup%"=="1" set defs=%defs% -dNO_SETUP
 if not "%xxx%"=="1" set defs=%defs% -dNO_XXX
 if "%fastmm%"=="1" set defs=%defs% -dFASTMM
 if "%map%"=="1" if "%compiler%"=="delphi" set params=%params% -GD
+if "%compver%"=="dxe2" set params=%params% -NSSystem;WinApi;Vcl
 
 rem --- Delete compiled units -------------------------------------------------
 del /q "%srcdir%Units\*.*"
@@ -95,6 +102,8 @@ if "%compver%"=="fpc" (
 ) else if "%compver%"=="d5" (
   call :%compiler% "%srcdir%lib\DxGetText\delphi5\gnugettextD5.pas"
 ) else if "%compver%"=="d2009" (
+  call :%compiler% "%srcdir%lib\DxGetText\delphi2009\gnugettext.pas"
+) else if "%compver%"=="dxe2" (
   call :%compiler% "%srcdir%lib\DxGetText\delphi2009\gnugettext.pas"
 ) else (
   call :%compiler% "%srcdir%lib\DxGetText\gnugettext.pas"

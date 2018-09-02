@@ -60,7 +60,7 @@ type
       function DoInitDialog: boolean; override;
       function DoClose: boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
-      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; override;
+      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean; override;
       function DoSize(ResizeType, NewWidth, NewHeight: integer): boolean; override;
       function CanClose: boolean; override;
     private
@@ -494,7 +494,7 @@ begin
     end;
 end;
 
-function TFormMain.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean;
+function TFormMain.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean;
 begin
   if (ControlID = IDC_LIST_DOWNLOADS) and (Code = LVN_GETDISPINFO) then
     Result := DownloadListGetDisplayInfo(PLVDispInfo(LParam))

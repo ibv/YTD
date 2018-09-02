@@ -59,7 +59,7 @@ type
       function DoClose: boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
       {$IFNDEF STATICPROVIDERLIST}
-      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; override;
+      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean; override;
       {$ENDIF}
     protected
       function DoCtlColorStatic(DeviceContext: HDC; Control: THandle; out Brush: THandle): boolean; virtual;
@@ -281,7 +281,7 @@ begin
 end;
 
 {$IFNDEF STATICPROVIDERLIST}
-function TFormAbout.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; WParam: WPARAM; LParam: LPARAM; out NotifyResult: integer): boolean;
+function TFormAbout.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; WParam: WPARAM; LParam: LPARAM; out NotifyResult: LRESULT): boolean;
 begin
   if (ControlID = IDC_LIST_PROVIDERS) and (Code = LVN_GETDISPINFO) then
     Result := ListProvidersGetDisplayInfo(PLVDispInfo(LParam))

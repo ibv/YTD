@@ -77,7 +77,7 @@ type
       // Message handler for WM_COMMAND - shortcuts, menus, control-specific codes...
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; virtual;
       // Message handler for WM_NOTIFY - something happens to a control
-      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; virtual;
+      function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean; virtual;
       // Message handler for WM_SIZE - form was resized
       function DoSize(ResizeType, NewWidth, NewHeight: integer): boolean; virtual;
       // Message handler for WM_LBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_MBUTTONDBLCLK
@@ -410,7 +410,7 @@ begin
   Result := False;
 end;
 
-function TApiForm.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean;
+function TApiForm.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: LRESULT): boolean;
 begin
   Result := False;
   NotifyResult := 0;

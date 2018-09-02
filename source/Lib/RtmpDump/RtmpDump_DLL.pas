@@ -26,6 +26,17 @@ implementation
 uses
   Windows;
 
+const
+  LIBRARY_NAME = 
+    {$IFDEF WIN32}
+    'rtmpdump_dll.dll'
+    {$ELSE}
+      {$IFDEF WIN64}
+      'rtmpdump_dll_x64.dll'
+      {$ENDIF}
+    {$ENDIF}
+    ;
+
 type
   PInternalRtmpDumpOption = ^TInternalRtmpDumpOption;
   TInternalRtmpDumpOption = record
@@ -43,7 +54,7 @@ function RtmpDump_Init: boolean;
 begin
   if LibHandle = 0 then
     begin
-    LibHandle := LoadLibrary('rtmpdump_dll.dll');
+    LibHandle := LoadLibrary(LIBRARY_NAME);
     if LibHandle <> 0 then
       begin
       RtmpDumpMain := GetProcAddress(LibHandle, 'RtmpDumpMain');

@@ -169,8 +169,8 @@ begin
       try
         repeat
           Sub := HtmlDecode(UrlDecode(SubtitlesRegExp.SubexpressionByName('CAPTION')), True);
-          SubStart := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('START'), '.', DecimalSeparator, []));
-          SubEnd := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('END'), '.', DecimalSeparator, []));
+          SubStart := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('START'), '.', {$IFDEF DELPHI2010_UP} FormatSettings. {$ENDIF} DecimalSeparator, []));
+          SubEnd := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('END'), '.', {$IFDEF DELPHI2010_UP} FormatSettings. {$ENDIF} DecimalSeparator, []));
           fSubtitles := fSubtitles + {$IFDEF UNICODE} AnsiString {$ENDIF} (SubtitlesToSrt(n, SubStart*ONE_SECOND, SubEnd*ONE_SECOND, Sub));
         until not SubtitlesRegExp.MatchAgain;
         fSubtitlesExt := '.srt';

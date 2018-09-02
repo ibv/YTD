@@ -85,6 +85,7 @@ type
       fLastUrl: string;
       fOnFileNameValidate: TDownloaderFileNameValidateEvent;
       fOptions: TYTDOptions;
+      fReferer: string;
     protected
       function GetName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -99,6 +100,7 @@ type
       procedure SetFileName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property UnpreparedName: string read fName;
       property LastURL: string read fLastUrl;
+      property Referer: string read fReferer write fReferer;
     protected
       function GetDefaultFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetFileNameExt: string; virtual;
@@ -108,6 +110,8 @@ type
       function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function CreateHttp: THttpSend; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      procedure ClearHttp(Http: THttpSend);
+      procedure SetReferer(Http: THttpSend; const Referer: string);
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; const Headers: array of string; Clear: boolean): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -129,6 +133,7 @@ type
       function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Encode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function HexEncode(const Text: AnsiString): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function JSDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripSlashes(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripTags(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -158,6 +163,7 @@ type
       procedure NotPreparedError; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function Smil_FindBestVideo(Container: TXmlNode; out Url: string; const MaxBitrate: integer = 0): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UnixTimestamp(DT: TDateTime = 0): integer;
     public
       class function Provider: string; virtual; abstract;
       class function Features: TDownloaderFeatures; virtual;
@@ -370,13 +376,42 @@ begin
   Result.ProxyPass := DefaultHttp.ProxyPass;
 end;
 
+procedure TDownloader.ClearHttp(Http: THttpSend);
+begin
+  Http.Clear;
+  if Referer <> '' then
+    SetReferer(Http, Referer);
+end;
+
+procedure TDownloader.SetReferer(Http: THttpSend; const Referer: string);
+const
+  RefererHdr = 'Referer:';
+var
+  i: integer;
+  Found: boolean;
+begin
+  if Referer <> '' then
+    begin
+    Found := False;
+    for i := 0 to Pred(Http.Headers.Count) do
+      if AnsiCompareText(RefererHdr, Copy(Http.Headers[i], 1, Length(RefererHdr))) = 0 then
+        begin
+        Http.Headers[i] := RefererHdr + ' ' + Referer;
+        Found := True;
+        Break;
+        end;
+    if not Found then
+      Http.Headers.Add(RefererHdr + ' ' + Referer);
+    end;
+end;
+
 function TDownloader.DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod; Clear: boolean): boolean;
 var MethodStr: string;
 begin
   repeat
     SetLastUrl(Url);
     if Clear then
-      Http.Clear;
+      ClearHttp(Http);
     case Method of
       hmGET:  MethodStr := 'GET';
       hmPOST: MethodStr := 'POST';
@@ -405,7 +440,7 @@ var
   i: integer;
 begin
   if Clear then
-    Http.Clear;
+    ClearHttp(Http);
   for i := 0 to Pred(Length(Headers)) do
     Http.Headers.Add(Headers[i]);
   InputStream := TMemoryStream.Create;
@@ -531,7 +566,7 @@ begin
       Node.Assign(SoapBody);
     RequestStr := Request.SaveToBinaryString;
     if Clear then
-      Http.Clear;
+      ClearHttp(Http);
     Http.Headers.Add('SOAPAction: ' + SoapAction);
     Result := DownloadXml(Http, Url, RequestStr, HTTP_SOAP_ENCODING, Response, False);
     try
@@ -765,6 +800,23 @@ end;
 function TDownloader.Base64Encode(const Text: string): string;
 begin
   Result :=  {$IFDEF UNICODE} string {$ENDIF} (EncodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (Text)));
+end;
+
+function TDownloader.HexEncode(const Text: AnsiString): string;
+const
+  HexChar {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '0123456789abcdef';
+var
+  i, j, n: integer;
+begin
+  n := Length(Text);
+  SetLength(Result, 2*n);
+  j := 1;
+  for i := 1 to n do
+    begin
+    Result[j] := HexChar[Succ(Byte(Text[i]) shr 4)];
+    Result[Succ(j)] := HexChar[Succ(Byte(Text[i]) and $f)];
+    Inc(j, 2);
+    end;
 end;
 
 function TDownloader.JSDecode(const Text: string): string;
@@ -1159,6 +1211,13 @@ begin
   if not Result then
     if (MaxBitrate > 0) then
       Result := Smil_FindBestVideo(Container, Url, 0);
+end;
+
+function TDownloader.UnixTimestamp(DT: TDateTime): integer;
+begin
+  if DT = 0 then
+    DT := Now;
+  Result := Trunc((DT - 25569) * 24*60*60);
 end;
 
 end.

@@ -157,12 +157,14 @@ begin
               end;
         if BestPath <> '' then
           begin
-          {$IFDEF DELPHI6_UP}
-            {$MESSAGE WARN 'Joj.sk: nevim, jak zjistit jmeno serveru'}
+          {$IFDEF DIRTYHACKS}
+            {$IFDEF DELPHI6_UP}
+              {$MESSAGE WARN 'Joj.sk: nevim, jak zjistit jmeno serveru'}
+            {$ENDIF}
+            MovieUrl := 'http://n06.joj.sk/' + BestPath;
+            SetPrepared(True);
+            Result := True;
           {$ENDIF}
-          MovieUrl := 'http://n06.joj.sk/' + BestPath;
-          SetPrepared(True);
-          Result := True;
           end;
         end;
     finally

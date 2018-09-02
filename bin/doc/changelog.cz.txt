@@ -1,11 +1,38 @@
 ______________________________________________________________________________
 
-YTD v1.08                                                    (c) 2009-12 Pepak
+YTD v1.09                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.09:
+
+    * Noví poskytovatelé: 
+      - Laola1.tv (asi jen nìkterá videa)
+      - NebickoVPapulke.sk
+      - Ulož.to (pouze Ulož.to LIVE)
+      - Zvrácený.cz (porno)
+
+    * Aktualizovaní poskytovatelé:
+      - Rajèe.iDnes.cz
+      - MojeVideo.sk (novì vyžaduje token!)
+
+    * YouTube.com: Zmìnil jsem logiku dekódování objektu FmtUrlMap, takže by
+      nyní mìla fungovat i videa s neobvyklým poøadím parametrù. Teoreticky
+      to mohlo i nìco rozhodit, takže když narazíte na video, které ve verzi
+      1.08 funguje a ve verzi 1.09 už ne, dejte vìdìt.
+
+    * Knihovna Synapse aktualizována na verzi 40. Pokud narazíte na pøíklad
+      nìèeho, co ve verzi 1.09 nefunguje a ve verzi 1.08 ano, dejte mi prosím
+      vìdìt. Díky.
+
+    * YTD lze nyní zkompilovat pomocí Delphi XE2 (32bitový režim). Ovìøena
+      funkènost kompilaèních skriptù pro Delphi 5, 7, 2007, 2009, XE2 a pro
+      FreePascal.
+
+
 
   v1.08:
 

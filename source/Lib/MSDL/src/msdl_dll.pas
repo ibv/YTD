@@ -28,6 +28,17 @@ implementation
 uses
   Windows;
 
+const
+  LIBRARY_NAME = 
+    {$IFDEF WIN32}
+    'msdl_dll.dll'
+    {$ELSE}
+      {$IFDEF WIN64}
+      'msdl_dll_x64.dll'
+      {$ENDIF}
+    {$ENDIF}
+    ;
+
 type
   PInternalMsdlOption = ^TInternalMsdlOption;
   TInternalMsdlOption = record
@@ -45,7 +56,7 @@ function Msdl_Init: boolean;
 begin
   if LibHandle = 0 then
     begin
-    LibHandle := LoadLibrary('msdl_dll.dll');
+    LibHandle := LoadLibrary(LIBRARY_NAME);
     if LibHandle <> 0 then
       begin
       MsdlMain := GetProcAddress(LibHandle, 'MsdlMain');

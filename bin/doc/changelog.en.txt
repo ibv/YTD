@@ -1,11 +1,37 @@
 ______________________________________________________________________________
 
-YTD v1.08                                                    (c) 2009-12 Pepak
+YTD v1.09                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.09:
+
+    * New providers: 
+      - Laola1.tv (probably only partial support)
+      - NebickoVPapulke.sk
+      - Uloz.to (only Uloz.to LIVE)
+      - Zvraceny.cz (porn)
+
+    * Updated providers:
+      - Rajce.iDnes.cz
+      - MojeVideo.sk (requires a token now)
+
+    * YouTube.com: Changed the decoding of the FmtUrlMap object so that it
+      will now work regardless of the order of the elements. It might break
+      something else, so if you find a video which works in YTD 1.08 and 
+      doesn't work in 1.09, please let me know.
+
+    * The Synapse library was updated to release 40. Again, this might break
+      something; in such a case, let me know.
+
+    * YTD is now compatible with Delphi XE2 (in 32bit mode). The build script
+      was verified to work with Delphi 5, 7, 2007, 2009 and XE2 and also with
+      FreePascal.
+
+
 
   v1.08:
 

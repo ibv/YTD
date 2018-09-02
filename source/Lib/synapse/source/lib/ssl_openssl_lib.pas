@@ -1,9 +1,9 @@
 {==============================================================================|
-| Project : Ararat Synapse                                       | 003.005.000 |
+| Project : Ararat Synapse                                       | 003.007.000 |
 |==============================================================================|
 | Content: SSL support by OpenSSL                                              |
 |==============================================================================|
-| Copyright (c)1999-2008, Lukas Gebauer                                        |
+| Copyright (c)1999-2012, Lukas Gebauer                                        |
 | All rights reserved.                                                         |
 |                                                                              |
 | Redistribution and use in source and binary forms, with or without           |
@@ -33,7 +33,8 @@
 | DAMAGE.                                                                      |
 |==============================================================================|
 | The Initial Developer of the Original Code is Lukas Gebauer (Czech Republic).|
-| Portions created by Lukas Gebauer are Copyright (c)2002-2008.                |
+| Portions created by Lukas Gebauer are Copyright (c)2002-2012.                |
+| Portions created by Petr Fejfar are Copyright (c)2011-2012.                  |
 | All Rights Reserved.                                                         |
 |==============================================================================|
 | Contributor(s):                                                              |
@@ -60,6 +61,13 @@ Special thanks to Gregor Ibic <gregor.ibic@intelicom.si>
   (*$HPPEMIT 'namespace ssl_openssl_lib { using System::Shortint; }' *)
 {$ENDIF}
 
+//old Delphi does not have MSWINDOWS define.
+{$IFDEF WIN32}
+  {$IFNDEF MSWINDOWS}
+    {$DEFINE MSWINDOWS}
+  {$ENDIF}
+{$ENDIF}
+
 {:@abstract(OpenSSL support)
 
 This unit is Pascal interface to OpenSSL library (used by @link(ssl_openssl) unit).
@@ -77,8 +85,12 @@ uses
 {$ENDIF}
   Classes,
   synafpc,
-{$IFNDEF WIN32}
-  Libc, SysUtils;
+{$IFNDEF MSWINDOWS}
+  {$IFDEF FPC}
+  BaseUnix, SysUtils;
+  {$ELSE}
+   Libc, SysUtils;
+  {$ENDIF}
 {$ELSE}
   Windows;
 {$ENDIF}
@@ -95,9 +107,14 @@ const
   {$ENDIF}
 {$ELSE}
 var
-  {$IFNDEF WIN32}
-  DLLSSLName: string = 'libssl.so';
-  DLLUtilName: string = 'libcrypto.so';
+  {$IFNDEF MSWINDOWS}
+    {$IFDEF DARWIN}
+    DLLSSLName: string = 'libssl.dylib';
+    DLLUtilName: string = 'libcrypto.dylib';
+    {$ELSE}
+    DLLSSLName: string = 'libssl.so';
+    DLLUtilName: string = 'libcrypto.so';
+    {$ENDIF}
   {$ELSE}
   DLLSSLName: string = 'ssleay32.dll';
   DLLSSLName2: string = 'libssl32.dll';
@@ -127,6 +144,9 @@ type
   PASN1_INTEGER = SslPtr;
   PPasswdCb = SslPtr;
   PFunction = procedure;
+  PSTACK = SslPtr; {pf}
+  TSkPopFreeFunc = procedure(p:SslPtr); cdecl; {pf}
+  TX509Free = procedure(x: PX509); cdecl; {pf}
 
   DES_cblock = array[0..7] of Byte;
   PDES_cblock = ^DES_cblock;
@@ -201,6 +221,9 @@ const
   SSL_FILETYPE_ASN1	= 2;
   SSL_FILETYPE_PEM = 1;
   EVP_PKEY_RSA = 6;
+
+  SSL_CTRL_SET_TLSEXT_HOSTNAME = 55;
+  TLSEXT_NAMETYPE_host_name = 0;
 
 var
   SSLLibHandle: TLibHandle = 0;
@@ -321,6 +344,11 @@ var
 
   [DllImport(DLLSSLName, CharSet = CharSet.Ansi,
     SetLastError = False, CallingConvention= CallingConvention.cdecl,
+    EntryPoint = 'SSL_CTX_ctrl')]
+    function SslCtxCtrl(ctx: PSSL_CTX; cmd: integer; larg: integer; parg: IntPtr): integer; external;
+
+  [DllImport(DLLSSLName, CharSet = CharSet.Ansi,
+    SetLastError = False, CallingConvention= CallingConvention.cdecl,
     EntryPoint = 'SSL_new')]
     function SslNew(ctx: PSSL_CTX):PSSL;  external;
 
@@ -398,6 +426,11 @@ var
     SetLastError = False, CallingConvention= CallingConvention.cdecl,
     EntryPoint = 'SSL_get_verify_result')]
     function SSLGetVerifyResult(ssl: PSSL):Integer;external;
+
+  [DllImport(DLLSSLName, CharSet = CharSet.Ansi,
+    SetLastError = False, CallingConvention= CallingConvention.cdecl,
+    EntryPoint = 'SSL_ctrl')]
+    function SslCtrl(ssl: PSSL; cmd: integer; larg: integer; parg: IntPtr): integer; external;
 
   [DllImport(DLLUtilName, CharSet = CharSet.Ansi,
     SetLastError = False, CallingConvention= CallingConvention.cdecl,
@@ -674,6 +707,7 @@ var
   procedure SslCtxSetDefaultPasswdCbUserdata(ctx: PSSL_CTX; u: SslPtr);
 //  function SslCtxLoadVerifyLocations(ctx: PSSL_CTX; const CAfile: PChar; const CApath: PChar):Integer;
   function SslCtxLoadVerifyLocations(ctx: PSSL_CTX; const CAfile: AnsiString; const CApath: AnsiString):Integer;
+  function SslCtxCtrl(ctx: PSSL_CTX; cmd: integer; larg: integer; parg: SslPtr): integer;
   function SslNew(ctx: PSSL_CTX):PSSL;
   procedure SslFree(ssl: PSSL);
   function SslAccept(ssl: PSSL):Integer;
@@ -690,6 +724,7 @@ var
   function SSLCipherGetName(c: SslPtr): AnsiString;
   function SSLCipherGetBits(c: SslPtr; var alg_bits: Integer):Integer;
   function SSLGetVerifyResult(ssl: PSSL):Integer;
+  function SSLCtrl(ssl: PSSL; cmd: integer; larg: integer; parg: SslPtr):Integer;
 
 // libeay.dll
   function X509New: PX509;
@@ -739,7 +774,13 @@ var
   function Asn1UtctimeNew: PASN1_UTCTIME;
   procedure Asn1UtctimeFree(a: PASN1_UTCTIME);
   function Asn1IntegerSet(a: PASN1_INTEGER; v: integer): integer;
+  function Asn1IntegerGet(a: PASN1_INTEGER): integer; {pf}
   function i2dX509bio(b: PBIO; x: PX509): integer;
+  function d2iX509bio(b:PBIO; x:PX509):  PX509;    {pf}
+  function PEMReadBioX509(b:PBIO; {var x:PX509;}x:PSslPtr; callback:PFunction; cb_arg: SslPtr):  PX509;    {pf}
+  procedure SkX509PopFree(st: PSTACK; func: TSkPopFreeFunc); {pf}
+
+
   function i2dPrivateKeyBio(b: PBIO; pkey: EVP_PKEY): integer;
 
   // 3DES functions
@@ -752,6 +793,9 @@ var
 function IsSSLloaded: Boolean;
 function InitSSLInterface: Boolean;
 function DestroySSLInterface: Boolean;
+
+var
+  _X509Free: TX509Free = nil; {pf}
 
 implementation
 
@@ -782,6 +826,7 @@ type
   TSslCtxSetDefaultPasswdCb = procedure(ctx: PSSL_CTX; cb: SslPtr); cdecl;
   TSslCtxSetDefaultPasswdCbUserdata = procedure(ctx: PSSL_CTX; u: SslPtr); cdecl;
   TSslCtxLoadVerifyLocations = function(ctx: PSSL_CTX; const CAfile: PAnsiChar; const CApath: PAnsiChar):Integer; cdecl;
+  TSslCtxCtrl = function(ctx: PSSL_CTX; cmd: integer; larg: integer; parg: SslPtr): integer; cdecl;
   TSslNew = function(ctx: PSSL_CTX):PSSL; cdecl;
   TSslFree = procedure(ssl: PSSL); cdecl;
   TSslAccept = function(ssl: PSSL):Integer; cdecl;
@@ -798,10 +843,12 @@ type
   TSSLCipherGetName = function(c: Sslptr):PAnsiChar; cdecl;
   TSSLCipherGetBits = function(c: SslPtr; alg_bits: PInteger):Integer; cdecl;
   TSSLGetVerifyResult = function(ssl: PSSL):Integer; cdecl;
+  TSSLCtrl = function(ssl: PSSL; cmd: integer; larg: integer; parg: SslPtr):Integer; cdecl;
+
+  TSSLSetTlsextHostName = function(ssl: PSSL; buf: PAnsiChar):Integer; cdecl;
 
 // libeay.dll
   TX509New = function: PX509; cdecl;
-  TX509Free = procedure(x: PX509); cdecl;
   TX509NameOneline = function(a: PX509_NAME; buf: PAnsiChar; size: Integer):PAnsiChar; cdecl;
   TX509GetSubjectName = function(a: PX509):PX509_NAME; cdecl;
   TX509GetIssuerName = function(a: PX509):PX509_NAME; cdecl;
@@ -845,7 +892,11 @@ type
   TAsn1UtctimeNew = function: PASN1_UTCTIME; cdecl;
   TAsn1UtctimeFree = procedure(a: PASN1_UTCTIME); cdecl;
   TAsn1IntegerSet = function(a: PASN1_INTEGER; v: integer): integer; cdecl;
+  TAsn1IntegerGet = function(a: PASN1_INTEGER): integer; cdecl; {pf}
   Ti2dX509bio = function(b: PBIO; x: PX509): integer; cdecl;
+  Td2iX509bio = function(b:PBIO;  x:PX509):   PX509;   cdecl; {pf}
+  TPEMReadBioX509 = function(b:PBIO;  {var x:PX509;}x:PSslPtr; callback:PFunction; cb_arg:SslPtr): PX509;   cdecl; {pf}
+  TSkX509PopFree = procedure(st: PSTACK; func: TSkPopFreeFunc); cdecl; {pf}
   Ti2dPrivateKeyBio= function(b: PBIO; pkey: EVP_PKEY): integer; cdecl;
 
   // 3DES functions
@@ -880,6 +931,7 @@ var
   _SslCtxSetDefaultPasswdCb: TSslCtxSetDefaultPasswdCb = nil;
   _SslCtxSetDefaultPasswdCbUserdata: TSslCtxSetDefaultPasswdCbUserdata = nil;
   _SslCtxLoadVerifyLocations: TSslCtxLoadVerifyLocations = nil;
+  _SslCtxCtrl: TSslCtxCtrl = nil;
   _SslNew: TSslNew = nil;
   _SslFree: TSslFree = nil;
   _SslAccept: TSslAccept = nil;
@@ -896,10 +948,10 @@ var
   _SSLCipherGetName: TSSLCipherGetName = nil;
   _SSLCipherGetBits: TSSLCipherGetBits = nil;
   _SSLGetVerifyResult: TSSLGetVerifyResult = nil;
+  _SSLCtrl: TSSLCtrl = nil;
 
 // libeay.dll
   _X509New: TX509New = nil;
-  _X509Free: TX509Free = nil;
   _X509NameOneline: TX509NameOneline = nil;
   _X509GetSubjectName: TX509GetSubjectName = nil;
   _X509GetIssuerName: TX509GetIssuerName = nil;
@@ -942,7 +994,11 @@ var
   _Asn1UtctimeNew: TAsn1UtctimeNew = nil;
   _Asn1UtctimeFree: TAsn1UtctimeFree = nil;
   _Asn1IntegerSet: TAsn1IntegerSet = nil;
+  _Asn1IntegerGet: TAsn1IntegerGet = nil; {pf}
   _i2dX509bio: Ti2dX509bio = nil;
+  _d2iX509bio: Td2iX509bio = nil; {pf}
+  _PEMReadBioX509: TPEMReadBioX509 = nil; {pf}
+  _SkX509PopFree: TSkX509PopFree = nil; {pf}
   _i2dPrivateKeyBio: Ti2dPrivateKeyBio = nil;
 
   // 3DES functions
@@ -1135,6 +1191,14 @@ begin
     Result := 0;
 end;
 
+function SslCtxCtrl(ctx: PSSL_CTX; cmd: integer; larg: integer; parg: SslPtr): integer;
+begin
+  if InitSSLInterface and Assigned(_SslCtxCtrl) then
+    Result := _SslCtxCtrl(ctx, cmd, larg, parg)
+  else
+    Result := 0;
+end;
+
 function SslNew(ctx: PSSL_CTX):PSSL;
 begin
   if InitSSLInterface and Assigned(_SslNew) then
@@ -1269,6 +1333,15 @@ begin
     Result := X509_V_ERR_APPLICATION_VERIFICATION;
 end;
 
+
+function SSLCtrl(ssl: PSSL; cmd: integer; larg: integer; parg: SslPtr):Integer;
+begin
+  if InitSSLInterface and Assigned(_SSLCtrl) then
+    Result := _SSLCtrl(ssl, cmd, larg, parg)
+  else
+    Result := X509_V_ERR_APPLICATION_VERIFICATION;
+end;
+
 // libeay.dll
 function X509New: PX509;
 begin
@@ -1352,7 +1425,7 @@ procedure ErrErrorString(e: integer; var buf: Ansistring; len: integer);
 begin
   if InitSSLInterface and Assigned(_ErrErrorString) then
     _ErrErrorString(e, Pointer(buf), len);
-  buf := PChar(Buf);
+  buf := PAnsiChar(Buf);
 end;
 
 function ErrGetError: integer;
@@ -1586,6 +1659,28 @@ begin
     Result := 0;
 end;
 
+function d2iX509bio(b: PBIO; x: PX509): PX509; {pf}
+begin
+  if InitSSLInterface and Assigned(_d2iX509bio) then
+    Result := _d2iX509bio(x,b)
+  else
+    Result := nil;
+end;
+
+function PEMReadBioX509(b:PBIO; {var x:PX509;}x:PSslPtr; callback:PFunction; cb_arg: SslPtr):  PX509;    {pf}
+begin
+  if InitSSLInterface and Assigned(_PEMReadBioX509) then
+    Result := _PEMReadBioX509(b,x,callback,cb_arg)
+  else
+    Result := nil;
+end;
+
+procedure SkX509PopFree(st: PSTACK; func:TSkPopFreeFunc); {pf}
+begin
+  if InitSSLInterface and Assigned(_SkX509PopFree) then
+    _SkX509PopFree(st,func);
+end;
+
 function i2dPrivateKeyBio(b: PBIO; pkey: EVP_PKEY): integer;
 begin
   if InitSSLInterface and Assigned(_i2dPrivateKeyBio) then
@@ -1606,6 +1701,14 @@ function Asn1IntegerSet(a: PASN1_INTEGER; v: integer): integer;
 begin
   if InitSSLInterface and Assigned(_Asn1IntegerSet) then
     Result := _Asn1IntegerSet(a, v)
+  else
+    Result := 0;
+end;
+
+function Asn1IntegerGet(a: PASN1_INTEGER): integer; {pf}
+begin
+  if InitSSLInterface and Assigned(_Asn1IntegerGet) then
+    Result := _Asn1IntegerGet(a)
   else
     Result := 0;
 end;
@@ -1694,6 +1797,13 @@ var
   s: string;
   x: integer;
 begin
+  {pf}
+  if SSLLoaded then
+    begin
+      Result := TRUE;
+      exit;
+    end;
+  {/pf}  
   SSLCS.Enter;
   try
     if not IsSSLloaded then
@@ -1704,7 +1814,7 @@ begin
 {$ELSE}
       SSLLibHandle := LoadLib(DLLSSLName);
       SSLUtilHandle := LoadLib(DLLUtilName);
-  {$IFNDEF LINUX}
+  {$IFDEF MSWINDOWS}
       if (SSLLibHandle = 0) then
         SSLLibHandle := LoadLib(DLLSSLName2);
   {$ENDIF}
@@ -1736,6 +1846,7 @@ begin
         _SslCtxSetDefaultPasswdCb := GetProcAddr(SSLLibHandle, 'SSL_CTX_set_default_passwd_cb');
         _SslCtxSetDefaultPasswdCbUserdata := GetProcAddr(SSLLibHandle, 'SSL_CTX_set_default_passwd_cb_userdata');
         _SslCtxLoadVerifyLocations := GetProcAddr(SSLLibHandle, 'SSL_CTX_load_verify_locations');
+        _SslCtxCtrl := GetProcAddr(SSLLibHandle, 'SSL_CTX_ctrl');
         _SslNew := GetProcAddr(SSLLibHandle, 'SSL_new');
         _SslFree := GetProcAddr(SSLLibHandle, 'SSL_free');
         _SslAccept := GetProcAddr(SSLLibHandle, 'SSL_accept');
@@ -1752,6 +1863,7 @@ begin
         _SslCipherGetName := GetProcAddr(SSLLibHandle, 'SSL_CIPHER_get_name');
         _SslCipherGetBits := GetProcAddr(SSLLibHandle, 'SSL_CIPHER_get_bits');
         _SslGetVerifyResult := GetProcAddr(SSLLibHandle, 'SSL_get_verify_result');
+        _SslCtrl := GetProcAddr(SSLLibHandle, 'SSL_ctrl');
 
         _X509New := GetProcAddr(SSLUtilHandle, 'X509_new');
         _X509Free := GetProcAddr(SSLUtilHandle, 'X509_free');
@@ -1797,7 +1909,11 @@ begin
         _Asn1UtctimeNew := GetProcAddr(SSLUtilHandle, 'ASN1_UTCTIME_new');
         _Asn1UtctimeFree := GetProcAddr(SSLUtilHandle, 'ASN1_UTCTIME_free');
         _Asn1IntegerSet := GetProcAddr(SSLUtilHandle, 'ASN1_INTEGER_set');
+        _Asn1IntegerGet := GetProcAddr(SSLUtilHandle, 'ASN1_INTEGER_get'); {pf}
         _i2dX509bio := GetProcAddr(SSLUtilHandle, 'i2d_X509_bio');
+        _d2iX509bio := GetProcAddr(SSLUtilHandle, 'd2i_X509_bio'); {pf}
+        _PEMReadBioX509 := GetProcAddr(SSLUtilHandle, 'PEM_read_bio_X509'); {pf}
+        _SkX509PopFree := GetProcAddr(SSLUtilHandle, 'SK_X509_POP_FREE'); {pf}
         _i2dPrivateKeyBio := GetProcAddr(SSLUtilHandle, 'i2d_PrivateKey_bio');
 
         // 3DES functions
@@ -1919,6 +2035,7 @@ begin
     _SslCtxSetDefaultPasswdCb := nil;
     _SslCtxSetDefaultPasswdCbUserdata := nil;
     _SslCtxLoadVerifyLocations := nil;
+    _SslCtxCtrl := nil;
     _SslNew := nil;
     _SslFree := nil;
     _SslAccept := nil;
@@ -1935,6 +2052,7 @@ begin
     _SslCipherGetName := nil;
     _SslCipherGetBits := nil;
     _SslGetVerifyResult := nil;
+    _SslCtrl := nil;
 
     _X509New := nil;
     _X509Free := nil;
@@ -1980,6 +2098,8 @@ begin
     _Asn1UtctimeNew := nil;
     _Asn1UtctimeFree := nil;
     _Asn1IntegerSet := nil;
+    _Asn1IntegerGet := nil; {pf}
+    _SkX509PopFree := nil; {pf}
     _i2dX509bio := nil;
     _i2dPrivateKeyBio := nil;
 

@@ -40,7 +40,7 @@ unit downPublicTV;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 

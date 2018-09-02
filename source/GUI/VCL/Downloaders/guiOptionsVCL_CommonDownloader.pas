@@ -142,7 +142,7 @@ begin
   if Supports(dfRtmpLiveStream, [CheckLiveStream]) then
     CheckLiveStream.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features);
   if Supports(dfRequireSecureToken, [LabelSecureToken, EditSecureToken]) then
-    EditSecureToken.Text := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, '');
+    EditSecureToken.Text := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, '');
   if Supports(dfUserLogin, [LabelUserName, EditUserName, LabelPassword, EditPassword]) then
     begin
     EditUserName.Text := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_USERNAME, '');
@@ -164,7 +164,7 @@ begin
   if Supports(dfRtmpLiveStream) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, CheckLiveStream.Checked);
   if Supports(dfRequireSecureToken) then
-    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, EditSecureToken.Text);
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, EditSecureToken.Text);
   if Supports(dfUserLogin) then
     begin
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_USERNAME, EditUserName.Text);

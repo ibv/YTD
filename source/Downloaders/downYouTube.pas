@@ -63,8 +63,8 @@ type
       YouTubeConfigJSRegExp: TRegExp;
       FormatListRegExp: TRegExp;
       FlashVarsParserRegExp: TRegExp;
-      HttpFmtUrlMapRegExp: TRegExp;
-      RtmpFmtUrlMapRegExp: TRegExp;
+      FormatUrlMapRegExp: TRegExp;
+      FormatUrlMapVarsRegExp: TRegExp;
       Extension: string;
       MaxWidth, MaxHeight: integer;
       AvoidWebM: boolean;
@@ -135,8 +135,8 @@ const
   REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
-  REGEXP_FORMAT_URL_MAP_HTTP = '(?:^|[,&])url=(?P<URL>https?(?::|%3A)(?:/|%2F){2}[^&,]+)[^,]*&itag=(?P<FORMAT>[0-9]+)';
-  REGEXP_FORMAT_URL_MAP_RTMP = '(?:^|[,&])conn=(?P<URL>rtmpt?e?(?::|%3A)(?:/|%2F){2}[^&,]+)[^,]*&stream=(?P<STREAM>[^&,]+)[^,]*&itag=(?P<FORMAT>[0-9]+)';
+  REGEXP_FORMAT_URL_MAP_ITEM = '(?:^|,)(?P<ITEM>.*?)(?:$|(?=,))';
+  REGEXP_FORMAT_URL_MAP_VARS = '(?:^|&)(?P<VARNAME>[^=]+)=(?P<VARVALUE>[^&]*)';
 
 const
   EXTENSION_FLV {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '.flv';
@@ -187,8 +187,8 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
   FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST);
-  HttpFmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_HTTP);
-  RtmpFmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_RTMP);
+  FormatUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_ITEM);
+  FormatUrlMapVarsRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_VARS);
   MaxWidth := OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT;
   MaxHeight := OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT;
   {$IFDEF SUBTITLES}
@@ -203,8 +203,8 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(FlashVarsParserRegExp);
   RegExFreeAndNil(FormatListRegExp);
-  RegExFreeAndNil(HttpFmtUrlMapRegExp);
-  RegExFreeAndNil(RtmpFmtUrlMapRegExp);
+  RegExFreeAndNil(FormatUrlMapRegExp);
+  RegExFreeAndNil(FormatUrlMapVarsRegExp);
   inherited;
 end;
 
@@ -370,55 +370,51 @@ end;
 
 function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; out Url: string; out Downloader: TDownloader): boolean;
 var
-  FoundFormat, Stream: string;
+  FoundFormat, Server, Stream: string;
+  Formats: TStringArray;
+  i: integer;
   HTTPDownloader: TDownloader_YouTube_HTTP;
   RTMPDownloader: TDownloader_YouTube_RTMP;
 begin
   Result := False;
   Url := '';
   Downloader := nil;
-  if HttpFmtUrlMapRegExp.Match(FormatUrlMap) then
-    repeat
-      FoundFormat := HttpFmtUrlMapRegExp.SubexpressionByName('FORMAT');
-      if VideoFormat = FoundFormat then
-        begin
-        Url := UrlDecode(HttpFmtUrlMapRegExp.SubexpressionByName('URL'));
-        HTTPDownloader := TDownloader_YouTube_HTTP.Create(Url);
-        HTTPDownloader.Cookies.Assign(Http.Cookies);
-        Downloader := HTTPDownloader;
-        Result := True;
-        Break;
-        end;
-    until not HttpFmtUrlMapRegExp.MatchAgain;
-  if not Result then
-    if RtmpFmtUrlMapRegExp.Match(FormatUrlMap) then
-      repeat
-        FoundFormat := RtmpFmtUrlMapRegExp.SubexpressionByName('FORMAT');
-        if VideoFormat = FoundFormat then
+  if GetRegExpAllVar(FormatUrlMapRegExp, FormatUrlMap, 'ITEM', Formats) then
+    for i := 0 to Pred(Length(Formats)) do
+      if GetRegExpVarPairs(FormatUrlMapVarsRegExp, Formats[i], ['itag', 'url', 'conn', 'stream'], [@FoundFormat, @Url, @Server, @Stream]) then
+        if FoundFormat = VideoFormat then
           begin
-          Url := UrlDecode(RtmpFmtUrlMapRegExp.SubexpressionByName('URL'));
-          Stream := UrlDecode(RtmpFmtUrlMapRegExp.SubexpressionByName('STREAM'));
-          RTMPDownloader := TDownloader_YouTube_RTMP.Create(Url);
-          RTMPDownloader.Playpath := Stream;
-          RTMPDownloader.SwfVfy := 'http://s.ytimg.com/yt/swfbin/watch_as3-vflk8NbNX.swf';
-          RTMPDownloader.PageUrl := GetMovieInfoUrl;
-          Downloader := RTMPDownloader;
-          Result := True;
+          if Url <> '' then
+            begin
+            Url := UrlDecode(Url);
+            HTTPDownloader := TDownloader_YouTube_HTTP.Create(Url);
+            HTTPDownloader.Cookies.Assign(Http.Cookies);
+            Downloader := HTTPDownloader;
+            Result := True;
+            end
+          else if (Server <> '') and (Stream <> '') then
+            begin
+            Url := UrlDecode(Server);
+            Stream := UrlDecode(Stream);
+            RTMPDownloader := TDownloader_YouTube_RTMP.Create(Url);
+            RTMPDownloader.Playpath := Stream;
+            RTMPDownloader.SwfVfy := 'http://s.ytimg.com/yt/swfbin/watch_as3-vflk8NbNX.swf';
+            RTMPDownloader.PageUrl := GetMovieInfoUrl;
+            Downloader := RTMPDownloader;
+            Result := True;
+            end;
           Break;
           end;
-      until not RtmpFmtUrlMapRegExp.MatchAgain;
 end;
 
 function TDownloader_YouTube.GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
 var QualityIndex, MaxVideoQuality, MaxAudioQuality, Width, Height: integer;
     VideoQuality, AudioQuality: integer;
     VideoFormat, Ext: string;
-    IsHTTP: boolean;
 begin
   Result := '';
   MaxVideoQuality := 0;
   MaxAudioQuality := 0;
-  IsHTTP := HttpFmtUrlMapRegExp.Match(FormatUrlMap);
   if FormatListRegExp.Match(FormatList) then
     repeat
       //VideoQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('VIDEOQUALITY'), 0);
@@ -431,9 +427,7 @@ begin
       if Ext = EXTENSION_MP4 then
         QualityIndex := 100
       else if Ext = EXTENSION_WEBM then
-        if not IsHTTP then
-          QualityIndex := 0 // not available over RTMP
-        else if AvoidWebM then
+        if AvoidWebM then
           QualityIndex := 1
         else
           QualityIndex := 80
@@ -449,7 +443,7 @@ begin
         if (Width <= MaxWidth) or (MaxWidth <= 0) then
           if (Height <= MaxHeight) or (MaxHeight <= 0) then
             begin
-                    MaxVideoQuality := VideoQuality;
+            MaxVideoQuality := VideoQuality;
             MaxAudioQuality := AudioQuality;
             Result := VideoFormat;
             end;

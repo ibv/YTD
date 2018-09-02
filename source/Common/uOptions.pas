@@ -183,10 +183,6 @@ type
       property DownloadToProviderSubdirs: boolean read GetDownloadToProviderSubdirs write SetDownloadToProviderSubdirs;
     end;
 
-const
-  OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'live_stream';
-  OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secure_token';
-
 implementation
 
 uses
@@ -803,7 +799,13 @@ begin
   Options := AOptions;
   OnDone := AOnDone;
   FreeOnTerminate := True;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED OFF}
+  {$ENDIF}
   Resume;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED ON}
+  {$ENDIF}
 end;
 
 procedure TGetNewestVersionThread.Execute;

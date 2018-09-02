@@ -326,16 +326,28 @@ procedure TDownloadListItem.Start;
 begin
   if Thread = nil then
     CreateThread;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED OFF}
+  {$ENDIF}
   if Thread.Suspended then
     Thread.Resume;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED ON}
+  {$ENDIF}
 end;
 
 procedure TDownloadListItem.Stop;
 begin
   if Thread <> nil then
     begin
+    {$IFDEF DELPHIXE2_UP}
+      {$WARN SYMBOL_DEPRECATED OFF}
+    {$ENDIF}
     if Paused then
       Thread.Resume;
+    {$IFDEF DELPHIXE2_UP}
+      {$WARN SYMBOL_DEPRECATED ON}
+    {$ENDIF}
     Thread.Terminate;
     {$IFDEF DELPHITHREADS}
       Thread.WaitFor;
@@ -356,8 +368,14 @@ end;
 
 procedure TDownloadListItem.Pause;
 begin
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED OFF}
+  {$ENDIF}
   if Thread <> nil then
     Thread.Suspend;
+  {$IFDEF DELPHIXE2_UP}
+    {$WARN SYMBOL_DEPRECATED ON}
+  {$ENDIF}
 end;
 
 procedure TDownloadListItem.PlayMedia;
