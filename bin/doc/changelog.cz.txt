@@ -1,11 +1,21 @@
 ﻿______________________________________________________________________________
 
-YTD v1.26                                                    (c) 2009-13 Pepak
+YTD v1.27                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.27:
+
+    * Nova.cz: RTMP videa fungují, jen je třeba pohlídat si správné heslo pro
+      resolver, protože ho Nova začala nějak častěji měnit. Silverlight videa
+      se nestahují, nevím proč, možná nějaká nekompatibilita s MSDL.
+
+    * Stv.sk: Stahování videí nyní funguje správně.
+
+
 
   v1.26:
 

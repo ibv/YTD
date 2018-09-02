@@ -133,13 +133,14 @@ begin
   else
     begin
     Auth := Auth + IntToStr(UnixTimestamp);
+    Server := StringReplace(Server, '/_definst_/', '', []);
     MovieUrl := Server + '?auth=' + Auth;
     Self.RtmpUrl := MovieUrl;
     Self.Playpath := 'mp4:' + ID + '?auth=' + Auth;
-    Self.FlashVer := 'WIN 11,3,300,268'; //FLASH_DEFAULT_VERSION;
-    Self.TcUrl := MovieUrl;
-    Self.SwfVfy := 'http://embed.stv.livebox.sk/v1/LiveboxPlayer.swf';
-    Self.PageUrl := GetMovieInfoUrl;
+    //Self.FlashVer := 'WIN 11,3,300,268'; //FLASH_DEFAULT_VERSION;
+    //Self.TcUrl := MovieUrl;
+    //Self.SwfVfy := 'http://embed.stv.livebox.sk/v1/LiveboxPlayer.swf';
+    //Self.PageUrl := GetMovieInfoUrl;
     SetPrepared(True);
     Result := True;
     end;

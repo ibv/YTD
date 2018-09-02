@@ -50,6 +50,10 @@ unit downNova;
   playlistu - zejmena jde o metody getHashString a onGetTimeStamp). Potreba je
   pro to ResolverSecret, ktery se da najit v desifrovanem konfiguracnim souboru
   jako polozka "secret" (primo v SWF je jen falesna hodnota pro zmatelni nepritele).
+
+  Vhodne testovaci porady:
+  - MS:   http://voyo.nova.cz/product/26894-testovaci-video-okresni-prebor-16
+  - RTMP: http://voyo.nova.cz/product/porady/32684-automag-40-3-12-2012
 }
 
 {.$DEFINE VOYO_PLUS}
@@ -86,12 +90,15 @@ type
       RegExpFlowPlayerConfigUrl: TRegExp;
       RegExpFlowPlayerConfig: TRegExp;
       JSONConfigRegExp: TRegExp;
+      ResolverSecretRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
       function TryMSDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
       function TryRTMPDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
+      function GetDecryptedConfig(Http: THttpSend; const Url: string; out Config: string): boolean;
+      function GetResolverSecret(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out ResolverSecret: string): boolean;
     public
       class function Features: TDownloaderFeatures; override;
       class function Provider: string; override;
@@ -137,8 +144,9 @@ const
   REGEXP_PLAYERPARAMS = 'voyoPlayer\.params\s*=\s*\{(?P<PARAMS>.*?)\}\s*;';
   REGEXP_PLAYERPARAMS_ITEM = '\b(?P<VARNAME>[a-z0-9_]+)\s*:\s*(?P<QUOTE>["'']?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*(?:,|$)';
   REGEXP_CONFIG_URL = '<script\b[^>]*?\ssrc="(?P<URL>https?://[^"]+?/config\.php\?.+?)"';
-  REGEXP_CONFIG = '''(?P<CONFIG>[a-zA-Z0-9+/=]+)''';
+  REGEXP_CONFIG = 'var\s+voyoPlusConfig\d*\s*=\s*\\?"(?P<CONFIG>.+?)\\?"';
   REGEXP_JSON_CONFIG = '"(?P<VARNAME>[^"]+)"\s*:\s*(?P<VARVALUE>(?:"[^"]*"|\w+))';
+  REGEXP_RESOLVER_SECRET = '"secret"\s*:\s*"(?P<SECRET>.*?)"';
 
 const
   NOVA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Nova.cz';
@@ -191,6 +199,7 @@ begin
   RegExpFlowPlayerConfigUrl := RegExCreate(REGEXP_CONFIG_URL);
   RegExpFlowPlayerConfig := RegExCreate(REGEXP_CONFIG);
   JSONConfigRegExp := RegExCreate(REGEXP_JSON_CONFIG);
+  ResolverSecretRegExp := RegExCreate(REGEXP_RESOLVER_SECRET);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
   ResolverSecret := OPTION_NOVA_SECRET_DEFAULT;
   ConfigPassword := OPTION_NOVA_CONFIG_PASSWORD_DEFAULT;
@@ -206,6 +215,7 @@ begin
   RegExFreeAndNil(RegExpFlowPlayerConfigUrl);
   RegExFreeAndNil(RegExpFlowPlayerConfig);
   RegExFreeAndNil(JSONConfigRegExp);
+  RegExFreeAndNil(ResolverSecretRegExp);
   inherited;
 end;
 
@@ -223,12 +233,13 @@ begin
 end;
 
 function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
-const
-  AES_KEY_BITS = 128;
 var
   Params, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string;
-  ConfigUrl, ConfigPage, Config, DecryptedConfig: string;
+  ConfigUrl, DecryptedConfig: string;
   HaveParams: boolean;
+  {$IFDEF DEBUG}
+  Secret: string;
+  {$ENDIF}
 begin
   inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
   Result := False;
@@ -243,25 +254,27 @@ begin
   // a) Mohou byt zasifrovane v javascriptove konfiguraci
   if not HaveParams then
     if GetRegExpVar(RegExpFlowPlayerConfigUrl, Page, 'URL', ConfigUrl) then
-      if DownloadPage(Http, ConfigUrl, ConfigPage) then
-        if GetRegExpVar(RegExpFlowPlayerConfig, ConfigPage, 'CONFIG', Config) then
-          if ConfigPassword = '' then
-            begin
-            SetLastErrorMsg(ERR_MISSING_CONFIG_PASSWORD);
-            Exit;
-            end
-          else
-            begin
-            DecryptedConfig :=  {$IFDEF UNICODE} string {$ENDIF} (AESCTR_Decrypt(DecodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (Config)),  {$IFDEF UNICODE} AnsiString {$ENDIF} (ConfigPassword), AES_KEY_BITS));
-            if GetRegExpVarPairs(JSONConfigRegExp, DecryptedConfig, ['mediaID', 'sectionID', 'siteID'], [@MediaID, @SectionID, @SiteID]) then
-              HaveParams := True;
-            end;
+      if ConfigPassword = '' then
+        begin
+        SetLastErrorMsg(ERR_MISSING_CONFIG_PASSWORD);
+        Exit;
+        end
+      else
+        if GetDecryptedConfig(Http, ConfigUrl, DecryptedConfig) then
+          if GetRegExpVarPairs(JSONConfigRegExp, DecryptedConfig, ['mediaID', 'sectionID', 'siteID'], [@MediaID, @SectionID, @SiteID]) then
+            HaveParams := True;
   // b)Mohou byt primo ve zdrojove strance
   if not HaveParams then
     if GetRegExpVar(PlayerParamsRegExp, Page, 'PARAMS', Params) then
       if GetRegExpVarPairs(PlayerParamsItemRegExp, Params, ['siteId', 'sectionId', 'subsite'], [@SiteID, @SectionID, @Subsite]) then
         if GetRegExpVars(MediaDataRegExp, Page, ['PROD_ID', 'UNIT_ID', 'MEDIA_ID'], [@ProductID, @UnitID, @MediaID]) then
           HaveParams := True;
+  // ResolverSecret lze ziskat strojove, pokud zname ConfigPassword
+  {$IFDEF DEBUG}
+  if HaveParams then
+    if GetResolverSecret(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, Secret) then
+      Writeln(Secret);
+  {$ENDIF}
   // Aspon nektere z tech parametru jsou povinne
   if not HaveParams then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
@@ -289,6 +302,7 @@ const
     + '<format>%2:s</format>'
     + '</GetSecuredUrl>'
     ;
+  NACEVI_BASE_URL = 'http://cdn1003.nacevi.cz/nova-vod-wmv/nova-vod-wmv/%s/%s/%s%s.wmv';
 var
   InfoUrl, StreamInfo, Year, Month, ID, Url: string;
   MSDownloader: TMSDirectDownloader;
@@ -315,7 +329,9 @@ begin
     if DownloadPage(Http, InfoUrl, StreamInfo) then
       if GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
         begin
-        MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
+        MovieUrl := Format(NACEVI_BASE_URL, [Year, Month, ID, QualitySuffix[not LowQuality]]);
+        if not DownloadPage(Http, Url, hmHEAD) then
+          MovieUrl := Format(NACEVI_BASE_URL, [Year, Month, ID, QualitySuffix[LowQuality]]);
         MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
         MSDownloader.Options := Options;
         Downloader := MSDownloader;
@@ -409,6 +425,44 @@ begin
         FreeAndNil(InfoXml);
         end;
     end;
+end;
+
+function TDownloader_Nova.GetResolverSecret(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out ResolverSecret: string): boolean;
+var
+  Url, ConfigPage, Secret: string;
+begin
+  Result := False;
+  Url := Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash&prod=%s&unit=%s&media=%s&site=%s&section=%s&subsite=%s&embed=0&mute=0&size=&realSite=%s&width=704&height=441&hdEnabled=0&hash=&finish=finishedPlayer&dev=undefined&wv=0&sts=undefined&r=0.%d', [ProductID, UnitID, MediaID, SiteID, SectionID, Subsite, SiteID, UnixTimestamp]);
+  if GetDecryptedConfig(Http, Url, ConfigPage) then
+    if GetRegExpVar(ResolverSecretRegExp, ConfigPage, 'SECRET', Secret) then
+      begin
+      ResolverSecret := JSDecode(Secret);
+      Result := True;
+      end;
+end;
+
+function TDownloader_Nova.GetDecryptedConfig(Http: THttpSend; const Url: string; out Config: string): boolean;
+const
+  AES_KEY_BITS = 128;
+var
+  ConfigPage, ConfigInfo, DecryptedConfig: string;
+begin
+  Result := False;
+  if ConfigPassword <> '' then
+    if DownloadPage(Http, Url, ConfigPage, peNone) then
+      begin
+      if GetRegExpVar(RegExpFlowPlayerConfig, ConfigPage, 'CONFIG', ConfigInfo) then
+        begin
+        ConfigInfo := JSDecode(ConfigInfo);
+        //ConfigInfo := JSDecode(ConfigInfo);
+        DecryptedConfig :=  {$IFDEF UNICODE} string {$ENDIF} (AESCTR_Decrypt(DecodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (ConfigInfo)),  {$IFDEF UNICODE} AnsiString {$ENDIF} (ConfigPassword), AES_KEY_BITS));
+        if DecryptedConfig <> '' then
+          begin
+          Config := DecryptedConfig;
+          Result := True;
+          end;
+        end;
+      end;
 end;
 
 { TDownloader_Nova_RTMP }
