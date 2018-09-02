@@ -1,11 +1,20 @@
 ______________________________________________________________________________
 
-YTD v1.10                                                    (c) 2009-12 Pepak
+YTD v1.11                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.11:
+
+    * Nový poskytovatel: Mixer.cz.
+
+    * Opravena chyba z 1.09, kvùli které byl pro ÈT vyžadován token i tam, kde
+      ve skuteènosti není potøeba.
+
+
 
   v1.10:
 

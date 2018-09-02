@@ -73,7 +73,7 @@ type
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); override;
-      function PrepareToken: boolean;
+      function PrepareToken: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$IFDEF SUBTITLES}
     protected
       fSubtitleUrlRegExps: array of TRegExp;

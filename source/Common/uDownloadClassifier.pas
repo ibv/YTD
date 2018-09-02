@@ -139,6 +139,7 @@ procedure TDownloadClassifier.SetUrl(const Value: string);
 var DC: TDownloaderClass;
     i: integer;
     ID: string;
+    b: boolean;
 begin
   Clear;
   i := Pos('#', Value);
@@ -146,9 +147,13 @@ begin
     fUrl := Value
   else
     fUrl := Copy(Value, 1, Pred(i));
-  if not UrlClassifier.Match(fUrl) then
+  b := UrlClassifier.Match(fUrl);
+  if not b then
+    begin
     fUrl := Value;
-  if UrlClassifier.Match(fUrl) then
+    b := UrlClassifier.Match(fUrl);
+    end;
+  if b then
     for i := 0 to Pred(ProviderCount) do
       begin
       DC := Providers[i];

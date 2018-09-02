@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.10                                                    (c) 2009-12 Pepak
+YTD v1.11                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -158,6 +158,7 @@ Metoo.sk            | MS       |       | http://pohoda.metoo.sk/pohoda2011-fiber
                     |          |       | http://www.metoo.sk/voicestv?relacia=vl26-sto-much-stratasoul-bene-sewologylab
 Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
                     |          |       | http://www.metropol.cz/zpravy/z-prahy/tradicni-plavecky-zavod-otuzilcu-startuje-v-1100/
+Mixer.cz            | HTTP     |       | http://www.mixer.cz/1/41102-video-games
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
 MojeVideo.cz        | HTTP     |       | http://mojevideo.cz/view.php?id=5332
@@ -350,6 +351,7 @@ YouPorn.com         | HTTP     | F     |
 Yuvutu.com          | HTTP     | F     |
 Zakulisi.cz         | HTTP     | F     |
 ZlutySnih.cz        | HTTP     | F     |
+Zvraceny.cz         | HTTP     | F     |
 ------------------------------------------------------------------------------
 
 F ... Funkèní pouze v plné (ne-lite) verzi YTD kvùli porno obsahu.

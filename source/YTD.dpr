@@ -247,6 +247,7 @@ uses
   downMetropolCZ in 'Downloaders\downMetropolCZ.pas',
   downMetropolCZ_Zpravy in 'Downloaders\downMetropolCZ_Zpravy.pas',
   downMetropolTV in 'Downloaders\downMetropolTV.pas',
+  downMixerCZ in 'Downloaders\downMixerCZ.pas',
   downMojeTelevize in 'Downloaders\downMojeTelevize.pas',
   downMojeVideo in 'Downloaders\downMojeVideo.pas',
   downMojeVideoSk in 'Downloaders\downMojeVideoSk.pas',

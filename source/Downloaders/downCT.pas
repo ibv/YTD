@@ -67,6 +67,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
+      function PrepareToken: boolean; override;
     public
       class function Features: TDownloaderFeatures; override;
       class function Provider: string; override;
@@ -595,6 +596,12 @@ begin
     SetPrepared(True);
     Result := True;
     end;
+end;
+
+function TDownloader_CT.PrepareToken: boolean;
+begin
+  inherited PrepareToken;
+  Result := True;
 end;
 
 initialization
