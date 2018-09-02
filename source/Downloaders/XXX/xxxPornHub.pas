@@ -40,19 +40,23 @@ unit xxxPornHub;
 interface
 
 uses
-  SysUtils, Classes,
-  uPCRE, uXml, HttpSend, 
-  uDownloader, uCommonDownloader, uHttpDownloader, xxxPornHubEmbed;
+  SysUtils, Classes, Windows,
+  uPCRE, uXml, HttpSend, SynaCode,
+  uCrypto, uStrings, uFunctions, 
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_PornHub = class(TDownloader_PornHubEmbed)
+  TDownloader_PornHub = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: TRegExp;
+      FlashVarsRegExp: TRegExp;
+      FlashVarsItemsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function Decrypt(const Data, Password: AnsiString): AnsiString;
     public
+      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -66,34 +70,38 @@ uses
   uMessages;
 
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*pornhub\.com/view_video\.php\?(?:.*&)?viewkey=';
+  URLREGEXP_BEFORE_ID = 'pornhub\.com/view_video\.php\?(?:.*&)?viewkey=';
   URLREGEXP_ID =        '[0-9a-f]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<div\s+class="video-title-nf"[^>]+>\s*<h1>(?P<TITLE>.+?)</h1>';
-  REGEXP_MOVIE_ID = '<input\s+type="hidden"\s+id="video_[0-9+]"\s+value="(?P<ID>[0-9]+)"';
+  REGEXP_FLASHVARS = REGEXP_FLASHVARS_JS;
+  REGEXP_FLASHVARS_ITEMS = REGEXP_PARSER_FLASHVARS_JS;
 
 { TDownloader_PornHub }
 
+class function TDownloader_PornHub.Provider: string;
+begin
+  Result := 'PornHub.com';
+end;
+
 class function TDownloader_PornHub.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_PornHub.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  InfoPageIsXml := False;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashVarsItemsRegExp := RegExCreate(REGEXP_FLASHVARS_ITEMS);
 end;
 
 destructor TDownloader_PornHub.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarsItemsRegExp);
   inherited;
 end;
 
@@ -103,22 +111,79 @@ begin
 end;
 
 function TDownloader_PornHub.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Title, Info: string;
-    InfoXml: TXmlDoc;
+var
+  FlashVars, Title, Url, Encrypted: string;
 begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, 'http://www.pornhub.com/embed_player.php?id=' + ID, Info, InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetRegExpVarPairs(FlashVarsItemsRegExp, FlashVars, ['video_title', 'video_url', 'encrypted'], [@Title, @Url, @Encrypted]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
-    try
-      Result := inherited AfterPrepareFromPage(Info, InfoXml, Http);
-      if Result and GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
-        SetName(Title);
-    finally
-      FreeAndNil(InfoXml);
+    begin
+    Url := UrlDecode(Url);
+    if Url <> '' then
+      if AnsiCompareText(Encrypted, 'true') = 0 then
+        if Title <> '' then
+          Url := {$IFDEF UNICODE} string {$ENDIF} (Decrypt(DecodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (Url)), {$IFDEF UNICODE} AnsiString {$ENDIF} (StringToUtf8(StringReplace(Title, '+', ' ', [rfReplaceAll])))));
+    if not IsHttpProtocol(Url) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieUrl := Url;
+      SetName(UrlDecode(Title));
+      SetPrepared(True);
+      Result := True;
       end;
+    end;
+end;
+
+function TDownloader_PornHub.Decrypt(const Data, Password: AnsiString): AnsiString;
+
+  procedure DebugPrint(const Description: string; const Input: array of Byte);
+    var
+      i: integer;
+    begin
+      Write(Description);
+      for i := 0 to Pred(Length(Input)) do
+        Write(Format(' %02.2x', [Input[i]]));
+      Writeln;
+    end;
+
+const
+  KEY_LENGTH_BITS = 256;
+  KEY_LENGTH_BYTES = KEY_LENGTH_BITS shr 3;
+  BLOCK_LENGTH_BITS = 128;
+  BLOCK_LENGTH_BYTES = BLOCK_LENGTH_BITS shr 3;
+type
+  TKey = array[0..KEY_LENGTH_BYTES-1] of byte;
+  TBlock = array[0..BLOCK_LENGTH_BYTES-1] of byte;
+var
+  Key: TKey;
+  EncBlock: TBlock;
+  Decrypted: AnsiString;
+  i, pwLength: integer;
+begin
+  // The URL is encrypted by AES256 in CTR mode, where the first block is the
+  // initial CTR value.
+  // For further details, search the Flash for _getDecryptedVideoUrl.
+  Result := '';
+  // 1. Get the actual encryption key from the password
+  pwLength := Length(Password);
+  for i := 0 to Pred(KEY_LENGTH_BYTES) do
+    if i >= pwLength then
+      Key[i] := 0
+    else
+      Key[i] := Ord(Password[Succ(i)]);
+  if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KEY_LENGTH_BITS) then
+    Exit;
+  for i := 0 to Pred(KEY_LENGTH_BYTES) do
+    Key[i] := EncBlock[i mod BLOCK_LENGTH_BYTES];
+  // 2. Decrypt URL in counter mode
+  if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KEY_LENGTH_BITS) then
+    Exit;
+  Result := Decrypted;
 end;
 
 initialization

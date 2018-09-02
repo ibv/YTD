@@ -44,11 +44,6 @@ unit downNova;
   a org.flowplayer.nacevi.Nacevi (sestaveni URL a ziskani a zpracovani playlistu -
   zejmena jde o metody getHashString a onGetTimeStamp).
 
-  Nedari se mi sehnat funkcni RTMP i MS video soucasne. Zpravy by obecne mely
-  byt na RTMP, ale o RTSP nevim.
-  http://voyo.nova.cz/product/zpravy/31987-televizni-noviny-3-11-2012
-  -> RTMP
-
 }
 
 interface
@@ -66,18 +61,24 @@ uses
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uNestedDownloader,
-  uRtmpDownloader, uMSDownloader;
+  uRtmpDirectDownloader, uMSDirectDownloader;
 
 type
   TDownloader_Nova = class(TNestedDownloader)
     private
     protected
       LowQuality: boolean;
+      Secret: string;
       MediaDataRegExp: TRegExp;
+      MovieIDRegExp: TRegExp;
+      PlayerParamsRegExp: TRegExp;
+      PlayerParamsItemRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
+      function TryMSDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
+      function TryRTMPDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
     public
       class function Features: TDownloaderFeatures; override;
       class function Provider: string; override;
@@ -85,46 +86,6 @@ type
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
       {$ENDIF}
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
-    end;
-
-  TDownloader_Nova_RTMP = class(TRtmpDownloader)
-    private
-    protected
-      MediaIdRegExp: TRegExp;
-      MediaDataRegExp: TRegExp;
-      LowQuality: boolean;
-      Secret: string;
-    protected
-      function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
-    protected
-    public
-      class function Features: TDownloaderFeatures; override;
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
-    end;
-
-  TDownloader_Nova_MS = class(TMSDownloader)
-    private
-    protected
-      LowQuality: boolean;
-      PlayerParamsRegExp: TRegExp;
-      PlayerParamsItemRegExp: TRegExp;
-      MediaDataRegExp: TRegExp;
-      MovieIDRegExp: TRegExp;
-    protected
-      function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
-    protected
-    public
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -156,21 +117,22 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MEDIADATA = '\bmainVideo\s*=\s*new\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)\s*,\s*(?P<FLAG>true|false)';
-
-  REGEXP_RTMP_MOVIE_TITLE = REGEXP_TITLE_H1_CLASS;
-  REGEXP_RTMP_MEDIAID = '(?:\bvar\s|\b)media_id\s*=\s*(?P<QUOTE>["'']?)(?P<ID>[0-9]+)(?P=QUOTE)';
-  //REGEXP_RTMP_MEDIADATA = '\bmediadata\s*\(\s*[0-9]+\s*,\s*[0-9]+\s*,\s*(?P<ID>[0-9]+)';
-
-  REGEXP_MS_TITLE = REGEXP_MOVIE_TITLE;
-  REGEXP_MS_PLAYERPARAMS = 'voyoPlayer\.params\s*=\s*\{(?P<PARAMS>.*?)\}\s*;';
-  REGEXP_MS_PLAYERPARAMS_ITEM = '\b(?P<VARNAME>[a-z0-9_]+)\s*:\s*(?P<QUOTE>["'']?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*(?:,|$)';
-  //REGEXP_MS_MEDIADATA = '\bnew\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)';
-  REGEXP_MS_STREAMID = '<param\s+value=\\"(?:[^,]*,)*identifier=(?P<ID>(?P<YEAR>\d{4})-(?P<MONTH>\d{2})-[^",]+)';
+  REGEXP_MEDIADATA = '\bmainVideo\s*=\s*new\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)'; // dalsi tri parametry jsou: Archivovane, Extra, Zive
+  REGEXP_STREAMID = '<param\s+value=\\"(?:[^,]*,)*identifier=(?P<ID>(?P<YEAR>\d{4})-(?P<MONTH>\d{2})-[^",]+)';
+  REGEXP_PLAYERPARAMS = 'voyoPlayer\.params\s*=\s*\{(?P<PARAMS>.*?)\}\s*;';
+  REGEXP_PLAYERPARAMS_ITEM = '\b(?P<VARNAME>[a-z0-9_]+)\s*:\s*(?P<QUOTE>["'']?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*(?:,|$)';
 
 const
   NOVA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Nova.cz';
   NOVA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+
+type
+  TDownloader_Nova_MS = class(TMSDirectDownloader);
+
+  TDownloader_Nova_RTMP = class(TRTMPDirectDownloader)
+    public
+      class function Features: TDownloaderFeatures; override;
+    end;
 
 { TDownloader_Nova }
 
@@ -200,13 +162,22 @@ constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MediaDataRegExp := RegExCreate(REGEXP_MEDIADATA);
+  MovieIDRegExp := RegExCreate(REGEXP_STREAMID);
+  PlayerParamsRegExp := RegExCreate(REGEXP_PLAYERPARAMS);
+  PlayerParamsItemRegExp := RegExCreate(REGEXP_PLAYERPARAMS_ITEM);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
+  Secret := OPTION_NOVA_SECRET_DEFAULT;
 end;
 
 destructor TDownloader_Nova.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MediaDataRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(PlayerParamsRegExp);
+  RegExFreeAndNil(PlayerParamsItemRegExp);
   inherited;
 end;
 
@@ -215,180 +186,20 @@ begin
   Result := MovieID;
 end;
 
-function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
-//var
-//  Flag: string;
-begin
-  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
-//  if GetRegExpVar(MediaDataRegExp, Page, 'FLAG', Flag) and (Flag = 'true') then
-//    Downloader := TDownloader_Nova_MS.Create(MovieID)
-//  else
-    Downloader := TDownloader_Nova_RTMP.Create(MovieID);
-  Result := True;
-end;
-
 procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
-end;
-
-{ TDownloader_Nova_RTMP }
-
-class function TDownloader_Nova_RTMP.Provider: string;
-begin
-  Result := NOVA_PROVIDER;
-end;
-
-class function TDownloader_Nova_RTMP.UrlRegExp: string;
-begin
-  Result := Format(NOVA_URLREGEXP, [MovieIDParamName]);
-end;
-
-class function TDownloader_Nova_RTMP.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features + [dfPreferRtmpLiveStream];
-end;
-
-constructor TDownloader_Nova_RTMP.Create(const AMovieID: string);
-begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(Format(REGEXP_RTMP_MOVIE_TITLE, ['original_title']));
-  MediaIdRegExp := RegExCreate(REGEXP_RTMP_MEDIAID);
-  MediaDataRegExp := RegExCreate(REGEXP_MEDIADATA);
-  LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
-  Secret := OPTION_NOVA_SECRET_DEFAULT;
-end;
-
-destructor TDownloader_Nova_RTMP.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MediaIdRegExp);
-  RegExFreeAndNil(MediaDataRegExp);
-  inherited;
-end;
-
-function TDownloader_Nova_RTMP.GetMovieInfoUrl: string;
-begin
-  Result := MovieID;
-end;
-
-function TDownloader_Nova_RTMP.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  NOVA_SERVICE_URL = 'http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx';
-  NOVA_TIMESTAMP_URL = 'http://tn.nova.cz/lbin/time.php';
-  NOVA_APP_ID = 'nova-vod';
-var
-  InfoXml: TXmlDoc;
-  Node: TXmlNode;
-  Media_ID, Timestamp, ID, Signature, Url, Status, BaseUrl, Quality: string;
-  SignatureBytes: AnsiString;
-  i: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(MediaIdRegExp, Page, 'ID', Media_ID) then
-    GetRegExpVar(MediaDataRegExp, Page, 'MEDIA_ID', Media_ID);
-  if Media_ID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['media_id']))
-  else if Secret = '' then
-    SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET)
-  else if not DownloadPage(Http, NOVA_TIMESTAMP_URL, Timestamp) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
-  else
-    begin
-    Timestamp := Copy(Timestamp, 1, 14);
-    ID := UrlEncode(NOVA_APP_ID + '|' + Media_ID);
-    SignatureBytes := {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret);
-    SignatureBytes := MD5(SignatureBytes);
-    SignatureBytes := EncodeBase64(SignatureBytes);
-    Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (SignatureBytes));
-    Url := Format(NOVA_SERVICE_URL + '?c=%s&h=0&t=%s&s=%s&tm=nova&d=1', [ID, Timestamp, Signature]);
-    if not DownloadXml(Http, Url, InfoXml) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-    else
-      try
-        if (not GetXmlVar(InfoXml, 'status', Status)) or (Status <> 'Ok') then
-          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE + ' ' + Status)
-        else if not GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
-        else if not XmlNodeByPath(InfoXml, 'mediaList', Node) then
-          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-        else
-          for i := 0 to Pred(Node.NodeCount) do
-            if Node[i].Name = 'media' then
-              if GetXmlVar(Node[i], 'url', Url) then
-                if GetXmlVar(Node[i], 'quality', Quality) then
-                  if (LowQuality and (Quality = 'lq')) or ((not LowQuality) and (Quality = 'hq')) then
-                    begin
-                    MovieUrl := Url;
-                    Self.RtmpUrl := BaseUrl;
-                    Self.Playpath := Url;
-                    SetPrepared(True);
-                    Result := True;
-                    Break;
-                    end;
-      finally
-        FreeAndNil(InfoXml);
-        end;
-    end;
-end;
-
-procedure TDownloader_Nova_RTMP.SetOptions(const Value: TYTDOptions);
 begin
   inherited;
   LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
   Secret := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT);
 end;
 
-{ TDownloader_Nova_MS }
-
-class function TDownloader_Nova_MS.Provider: string;
-begin
-  Result := NOVA_PROVIDER;
-end;
-
-class function TDownloader_Nova_MS.UrlRegExp: string;
-begin
-  Result := Format(NOVA_URLREGEXP, [MovieIDParamName]);
-end;
-
-constructor TDownloader_Nova_MS.Create(const AMovieID: string);
-begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MS_TITLE);
-  PlayerParamsRegExp := RegExCreate(REGEXP_MS_PLAYERPARAMS);
-  PlayerParamsItemRegExp := RegExCreate(REGEXP_MS_PLAYERPARAMS_ITEM);
-  MediaDataRegExp := RegExCreate(REGEXP_MEDIADATA);
-  MovieIDRegExp := RegExCreate(REGEXP_MS_STREAMID);
-  LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
-end;
-
-destructor TDownloader_Nova_MS.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(PlayerParamsRegExp);
-  RegExFreeAndNil(PlayerParamsItemRegExp);
-  RegExFreeAndNil(MediaDataRegExp);
-  RegExFreeAndNil(MediaDataRegExp);
-  inherited;
-end;
-
-function TDownloader_Nova_MS.GetMovieInfoUrl: string;
-begin
-  Result := MovieID;
-end;
-
-function TDownloader_Nova_MS.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  QualitySuffix: array[boolean] of string = ('-LQ', '-HQ');
+function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
 var
-  Params, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, StreamInfo, Year, Month, ID: string;
+  Params, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
   Result := False;
+  // Vytahnu si spolecne parametry videa
   if not GetRegExpVar(PlayerParamsRegExp, Page, 'PARAMS', Params) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not GetRegExpVarPairs(PlayerParamsItemRegExp, Params, ['siteId', 'sectionId', 'subsite'], [@SiteID, @SectionID, @Subsite]) then
@@ -397,27 +208,95 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not GetRegExpVars(MediaDataRegExp, Page, ['PROD_ID', 'UNIT_ID', 'MEDIA_ID'], [@ProductID, @UnitID, @MediaID]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash&prod=%s&unit=%s&media=%s&site=%s&section=%s&subsite=%s&embed=0&mute=0&size=&realSite=%s&width=704&height=441&hdEnabled=%d', [ProductID, UnitID, MediaID, SiteID, SectionID, Subsite, SiteID, Integer(LowQuality)]), StreamInfo) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if not GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
-    SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
+  // Ted postupne vyzkousim jednotlive downloadery
+  else if TryMSDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, Downloader) then
+    Result := True
+  else if TryRTMPDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, Downloader) then
+    Result := True
   else
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
+end;
+
+function TDownloader_Nova.TryMSDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
+const
+  QualitySuffix: array[boolean] of string = ('-LQ', '-HQ');
+var
+  StreamInfo, Year, Month, ID: string;
+  MSDownloader: TMSDirectDownloader;
+begin
+  Result := False;
+  if DownloadPage(Http, Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash&prod=%s&unit=%s&media=%s&site=%s&section=%s&subsite=%s&embed=0&mute=0&size=&realSite=%s&width=704&height=441&hdEnabled=%d', [ProductID, UnitID, MediaID, SiteID, SectionID, Subsite, SiteID, Integer(LowQuality)]), StreamInfo) then
+    if GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
+      begin
+      MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
+      MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
+      MSDownloader.Options := Options;
+      Downloader := MSDownloader;
+      Result := True;
+      end;
+end;
+
+function TDownloader_Nova.TryRTMPDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
+const
+  NOVA_SERVICE_URL = 'http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx';
+  NOVA_TIMESTAMP_URL = 'http://tn.nova.cz/lbin/time.php';
+  NOVA_APP_ID = 'nova-vod';
+var
+  InfoXml: TXmlDoc;
+  Node: TXmlNode;
+  Timestamp, AppID, Signature, InfoUrl, Status, Url, BaseUrl, Quality: string;
+  SignatureBytes: AnsiString;
+  i: integer;
+  RtmpDownloader: TDownloader_Nova_RTMP;
+begin
+  Result := False;
+  if DownloadPage(Http, NOVA_TIMESTAMP_URL, Timestamp) then
     begin
-    MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
-    SetPrepared(True);
-    Result := True;
+    Timestamp := Copy(Timestamp, 1, 14);
+    AppID := UrlEncode(NOVA_APP_ID + '|' + MediaID);
+    SignatureBytes := {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + MediaID + '|' + Timestamp + '|' + Secret);
+    SignatureBytes := MD5(SignatureBytes);
+    SignatureBytes := EncodeBase64(SignatureBytes);
+    Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (SignatureBytes));
+    InfoUrl := Format(NOVA_SERVICE_URL + '?c=%s&h=0&t=%s&s=%s&tm=nova&d=1', [AppID, Timestamp, Signature]);
+    if DownloadXml(Http, InfoUrl, InfoXml) then
+      try
+        //InfoXml.SaveToFile('nova.xml');
+        if GetXmlVar(InfoXml, 'status', Status) then
+          if Status = 'Ok' then
+            if GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then
+              if XmlNodeByPath(InfoXml, 'mediaList', Node) then
+                for i := 0 to Pred(Node.NodeCount) do
+                  if Node[i].Name = 'media' then
+                    if GetXmlVar(Node[i], 'url', Url) then
+                      if GetXmlVar(Node[i], 'quality', Quality) then
+                        if (LowQuality and (Quality = 'lq')) or ((not LowQuality) and (Quality = 'hq')) then
+                          begin
+                          MovieUrl := Url;
+                          RtmpDownloader := TDownloader_Nova_RTMP.Create(Url);
+                          RtmpDownloader.Options := Options;
+                          RtmpDownloader.RtmpUrl := BaseUrl;
+                          RtmpDownloader.Playpath := Url;
+                          RtmpDownloader.SaveRtmpDumpOptions;
+                          Downloader := RtmpDownloader;
+                          Result := True;
+                          Break;
+                          end;
+      finally
+        FreeAndNil(InfoXml);
+        end;
     end;
 end;
 
-procedure TDownloader_Nova_MS.SetOptions(const Value: TYTDOptions);
+{ TDownloader_Nova_RTMP }
+
+class function TDownloader_Nova_RTMP.Features: TDownloaderFeatures;
 begin
-  inherited;
-  LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
+  Result := inherited Features + [dfPreferRtmpLiveStream];
 end;
 
 initialization
   RegisterDownloader(TDownloader_Nova);
   //RegisterDownloader(TDownloader_Nova_RTMP);
-  //RegisterDownloader(TDownloader_Nova_MS);
 
 end.

@@ -42,17 +42,23 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  uRTMPDirectDownloader, uMSDirectDownloader;
 
 type
-  TDownloader_Hasici150 = class(TMSDownloader)
+  TDownloader_Hasici150 = class(TNestedDownloader)
     private
     protected
-      ConfigRegExp: TRegExp;
+      RtmpServerRegExp: TRegExp;
+      RtmpStreamRegExp: TRegExp;
+      MSConfigRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
+      function TryRTMPDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; 
+      function TryMSDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; 
     public
+      class function Features: TDownloaderFeatures; override;
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -66,17 +72,29 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
+// RTMP: http://www.hasici150.tv/cz/Media-galerie/Video/Predavani-cen-RWE-_____312/Predavani-cen-RWE-_____1004/
+// MS: http://www.hasici150.tv/cz/Media-galerie/Video/Plzenska-stovka-2012---serial-CPVK_____210/Plzenska-stovka-2012_____776/
 const
   URLREGEXP_BEFORE_ID = 'hasici150\.tv/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(.*?\|\s*)([^|]*)</title>';
-  REGEXP_EXTRACT_CONFIG = '<iframe\s[^>]*[?&]configxml=(?P<URL>https?://[^&"]+)';
+  REGEXP_MOVIE_TITLE = '<title>(?:.*?\|\s*)(?P<TITLE>[^|]*?)\s*</title>';
+  REGEXP_RTMP_SERVER = '\bstreamer\s*:\s*''(?P<SERVER>.+?)''';
+  REGEXP_RTMP_STREAM = '\bfile\s*:\s*''(?P<STREAM>.+?)''';
+  REGEXP_MS_CONFIG = '<iframe\s[^>]*[?&]configxml=(?P<URL>https?://[^&"]+)';
+
+type
+  TDownloader_Hasici150_MS = class(TMSDirectDownloader);
+  TDownloader_Hasici150_RTMP = class(TRTMPDirectDownloader);
 
 { TDownloader_Hasici150 }
+
+class function TDownloader_Hasici150.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + TDownloader_Hasici150_RTMP.Features + TDownloader_Hasici150_MS.Features;
+end;
 
 class function TDownloader_Hasici150.Provider: string;
 begin
@@ -92,14 +110,18 @@ constructor TDownloader_Hasici150.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  ConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  RtmpServerRegExp := RegExCreate(REGEXP_RTMP_SERVER);
+  RtmpStreamRegExp := RegExCreate(REGEXP_RTMP_STREAM);
+  MSConfigRegExp := RegExCreate(REGEXP_MS_CONFIG);
 end;
 
 destructor TDownloader_Hasici150.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(ConfigRegExp);
+  RegExFreeAndNil(RtmpServerRegExp);
+  RegExFreeAndNil(RtmpStreamRegExp);
+  RegExFreeAndNil(MSConfigRegExp);
   inherited;
 end;
 
@@ -108,35 +130,66 @@ begin
   Result := 'http://www.hasici150.tv/' + MovieID;
 end;
 
-function TDownloader_Hasici150.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Hasici150.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+begin
+  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
+  Result := False;
+  if TryRTMPDownloader(Page, PageXml, Http, Downloader) then
+    Result := True
+  else if TryMSDownloader(Page, PageXml, Http, Downloader) then
+    Result := True
+  else
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
+end;
+
+function TDownloader_Hasici150.TryRTMPDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
 var
+  Server, Stream: string;
+  RtmpDownloader: TDownloader_Hasici150_RTMP;
+begin
+  Result := False;
+  if GetRegExpVar(RtmpServerRegExp, Page, 'SERVER', Server) then
+    if GetRegExpVar(RtmpStreamRegExp, Page, 'STREAM', Stream) then
+      begin
+      MovieUrl := Server + '/' + Stream;
+      RtmpDownloader := TDownloader_Hasici150_RTMP.Create(MovieUrl);
+      RtmpDownloader.Options := Options;
+      RtmpDownloader.RtmpUrl := Server;
+      RtmpDownloader.Playpath := ChangeFileExt(Stream, '');
+      RtmpDownloader.SaveRtmpDumpOptions;
+      Downloader := RtmpDownloader;
+      Result := True;
+      end;
+end;
+
+function TDownloader_Hasici150.TryMSDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+var
+  MSDownloader: TMSDirectDownloader;
   InfoUrl, Url, Role, Title: string;
   Info: TXmlDoc;
   i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(ConfigRegExp, Page, 'URL', InfoUrl) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, StringReplace(InfoUrl, '.php;params:', '.php?params=', []), Info) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      for i := 0 to Pred(Info.Root.NodeCount) do
-        if Info.Root.Nodes[i].Name = 'media' then
-          if GetXmlAttr(Info.Root.Nodes[i], '', 'src', Url) then
-            if (not GetXmlAttr(Info.Root.Nodes[i], '', 'role', Role)) or (Role <> 'advertisement') then
-              begin
-              if GetXmlAttr(Info.Root.Nodes[i], '', 'title', Title) then
-                SetName(Title);
-              MovieUrl := Url;
-              SetPrepared(True);
-              Result := True;
-              Break;
-              end;
-    finally
-      FreeAndNil(Info);
-      end;
+  if GetRegExpVar(MSConfigRegExp, Page, 'URL', InfoUrl) then
+    if DownloadXml(Http, StringReplace(InfoUrl, '.php;params:', '.php?params=', []), Info) then
+      try
+        for i := 0 to Pred(Info.Root.NodeCount) do
+          if Info.Root.Nodes[i].Name = 'media' then
+            if GetXmlAttr(Info.Root.Nodes[i], '', 'src', Url) then
+              if (not GetXmlAttr(Info.Root.Nodes[i], '', 'role', Role)) or (Role <> 'advertisement') then
+                begin
+                if GetXmlAttr(Info.Root.Nodes[i], '', 'title', Title) then
+                  SetName(Title);
+                MovieUrl := Url;
+                MSDownloader := TDownloader_Hasici150_MS.CreateWithName(MovieUrl, UnpreparedName);
+                MSDownloader.Options := Options;
+                Downloader := MSDownloader;
+                Result := True;
+                Break;
+                end;
+      finally
+        FreeAndNil(Info);
+        end;
 end;
 
 initialization

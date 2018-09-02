@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-09-22 14:54\n"
-"PO-Revision-Date: 2012-09-22 14:54\n"
+"POT-Creation-Date: 2013-01-20 16:46\n"
+"PO-Revision-Date: 2013-01-20 16:46\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -874,7 +874,7 @@ msgstr ""
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #: CLI/uYTD.pas:469
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:606
+#: CLI/uYTD.pas:605
 msgid "    File name: "
 msgstr ""
 
@@ -908,40 +908,40 @@ msgid "Trying to parse as HTML page..."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:612
+#: CLI/uYTD.pas:611
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:614
+#: CLI/uYTD.pas:613
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:615
+#: CLI/uYTD.pas:614
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:616
+#: CLI/uYTD.pas:615
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:617
+#: CLI/uYTD.pas:616
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:618
+#: CLI/uYTD.pas:617
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:634
+#: CLI/uYTD.pas:633
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:645
+#: CLI/uYTD.pas:644
 msgid "Incorrect answer."
 msgstr ""
 
@@ -1534,9 +1534,9 @@ msgid "Error loading configuration file. Error %s:\n"
 msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:289
+#: GUI/uDownloadList.pas:288
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:299
+#: GUI/uDownloadList.pas:298
 msgid "File already exists."
 msgstr ""
 
@@ -1545,6 +1545,17 @@ msgstr ""
 #. Label "Newest version:"
 #: GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
+msgstr ""
+
+#. Programmer's name for it: re7zListStart
+#: Lib/Pepak/uSystem.pas:526
+msgid "^-{10}[- ]+$"
+msgstr ""
+
+#. Programmer's name for it: re7zListItem
+#: Lib/Pepak/uSystem.pas:527
+msgid "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) "
+"([.DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
 msgstr ""
 
 #. error code, error code, error message

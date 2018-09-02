@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMamaOzenMa;
+unit downOwn3D_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,22 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MamaOzenMa = class(TDownloader_Joj_Porady)
+  TDownloader_Own3D_Embed = class(THttpDownloader)
     private
     protected
-      function GetMovieInfoUrl: string; override;{*}
-      function TheServer: string; override;
+      BasePathRegExp: TRegExp;
+      HDPathRegExp: TRegExp;
+      HQPathRegExp: TRegExp;
+      SDPathRegExp: TRegExp;
+    protected
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
-      class function UrlRegExp: string; override;{*}
+      class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -64,45 +69,76 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://mamaozenma.joj.sk/video-mama-ozen-ma/detail/drama-u-pavla.html
+// http://www.own3d.tv/stream/927952
 const
-  URLREGEXP_BEFORE_ID = 'mamaozenma\.joj\.sk/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = 'own3d\.tv/stream/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_MamaOzenMa }
+const
+  REGEXP_MOVIE_TITLE =  '''title''\s*:\s*\{.*?''title''\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_BASE =   '''baseUrl''\s*:\s*''(?P<BASE>https?://.+?)''';
+  REGEXP_MOVIE_HD =     '''HDUrl''\s*:\s*''(?P<PATH>videos/.+?\.mp4)''';
+  REGEXP_MOVIE_HQ =     '''HQUrl''\s*:\s*''(?P<PATH>videos/.+?\.mp4)''';
+  REGEXP_MOVIE_SD =     '''url''\s*:\s*''(?P<PATH>videos/.+?\.mp4)''';
 
-class function TDownloader_MamaOzenMa.Provider: string;
+{ TDownloader_Own3D_Embed }
+
+class function TDownloader_Own3D_Embed.Provider: string;
 begin
-  Result := 'Joj.sk';
+  Result := 'Own3D.tv';
 end;
 
-class function TDownloader_MamaOzenMa.UrlRegExp: string;
+class function TDownloader_Own3D_Embed.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_MamaOzenMa.Create(const AMovieID: string);
+constructor TDownloader_Own3D_Embed.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUnknown;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  BasePathRegExp := RegExCreate(REGEXP_MOVIE_BASE);
+  HDPathRegExp := RegExCreate(REGEXP_MOVIE_HD);
+  HQPathRegExp := RegExCreate(REGEXP_MOVIE_HQ);
+  SDPathRegExp := RegExCreate(REGEXP_MOVIE_SD);
+end;
+
+destructor TDownloader_Own3D_Embed.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(BasePathRegExp);
+  RegExFreeAndNil(HDPathRegExp);
+  RegExFreeAndNil(HQPathRegExp);
+  RegExFreeAndNil(SDPathRegExp);
   inherited;
 end;
 
-destructor TDownloader_MamaOzenMa.Destroy;
+function TDownloader_Own3D_Embed.GetMovieInfoUrl: string;
 begin
-  inherited;
+  Result := 'http://www.own3d.tv/inc/flowplayer/embed/json_cfg.php?video_id=' + MovieID;
 end;
 
-function TDownloader_MamaOzenMa.GetMovieInfoUrl: string;
+function TDownloader_Own3D_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  BaseUrl, Path: string;
 begin
-  Result := 'http://mamaozenma.joj.sk/' + MovieID;
-end;
-
-function TDownloader_MamaOzenMa.TheServer: string;
-begin
-  Result := 'n03.joj.sk';
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(BasePathRegExp, Page, 'BASE', BaseUrl) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+  else if not (GetRegExpVar(HDPathRegExp, Page, 'PATH', Path) or GetRegExpVar(HQPathRegExp, Page, 'PATH', Path) or GetRegExpVar(SDPathRegExp, Page, 'PATH', Path)) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else
+    begin
+    MovieUrl := BaseUrl + Path;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MamaOzenMa);
+  RegisterDownloader(TDownloader_Own3D_Embed);
 
 end.

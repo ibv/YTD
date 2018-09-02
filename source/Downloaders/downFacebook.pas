@@ -48,8 +48,9 @@ type
   TDownloader_Facebook = class(THttpDownloader)
     private
     protected
-      MovieUrlHQRegExp: TRegExp;
-      MovieUrlLQRegExp: TRegExp;
+      MovieListRegExp: TRegExp;
+      MovieHDUrlRegExp: TRegExp;
+      MovieSDUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,16 +69,19 @@ uses
   uMessages;
 
 // http://www.facebook.com/video/video.php?v=1131482863478
+// http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
+// http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*facebook\.com/video/.*?[?&]v=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'facebook\.com/.*?[?&]v=';
+  //URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*facebook\.com/video/.*?[?&]v=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE = '<h3\s+class="video_title\s+datawrap">(?P<TITLE>.*?)</h3>';
-  REGEXP_MOVIE_URL_HQ = '\bswf_id_[0-9a-f]+\.addVariable\s*\(\s*"highqual_src"\s*,\s*"(?P<URL>.*?)"';
-  REGEXP_MOVIE_URL_LQ = '\bswf_id_[0-9a-f]+\.addVariable\s*\(\s*"lowqual_src"\s*,\s*"(?P<URL>.*?)"';
-  REGEXP_MOVIE_URL = '\bswf_id_[0-9a-f]+\.addVariable\s*\(\s*"video_src"\s*,\s*"(?P<URL>.*?)"';
+  REGEXP_MOVIE_LIST = '\[\s*"video"\s*,\s*"(?P<INFO>.+?)"';
+  REGEXP_SD_MOVIE_URL = '"sd_src"\s*:\s*"(?P<URL>.+?)"';
+  REGEXP_HD_MOVIE_URL = '"hd_src"\s*:\s*"(?P<URL>.+?)"';
 
 { TDownloader_Facebook }
 
@@ -88,7 +92,7 @@ end;
 
 class function TDownloader_Facebook.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Facebook.Create(const AMovieID: string);
@@ -96,17 +100,17 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  MovieUrlHQRegExp := RegExCreate(REGEXP_MOVIE_URL_HQ);
-  MovieUrlLQRegExp := RegExCreate(REGEXP_MOVIE_URL_LQ);
+  MovieListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
+  MovieHDUrlRegExp := RegExCreate(REGEXP_HD_MOVIE_URL);
+  MovieSDUrlRegExp := RegExCreate(REGEXP_SD_MOVIE_URL);
 end;
 
 destructor TDownloader_Facebook.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  RegExFreeAndNil(MovieUrlHQRegExp);
-  RegExFreeAndNil(MovieUrlLQRegExp);
+  RegExFreeAndNil(MovieListRegExp);
+  RegExFreeAndNil(MovieHDUrlRegExp);
+  RegExFreeAndNil(MovieSDUrlRegExp);
   inherited;
 end;
 
@@ -116,17 +120,23 @@ begin
 end;
 
 function TDownloader_Facebook.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
+var Info, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not (GetRegExpVar(MovieUrlHQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlLQRegExp, Page, 'URL', Url) or GetRegExpVar(MovieUrlRegExp, Page, 'URL', Url)) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  if not GetRegExpVar(MovieListRegExp, Page, 'INFO', Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     begin
-    MovieURL := UrlDecode(JSDecode(Url));
-    SetPrepared(True);
-    Result := True;
+    Info := UrlDecode(JSDecode(Info));
+    if not (GetRegExpVar(MovieHDUrlRegExp, Info, 'URL', Url) or GetRegExpVar(MovieSDUrlRegExp, Info, 'URL', Url)) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieURL := JSDecode(Url);
+      SetPrepared(True);
+      Result := True;
+      end;
     end;
 end;
 

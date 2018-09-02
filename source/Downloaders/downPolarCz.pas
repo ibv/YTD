@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMamaOzenMa;
+unit downPolarCz;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,19 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MamaOzenMa = class(TDownloader_Joj_Porady)
+  TDownloader_PolarCz = class(THttpDownloader)
     private
     protected
-      function GetMovieInfoUrl: string; override;{*}
-      function TheServer: string; override;
+      MovieUrlsRegExp: TRegExp;
+    protected
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
-      class function UrlRegExp: string; override;{*}
+      class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -64,45 +66,78 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://mamaozenma.joj.sk/video-mama-ozen-ma/detail/drama-u-pavla.html
+// http://www.polar.cz/archiv/video/regionalni-zpravy-polar-18-01-2013-09-00
 const
-  URLREGEXP_BEFORE_ID = 'mamaozenma\.joj\.sk/';
+  URLREGEXP_BEFORE_ID = 'polar\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_MamaOzenMa }
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H2;
+  REGEXP_MOVIE_URLS =   '\burl\s*:\s*"(?P<URL>https?://[^"]+)"\s*,\s*bitrate\s*:\s*(?P<BITRATE>\d+)';
 
-class function TDownloader_MamaOzenMa.Provider: string;
+{ TDownloader_PolarCz }
+
+class function TDownloader_PolarCz.Provider: string;
 begin
-  Result := 'Joj.sk';
+  Result := 'Polar.cz';
 end;
 
-class function TDownloader_MamaOzenMa.UrlRegExp: string;
+class function TDownloader_PolarCz.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_MamaOzenMa.Create(const AMovieID: string);
+constructor TDownloader_PolarCz.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlsRegExp := RegExCreate(REGEXP_MOVIE_URLS);
+end;
+
+destructor TDownloader_PolarCz.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlsRegExp);
   inherited;
 end;
 
-destructor TDownloader_MamaOzenMa.Destroy;
+function TDownloader_PolarCz.GetMovieInfoUrl: string;
 begin
-  inherited;
+  Result := 'http://www.polar.cz/' + MovieID;
 end;
 
-function TDownloader_MamaOzenMa.GetMovieInfoUrl: string;
+function TDownloader_PolarCz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const
+  RegExpVars: array[0..1] of string = ('URL', 'BITRATE');
+var
+  BestUrl, Url, sBitrate: string;
+  BestBitrate, Bitrate: integer;
 begin
-  Result := 'http://mamaozenma.joj.sk/' + MovieID;
-end;
-
-function TDownloader_MamaOzenMa.TheServer: string;
-begin
-  Result := 'n03.joj.sk';
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  BestUrl := '';
+  BestBitrate := -1;
+  if not GetRegExpVars(MovieUrlsRegExp, Page, RegExpVars, [@Url, @sBitrate]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    repeat
+      Bitrate := StrToIntDef(sBitrate, 0);
+      if Bitrate > BestBitrate then
+        begin
+        BestUrl := Url;
+        BestBitrate := Bitrate;
+        end;
+    until not GetRegExpVarsAgain(MovieUrlsRegExp, RegExpVars, [@Url, @sBitrate]);
+    MovieUrl := BestUrl;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MamaOzenMa);
+  RegisterDownloader(TDownloader_PolarCz);
 
 end.

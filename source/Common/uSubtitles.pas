@@ -44,8 +44,21 @@ uses
 
 function SubtitlesToSrt(var Index: integer; const TimeStart, TimeEnd: TDateTime; const Subtitle: string): string; overload;
 function SubtitlesToSrt(var Index: integer; const TimeStart, TimeEnd: string; const Subtitle: string): string; overload;
+function SubtitlesToSrt(var Index: integer; const TimeStart: TDateTime; const Subtitle: string): string; overload;
 
 implementation
+
+function SubtitlesToSrt(var Index: integer; const TimeStart: TDateTime; const Subtitle: string): string;
+const
+  ONE_SECOND = 1/(24*60*60);
+var
+  Time: TDateTime;
+begin
+  Time := (Length(Subtitle) / 14)*ONE_SECOND;
+  if Time < (2*ONE_SECOND) then
+    Time := 2*ONE_SECOND;
+  Result := SubtitlesToSrt(Index, TimeStart, TimeStart + Time, Subtitle);
+end;
 
 function SubtitlesToSrt(var Index: integer; const TimeStart, TimeEnd: TDateTime; const Subtitle: string): string;
 begin

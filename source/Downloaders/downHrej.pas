@@ -42,16 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TDownloader_Hrej = class(THttpDownloader)
+  TDownloader_Hrej = class(TNestedDownloader)
     private
     protected
-      VideoIdRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -66,15 +63,15 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
+// http://www.hrej.cz/novinky/2012/12/18/sledujte-vidcast-2-akcni-special-28993/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*hrej\.cz/tv/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'hrej\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
-  REGEXP_VIDEO_ID = '[^/]*--(?P<ID>[0-9]+)';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H2;
+  REGEXP_MOVIE_URL = REGEXP_URL_EMBED_SRC;
 
 { TDownloader_Hrej }
 
@@ -93,44 +90,19 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_Hrej.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
 function TDownloader_Hrej.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.hrej.cz/tv/' + MovieID;
-end;
-
-function TDownloader_Hrej.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Url: string;
-    Xml: TXmlDoc;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(VideoIdRegExp, MovieID, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, 'http://www.hrej.cz/tv/' + ID + '.xml', Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      if not GetXmlVar(Xml, 'flv', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else
-        begin
-        MovieURL := Url;
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
+  Result := 'http://www.hrej.cz/' + MovieID;
 end;
 
 initialization

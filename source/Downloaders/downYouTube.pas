@@ -113,7 +113,7 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-  uHttpDirectDownloader, uRtmpDirectDownloader, rtmpdump_dll,
+  uHttpDirectDownloader, uRtmpDirectDownloader, 
   {$IFDEF SUBTITLES}
   uSubtitles,
   {$ENDIF}

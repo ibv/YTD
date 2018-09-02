@@ -1,11 +1,41 @@
 ﻿______________________________________________________________________________
 
-YTD v1.18                                                    (c) 2009-12 Pepak
+YTD v1.19                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.19:
+
+    * Updated the signing certificate.
+
+    * New providers:
+      - Own3D.tv
+      - Polar.cz
+      - SchoolOfCare.ru
+
+    * CeskaTelevize.cz: Added support for subtitles. It may happen that some
+      videos won't download at all - in that case, disable subtitle download
+      in the CT's configuration and try again.
+
+    * Hasici150.tv: Added support for RTMP movies. The old Silverlight-based
+      movies should still work, but I can't find any which would play in the
+      browser so I can't verify it.
+
+    * iPrima.cz: It will probably die quickly as the Livebox guy updates the
+      page setup once again, but if you are quick, you may be able to download
+      something...
+
+    * MamaOzenMa.joj.sk: The other *.joj.sk movies should work as well, but
+      I haven't tested them.
+
+    * Nova.cz: Completely rewritten. Now both Flash and Silverlight movies
+      work. Thanks go to Balutbj for providing a great deal of information
+      about how Nova works.
+
+
 
   v1.18:
 

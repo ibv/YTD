@@ -48,7 +48,6 @@ type
   TDownloader_BTVCz = class(THttpDownloader)
     private
     protected
-      PlaylistUrlRegExp: TRegExp;
       DatumRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
@@ -75,7 +74,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_DESCRIPTION;
-  REGEXP_PLAYLIST_URL = REGEXP_URL_ADDPARAM_FLASHVARS_FILE;
+  REGEXP_MOVIE_URL = REGEXP_URL_ADDPARAM_FLASHVARS_FILE;
   REGEXP_MOVIE_DATE =   '<p>\s*<strong>Premiéra:</strong>\s*(?P<DATE>.*?)\s*</p>';
 
 { TDownloader_BTVCz }
@@ -95,14 +94,14 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  PlaylistUrlRegExp := RegExCreate(REGEXP_PLAYLIST_URL);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
   DatumRegExp := RegExCreate(REGEXP_MOVIE_DATE);
 end;
 
 destructor TDownloader_BTVCz.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(PlaylistUrlRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   RegExFreeAndNil(DatumRegExp);
   inherited;
 end;
@@ -114,57 +113,22 @@ end;
 
 function TDownloader_BTVCz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Url, Datum, Title: string;
-  i: integer;
-  Playlist: TXmlDoc;
-  Tracks: TXmlNode;
+  Datum, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(DatumRegExp, Page, 'DATE', Datum) then
     Datum := '';
-  if not GetRegExpVar(PlaylistUrlRegExp, Page, 'URL', Url) then
+  if not GetRegExpVar(MovieUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, Url, Playlist) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    try
-      if not XmlNodeByPath(Playlist, 'tracklist', Tracks) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else
-        for i := 0 to Pred(Tracks.NodeCount) do
-          if Tracks.Nodes[i].Name = 'track' then
-            if GetXmlVar(Tracks.Nodes[i], 'location', Url) then
-              begin
-              if not GetXmlVar(Tracks.Nodes[i], 'title', Title) then
-                Title := Format('[Movie %d]', [i]);
-              if Datum <> '' then
-                Title := Datum + ' - ' + Title;
-              SetName(Title);
-              MovieUrl := Url;
-              SetPrepared(True);
-              Result := True;
-              {$IFDEF MULTIDOWNLOADS}
-              NameList.Add(Title);
-              UrlList.Add(Url);
-              {$ELSE}
-              Break;
-              {$ENDIF}
-              end;
-    finally
-      FreeAndNil(Playlist);
-      end;
-
-{
-  Result := Prepared;
-
-  if Result then
     begin
-    if GetRegExpVar(DatumRegExp, Page, 'DATE', Datum) then
-      if Datum <> '' then
-        SetName(Name + ' (' + Datum + ')');
+    if Datum <> '' then
+      SetName(UnpreparedName + ' - ' + Datum);
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
-}
 end;
 
 initialization

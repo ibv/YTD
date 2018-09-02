@@ -42,13 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader,
+  RtmpDump_DLL;
 
 type
   TRtmpDirectDownloader = class(TRtmpDownloader)
     private
+      fSavedRtmpDumpOptions: TRtmpDumpOptions;
     protected
       function GetMovieInfoUrl: string; override;
+      property SavedRtmpDumpOptions: TRtmpDumpOptions read fSavedRtmpDumpOptions write fSavedRtmpDumpOptions;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -56,6 +59,8 @@ type
       constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
       function Prepare: boolean; override;
+      procedure SaveRtmpDumpOptions;
+      procedure RestoreRtmpDumpOptions;
     end;
 
 implementation
@@ -85,6 +90,7 @@ end;
 constructor TRtmpDirectDownloader.Create(const AMovieID: string);
 begin
   inherited;
+  SetLength(fSavedRtmpDumpOptions, 0);
 end;
 
 constructor TRtmpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
@@ -113,11 +119,26 @@ begin
     begin
     if UnpreparedName = '' then
       SetName(ExtractUrlFileName(MovieID));
+    RestoreRtmpDumpOptions;
     MovieURL := MovieID;
-    RtmpUrl := MovieID;
+    if RtmpUrl = '' then
+      RtmpUrl := MovieID;
     SetPrepared(True);
     Result := True;
     end;
+end;
+
+procedure TRtmpDirectDownloader.RestoreRtmpDumpOptions;
+var
+  i: integer;
+begin
+  for i := 0 to Pred(Length(SavedRtmpDumpOptions)) do
+    SetRtmpDumpOption( {$IFDEF UNICODE} Char {$ENDIF} (SavedRtmpDumpOptions[i].ShortOption), {$IFDEF UNICODE} string {$ENDIF} (SavedRtmpDumpOptions[i].Argument));
+end;
+
+procedure TRtmpDirectDownloader.SaveRtmpDumpOptions;
+begin
+  SavedRtmpDumpOptions := RtmpDumpOptions;
 end;
 
 initialization

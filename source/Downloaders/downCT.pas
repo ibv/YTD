@@ -38,6 +38,8 @@ unit downCT;
 {$INCLUDE 'ytd.inc'}
 {$DEFINE VER_OLD}
 {$DEFINE VER_20111217}
+{$DEFINE CONVERTSUBTITLES}
+  // Convert subtitles to .srt format
 
 
 {$DEFINE DEBUG_ERRORSOAP}
@@ -115,6 +117,11 @@ type
       EmbeddedFrameRegExp: TRegExp;
       JavascriptPlayerRegExp: TRegExp;
       VideoPlayerUrlRegExp: TRegExp;
+      {$IFDEF SUBTITLES}
+      {$IFDEF CONVERTSUBTITLES}
+      SubtitleItemRegExp: TRegExp;
+      {$ENDIF}
+      {$ENDIF}
       Extension: string;
       MaxBitrate: integer;
     protected
@@ -141,6 +148,9 @@ type
       function First: boolean; override;
       function Next: boolean; override;
       {$ENDIF}
+      {$IFDEF SUBTITLES}
+      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      {$ENDIF}
     end;
   {$ENDIF}
 
@@ -156,6 +166,9 @@ uses
   uStrings,
   uJSON, uLkJSON,
   SynaUtil,
+  {$ENDIF}
+  {$IFDEF SUBTITLES}
+  uSubtitles,
   {$ENDIF}
   uDownloadClassifier,
   uMessages;
@@ -178,6 +191,12 @@ const
   REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
   REGEXP_JS_PLAYER = '<a\s+(?:\w+="[^"]*"\s+)*\bhref="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+(?:id|target)="videoPlayer_';
   REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>(?:https?:|\\?/).+?)"';
+  {$IFDEF SUBTITLES}
+  REGEXP_SUBTITLES = '<ul\s+id="subtitle[^>]+>(?P<SUBTITLES>.*?)</ul>';
+  {$IFDEF CONVERTSUBTITLES}
+  REGEXP_SUBTITLE_ITEM = '<li>\s*<a\b[^>]*>(?P<HOUR>\d+):(?P<MINUTE>\d{2}):(?P<SECOND>\d{2})</a>\s*(?P<TEXT>.*?)</li>';
+  {$ENDIF}
+  {$ENDIF}
   CUSTOM_HEADERS: array[0..0] of string = (
     'X-addr: 127.0.0.1'
     );
@@ -261,6 +280,12 @@ begin
   {$ENDIF}
 end;
 
+function TDownloader_CT.PrepareToken: boolean;
+begin
+  inherited PrepareToken;
+  Result := True;
+end;
+
 {$IFDEF VER_OLD}
 
 class function TDownloader_CT_old.Provider: string;
@@ -275,7 +300,10 @@ end;
 
 class function TDownloader_CT_old.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfPreferRtmpLiveStream];
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles, {$IFDEF CONVERTSUBTITLES} dfSubtitlesConvert, {$ENDIF} {$ENDIF}
+    dfPreferRtmpLiveStream
+    ];
 end;
 
 constructor TDownloader_CT_old.Create(const AMovieID: string);
@@ -287,6 +315,13 @@ begin
   EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
   JavascriptPlayerRegExp := RegExCreate(REGEXP_JS_PLAYER);
   VideoPlayerUrlRegExp := RegExCreate(REGEXP_VIDEOPLAYERURL);
+  {$IFDEF SUBTITLES}
+  {$IFDEF CONVERTSUBTITLES}
+  SubtitleItemRegExp := RegExCreate(REGEXP_SUBTITLE_ITEM);
+  {$ENDIF}
+  SetLength(fSubtitleRegExps, 1);
+  fSubtitleRegExps[0] := RegExCreate(REGEXP_SUBTITLES);
+  {$ENDIF}
   {$IFDEF MULTIDOWNLOADS}
   fStreams := TStringList.Create;
   fBaseUrls := TStringList.Create;
@@ -300,6 +335,13 @@ begin
   RegExFreeAndNil(EmbeddedFrameRegExp);
   RegExFreeAndNil(JavascriptPlayerRegExp);
   RegExFreeAndNil(VideoPlayerUrlRegExp);
+  {$IFDEF SUBTITLES}
+  {$IFDEF CONVERTSUBTITLES}
+  RegExFreeAndNil(SubtitleItemRegExp);
+  {$ENDIF}
+  RegExFreeAndNil(fSubtitleRegExps[0]);
+  SetLength(fSubtitleRegExps, 0);
+  {$ENDIF}
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fStreams);
   FreeAndNil(fBaseUrls);
@@ -315,6 +357,11 @@ end;
 function TDownloader_CT_old.GetMovieInfoUrl: string;
 begin
   Result := MovieID;
+  {$IFDEF SUBTITLES}
+  if SubtitlesEnabled then
+    if Result <> '' then
+      Result := Result + 'titulky/';
+  {$ENDIF}
 end;
 
 function TDownloader_CT_old.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
@@ -531,6 +578,46 @@ begin
   //Self.PageUrl := MovieID;
 end;
 
+{$IFDEF SUBTITLES}
+function TDownloader_CT_old.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+{$IFDEF CONVERTSUBTITLES}
+const
+  SubtitleVarNames: array[0..3] of string = ('HOUR', 'MINUTE', 'SECOND', 'TEXT');
+var
+  Srt, Hour, Minute, Second, Text: string;
+  Index: integer;
+//  REGEXP_SUBTITLE_ITEM = '<li>\s*<a\b[^>]*>(?P<HOUR>\d+):(?P<MINUTE>\d{2}):(?P<SECOND>\d{2})</a>\s*(?P<TEXT>.*?)</li>';
+{$ENDIF}
+begin
+  Result := inherited ReadSubtitles(Page, PageXml, Http);
+  fSubtitlesExt := '.htm';
+  {$IFDEF CONVERTSUBTITLES}
+  if Result then
+    if fSubtitles <> '' then
+      if ConvertSubtitles then
+        if GetRegExpVars(SubtitleItemRegExp, Page, SubtitleVarNames, [@Hour, @Minute, @Second, @Text]) then
+          begin
+          Srt := '';
+          Index := 0;
+          repeat
+            {
+            Text := StringReplace(Text, #13#10, ' ', [rfReplaceAll]);
+            Text := StringReplace(Text, #13, ' ', [rfReplaceAll]);
+            Text := StringReplace(Text, #10, ' ', [rfReplaceAll]);
+            Text := StringReplace(Text, '<br>', #13#10, [rfReplaceAll]);
+            Text := StringReplace(Text, '<br/>', #13#10, [rfReplaceAll]);
+            Text := StringReplace(Text, '<br />', #13#10, [rfReplaceAll]);
+            Text := StringReplace(Text, #13#10' ', #13#10, [rfReplaceAll]);
+            }
+            Srt := Srt + SubtitlesToSrt(Index, EncodeTime(StrToInt(Hour), StrToInt(Minute), StrToInt(Second), 0), Text);
+          until not GetRegExpVarsAgain(SubtitleItemRegExp, SubtitleVarNames, [@Hour, @Minute, @Second, @Text]);
+          fSubtitles := {$IFDEF UNICODE} AnsiString({StringToUtf8}(Srt)) {$ELSE} Srt {$ENDIF} ;
+          fSubtitlesExt := '.srt';
+          end;
+  {$ENDIF}
+end;
+{$ENDIF}
+
 {$ENDIF}
 
 { TDownloader_CT_20111217 }
@@ -608,13 +695,8 @@ begin
     end;
 end;
 
-function TDownloader_CT.PrepareToken: boolean;
-begin
-  inherited PrepareToken;
-  Result := True;
-end;
-
 initialization
   RegisterDownloader(TDownloader_CT);
 
 end.
+

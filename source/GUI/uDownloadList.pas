@@ -45,7 +45,7 @@ uses
   uCompatibility, uDownloadListItem, uDownloadThread,
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
-  uOptions, uLanguages;
+  uOptions, uLanguages, uFunctions;
 
 type
   TDownloadList = class;
@@ -221,11 +221,10 @@ begin
 end;
 
 function TDownloadList.AddFromHTML(const Source: string): integer;
-const HTTP_PREFIX = 'http://';
-      HTTPS_PREFIX = 'https://';
-var Downloader: TPlaylist_HTML;
+var
+  Downloader: TPlaylist_HTML;
 begin
-  if (AnsiCompareText(Copy(Source, 1, Length(HTTP_PREFIX)), HTTP_PREFIX) = 0) or (AnsiCompareText(Copy(Source, 1, Length(HTTPS_PREFIX)), HTTPS_PREFIX) = 0) then
+  if IsHttpProtocol(Source) then
     Downloader := TPlaylist_HTML.Create(Source)
   else
     Downloader := TPlaylist_HTMLfile.Create(Source);

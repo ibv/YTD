@@ -539,11 +539,10 @@ begin
 end;
 
 function TYTD.DownloadURLsFromHTML(const Source: string): integer;
-const HTTP_PREFIX = 'http://';
-      HTTPS_PREFIX = 'https://';
-var Playlist: TPlaylist_HTML;
+var
+  Playlist: TPlaylist_HTML;
 begin
-  if (AnsiCompareText(Copy(Source, 1, Length(HTTP_PREFIX)), HTTP_PREFIX) = 0) or (AnsiCompareText(Copy(Source, 1, Length(HTTPS_PREFIX)), HTTPS_PREFIX) = 0) then
+  if IsHttpProtocol(Source) then
     Playlist := HtmlPlaylist
   else
     Playlist := HtmlFilePlaylist;

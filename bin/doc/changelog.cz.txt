@@ -1,11 +1,50 @@
 ﻿______________________________________________________________________________
 
-YTD v1.18                                                    (c) 2009-12 Pepak
+YTD v1.19                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.19:
+
+    * Aktualizován podpisový certifikát.
+
+    * Noví poskytovatelé:
+      - Own3D.tv
+      - Polar.cz
+      - SchoolOfCare.ru
+
+    * CeskaTelevize.cz: Doplněna podpora pro stahování titulků. Pokud by kvůli
+      tomu náhodou některé video nešlo vůbec stáhnout, vypněte stahování
+      titulků v konfiguraci ČT a pak mi dejte vědět.
+
+    * Hasici150.tv: Doplněna podpora pro RTMP videa. Původní Microsoftí videa
+      by měla stále fungovat, bohužel mám jenom videa, která už nefungují ani
+      na webu (nicméně všechny potřebné parametry pro ně se najdou, takže
+      pokud existuje i nějaké funkční video, tak by mělo jít stáhnout).
+
+    * iPrima.cz: Když už dělám verzi, tak jsem zaktualizoval i Primu, ale
+      nejspíš dlouho nevydrží...
+
+    * MamaOzenMa.joj.sk: Měly by fungovat i ostatní pořady Joj.sk, ale nemám
+      je vyzkoušené.
+
+    * Nova.cz: Kompletně překopáno. Nyní už fungují jak Flash tak Silverlight
+      videa. Lví podíl na této funkci má Balutbj, který k tomu dodal strašnou
+      spoustu informací včetně funkčního PHP skriptu, vůči kterému jsem mohl
+      ověřovat.
+
+    * Další aktualizovaní poskytovatelé:
+      - B-TV.cz
+      - Facebook.com
+      - Hrej.cz
+      - PornHub.com
+      - Tube8.com
+      - Tyzden.sk
+
+
 
   v1.18:
 

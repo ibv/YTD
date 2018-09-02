@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.18                                                    (c) 2009-12 Pepak
+YTD v1.19                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -97,6 +97,8 @@ EuroGamer.cz        | HTTP     |       | http://www.eurogamer.cz/videos/elder-sc
 EuroSeptik          | HTTP     |       | http://euroseptik.cz/nigel-farage-vs-barroso-brok-kapo-schulz-tohle-je-zvracena-demokracie/
 EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnum=15099&aid=
 Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php?v=1131482863478
+                    |          |       | http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
+                    |          |       | http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
 FarmarHladaZenu.sk  | HTTP     |       | http://www.farmarhladazenu.sk/epizody/detail/farmar-hlada-zenu-2-novi-farmari.html
 FileCabi.net        | HTTP     |       | http://www.filecabi.net/video/hiddendogstopsrobbery.html
 Fishki.net          | HTTP     | 4     | http://fishki.net/comment.php?id=79682
@@ -115,7 +117,8 @@ Games.Tiscali.cz    | HTTP     |       | http://games.tiscali.cz/video/zhodnotte
 GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
 GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
 Guba.com            | HTTP     |       | http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
-Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
+Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galerie/Video/Predavani-cen-RWE-_____312/Predavani-cen-RWE-_____1004/
+                    | MS       |       | http://www.hasici150.tv/cz/Media-galerie/Video/Plzenska-stovka-2012---serial-CPVK_____210/Plzenska-stovka-2012_____776/
 HejbejSe.tv         | HTTP     |       | http://www.hejbejse.tv/video/klip/Petra-4-
 Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
@@ -147,7 +150,7 @@ LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272
                     |          |       | http://www.liveleak.com/e/57d_1278546690
 LiveVideo.com       | HTTP     |       | http://www.livevideo.com/liveshow/brian3maria
 Loupak.cz           | HTTP     |       | http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
-MamaOzenMa.sk       | HTTP     |       | http://www.mamaozenma.sk/video-mama-ozen-ma/detail/mama-ozen-ma-06-09-2011-3.html
+MamaOzenMa.sk       | HTTP     |       | http://mamaozenma.joj.sk/video-mama-ozen-ma/detail/drama-u-pavla.html
 Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
                     |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
@@ -203,11 +206,13 @@ Online.hokej.cz     | RTMP     | 9     | http://online.hokej.cz/?date=2012-01-20
 Osobnosti.cz        | HTTP     |       | http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
 OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
                     |          |       | http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
+Own3D.tv            | HTTP     |       | http://www.own3d.tv/stream/927952
 PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
 PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
 PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
 PlayWire.com        | RTMP     |       | http://cdn.playwire.com/343/embed/28047.html
 PlayZone.cz         | RTMP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
+Polar.cz            | HTTP     |       | http://www.polar.cz/archiv/video/regionalni-zpravy-polar-18-01-2013-09-00
 PracticalMethod.com | HTTP     |       | http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
 PrahovaHD.ro        | RTMP     |       | http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
 PrazdninyVTelci.cz  | MS       |       | http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
@@ -237,6 +242,7 @@ RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d3
                     |          |       | http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
                     |          |       | http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
                     | HDS      |       | http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
+SchoolOfCare.ru     | HTTP     |       | http://schoolofcare.ru/masha/339/
 Sefka.cz            | HTTP     |       | http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
 Sefka.sk            | HTTP     |       | http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
 Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx

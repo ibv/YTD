@@ -80,6 +80,8 @@ const
   REGEXP_URL_FILE_COLON_VALUE = '(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*:\s*(?P<QUOTE2>[''"])(?P<URL>(?:https?|mmsh?)://.+?)(?P=QUOTE2)';
 
   REGEXP_FLASHVARS = '<param\s+name="flashvars"\s+value="(?P<FLASHVARS>.*?)"';
+  REGEXP_FLASHVARS_JS = '\bvar\s+flashvars\s*=\s*\{(?P<FLASHVARS>.+?)\}\s*;';
+  REGEXP_PARSER_FLASHVARS_JS = '(?P<QUOTE1>[''"]?)(?P<VARNAME>\w+)(?P=QUOTE1)\s*:\s*(?P<QUOTE2>[''"]?)(?P<VARVALUE>.*?)(?P=QUOTE2)\s*(?:,|$)';
   REGEXP_PARSER_HTMLVARS = '(?:^|&amp;)(?P<VARNAME>[^=]+?)(?:=(?P<VARVALUE>.*?))?(?=$|&amp;)';
 
   HTTP_FORM_URLENCODING = 'application/x-www-form-urlencoded';

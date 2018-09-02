@@ -41,6 +41,7 @@ unit uSystem;
 {$DEFINE USYSTEM_CONSOLE}
 {$DEFINE USYSTEM_SHELL}
 {$DEFINE USYSTEM_FILES}
+  {$DEFINE USYSTEM_FILES_CLEANUPTEMP}
 {.$DEFINE USYSTEM_NET}
 {.$DEFINE USYSTEM_APPLICATION}
 {$DEFINE USYSTEM_WOW64}
@@ -202,9 +203,11 @@ uses
 {$IFDEF USYSTEM_CONSOLE}
 function GetConsoleOutput(const Command: string; Input, Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; 
 var
+  CommandBuffer: array of Char;
   StartupInfo: TStartupInfo;
   ProcessInfo: TProcessInformation;
   SecurityAttr: TSecurityAttributes;
+  HavePipes: boolean;
   PipeInputRead: THandle;
   PipeInputWrite: THandle;
   TmpPipeInputWrite: THandle;
@@ -248,6 +251,25 @@ var
       end;
   end;
 
+  procedure ClosePipe(var Handle: THandle);
+  begin
+    if Handle <> 0 then
+      begin
+      CloseHandle(Handle);
+      Handle := 0;
+      end;
+  end;
+
+  procedure ClosePipes;
+  begin
+    CloseHandle(PipeInputRead);
+    CloseHandle(PipeInputWrite);
+    CloseHandle(PipeOutputRead);
+    CloseHandle(PipeOutputWrite);
+    CloseHandle(PipeErrorsRead);
+    CloseHandle(PipeErrorsWrite);
+  end;
+
 begin
   GetMem(Buffer, BufferSize);
   try
@@ -256,69 +278,84 @@ begin
     SecurityAttr.nLength := SizeOf(SecurityAttr);
     SecurityAttr.bInheritHandle := True;
     SecurityAttr.lpSecurityDescriptor := nil;
-    CreatePipe(PipeInputRead, TmpPipeInputWrite, @SecurityAttr, 0);
-    CreatePipe(TmpPipeOutputRead, PipeOutputWrite, @SecurityAttr, 0);
-    CreatePipe(TmpPipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
-    // Je kriticky dulezity si polovinu handlu zduplikovat a ty puvodni zavrit!!!
     ThisProcess := GetCurrentProcess;
-    DuplicateHandle(ThisProcess, TmpPipeInputWrite, ThisProcess, @PipeInputWrite, 0, false, DUPLICATE_SAME_ACCESS);
-    DuplicateHandle(ThisProcess, TmpPipeOutputRead, ThisProcess, @PipeOutputRead, 0, false, DUPLICATE_SAME_ACCESS);
-    DuplicateHandle(ThisProcess, TmpPipeErrorsRead, ThisProcess, @PipeErrorsRead, 0, false, DUPLICATE_SAME_ACCESS);
-    CloseHandle(TmpPipeInputWrite);
-    CloseHandle(TmpPipeOutputRead);
-    CloseHandle(TmpPipeErrorsRead);
-    //---
     FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
     StartupInfo.cb := SizeOf(StartupInfo);
     StartupInfo.hStdInput := PipeInputRead;
     StartupInfo.hStdOutput := PipeOutputWrite;
     StartupInfo.hStdError := PipeErrorsWrite;
     StartupInfo.wShowWindow := Visibility;
-    StartupInfo.dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
-    if CreateProcess(nil, PChar(command), nil, nil, true,
-      CREATE_DEFAULT_ERROR_MODE or CREATE_NEW_CONSOLE or Priority, nil, nil,
-      StartupInfo, ProcessInfo)
-    then
+    StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
+    HavePipes := (Input <> nil) or (Output <> nil) or (Errors <> nil);
+    if HavePipes then
       begin
-      Result := true;
-      repeat
-        GetExitCodeProcess(ProcessInfo.hProcess, ResultCode);
-        if Input <> nil then
-          if (Input.Size - Input.Position) > 0 then
-            begin
-            while WriteToPipe(PipeInputWrite, Input) do
-              ;
-            end
-          else
-            begin
-            Input := nil;
-            CloseHandle(PipeInputWrite);
-            end;
-        while ReadFromPipe(PipeOutputRead, Output, OnStdOutput) do
-          ;
-        while ReadFromPipe(PipeErrorsRead, Errors, OnErrOutput) do
-          ;
-        Sleep(200);
-      until ResultCode <> STILL_ACTIVE;
-      CloseHandle(PipeInputRead);
-      CloseHandle(PipeOutputWrite);
-      CloseHandle(PipeOutputRead);
-      CloseHandle(PipeErrorsWrite);
-      CloseHandle(PipeErrorsRead);
-      WaitForSingleObject(ProcessInfo.hProcess, INFINITE);  // asi zbytecne
-      GetExitCodeProcess(ProcessInfo.hProcess, ResultCode); // asi zbytecne
-      CloseHandle(ProcessInfo.hProcess);
+      StartupInfo.dwFlags := StartupInfo.dwFlags or STARTF_USESTDHANDLES;
+      // Je kriticky dulezite vytvaret roury takhle - ze ji vytvorim, pak si z ni
+      // udelam kopii a pak tu puvodni zrusim
+      CreatePipe(PipeInputRead, TmpPipeInputWrite, @SecurityAttr, 0);
+      CreatePipe(TmpPipeOutputRead, PipeOutputWrite, @SecurityAttr, 0);
+      CreatePipe(TmpPipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
+      DuplicateHandle(ThisProcess, TmpPipeInputWrite, ThisProcess, @PipeInputWrite, 0, false, DUPLICATE_SAME_ACCESS);
+      DuplicateHandle(ThisProcess, TmpPipeOutputRead, ThisProcess, @PipeOutputRead, 0, false, DUPLICATE_SAME_ACCESS);
+      DuplicateHandle(ThisProcess, TmpPipeErrorsRead, ThisProcess, @PipeErrorsRead, 0, false, DUPLICATE_SAME_ACCESS);
+      CloseHandle(TmpPipeInputWrite);
+      CloseHandle(TmpPipeOutputRead);
+      CloseHandle(TmpPipeErrorsRead);
+      StartupInfo.hStdInput := PipeInputRead;
+      StartupInfo.hStdOutput := PipeOutputWrite;
+      StartupInfo.hStdError := PipeErrorsWrite;
       end
     else
       begin
-      Result := false;
-      ResultCode := $ffffff;
-      CloseHandle(PipeInputRead);
-      CloseHandle(PipeInputWrite);
-      CloseHandle(PipeOutputRead);
-      CloseHandle(PipeOutputWrite);
-      CloseHandle(PipeErrorsRead);
-      CloseHandle(PipeErrorsWrite);
+      PipeInputRead := 0;
+      PipeInputWrite := 0;
+      PipeOutputRead := 0;
+      PipeOutputWrite := 0;
+      PipeErrorsRead := 0;
+      PipeErrorsWrite := 0;
+      end;
+    // Pro funkcnost v Unicode je treba zajistit, ze Command je zapisovatelny.
+    SetLength(CommandBuffer, Succ(Length(Command)));
+    StrPCopy(@CommandBuffer[0], Command);
+    try
+      if CreateProcess(nil, PChar(CommandBuffer), nil, nil, true,
+        CREATE_DEFAULT_ERROR_MODE or CREATE_NEW_CONSOLE or Priority, nil, nil,
+        StartupInfo, ProcessInfo)
+      then
+        begin
+        Result := true;
+        repeat
+          GetExitCodeProcess(ProcessInfo.hProcess, ResultCode);
+          if Input <> nil then
+            if (Input.Size - Input.Position) > 0 then
+              begin
+              while WriteToPipe(PipeInputWrite, Input) do
+                ;
+              end
+            else
+              begin
+              Input := nil;
+              ClosePipe(PipeInputWrite);
+              end;
+          if HavePipes then
+            while ReadFromPipe(PipeOutputRead, Output, OnStdOutput) do
+              ;
+          if HavePipes then
+            while ReadFromPipe(PipeErrorsRead, Errors, OnErrOutput) do
+              ;
+          Sleep(200);
+        until ResultCode <> STILL_ACTIVE;
+        WaitForSingleObject(ProcessInfo.hProcess, INFINITE);  // asi zbytecne
+        GetExitCodeProcess(ProcessInfo.hProcess, ResultCode); // asi zbytecne
+        CloseHandle(ProcessInfo.hProcess);
+        end
+      else
+        begin
+        Result := false;
+        ResultCode := $ffffff;
+        end;
+    finally
+      ClosePipes;
       end;
   finally
     FreeMem(Buffer);
@@ -674,25 +711,17 @@ begin
 end;
 
 function WaitForEnd(FileName: string; Params: string; Command: Word; out ResultCode: DWORD): Boolean;
-var L, LE: TStringList;
-    Dir: string;
+var
+  Dir: string;
 begin
-  L := TStringList.Create;
+  Dir := GetCurrentDir;
   try
-    LE := TStringList.Create;
-    try
-      Dir := GetCurrentDir;
-      try
-        SetCurrentDir(ExtractFilePath(FileName));
-        Result := GetConsoleOutput('"' + FileName + '" ' + Params, TStringList(nil), L, LE, ResultCode, Command);
-      finally
-        SetCurrentDir(Dir);
-        end;
-    finally
-      LE.Free;
-      end;
+    SetCurrentDir(ExtractFilePath(FileName));
+    if Pos(' ', FileName) > 0 then
+      FileName := AnsiQuotedStr(FileName, '"');
+    Result := GetConsoleOutput(FileName + ' ' + Params, TStream(nil), TStream(nil), TStream(nil), ResultCode, Command);
   finally
-    L.Free;
+    SetCurrentDir(Dir);
     end;
 end;
 
@@ -1046,6 +1075,34 @@ begin
     Result := '';
 end;
 
+{$IFDEF USYSTEM_FILES_CLEANUPTEMP}
+var
+  SystemTempFileList: TStringList = nil;
+
+procedure Init_TempCleanup;
+begin
+  SystemTempFileList := TStringList.Create;
+end;
+
+procedure Done_TempCleanup;
+var
+  i: integer;
+  FN: string;
+begin
+  if SystemTempFileList <> nil then
+    try
+      for i := 0 to Pred(SystemTempFileList.Count) do
+        begin
+        FN := SystemTempFileList[i];
+        if FileExists(FN) then
+          DeleteFile(PChar(FN));
+        end;
+    finally
+      FreeAndNil(SystemTempFileList);
+      end;
+end;
+{$ENDIF}
+
 function SystemTempFile(const Dir, Prefix: string): string;
 var n: integer;
     Buf: array[0..MAX_PATH] of Char;
@@ -1059,6 +1116,10 @@ begin
     end
   else
     Result := '';
+  {$IFDEF USYSTEM_FILES_CLEANUPTEMP}
+  if Result <> '' then
+    SystemTempFileList.Add(Result);
+  {$ENDIF}
 end;
 
 function SystemTempFile(const Dir, Prefix, Extension: string): string;
@@ -1074,6 +1135,10 @@ begin
     Result := Base + IntToStr(i) + Extension;
     Inc(i);
     end;
+  {$IFDEF USYSTEM_FILES_CLEANUPTEMP}
+  if Result <> '' then
+    SystemTempFileList.Add(Result);
+  {$ENDIF}
 end;
 
 function AddLastSlash(const Path: string): string;
@@ -1374,10 +1439,16 @@ initialization
   {$IFDEF USYSTEM_WOW64}
   Init_Wow64;
   {$ENDIF}
+  {$IFDEF USYSTEM_FILES_CLEANUPTEMP}
+  Init_TempCleanup;
+  {$ENDIF}
 
 finalization
   {$IFDEF USYSTEM_WOW64}
   Done_Wow64;
+  {$ENDIF}
+  {$IFDEF USYSTEM_FILES_CLEANUPTEMP}
+  Done_TempCleanup;
   {$ENDIF}
 
 end.

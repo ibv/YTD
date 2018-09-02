@@ -34,19 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxPornHubEmbed;
+unit downSchoolOfCare;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, 
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_PornHubEmbed = class(THttpDownloader)
+  TDownloader_SchoolOfCare = class(THttpDownloader)
     private
+    protected
+      MovieIdRegExp: TRegExp;
+      MoviePathRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -64,60 +67,72 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://schoolofcare.ru/masha/339/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*pornhub\.com/embed_player\.php\?id=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'schoolofcare\.ru/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_PornHubEmbed }
+const
+  REGEXP_MOVIE_TITLE =  '<div[^>]*\sclass="head"[^>]*>\s*<p>(?P<TITLE>.*?)</p>';
+  REGEXP_MOVIE_ID =     '\bvar\s+id\s*=\s*''(?P<ID>.+?)''';
+  REGEXP_MOVIE_PATH =   '<a\s+href="(?P<PATH>/.+?)"';
 
-class function TDownloader_PornHubEmbed.Provider: string;
+{ TDownloader_SchoolOfCare }
+
+class function TDownloader_SchoolOfCare.Provider: string;
 begin
-  Result := 'PornHub.com';
+  Result := 'SchoolOfCare.ru';
 end;
 
-class function TDownloader_PornHubEmbed.UrlRegExp: string;
+class function TDownloader_SchoolOfCare.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_PornHubEmbed.Create(const AMovieID: string);
+constructor TDownloader_SchoolOfCare.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  InfoPageIsXml := True;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  MoviePathRegExp := RegExCreate(REGEXP_MOVIE_PATH);
 end;
 
-destructor TDownloader_PornHubEmbed.Destroy;
+destructor TDownloader_SchoolOfCare.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieIdRegExp);
+  RegExFreeAndNil(MoviePathRegExp);
   inherited;
 end;
 
-function TDownloader_PornHubEmbed.GetMovieInfoUrl: string;
+function TDownloader_SchoolOfCare.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.pornhub.com/embed_player.php?id=' + MovieID;
+  Result := 'http://schoolofcare.ru/' + MovieID;
 end;
 
-function TDownloader_PornHubEmbed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, Title: string;
+function TDownloader_SchoolOfCare.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  ID, Info, Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlVar(PageXml, 'video_url', Url) then
+  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not DownloadPage(Http, 'http://schoolofcare.ru/actions/getVideoCode/?ID=' + UrlEncode(ID), Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(MoviePathRegExp, Info, 'PATH', Path) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    if GetXmlVar(PageXml, 'post_roll/embed/a', Title) then
-      SetName(Title);
-    MovieUrl := HtmlDecode(Url);
+    MovieUrl := 'http://schoolofcare.ru' + Path;
     SetPrepared(True);
     Result := True;
     end;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_PornHubEmbed);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_SchoolOfCare);
 
 end.

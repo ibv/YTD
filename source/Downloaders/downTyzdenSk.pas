@@ -49,11 +49,7 @@ type
   TDownloader_TyzdenSk = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: TRegExp;
-      FlashVarsItemsRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -70,14 +66,13 @@ uses
 
 // http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tyzden\.sk/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'tyzden\.sk/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>(?:[^|]*\|)?[^|]*)[|<]';
-  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"(?P<FLASHVARS>.*?)"';
-  REGEXP_FLASHVARS_ITEMS = '(?P<VARNAME>[^="]+)=(?P<VARVALUE>.*?)(?:&amp;|$)';
+  REGEXP_MOVIE_URL = '<video\b.*?<source\b[^>]*?\ssrc="(?P<URL>https?://.+?)"';
 
 { TDownloader_TyzdenSk }
 
@@ -88,7 +83,7 @@ end;
 
 class function TDownloader_TyzdenSk.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_TyzdenSk.Create(const AMovieID: string);
@@ -96,60 +91,19 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
-  FlashVarsItemsRegExp := RegExCreate(REGEXP_FLASHVARS_ITEMS);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_TyzdenSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(FlashVarsRegExp);
-  RegExFreeAndNil(FlashVarsItemsRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
 function TDownloader_TyzdenSk.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.tyzden.sk/' + MovieID;
-end;
-
-function TDownloader_TyzdenSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var FlashVars, Node, V: string;
-    i: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else if not GetRegExpVarPairs(FlashVarsItemsRegExp, FlashVars, ['node', 'v'], [@Node, @V]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else if (Node = '') or (V = '') then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else
-    begin
-    Node := UrlDecode(Node);
-    repeat
-      i := Pos(';', Node);
-      if i <= 0 then
-        Break
-      else if i > 1 then
-        begin
-        SetLength(Node, Pred(i));
-        Break;
-        end
-      else
-        System.Delete(Node, 1, 1);
-    until Node <> '';
-    V := UrlDecode(V);
-    if Node = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-    else
-      begin
-      MovieUrl := Node + V;
-      SetPrepared(True);
-      Result := True;
-      end;
-    end;
 end;
 
 initialization
