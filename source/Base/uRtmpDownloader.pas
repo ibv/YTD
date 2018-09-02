@@ -434,7 +434,7 @@ begin
     if not Result then
       if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
         DeleteFile(PChar(FN));
-    if Result then
+    //if Result then
       if FN <> FinalFN then
         begin
         if FileExists(FinalFN) then

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YTD 1.15\n"
-"POT-Creation-Date: 2013-04-07 18:25\n"
-"PO-Revision-Date: 2013-05-19 11:21+0100\n"
+"POT-Creation-Date: 2013-12-26 11:05\n"
+"PO-Revision-Date: 2013-12-26 11:07+0100\n"
 "Last-Translator: Pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -60,7 +60,7 @@ msgid "Newest version:"
 msgstr "Nejnovější verze:"
 
 #. FormAbout..LabelNewestVersion..Caption
-#: GUI/VCL/guiAboutVCL.dfm:65 GUI/VCL/guiAboutVCL.pas:129
+#: GUI/VCL/guiAboutVCL.dfm:65 GUI/VCL/guiAboutVCL.pas:132
 msgid "not found"
 msgstr "nenalezena"
 
@@ -529,11 +529,6 @@ msgstr "Na&instalovat"
 msgid "&Run from current location without installing"
 msgstr "Sp&ustit z aktuálního umístění bez instalace"
 
-#. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..CheckAvoidHD..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:9
-msgid "&Avoid HD content"
-msgstr "Nepokoušet se hledat &HD videa"
-
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:16
 msgid "Secure &Token:"
@@ -831,7 +826,7 @@ msgstr "  Nazev média: "
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:469 CLI/uYTD.pas:605
+#: CLI/uYTD.pas:469 CLI/uYTD.pas:610
 msgid "    File name: "
 msgstr "Nazev souboru: "
 
@@ -840,65 +835,69 @@ msgstr "Nazev souboru: "
 msgid "  Content URL: "
 msgstr "   URL obsahu: "
 
+#: CLI/uYTD.pas:476
+msgid "Download skipped."
+msgstr "Download byl přeskočen."
+
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:480
+#: CLI/uYTD.pas:485
 msgid "  SUCCESS."
 msgstr "  V PORADKU."
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:497
+#: CLI/uYTD.pas:502
 msgid "  ABORTED BY USER"
 msgstr "  PRERUSENO UZIVATELEM"
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:502
+#: CLI/uYTD.pas:507
 msgid "ERROR %s: %s"
 msgstr "CHYBA %s: %s"
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:517
+#: CLI/uYTD.pas:522
 msgid "Unknown URL."
 msgstr "Neznama URL."
 
-#: CLI/uYTD.pas:535
+#: CLI/uYTD.pas:540
 msgid "Trying to parse as HTML page..."
 msgstr "Zpracovavam URL jako HTML stranku..."
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:611
+#: CLI/uYTD.pas:616
 msgid "  File "
 msgstr "  Soubor "
 
-#: CLI/uYTD.pas:613
+#: CLI/uYTD.pas:618
 msgid " already exists."
 msgstr " uz existuje."
 
-#: CLI/uYTD.pas:614
+#: CLI/uYTD.pas:619
 msgid "  Do you want to: "
 msgstr "Chcete ho:"
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:615
+#: CLI/uYTD.pas:620
 msgid "kip it, "
 msgstr " preskocit, "
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:616
+#: CLI/uYTD.pas:621
 msgid "verwrite it, or "
 msgstr " prepsat, nebo "
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:617
+#: CLI/uYTD.pas:622
 msgid "ename it? "
 msgstr " prejmenovat?"
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:633
+#: CLI/uYTD.pas:638
 msgid "  New filename: "
 msgstr "  Novy nazev: "
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:644
+#: CLI/uYTD.pas:649
 msgid "Incorrect answer."
 msgstr "Nespravna odpoved."
 
@@ -1213,15 +1212,21 @@ msgstr "Server hlásí chybu: %s"
 msgid "Invalid configuration: Secure token not set."
 msgstr "Chybné nastavení: SecureToken není nastaven."
 
-#. Programmer's name for it: ERR_LOGIN_FAILED
-#. Programmer's name for it: ERR_LOGIN_FAILED
+#. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
+#. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
 #: Common/uMessages.pas:97
+msgid "Encryption not yet supported."
+msgstr "Nepodporované šifrovací schéma."
+
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#: Common/uMessages.pas:98
 msgid "Login failed."
 msgstr "Přihlášení se nezdařilo."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:99
+#: Common/uMessages.pas:100
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 
@@ -1241,7 +1246,7 @@ msgid "Přepis, angličtina"
 msgstr "Přepis, angličtina"
 
 #. Programmer's name for it: ERR_MISSING_CONFIG_PASSWORD
-#: Downloaders/downNova.pas:148
+#: Downloaders/downVoyo.pas:142
 msgid "Invalid configuration: Config password not set."
 msgstr "Chybné nastavení: Heslo pro konfigurace není nastaveno."
 
@@ -1443,7 +1448,7 @@ msgid "Automatically convert with"
 msgstr "Automaticky konvertovat pomocí"
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:87 GUI/guiOptions.pas:144 GUI/guiOptions.pas:146
+#: GUI/guiOptions.pas:92 GUI/guiOptions.pas:149 GUI/guiOptions.pas:151
 msgid ""
 "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
@@ -1456,7 +1461,7 @@ msgstr ""
 "YTD na některá nastavení, která mají na soukromí vliv."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:95
+#: GUI/guiOptions.pas:100
 msgid ""
 "Would you like to run YTD in portable mode?\n"
 "\n"
@@ -1479,7 +1484,7 @@ msgstr ""
 "ANO = přenositelný režim, NE = normální režim"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:107
+#: GUI/guiOptions.pas:112
 msgid ""
 "Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
@@ -1508,23 +1513,23 @@ msgstr ""
 "Má YTD automaticky zjišťovat nové verze?"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:110
+#: GUI/guiOptions.pas:115
 msgid "Change container to .AVI"
 msgstr "Změnit kontejner na .AVI"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:113
+#: GUI/guiOptions.pas:118
 msgid "Convert movie to AVI/XVID"
 msgstr "Zkonvertovat film do AVI/XVID"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:116
+#: GUI/guiOptions.pas:121
 msgid "Convert movie to AVI/H264"
 msgstr "Zkonvertovat film do AVI/H264"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #. {$ENDIF}
-#: GUI/guiOptions.pas:120 GUI/guiOptions.pas:153 GUI/guiOptions.pas:155
+#: GUI/guiOptions.pas:125 GUI/guiOptions.pas:158 GUI/guiOptions.pas:160
 msgid ""
 "Error loading configuration file. Error %s:\n"
 "%s\n"
@@ -1536,13 +1541,13 @@ msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:288 GUI/uDownloadList.pas:298
+#: GUI/uDownloadList.pas:294 GUI/uDownloadList.pas:302
 msgid "File already exists."
 msgstr "Soubor už existuje."
 
 #. GUI: Check for a new version wasn't made yet - or failed.
 #. Label "Newest version:"
-#: GUI/VCL/guiAboutVCL.pas:129 GUI/WinAPI/guiAboutWINAPI.pas:223
+#: GUI/VCL/guiAboutVCL.pas:132 GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
 msgstr "zjišťuji..."
 
@@ -1580,6 +1585,9 @@ msgstr "Neznámá chyba %u = %08.8x."
 #: Lib/Pepak/ApiForm/uDialogs.pas:149
 msgid "Select a directory"
 msgstr "Zvolte adresář pro downloady"
+
+#~ msgid "&Avoid HD content"
+#~ msgstr "Nepokoušet se hledat &HD videa"
 
 #~ msgid "Error while calculating streamlength"
 #~ msgstr "Error while calculating streamlength"

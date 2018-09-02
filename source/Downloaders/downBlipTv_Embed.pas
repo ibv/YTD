@@ -48,10 +48,7 @@ type
   TDownloader_BlipTv_Embed = class(THttpDownloader)
     private
     protected
-      MovieIdFromUrlRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -69,12 +66,9 @@ uses
 
 // http://blip.tv/play/hIVV4sNUAg
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/play/';
-  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
+  URLREGEXP_BEFORE_ID = 'blip\.tv/rss/flash/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
-
-const
-  REGEXP_MOVIE_ID_FROM_URL = '[?&#]file=http(?:%3A%2F%2F|://)(?:www\.)?blip\.tv(?:%2F|/)rss(?:%2F|/)flash(?:%2F|/)(?P<ID>[0-9]+)';
 
 { TDownloader_BlipTv_Embed }
 
@@ -93,27 +87,16 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   InfoPageIsXml := True;
-  MovieIdFromUrlRegExp := RegExCreate(REGEXP_MOVIE_ID_FROM_URL);
 end;
 
 destructor TDownloader_BlipTv_Embed.Destroy;
 begin
-  RegExFreeAndNil(MovieIdFromUrlRegExp);
   inherited;
 end;
 
 function TDownloader_BlipTv_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://blip.tv/play/' + MovieID;
-end;
-
-function TDownloader_BlipTv_Embed.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
-var ID: string;
-begin
-  Result := False;
-  if DownloadPage(Http, Url, hmHead) then
-    if GetRegExpVar(MovieIdFromUrlRegExp, LastUrl, 'ID', ID) then
-      Result := inherited GetMovieInfoContent(Http, 'http://blip.tv/rss/flash/' + ID, Page, Xml, Method);
+  Result := 'http://blip.tv/rss/flash/' + MovieID;
 end;
 
 function TDownloader_BlipTv_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

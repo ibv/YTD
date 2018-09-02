@@ -1,11 +1,40 @@
 ﻿______________________________________________________________________________
 
-YTD v1.31                                                    (c) 2009-13 Pepak
+YTD v1.33                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.33:
+
+    * Removed the forgotten debug code in the YouTube downloader.
+
+
+
+  v1.32:
+
+    * Updated providers:
+      - Blip.tv
+
+    * YouTube.com:
+      - Support for the VEVO streaming scheme. Thanks to Mandel99 for this.
+      - Modified the subtitle support to allow two-letter language codes
+        even if YouTube uses longer codes. This happens with languages such
+        as Spanish which might appear as "es-ES" in YouTube. Former versions
+        of YTD needed an exact specification, this version will also work
+        if you choose "es". The exact specification is preferred, though,
+        so if you set a preference to "en-US" and YouTube lists "en,en-US",
+        the "en-US" version will be downloaded.
+
+    * RTMP: If you abort the download or the download fails, the movie will
+      be renamed from the temporary filename to the expected final one. In
+      the previous versions the movie only got renamed if it downloaded
+      successfully. Note that if you kill the application in Task Manager or
+      CTRL+C the command-line version, the temporary filename will remain.
+
+
 
   v1.31:
 
@@ -39,6 +68,7 @@ CHANGELOG
       - iDnes.cz
       - MojeVideo.sk
       - PornTube.com
+      - Stream.cz
       - Tube8.com
       - ZDF.de
 

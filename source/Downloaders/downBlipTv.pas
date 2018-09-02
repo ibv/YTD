@@ -64,12 +64,12 @@ uses
 
 // http://blip.tv/weird-america/weird-america-mark-mothersbaugh-111976
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!file/|play/)';
+  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!rss/flash/)';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_URL =    '<meta\s+property="og:video"\s+content="(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_URL =    '<meta\s+property="og:video"\s+content="[^"]*\bfile=(?P<URL>https?://.+?)"';
 
 { TDownloader_BlipTv }
 

@@ -78,10 +78,11 @@ type
     protected
       function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
       function GetVideoFormatExt(const VideoFormat: string): string;
-      function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live: boolean; out Url: string; out Downloader: TDownloader): boolean;
+      function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live, Vevo: boolean; out Url: string; out Downloader: TDownloader): boolean;
       function ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
       function FlashVarsDecode(const Text: string): string;
       function JSONVarsDecode(const Text: string): string;
+      function UpdateVevoSignature(const Signature: string): string;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -232,10 +233,38 @@ end;
 
 {$IFDEF SUBTITLES}
 function TDownloader_YouTube.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+
+ function MatchLanguageCode(const Language, PreferredLanguages: string; out Position: integer; out ExactMatch: boolean): boolean;
+   var
+     Preferred: string;
+     ix: integer;
+   begin
+     Result := False;
+     if Language <> '' then
+       begin
+       Preferred := ',' + PreferredLanguages + ',';
+       Position := Pos(',' + Language + ',', Preferred);
+       if Position > 0 then
+         ExactMatch := True
+       else
+         begin
+         ix := Pos('-', Language);
+         if ix > 0 then
+           begin
+           Position := Pos(',' + Copy(Language, 1, Pred(ix)) + ',', Preferred);
+           if Position > 0 then
+             ExactMatch := False;
+           end;
+         end;
+       Result := Position > 0;
+       end;
+   end; 
+
 const SECONDS_PER_DAY = 60 * 60 * 24;
 var Xml: TXmlDoc;
-    CurLanguage, WantedLanguages, BestLanguage, BestLanguageName: string;
+    CurLanguage, BestLanguage {, BestLanguageName}: string;
     CurLanguagePos, BestLanguagePos: integer;
+    ExactLanguageMatch: boolean;
     Url: string;
     s: AnsiString;
     i: integer;
@@ -250,37 +279,29 @@ begin
   Result := False;
   if DownloadXml(Http, 'http://video.google.com/timedtext?v=' + MovieID + '&type=list', Xml) then
     try
-      WantedLanguages := ',' + PreferredLanguages + ',';
       BestLanguage := '';
-      BestLanguageName := '';
+      //BestLanguageName := '';
       BestLanguagePos := MaxInt;
       for i := 0 to Pred(Xml.Root.NodeCount) do
         if Xml.Root.Nodes[i].Name = 'track' then
           if GetXmlAttr(Xml.Root.Nodes[i], '', 'lang_code', CurLanguage) then
             begin
-            if CurLanguage = '' then
+            if not MatchLanguageCode(CurLanguage, PreferredLanguages, CurLanguagePos, ExactLanguageMatch) then
               CurLanguagePos := Pred(MaxInt)
-            else
-              begin
-              CurLanguagePos := Pos(',' + CurLanguage + ',', WantedLanguages);
-              if CurLanguagePos <= 0 then
-                if BestLanguagePos = MaxInt then
-                  CurLanguagePos := Pred(MaxInt)
-                else
-                  CurLanguagePos := MaxInt;
-              end;
+            else if not ExactLanguageMatch then
+              CurLanguagePos := CurLanguagePos + 2*Length(PreferredLanguages);
             if CurLanguagePos < BestLanguagePos then
               begin
               BestLanguagePos := CurLanguagePos;
               BestLanguage := CurLanguage;
-              GetXmlAttr(Xml.Root.Nodes[i], '', 'name', BestLanguageName);
+              //GetXmlAttr(Xml.Root.Nodes[i], '', 'lang_original', BestLanguageName);
               end;
             end;
-//      if BestLanguagePos < MaxInt then
+      //if BestLanguagePos < MaxInt then
         begin
         Url := 'http://video.google.com/timedtext?type=track';
-        if BestLanguageName <> '' then
-          Url := Url + '&name=' + string(EncodeUrl(AnsiString(StringToUtf8(BestLanguageName))));
+        //if BestLanguageName <> '' then
+        //  Url := Url + '&name=' + string(EncodeUrl(AnsiString(StringToUtf8(BestLanguageName))));
         if BestLanguage <> '' then
           Url := Url + '&lang=' + string(EncodeUrl(AnsiString(StringToUtf8(BestLanguage))));
         Url := Url + '&v=' + MovieID;
@@ -360,13 +381,13 @@ end;
 
 function TDownloader_YouTube.ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
 var
-  Status, Reason, FmtList, FmtUrlMap, VideoFormat, PS: string;
+  Status, Reason, FmtList, FmtUrlMap, VideoFormat, PS, PTK: string;
   D: TDownloader;
 begin
   Result := False;
   Title := '';
   Url := '';
-  if GetRegExpVarPairs(Parser, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map', 'ps'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap, @PS]) then
+  if GetRegExpVarPairs(Parser, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map', 'ps', 'ptk'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap, @PS, @PTK]) then
     if Status = 'fail' then
       SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
     else if FmtList = '' then
@@ -380,7 +401,7 @@ begin
       if VideoFormat = '' then
         VideoFormat := '22';
       Extension := GetVideoFormatExt(VideoFormat);
-      if not GetDownloader(Http, VideoFormat, FmtUrlMap, PS = 'live', Url, D) then
+      if not GetDownloader(Http, VideoFormat, FmtUrlMap, PS = 'live', PTK = 'vevo', Url, D) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else if CreateNestedDownloaderFromDownloader(D) then
         begin
@@ -390,7 +411,7 @@ begin
       end;
 end;
 
-function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live: boolean; out Url: string; out Downloader: TDownloader): boolean;
+function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live, Vevo: boolean; out Url: string; out Downloader: TDownloader): boolean;
 var
   FoundFormat, Server, Stream, Signature, Signature2: string;
   Formats: TStringArray;
@@ -411,6 +432,8 @@ begin
             Url := UrlDecode(Url);
             if Signature = '' then
               Signature := Signature2;
+            if Vevo then
+              Signature := UpdateVevoSignature(Signature);
             if Signature <> '' then
               Url := Url + '&signature=' + UrlDecode(Signature);
             HTTPDownloader := TDownloader_YouTube_HTTP.Create(Url);
@@ -513,6 +536,50 @@ begin
   {$IFDEF SUBTITLES}
     PreferredLanguages := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_PREFERREDLANGUAGES, OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT);
   {$ENDIF}
+end;
+
+function TDownloader_YouTube.UpdateVevoSignature(const Signature: string): string;
+
+  procedure YoutubeSwap(var Str: string; Pos: integer);
+    var
+      C: Char;
+    begin
+      c := Str[1];
+      Str[1] := Str[1 + (Pos mod Length(Str))];
+      Str[1 + Pos] := c;
+    end;
+
+  procedure Reverse(var Str: string);
+    var
+      i, n: integer;
+      c: Char;
+    begin
+      n := Length(Str);
+      for i := 1 to (n div 2) do
+        begin
+        c := Str[i];
+        Str[i] := Str[n-i+1];
+        Str[n-i+1] := c;
+        end;
+    end;
+
+  procedure Slice(var Str: string; Pos: integer);
+    begin
+      System.Delete(Str, 1, Pos);
+    end;
+
+begin
+  // Thanks to mandel99
+  Result := Signature;
+  YoutubeSwap(Result, 32);
+  Reverse(Result);
+  Slice(Result, 3);
+  Reverse(Result);
+  Slice(Result, 1);
+  Reverse(Result);
+  YoutubeSwap(Result, 19);
+  YoutubeSwap(Result, 24);
+  Slice(Result, 3);
 end;
 
 { TDownloader_YouTube_RTMP }

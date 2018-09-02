@@ -1,11 +1,41 @@
 ﻿______________________________________________________________________________
 
-YTD v1.31                                                    (c) 2009-13 Pepak
+YTD v1.33                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.33:
+
+    * Odstraněn zapomenutý ladící kód v stahovači z YouTube.
+
+
+
+  v1.32:
+
+    * Aktualizovaní poskytovatelé:
+      - Blip.tv
+
+    * YouTube.com:
+      - Podpora pro videa streamovaná systémem VEVO. Poděkování za tuto funkci
+        patří uživateli Mandel99.
+      - Podpora pro titulky byla upravena tak, aby se v případě potřeby použil
+        dvouznakový název jazyka. Jde o případy, kdy v seznamu preferovaných
+        jazyků je např. "cs,en", ale video neobsahuje "en" titulky - místo
+        toho má např. "en-US", "en-UK" apod. V tomto případě se preferuje
+        přesná shoda (tzn. když si do preferovaných titulků dáte "en-UK", tak
+        se stáhnou přesně tyhle), ale pokud ta není úspěšná, stáhnou se
+        aspoň první "en" titulky.
+
+    * RTMP: Pokud přerušíte nebo z jiného důvodu nedokončíte stahování, 
+      přejmenuje se dočasný "nesmyslný" soubor na rozumný název (podle názvu
+      video). Výjimkou je, když program natvrdo ukončíte ze správce procesů
+      nebo v command-line variantě pomocí CTRL+C - v tom případě zůstane
+      nesmyslné jméno souboru.
+
+
 
   v1.31:
 
@@ -41,6 +71,7 @@ CHANGELOG
       - iDnes.cz
       - MojeVideo.sk
       - PornTube.com
+      - Stream.cz
       - Tube8.com
       - ZDF.de
 

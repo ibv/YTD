@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-04-07 18:25\n"
-"PO-Revision-Date: 2013-04-07 18:25\n"
+"POT-Creation-Date: 2013-12-26 11:05\n"
+"PO-Revision-Date: 2013-12-26 11:05\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -65,7 +65,7 @@ msgstr ""
 
 #. FormAbout..LabelNewestVersion..Caption
 #: GUI/VCL/guiAboutVCL.dfm:65
-#: GUI/VCL/guiAboutVCL.pas:129
+#: GUI/VCL/guiAboutVCL.pas:132
 msgid "not found"
 msgstr ""
 
@@ -565,11 +565,6 @@ msgstr ""
 msgid "&Run from current location without installing"
 msgstr ""
 
-#. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..CheckAvoidHD..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:9
-msgid "&Avoid HD content"
-msgstr ""
-
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:16
 msgid "Secure &Token:"
@@ -884,7 +879,7 @@ msgstr ""
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #: CLI/uYTD.pas:469
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:605
+#: CLI/uYTD.pas:610
 msgid "    File name: "
 msgstr ""
 
@@ -893,65 +888,69 @@ msgstr ""
 msgid "  Content URL: "
 msgstr ""
 
+#: CLI/uYTD.pas:476
+msgid "Download skipped."
+msgstr ""
+
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:480
+#: CLI/uYTD.pas:485
 msgid "  SUCCESS."
 msgstr ""
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:497
+#: CLI/uYTD.pas:502
 msgid "  ABORTED BY USER"
 msgstr ""
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:502
+#: CLI/uYTD.pas:507
 msgid "ERROR %s: %s"
 msgstr ""
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:517
+#: CLI/uYTD.pas:522
 msgid "Unknown URL."
 msgstr ""
 
-#: CLI/uYTD.pas:535
+#: CLI/uYTD.pas:540
 msgid "Trying to parse as HTML page..."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:611
+#: CLI/uYTD.pas:616
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:613
+#: CLI/uYTD.pas:618
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:614
+#: CLI/uYTD.pas:619
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:615
+#: CLI/uYTD.pas:620
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:616
+#: CLI/uYTD.pas:621
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:617
+#: CLI/uYTD.pas:622
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:633
+#: CLI/uYTD.pas:638
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:644
+#: CLI/uYTD.pas:649
 msgid "Incorrect answer."
 msgstr ""
 
@@ -1295,17 +1294,24 @@ msgid "Invalid configuration: Secure token not "
 "set."
 msgstr ""
 
-#. Programmer's name for it: ERR_LOGIN_FAILED
+#. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
 #: Common/uMessages.pas:97
-#. Programmer's name for it: ERR_LOGIN_FAILED
+#. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
 #: Common/uMessages.pas:97
+msgid "Encryption not yet supported."
+msgstr ""
+
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#: Common/uMessages.pas:98
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#: Common/uMessages.pas:98
 msgid "Login failed."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:99
+#: Common/uMessages.pas:100
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:99
+#: Common/uMessages.pas:100
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr ""
 
@@ -1325,7 +1331,7 @@ msgid "Přepis, angličtina"
 msgstr ""
 
 #. Programmer's name for it: ERR_MISSING_CONFIG_PASSWORD
-#: Downloaders/downNova.pas:148
+#: Downloaders/downVoyo.pas:142
 msgid "Invalid configuration: Config password not "
 "set."
 msgstr ""
@@ -1497,9 +1503,9 @@ msgid "Automatically convert with"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:87
-#: GUI/guiOptions.pas:144
-#: GUI/guiOptions.pas:146
+#: GUI/guiOptions.pas:92
+#: GUI/guiOptions.pas:149
+#: GUI/guiOptions.pas:151
 msgid "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
 "To protect your privacy, the program will now ask you\n"
@@ -1508,7 +1514,7 @@ msgid "This is the first time you are running the GUI version\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:95
+#: GUI/guiOptions.pas:100
 msgid "Would you like to run YTD in portable mode?\n"
 "\nIn portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
@@ -1519,7 +1525,7 @@ msgid "Would you like to run YTD in portable mode?\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:107
+#: GUI/guiOptions.pas:112
 msgid "Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
 "\nIn order to perform the check, YTD's server must\n"
@@ -1535,39 +1541,39 @@ msgid "Would you like YTD to check for new versions\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:110
+#: GUI/guiOptions.pas:115
 msgid "Change container to .AVI"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:113
+#: GUI/guiOptions.pas:118
 msgid "Convert movie to AVI/XVID"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:116
+#: GUI/guiOptions.pas:121
 msgid "Convert movie to AVI/H264"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:120
+#: GUI/guiOptions.pas:125
 #. {$ENDIF}
-#: GUI/guiOptions.pas:153
-#: GUI/guiOptions.pas:155
+#: GUI/guiOptions.pas:158
+#: GUI/guiOptions.pas:160
 msgid "Error loading configuration file. Error %s:\n"
 "%s\n"
 "Default config file will be created."
 msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:288
+#: GUI/uDownloadList.pas:294
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:298
+#: GUI/uDownloadList.pas:302
 msgid "File already exists."
 msgstr ""
 
 #. GUI: Check for a new version wasn't made yet - or failed.
-#: GUI/VCL/guiAboutVCL.pas:129
+#: GUI/VCL/guiAboutVCL.pas:132
 #. Label "Newest version:"
 #: GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
