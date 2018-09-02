@@ -48,12 +48,9 @@ type
   TDownloader_Vimeo = class(THttpDownloader)
     private
     protected
-      ConfigRegExp: TRegExp;
-      ConfigVarsRegExp: TRegExp;
+      MovieInfoRegExp: TRegExp;
     protected
-      function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -71,14 +68,17 @@ uses
 
 // http://www.vimeo.com/10777111
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!\bplayer\.)vimeo\.com/(?:video/)?';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '(?<!\bplayer\.)vimeo\.com/(?:video/)?';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H1;
-  REGEXP_CONFIG = '\{\s*"request"\s*:\s*\{(?P<CONFIG>.*?)\}';
-  REGEXP_CONFIG_VARS = '"(?P<VARNAME>[^"]+)"\s*:\s*(?P<QUOTE>"?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*,';
+  REGEXP_MOVIE_TITLE = '"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_INFO = '"url"\s*:\s*"(?P<URL>https?://[^"]+)"'
+                    + 's*,\s*"height"\s*:\s*(?P<HEIGHT>\d+)'
+                    + '\s*,\s*"width"\s*:\s*(?P<WIDTH>\d+)'
+                    + '\s*,\s*"id"\s*:\s*(?P<ID>\d+)'
+                    + '\s*,\s*"bitrate"\s*:\s*(?P<BITRATE>\d+)';
 
 { TDownloader_Vimeo }
 
@@ -89,70 +89,61 @@ end;
 
 class function TDownloader_Vimeo.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Vimeo.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  ConfigRegExp := RegExCreate(REGEXP_CONFIG);
-  ConfigVarsRegExp := RegExCreate(REGEXP_CONFIG_VARS);
   InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
 destructor TDownloader_Vimeo.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(ConfigRegExp);
-  RegExFreeAndNil(ConfigVarsRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
-end;
-
-function TDownloader_Vimeo.GetFileNameExt: string;
-begin
-  Result := '.mp4';
 end;
 
 function TDownloader_Vimeo.GetMovieInfoUrl: string;
 begin
-  Result := 'http://vimeo.com/' + MovieID;
-end;
-
-function TDownloader_Vimeo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
-begin
-  Http.Cookies.Add('hd_preference=1');
-  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
+  Result := 'http://player.vimeo.com/v2/video/' + MovieID + '/config';
 end;
 
 function TDownloader_Vimeo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  QualityStr: array[0..1] of string = ('hd', 'sd');
 var
-  Config, Signature, Timestamp, Url: string;
-  i: integer;
+  Url, BestUrl, sBitrate: string;
+  Bitrate, BestBitrate: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(ConfigRegExp, Page, 'CONFIG', Config) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
-  else if not GetRegExpVarPairs(ConfigVarsRegExp, Config, ['signature', 'timestamp'], [@Signature, @Timestamp]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
-  else if Signature = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['signature']))
-  else if Timestamp = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
+  if not GetRegExpVars(MovieInfoRegExp, Page, ['URL', 'BITRATE'], [@Url, @sBitrate]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     begin
-    Url := 'http://player.vimeo.com/play_redirect?clip_id=' + MovieID + '&sig=' + Signature + '&time=' + Timestamp + '&quality=%s&codecs=H264,VP8,VP6&type=moogaloop_local&embed_location=';
-    MovieUrl := Format(Url, [QualityStr[0]]);
-    for i := 0 to Pred(Length(QualityStr)) do
-      if DownloadPage(Http, Format(Url, [QualityStr[i]]), hmHEAD) then
+    BestUrl := '';
+    BestBitrate := -1;
+    repeat
+      if Url <> '' then
         begin
-        MovieUrl := Format(Url, [QualityStr[i]]);
-        Result := True;
-        SetPrepared(True);
+        Bitrate := StrToIntDef(sBitrate, 0);
+        if Bitrate > BestBitrate then
+          begin
+          BestUrl := Url;
+          BestBitrate := Bitrate;
+          end;
         end;
+    until not GetRegExpVarsAgain(MovieInfoRegExp, ['URL', 'BITRATE'], [@Url, @sBitrate]);
+    if BestUrl = '' then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieUrl := BestUrl;
+      SetPrepared(True);
+      Result := True;
+      end;
     end;
 end;
 

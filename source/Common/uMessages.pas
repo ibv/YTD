@@ -94,6 +94,7 @@ resourcestring
   ERR_MEDIA_REMOVED = 'Media file was removed from the server.';
   ERR_SERVER_ERROR = 'Server returned an error: %s';
   ERR_SECURE_TOKEN_NOT_SET = 'Invalid configuration: Secure token not set.';
+  ERR_ENCRYPTION_NOT_SUPPORTED = 'Encryption not yet supported.';
   ERR_LOGIN_FAILED = 'Login failed.';
 
   ERR_FAILED_TO_LOAD_DLL = 'Failed to load library "%s" or its prerequisites.';

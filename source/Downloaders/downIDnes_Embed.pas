@@ -71,7 +71,7 @@ uses
 // http://servis.idnes.cz/stream/flv/data.asp?idvideo=V110523_130926_tv-spolecnost_zkl&reklama=1&idrubriky=hobby-zahrada&idostrova=hobby&idclanku=A110523_110238_hobby-zahrada_mce
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        'servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+';
   URLREGEXP_AFTER_ID =  '';
 
 type
@@ -87,7 +87,7 @@ end;
 
 class function TDownloader_IDnes_Embed.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_IDnes_Embed.Create(const AMovieID: string);
@@ -114,7 +114,7 @@ end;
 
 function TDownloader_IDnes_Embed.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
 var
-  ItemType, Server, Path, VideoFile, Title: string;
+  ItemType, Server, Path, VideoFile, Title, Stream: string;
   Items: TXmlNode;
   i: integer;
 begin
@@ -144,7 +144,11 @@ begin
               end
             else
               begin
-              Downloader := TDownloader_iDnes_RTMP.CreateWithName('rtmpt://' + Server + 'mp4:' + Path + VideoFile, Title);
+              Stream := 'mp4:' + Path + VideoFile;
+              Downloader := TDownloader_iDnes_RTMP.CreateWithName('rtmpt://' + Server + Stream, Title);
+              TDownloader_iDnes_RTMP(Downloader).Playpath := Stream;
+              TDownloader_iDnes_RTMP(Downloader).PageUrl := GetMovieInfoUrl;
+              TDownloader_iDnes_RTMP(Downloader).SaveRtmpDumpOptions;
               Result := True;
               end;
             Exit;

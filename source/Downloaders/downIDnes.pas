@@ -42,12 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader,
-  downIDnes_Embed {Important - downIDnes_Embed must be registered first}
-  ;
+  uDownloader, uCommonDownloader, uPlaylistDownloader;
 
 type
-  TDownloader_IDnes = class(TNestedDownloader)
+  TDownloader_IDnes = class(TPlaylistDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -91,12 +89,12 @@ constructor TDownloader_IDnes.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peAnsi;
-  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  PlayListItemRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_IDnes.Destroy;
 begin
-  RegExFreeAndNil(NestedUrlRegExp);
+  RegExFreeAndNil(PlayListItemRegExp);
   inherited;
 end;
 

@@ -470,9 +470,14 @@ begin
           Write(_('  Content URL: ')); WriteColored(ccWhite, Downloader.ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
           if fPrepareOnly then
             Result := True
+          else if not Downloader.ValidateFileName then
+            begin
+            Result := False;
+            ShowDownloadError(Url, _('Download skipped.'));
+            end
           else
             begin
-            Result := Downloader.ValidateFileName and Downloader.Download;
+            Result := Downloader.Download;
             if fNextProgressUpdate <> 0 then
               Writeln;
             if Result then

@@ -49,7 +49,10 @@ type
   TDownloader_RTVSSk = class(TDownloader_STV)
     private
     protected
+      ServerInfoScriptRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function GetAuthPageUrl(const Page: string; out Url: string): boolean; override;
     public
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -65,10 +68,14 @@ uses
 
 // http://www.rtvs.sk/televizia/program/detail/4686/milujem-slovensko/archiv?date=17.05.2013
 // http://www.rtvs.sk/tv.programmes.detail/archive/4686?date=14.06.2013
+// http://www.rtvs.sk/radio/relacie/detail/pohoda-fm/archiv?date=28.05.2013&station=fm
 const
   URLREGEXP_BEFORE_ID = 'rtvs\.sk/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
+
+const
+  SERVER_INFO_SCRIPT = '<script\b[^>]*\ssrc="(?P<URL>https?://[^"]+-arch.js)"';
 
 { TDownloader_RTVSSk }
 
@@ -80,16 +87,23 @@ end;
 constructor TDownloader_RTVSSk.Create(const AMovieID: string);
 begin
   inherited;
+  ServerInfoScriptRegExp := RegExCreate(SERVER_INFO_SCRIPT);
 end;
 
 destructor TDownloader_RTVSSk.Destroy;
 begin
+  RegExFreeAndNil(ServerInfoScriptRegExp);
   inherited;
 end;
 
 function TDownloader_RTVSSk.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.rtvs.sk/' + MovieID;
+end;
+
+function TDownloader_RTVSSk.GetAuthPageUrl(const Page: string; out Url: string): boolean;
+begin
+  Result := GetRegExpVar(ServerInfoScriptRegExp, Page, 'URL', Url);
 end;
 
 initialization

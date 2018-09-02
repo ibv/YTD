@@ -65,13 +65,13 @@ uses
 
 // http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*loupak\.cz/video/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'loupak\.cz/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_EXTRACT_TITLE = '<meta\s+property="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_EXTRACT_URL = '\bflashvars\.videoPath\s*=\s*''(?P<URL>https?://.+?)''';
+  REGEXP_EXTRACT_URL = '\.setup\s*\(\s*\{\s*file\s*:\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_Loupak }
 
@@ -82,7 +82,7 @@ end;
 
 class function TDownloader_Loupak.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Loupak.Create(const AMovieID: string);

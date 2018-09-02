@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxHardSexTube;
+unit downEyeneer;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,10 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_HardSexTube = class(THttpDownloader)
+  TDownloader_Eyeneer = class(THttpDownloader)
     private
     protected
-      MovieInfoRegExp: TRegExp;
+      MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,70 +66,92 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://www.eyeneer.com/video/rock/bee-gees/to-love-somebody
 const
-  URLREGEXP_BEFORE_ID = 'hardsextube\.com/video/';
+  URLREGEXP_BEFORE_ID = 'eyeneer\.com/video/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_MOVIE_INFO =    '\bmakesecurl\s*:\s*"(?P<SECURL>[^"]+)"\s*,\s*flvserver\s*:\s*"(?P<SERVER>https?://[^"]+?)"\s*,\s*flv\s*:\s*"(?P<PATH>/[^"]+?)"';
+  REGEXP_MOVIE_ID =     '<meta\s+property="og:video"\s+content="https?://content\.bitsontherun\.com/players/(?P<ID>[^"-.]+)-[^."]+\.swf"';
 
-{ TDownloader_HardSexTube }
+{ TDownloader_Eyeneer }
 
-class function TDownloader_HardSexTube.Provider: string;
+class function TDownloader_Eyeneer.Provider: string;
 begin
-  Result := 'HardSexTube.com';
+  Result := 'Eyeneer.com';
 end;
 
-class function TDownloader_HardSexTube.UrlRegExp: string;
+class function TDownloader_Eyeneer.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_HardSexTube.Create(const AMovieID: string);
+constructor TDownloader_Eyeneer.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peAnsi;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+  InfoPageEncoding := peUtf8;
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
-destructor TDownloader_HardSexTube.Destroy;
+destructor TDownloader_Eyeneer.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieInfoRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
   inherited;
 end;
 
-function TDownloader_HardSexTube.GetMovieInfoUrl: string;
+function TDownloader_Eyeneer.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.hardsextube.com/video/' + MovieID;
+  Result := 'http://www.eyeneer.com/video/' + MovieID;
 end;
 
-function TDownloader_HardSexTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Eyeneer.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Server, Path, SecUrl: string;
+  Xml: TXmlDoc;
+  ChannelNode, ItemNode: TXmlNode;
+  ID, Title, Url, Ext: string;
+  i, j: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVars(MovieInfoRegExp, Page, ['SERVER', 'PATH', 'SECURL'], [@Server, @Path, @SecUrl]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  else if (Server = '') or (Path = '') then
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if AnsiCompareText(SecUrl, 'true') = 0 then
-    SetLastErrorMsg(ERR_ENCRYPTION_NOT_SUPPORTED)
+  else if not DownloadXml(Http, 'http://content.bitsontherun.com/jw6/' + ID + '.xml', Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    MovieUrl := Server + Path;
-    SetPrepared(True);
-    Result := True;
-    end;
+    try
+      if XmlNodeByPath(Xml, 'channel', ChannelNode) then
+        for i := 0 to Pred(ChannelNode.NodeCount) do
+          if ChannelNode.Nodes[i].Name = 'item' then
+            begin
+            ItemNode := ChannelNode.Nodes[i];
+            if GetXmlVar(ItemNode, 'title', Title) then
+              for j := 0 to Pred(ItemNode.NodeCount) do
+                if ItemNode.Nodes[j].Name = 'jwplayer:source' then
+                  if GetXmlAttr(ItemNode.Nodes[j], '', 'file', Url) then
+                    begin
+                    Ext := ExtractUrlExt(Url);
+                    if AnsiCompareText(Ext, '.mp4') = 0 then
+                      begin
+                      {$IFDEF MULTIDOWNLOADS}
+                      NameList.Add(Title);
+                      UrlList.Add(Url);
+                      {$ELSE}
+                      MovieUrl := Url;
+                      SetName(Title);
+                      {$ENDIF}
+                      SetPrepared(True);
+                      Result := True;
+                      Break;
+                      end;
+                    end;
+            end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_HardSexTube);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Eyeneer);
 
 end.

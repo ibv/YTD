@@ -99,20 +99,17 @@ begin
 end;
 
 function TExternalDownloader.GetAnsiCompatibleFileName(const FileName: string): string;
-{$IFDEF UNICODE}
 var
   FN: AnsiString;
   Dir: string;
   i, n: integer;
-{$ENDIF}
 begin
   Result := FileName;
-  {$IFDEF UNICODE}
-  FN := AnsiString(ExtractFileName(Result));
+  FN := {$IFDEF UNICODE} AnsiString {$ENDIF} (ExtractFileName(Result));
   for i := 1 to Length(FN) do
-    if Pos(Char(FN[i]), INVALID_FILENAME_CHARS) > 0 then
+    if (Ord(Char(FN[i])) < 32) or (Ord(Char(FN[i])) >= 128) or (Pos(Char(FN[i]), INVALID_FILENAME_CHARS) > 0) then
       begin
-      FN := EncodeBase64mod(MD5(FN)) + AnsiString(ExtractFileExt(FileName));
+      FN := EncodeBase64mod(MD5(FN)) + {$IFDEF UNICODE} AnsiString {$ENDIF} (ExtractFileExt(FileName));
       if Options.DestinationPath = '' then
         Dir := ''
       else
@@ -121,12 +118,11 @@ begin
       while FileExists(Dir + string(FN)) do
         begin
         Inc(n);
-        FN := EncodeBase64mod(MD5(AnsiString(Result + IntToStr(n)))) + AnsiString(ExtractFileExt(FileName));
+        FN := EncodeBase64mod(MD5({$IFDEF UNICODE} AnsiString {$ENDIF} (Result + IntToStr(n)))) + {$IFDEF UNICODE} AnsiString {$ENDIF} (ExtractFileExt(FileName));
         end;
       Result := Dir + string(FN);
       Break;
       end;
-  {$ENDIF}
 end;
 
 function TExternalDownloader.Prepare: boolean;

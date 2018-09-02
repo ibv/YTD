@@ -49,9 +49,8 @@ type
   TDownloader_PornTube = class(THttpDownloader)
     private
     protected
-      PlaylistRegExp: TRegExp;
+      MovieInfoRegExp: TRegExp;
       PlaylistItemRegExp: TRegExp;
-      StreamsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -75,9 +74,9 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_PLAYLIST = 'var\s+playerConfigPlaylist\s*=\s*\[(?P<INFO>.*?)\]\s*;';
-  REGEXP_MOVIE_PLAYLIST_ITEM = '\bsources\s*:\s*\[\s*(?P<ITEM>.*?)\]\s*,\s*title\s*:\s*"(?P<TITLE>.*?)"';
-  REGEXP_MOVIE_STREAMS = '\{\s*"file"\s*:\s*"(?P<URL>https?:[^"]+)"\s*,\s*"label"\s*:\s*"(?P<QUALITY>\d+)[^"]*".*?\}';
+  REGEXP_MOVIE_TITLE = '\btitle\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_INFO = '\bembedPlayer\s*\(\s*(?P<ID>\d+)\s*,\s*\d+\s*,\s*\[\s*(?P<QUALITIES>(?:\d+,)*\d+)\]';
+  REGEXP_PLAYLIST_ITEM = '(?:^\s*\{|,)\s*"(?P<QUALITY>\d+)"\s*:\s*\{\s*"status"\s*:\s*"success"\s*,\s*"token"\s*:\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_PornTube }
 
@@ -95,16 +94,16 @@ constructor TDownloader_PornTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  PlaylistRegExp := RegExCreate(REGEXP_MOVIE_PLAYLIST);
-  PlaylistItemRegExp := RegExCreate(REGEXP_MOVIE_PLAYLIST_ITEM);
-  StreamsRegExp := RegExCreate(REGEXP_MOVIE_STREAMS);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+  PlaylistItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
 end;
 
 destructor TDownloader_PornTube.Destroy;
 begin
-  RegExFreeAndNil(PlaylistRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   RegExFreeAndNil(PlaylistItemRegExp);
-  RegExFreeAndNil(StreamsRegExp);
   inherited;
 end;
 
@@ -115,43 +114,43 @@ end;
 
 function TDownloader_PornTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Playlist, PlaylistItem, Title, BestUrl, Url, sQuality: string;
+  ID, Qualities, Playlist, Url, sQuality, BestUrl: string;
   Quality, BestQuality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if GetRegExpVar(PlaylistRegExp, Page, 'INFO', Playlist) then
-    if GetRegExpVars(PlaylistItemRegExp, Playlist, ['ITEM', 'TITLE'], [@PlaylistItem, @Title]) then
-      begin
-      {$IFDEF MULTIDOWNLOADS}
-      repeat
-      {$ENDIF}
-        BestUrl := '';
-        BestQuality := -1;
-        if GetRegExpVars(StreamsRegExp, PlaylistItem, ['URL', 'QUALITY'], [@Url, @sQuality]) then
-          repeat
-            Quality := StrToIntDef(sQuality, 0);
-            if (Url <> '') and (Quality > BestQuality) then
-              begin
-              BestUrl := Url;
-              BestQuality := Quality;
-              end;
-          until not GetRegExpVarsAgain(StreamsRegExp, ['URL', 'QUALITY'], [@Url, @sQuality]);
-        if BestUrl <> '' then
+  if not GetRegExpVars(MovieInfoRegExp, Page, ['ID', 'QUALITIES'], [@ID, @Qualities]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if (ID = '') or (Qualities = '') then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, 'http://tkn.porntube.com/' + ID + '/desktop/' + StringReplace(Qualities, ',', '+', [rfReplaceAll]), '{}', HTTP_FORM_URLENCODING, ['Origin: http://www.porntube.com'], Playlist) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVars(PlaylistItemRegExp, Playlist, ['URL', 'QUALITY'], [@Url, @sQuality]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    BestUrl := '';
+    BestQuality := -1;
+    repeat
+      if Url <> '' then
+        begin
+        Quality := StrToIntDef(sQuality, 0);
+        if Quality > BestQuality then
           begin
-          SetName(JSDecode(Title));
-          MovieUrl := JSDecode(BestUrl);
-          {$IFDEF MULTIDOWNLOADS}
-          NameList.Add(Title);
-          UrlList.Add(MovieUrl);
-          {$ENDIF}
-          SetPrepared(True);
-          Result := True;
+          BestQuality := Quality;
+          BestUrl := Url;
           end;
-      {$IFDEF MULTIDOWNLOADS}
-      until not GetRegExpVarsAgain(PlaylistItemRegExp, ['ITEM', 'TITLE'], [@PlaylistItem, @Title]);
-      {$ENDIF}
+        end;
+    until not GetRegExpVarsAgain(PlaylistItemRegExp, ['URL', 'QUALITY'], [@Url, @sQuality]);
+    if BestUrl = '' then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieUrl := BestUrl;
+      SetPrepared(True);
+      Result := True;
       end;
+    end;
 end;
 
 initialization

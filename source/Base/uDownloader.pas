@@ -744,15 +744,41 @@ type
     DecodeOnly: boolean;
     end;
 const
-  HtmlDecodeItems: array[0..6] of THtmlDecodeItem
+  HtmlDecodeItems: array[0..32] of THtmlDecodeItem
     = (
-        (Html: '&mdash;'; Txt: '--'; DecodeOnly: true),
-        (Html: '&lt;'   ; Txt: '<' ; DecodeOnly: false),
-        (Html: '&gt;'   ; Txt: '>' ; DecodeOnly: false),
-        (Html: '&quot;' ; Txt: '"' ; DecodeOnly: false),
-        (Html: '&apos;' ; Txt: ''''; DecodeOnly: false),
-        (Html: '&amp;'  ; Txt: '&' ; DecodeOnly: false),
-        (Html: '&nbsp;' ; Txt: ' ' ; DecodeOnly: false)
+        (Html: '&mdash;'   ; Txt: '--'; DecodeOnly: true),
+        (Html: '&lt;'      ; Txt: '<' ; DecodeOnly: false),
+        (Html: '&gt;'      ; Txt: '>' ; DecodeOnly: false),
+        (Html: '&quot;'    ; Txt: '"' ; DecodeOnly: false),
+        (Html: '&apos;'    ; Txt: ''''; DecodeOnly: false),
+        (Html: '&amp;'     ; Txt: '&' ; DecodeOnly: false),
+        (Html: '&nbsp;'    ; Txt: ' ' ; DecodeOnly: false),
+        (Html: '&Aacute;'  ; Txt: 'Á' ; DecodeOnly: true), 
+        (Html: '&Egrave;'  ; Txt: 'È' ; DecodeOnly: true), 
+        (Html: '&Iuml;'    ; Txt: 'Ï' ; DecodeOnly: true), 
+        (Html: '&Eacute;'  ; Txt: 'É' ; DecodeOnly: true), 
+        (Html: '&Igrave;'  ; Txt: 'Ì' ; DecodeOnly: true), 
+        (Html: '&Iacute;'  ; Txt: 'Í' ; DecodeOnly: true), 
+        (Html: '&Ograve;'  ; Txt: 'Ò' ; DecodeOnly: true), 
+        (Html: '&Oacute;'  ; Txt: 'Ó' ; DecodeOnly: true), 
+        (Html: '&Oslash;'  ; Txt: 'Ø' ; DecodeOnly: true), 
+        (Html: '&Scaron;'  ; Txt: 'Š' ; DecodeOnly: true), 
+        (Html: '&Uacute;'  ; Txt: 'Ú' ; DecodeOnly: true), 
+        (Html: '&Ugrave;'  ; Txt: 'Ù' ; DecodeOnly: true), 
+        (Html: '&Yacute;'  ; Txt: 'Ý' ; DecodeOnly: true), 
+        (Html: '&aacute;'  ; Txt: 'á' ; DecodeOnly: true), 
+        (Html: '&egrave;'  ; Txt: 'è' ; DecodeOnly: true), 
+        (Html: '&iuml;'    ; Txt: 'ï' ; DecodeOnly: true), 
+        (Html: '&eacute;'  ; Txt: 'é' ; DecodeOnly: true), 
+        (Html: '&igrave;'  ; Txt: 'ì' ; DecodeOnly: true), 
+        (Html: '&iacute;'  ; Txt: 'í' ; DecodeOnly: true), 
+        (Html: '&ograve;'  ; Txt: 'ò' ; DecodeOnly: true), 
+        (Html: '&oacute;'  ; Txt: 'ó' ; DecodeOnly: true), 
+        (Html: '&oslash;'  ; Txt: 'ø' ; DecodeOnly: true), 
+        (Html: '&scaron;'  ; Txt: 'š' ; DecodeOnly: true), 
+        (Html: '&uacute;'  ; Txt: 'ú' ; DecodeOnly: true), 
+        (Html: '&ugrave;'  ; Txt: 'ù' ; DecodeOnly: true), 
+        (Html: '&yacute;'  ; Txt: 'ý' ; DecodeOnly: true)
       );
 
 function TDownloader.HtmlDecode(const Text: string; Unicode: boolean): string;

@@ -1,11 +1,36 @@
 ﻿______________________________________________________________________________
 
-YTD v1.30                                                    (c) 2009-13 Pepak
+YTD v1.31                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.31:
+
+    * New providers:
+      - Eyeneer.com
+      - Old.Stream.cz
+
+    * Updated providers:
+      - iHNED.cz
+      - Loupak.cz
+      - NebickoVPapulke.sk
+      - PornTube.com
+      - Tyzden.sk
+      - Vimeo.com
+
+    * iDnes.cz: Support for multiple videos on one page.
+      RTMP streaming still doesn't work.
+
+    * Better decoding HTML entities into czech characters.
+
+    * CLI: Skipped videos (due to already existing file, for example) are
+      now reported with a correct error message rather than "Unable to find
+      media info page".
+
+
 
   v1.30:
 

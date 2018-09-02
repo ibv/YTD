@@ -66,8 +66,8 @@ uses
 
 // http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
 const
-  URLREGEXP_BEFORE_ID = 'tyzden\.sk/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'tyzden\.sk/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -83,7 +83,7 @@ end;
 
 class function TDownloader_TyzdenSk.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_TyzdenSk.Create(const AMovieID: string);
@@ -102,8 +102,11 @@ begin
 end;
 
 function TDownloader_TyzdenSk.GetMovieInfoUrl: string;
+const
+  Separators: array[boolean] of string = ('?', '&');
 begin
-  Result := 'http://www.tyzden.sk/' + MovieID;
+  Result := MovieID;
+  Result := Result + Separators[Pos('?', Result) > 0] + 'piano_d=1';
 end;
 
 initialization

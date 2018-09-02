@@ -52,6 +52,7 @@ type
       StreamIdRegExp: TRegExp;
       StreamInfoRegExp: TRegExp;
     protected
+      function GetAuthPageUrl(const Page: string; out Url: string): boolean; virtual;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -113,16 +114,24 @@ begin
   Result := 'http://www1.stv.sk/online/archiv/' + MovieID;
 end;
 
+function TDownloader_STV.GetAuthPageUrl(const Page: string; out Url: string): boolean;
+begin
+  Url := 'http://embed.stv.livebox.sk/v1/tv-arch.js';
+  Result := True;
+end;
+
 function TDownloader_STV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  ID, AuthPage, Auth, Server: string;
+  ID, AuthPageUrl, AuthPage, Auth, Server: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   Referer := GetMovieInfoUrl;
   if not GetRegExpVar(StreamIdRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
-  else if not DownloadPage(Http, 'http://embed.stv.livebox.sk/v1/tv-arch.js', AuthPage) then
+  else if not GetAuthPageUrl(Page, AuthPageUrl) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, AuthPageUrl, AuthPage) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else if not GetRegExpVars(StreamInfoRegExp, AuthPage, ['SERVER', 'AUTH'], [@Server, @Auth]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)

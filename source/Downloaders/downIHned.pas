@@ -59,6 +59,7 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      function Prepare: boolean; override;
     end;
 
 implementation
@@ -151,6 +152,13 @@ begin
       Result := True;
       end;
     end;
+end;
+
+function TDownloader_IHned.Prepare: boolean;
+begin
+  Result := inherited Prepare;
+  if Result then
+    SetName(StripTags(Name));
 end;
 
 initialization

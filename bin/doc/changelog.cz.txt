@@ -1,11 +1,38 @@
 ﻿______________________________________________________________________________
 
-YTD v1.30                                                    (c) 2009-13 Pepak
+YTD v1.31                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.31:
+
+    * Noví poskytovatelé:
+      - Eyeneer.com
+      - Old.Stream.cz
+
+    * Aktualizovaní poskytovatelé:
+      - iHNED.cz
+      - Loupak.cz
+      - NebickoVPapulke.sk
+      - PornTube.com
+      - Tyzden.sk
+      - Vimeo.com
+
+    * iDnes.cz: Podpora pro víc videí na jedné stránce.
+      Stále nefunguje RTMP streamování.
+
+    * Přidáno dekódování českých znaků v podobě entit (zlepší názvy videí
+      např. u České televize).
+
+    * CLI: Pokud uživatel nechá některé video přeskočit (pokud už soubor
+      na disku existuje), tak se tato situace zobrazí jako "Download byl
+      zrušen uživatelem" a ne jako "Nepodařilo se najít stránku s informací
+      o médiu".
+
+
 
   v1.30:
 
