@@ -42,7 +42,7 @@ unit downYouTube;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows,
   uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
   uOptions,
   {$IFDEF GUI}
@@ -474,18 +474,18 @@ begin
       // Now use these values to calculate quality
       Ext := GetVideoFormatExt(VideoFormat);
       if Ext = EXTENSION_MP4 then
-        QualityIndex := 100
+        QualityIndex := 1000
       else if Ext = EXTENSION_WEBM then
         if AvoidWebM then
           QualityIndex := 1
         else
-          QualityIndex := 80
+          QualityIndex := 900
       else if Ext = EXTENSION_FLV then
-        QualityIndex := 60
+        QualityIndex := 800
       else if Ext = EXTENSION_3GP then
-        QualityIndex := 40
+        QualityIndex := 400
       else
-        QualityIndex := 20;
+        QualityIndex := 100;
       VideoQuality := Width * Height * QualityIndex;
       AudioQuality := AudioQuality * QualityIndex;
       if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then

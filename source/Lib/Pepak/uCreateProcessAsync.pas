@@ -169,18 +169,11 @@ type
 
 constructor TWaitForProcessEndThread.Create(AProcess, AThread: THandle; AOnProcessFinished: TProcessFinishedEvent);
 begin
-  inherited Create(True);
   hProcess := AProcess;
   hThread := AThread;
   OnProcessFinished := AOnProcessFinished;
   FreeOnTerminate := True;
-  {$IFDEF DELPHIXE2_UP}
-    {$WARN SYMBOL_DEPRECATED OFF}
-  {$ENDIF}
-  Resume;
-  {$IFDEF DELPHIXE2_UP}
-    {$WARN SYMBOL_DEPRECATED ON}
-  {$ENDIF}
+  inherited Create(False);
 end;
 
 procedure TWaitForProcessEndThread.Execute;

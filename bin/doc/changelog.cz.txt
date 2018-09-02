@@ -1,11 +1,22 @@
 ﻿______________________________________________________________________________
 
-YTD v1.34                                                    (c) 2009-14 Pepak
+YTD v1.35                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.35:
+
+    * Aktualizovaní poskytovatelé:
+      - 3news.co.nz
+      - CeskaTelevize.cz (autor: utajeno)
+
+    * Ověřena funkčnost sestavovacího skriptu ve všech mě dostupných verzích
+      Delphi a také ve FreePascalu 2.6.2.
+
+
 
   v1.34:
 

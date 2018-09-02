@@ -40,7 +40,7 @@ unit downRuTube;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend, SynaUtil,
   uOptions,
   uDownloader, uCommonDownloader, uNestedDownloader;

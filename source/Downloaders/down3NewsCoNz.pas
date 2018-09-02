@@ -42,11 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_3NewsCoNz = class(THttpDownloader)
+  TDownloader_3NewsCoNz = class(TRtmpDownloader)
     private
+    protected
+      MovieInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -72,7 +74,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
-  REGEXP_MOVIE_URL =    '\bvar\s+video\s*=\s*"(?P<URL>.+?)"';
+  REGEXP_MOVIE_INFO =   '\bvar\s+video\s*=\s*"(?P<URL>.+?)"';
 
 { TDownloader_3NewsCoNz }
 
@@ -91,13 +93,13 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
 destructor TDownloader_3NewsCoNz.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
@@ -107,11 +109,36 @@ begin
 end;
 
 function TDownloader_3NewsCoNz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  InfoUrl, Server, Url: string;
+  InfoXml: TXmlDoc;
+  SmilNode: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    MovieUrl := 'http://flash.mediaworks.co.nz/tv3/streams/_definst_/' + StringReplace(MovieUrl, '*', '/', [rfReplaceAll]) + '_700K.mp4';
+  Result := False;
+  if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', InfoUrl) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, 'http://www.3news.co.nz/portals/0/video/smil1500-3.aspx?serverVar=rtmpe://vod-non-geo.mediaworks.co.nz/vod/_definst_&locationVar=mp4:3news' + InfoUrl + '&typeVar=mp4', InfoXml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else
+    try
+      if not GetXmlAttr(InfoXml, 'head/meta', 'base', Server) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+      else if not XmlNodeByPath(InfoXml, 'body/switch', SmilNode) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+      else if not Smil_FindBestVideo(SmilNode, Url) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else
+        begin
+        MovieUrl := Server + Url;
+        Self.RtmpUrl := MovieUrl;
+        Self.Playpath := Url;
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      FreeAndNil(InfoXml);
+      end;
 end;
 
 initialization

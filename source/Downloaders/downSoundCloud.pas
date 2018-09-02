@@ -52,7 +52,6 @@ type
       ClientIdRegExp: TRegExp;
       ClientID: string;
     protected
-      function BeforeGetMovieInfoUrl(Http: THttpSend): boolean; override;
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -79,7 +78,8 @@ const
 const
   REGEXP_MOVIE_TITLE =  '"title"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_MOVIE_URL =    '"stream_url"\s*:\s*"(?P<URL>https?://.+?)"';
-  REGEXP_CLIENT_URL =   '<script\s+src="(?P<URL>//[^"]+)">';
+  REGEXP_CLIENT_URL =   '"layouts/stream"\s*:\s*"(?P<URL>.+?)"';
+  //REGEXP_CLIENT_URL =   '<script\s+src="(?P<URL>//[^"]+)">';
   REGEXP_CLIENT_ID =    '\bclientId\s*=\s*"(?P<ID>.+?)"';
 
 { TDownloader_SoundCloud }
@@ -113,26 +113,9 @@ begin
   inherited;
 end;
 
-function TDownloader_SoundCloud.BeforeGetMovieInfoUrl(Http: THttpSend): boolean;
-var
-  Page, Url, ID: string;
-begin
-  inherited BeforeGetMovieInfoUrl(Http);
-  Result := False;
-  ClientID := '';
-  if DownloadPage(Http, 'http://m.soundcloud.com/' + MovieID, Page) then
-    if GetRegExpVar(ClientUrlRegExp, Page, 'URL', Url) then
-      if DownloadPage(Http, 'http:' + Url, Page) then
-        if GetRegExpVar(ClientIdRegExp, Page, 'ID', ID) then
-          begin
-          ClientID := ID;
-          Result := True;
-          end;
-end;
-
 function TDownloader_SoundCloud.GetMovieInfoUrl: string;
 begin
-  Result := Format('http://m.soundcloud.com/_api/resolve?url=http://soundcloud.com/%s&client_id=%s&format=json', [UrlEncode(MovieID), ClientID]);
+  Result := 'http://soundcloud.com/' + MovieID;
 end;
 
 function TDownloader_SoundCloud.GetFileNameExt: string;
@@ -142,16 +125,22 @@ end;
 
 function TDownloader_SoundCloud.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Separator: string;
+  Url, ClientPage, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieUrl := HtmlDecode(JSDecode(MovieUrl));
-  if Pos('?', MovieUrl) > 0 then
-    Separator := '&'
+  Result := False;
+  Exit; {$IFDEF DELPHI7_UP} {$MESSAGE WARN 'Incomplete'} {$ENDIF}
+  if not GetRegExpVar(ClientUrlRegExp, Page, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), ClientPage) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(ClientIdRegExp, ClientPage, 'ID', ID) then
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
   else
-    Separator := '?';
-  MovieUrl := Format('%s%sclient_id=%s', [MovieUrl, Separator, ClientID]);
-  Result := Prepared;
+        begin
+        ClientID := ID;
+        Result := True;
+        end;
 end;
 
 initialization

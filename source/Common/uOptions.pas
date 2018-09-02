@@ -828,17 +828,10 @@ type
 
 constructor TGetNewestVersionThread.Create(AOptions: TYTDOptions; AOnDone: TGetNewestVersionEvent);
 begin
-  inherited Create(True);
   Options := AOptions;
   OnDone := AOnDone;
   FreeOnTerminate := True;
-  {$IFDEF DELPHIXE2_UP}
-    {$WARN SYMBOL_DEPRECATED OFF}
-  {$ENDIF}
-  Resume;
-  {$IFDEF DELPHIXE2_UP}
-    {$WARN SYMBOL_DEPRECATED ON}
-  {$ENDIF}
+  inherited Create(False);
 end;
 
 procedure TGetNewestVersionThread.Execute;

@@ -40,7 +40,8 @@ unit uFileStreamEx;
 interface
 
 uses
-  SysUtils, Classes, Windows, {$IFDEF DELPHI2009_UP} RTLConsts {$ELSE} Consts {$ENDIF}, 
+  SysUtils, Classes, Windows, 
+  {$IFDEF FPC} RTLConsts, {$ELSE} {$IFDEF DELPHI7_UP} RTLConsts, {$ELSE} Consts, {$ENDIF} {$ENDIF}
   uCompatibility;
 
 type
@@ -50,7 +51,7 @@ type
     function GetPosition64: int64;
     function GetSize64: int64;
     procedure SetPosition64(const Value: int64);
-    procedure SetSize64(const Value: int64);
+    procedure SetSize64(const Value: int64); {$IFDEF FPC} reintroduce; {$ENDIF}
   protected
     function GetLastErrorMsg(LastError: DWORD): string; overload;
     function GetLastErrorMsg: string; overload;

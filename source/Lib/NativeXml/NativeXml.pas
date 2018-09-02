@@ -2585,7 +2585,7 @@ begin
     for j := 2 downto 0 do
     begin
       // Check overshoot
-      if {$IFDEF PEPAK} NativeInt {$ELSE} integer {$ENDIF} (D) - {$IFDEF PEPAK} NativeInt {$ELSE} integer {$ENDIF} (@Buffer) >= Count then
+      if {$IFDEF PEPAK} NativeUInt {$ELSE} integer {$ENDIF} (D) - {$IFDEF PEPAK} NativeUInt {$ELSE} integer {$ENDIF} (@Buffer) >= {$IFDEF PEPAK} NativeUInt {$ENDIF} (Count) then
         exit;
       D^ := LongVal shr (j * 8) and $FF;
       inc(D);

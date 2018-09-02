@@ -65,7 +65,7 @@ unit downVoyo;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows,
   uPCRE, uXml, uCrypto, HttpSend, SynaCode,
   uOptions, uCompatibility, uFunctions,
   {$IFDEF GUI}
@@ -308,7 +308,7 @@ begin
       if GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
         begin
         MovieUrl := Format(NACEVI_BASE_URL, [Year, Month, ID, QualitySuffix[not LowQuality]]);
-        if not DownloadPage(Http, Url, hmHEAD) then
+        if not DownloadPage(Http, MovieUrl, hmHEAD) then
           MovieUrl := Format(NACEVI_BASE_URL, [Year, Month, ID, QualitySuffix[LowQuality]]);
         MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
         MSDownloader.Options := Options;

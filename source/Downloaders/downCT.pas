@@ -48,7 +48,7 @@ unit downCT;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows,
   {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
@@ -518,7 +518,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/getPlaylistURL.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/getPlaylistURI.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Copy(Url, 1, 4) <> 'http' then
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
@@ -607,7 +607,7 @@ begin
   Self.RtmpApp := Copy(Path, 2, MaxInt) + '?' + Para;
   Self.Playpath := Stream;
   //Self.FlashVer := FLASH_DEFAULT_VERSION;
-  Self.SwfUrl := 'http://img9.ceskatelevize.cz/libraries/JWPlayer/player.swf';
+  //Self.SwfUrl := 'http://img9.ceskatelevize.cz/libraries/JWPlayer/player.swf';
   //Self.TcUrl := BaseUrl;
   //Self.PageUrl := MovieID;
 end;

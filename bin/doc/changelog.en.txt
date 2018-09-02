@@ -1,11 +1,23 @@
 ﻿______________________________________________________________________________
 
-YTD v1.34                                                    (c) 2009-14 Pepak
+YTD v1.35                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.35:
+
+    * Updated providers:
+      - 3news.co.nz
+      - CeskaTelevize.cz (author: secret)
+
+    * Verified the build script. Again it works for all Delphi versions I
+      can access as well as with FreePascal 2.6.2.
+
+
+  
 
   v1.34:
 

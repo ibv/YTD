@@ -737,6 +737,10 @@ end;
 function RunFile(const FileName, Params, WorkDir: string; Command: Word; out RunCode: integer): boolean;
 {$DEFINE __RUNFILE_NOZONECHECK}
 {$IFDEF __RUNFILE_NOZONECHECK}
+{$IFDEF FPC}
+type
+  PShellExecuteInfo = ^TShellExecuteInfo;
+{$ENDIF}
 var
   ExecInfo: TShellExecuteInfo;
 {$ENDIF}
@@ -753,7 +757,7 @@ begin
   ExecInfo.nShow := Command;
   CoInitializeEx(nil, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE);
   try
-    if ShellExecuteEx(@ExecInfo) then
+    if ShellExecuteEx(PShellExecuteInfo(@ExecInfo)) then
       begin
       RunCode := ExecInfo.hInstApp;
       Result := True;
@@ -776,6 +780,10 @@ begin
 end;
 
 function WaitForEndElevated(const FileName, Params: string; Command: Word; out ResultCode: DWORD): Boolean;
+{$IFDEF FPC}
+type
+  PShellExecuteInfo = ^TShellExecuteInfo;
+{$ENDIF}
 var
   ExecInfo: TShellExecuteInfo;
 begin
@@ -787,7 +795,7 @@ begin
   if Params <> '' then
     ExecInfo.lpParameters := PChar(Params);
   ExecInfo.nShow := Command;
-  if ShellExecuteEx(@ExecInfo) then
+  if ShellExecuteEx(PShellExecuteInfo(@ExecInfo)) then
     begin
     Result := True;
     if ExecInfo.hProcess <> 0 then

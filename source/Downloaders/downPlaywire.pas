@@ -40,7 +40,7 @@ unit downPlaywire;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uRtmpDownloader;

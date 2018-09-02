@@ -40,7 +40,7 @@ unit uCompatibility;
 interface
 
 uses
-  SysUtils, Classes, Windows;
+  SysUtils, Classes, Windows, ShellApi;
 
 {$IFNDEF DELPHI7_UP}
 type
@@ -105,9 +105,6 @@ const
 
 {$IFNDEF DELPHI2010_UP}
 const
-  INVALID_SET_FILE_POINTER = DWORD(-1);
-
-const
   CSIDL_PROGRAM_FILES = 38;
 
 const
@@ -120,6 +117,11 @@ type
   NativeInt = {$IFDEF WIN64} int64 {$ELSE} Longint {$ENDIF} ;
   NativeUInt = {$IFDEF WIN64} uint64 {$ELSE} Longword {$ENDIF} ;
 {$ENDIF}
+{$ENDIF}
+
+{$IFNDEF DELPHIXE5_UP}
+const
+  INVALID_SET_FILE_POINTER = $ffffffff;
 {$ENDIF}
 
 {$IFDEF FPC}

@@ -40,7 +40,7 @@ unit downTVNovinySk;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, Windows,
   uPCRE, uXml, uCrypto, HttpSend, SynaCode,
   uOptions, uCompatibility,
   uDownloader, uCommonDownloader, downVoyo;
