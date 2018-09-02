@@ -111,7 +111,6 @@ const
   MAINFORM_AUTOCONVERT_WITH =
     'Automatically convert with';
 
-
 {gnugettext: reset}
 
 const

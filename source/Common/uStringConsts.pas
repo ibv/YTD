@@ -40,7 +40,9 @@ unit uStringConsts;
 interface
 
 const
-  REGEXP_COMMON_URL = '^https?://(?:[a-z0-9-]+\.)*%s(?P<%s>%s)%s';
+  REGEXP_BASE_URL = '%s(?P<%s>%s)%s';
+  REGEXP_COMMON_URL_PREFIX = '^https?://(?:[a-z0-9-]+\.)*';
+  REGEXP_COMMON_URL = REGEXP_COMMON_URL_PREFIX + REGEXP_BASE_URL;
     // Protocol HTTP or HTTPS, any number of subdomains, pre-ID, downloader class, ID, post-ID
   REGEXP_SOMETHING = '.+';
   REGEXP_NUMBERS = '[0-9]+';
@@ -48,9 +50,11 @@ const
 
   // Common regular expressions for getting Title
   REGEXP_TITLE_TITLE = '<title>\s*(?P<TITLE>.*?)\s*</title>';
-  REGEXP_TITLE_DIV_CLASS = '<div\s+class="%s">\s*(?P<TITLE>.*?)\s*</div>';
-  REGEXP_TITLE_SPAN_CLASS = '<span\s+class="%s">\s*(?P<TITLE>.*?)\s*</span>';
+  REGEXP_TITLE_A_CLASS = '<a\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</a>';
+  REGEXP_TITLE_DIV_CLASS = '<div\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</div>';
+  REGEXP_TITLE_SPAN_CLASS = '<span\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</span>';
   REGEXP_TITLE_META_TITLE = '<meta\s+name="title"\s+content="\s*(?P<TITLE>.*?)\s*"';
+  REGEXP_TITLE_META_DESCRIPTION = '<meta\s+name="description"\s+content="\s*(?P<TITLE>.*?)\s*"';
   REGEXP_TITLE_H1 = '<h1[^>]*>\s*(?P<TITLE>.*?)\s*</h1>';
   REGEXP_TITLE_H1_CLASS = '<h1\s+class="%s">\s*(?P<TITLE>.*?)\s*</h1>';
   REGEXP_TITLE_H2 = '<h2[^>]*>\s*(?P<TITLE>.*?)\s*</h2>';
@@ -59,8 +63,8 @@ const
   REGEXP_TITLE_H3_CLASS = '<h3\s+class="%s">\s*(?P<TITLE>.*?)\s*</h3>';
 
   // Common regular expressions for getting Url
-  REGEXP_URL_EMBED_SRC = '<embed\s+src="(?P<URL>https?://.+?)"';
-  REGEXP_URL_PARAM_MOVIE = '<param\s+name="movie"\s+value="(?P<URL>.+?)"';
+  REGEXP_URL_EMBED_SRC = '<embed\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
+  REGEXP_URL_PARAM_MOVIE = '<param\s+name="movie"[^>]*\s+value="(?P<URL>.+?)"';
   REGEXP_URL_LINK_VIDEOSRC = '<link\s+rel="video_src"\s+href="(?P<URL>https?://.+?)"';
 
   HTTP_FORM_URLENCODING = 'application/x-www-form-urlencoded';

@@ -52,7 +52,8 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      constructor Create(const AMovieID, AMovieName: string); reintroduce; virtual;
+      constructor Create(const AMovieID: string); override;
+      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
       function Prepare: boolean; override;
     end;
@@ -77,9 +78,14 @@ begin
   {$ENDIF}
 end;
 
-constructor THttpDirectDownloader.Create(const AMovieID, AMovieName: string);
+constructor THttpDirectDownloader.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
+end;
+
+constructor THttpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+begin
+  Create(AMovieID);
   SetName(AMovieName);
 end;
 

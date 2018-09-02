@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
+RunParams=http://www.tvlux.sk/archiv/play/2511
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=79
 Release=0
-Build=604
+Build=606
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.79.0.604
+FileVersion=0.79.0.606
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=

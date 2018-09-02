@@ -76,10 +76,11 @@ uses
   uMessages;
 
 // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+// http://voyo.nova.cz/home/plus-video/321-kriminalka-andel-podraz
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*nova\.cz/+multimedia/';
-  URLREGEXP_ID =        '.+?';
-  URLREGEXP_AFTER_ID =  '\.html?';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*nova\.cz/';
+  URLREGEXP_ID =        '.+';
+  URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
@@ -119,7 +120,7 @@ end;
 
 function TDownloader_Nova.GetMovieInfoUrl: string;
 begin
-  Result := 'http://archiv.nova.cz/multimedia/' + MovieID + '.html';
+  Result := 'http://voyo.nova.cz/' + MovieID;
 end;
 
 function TDownloader_Nova.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

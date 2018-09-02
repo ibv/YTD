@@ -112,6 +112,8 @@ type
       function ActionDonate: boolean;
       function ActionEditConfig: boolean;
       function ActionOptions: boolean;
+      function ActionPlay: boolean;
+      function ActionExploreFolder: boolean;
       {$IFDEF THREADEDVERSION}
       procedure NewVersionEvent(Sender: TObject; const Version, Url: string);
       {$ENDIF}
@@ -173,6 +175,9 @@ const
   ACTION_DONATE = 40021;
   ACTION_EDITCONFIG = 40022;
   ACTION_OPTIONS = 40023;
+  ACTION_EXPLOREFOLDER = 40024;
+  ACTION_PLAY = 40025;
+
 
 //
 const
@@ -447,6 +452,10 @@ begin
           Result := ActionEditConfig;
         ACTION_OPTIONS:
           Result := ActionOptions;
+        ACTION_EXPLOREFOLDER:
+          Result := ActionExploreFolder;
+        ACTION_PLAY:
+          Result := ActionPlay;
         end;
     end;
 end;
@@ -455,6 +464,8 @@ function TFormMain.DoNotify(Control: THandle; ControlID: DWORD; Code: integer; w
 begin
   if (ControlID = IDC_LIST_DOWNLOADS) and (Code = LVN_GETDISPINFO) then
     Result := DownloadListGetDisplayInfo(PLVDispInfo(LParam))
+  else if (ControlID = IDC_LIST_DOWNLOADS) and (Code = NM_DBLCLK) then
+    Result := ActionPlay
   else
     Result := inherited DoNotify(Control, ControlID, Code, WParam, LParam, NotifyResult);
 end;
@@ -714,7 +725,7 @@ end;
 function TFormMain.ActionDonate: boolean;
 begin
   Result := True;
-  ShellExecute(0, 'open', DONATE_URL, nil, nil, SW_SHOWNORMAL);
+  ShellExecute(Handle, 'open', DONATE_URL, nil, nil, SW_SHOWNORMAL);
 end;
 
 function TFormMain.ActionEditConfig: boolean;
@@ -724,6 +735,14 @@ begin
   MessageBox(0, PChar(_(MAINFORM_EDIT_CONFIG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_TASKMODAL);
   if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL) <= 32 then
     ShellExecute(Handle, 'open', 'notepad', PChar('"' + Options.FileName + '"'), nil, SW_SHOWNORMAL);
+end;
+
+function TFormMain.ActionExploreFolder: boolean;
+var Index: integer;
+begin
+  Result := True;
+  Index := ListViewGetSelectedItem(DownloadListHandle);
+  DownloadList.Items[Index].ExploreMedia;
 end;
 
 function TFormMain.ActionOptions: boolean;
@@ -744,6 +763,15 @@ begin
   finally
     F.Free;
     end;
+end;
+
+function TFormMain.ActionPlay: boolean;
+var Index: integer;
+begin
+  Result := True;
+  Index := ListViewGetSelectedItem(DownloadListHandle);
+  if Index >= 0 then
+    DownloadList.Items[Index].PlayMedia;
 end;
 
 function TFormMain.ActionRefresh: boolean;

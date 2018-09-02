@@ -42,18 +42,18 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, uCompatibility, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_Joj = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: TRegExp;
+      MovieIdRegExp: TRegExp;
+      PageIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      function ProcessCalendar(Http: THttpSend; const CalendarUrl, RelationID: string; Day, Month, Year: integer): boolean; virtual;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,20 +68,17 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://televizia.joj.sk/tv-archiv/krimi-noviny/22-05-2010.html
+// http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
+// http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*joj\.sk/tv-archiv/';
-  URLREGEXP_ID =        '.+?';
-  URLREGEXP_AFTER_ID =  '/?$';
+  URLREGEXP_BEFORE_ID = 'joj\.sk/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"basePath=[^"]*?&amp;relationId=(?P<RELATIONID>[0-9]+)&amp;date=(?P<DAY>[0-9]{2})-(?P<MONTH>[0-9]{2})-(?P<YEAR>[0-9]{4})&amp;calendar=(?P<CALENDARURL>https?%3A%2F%2F.*?)&amp;';
-
-const
-  CALENDAR_URL_BY_RELATIONID = 'http://www.joj.sk//services/ArchivCalendar.xml?channel=1&relationId=';
-  {$IFDEF ALLOW_MDY_DATE}
-  CALENDAR_URL_BY_DATE = 'http://www.joj.sk//services/ArchivCalendar.xml?channel=1&date=';
-  {$ENDIF}
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_ID = '\bvideoId\s*:\s*"(?P<ID>[0-9]+)"';
+  REGEXP_PAGE_ID = '\bpageId\s*:\s*"(?P<ID>[0-9]+)"';
 
 { TDownloader_Joj }
 
@@ -92,94 +89,82 @@ end;
 
 class function TDownloader_Joj.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Joj.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  PageIdRegExp := RegExCreate(REGEXP_PAGE_ID);
 end;
 
 destructor TDownloader_Joj.Destroy;
 begin
-  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieIdRegExp);
+  RegExFreeAndNil(PageIdRegExp);
   inherited;
 end;
 
 function TDownloader_Joj.GetMovieInfoUrl: string;
 begin
-  Result := 'http://televizia.joj.sk/tv-archiv/' + MovieID;
-end;
-
-function TDownloader_Joj.ProcessCalendar(Http: THttpSend; const CalendarUrl, RelationID: string; Day, Month, Year: integer): boolean;
-var Xml: TXmlDoc;
-    Node, MonthNode, DayNode, FileNode: TXmlNode;
-    i: integer;
-    WantedDay, WantedMonth, Title, Path: string;
-begin
-  Result := False;
-  if DownloadXml(Http, CalendarUrl, Xml) then
-    try
-      WantedMonth := Format('%04.4d-%02.2d', [Year, Month]);
-      WantedDay := IntToStr(Day); //Format('%02.2d', [Day]);
-      if Xml.NodeByPathAndAttr('month', 'date', WantedMonth, MonthNode) then
-        if XmlNodeByPathAndAttr(MonthNode, 'day', 'date', WantedDay, DayNode) then
-          for i := 0 to Pred(DayNode.NodeCount) do
-            if DayNode.Nodes[i].Name = 'episode' then
-              if XmlNodeByPathAndAttr(DayNode.Nodes[i], 'relation', 'id', RelationId, Node) then
-                begin
-                Node := DayNode.Nodes[i];
-                if not XmlNodeByPathAndAttr(Node, 'files/file', 'quality', 'hi', FileNode) then
-                  XmlNodeByPath(Node, 'files/file', FileNode);
-                if FileNode <> nil then
-                  if GetXmlAttr(Node, '', 'title', Title) then
-                    if GetXmlAttr(FileNode, '', 'path', Path) then
-                      begin
-                      if Copy(Path, 1, 5) = 'data/' then
-                        Path := Copy(Path, 6, MaxInt);
-                      if (Title <> '') and (Path <> '') then
-                        begin
-                        SetName(Format('%s (%04.4d-%02.2d-%02.2d)', [Title, Year, Month, Day]));
-                        {$IFDEF DIRTYHACKS}
-                        // Note: I don't really know whether the domain is fixed or not! It seems to be, though
-                        MovieURL := 'http://n03.joj.sk/' + Path;
-                        SetPrepared(True);
-                        Result := True;
-                        {$ENDIF}
-                        Exit;
-                        end;
-                      end;
-                end;
-    finally
-      Xml.Free;
-      end;
+  Result := 'http://www.joj.sk/' + MovieID;
 end;
 
 function TDownloader_Joj.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var RelationID, CalendarUrl: string;
-    Day, Month, Year: integer;
+var Xml: TXmlDoc;
+    Files: TXmlNode;
+    VideoID, PageID, BestPath, Path, sQuality: string;
+    i, j, BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not FlashVarsRegExp.Match(Page) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', VideoID) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['videoId']))
+  else if not GetRegExpVar(PageIdRegExp, Page, 'ID', PageID) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['pageId']))
+  else if not DownloadXml(Http, 'http://www.joj.sk/services/Video.php?clip=' + VideoID + '&pageId=' + PageID, Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    RelationId := FlashVarsRegExp.SubexpressionByName('RELATIONID');
-    Day := StrToInt(FlashVarsRegExp.SubexpressionByName('DAY'));
-    Month := StrToInt(FlashVarsRegExp.SubexpressionByName('MONTH'));
-    Year := StrToInt(FlashVarsRegExp.SubexpressionByName('YEAR'));
-    CalendarUrl := FlashVarsRegExp.SubexpressionByName('CALENDARURL');
-    Result := False
-      or ProcessCalendar(Http, UrlDecode(CalendarUrl), RelationID, Day, Month, Year)
-      or ProcessCalendar(Http, CALENDAR_URL_BY_RELATIONID + RelationID, RelationID, Day, Month, Year)
-      {$IFDEF ALLOW_MDY_DATE}
-      or ProcessCalendar(Http, CALENDAR_URL_BY_DATE + Format('%04.4d-%02.2d', [Year, Day]), RelationID, Month, Day, Year)
-      {$ENDIF}
-      ;
-    end;
+    try
+      //if GetXmlAttr(Xml, '', 'title', Title) then
+      //  SetName(Title);
+      if not XmlNodeByPath(Xml, 'files', Files) then
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+      else
+        begin
+        BestQuality := -1;
+        BestPath := '';
+        for i := 0 to Pred(Files.NodeCount) do
+          if Files.Nodes[i].Name = 'file' then
+            if GetXmlAttr(Files.Nodes[i], '', 'path', Path) then
+              begin
+              Quality := 0;
+              if GetXmlAttr(Files.Nodes[i], '', 'label', sQuality) then
+                for j := 1 to Length(sQuality) do
+                  if CharInSet(sQuality[j], ['0'..'9']) then
+                    Quality := 10 * Quality + Ord(sQuality[j]) - Ord('0')
+                  else
+                    Break;
+              if Quality > BestQuality then
+                begin
+                BestPath := Path;
+                BestQuality := Quality;
+                end;
+              end;
+        if BestPath <> '' then
+          begin
+          MovieUrl := 'http://n14.joj.sk/' + BestPath;
+          SetPrepared(True);
+          Result := True;
+          end;
+        end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization

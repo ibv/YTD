@@ -179,7 +179,7 @@ begin
         if GetXmlAttr(Xml, 'body/video', 'src', Path) then
           begin
           Url := BaseUrl + '/' + Path;
-          Downloader := TDownloader_FreeCaster_RTMP.Create(Url, '');
+          Downloader := TDownloader_FreeCaster_RTMP.Create(Url);
           Result := True;
           Exit;
           end;
@@ -205,7 +205,7 @@ begin
             if BestUrl <> '' then
               begin
               Url := BaseUrl + BestUrl;
-              Downloader := TDownloader_FreeCaster_HTTP.Create(Url, '');
+              Downloader := TDownloader_FreeCaster_HTTP.Create(Url);
               Result := True;
               end;
             end;

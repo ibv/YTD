@@ -34,18 +34,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uMSDirectDownloader;
+unit downSerialOnline;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TMSDirectDownloader = class(TMSDownloader)
+  TDownloader_SerialOnline = class(TNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -53,75 +54,59 @@ type
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// mms://...
+// http://www.serial-online.cz/afery/afery-7.aspx
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_BEFORE_ID = 'serial-online\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TMSDirectDownloader }
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URL =    REGEXP_URL_PARAM_MOVIE;
 
-class function TMSDirectDownloader.Provider: string;
+{ TDownloader_SerialOnline }
+
+class function TDownloader_SerialOnline.Provider: string;
 begin
-  Result := 'MSDL direct download';
+  Result := 'Serial-Online.cz';
 end;
 
-class function TMSDirectDownloader.UrlRegExp: string;
+class function TDownloader_SerialOnline.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TMSDirectDownloader.Create(const AMovieID: string);
+constructor TDownloader_SerialOnline.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+destructor TDownloader_SerialOnline.Destroy;
 begin
-  Create(AMovieID);
-  SetName(AMovieName);
-end;
-
-destructor TMSDirectDownloader.Destroy;
-begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
-function TMSDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_SerialOnline.GetMovieInfoUrl: string;
 begin
-  Result := '';
-end;
-
-function TMSDirectDownloader.Prepare: boolean;
-begin
-  inherited Prepare;
-  Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.serial-online.cz/' + MovieID;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TMSDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_SerialOnline);
 
 end.

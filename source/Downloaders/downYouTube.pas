@@ -96,8 +96,9 @@ uses
 // http://www.youtube.com/watch/v/b5AWQ5aBjgE
 // http://www.youtube.com/watch?v=b5AWQ5aBjgE
 // http://www.youtube.com/embed/b5AWQ5aBjgE
+// http://www.youtube.com/watch_popup?v=b5AWQ5aBjgE
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch\?(?:.*&)*v=|embed/|embedded/)';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch(?:_popup)?\?(?:.*&)*v=|embed/|embedded/)';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 

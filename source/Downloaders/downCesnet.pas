@@ -34,94 +34,63 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uMSDirectDownloader;
+unit downCesnet;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uMSDownloader, uMSDirectDownloader;
 
 type
-  TMSDirectDownloader = class(TMSDownloader)
+  TDownloader_Cesnet = class(TMSDirectDownloader)
     private
     protected
-      function GetMovieInfoUrl: string; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// mms://...
+// http://server3.streaming.cesnet.cz/others/av/tydenvedy/2009/amazonie.wmv
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'streaming\.cesnet\.cz/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TMSDirectDownloader }
+{ TDownloader_Cesnet }
 
-class function TMSDirectDownloader.Provider: string;
+class function TDownloader_Cesnet.Provider: string;
 begin
-  Result := 'MSDL direct download';
+  Result := 'Cesnet.cz';
 end;
 
-class function TMSDirectDownloader.UrlRegExp: string;
+class function TDownloader_Cesnet.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TMSDirectDownloader.Create(const AMovieID: string);
-begin
-  inherited Create(AMovieID);
-end;
-
-constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
-begin
-  Create(AMovieID);
-  SetName(AMovieName);
-end;
-
-destructor TMSDirectDownloader.Destroy;
+constructor TDownloader_Cesnet.Create(const AMovieID: string);
 begin
   inherited;
 end;
 
-function TMSDirectDownloader.GetMovieInfoUrl: string;
+destructor TDownloader_Cesnet.Destroy;
 begin
-  Result := '';
-end;
-
-function TMSDirectDownloader.Prepare: boolean;
-begin
-  inherited Prepare;
-  Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetPrepared(True);
-    Result := True;
-    end;
+  inherited;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TMSDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Cesnet);
 
 end.

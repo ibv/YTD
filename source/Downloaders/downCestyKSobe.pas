@@ -131,7 +131,7 @@ begin
   if MovieURL = '' then
     if GetRegExpVar(MovieUrl2RegExp, Page, 'URL', s) then
       MovieURL := s;
-  if Name = '' then
+  if UnpreparedName = '' then
     if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', s) then
       SetName(s);
   if MovieURL <> '' then

@@ -59,6 +59,7 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       procedure SetOptions(const Value: TYTDOptions); override;
+      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -211,6 +212,12 @@ begin
   {$ENDIF}
 end;
 {$ENDIF}
+
+function TDownloader_VideaCesky.CreateNestedDownloaderFromURL(var Url: string): boolean;
+begin
+  Url := UrlDecode(Url);
+  Result := inherited CreateNestedDownloaderFromURL(Url);
+end;
 
 initialization
   RegisterDownloader(TDownloader_VideaCesky);

@@ -126,6 +126,10 @@ const
   DEFAULT_CONVERTER_TO_H264 =
       'Convert movie to AVI/H264'
       ;
+  ERROR_LOADING_CONFIG =
+    'Error loading configuration file. Error %s:'#10 +
+    '%s'#10 +
+    'Default config file will be created.';
 
 {gnugettext: reset}
 
@@ -158,9 +162,14 @@ end;
 
 function TYTDOptionsGUI.Load(IgnoreErrors: boolean): boolean;
 begin
-  Result := inherited Load(IgnoreErrors);
-  if Result then
-    fLoadSuccessful := True;
+  try
+    Result := inherited Load(IgnoreErrors);
+    if Result then
+      fLoadSuccessful := True;
+  except
+    on E: Exception do
+      Result := (MessageBox(0, PChar(Format(_(ERROR_LOADING_CONFIG), [E.ClassName, E.Message])), APPLICATION_TITLE, MB_OK or MB_ICONSTOP or MB_TASKMODAL) = idYes);
+    end;
 end;
 
 end.

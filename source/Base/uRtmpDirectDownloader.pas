@@ -52,7 +52,8 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      constructor Create(const AMovieID, AMovieName: string); reintroduce; virtual;
+      constructor Create(const AMovieID: string); override;
+      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
       function Prepare: boolean; override;
     end;
@@ -81,9 +82,14 @@ begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TRtmpDirectDownloader.Create(const AMovieID, AMovieName: string);
+constructor TRtmpDirectDownloader.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
+end;
+
+constructor TRtmpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+begin
+  Create(AMovieID);
   SetName(AMovieName);
 end;
 

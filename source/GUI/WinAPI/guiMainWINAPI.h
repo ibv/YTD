@@ -28,3 +28,5 @@
 #define ACTION_DONATE                           40021
 #define ACTION_EDITCONFIG                       40022
 #define ACTION_OPTIONS                          40023
+#define ACTION_EXPLOREFOLDER                    40024
+#define ACTION_PLAY                             40025

@@ -34,94 +34,113 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uMSDirectDownloader;
+unit downBBCNews;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TMSDirectDownloader = class(TMSDownloader)
+  TDownloader_BBCNews = class(TMSDownloader)
     private
     protected
+      MovieObjectRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// mms://...
+// http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_BEFORE_ID = 'news\.bbc\.co\.uk/player/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TMSDirectDownloader }
+const
+  REGEXP_MOVIE_TITLE = '<meta\s+name="Headline"\s+content="(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_OBJECT_URL = '<param\s+name="url"\s+value="(?P<PATH>/.+?)"';
 
-class function TMSDirectDownloader.Provider: string;
+{ TDownloader_BBCNews }
+
+class function TDownloader_BBCNews.Provider: string;
 begin
-  Result := 'MSDL direct download';
+  Result := 'News.BBC.co.uk';
 end;
 
-class function TMSDirectDownloader.UrlRegExp: string;
+class function TDownloader_BBCNews.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TMSDirectDownloader.Create(const AMovieID: string);
+constructor TDownloader_BBCNews.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT_URL);
 end;
 
-constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+destructor TDownloader_BBCNews.Destroy;
 begin
-  Create(AMovieID);
-  SetName(AMovieName);
-end;
-
-destructor TMSDirectDownloader.Destroy;
-begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieObjectRegExp);
   inherited;
 end;
 
-function TMSDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_BBCNews.GetMovieInfoUrl: string;
 begin
-  Result := '';
+  Result := 'http://news.bbc.co.uk/player/' + MovieID;
 end;
 
-function TMSDirectDownloader.Prepare: boolean;
+function TDownloader_BBCNews.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Xml: TXmlDoc;
+    Path, Url: string;
+    i: integer;
+    FirstEntry: boolean;
 begin
-  inherited Prepare;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  if not GetRegExpVar(MovieObjectRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, 'http://news.bbc.co.uk' + HtmlDecode(Path), Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetPrepared(True);
-    Result := True;
-    end;
+    try
+      // Skip the first ENTRY, it's only BBC header
+      FirstEntry := True;
+      for i := 0 to Pred(Xml.Root.NodeCount) do
+        if Xml.Root.Nodes[i].Name = 'ENTRY' then
+          if FirstEntry then
+            FirstEntry := False
+          else if GetXmlAttr(Xml.Root.Nodes[i], 'REF', 'HREF', Url) then
+            begin
+            MovieUrl := Url;
+            SetPrepared(True);
+            Result := True;
+            Exit;
+            end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TMSDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_BBCNews);
 
 end.

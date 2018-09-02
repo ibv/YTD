@@ -353,6 +353,16 @@ object FormYTD: TFormYTD
       ShortCut = 120
       OnExecute = actOptionsExecute
     end
+    object actPlay: TAction
+      Caption = 'Play'
+      ShortCut = 13
+      OnExecute = actPlayExecute
+    end
+    object ActExploreFolder: TAction
+      Caption = 'Explore folder'
+      ShortCut = 16453
+      OnExecute = ActExploreFolderExecute
+    end
   end
   object ActionImages: TImageList
     Left = 168

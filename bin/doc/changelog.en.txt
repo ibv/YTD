@@ -1,6 +1,62 @@
 CHANGELOG
 ---------
 
+  v0.81:
+
+    * New provider: Bahnorama.com.
+
+    * New provider: Cesnet.cz.
+
+    * New provider: Clevver.com.
+
+    * New provider: Dokumentarni.tv.
+
+    * New provider: FreePornoZdarma.cz (porn).
+
+    * New provider: News.BBC.co.uk.
+
+    * New provider: Serial-Online.cz.
+
+    * New provider: TVLux.sk.
+
+    * CeskaTelevize.cz: Support for Hyde Park and similar pages.
+
+    * CestyKSobe.cz: Fixed the bug "Downloader is not prepared".
+
+    * iPrima.cz: The highest-quality video is downloaded, even if the server
+      prefers a lowe-quality one.
+
+    * Joj.sk: Works again. Note that it may not work for all videos, as the
+      streaming server is hard-coded and may not be correct in all cases.
+
+    * Nova.cz: Updated to work with current page structure.
+
+    * Music.Stream.cz: Currently doesn't work.
+
+    * VideaCesky.cz: Updated to work with another form of nested downloader.
+
+    * YouTube.com: Support for URLs in form of http://www.youtube.com/watch_popup?v=b5AWQ5aBjgE.
+
+    * Zakulisi.cz: Removed the old debug code, which caused that the same
+      video was being downloaded for all URLs.
+
+    * Reorganized the documentation: The list of supported providers was moved
+      to file providers.txt.
+
+    * Fixed the command-line version to show downloaded size for videos with
+      unknown total size (until now, it didn't display anything).
+
+    * The ENTER key and/or double click on a downloaded movie plays this movie
+      in the default media player. (The double click used to work before, but
+      only in the VCL version of YTD.)
+
+    * CTRL+E key opens the folder into which the selected file was downloaded.
+
+    * In case an error occurs when loading the configuration file, YTD will
+      notify you of this problem and will create a new config file.
+
+
+
   v0.80:
 
     * New provider: HardSexTube (porn).

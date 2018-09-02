@@ -1,6 +1,63 @@
 CHANGELOG
 ---------
 
+  v0.81:
+
+    * Nový poskytovatel: Bahnorama.com.
+
+    * Nový poskytovatel: Cesnet.cz.
+
+    * Nový poskytovatel: Clevver.com.
+
+    * Nový poskytovatel: Dokumentarni.tv.
+
+    * Nový poskytovatel: FreePornoZdarma.cz (porno).
+
+    * Nový poskytovatel: News.BBC.co.uk.
+
+    * Nový poskytovatel: Serial-Online.cz.
+
+    * Nový poskytovatel: TVLux.sk.
+
+    * CeskaTelevize.cz: Podpora pro Hyde Park a další podobné stránky.
+
+    * CestyKSobe.cz: Opravena chyba "Downloader není pøipraven".
+
+    * iPrima.cz: Stahuje se nejkvalitnìjší verze videa i v pøípadì, že server
+      preferuje ménì kvalitní verzi.
+      
+    * Joj.sk: Po zmìnì webu opìt funguje. Otázka je, jak moc dobøe - používám
+      pevnì stanovený streamovací server, který na pokusných videích fungoval,
+      ale nemusí fungovat na všech.
+
+    * Nova.cz: Pøepracováno na aktální verzi stránek.
+
+    * Music.Stream.cz: Momentálnì nefunkèní.
+
+    * VideaCesky.cz: Aktualizováno na další tvar vloženého downloaderu.
+
+    * YouTube.com: Podpora pro URL ve tvaru http://www.youtube.com/watch_popup?v=b5AWQ5aBjgE.
+
+    * Zakulisi.cz: Opraven zapomenutý testovací kód, kvùli kterému se stahovalo 
+      stále stejné video.
+
+    * Pøeorganizována dokumentace. Seznam podporovaných serverù byl pøesunut
+      do samostatného souboru providers.txt.
+
+    * Opravena command-line verze, aby u videí bez známé délky zobrazovala
+      aspoò dosud pøenesená data (dosud nezobrazovala nic).
+
+    * Klávesou ENTER a/nebo dvojklikem na stáhnutý film se tento film pøehraje
+      ve výchozím pøehrávaèi médií. (Dvojklik už fungoval døíve, ale jen ve VCL
+      verzi programu.)
+
+    * Klávesou CTRL+E se otevøe adresáø, do kterého se aktuálnì vybrané stáhlo.
+
+    * Pokud dojde pøi startu k chybì naèítání konfiguraèního souboru, program
+      na to upozorní a vytvoøí nový soubor.
+
+
+
   v0.80:
 
     * Nový poskytovatel: HardSexTube.com (porno).

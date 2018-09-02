@@ -146,7 +146,7 @@ begin
 end;
 
 function TDownloader_CT.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
-var Host, Path, NewPage: string;
+var Host, Path, Url, NewPage: string;
 begin
   Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJECT', MovieObject);
   if not Result then
@@ -154,7 +154,8 @@ begin
       begin
       if Host = '' then
         Host := ExtractUrlRoot(MovieID);
-      if DownloadPage(Http, Host + StringReplace(HtmlDecode(Path), ' ',  '+', [rfReplaceAll]), NewPage, InfoPageEncoding) then
+      Url := Host + UrlEncode(StringReplace(HtmlDecode(Path), '&autoStart=false', '', []));
+      if DownloadPage(Http, Url, NewPage, InfoPageEncoding) then
         if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
           begin
           Page := NewPage;

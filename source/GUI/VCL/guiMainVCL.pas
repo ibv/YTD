@@ -130,6 +130,8 @@ type
     ToolButton4: TToolButton;
     Editconfigfile1: TMenuItem;
     actOptions: TAction;
+    actPlay: TAction;
+    ActExploreFolder: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -156,6 +158,8 @@ type
     procedure actDonateExecute(Sender: TObject);
     procedure actEditConfigFileExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
+    procedure actPlayExecute(Sender: TObject);
+    procedure ActExploreFolderExecute(Sender: TObject);
   protected
     fLoading: boolean;
     {$IFDEF SYSTRAY}
@@ -193,6 +197,7 @@ type
     procedure ConvertTask(Index: integer; const ConverterID: string); virtual;
     {$ENDIF}
     procedure PlayMedia(Index: integer); virtual;
+    procedure ExploreMedia(Index: integer); virtual;
     procedure LoadSettings; virtual;
     procedure SaveSettings; virtual;
   public
@@ -694,6 +699,11 @@ begin
   DownloadList.Items[Index].PlayMedia;
 end;
 
+procedure TFormYTD.ExploreMedia(Index: integer);
+begin
+  DownloadList.Items[Index].ExploreMedia;
+end;
+
 procedure TFormYTD.actSelectAllExecute(Sender: TObject);
 var i: integer;
 begin
@@ -818,6 +828,18 @@ begin
   finally
     F.Free;
     end;
+end;
+
+procedure TFormYTD.actPlayExecute(Sender: TObject);
+begin
+  if Downloads.Selected <> nil then
+    PlayMedia(Downloads.Selected.Index);
+end;
+
+procedure TFormYTD.ActExploreFolderExecute(Sender: TObject);
+begin
+  if Downloads.Selected <> nil then
+    ExploreMedia(Downloads.Selected.Index);
 end;
 
 end.

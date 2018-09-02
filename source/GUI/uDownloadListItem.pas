@@ -102,6 +102,7 @@ type
       procedure Stop; virtual;
       procedure Pause; virtual;
       procedure PlayMedia; virtual;
+      procedure ExploreMedia; virtual;
       function Download: boolean; virtual;
       property Downloader: TDownloader read fDownloader;
       property State: TDownloadThreadState read fState;
@@ -360,6 +361,20 @@ begin
     FN := Downloader.Options.DestinationPath + Downloader.FileName;
     if FileExists(FN) then
       ShellExecute(0, 'open', PChar(FN), nil, nil, SW_SHOWNORMAL);
+    end;
+end;
+
+procedure TDownloadListItem.ExploreMedia;
+var FN: string;
+begin
+  if State in [dtsDownloading, dtsFinished, dtsFailed, dtsAborted] then
+    begin
+    FN := Downloader.Options.DestinationPath + Downloader.FileName;
+    if FileExists(FN) then
+      begin
+      FN := ExcludeTrailingBackslash(ExtractFilePath(ExpandFileName(FN)));
+      ShellExecute(0, 'open', PChar(FN), nil, nil, SW_SHOWNORMAL);
+      end;
     end;
 end;
 

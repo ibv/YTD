@@ -34,94 +34,109 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uMSDirectDownloader;
+unit downBahnorama;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TMSDirectDownloader = class(TMSDownloader)
+  TDownloader_Bahnorama = class(THttpDownloader)
     private
     protected
+      MovieInfoUrlRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// mms://...
+// http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'bahnorama\.com/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TMSDirectDownloader }
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_INFO_URL = '<param\s+name="FlashVars"\s+value="(?:[^"]*&)?file=(?P<PATH>/[^&"]+)';
 
-class function TMSDirectDownloader.Provider: string;
+const
+  URL_ROOT = 'http://www.bahnorama.com';
+
+{ TDownloader_Bahnorama }
+
+class function TDownloader_Bahnorama.Provider: string;
 begin
-  Result := 'MSDL direct download';
+  Result := 'Bahnorama.com';
 end;
 
-class function TMSDirectDownloader.UrlRegExp: string;
+class function TDownloader_Bahnorama.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TMSDirectDownloader.Create(const AMovieID: string);
+constructor TDownloader_Bahnorama.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
+  inherited;
+  InfoPageEncoding := peUnknown;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoUrlRegExp := RegExCreate(REGEXP_MOVIE_INFO_URL);
 end;
 
-constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+destructor TDownloader_Bahnorama.Destroy;
 begin
-  Create(AMovieID);
-  SetName(AMovieName);
-end;
-
-destructor TMSDirectDownloader.Destroy;
-begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieInfoUrlRegExp);
   inherited;
 end;
 
-function TMSDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_Bahnorama.GetMovieInfoUrl: string;
 begin
-  Result := '';
+  Result := MovieID;
 end;
 
-function TMSDirectDownloader.Prepare: boolean;
+function TDownloader_Bahnorama.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Xml: TXmlDoc;
+    Path: string;
 begin
-  inherited Prepare;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, URL_ROOT + Path, Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetPrepared(True);
-    Result := True;
-    end;
+    try
+      if not GetXmlVar(Xml, 'trackList/track/location', Path) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else
+        begin
+        MovieUrl := URL_ROOT + Path;
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TMSDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Bahnorama);
 
 end.

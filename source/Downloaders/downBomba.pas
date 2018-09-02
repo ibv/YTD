@@ -90,7 +90,7 @@ constructor TDownloader_Bomba.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, [1]));
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 

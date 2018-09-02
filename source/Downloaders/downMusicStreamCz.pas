@@ -122,6 +122,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
+      Xml.SaveToFile('x.xml');
       if not Xml.NodeByPath('video', Node) then
         SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else if not (GetXmlAttr(Node, '', 'hdID', CdnID) or GetXmlAttr(Node, '', 'cdnID', CdnID)) then

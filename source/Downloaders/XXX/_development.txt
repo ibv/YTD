@@ -7,6 +7,7 @@ HTTP	HTML	HTML	xxxDachix
 HTTP	HTML	HTML	xxxDancingBear
 HTTP	HTML	XML	xxxEmpFlix
 HTTP	HTML	HTML	xxxExtremeTube
+HTTP	HTML	HTML	xxxFreePornoZdarma (<- XHamster)
 HTTP	HTML	Nested	xxxGrinvi
 HTTP	HTML	HTML	xxxKeezMovies
 HTTP	XML	XML	xxxMegaPorn

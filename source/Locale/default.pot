@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-03-26 07:13\n"
-"PO-Revision-Date: 2011-03-26 07:13\n"
+"POT-Creation-Date: 2011-05-22 16:18\n"
+"PO-Revision-Date: 2011-05-22 16:18\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -88,7 +88,7 @@ msgstr ""
 #: GUI/VCL/guiMainVCL.dfm:170
 #. Create columns
 #: GUI/WinAPI/guiAboutWINAPI.pas:366
-#: GUI/WinAPI/guiMainWINAPI.pas:355
+#: GUI/WinAPI/guiMainWINAPI.pas:360
 msgid "Provider"
 msgstr ""
 
@@ -127,31 +127,31 @@ msgstr ""
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:166
 #. Download list
-#: GUI/WinAPI/guiMainWINAPI.pas:354
+#: GUI/WinAPI/guiMainWINAPI.pas:359
 msgid "URL"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:175
-#: GUI/WinAPI/guiMainWINAPI.pas:356
+#: GUI/WinAPI/guiMainWINAPI.pas:361
 msgid "Status"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:179
-#: GUI/WinAPI/guiMainWINAPI.pas:357
+#: GUI/WinAPI/guiMainWINAPI.pas:362
 msgid "Title"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:184
-#: GUI/WinAPI/guiMainWINAPI.pas:358
+#: GUI/WinAPI/guiMainWINAPI.pas:363
 msgid "Size"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:189
-#: GUI/WinAPI/guiMainWINAPI.pas:359
+#: GUI/WinAPI/guiMainWINAPI.pas:364
 msgid "Progress"
 msgstr ""
 
@@ -347,33 +347,43 @@ msgstr ""
 msgid "Change program's options"
 msgstr ""
 
+#. FormYTD..YTDActions..actPlay..Caption
+#: GUI/VCL/guiMainVCL.dfm:357
+msgid "Play"
+msgstr ""
+
+#. FormYTD..YTDActions..ActExploreFolder..Caption
+#: GUI/VCL/guiMainVCL.dfm:362
+msgid "Explore folder"
+msgstr ""
+
 #. FormYTD..DownloadsPopup..N4..Caption
-#: GUI/VCL/guiMainVCL.dfm:1458
+#: GUI/VCL/guiMainVCL.dfm:1468
 #. FormYTD..DownloadsPopup..N2..Caption
-#: GUI/VCL/guiMainVCL.dfm:1470
+#: GUI/VCL/guiMainVCL.dfm:1480
 #. FormYTD..DownloadsPopup..N3..Caption
-#: GUI/VCL/guiMainVCL.dfm:1482
+#: GUI/VCL/guiMainVCL.dfm:1492
 #. FormYTD..DownloadsPopup..N1..Caption
-#: GUI/VCL/guiMainVCL.dfm:1488
+#: GUI/VCL/guiMainVCL.dfm:1498
 msgid "-"
 msgstr ""
 
 #. FormYTD..OpenHtmlFile..Filter
-#: GUI/VCL/guiMainVCL.dfm:1507
-#: GUI/WinAPI/guiMainWINAPI.pas:609
+#: GUI/VCL/guiMainVCL.dfm:1517
+#: GUI/WinAPI/guiMainWINAPI.pas:620
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr ""
 
 #. FormYTD..OpenUrlList..Filter
-#: GUI/VCL/guiMainVCL.dfm:1513
+#: GUI/VCL/guiMainVCL.dfm:1523
 #. FormYTD..SaveUrlList..Filter
-#: GUI/VCL/guiMainVCL.dfm:1520
-#: GUI/WinAPI/guiMainWINAPI.pas:586
+#: GUI/VCL/guiMainVCL.dfm:1530
+#: GUI/WinAPI/guiMainWINAPI.pas:597
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr ""
 
 #. FormYTD..SaveUrlList..DefaultExt
-#: GUI/VCL/guiMainVCL.dfm:1519
+#: GUI/VCL/guiMainVCL.dfm:1529
 msgid "lst"
 msgstr ""
 
@@ -508,79 +518,79 @@ msgstr ""
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:99
+#: Base/uHttpDownloader.pas:100
 msgid "Resolving began"
 msgstr ""
 
 #. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:100
+#: Base/uHttpDownloader.pas:101
 msgid "Resolving ended"
 msgstr ""
 
 #. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:101
+#: Base/uHttpDownloader.pas:102
 msgid "Socket created"
 msgstr ""
 
 #. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:102
+#: Base/uHttpDownloader.pas:103
 msgid "Socket closed"
 msgstr ""
 
 #. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:103
+#: Base/uHttpDownloader.pas:104
 msgid "Bound to IP/port"
 msgstr ""
 
 #. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:104
+#: Base/uHttpDownloader.pas:105
 msgid "Connected"
 msgstr ""
 
 #. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:105
+#: Base/uHttpDownloader.pas:106
 msgid "Can read data"
 msgstr ""
 
 #. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:106
+#: Base/uHttpDownloader.pas:107
 msgid "Can write data"
 msgstr ""
 
 #. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:107
+#: Base/uHttpDownloader.pas:108
 msgid "Listening"
 msgstr ""
 
 #. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:108
+#: Base/uHttpDownloader.pas:109
 msgid "Accepted connection"
 msgstr ""
 
 #. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:109
+#: Base/uHttpDownloader.pas:110
 msgid "Read data"
 msgstr ""
 
 #. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:110
+#: Base/uHttpDownloader.pas:111
 msgid "Wrote data"
 msgstr ""
 
 #. HTTP socket status: data is waiting
 #. Programmer's name for it: SOCKSTATUS_WAITING
-#: Base/uHttpDownloader.pas:111
+#: Base/uHttpDownloader.pas:112
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
 #: GUI/guiConsts.pas:47
@@ -589,7 +599,7 @@ msgstr ""
 
 #. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:112
+#: Base/uHttpDownloader.pas:113
 msgid "Socket error"
 msgstr ""
 
@@ -755,109 +765,116 @@ msgid "No valid URLs found."
 msgstr ""
 
 #. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
-#: CLI/uYTD.pas:356
+#: CLI/uYTD.pas:359
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
 msgstr ""
 
-#: CLI/uYTD.pas:365
+#. CLI progress bar. %: Downloaded size
+#: CLI/uYTD.pas:363
+msgid "  Downloading: %s"
+msgstr ""
+
+#: CLI/uYTD.pas:373
 msgid "  ERROR: "
 msgstr ""
 
 #. CLI: Error message to be written to the log file. %: URL, message
-#: CLI/uYTD.pas:367
+#: CLI/uYTD.pas:375
 msgid "FAILED \"%s\": %s"
 msgstr ""
 
 #. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
-#: CLI/uYTD.pas:385
+#: CLI/uYTD.pas:393
 msgid "  Playlist item: "
 msgstr ""
 
 #. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
-#: CLI/uYTD.pas:390
+#: CLI/uYTD.pas:398
 msgid "            URL: "
 msgstr ""
 
 #. CLI: Title shown before media title. Pad to the same length as "File name:'
-#: CLI/uYTD.pas:409
+#: CLI/uYTD.pas:417
 msgid "  Media title: "
 msgstr ""
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:410
+#: CLI/uYTD.pas:418
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:539
+#: CLI/uYTD.pas:551
 msgid "    File name: "
 msgstr ""
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:412
+#: CLI/uYTD.pas:420
 msgid "  Content URL: "
 msgstr ""
 
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:418
+#: CLI/uYTD.pas:426
 msgid "  SUCCESS."
 msgstr ""
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:434
+#: CLI/uYTD.pas:442
 msgid "  ABORTED BY USER"
 msgstr ""
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:439
+#: CLI/uYTD.pas:447
 msgid "ERROR %s: %s"
 msgstr ""
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:454
+#: CLI/uYTD.pas:462
 msgid "Unknown URL."
 msgstr ""
 
-#: CLI/uYTD.pas:469
+#: CLI/uYTD.pas:480
 msgid "Trying to parse as HTML page..."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:545
+#: CLI/uYTD.pas:557
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:547
+#: CLI/uYTD.pas:559
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:548
+#: CLI/uYTD.pas:560
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:549
+#: CLI/uYTD.pas:561
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:550
+#: CLI/uYTD.pas:562
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:551
+#: CLI/uYTD.pas:563
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:567
+#: CLI/uYTD.pas:579
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:578
+#: CLI/uYTD.pas:590
 msgid "Incorrect answer."
 msgstr ""
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
+#. Programmer's name for it: ERR_EXCEPTION_MESSAGE
+#: Common/uMessages.pas:57
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
 #: Common/uMessages.pas:57
 msgid "Exception %s with message:\n"
@@ -867,10 +884,14 @@ msgstr ""
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
 #: Common/uMessages.pas:59
+#. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
+#: Common/uMessages.pas:59
 msgid "Press any key to quit."
 msgstr ""
 
 #. Default playlist item name, %d is count
+#. Programmer's name for it: MSG_PLAYLIST_ITEM
+#: Common/uMessages.pas:60
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
 #: Common/uMessages.pas:60
 msgid "Playlist item %d"
@@ -879,9 +900,13 @@ msgstr ""
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
 #: Common/uMessages.pas:63
+#. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
+#: Common/uMessages.pas:63
 msgid "Downloader is not prepared!"
 msgstr ""
 
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
+#: Common/uMessages.pas:64
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
 #: Common/uMessages.pas:64
 msgid "Download of this content is not implemented."
@@ -889,9 +914,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
 #: Common/uMessages.pas:65
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: Common/uMessages.pas:65
 msgid "Download to file \"%s\" was not allowed."
 msgstr ""
 
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
+#: Common/uMessages.pas:67
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
 #: Common/uMessages.pas:67
 msgid "Failed to locate embedded object."
@@ -899,9 +928,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:68
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:68
 msgid "Failed to locate media info page."
 msgstr ""
 
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:69
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:69
 msgid "Failed to download media info page."
@@ -909,9 +942,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:70
+#. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:70
 msgid "Failed to prepare media info page."
 msgstr ""
 
+#. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
+#: Common/uMessages.pas:71
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:71
 msgid "Invalid media info page."
@@ -919,9 +956,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
 #: Common/uMessages.pas:72
+#. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
+#: Common/uMessages.pas:72
 msgid "Failed to download server list."
 msgstr ""
 
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
+#: Common/uMessages.pas:74
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
 #: Common/uMessages.pas:74
 msgid "Failed to locate media info."
@@ -929,9 +970,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
 #: Common/uMessages.pas:75
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
+#: Common/uMessages.pas:75
 msgid "Failed to find media title."
 msgstr ""
 
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
+#: Common/uMessages.pas:76
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
 #: Common/uMessages.pas:76
 msgid "Failed to find media URL."
@@ -939,14 +984,20 @@ msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
 #: Common/uMessages.pas:77
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
+#: Common/uMessages.pas:77
 msgid "Failed to find media server."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
 #: Common/uMessages.pas:78
+#. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
+#: Common/uMessages.pas:78
 msgid "Failed to find media stream."
 msgstr ""
 
+#. Programmer's name for it: ERR_HTTP_RESULT_CODE
+#: Common/uMessages.pas:80
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
 #: Common/uMessages.pas:80
 msgid "HTTP request failed with error code "
@@ -955,9 +1006,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
 #: Common/uMessages.pas:81
+#. Programmer's name for it: ERR_HTTP_NO_DATA_READ
+#: Common/uMessages.pas:81
 msgid "No data read from the connection."
 msgstr ""
 
+#. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
+#: Common/uMessages.pas:83
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
 #: Common/uMessages.pas:83
 msgid "Variable \"%s\" not found."
@@ -965,9 +1020,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
 #: Common/uMessages.pas:84
+#. Programmer's name for it: ERR_SEE_LOGFILE
+#: Common/uMessages.pas:84
 msgid "Error message listed in file \"%s\"."
 msgstr ""
 
+#. Programmer's name for it: ERR_MEDIA_REMOVED
+#: Common/uMessages.pas:85
 #. Programmer's name for it: ERR_MEDIA_REMOVED
 #: Common/uMessages.pas:85
 msgid "Media file was removed from the server."
@@ -975,9 +1034,13 @@ msgstr ""
 
 #. Programmer's name for it: ERR_SERVER_ERROR
 #: Common/uMessages.pas:86
+#. Programmer's name for it: ERR_SERVER_ERROR
+#: Common/uMessages.pas:86
 msgid "Server returned an error: %s"
 msgstr ""
 
+#. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
+#: Common/uMessages.pas:88
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #: Common/uMessages.pas:88
 msgid "Failed to load library \"%s\" or its prerequisites."
@@ -1141,8 +1204,8 @@ msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
 #: GUI/guiOptions.pas:99
-#: GUI/guiOptions.pas:139
-#: GUI/guiOptions.pas:141
+#: GUI/guiOptions.pas:143
+#: GUI/guiOptions.pas:145
 msgid "This is the first time you are running the GUI version\n"
 "of YouTube Downloader, or the configuration file isn't\n"
 "available. To protect your privacy, the program will now\n"
@@ -1189,15 +1252,22 @@ msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:128
-#: GUI/guiOptions.pas:147
-#: GUI/guiOptions.pas:149
 msgid "Convert movie to AVI/H264"
 msgstr ""
 
+#. Programmer's name for it: INITIALRUN_WANTPORTABLE
+#: GUI/guiOptions.pas:132
+#: GUI/guiOptions.pas:151
+#: GUI/guiOptions.pas:153
+msgid "Error loading configuration file. Error %s:\n"
+"%s\n"
+"Default config file will be created."
+msgstr ""
+
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:286
+#: GUI/uDownloadList.pas:289
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:296
+#: GUI/uDownloadList.pas:299
 msgid "File already exists."
 msgstr ""
 
@@ -1210,19 +1280,19 @@ msgstr ""
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
-#: Lib/Pepak/uApiFunctions.pas:41
+#: Lib/Pepak/uApiFunctions.pas:77
 msgid "Windows error %u = %08.8x\n"
 "%s"
 msgstr ""
 
 #. error code, error code
 #. Programmer's name for it: WINDOWS_ERROR_UNKNOWN
-#: Lib/Pepak/uApiFunctions.pas:42
+#: Lib/Pepak/uApiFunctions.pas:78
 msgid "Unknown error %u = %08.8x."
 msgstr ""
 
 #. Programmer's name for it: SSelectDirectory
-#: Lib/Pepak/uDialogs.pas:113
+#: Lib/Pepak/uDialogs.pas:149
 msgid "Select a directory"
 msgstr ""
 

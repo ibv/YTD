@@ -34,94 +34,71 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uMSDirectDownloader;
+unit xxxFreePornoZdarma;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uPCRE, uXml, HttpSend, 
+  uDownloader, uCommonDownloader, xxxXHamster;
 
 type
-  TMSDirectDownloader = class(TMSDownloader)
+  TDownloader_FreePornoZdarma = class(TDownloader_XHamster)
     private
     protected
       function GetMovieInfoUrl: string; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// mms://...
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_BEFORE_ID = 'freepornozdarma\.cz/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TMSDirectDownloader }
+const
+  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_META_DESCRIPTION;
 
-class function TMSDirectDownloader.Provider: string;
+{ TDownloader_FreePornoZdarma }
+
+class function TDownloader_FreePornoZdarma.UrlRegExp: string;
 begin
-  Result := 'MSDL direct download';
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-class function TMSDirectDownloader.UrlRegExp: string;
+constructor TDownloader_FreePornoZdarma.Create(const AMovieID: string);
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  inherited;
+  InfoPageEncoding := peUTF8;
+  RegExFreeAndNil(MovieTitleRegExp);
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
 end;
 
-constructor TMSDirectDownloader.Create(const AMovieID: string);
+destructor TDownloader_FreePornoZdarma.Destroy;
 begin
-  inherited Create(AMovieID);
-end;
-
-constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
-begin
-  Create(AMovieID);
-  SetName(AMovieName);
-end;
-
-destructor TMSDirectDownloader.Destroy;
-begin
+  RegExFreeAndNil(MovieTitleRegExp);
   inherited;
 end;
 
-function TMSDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_FreePornoZdarma.GetMovieInfoUrl: string;
 begin
-  Result := '';
-end;
-
-function TMSDirectDownloader.Prepare: boolean;
-begin
-  inherited Prepare;
-  Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.freepornozdarma.cz/video/' + MovieID;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TMSDirectDownloader);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_FreePornoZdarma);
   {$ENDIF}
 
 end.

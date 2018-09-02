@@ -80,6 +80,8 @@ type
       function DoNotify(Control: THandle; ControlID: DWORD; Code: integer; wParam: WPARAM; lParam: LPARAM; out NotifyResult: integer): boolean; virtual;
       // Message handler for WM_SIZE - form was resized
       function DoSize(ResizeType, NewWidth, NewHeight: integer): boolean; virtual;
+      // Message handler for WM_LBUTTONDBLCLK, WM_RBUTTONDBLCLK, WM_MBUTTONDBLCLK
+      function DoMouseButtonDblClick(Button: TMouseButton; Keys: WPARAM; Point: TPoint): boolean; virtual;
       // Message handler for WM_LBUTTONDOWN, WM_RBUTTONDOWN, WM_MBUTTONDOWN
       function DoMouseButtonDown(Button: TMouseButton; Keys: WPARAM; Point: TPoint): boolean; virtual;
       // Message handled for WM_CONTEXTMENU
@@ -337,6 +339,17 @@ begin
       Result := DoNotify(PNMHdr(Msg.LParam)^.hwndFrom, PNMHdr(Msg.LParam)^.idFrom, PNMHdr(Msg.LParam)^.code, Msg.WParam, Msg.LParam, Msg.Result);
     WM_SIZE:
       Result := DoSize(Msg.wParam, Msg.lParam and $ffff, Msg.lParam shr 16);
+    WM_LBUTTONDBLCLK:
+      Result := DoMouseButtonDblClick(mbLeft, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_RBUTTONDBLCLK:
+      Result := DoMouseButtonDblClick(mbRight, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_MBUTTONDBLCLK:
+      Result := DoMouseButtonDblClick(mbMiddle, Msg.wParam and $ffff, MakePoints(Msg.lParam));
+    WM_XBUTTONDBLCLK:
+      if (Msg.wParam shr 16) = XBUTTON1 then
+        Result := DoMouseButtonDblClick(mbExtra1, Msg.wParam and $ffff, MakePoints(Msg.lParam))
+      else if (Msg.wParam shr 16) = XBUTTON2 then
+        Result := DoMouseButtonDblClick(mbExtra2, Msg.wParam and $ffff, MakePoints(Msg.lParam));
     WM_LBUTTONDOWN:
       Result := DoMouseButtonDown(mbLeft, Msg.wParam and $ffff, MakePoints(Msg.lParam));
     WM_RBUTTONDOWN:
@@ -469,6 +482,11 @@ begin
           MoveWindow(AnchorItem.Handle, NewX, NewY, NewW, NewH, True);
           end;
   {$ENDIF}
+end;
+
+function TApiForm.DoMouseButtonDblClick(Button: TMouseButton; Keys: WPARAM; Point: TPoint): boolean;
+begin
+  Result := False;
 end;
 
 function TApiForm.DoMouseButtonDown(Button: TMouseButton; Keys: WPARAM; Point: TPoint): boolean;

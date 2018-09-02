@@ -337,23 +337,31 @@ end;
 procedure TYTD.DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean);
 const EmptyProgressBar = '                             ';
       ProgressBarLength = Length(EmptyProgressBar);
+      NewLine = '    '#13;
 var Proc: int64;
     i, n: integer;
     ProgressBar: string;
     Ticks: DWORD;
 begin
-  if (not StdOutRedirected) and (TotalSize >= 1) then
+  if (not StdOutRedirected) then
     begin
     Ticks := GetTickCount;
     if (fNextProgressUpdate = 0) or (Ticks > fNextProgressUpdate) or ((fNextProgressUpdate > $f0000000) and (Ticks < $10000000)) then
       begin
       fNextProgressUpdate := Ticks + 250; // 0.25 sec.
-      Proc := 1000 * DownloadedSize div TotalSize;
-      n := Proc div (1000 div ProgressBarLength);
-      ProgressBar := EmptyProgressBar;
-      for i := 1 to n do
-        ProgressBar[i] := '#';
-      Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)') + #13, [ProgressBar, Proc div 10, Proc mod 10, PrettySize(DownloadedSize), PrettySize(TotalSize)])); // CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
+      if TotalSize > 0 then
+        begin
+        Proc := 1000 * DownloadedSize div TotalSize;
+        n := Proc div (1000 div ProgressBarLength);
+        ProgressBar := EmptyProgressBar;
+        for i := 1 to n do
+          ProgressBar[i] := '#';
+        Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)') + NewLine, [ProgressBar, Proc div 10, Proc mod 10, PrettySize(DownloadedSize), PrettySize(TotalSize)])); // CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
+        end
+      else
+        begin
+        Write(Format(_('  Downloading: %s') + NewLine, [PrettySize(DownloadedSize)])); // CLI progress bar. %: Downloaded size
+        end;
       end;
     end;
 end;

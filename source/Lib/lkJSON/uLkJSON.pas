@@ -458,15 +458,15 @@ type
     function getBoolean(idx: Integer): Boolean; overload; override;
 
     function {$ifdef TCB_EXT}getDoubleFromName{$else}getDouble{$endif}
-      (nm: string): Double; overload;
+      (nm: string): Double; {$IFDEF PEPAK} reintroduce; {$ENDIF} overload;
     function {$ifdef TCB_EXT}getIntFromName{$else}getInt{$endif}
-      (nm: string): Integer; overload;
+      (nm: string): Integer; {$IFDEF PEPAK} reintroduce; {$ENDIF} overload;
     function {$ifdef TCB_EXT}getStringFromName{$else}getString{$endif}
-      (nm: string): string; overload;
+      (nm: string): string; {$IFDEF PEPAK} reintroduce; {$ENDIF} overload;
     function {$ifdef TCB_EXT}getWideStringFromName{$else}getWideString{$endif}
-      (nm: string): WideString; overload;
+      (nm: string): WideString; {$IFDEF PEPAK} reintroduce; {$ENDIF} overload;
     function {$ifdef TCB_EXT}getBooleanFromName{$else}getBoolean{$endif}
-      (nm: string): Boolean; overload;
+      (nm: string): Boolean; {$IFDEF PEPAK} reintroduce; {$ENDIF} overload;
   end;
 
   TlkJSON = class
@@ -1109,7 +1109,9 @@ end;
 
 procedure TlkJSONobject.Delete(idx: Integer);
 var
+  {$IFNDEF PEPAK}
   i,j,k:cardinal;
+  {$ENDIF}
   mth: TlkJSONobjectmethod;
 begin
   if (idx >= 0) and (idx < Count) then

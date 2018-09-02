@@ -126,9 +126,9 @@ begin
   Result := Prepared;
   if Result then
     if HttpProtocolRegExp.Match(MovieURL) then
-      Result := CreateNestedDownloaderFromDownloader(TDownloader_NJoy_HTTP.Create(MovieUrl, Name))
+      Result := CreateNestedDownloaderFromDownloader(TDownloader_NJoy_HTTP.CreateWithName(MovieUrl, Name))
     else
-      Result := CreateNestedDownloaderFromDownloader(TDownloader_NJoy_MMS.Create(MovieUrl, Name))
+      Result := CreateNestedDownloaderFromDownloader(TDownloader_NJoy_MMS.CreateWithName(MovieUrl, Name))
 end;
 
 initialization

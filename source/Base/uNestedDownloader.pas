@@ -141,7 +141,7 @@ begin
       end
     else if (DirectUrlRegExp <> nil) and GetRegExpVar(DirectUrlRegExp, Url, 'URL', Dummy) then
       begin
-      Downloader := THttpDirectDownloader.Create(Url, UnpreparedName);
+      Downloader := THttpDirectDownloader.CreateWithName(Url, UnpreparedName);
       Result := CreateNestedDownloaderFromDownloader(Downloader);
       if Result then
         MovieURL := Url

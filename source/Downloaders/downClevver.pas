@@ -34,94 +34,105 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uMSDirectDownloader;
+unit downClevver;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TMSDirectDownloader = class(TMSDownloader)
+  TDownloader_Clevver = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
-      function Prepare: boolean; override;
     end;
 
 implementation
 
 uses
+  uStringConsts,
   uDownloadClassifier,
-  uLanguages, uMessages;
+  uMessages;
 
-// mms://...
+// http://www.clevver.com/ctv/videof/245041/the-kids-are-all-right-movie-trailer.html
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        '(?:mmsh?|rtsp|real-rtsp|wms-rtsp)://.+';
+  URLREGEXP_BEFORE_ID = 'clevver\.com/ctv/videof/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
-{ TMSDirectDownloader }
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
 
-class function TMSDirectDownloader.Provider: string;
+const
+  {$IFDEF DIRTYHACKS}
+  API_KEY = 'A32FE17A9A42D925E631F2D68B';
+  {$ENDIF}
+  API_REQUEST = 'request=<request><login>internal</login><api_key>' + API_KEY + '</api_key><vid>%s</vid></request>';
+
+{ TDownloader_Clevver }
+
+class function TDownloader_Clevver.Provider: string;
 begin
-  Result := 'MSDL direct download';
+  Result := 'Clevver.com';
 end;
 
-class function TMSDirectDownloader.UrlRegExp: string;
+class function TDownloader_Clevver.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TMSDirectDownloader.Create(const AMovieID: string);
+constructor TDownloader_Clevver.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
 end;
 
-constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+destructor TDownloader_Clevver.Destroy;
 begin
-  Create(AMovieID);
-  SetName(AMovieName);
-end;
-
-destructor TMSDirectDownloader.Destroy;
-begin
+  RegExFreeAndNil(MovieTitleRegExp);
   inherited;
 end;
 
-function TMSDirectDownloader.GetMovieInfoUrl: string;
+function TDownloader_Clevver.GetMovieInfoUrl: string;
 begin
-  Result := '';
+  Result := 'http://www.clevver.com/ctv/videof/' + MovieID;
 end;
 
-function TMSDirectDownloader.Prepare: boolean;
+function TDownloader_Clevver.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Xml: TXmlDoc;
+    Url: string; 
 begin
-  inherited Prepare;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if MovieID = '' then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  if not DownloadXml(Http, 'http://clevver.com/api/get_fp_path', UrlEncode(Format(API_REQUEST, [MovieID])), HTTP_FORM_URLENCODING, Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
-    MovieURL := MovieID;
-    SetPrepared(True);
-    Result := True;
-    end;
+    try
+      if not GetXmlVar(Xml, 'videoPath', Url) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else
+        begin
+        MovieUrl := Url;
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization
-  {$IFDEF DIRECTDOWNLOADERS}
-  RegisterDownloader(TMSDirectDownloader);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Clevver);
 
 end.

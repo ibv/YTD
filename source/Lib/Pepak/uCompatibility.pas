@@ -84,6 +84,7 @@ function ExcludeTrailingPathDelimiter(const Path: string): string;
 {$IFNDEF DELPHI2010_UP}
 const
   WM_XBUTTONDOWN          = $020B;
+  WM_XBUTTONDBLCLK        = $020D;
 
   XBUTTON1                = 1;
   XBUTTON2                = 2;
