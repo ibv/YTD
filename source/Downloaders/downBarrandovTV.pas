@@ -123,12 +123,12 @@ begin
     begin
     SetName(Title);
     MovieUrl := 'rtmpe://' + HostName + '/' + StreamName;
-    SetRtmpDumpOption('r', MovieURL);
+    SetRtmpDumpOption('r', 'rtmpe://' + HostName);
     SetRtmpDumpOption('y', StreamName);
-    //SetRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
-    //SetRtmpDumpOption('s', 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID);
-    //SetRtmpDumpOption('t', MovieUrl);
-    //SetRtmpDumpOption('p', 'http://www.barrandov.tv/' + MovieID);
+    SetRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
+    SetRtmpDumpOption('s', 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID);
+    SetRtmpDumpOption('t', 'rtmpe://' + HostName);
+    SetRtmpDumpOption('p', 'http://www.barrandov.tv/' + MovieID);
     SetPrepared(True);
     Result := True;
     end;
