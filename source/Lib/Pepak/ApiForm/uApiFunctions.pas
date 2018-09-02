@@ -38,6 +38,7 @@ unit uApiFunctions;
 
 interface
 {$INCLUDE 'uApi.inc'}
+{$DEFINE LISTVIEW_DONTCREATETEXT}
 
 uses
   SysUtils, Classes, Windows, CommCtrl,
@@ -252,22 +253,35 @@ begin
   Result := SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_FOCUSED or LVNI_SELECTED);
 end;
 
+{$IFNDEF LISTVIEW_DONTCREATETEXT}
 const LISTVIEW_TEXT_BUFFER_SIZE = 16;
       LISTVIEW_TEXT_BUFFER_ITEMSIZE = 260;
 type TListViewTextBufferItem = array[0..LISTVIEW_TEXT_BUFFER_ITEMSIZE-1] of Char;
 var ListViewTextBuffer: array[0..LISTVIEW_TEXT_BUFFER_SIZE-1] of TListViewTextBufferItem;
     ListViewTextBufferIndex: integer = 0;
-    
+    ListViewSetVirtualItemTextCriticalSection: TRtlCriticalSection;
+{$ENDIF}
+
 function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
 begin
   Result := Longbool(DispInfo^.item.mask and LVIF_TEXT) and (DispInfo^.item.pszText <> nil) and (DispInfo^.item.cchTextMax > 0);
   if not Result then
+    {$IFDEF LISTVIEW_DONTCREATETEXT}
+    Exit;
+    {$ELSE}
     begin
-    DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
-    DispInfo^.item.pszText := @ListViewTextBuffer[ListViewTextBufferIndex, 0];
-    DispInfo^.item.cchTextMax := LISTVIEW_TEXT_BUFFER_ITEMSIZE;
-    ListViewTextBufferIndex := Succ(ListViewTextBufferIndex) mod LISTVIEW_TEXT_BUFFER_SIZE;
+    EnterCriticalSection(ListViewSetVirtualItemTextCriticalSection);
+    try
+      FillChar(ListViewTextBuffer[ListViewTextBufferIndex][0], Sizeof(ListViewTextBuffer[ListViewTextBufferIndex]), 0);
+      DispInfo^.item.mask := DispInfo^.item.mask or LVIF_TEXT;
+      DispInfo^.item.pszText := @ListViewTextBuffer[ListViewTextBufferIndex, 0];
+      DispInfo^.item.cchTextMax := LISTVIEW_TEXT_BUFFER_ITEMSIZE;
+      ListViewTextBufferIndex := Succ(ListViewTextBufferIndex) mod LISTVIEW_TEXT_BUFFER_SIZE;
+    finally
+      LeaveCriticalSection(ListViewSetVirtualItemTextCriticalSection);
+      end;
     end;
+    {$ENDIF}
   StrPLCopy(DispInfo^.item.pszText, Text, DispInfo^.item.cchTextMax-1);
 end;
 
@@ -299,5 +313,15 @@ begin
     SendMessage(Toolbar, TB_SETBUTTONINFO, Button, LPARAM(@Info));
     end;
 end;
+
+initialization
+  {$IFNDEF LISTVIEW_DONTCREATETEXT}
+  InitializeCriticalSection(ListViewSetVirtualItemTextCriticalSection);
+  {$ENDIF}
+
+finalization
+  {$IFNDEF LISTVIEW_DONTCREATETEXT}
+  DeleteCriticalSection(ListViewSetVirtualItemTextCriticalSection);
+  {$ENDIF}
 
 end.

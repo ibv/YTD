@@ -54,7 +54,6 @@ type
     protected
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
-      function GetTempDir: string; virtual;
       property DownloadedBytes: int64 read fDownloadedBytes write fDownloadedBytes;
       property TotalBytes: int64 read fTotalBytes write fTotalBytes;
       property Aborted: boolean read fAborted write fAborted;
@@ -94,15 +93,6 @@ end;
 function TExternalDownloader.GetTotalSize: int64;
 begin
   Result := TotalBytes;
-end;
-
-function TExternalDownloader.GetTempDir: string;
-const MAX_TEMP_PATH = MAX_PATH + 16;
-begin
-  SetLength(Result, MAX_TEMP_PATH);
-  SetLength(Result, GetTempPath(MAX_TEMP_PATH, @(Result[1])));
-  if Result <> '' then
-    Result := IncludeTrailingPathDelimiter(Result);
 end;
 
 function TExternalDownloader.Prepare: boolean;

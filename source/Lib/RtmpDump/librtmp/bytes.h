@@ -18,7 +18,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with librtmp see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
@@ -27,7 +28,7 @@
 
 #include <stdint.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 /* Windows is little endian only */
 #define __LITTLE_ENDIAN 1234
 #define __BIG_ENDIAN    4321
@@ -36,7 +37,7 @@
 
 typedef unsigned char uint8_t;
 
-#else /* !WIN32 */
+#else /* !_WIN32 */
 
 #include <sys/param.h>
 
@@ -52,7 +53,7 @@ typedef unsigned char uint8_t;
 #define __LITTLE_ENDIAN	LITTLE_ENDIAN
 #endif
 
-#endif /* !WIN32 */
+#endif /* !_WIN32 */
 
 /* define default endianness */
 #ifndef __LITTLE_ENDIAN

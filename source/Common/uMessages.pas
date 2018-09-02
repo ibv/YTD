@@ -41,11 +41,11 @@ interface
 
 const
   EOLN = #13#10;
-  APPLICATION_TITLE = 'YouTube Downloader';
-  APPLICATION_VERSION = {$INCLUDE 'ytd.version'};
-  APPLICATION_CAPTION = APPLICATION_TITLE + ' v' + APPLICATION_VERSION;
-  APPLICATION_URL = 'http://www.pepak.net/download/youtube-downloader/';
-  APPLICATION_SHORTCUT = APPLICATION_TITLE + '.lnk';
+  APPLICATION_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YouTube Downloader' {$IFNDEF XXX} + ' Lite' {$ENDIF} ;
+  APPLICATION_VERSION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = {$INCLUDE 'ytd.version'};
+  APPLICATION_CAPTION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YouTube Downloader' {$IFNDEF XXX} + ' Lite' {$ENDIF} + ' v' + {$INCLUDE 'ytd.version'};
+  APPLICATION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.pepak.net/download/youtube-downloader/';
+  APPLICATION_SHORTCUT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YouTube Downloader.lnk';
 
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
@@ -55,9 +55,13 @@ const
 {gnugettext: scan-all}
 resourcestring
   ERR_EXCEPTION_MESSAGE = 'Exception %s with message:'#10'%s'; // Message shown when an exception occurs. First %s is an exception type, second %s an exception message
-
+  ERR_INSTALL_FAILED = 'Installation failed.'; // Shown when installation failed
   MSG_PRESS_ANY_KEY_TO_QUIT = 'Press any key to quit.'; // Shown when running YTD command-line from IDE, right before YTD is terminated
   MSG_PLAYLIST_ITEM = 'Playlist item %d'; // Default playlist item name, %d is count
+  MSG_DOWNLOAD_OR_UPGRADE = 'Do you want to upgrade (YES)'#10'or just download the newest version (NO)?'#10#10'Note: Upgrade will stop all transfers.'; // What to do with the newest version
+  MSG_UPGRADING = 'Upgrading...'; // Downloading the upgrade data
+  MSG_FAILED_TO_UPGRADE = 'Failed to upgrade. Upgrade file: %s'; // Failed to execute the upgrade file
+  MSG_FAILED_TO_DOWNLOAD_UPGRADE = 'Failed to download upgrade data: '; // Failed to download the upgrade file
 
   // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!'; // Attempted to access data which depends Prepare without running Prepare

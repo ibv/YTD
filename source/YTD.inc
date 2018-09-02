@@ -60,7 +60,8 @@
   // What doesn't work:
   //   - Synchronize hangs until the application finishes. Obviously, since
   //     thread messages appear in TApiForm's message loop rather than 
-  //     the TApplication's. "Fixed" by removing all Synchronize's.
+  //     the TApplication's. "Fixed" by replacing Synchronize's with critical
+  //     sections.
   //   - WaitFor fails with an error. No idea why.
   //   - OnTerminate doesn't get called. No idea why. So I call it manually.
 
@@ -106,6 +107,9 @@
 {.DEFINE NO_CLI}  
   // Don't compile the command-line version
 
+{.DEFINE NO_SETUP}
+  // Don't compile the setup/install/upgrade code
+
 {.DEFINE NO_XXX}  
   // Don't compile support for porn providers
 
@@ -114,6 +118,8 @@
 {$UNDEF GUI}
 {$UNDEF CLI}
 {$UNDEF XXX}
+{$UNDEF SETUP}
+{$UNDEF SETUP_GUI}
 
 {$IFNDEF NO_GUI}
   {$DEFINE GUI}
@@ -127,6 +133,10 @@
   {$DEFINE XXX}
 {$ENDIF}
 
+{$IFNDEF NO_SETUP}
+  {$DEFINE SETUP}
+{$ENDIF}
+
 
 
 // A number of features are only available in the GUI version.
@@ -136,6 +146,7 @@
   {$UNDEF CONVERTERS}
   {$UNDEF THREADEDVERSION}
   {$UNDEF GUI_WINAPI}
+  {$UNDEF SETUP}
 {$ENDIF}
 
 
@@ -164,13 +175,24 @@
 
 
 
+// Setup functions may provide a GUI
+{$IFDEF SETUP}
+  {$IFDEF GUI}
+    {$DEFINE SETUP_GUI}
+  {$ENDIF}
+{$ENDIF}
+
+
+
 // In the debug mode:
 //  - FASTMM is used to detect memory leaks.
 //  - non-working providers are built in for testing
 
 {$IFDEF DEBUG}
   {.$DEFINE FASTMM}
-  {$DEFINE NONWORKING}
+  {.$DEFINE NONWORKING}
+{$ELSE}
+  {$UNDEF NONWORKING}
 {$ENDIF}
 
 

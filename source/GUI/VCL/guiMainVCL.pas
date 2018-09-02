@@ -371,7 +371,7 @@ begin
     begin
     actReportBug.Enabled := False;
     if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version]), mtInformation, [mbYes, mbNo], 0) = mrYes then
-      ShellExecute(Handle, 'open', PChar(Url), nil, nil, SW_SHOWNORMAL);
+      NewVersionFound(Options, Url, Handle);
     end;
 end;
 {$ENDIF}
@@ -555,7 +555,7 @@ end;
 
 procedure TFormYTD.actDonateExecute(Sender: TObject);
 begin
-  ShellExecute(0, 'open', DONATE_URL, nil, nil, SW_SHOWNORMAL);
+  Run(DONATE_URL, Handle);
 end;
 
 procedure TFormYTD.actConvertExecute(Sender: TObject);
@@ -831,7 +831,7 @@ begin
   Options.Save;
   MessageDlg(_(MAINFORM_EDIT_CONFIG), mtWarning, [mbOK], 0);
   if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL) <= 32 then
-    ShellExecute(Handle, 'open', 'notepad', PChar('"' + Options.FileName + '"'), nil, SW_SHOWNORMAL);
+    Run('notepad', '"' + Options.FileName + '"', Handle);
 end;
 
 procedure TFormYTD.actOptionsExecute(Sender: TObject);

@@ -17,20 +17,31 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with librtmp see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
-#ifdef WIN32
+#ifdef _WIN32
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
+#ifdef _MSC_VER	/* MSVC */
+#define snprintf _snprintf
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+#define vsnprintf _vsnprintf
+#endif
+
 #define GetSockError()	WSAGetLastError()
+#define SetSockError(e)	WSASetLastError(e)
 #define setsockopt(a,b,c,d,e)	(setsockopt)(a,b,c,(const char *)d,(int)e)
 #define EWOULDBLOCK	WSAETIMEDOUT	/* we don't use nonblocking, but we do use timeouts */
 #define sleep(n)	Sleep(n*1000)
 #define msleep(n)	Sleep(n)
 #define SET_RCVTIMEO(tv,s)	int tv = s*1000
-#else
+#else /* !_WIN32 */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/times.h>
@@ -40,6 +51,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #define GetSockError()	errno
+#define SetSockError(e)	errno = e
 #undef closesocket
 #define closesocket(s)	close(s)
 #define msleep(n)	usleep(n*1000)

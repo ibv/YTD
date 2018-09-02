@@ -45,6 +45,9 @@ uses
   uConsoleApp, uOptions, uLanguages, uMessages, uFunctions,
   uDownloader, uCommonDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
+  {$IFDEF SETUP}
+  uHttpDirectDownloader, uSetup,
+  {$ENDIF}
   uDownloadClassifier;
 
 type
@@ -72,7 +75,7 @@ type
       function DownloadURLsFromFileList(const FileName: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadURLsFromHTML(const Source: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowProviders; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure ShowVersion; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ShowVersion(DoUpgrade: boolean): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
       property HtmlPlaylist: TPlaylist_HTML read fHtmlPlaylist;
       property HtmlFilePlaylist: TPlaylist_HTMLfile read fHtmlFilePlaylist;
@@ -87,6 +90,7 @@ const
   RESCODE_NOURLS = 2;
   RESCODE_BADPARAMS = 3;
   RESCODE_BADDATA = 4;
+  RESCODE_BADUPGRADE = 5;
 
 implementation
 
@@ -139,6 +143,9 @@ begin
   WriteColored(ccWhite, ' -k'); Writeln(_(' .......... Ask what to do with existing files (default).')); // CLI: Help for -k command line argument
   WriteColored(ccWhite, ' -l'); Writeln(_(' .......... List all available providers.')); // CLI: Help for -l command line argument
   WriteColored(ccWhite, ' -v'); Writeln(_(' .......... Test for updated version of YTD.')); // CLI: Help for -v command line argument
+  {$IFDEF SETUP}
+  WriteColored(ccWhite, ' -u'); Writeln(_(' .......... Test for a new version and upgrade if possible.')); // CLI: Help for -u command line argument
+  {$ENDIF}
   WriteColored(ccWhite, ' -ah[-]'); Writeln(_(' ...... [Don''t] Automatically try HTML parser for unknown URLs.')); // CLI: Help for -ah command line argument
   Writeln;
   WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.')); // CLI: Help for <url> command line argument
@@ -164,17 +171,43 @@ begin
   Writeln;
 end;
 
-procedure TYTD.ShowVersion;
+function TYTD.ShowVersion(DoUpgrade: boolean): boolean;
 var Url, Version: string;
+    {$IFDEF SETUP}
+    FileName: string;
+    {$ENDIF}
 begin
   Write(_('Current version: ')); WriteColored(ccWhite, AppVersion); Writeln; // CLI: Note: pad with spaces to the same length as "Newest version:"
   Write(_('Newest version:  ')); // CLI: Note: pad with spaces to the same length as "Current version:"
-  if not Options.GetNewestVersion(Version, Url) then
+  Result := Options.GetNewestVersion(Version, Url);
+  if not Result then
     WriteColored(ccLightRed, _('check failed')) // CLI: Couldn't check for a newer version
   else if IsNewerVersion(Version) then
     begin
     WriteColored(ccLightCyan, Version); Writeln;
-    Write(_('Download URL:    ')); WriteColored(ccWhite, Url); // CLI: Note: pad with spaces to the same length as "Current version:"
+    {$IFDEF SETUP}
+    if DoUpgrade then
+      begin
+      Result := False;
+      if Options.DownloadNewestVersion(FileName) then
+        if (AnsiCompareText(ExtractFileExt(FileName), '.exe') = 0) and Run(FileName, Format('%s "%s"', [SETUP_PARAM_UPGRADE, ExtractFilePath(ParamStr(0))])) then
+          begin
+          Write(MSG_UPGRADING);
+          Result := True;
+          end
+        else
+          WriteColored(ccLightRed, Format(MSG_FAILED_TO_UPGRADE, [FileName])) // CLI: Failed to start the update code
+      else
+        begin
+        WriteColored(ccLightRed, MSG_FAILED_TO_DOWNLOAD_UPGRADE); // CLI: Couldn't download the upgraded version
+        WriteColored(ccWhite, Url);
+        end;
+      end
+    else
+    {$ENDIF}
+      begin
+      Write(_('Download URL:    ')); WriteColored(ccWhite, Url); // CLI: Note: pad with spaces to the same length as "Current version:"
+      end;
     end
   else
     WriteColored(ccWhite, Version);
@@ -219,11 +252,15 @@ begin
             Result := RESCODE_OK;
           Break;
           end
-        else if (Param = '-v') then
+        else if (Param = '-v') {$IFDEF SETUP} or (Param = '-u') {$ENDIF} then
           begin
-          ShowVersion;
-          if Result in [RESCODE_OK, RESCODE_NOURLS] then
-            Result := RESCODE_OK;
+          if ShowVersion( {$IFDEF SETUP} Param = '-u' {$ELSE} False {$ENDIF} ) then
+            begin
+            if Result in [RESCODE_OK, RESCODE_NOURLS] then
+              Result := RESCODE_OK;
+            end
+          else
+            Result := RESCODE_BADUPGRADE;
           Break;
           end
         else if (Param = '-n') then
@@ -337,7 +374,7 @@ end;
 procedure TYTD.DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean);
 const EmptyProgressBar = '                             ';
       ProgressBarLength = Length(EmptyProgressBar);
-      NewLine = '   '#13;
+      NewLine = '  '#13;
 var Proc: int64;
     i, n: integer;
     ProgressBar: string;

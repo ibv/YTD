@@ -89,6 +89,13 @@ type
       property ContentUrl: string read fMovieUrl;
     end;
 
+const
+  OPTION_COMMONDOWNLOADER_SUBTITLESENABLED {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'subtitles_enabled';
+  {$IFDEF SUBTITLES}
+    OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'convert_subtitles';
+    OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT = True;
+  {$ENDIF}
+
 implementation
 
 uses
@@ -307,16 +314,10 @@ begin
 end;
 
 procedure TCommonDownloader.SetOptions(const Value: TYTDOptions);
-{$IFDEF SUBTITLES}
-var s: string;
-{$ENDIF}
 begin
   inherited;
   {$IFDEF SUBTITLES}
-  fSubtitlesEnabled := Value.SubtitlesEnabled;
-  if fSubtitlesEnabled then
-    if Value.ReadProviderOption(Provider, 'subtitles_enabled', s) then
-      fSubtitlesEnabled := StrToIntDef(s, 0) <> 0;
+  fSubtitlesEnabled := Value.SubtitlesEnabled and Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, False);
   {$ENDIF}
 end;
 

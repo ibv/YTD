@@ -146,8 +146,8 @@ begin
           Break;
           end;
       MovieUrl := Server + '/' + Stream;
-      SetRtmpDumpOption('r', Server);
-      SetRtmpDumpOption('y', Stream);
+      Self.RtmpUrl := Server;
+      Self.Playpath := Stream;
       SetPrepared(True);
       Result := True;
       end;

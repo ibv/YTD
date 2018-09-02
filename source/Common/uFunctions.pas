@@ -36,14 +36,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit uFunctions;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE COMOBJ}
 
 interface
 
 uses
-  SysUtils, uMessages;
-  
+  SysUtils, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
+  HttpSend, SynaUtil,
+  uMessages, uCompatibility;
+
 function PrettySize(Size: int64): string;
 function IsNewerVersion(OnlineVersion: string): boolean;
+function GetSpecialFolder(FolderID: integer): string;
+function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; FileName: string = ''): boolean;
+function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle = 0): boolean; overload;
+function Run(const FileName, CommandLine: string; OwnerHandle: THandle = 0): boolean; overload;
+function Run(const FileName: string; OwnerHandle: THandle = 0): boolean; overload;
+function GetTempDir: string;
+function CheckRedirect(Http: THttpSend; var Url: string): boolean;
 
 implementation
 
@@ -119,6 +129,132 @@ begin
       else if NumCurrent > NumOnline then
         Break;
   until False;
+end;
+
+function GetSpecialFolder(FolderID: integer): string;
+var PIDL : PItemIDList;
+    DirBuf: array[0..MAX_PATH] of char;
+begin
+  SHGetSpecialFolderLocation(0, FolderID, PIDL);
+  try
+    SHGetPathFromIDList(PIDL, DirBuf);
+    Result := string(DirBuf);
+  finally
+    CoTaskMemFree(PIDL);
+    end;
+end;
+
+function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer; FileName: string): boolean;
+var IObject: IUnknown;
+    Dir, ShortcutFile: string;
+begin
+  CoInitialize(nil);
+  try
+    {$IFDEF COMOBJ}
+    IObject := CreateComObject(CLSID_ShellLink);
+    {$ELSE}
+    Result := False;
+    if (CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER or CLSCTX_LOCAL_SERVER, IUnknown, IObject) and $80000000) = 0 then
+    {$ENDIF}
+      try
+        if FileName = '' then
+          FileName := ParamStr(0);
+        with IObject as IShellLink do
+          begin
+          SetPath(PChar(FileName));
+          SetWorkingDirectory(PChar(ExtractFilePath(FileName)));
+          end;
+        if WhereCSIDL = 0 then
+          Dir := Where
+        else
+          Dir := GetSpecialFolder(WhereCSIDL);
+        if Dir = '' then
+          ShortcutFile := ShortcutName
+        else
+          ShortcutFile := Dir + '\' + ShortcutName;
+        with IObject as IPersistFile do
+          Save(PWideChar(WideString(ShortcutFile)), False);
+        Result := True;
+      finally
+        IObject := nil;
+        end;
+  finally
+    CoUninitialize;
+    end;
+end;
+
+function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle): boolean; overload;
+begin
+  Result := ShellExecute(OwnerHandle, 'open', PChar(FileName), PChar(CommandLine), PChar(WorkDir), SW_SHOWNORMAL) > 32;
+end;
+
+function Run(const FileName, CommandLine: string; OwnerHandle: THandle): boolean;
+begin
+  Result := Run(FileName, CommandLine, '', OwnerHandle);
+end;
+
+function Run(const FileName: string; OwnerHandle: THandle): boolean;
+begin
+  Result := Run(FileName, '', OwnerHandle);
+end;
+
+function GetTempDir: string;
+const MAX_TEMP_PATH = MAX_PATH + 16;
+begin
+  SetLength(Result, MAX_TEMP_PATH);
+  SetLength(Result, GetTempPath(MAX_TEMP_PATH, @(Result[1])));
+  if Result <> '' then
+    Result := IncludeTrailingPathDelimiter(Result);
+end;
+
+function CheckRedirect(Http: THttpSend; var Url: string): boolean;
+const
+  Location {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Location:';
+  Localhost {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'localhost';
+var
+  i: integer;
+  Redirect: string;
+  RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara: string;
+  OldURL, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara: string;
+begin
+  Result := False;
+  if (Http.ResultCode >= 300) and (Http.ResultCode < 400) then
+    for i := 0 to Pred(Http.Headers.Count) do
+      if AnsiCompareText(Location, Copy(Http.Headers[i], 1, Length(Location))) = 0 then
+        begin
+        OldUrl := Url;
+        Redirect := Trim(Copy(Http.Headers[i], Length(Location)+1, MaxInt));
+        ParseUrl(Redirect, RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara);
+        if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
+          begin
+          ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
+          if RedirProtocol = '' then
+            RedirProtocol := UrlProtocol;
+          if RedirUser = '' then
+            RedirUser := UrlUser;
+          if RedirPass = '' then
+            RedirPass := UrlPass;
+          if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
+            RedirHost := UrlHost;
+          if RedirPort = '' then
+            RedirPort := UrlPort;
+          Url := RedirProtocol + '://';
+          if RedirUser <> '' then
+            begin
+            Url := Url + RedirUser;
+            if RedirPass <> '' then
+              Url := Url + ':' + RedirPass;
+            Url := Url + '@';
+            end;
+          Url := Url + RedirHost + ':' + RedirPort + RedirPath;
+          if RedirPara <> '' then
+            Url := Url + '?' + RedirPara ;
+          end
+        else
+          Url := Redirect;
+        Result := Url <> OldUrl;
+        Break;
+        end;
 end;
 
 end.

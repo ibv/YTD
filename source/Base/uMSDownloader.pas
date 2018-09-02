@@ -41,6 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  uFunctions,
   uDownloader, uCommonDownloader, uExternalDownloader,
   Msdl_Dll;
 

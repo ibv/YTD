@@ -136,9 +136,9 @@ begin
           begin
           SetName(Title);
           MovieUrl := 'rtmp://' + VideoServer + '/' + VideoApp + '/' + VideoPath;
-          AddRtmpDumpOption('r', MovieUrl);
-          AddRtmpDumpOption('s', 'http://www.nbc.com/[[IMPORT]]/video.nbcuni.com/outlet/extensions/inext_video_player/video_player_extension.swf?4.5.3');
-          AddRtmpDumpOption('t', 'rtmp://' + VideoServer + '/' + VideoApp + '?_fcs_vhost=' + VideoHost);
+          Self.RtmpUrl := MovieUrl;
+          Self.SwfUrl := 'http://www.nbc.com/[[IMPORT]]/video.nbcuni.com/outlet/extensions/inext_video_player/video_player_extension.swf?4.5.3';
+          Self.TcUrl := 'rtmp://' + VideoServer + '/' + VideoApp + '?_fcs_vhost=' + VideoHost;
           SetPrepared(True);
           Result := True;
           end;

@@ -69,7 +69,7 @@ uses
 
 // http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)sportstream\.cz/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*sportstream\.(?:tiscali\.)?cz/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -106,7 +106,7 @@ end;
 
 function TDownloader_SportStream.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.sportstream.cz/' + MovieID;
+  Result := 'http://sportstream.tiscali.cz/' + MovieID;
 end;
 
 function TDownloader_SportStream.GetFileNameExt: string;
@@ -125,11 +125,11 @@ begin
   else
     begin
     MovieUrl := TCURL + PlayPath;
-    AddRtmpDumpOption('r', TCURL);
-    AddRtmpDumpOption('y', PlayPath);
-    AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-    AddRtmpDumpOption('W', 'http://www.sportstream.cz/sport_player.swf');
-    AddRtmpDumpOption('t', TCURL);
+    Self.RtmpUrl := TCURL;
+    Self.Playpath := PlayPath;
+    Self.FlashVer := FLASH_DEFAULT_VERSION;
+    Self.SwfVfy := 'http://www.sportstream.cz/sport_player.swf';
+    Self.TcUrl := TCURL;
     SetPrepared(True);
     Result := True;
     end;

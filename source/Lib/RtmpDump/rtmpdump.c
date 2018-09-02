@@ -14,7 +14,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RTMPDump; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -51,7 +52,7 @@
 #define DEF_SKIPFRM	0
 
 // starts sockets
-bool
+int
 InitSockets()
 {
 #ifdef WIN32
@@ -61,7 +62,7 @@ InitSockets()
   version = MAKEWORD(1, 1);
   return (WSAStartup(version, &wsaData) == 0);
 #else
-  return true;
+  return TRUE;
 #endif
 }
 
@@ -90,7 +91,7 @@ FILE *file = 0;
 void
 sigIntHandler(int sig)
 {
-  RTMP_ctrlC = true;
+  RTMP_ctrlC = TRUE;
   RTMP_LogPrintf("Caught signal: %d, cleaning up, just a second...\n", sig);
   // ignore all these signals now and let the connection close
   signal(SIGINT, SIG_IGN);
@@ -193,7 +194,7 @@ OpenResumeFile(const char *flvFile,	// file name [in]
 
       // go through the file to find the meta data!
       off_t pos = dataOffset + 4;
-      bool bFoundMetaHeader = false;
+      int bFoundMetaHeader = FALSE;
 
       while (pos < *size - 4 && !bFoundMetaHeader)
 	{
@@ -221,7 +222,7 @@ OpenResumeFile(const char *flvFile,	// file name [in]
 		break;
 
 	      AMFObject metaObj;
-	      int nRes = AMF_Decode(&metaObj, buffer, dataSize, false);
+	      int nRes = AMF_Decode(&metaObj, buffer, dataSize, FALSE);
 	      if (nRes < 0)
 		{
 		  RTMP_Log(RTMP_LOGERROR, "%s, error decoding meta data packet",
@@ -251,7 +252,7 @@ OpenResumeFile(const char *flvFile,	// file name [in]
 		      RTMP_Log(RTMP_LOGDEBUG, "File has duration: %f", *duration);
 		    }
 
-		  bFoundMetaHeader = true;
+		  bFoundMetaHeader = TRUE;
 		  break;
 		}
 	      //metaObj.Reset();
@@ -279,7 +280,7 @@ GetLastKeyframe(FILE * file,	// output file [in]
   const size_t bufferSize = 16;
   char buffer[bufferSize];
   uint8_t dataType;
-  bool bAudioOnly;
+  int bAudioOnly;
   off_t size;
 
   fseek(file, 0, SEEK_END);
@@ -429,7 +430,7 @@ GetLastKeyframe(FILE * file,	// output file [in]
 
       // make sure the WriteStream doesn't write headers and ignores all the 0ms TS packets
       // (including several meta data headers and the keyframe we seeked to)
-      //bNoHeader = true; if bResume==true this is true anyway
+      //bNoHeader = TRUE; if bResume==true this is true anyway
     }
 
   //}
@@ -439,7 +440,7 @@ GetLastKeyframe(FILE * file,	// output file [in]
 
 int
 Download(RTMP * rtmp,		// connected RTMP object
-	 FILE * file, uint32_t dSeek, uint32_t dStopOffset, double duration, bool bResume, char *metaHeader, uint32_t nMetaHeaderSize, char *initialFrame, int initialFrameType, uint32_t nInitialFrameSize, int nSkipKeyFrames, bool bStdoutMode, bool bLiveStream, bool bHashes, bool bOverrideBufferTime, uint32_t bufferTime, double *percent)	// percentage downloaded [out]
+	 FILE * file, uint32_t dSeek, uint32_t dStopOffset, double duration, int bResume, char *metaHeader, uint32_t nMetaHeaderSize, char *initialFrame, int initialFrameType, uint32_t nInitialFrameSize, int nSkipKeyFrames, int bStdoutMode, int bLiveStream, int bHashes, int bOverrideBufferTime, uint32_t bufferTime, double *percent)	// percentage downloaded [out]
 {
   int32_t now, lastUpdate;
   int bufferSize = 64 * 1024;
@@ -582,7 +583,7 @@ Download(RTMP * rtmp,		// connected RTMP object
 #endif
 
     }
-  while (!RTMP_ctrlC && nRead > -1 && RTMP_IsConnected(rtmp));
+  while (!RTMP_ctrlC && nRead > -1 && RTMP_IsConnected(rtmp) && !RTMP_IsTimedout(rtmp));
   free(buffer);
   if (nRead < 0)
     nRead = rtmp->m_read.status;
@@ -718,9 +719,9 @@ main(int argc, char **argv)
 
   int nSkipKeyFrames = DEF_SKIPFRM;	// skip this number of keyframes when resuming
 
-  bool bOverrideBufferTime = false;	// if the user specifies a buffer time override this is true
-  bool bStdoutMode = true;	// if true print the stream directly to stdout, messages go to stderr
-  bool bResume = false;		// true in resume mode
+  int bOverrideBufferTime = FALSE;	// if the user specifies a buffer time override this is true
+  int bStdoutMode = TRUE;	// if true print the stream directly to stdout, messages go to stderr
+  int bResume = FALSE;		// true in resume mode
   uint32_t dSeek = 0;		// seek position in resume mode, 0 otherwise
   uint32_t bufferTime = DEF_BUFTIME;
 
@@ -740,8 +741,8 @@ main(int argc, char **argv)
   int port = -1;
   int protocol = RTMP_PROTOCOL_UNDEFINED;
   int retries = 0;
-  bool bLiveStream = false;	// is it a live stream? then we can't seek/resume
-  bool bHashes = false;		// display byte counters not hashes by default
+  int bLiveStream = FALSE;	// is it a live stream? then we can't seek/resume
+  int bHashes = FALSE;		// display byte counters not hashes by default
 
   long int timeout = DEF_TIMEOUT;	// timeout connection after 120 seconds
   uint32_t dStartOffset = 0;	// seek position in non-live mode
@@ -921,12 +922,12 @@ main(int argc, char **argv)
 	    else
 	      {
 		bufferTime = bt;
-		bOverrideBufferTime = true;
+		bOverrideBufferTime = TRUE;
 	      }
 	    break;
 	  }
 	case 'v':
-	  bLiveStream = true;	// no seeking or resuming possible!
+	  bLiveStream = TRUE;	// no seeking or resuming possible!
 	  break;
 	case 'd':
 	  STR2AVAL(subscribepath, optarg);
@@ -939,7 +940,7 @@ main(int argc, char **argv)
 	  break;
 	case 'l':
 	  protocol = atoi(optarg);
-	  if (protocol < RTMP_PROTOCOL_RTMP || protocol > RTMP_PROTOCOL_RTMPS)
+	  if (protocol < RTMP_PROTOCOL_RTMP || protocol > RTMP_PROTOCOL_RTMPTS)
 	    {
 	      RTMP_Log(RTMP_LOGERROR, "Unknown protocol specified: %d", protocol);
 	      return RD_FAILED;
@@ -1001,11 +1002,11 @@ main(int argc, char **argv)
 	case 'o':
 	  flvFile = optarg;
 	  if (strcmp(flvFile, "-"))
-	    bStdoutMode = false;
+	    bStdoutMode = FALSE;
 
 	  break;
 	case 'e':
-	  bResume = true;
+	  bResume = TRUE;
 	  break;
 	case 'u':
 	  STR2AVAL(auth, optarg);
@@ -1036,7 +1037,7 @@ main(int argc, char **argv)
 	  }
 	  break;
 	case '#':
-	  bHashes = true;
+	  bHashes = TRUE;
 	  break;
 	case 'q':
 	  RTMP_debuglevel = RTMP_LOGCRIT;
@@ -1097,20 +1098,20 @@ main(int argc, char **argv)
     {
       RTMP_Log(RTMP_LOGWARNING,
 	  "You haven't specified an output file (-o filename), using stdout");
-      bStdoutMode = true;
+      bStdoutMode = TRUE;
     }
 
   if (bStdoutMode && bResume)
     {
       RTMP_Log(RTMP_LOGWARNING,
 	  "Can't resume in stdout mode, ignoring --resume option");
-      bResume = false;
+      bResume = FALSE;
     }
 
   if (bLiveStream && bResume)
     {
       RTMP_Log(RTMP_LOGWARNING, "Can't resume live stream, ignoring --resume option");
-      bResume = false;
+      bResume = FALSE;
     }
 
 #ifdef CRYPTO
@@ -1168,6 +1169,10 @@ main(int argc, char **argv)
 		   &tcUrl, &swfUrl, &pageUrl, &app, &auth, &swfHash, swfSize,
 		   &flashVer, &subscribepath, dSeek, dStopOffset, bLiveStream, timeout);
 
+  /* Try to keep the stream moving if it pauses on us */
+  if (!bLiveStream && !(protocol & RTMP_FEATURE_HTTP))
+    rtmp.Link.lFlags |= RTMP_LF_BUFX;
+
   off_t size = 0;
 
   // ok, we have to get the timestamp of the last keyframe (only keyframes are seekable) / last audio frame (audio only streams)
@@ -1182,7 +1187,7 @@ main(int argc, char **argv)
       if (!file)
 	{
 	  // file does not exist, so go back into normal mode
-	  bResume = false;	// we are back in fresh file mode (otherwise finalizing file won't be done)
+	  bResume = FALSE;	// we are back in fresh file mode (otherwise finalizing file won't be done)
 	}
       else
 	{
@@ -1199,7 +1204,7 @@ main(int argc, char **argv)
 	    {
 	      RTMP_Log(RTMP_LOGDEBUG,
 		  "Last keyframe is first frame in stream, switching from resume to normal mode!");
-	      bResume = false;
+	      bResume = FALSE;
 	    }
 	}
     }
@@ -1327,7 +1332,7 @@ main(int argc, char **argv)
 		nStatus = RD_INCOMPLETE;
 	      break;
 	    }
-	  bResume = true;
+	  bResume = TRUE;
 	}
 
       nStatus = Download(&rtmp, file, dSeek, dStopOffset, duration, bResume,

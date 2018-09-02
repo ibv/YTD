@@ -45,7 +45,7 @@ uses
   {$IFDEF CONVERTERS}
   uCreateProcessAsync,
   {$ENDIF}
-  uOptions;
+  uOptions, uFunctions;
 
 type
   TDownloadListItem = class
@@ -337,13 +337,20 @@ begin
     if Paused then
       Thread.Resume;
     Thread.Terminate;
-    if Thread.Active then
-      {$IFDEF DELPHITHREADS}
-        Thread.WaitFor;
+    {$IFDEF DELPHITHREADS}
+      Thread.WaitFor;
+    {$ELSE}
+      {$IFDEF DIRTYHACKS}
+      Sleep(10);
       {$ELSE}
-        while (Thread <> nil) and Thread.Active do
-          Sleep(2);
+      'I have no idea how to properly quit the thread...'
+      // WaitFor doesn't work, ClearThread works but I would need to clear
+      // events such as OnProgress first (and that would mean clearing
+      // something which may no longer exist), I can't use a loop
+      // while Assigned(Thread) do Sleep, because that is apparently an
+      // endless loop...
       {$ENDIF}
+    {$ENDIF}
     end;
 end;
 
@@ -360,7 +367,7 @@ begin
     begin
     FN := Downloader.Options.DestinationPath + Downloader.FileName;
     if FileExists(FN) then
-      ShellExecute(0, 'open', PChar(FN), nil, nil, SW_SHOWNORMAL);
+      Run(FN);
     end;
 end;
 
@@ -373,7 +380,7 @@ begin
     if FileExists(FN) then
       begin
       FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(FN)));
-      ShellExecute(0, 'open', PChar(FN), nil, nil, SW_SHOWNORMAL);
+      Run(FN);
       end;
     end;
 end;

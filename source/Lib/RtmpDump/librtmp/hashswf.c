@@ -15,7 +15,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with librtmp see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
@@ -65,9 +66,9 @@
 extern void RTMP_TLS_Init();
 extern TLS_CTX RTMP_TLS_ctx;
 
-#endif /* CRYPTO */
-
 #include <zlib.h>
+
+#endif /* CRYPTO */
 
 #define	AGENT	"Mozilla/5.0"
 
@@ -136,7 +137,7 @@ HTTP_get(struct HTTP_ctx *http, const char *url, HTTP_read_callback *cb)
     }
   sa.sin_port = htons(port);
   sb.sb_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if (sb.sb_socket < 0)
+  if (sb.sb_socket == -1)
     return HTTPRES_LOST_CONNECTION;
   i =
     sprintf(sb.sb_buf,
@@ -186,7 +187,7 @@ HTTP_get(struct HTTP_ctx *http, const char *url, HTTP_read_callback *cb)
   }
 
   sb.sb_size = 0;
-  sb.sb_timedout = false;
+  sb.sb_timedout = FALSE;
   if (RTMPSockBuf_Fill(&sb) < 1)
     {
       ret = HTTPRES_LOST_CONNECTION;
@@ -434,7 +435,7 @@ make_unix_time(char *s)
 /* Convert a Unix time to a network time string
  * Weekday, DD-MMM-YYYY HH:MM:SS GMT
  */
-void
+static void
 strtime(time_t * t, char *s)
 {
   struct tm *tm;
@@ -464,12 +465,19 @@ RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
   AVal home, hpre;
 
   date[0] = '\0';
-#ifdef WIN32
+#ifdef _WIN32
+#ifdef XBMC4XBOX
+  hpre.av_val = "Q:";
+  hpre.av_len = 2;
+  home.av_val = "\\UserData";
+#else
   hpre.av_val = getenv("HOMEDRIVE");
   hpre.av_len = strlen(hpre.av_val);
   home.av_val = getenv("HOMEPATH");
+#endif
 #define DIRSEP	"\\"
-#else
+
+#else /* !_WIN32 */
   hpre.av_val = "";
   hpre.av_len = 0;
   home.av_val = getenv("HOME");

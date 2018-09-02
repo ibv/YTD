@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.86                                     (c) 2009-11 Pepak
+YouTube Downloader v0.87                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -26,7 +26,7 @@ AutoSalonTV.cz      | MS       |       | http://autosalontv.cz/?year=2010&week=5
 AutoTube.cz         | HTTP     |       | http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 Bahnorama.com       | HTTP     |       | http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
 BandZone.cz         | HTTP     |       | http://bandzone.cz/teensjazzbandvelkelosiny?at=video;vi=9556
-Barrandov.tv        | RTMP     | X     | http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+Barrandov.tv        | RTMP     | 8     | http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
 Bing.com            | HTTP     |       | http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
 Blenus.com          | HTTP     |       | http://www.blennus.com/index.php?option=content&task=view&id=1027&Itemid=
 Blip.tv             | HTTP     |       | http://blip.tv/play/hIVV4tIUAg
@@ -355,3 +355,15 @@ X ... Momentálnì nefunkèní.
       When using the command-line version of YTD, please make sure to properly
       escape the URL, so that it satisfied the requirements of command 
       interpreter (e.g. CMD.EXE).
+
+
+8 ... Pro správnou funkci je vyžadován Secure Token. Jde o tajný øetìzec,
+      kterým se klient autentizuje serveru a potvrzuje tak, že je oprávnìn
+      si o média øíkat. Získání tohoto tokenu je na vás - z právních dùvodù
+      ho neprozradím ani neøeknu, kde a jak ho získat.
+
+      A Secure Token is required for proper function. Secure Token is a
+      secret string, which is used to authentize the client to the server
+      during the handshake. It's up to you to provide the token - YTD doesn't
+      have it and I will not disclose either its value or how to get it, for
+      legal reasons.

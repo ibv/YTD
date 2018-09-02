@@ -133,11 +133,11 @@ begin
       else
         begin
         MovieUrl := Streamer + '/mp4:' + Location;
-        AddRtmpDumpOption('r', Streamer);
-        AddRtmpDumpOption('y', 'mp4:' + Location);
-        AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-        AddRtmpDumpOption('W', 'http://www.streamhosting.cz/flash/recent/player-licensed.swf');
-        AddRtmpDumpOption('p', GetMovieInfoUrl);
+        Self.RtmpUrl := Streamer;
+        Self.Playpath := 'mp4:' + Location;
+        Self.FlashVer := FLASH_DEFAULT_VERSION;
+        Self.SwfVfy := 'http://www.streamhosting.cz/flash/recent/player-licensed.swf';
+        Self.PageUrl := GetMovieInfoUrl;
         SetPrepared(True);
         Result := True;
         end;

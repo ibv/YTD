@@ -48,7 +48,8 @@ interface
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
-  uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions;
+  uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions,
+  guiFunctions;
 
 type
   TFormAbout = class(TApiForm)
@@ -209,11 +210,11 @@ begin
   Self.Translate;
   // Label "YouTube Downloader"
   {$IFDEF OVERRIDETITLEANDURL}
-  SetDlgItemText(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER, APPLICATION_TITLE);
+  SetDlgItemText(Self.Handle, IDC_LABEL_YOUTUBEDOWNLOADER, PChar(APPLICATION_TITLE));
   {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_YOUTUBEDOWNLOADER, WM_SETFONT, Font_Title, 1);
   // Label "Version:" and version number
-  SetDlgItemText(Self.Handle, IDC_LABEL_VERSION, APPLICATION_VERSION);
+  SetDlgItemText(Self.Handle, IDC_LABEL_VERSION, PChar(APPLICATION_VERSION));
   SendDlgItemMessage(Handle, IDC_LABEL_VERSION, WM_SETFONT, Font_Info, 1);
   // Label "Newest version:"
   fNewestVersionColor := {$IFDEF THREADEDVERSION} clBlack {$ELSE} clRed {$ENDIF} ;
@@ -224,7 +225,7 @@ begin
   SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Info, 1);
   // Label "Homepage:"
   {$IFDEF OVERRIDETITLEANDURL}
-  SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGE, APPLICATION_URL);
+  SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGE, PChar(APPLICATION_URL));
   {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_HOMEPAGE, WM_SETFONT, Font_Link, 1);
   // Get the newest version info
@@ -332,13 +333,12 @@ end;
 
 procedure TFormAbout.LabelHomepageClick;
 begin
-  ShellExecute(Handle, 'open', APPLICATION_URL, nil, nil, 0);
+  Run(APPLICATION_URL, Handle);
 end;
 
 procedure TFormAbout.LabelNewestVersionClick;
 begin
-  if fNewestVersionUrl <> '' then
-    ShellExecute(Handle, 'open', PChar(fNewestVersionUrl), nil, nil, 0);
+  NewVersionFound(Options, fNewestVersionUrl, Handle);
 end;
 
 {$IFNDEF STATICPROVIDERLIST}

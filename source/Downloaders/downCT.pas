@@ -43,6 +43,14 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, Variants, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
+  {$IFDEF GUI}
+    guiDownloaderOptions,
+    {$IFDEF GUI_WINAPI}
+      guiOptionsWINAPI_CT,
+    {$ELSE}
+      guiOptionsVCL_CT,
+    {$ENDIF}
+  {$ENDIF}
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
@@ -58,8 +66,10 @@ type
       MovieObjectRegExp: TRegExp;
       EmbeddedFrameRegExp: TRegExp;
       LiveStream: boolean;
+      Extension: string;
     protected
       procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
+      function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
       function ConvertMovieObject(var Data: string): boolean;
@@ -74,6 +84,9 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       {$IFDEF MULTIDOWNLOADS}
@@ -81,6 +94,10 @@ type
       function Next: boolean; override;
       {$ENDIF}
     end;
+
+const
+  OPTION_CT_LIVESTREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'live_stream';
+  OPTION_CT_LIVESTREAM_DEFAULT = True;
 
 implementation
 
@@ -115,6 +132,13 @@ begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
+{$IFDEF GUI}
+class function TDownloader_CT.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_CT;
+end;
+{$ENDIF}
+
 constructor TDownloader_CT.Create(const AMovieID: string);
 begin
   inherited;
@@ -122,7 +146,7 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT);
   EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
-  LiveStream := True;
+  LiveStream := OPTION_CT_LIVESTREAM_DEFAULT;
   {$IFDEF MULTIDOWNLOADS}
   fStreams := TStringList.Create;
   fBaseUrls := TStringList.Create;
@@ -139,6 +163,11 @@ begin
   FreeAndNil(fBaseUrls);
   {$ENDIF}
   inherited;
+end;
+
+function TDownloader_CT.GetFileNameExt: string;
+begin
+  Result := Extension;
 end;
 
 function TDownloader_CT.GetMovieInfoUrl: string;
@@ -306,11 +335,9 @@ begin
 end;
 
 procedure TDownloader_CT.SetOptions(const Value: TYTDOptions);
-var s: string;
 begin
   inherited;
-  if Value.ReadProviderOption(Provider, 'live_stream', s) then
-    LiveStream := StrToIntDef(s, 0) <> 0;
+  LiveStream := Value.ReadProviderOptionDef(Provider, OPTION_CT_LIVESTREAM, OPTION_CT_LIVESTREAM_DEFAULT);
 end;
 
 {$IFDEF MULTIDOWNLOADS}
@@ -350,16 +377,17 @@ procedure TDownloader_CT.SetRtmpOptions(const BaseUrl, Stream: string);
 var Protocol, User, Password, Host, Port, Path, Para: string;
 begin
   MovieURL := BaseUrl + '/' + Stream;
+  Extension := ExtractUrlExt(Stream);
   ParseUrl(BaseUrl, Protocol, User, Password, Host, Port, Path, Para);
-  SetRtmpDumpOption('r', BaseUrl);
-  SetRtmpDumpOption('a', Copy(Path, 2, MaxInt) + '?' + Para);
-  SetRtmpDumpOption('y', Stream);
-  //SetRtmpDumpOption('f', 'WIN 10,1,102,64');
-  //SetRtmpDumpOption('s', 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23');
-  //SetRtmpDumpOption('t', BaseUrl);
-  //SetRtmpDumpOption('p', MovieID);
+  Self.RtmpUrl := BaseUrl;
+  Self.RtmpApp := Copy(Path, 2, MaxInt) + '?' + Para;
+  Self.Playpath := Stream;
+  //Self.FlashVer := FLASH_DEFAULT_VERSION;
+  //Self.SwfUrl := 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23';
+  //Self.TcUrl := BaseUrl;
+  //Self.PageUrl := MovieID;
   if LiveStream then
-    SetRtmpDumpOption('v', '');
+    Self.Live := True;
 end;
 
 initialization

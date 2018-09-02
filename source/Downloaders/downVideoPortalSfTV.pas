@@ -134,7 +134,7 @@ begin
   if BestUrl <> '' then
     begin
     MovieUrl := BestUrl;
-    AddRtmpDumpOption('r', BestUrl);
+    Self.RtmpUrl := BestUrl;
     SetPrepared(True);
     Result := True;
     end;

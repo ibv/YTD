@@ -55,6 +55,7 @@ type
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
+      class function Features: TDownloaderFeatures; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -82,6 +83,13 @@ const
 class function TDownloader_CrunchyRoll.Provider: string;
 begin
   Result := 'CrunchyRoll.com';
+end;
+
+class function TDownloader_CrunchyRoll.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles {$ENDIF}
+    ];
 end;
 
 class function TDownloader_CrunchyRoll.UrlRegExp: string;

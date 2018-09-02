@@ -42,7 +42,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, HttpSend, ShellApi, ComCtrls, 
-  uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions;
+  uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions,
+  guiFunctions;
 
 const
   WM_FIRSTSHOW = WM_USER + 1;
@@ -153,13 +154,12 @@ end;
 
 procedure TFormAbout.LabelNewestVersionClick(Sender: TObject);
 begin
-  if NewVersionUrl <> '' then
-    ShellExecute(Handle, 'open', PChar(NewVersionUrl), nil, nil, 0);
+  NewVersionFound(Options, NewVersionUrl, Handle);
 end;
 
 procedure TFormAbout.LabelHomepageClick(Sender: TObject);
 begin
-  ShellExecute(Handle, 'open', PChar((Sender as TLabel).Caption), nil, nil, 0);
+  Run((Sender as TLabel).Caption, Handle);
 end;
 
 procedure TFormAbout.LoadProviders;

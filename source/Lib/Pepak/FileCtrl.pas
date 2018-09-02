@@ -52,8 +52,8 @@ function DirectoryExists(const Name: string): boolean;
 var
   Code: Integer;
 begin
-  Code := GetFileAttributes(PChar(Name));
-  Result := (Code <> -1) and (FILE_ATTRIBUTE_DIRECTORY and Code <> 0);
+  Code := GetFileAttributes(PChar(ExcludeTrailingPathDelimiter(Name)));
+  Result := (Code <> -1) and Longbool(Code and FILE_ATTRIBUTE_DIRECTORY);
 end;
 
 function ForceDirectories(Dir: string): Boolean;

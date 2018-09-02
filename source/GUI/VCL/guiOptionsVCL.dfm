@@ -1,10 +1,9 @@
 object FormOptions: TFormOptions
   Left = 284
   Top = 158
-  BorderStyle = bsDialog
+  Width = 551
+  Height = 465
   Caption = 'Options'
-  ClientHeight = 274
-  ClientWidth = 312
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,12 +13,13 @@ object FormOptions: TFormOptions
   OldCreateOrder = True
   Position = poOwnerFormCenter
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object BtnOK: TButton
-    Left = 144
-    Top = 238
+    Left = 375
+    Top = 402
     Width = 75
     Height = 25
     Action = actOK
@@ -29,8 +29,8 @@ object FormOptions: TFormOptions
     TabOrder = 0
   end
   object btnCancel: TButton
-    Left = 224
-    Top = 238
+    Left = 455
+    Top = 402
     Width = 75
     Height = 25
     Action = actCancel
@@ -42,8 +42,8 @@ object FormOptions: TFormOptions
   object PageOptions: TPageControl
     Left = 0
     Top = 0
-    Width = 312
-    Height = 225
+    Width = 543
+    Height = 389
     ActivePage = TabDownloadOptions
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
@@ -60,7 +60,7 @@ object FormOptions: TFormOptions
       object CheckPortableMode: TCheckBox
         Left = 8
         Top = 8
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Portable mode'
@@ -69,7 +69,7 @@ object FormOptions: TFormOptions
       object CheckCheckNewVersions: TCheckBox
         Left = 8
         Top = 32
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Check for new versions on startup'
@@ -84,8 +84,8 @@ object FormOptions: TFormOptions
       end
       object BtnDesktopShortcut: TButton
         Left = 8
-        Top = 130
-        Width = 281
+        Top = 294
+        Width = 512
         Height = 25
         Action = actDesktopShortcut
         Anchors = [akLeft, akRight, akBottom]
@@ -93,8 +93,8 @@ object FormOptions: TFormOptions
       end
       object BtnStartMenuShortcut: TButton
         Left = 8
-        Top = 162
-        Width = 281
+        Top = 326
+        Width = 512
         Height = 25
         Action = actStartMenuShortcut
         Anchors = [akLeft, akRight, akBottom]
@@ -103,7 +103,7 @@ object FormOptions: TFormOptions
       object CheckMonitorClipboard: TCheckBox
         Left = 7
         Top = 56
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Monitor clipboard for downloadable URLs'
@@ -140,7 +140,7 @@ object FormOptions: TFormOptions
       object CheckAutoDownload: TCheckBox
         Left = 8
         Top = 8
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Automatically start downloads'
@@ -149,7 +149,7 @@ object FormOptions: TFormOptions
       object ComboOverwriteMode: TComboBox
         Left = 112
         Top = 112
-        Width = 185
+        Width = 416
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
@@ -164,13 +164,13 @@ object FormOptions: TFormOptions
       object EditDownloadDir: TEdit
         Left = 112
         Top = 88
-        Width = 169
+        Width = 400
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 2
       end
       object BtnDownloadDir: TButton
-        Left = 280
+        Left = 511
         Top = 88
         Width = 17
         Height = 21
@@ -181,7 +181,7 @@ object FormOptions: TFormOptions
       object ComboConverter: TComboBox
         Left = 112
         Top = 144
-        Width = 185
+        Width = 416
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
@@ -192,7 +192,7 @@ object FormOptions: TFormOptions
       object CheckSubtitlesEnabled: TCheckBox
         Left = 8
         Top = 56
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Download &subtitles if available'
@@ -201,7 +201,7 @@ object FormOptions: TFormOptions
       object CheckAutoTryHtmlParser: TCheckBox
         Left = 7
         Top = 32
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Automatically try &HTML parser'
@@ -246,7 +246,7 @@ object FormOptions: TFormOptions
       object CheckUseProxy: TCheckBox
         Left = 8
         Top = 8
-        Width = 289
+        Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'U&se proxy server'
@@ -279,6 +279,30 @@ object FormOptions: TFormOptions
         Width = 177
         Height = 21
         TabOrder = 4
+      end
+    end
+    object TabDownloaderOptions: TTabSheet
+      Caption = 'Downloader settings'
+      ImageIndex = 3
+      object ListDownloaderOptions: TListBox
+        Left = 0
+        Top = 0
+        Width = 169
+        Height = 361
+        Align = alLeft
+        ItemHeight = 13
+        Sorted = True
+        TabOrder = 0
+        OnClick = ListDownloaderOptionsClick
+      end
+      object PanelDownloaderOptions: TPanel
+        Left = 169
+        Top = 0
+        Width = 366
+        Height = 361
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 1
       end
     end
   end

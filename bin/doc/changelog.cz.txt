@@ -1,11 +1,95 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.86                                     (c) 2009-11 Pepak
+YouTube Downloader v0.87                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.87:
+
+    * Barrandov.tv: Podpora pro novı pøehrávací program. Aby to fungovalo,
+      musíte si nìkde zjistit tzv. Secure Token, kterı Barrandov vyaduje,
+      a zadat ho do konfigurace programu (viz popis konfigurace v dokumentaci
+      nebo nové grafické rozhraní ke konfiguraci níe). Neptejte se mì, kde
+      a jak Secure Token získat, z právních dùvodù nebudu na tyto dotazy
+      odpovídat (podle mì by to sice autorskému zákonu neodporovalo, ale nemám
+      chu riskovat pøípadnı soudní spor).
+
+      Dìkuji Killermanovi za zjištìní potøebnıch poarametrù.
+
+    * Cas.sk: Zprovoznìno nìkolik dalších typù vkládaného videa.
+
+    * CeskaTelevize.cz: K názvu souboru je pøipojena správná pøípona.
+
+    * DrsnySvet.cz: Podpora pro videa hostovaná pøímo na serveru.
+
+    * iPrima.cz: Opìt bìí. Nejsem si jistı tím, jestli se stahuje 
+      nejkvalitnìjší dostupná verze - pokud zjistíte, e ne, napište mi prosím,
+      jak ji v prohlíeèi vyvolat.
+
+    * SportStream.cz: Pøedìláno na podporu SportStream.Tiscali.cz.
+
+    * Novı distribuèní archív: Dosud byl YouTube Downloader instalován v ZIP
+      archívu s tím, e si ho uivatel rozbalí sám podle potøeby. To se bohuel
+      ukázalo jako neudritelné vzhledem k mnoství lidí, kteøí rozbalili jen
+      samotnı spouštìcí soubor (bez podpùrnıch knihoven) a pak se divili, proè
+      jim nefunguje stahování z Èeské televize. Proto pøecházím na novı systém,
+      kdy se stahuje soubor .exe, kterı uivateli nabídne instalaci.
+
+      Pro uivatele, kteøí neradi aktualizují: Distribuèní soubor je obyèejnı
+      samorozbalovací archív ve formátu 7-zip, kterı mùete 7-zipem normálnì
+      rozbalit. Pøípadnì mùete spustit instalaci, stejnì jenom zkopíruje
+      soubory do zvoleného adresáøe, volitelnì zaloí zástupce, a spustí YTD.
+      Rozhodnì neprovádí ádné zápisy mimo zvolenı adresáø (kromì volitelnıch
+      zástupcù na Ploše a ve Start menu, pochopitelnì) ani v registrech.
+
+      Distribuèní archív umoòuje spustit YTD i bez instalace. Buï stisknutím
+      pøíslušného tlaèítka, nebo pøímo spuštìním distribuèního archívu s
+      parametrem --gui, nebo pomocí bìnıch parametrù (pak se spustí command-
+      line verze a provede obvyklé operace).
+
+      Podrobnìji viz heslo "Distribuèní archív" v dokumentaci.
+
+    * Novı distribuèní model také dovoluje automatickou aktualizaci programu.
+      V grafickém prostøedí byly všechny nabídky na stáhnutí aktuální verze 
+      doplnìny tak, aby mìl uivatel na vıbìr stáhnutí (jako dosud) i pøímou
+      aktualizaci. Upozoròuji však, e pro provedení aktualizace se musí YTD
+      restartovat a tím se pochopitelnì zastaví všechny bìící pøenosy.
+
+      Pøibyla monost zaktualizovat program z pøíkazové øádky (bez zásahu
+      uivatele) pomocí parametru -u. Vısledek se vrátí jako errorlevel (viz
+      dokumentace). Pozor, vzhledem k mechanismu, kterım to probíhá, by v 
+      aktualizaèní dávce mìla po volání "ytd -u" následovat tak pùlsekundová
+      pauza.
+
+    * GUI: Doplnìna podpora pro grafické nastavení jednotlivıch stahovaèù:
+      V nastaveních (F9) je nová záloka "Nastavení stahovaèù", ve kterıch
+      je pro kadı stahovaè, na kterém se dá nìco konfigurovat, samostatnı 
+      panel s nastaveními. Všechna nastavení šla u døíve zapisovat ruènì
+      v XML souboru konfigurace, takhle je to ale pro nìkoho pohodlnìjší.
+
+      Pøi startu programu bez command-line parametrù se nespustí pøímo YTD,
+      ale nová kopie YTD a stará se ukonèí. To sice mírnì zpomalí start, ale
+      zato to uvolní konzoli v pøípadì, e bylo YTD spuštìno z konzolové
+      aplikace (CMD, FAR Manager apod.). Pøedchozí chování (pøímé spuštìní
+      YTD) je zachováno pro CLI verzi programu, spuštìní programu z Delphi
+      IDE a spuštìní programu s parametrem --gui.
+
+      Opravena chyba, kvùli které nešlo vytváøet zástupce na ploše ani ve
+      Start menu.
+
+    * Knihovna RTMPDUMP_DLL aktualizována na verzi 2.4 (sestavení ze dne 
+      20.7.2011). V této verzi by mìl bıt podporován handshake z Flashe 10,
+      tzn. mìly by zmizet chyby "HandShake: Type mismatch: client sent 6, 
+      server answered 9".
+
+    * Opraveno nìkolik nekompatibilit s Delphi 2009 a FreePascalem.
+
+    * Aktualizován slovenskı pøeklad (V. Kubala).
+
+
 
   v0.86:
 

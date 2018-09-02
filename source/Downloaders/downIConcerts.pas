@@ -113,7 +113,7 @@ begin
   if MovieUrl <> '' then
     begin
     MovieUrl := 'rtmp://iconcerts.infomaniak.ch/icpreview/' + MovieUrl;
-    AddRtmpDumpOption ('r', MovieUrl);
+    Self.RtmpUrl := MovieUrl;
     SetPrepared(True);
     Result := True;
     end;

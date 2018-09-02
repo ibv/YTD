@@ -34,25 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit guiOptionsWINAPI_Network;
+unit guiOptionsWINAPI_Main;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
+  SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi, ShlObj,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
-  uLanguages, uMessages, uOptions, guiConsts, uDialogs,
-  guiOptionsWINAPI;
+  uLanguages, uMessages, uOptions, uDialogs, uFunctions,
+  guiConsts, guiFunctions, guiOptionsWINAPI;
 
 type
-  TFrameNetworkOptions = class(TFrameOptions)
+  TFrameMainOptions = class(TFrameOptions)
     protected
     private
-      EditProxyHost: THandle;
-      EditProxyPort: THandle;
-      EditProxyUser: THandle;
-      EditProxyPass: THandle;
+      EditLanguage: THandle;
       procedure CreateObjects;
       procedure DestroyObjects;
     protected
@@ -60,10 +57,9 @@ type
       function DoClose: boolean; override;
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
     protected
-      procedure LabelProxyHostClick;
-      procedure LabelProxyPortClick;
-      procedure LabelProxyUserClick;
-      procedure LabelProxyPassClick;
+      procedure LabelLanguageClick;
+      procedure ButtonShortcutOnDesktopClick;
+      procedure ButtonShortcutInStartMenuClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -77,61 +73,54 @@ implementation
 
 // from resource.h
 const
-  IDC_CHECKBOX_USEPROXY = 1000;
-  IDC_LABEL_PROXYHOST = 1001;
-  IDC_EDIT_PROXYHOST = 1002;
-  IDC_LABEL_PROXYPORT = 1003;
-  IDC_EDIT_PROXYPORT = 1004;
-  IDC_LABEL_PROXYUSER = 1005;
-  IDC_EDIT_PROXYUSER = 1006;
-  IDC_LABEL_PROXYPASS = 1007;
-  IDC_EDIT_PROXYPASS = 1008;
+  IDC_CHECKBOX_PORTABLEMODE = 1000;
+  IDC_CHECKBOX_CHECKNEWVERSION = 1001;
+  IDC_LABEL_LANGUAGE = 1002;
+  IDC_EDIT_LANGUAGE = 1003;
+  IDC_BUTTON_SHORTCUTONDESKTOP = 1004;
+  IDC_BUTTON_SHORTCUTINSTARTMENU = 1005;
+  IDC_CHECKBOX_MONITORCLIPBOARD = 1006;
 
-{ TFrameNetworkOptions }
+{ TFrameMainOptions }
 
-constructor TFrameNetworkOptions.Create(AOwner: TApiForm; const ADialogResourceName: string);
+constructor TFrameMainOptions.Create(AOwner: TApiForm; const ADialogResourceName: string);
 begin
   inherited;
 end;
 
-destructor TFrameNetworkOptions.Destroy;
+destructor TFrameMainOptions.Destroy;
 begin
   inherited;
 end;
 
-procedure TFrameNetworkOptions.CreateObjects;
+procedure TFrameMainOptions.CreateObjects;
 begin
-  EditProxyHost := GetDlgItem(Self.Handle, IDC_EDIT_PROXYHOST);
-  EditProxyPort := GetDlgItem(Self.Handle, IDC_EDIT_PROXYPORT);
-  EditProxyUser := GetDlgItem(Self.Handle, IDC_EDIT_PROXYUSER);
-  EditProxyPass := GetDlgItem(Self.Handle, IDC_EDIT_PROXYPASS);
+  EditLanguage := GetDlgItem(Self.Handle, IDC_EDIT_LANGUAGE);
 end;
 
-procedure TFrameNetworkOptions.DestroyObjects;
+procedure TFrameMainOptions.DestroyObjects;
 begin
-  EditProxyHost := 0;
-  EditProxyPort := 0;
-  EditProxyUser := 0;
-  EditProxyPass := 0;
+  EditLanguage := 0;
 end;
 
-function TFrameNetworkOptions.DoInitDialog: boolean;
+function TFrameMainOptions.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
   CreateObjects;
   Self.Translate;
   LoadFromOptions;
   // Make sure everything can be resized easily
-  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_USEPROXY), [akTop, akLeft, akRight]);
-  SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_PROXYHOST), [akTop, akLeft, akRight]);
-  SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_PROXYPORT), [akTop, akLeft, akRight]);
-  SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_PROXYUSER), [akTop, akLeft, akRight]);
-  SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_PROXYPASS), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_PORTABLEMODE), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_LANGUAGE), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTONDESKTOP), [akBottom, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTINSTARTMENU), [akBottom, akLeft, akRight]);
   // Accelerators
-  Accelerators := LoadAccelerators(hInstance, 'OPTIONS_NETWORK_ACTIONS');
+  Accelerators := LoadAccelerators(hInstance, 'OPTIONS_MAIN_ACTIONS');
 end;
 
-function TFrameNetworkOptions.DoClose: boolean;
+function TFrameMainOptions.DoClose: boolean;
 begin
   Result := inherited DoClose;
   if Result then
@@ -142,30 +131,25 @@ begin
     end;
 end;
 
-function TFrameNetworkOptions.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
+function TFrameMainOptions.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
 begin
   Result := False;
   case NotificationCode of
     STN_CLICKED {, BN_CLICKED, CBN_SELCHANGE} : // Click on a label, button etc.
       case Identifier of
-        IDC_LABEL_PROXYHOST:
+        IDC_LABEL_LANGUAGE:
           begin
-          LabelProxyHostClick;
+          LabelLanguageClick;
           Result := True;
           end;
-        IDC_LABEL_PROXYPORT:
+        IDC_BUTTON_SHORTCUTONDESKTOP:
           begin
-          LabelProxyPortClick;
+          ButtonShortcutOnDesktopClick;
           Result := True;
           end;
-        IDC_LABEL_PROXYUSER:
+        IDC_BUTTON_SHORTCUTINSTARTMENU:
           begin
-          LabelProxyUserClick;
-          Result := True;
-          end;
-        IDC_LABEL_PROXYPASS:
-          begin
-          LabelProxyPassClick;
+          ButtonShortcutInStartMenuClick;
           Result := True;
           end;
         end;
@@ -174,50 +158,59 @@ begin
     Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
 end;
 
-procedure TFrameNetworkOptions.LoadFromOptions;
+procedure TFrameMainOptions.LoadFromOptions;
 const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
-  // Proxy settings
-  CheckDlgButton(Self.Handle, IDC_CHECKBOX_USEPROXY, CheckboxConsts[Options.ProxyActive]);
-  SendMessage(EditProxyHost, WM_SETTEXT, 0, LPARAM(PChar(Options.ProxyHost)));
-  SendMessage(EditProxyPort, WM_SETTEXT, 0, LPARAM(PChar(Options.ProxyPort)));
-  SendMessage(EditProxyUser, WM_SETTEXT, 0, LPARAM(PChar(Options.ProxyUser)));
-  SendMessage(EditProxyPass, WM_SETTEXT, 0, LPARAM(PChar(Options.ProxyPassword)));
+  // Portable mode
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_PORTABLEMODE, CheckboxConsts[Options.PortableMode]);
+  // Check for new version automatically
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION, CheckboxConsts[Options.CheckForNewVersionOnStartup]);
+  // Monitor clipboard
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD, CheckboxConsts[Options.MonitorClipboard]);
+  // Language
+  SetWindowText(EditLanguage, PChar(Options.Language));
 end;
 
-procedure TFrameNetworkOptions.SaveToOptions;
+procedure TFrameMainOptions.SaveToOptions;
 begin
-  // Proxy settings
-  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_USEPROXY) of
+  // Portable mode
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_PORTABLEMODE) of
     BST_CHECKED:
-      Options.ProxyActive := True;
+      Options.PortableMode := True;
     BST_UNCHECKED:
-      Options.ProxyActive := False;
+      Options.PortableMode := False;
     end;
-  Options.ProxyHost := GetWindowTextAsString(EditProxyHost);
-  Options.ProxyPort := GetWindowTextAsString(EditProxyPort);
-  Options.ProxyUser := GetWindowTextAsString(EditProxyUser);
-  Options.ProxyPassword := GetWindowTextAsString(EditProxyPass);
+  // Check for new version automatically
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION) of
+    BST_CHECKED:
+      Options.CheckForNewVersionOnStartup := True;
+    BST_UNCHECKED:
+      Options.CheckForNewVersionOnStartup := False;
+    end;
+  // Monitor clipboard
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD) of
+    BST_CHECKED:
+      Options.MonitorClipboard := True;
+    BST_UNCHECKED:
+      Options.MonitorClipboard := False;
+    end;
+  // Language
+  Options.Language := GetWindowTextAsString(EditLanguage);
 end;
 
-procedure TFrameNetworkOptions.LabelProxyHostClick;
+procedure TFrameMainOptions.LabelLanguageClick;
 begin
-  SetFocus(EditProxyHost);
+  SetFocus(EditLanguage);
 end;
 
-procedure TFrameNetworkOptions.LabelProxyPassClick;
+procedure TFrameMainOptions.ButtonShortcutOnDesktopClick;
 begin
-  SetFocus(EditProxyPort);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY);
 end;
 
-procedure TFrameNetworkOptions.LabelProxyPortClick;
+procedure TFrameMainOptions.ButtonShortcutInStartMenuClick;
 begin
-  SetFocus(EditProxyUser);
-end;
-
-procedure TFrameNetworkOptions.LabelProxyUserClick;
-begin
-  SetFocus(EditProxyPass);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS);
 end;
 
 initialization

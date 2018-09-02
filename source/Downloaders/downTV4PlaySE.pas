@@ -151,10 +151,10 @@ begin
         else
           begin
           MovieUrl := BaseUrl + '/' + BestUrl;
-          AddRtmpDumpOption('r', BaseUrl);
-          AddRtmpDumpOption('y', BestUrl);
-          Result := True;
+          Self.RtmpUrl := BaseUrl;
+          Self.Playpath := BestUrl;
           SetPrepared(True);
+          Result := True;
           end;
         end;
     finally

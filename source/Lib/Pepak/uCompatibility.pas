@@ -39,10 +39,10 @@ unit uCompatibility;
 
 interface
 
-{$IFNDEF DELPHI2009_UP}
 uses
-  SysUtils;
+  SysUtils, Classes, Windows;
 
+{$IFNDEF DELPHI2009_UP}
 type
   TSysCharSet = set of Char;
 
@@ -88,6 +88,8 @@ const
 
   XBUTTON1                = 1;
   XBUTTON2                = 2;
+
+  CSIDL_PROGRAM_FILES = 38;
 {$ENDIF}
 
 implementation

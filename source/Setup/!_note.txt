@@ -1,0 +1,16 @@
+This is a simple launcher for YTD.exe, intended for use with 7-zip's 7zS2.sfx
+installer module. Basically, it performs a minor modification of the supplied
+command-line to reflect different defaults when the program is started from 
+the distribution archive (no arguments -> start graphical Setup, otherwise run
+in CLI mode) and when it is started from the installed location (no arguments
+-> run in GUI mode, otherwise run in CLI mode).
+
+Actually, this is mostly a pointless excercise in Win32 assembler, as the same
+thing can easily be done using a batch file (see setup.bat). But I rather like
+assembler and besides, non-batch execution allows for a completely hidden
+"Setup" launcher.
+
+See the 7-zip "extra" package for details on 7zS2.sfx.
+
+Building Setup requires MASM32. Update build.bat to point to MASM's directory
+and then run it.

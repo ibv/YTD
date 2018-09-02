@@ -141,14 +141,14 @@ begin
               Server := 'stream7.idnes.cz/vod/'; // For some reason the "real" server does not work!
               {$ENDIF}
               MovieUrl := 'rtmpt://' + Server + Stream;
-              AddRtmpDumpOption('r', 'rtmpt://' + Server);
-              AddRtmpDumpOption('y', Stream);
-              AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-              AddRtmpDumpOption('s', 'http://g.idnes.cz/swf/flv/player.swf?v=20101103');
-              AddRtmpDumpOption('t', 'rtmpt://' + Server);
-              AddRtmpDumpOption('p', 'http://video.idnes.cz/?' + MovieID);
-              Result := True;
+              Self.RtmpUrl := 'rtmpt://' + Server;
+              Self.Playpath := Stream;
+              Self.FlashVer := FLASH_DEFAULT_VERSION;
+              Self.SwfUrl := 'http://g.idnes.cz/swf/flv/player.swf?v=20101103';
+              Self.TcUrl := 'rtmpt://' + Server;
+              Self.PageUrl := 'http://video.idnes.cz/?' + MovieID;
               SetPrepared(True);
+              Result := True;
               end;
             Exit;
             end;

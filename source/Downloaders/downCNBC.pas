@@ -152,8 +152,8 @@ begin
                     if Url <> '' then
                       begin
                       MovieUrl := App + Url;
-                      AddRtmpDumpOption('r', App);
-                      AddRtmpDumpOption('y', Url);
+                      Self.RtmpUrl := App;
+                      Self.Playpath := Url;
                       SetPrepared(True);
                       Result := True;
                       Exit;

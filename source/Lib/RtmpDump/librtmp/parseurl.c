@@ -16,7 +16,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with librtmp see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
@@ -29,7 +30,7 @@
 #include "rtmp_sys.h"
 #include "log.h"
 
-bool RTMP_ParseURL(const char *url, int *protocol, AVal *host, unsigned int *port,
+int RTMP_ParseURL(const char *url, int *protocol, AVal *host, unsigned int *port,
 	AVal *playpath, AVal *app)
 {
 	char *p, *end, *col, *ques, *slash;
@@ -49,7 +50,7 @@ bool RTMP_ParseURL(const char *url, int *protocol, AVal *host, unsigned int *por
 	p = strstr(url, "://");
 	if(!p) {
 		RTMP_Log(RTMP_LOGERROR, "RTMP URL: No :// in url!");
-		return false;
+		return FALSE;
 	}
 	{
 	int len = (int)(p-url);
@@ -66,6 +67,8 @@ bool RTMP_ParseURL(const char *url, int *protocol, AVal *host, unsigned int *por
 	        *protocol = RTMP_PROTOCOL_RTMFP;
 	else if(len == 6 && strncasecmp(url, "rtmpte", 6)==0)
 	        *protocol = RTMP_PROTOCOL_RTMPTE;
+	else if(len == 6 && strncasecmp(url, "rtmpts", 6)==0)
+	        *protocol = RTMP_PROTOCOL_RTMPTS;
 	else {
 		RTMP_Log(RTMP_LOGWARNING, "Unknown protocol!\n");
 		goto parsehost;
@@ -81,7 +84,7 @@ parsehost:
 	/* check for sudden death */
 	if(*p==0) {
 		RTMP_Log(RTMP_LOGWARNING, "No hostname in URL!");
-		return false;
+		return FALSE;
 	}
 
 	end   = p + strlen(p);
@@ -123,7 +126,7 @@ parsehost:
 
 	if(!slash) {
 		RTMP_Log(RTMP_LOGWARNING, "No application or playpath in URL!");
-		return true;
+		return TRUE;
 	}
 	p = slash+1;
 
@@ -176,7 +179,7 @@ parsehost:
 		RTMP_ParsePlaypath(&av, playpath);
 	}
 
-	return true;
+	return TRUE;
 }
 
 /*
@@ -262,6 +265,7 @@ void RTMP_ParsePlaypath(AVal *in, AVal *out) {
 		if (subExt && p == ext) {
 			p += 4;
 			pplen -= 4;
+			continue;
 		}
 		if (*p == '%') {
 			unsigned int c;

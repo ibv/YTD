@@ -42,7 +42,11 @@ interface
 uses
   SysUtils, Classes, Windows,
   HttpSend, SynaUtil, SynaCode,
-  uOptions, uPCRE, uXML, uAMF, uCompatibility;
+  uOptions, uPCRE, uXML, uAMF, uFunctions,
+  {$IFDEF GUI}
+  guiDownloaderOptions,
+  {$ENDIF}
+  uCompatibility;
 
 type
   EDownloaderError = class(Exception);
@@ -58,8 +62,12 @@ type
 type
   TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
 
+type
+  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} );
+  TDownloaderFeatures = set of TDownloaderFeature;
+
 const
-  peXml: TPageEncoding = peNone;
+  peXml = peNone;
 
 type
   THttpMethod = (hmGET, hmPOST, hmHEAD);
@@ -98,7 +106,6 @@ type
       function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function CreateHttp: THttpSend; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      function CheckRedirect(Http: THttpSend; var Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -140,8 +147,12 @@ type
       procedure NotPreparedError; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       class function Provider: string; virtual; abstract;
+      class function Features: TDownloaderFeatures; virtual;
       class function UrlRegExp: string; virtual; abstract;
       class function MovieIDParamName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; virtual;
+      {$ENDIF}
     public
       constructor Create(const AMovieID: string); virtual;
       destructor Destroy; override;
@@ -183,6 +194,18 @@ class function TDownloader.MovieIDParamName: string;
 begin
   Result := ClassName;
 end;
+
+class function TDownloader.Features: TDownloaderFeatures;
+begin
+  Result := [];
+end;
+
+{$IFDEF GUI}
+class function TDownloader.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := nil;
+end;
+{$ENDIF}
 
 constructor TDownloader.Create(const AMovieID: string);
 begin
@@ -313,56 +336,6 @@ begin
   Result.ProxyPort := DefaultHttp.ProxyPort;
   Result.ProxyUser := DefaultHttp.ProxyUser;
   Result.ProxyPass := DefaultHttp.ProxyPass;
-end;
-
-function TDownloader.CheckRedirect(Http: THttpSend; var Url: string): boolean;
-const
-  Location = 'Location:';
-  Localhost = 'localhost';
-var
-  i: integer;
-  Redirect: string;
-  RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara: string;
-  OldURL, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara: string;
-begin
-  Result := False;
-  if (Http.ResultCode >= 300) and (Http.ResultCode < 400) then
-    for i := 0 to Pred(Http.Headers.Count) do
-      if AnsiCompareText(Location, Copy(Http.Headers[i], 1, Length(Location))) = 0 then
-        begin
-        OldUrl := Url;
-        Redirect := Trim(Copy(Http.Headers[i], Length(Location)+1, MaxInt));
-        ParseUrl(Redirect, RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara);
-        if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
-          begin
-          ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
-          if RedirProtocol = '' then
-            RedirProtocol := UrlProtocol;
-          if RedirUser = '' then
-            RedirUser := UrlUser;
-          if RedirPass = '' then
-            RedirPass := UrlPass;
-          if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
-            RedirHost := UrlHost;
-          if RedirPort = '' then
-            RedirPort := UrlPort;
-          Url := RedirProtocol + '://';
-          if RedirUser <> '' then
-            begin
-            Url := Url + RedirUser;
-            if RedirPass <> '' then
-              Url := Url + ':' + RedirPass;
-            Url := Url + '@';
-            end;
-          Url := Url + RedirHost + ':' + RedirPort + RedirPath;
-          if RedirPara <> '' then
-            Url := Url + '?' + RedirPara ;
-          end
-        else
-          Url := Redirect;
-        Result := Url <> OldUrl;
-        Break;
-        end;
 end;
 
 function TDownloader.DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod; Clear: boolean): boolean;

@@ -495,7 +495,7 @@ type
   ElkIntException = class(Exception)
   public
     idx: Integer;
-    constructor Create(idx: Integer; msg: string);
+    constructor Create(Aidx: Integer; msg: string);
   end;
 
 // author of next two functions is Kusnassriyanto Saiful Bahri
@@ -878,7 +878,7 @@ begin
     end
   else
     begin
-      result := fList.Items[idx];
+      result := TlkJSONbase(fList.Items[idx]);
     end;
 end;
 
@@ -2091,9 +2091,9 @@ end;
 
 { ElkIntException }
 
-constructor ElkIntException.Create(idx: Integer; msg: string);
+constructor ElkIntException.Create(Aidx: Integer; msg: string);
 begin
-  self.idx := idx;
+  self.idx := Aidx;
   inherited Create(msg);
 end;
 
@@ -2476,9 +2476,9 @@ procedure TlkBalTree.Clear;
 
   procedure rec(t: PlkBalNode);
   begin
-    if t.left<>fbottom then rec(t.left);
-    if t.right<>fbottom then rec(t.right);
-    t.nm := '';
+    if t^.left<>fbottom then rec(t^.left);
+    if t^.right<>fbottom then rec(t^.right);
+    t^.nm := '';
     dispose(t);
   end;
 
@@ -2490,16 +2490,16 @@ end;
 
 function TlkBalTree.counters: string;
 begin
-  result := format('Balanced tree root node level is %d',[froot.level]);
+  result := format('Balanced tree root node level is %d',[froot^.level]);
 end;
 
 constructor TlkBalTree.Create;
 begin
   inherited Create;
   new(fbottom);
-  fbottom.left := fbottom;
-  fbottom.right := fbottom;
-  fbottom.level := 0;
+  fbottom^.left := fbottom;
+  fbottom^.right := fbottom;
+  fbottom^.level := 0;
   fdeleted := fbottom;
   froot := fbottom;
 end;
@@ -2509,10 +2509,10 @@ function TlkBalTree.Delete(const ws: WideString): Boolean;
   procedure UpdateKeys(t: PlkBalNode; idx: integer);
   begin
     if t <> fbottom then begin
-      if t.key > idx then
-        t.key := t.key - 1;
-      UpdateKeys(t.left, idx);
-      UpdateKeys(t.right, idx);
+      if t^.key > idx then
+        t^.key := t^.key - 1;
+      UpdateKeys(t^.left, idx);
+      UpdateKeys(t^.right, idx);
     end;
   end;
 
@@ -2521,30 +2521,30 @@ function TlkBalTree.Delete(const ws: WideString): Boolean;
     result := false;
     if t<>fbottom then begin
       flast := t;
-      if ws<t.nm then
-        result := del(t.left)
+      if ws<t^.nm then
+        result := del(t^.left)
       else begin
         fdeleted := t;
-        result := del(t.right);
+        result := del(t^.right);
       end;
-      if (t = flast) and (fdeleted <> fbottom) and (ws = fdeleted.nm) then begin
-        UpdateKeys(froot, fdeleted.key);
-        fdeleted.key := t.key;
-        fdeleted.nm := t.nm;
-        t := t.right;
-        flast.nm := '';
+      if (t = flast) and (fdeleted <> fbottom) and (ws = fdeleted^.nm) then begin
+        UpdateKeys(froot, fdeleted^.key);
+        fdeleted^.key := t^.key;
+        fdeleted^.nm := t^.nm;
+        t := t^.right;
+        flast^.nm := '';
         dispose(flast);
         result := true;
       end
-      else if (t.left.level < (t.level - 1)) or (t.right.level < (t.level - 1)) then begin
-        t.level := t.level - 1;
-        if t.right.level > t.level then
-          t.right.level := t.level;
+      else if (t^.left^.level < (t^.level - 1)) or (t^.right^.level < (t^.level - 1)) then begin
+        t^.level := t^.level - 1;
+        if t^.right^.level > t^.level then
+          t^.right^.level := t^.level;
         skew(t);
-        skew(t.right);
-        skew(t.right.right);
+        skew(t^.right);
+        skew(t^.right^.right);
         split(t);
-        split(t.right);
+        split(t^.right);
       end;
     end;
   end;
@@ -2608,9 +2608,9 @@ begin
   tk := froot;
   while (result=-1) and (tk<>fbottom) do
     begin
-      if tk.nm = ws then result := tk.key
-      else if ws<tk.nm then tk := tk.left
-      else tk := tk.right;
+      if tk^.nm = ws then result := tk^.key
+      else if ws<tk^.nm then tk := tk^.left
+      else tk := tk^.right;
     end;
 end;
 
@@ -2621,19 +2621,19 @@ function TlkBalTree.Insert(const ws: WideString; x: Integer): Boolean;
     if t = fbottom then
       begin
         new(t);
-        t.key := x;
-        t.nm := ws;
-        t.left := fbottom;
-        t.right := fbottom;
-        t.level := 1;
+        t^.key := x;
+        t^.nm := ws;
+        t^.left := fbottom;
+        t^.right := fbottom;
+        t^.level := 1;
         result := true;
       end
     else
       begin
-        if ws < t.nm then
-          result := ins(t.left)
-        else if ws > t.nm then
-          result := ins(t.right)
+        if ws < t^.nm then
+          result := ins(t^.left)
+        else if ws > t^.nm then
+          result := ins(t^.right)
         else result := false;
         skew(t);
         split(t);
@@ -2648,12 +2648,12 @@ procedure TlkBalTree.skew(var t: PlkBalNode);
 var
   temp: PlkBalNode;
 begin
-  if t.left.level = t.level then
+  if t^.left^.level = t^.level then
     begin
       temp := t;
-      t := t.left;
-      temp.left := t.right;
-      t.right := temp;
+      t := t^.left;
+      temp^.left := t^.right;
+      t^.right := temp;
     end;
 end;
 
@@ -2661,13 +2661,13 @@ procedure TlkBalTree.split(var t: PlkBalNode);
 var
   temp: PlkBalNode;
 begin
-  if t.right.right.level = t.level then
+  if t^.right^.right^.level = t^.level then
     begin
       temp := t;
-      t := t.right;
-      temp.right := t.left;
-      t.left := temp;
-      t.level := t.level+1;
+      t := t^.right;
+      temp^.right := t^.left;
+      t^.left := temp;
+      t^.level := t^.level+1;
     end;
 end;
 {$ENDIF USE_HASH}

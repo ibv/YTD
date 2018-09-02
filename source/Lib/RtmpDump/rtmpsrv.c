@@ -14,7 +14,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RTMPDump; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -67,6 +68,8 @@
 #define	CleanupSockets()
 #endif
 
+#define DUPTIME	5000	/* interval we disallow duplicate requests, in msec */
+
 enum
 {
   STREAMING_ACCEPTING,
@@ -82,6 +85,8 @@ typedef struct
   int streamID;
   int arglen;
   int argc;
+  uint32_t filetime;	/* time of last download we started */
+  AVal filename;	/* name of last download */
   char *connect;
 
 } STREAMING_SERVER;
@@ -96,7 +101,7 @@ typedef struct
   char *hostname;
   int rtmpport;
   int protocol;
-  bool bLiveStream;		// is it a live stream? then we can't seek/resume
+  int bLiveStream;		// is it a live stream? then we can't seek/resume
 
   long int timeout;		// timeout connection afte 300 seconds
   uint32_t bufferTime;
@@ -159,7 +164,7 @@ SAVC(code);
 SAVC(description);
 SAVC(secureToken);
 
-static bool
+static int
 SendConnectResult(RTMP *r, double txn)
 {
   RTMPPacket packet;
@@ -170,7 +175,7 @@ SendConnectResult(RTMP *r, double txn)
 
   packet.m_nChannel = 0x03;     // control channel (invoke)
   packet.m_headerType = 1; /* RTMP_PACKET_SIZE_MEDIUM; */
-  packet.m_packetType = 0x14;   // INVOKE
+  packet.m_packetType = RTMP_PACKET_TYPE_INVOKE;
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -220,10 +225,10 @@ SendConnectResult(RTMP *r, double txn)
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  return RTMP_SendPacket(r, &packet, false);
+  return RTMP_SendPacket(r, &packet, FALSE);
 }
 
-static bool
+static int
 SendResultNumber(RTMP *r, double txn, double ID)
 {
   RTMPPacket packet;
@@ -231,7 +236,7 @@ SendResultNumber(RTMP *r, double txn, double ID)
 
   packet.m_nChannel = 0x03;     // control channel (invoke)
   packet.m_headerType = 1; /* RTMP_PACKET_SIZE_MEDIUM; */
-  packet.m_packetType = 0x14;   // INVOKE
+  packet.m_packetType = RTMP_PACKET_TYPE_INVOKE;
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -245,7 +250,7 @@ SendResultNumber(RTMP *r, double txn, double ID)
 
   packet.m_nBodySize = enc - packet.m_body;
 
-  return RTMP_SendPacket(r, &packet, false);
+  return RTMP_SendPacket(r, &packet, FALSE);
 }
 
 SAVC(onStatus);
@@ -257,15 +262,15 @@ static const AVal av_Stopped_playing = AVC("Stopped playing");
 SAVC(details);
 SAVC(clientid);
 
-static bool
+static int
 SendPlayStart(RTMP *r)
 {
   RTMPPacket packet;
-  char pbuf[384], *pend = pbuf+sizeof(pbuf);
+  char pbuf[512], *pend = pbuf+sizeof(pbuf);
 
   packet.m_nChannel = 0x03;     // control channel (invoke)
   packet.m_headerType = 1; /* RTMP_PACKET_SIZE_MEDIUM; */
-  packet.m_packetType = 0x14;   // INVOKE
+  packet.m_packetType = RTMP_PACKET_TYPE_INVOKE;
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -286,18 +291,18 @@ SendPlayStart(RTMP *r)
   *enc++ = AMF_OBJECT_END;
 
   packet.m_nBodySize = enc - packet.m_body;
-  return RTMP_SendPacket(r, &packet, false);
+  return RTMP_SendPacket(r, &packet, FALSE);
 }
 
-static bool
+static int
 SendPlayStop(RTMP *r)
 {
   RTMPPacket packet;
-  char pbuf[384], *pend = pbuf+sizeof(pbuf);
+  char pbuf[512], *pend = pbuf+sizeof(pbuf);
 
   packet.m_nChannel = 0x03;     // control channel (invoke)
   packet.m_headerType = 1; /* RTMP_PACKET_SIZE_MEDIUM; */
-  packet.m_packetType = 0x14;   // INVOKE
+  packet.m_packetType = RTMP_PACKET_TYPE_INVOKE;
   packet.m_nTimeStamp = 0;
   packet.m_nInfoField2 = 0;
   packet.m_hasAbsTimestamp = 0;
@@ -318,7 +323,7 @@ SendPlayStop(RTMP *r)
   *enc++ = AMF_OBJECT_END;
 
   packet.m_nBodySize = enc - packet.m_body;
-  return RTMP_SendPacket(r, &packet, false);
+  return RTMP_SendPacket(r, &packet, FALSE);
 }
 
 static void
@@ -470,7 +475,7 @@ ServeInvoke(STREAMING_SERVER *server, RTMP * r, RTMPPacket *packet, unsigned int
     }
 
   AMFObject obj;
-  nRes = AMF_Decode(&obj, body, nBodySize, false);
+  nRes = AMF_Decode(&obj, body, nBodySize, FALSE);
   if (nRes < 0)
     {
       RTMP_Log(RTMP_LOGERROR, "%s, error decoding invoke packet", __FUNCTION__);
@@ -575,6 +580,7 @@ ServeInvoke(STREAMING_SERVER *server, RTMP * r, RTMPPacket *packet, unsigned int
       char *file, *p, *q, *cmd, *ptr;
       AVal *argv, av;
       int len, argc;
+      uint32_t now;
       RTMPPacket pc = {0};
       AMFProp_GetString(AMF_GetProp(&obj, NULL, 3), &r->Link.playpath);
       /*
@@ -686,19 +692,34 @@ ServeInvoke(STREAMING_SERVER *server, RTMP * r, RTMPPacket *packet, unsigned int
 	  /* Add extension if none present */
 	  if (file[av.av_len - 4] != '.')
 	    {
-	      strcpy(file+av.av_len, ".flv");
 	      av.av_len += 4;
+	    }
+	  /* Always use flv extension, regardless of original */
+	  if (strcmp(file+av.av_len-4, ".flv"))
+	    {
+	      strcpy(file+av.av_len-4, ".flv");
 	    }
 	  argv[argc].av_val = ptr + 1;
 	  argv[argc++].av_len = 2;
 	  argv[argc].av_val = file;
-	  argv[argc++].av_len = av.av_len;
+	  argv[argc].av_len = av.av_len;
 	  ptr += sprintf(ptr, " -o %s", file);
+	  now = RTMP_GetTime();
+	  if (now - server->filetime < DUPTIME && AVMATCH(&argv[argc], &server->filename))
+	    {
+	      printf("Duplicate request, skipping.\n");
+	      free(file);
+	    }
+	  else
+	    {
+	      printf("\n%s\n\n", cmd);
+	      fflush(stdout);
+	      server->filetime = now;
+	      free(server->filename.av_val);
+	      server->filename = argv[argc++];
+	      spawn_dumper(argc, argv, cmd);
+	    }
 
-	  printf("\n%s\n\n", cmd);
-	  fflush(stdout);
-	  spawn_dumper(argc, argv, cmd);
-	  free(file);
 	  free(cmd);
 	}
       pc.m_body = server->connect;
@@ -1012,7 +1033,7 @@ stopStreaming(STREAMING_SERVER * server)
 void
 sigIntHandler(int sig)
 {
-  RTMP_ctrlC = true;
+  RTMP_ctrlC = TRUE;
   RTMP_LogPrintf("Caught signal: %d, cleaning up, just a second...\n", sig);
   if (rtmpServer)
     stopStreaming(rtmpServer);
@@ -1043,7 +1064,7 @@ main(int argc, char **argv)
 
   defaultRTMPRequest.rtmpport = -1;
   defaultRTMPRequest.protocol = RTMP_PROTOCOL_UNDEFINED;
-  defaultRTMPRequest.bLiveStream = false;	// is it a live stream? then we can't seek/resume
+  defaultRTMPRequest.bLiveStream = FALSE;	// is it a live stream? then we can't seek/resume
 
   defaultRTMPRequest.timeout = 300;	// timeout connection afte 300 seconds
   defaultRTMPRequest.bufferTime = 20 * 1000;

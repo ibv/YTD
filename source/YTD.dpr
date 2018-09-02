@@ -54,14 +54,16 @@ uses
   SysUtils,
   Windows,
   CommCtrl,
-  {$IFDEF FPC}
-    Interfaces,
+  {$IFDEF SETUP}
+  ShlObj,
+  FileCtrl,
   {$ENDIF}
   {$IFDEF GUI}
     {$IFNDEF GUI_WINAPI}
       Forms,
     {$ENDIF}
   {$ENDIF}
+  uCompatibility,
   // Base objects and units
   uFunctions in 'Common\uFunctions.pas',
   uMessages in 'Common\uMessages.pas',
@@ -69,6 +71,9 @@ uses
   uStringConsts in 'Common\uStringConsts.pas',
   {$IFDEF SUBTITLES}
   uSubtitles in 'Common\uSubtitles.pas',
+  {$ENDIF}
+  {$IFDEF SETUP}
+  uSetup in 'Common\uSetup.pas',
   {$ENDIF}
   uXML in 'Common\uXML.pas',
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
@@ -94,22 +99,42 @@ uses
     {$IFDEF GUI_WINAPI}
       guiMainWINAPI in 'GUI\WinAPI\guiMainWINAPI.pas',
       guiAboutWINAPI in 'GUI\WinAPI\guiAboutWINAPI.pas',
+      {$IFDEF SETUP_GUI}
+      guiSetupWINAPI in 'GUI\WinAPI\guiSetupWINAPI.pas',
+      {$ENDIF}
       guiOptionsWINAPI in 'GUI\WinAPI\guiOptionsWINAPI.pas',
-      guiOptionsWINAPI_Main in 'GUI\WinAPI\guiOptionsWINAPI_Main.pas',
-      guiOptionsWINAPI_Downloads in 'GUI\WinAPI\guiOptionsWINAPI_Downloads.pas',
-      guiOptionsWINAPI_Network in 'GUI\WinAPI\guiOptionsWINAPI_Network.pas',
+      guiOptionsWINAPI_Main in 'GUI\WinAPI\Options\guiOptionsWINAPI_Main.pas',
+      guiOptionsWINAPI_Downloads in 'GUI\WinAPI\Options\guiOptionsWINAPI_Downloads.pas',
+      guiOptionsWINAPI_Network in 'GUI\WinAPI\Options\guiOptionsWINAPI_Network.pas',
+      guiOptionsWINAPI_Downloaders in 'GUI\WinAPI\Options\guiOptionsWINAPI_Downloaders.pas',
+      guiOptionsWINAPI_Downloader in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Downloader.pas',
+      guiOptionsWINAPI_CommonDownloader in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CommonDownloader.pas',
+      guiOptionsWINAPI_Barrandov in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Barrandov.pas',
+      guiOptionsWINAPI_CT in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CT.pas',
+      guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
+      guiOptionsWINAPI_YouTube in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_YouTube.pas',
       {$IFDEF CONVERTERS}
       guiConverterWINAPI in 'GUI\WinAPI\guiConverterWINAPI.pas',
       {$ENDIF}
     {$ELSE}
       guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
       guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
+      {$IFDEF SETUP_GUI}
+      guiSetupVCL in 'GUI\VCL\guiSetupVCL.pas' {FormSetup},
+      {$ENDIF}
       guiOptionsVCL in 'GUI\VCL\guiOptionsVCL.pas' {FormOptions},
+      guiOptionsVCL_Downloader in 'GUI\VCL\Downloaders\guiOptionsVCL_Downloader.pas' {FrameDownloaderOptionsPageVCL: TFrame},
+      guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
+      guiOptionsVCL_Barrandov in 'GUI\VCL\Downloaders\guiOptionsVCL_Barrandov.pas' {FrameDownloaderOptionsPage_Barrandov: TFrame},
+      guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
+      guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
+      guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       {$IFDEF CONVERTERS}
-      guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas', {FormSelectConverter}
+      guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
       {$ENDIF}
     {$ENDIF}
     guiConsts in 'GUI\guiConsts.pas',
+    guiDownloaderOptions in 'GUI\guiDownloaderOptions.pas',
     guiFunctions in 'GUI\guiFunctions.pas',
     guiOptions in 'GUI\guiOptions.pas',
     uDownloadList in 'GUI\uDownloadList.pas',
@@ -366,55 +391,242 @@ uses
   listYouTube in 'Playlists\listYouTube.pas',
   listYouTubePage in 'Playlists\listYouTubePage.pas';
 
+type
+  TStartupType = ( {$IFDEF CLI} stCLI, {$ENDIF} {$IFDEF GUI} stGUI, stGUIexplicit, {$ENDIF} {$IFDEF SETUP} stInstall, {$ENDIF} stNone);
+
 var
+  StartedFromIDE: boolean;
   ErrorMsg: string;
+  {$IFDEF SETUP}
+  InstallDir: string;
+  DesktopShortcut, StartMenuShortcut, RestartYTD: boolean;
+  {$ENDIF}
+
+function FindStartupType( {$IFDEF SETUP} var InstallDir: string; var DesktopShortcut, StartMenuShortcut, RestartYTD: boolean {$ENDIF} ): TStartupType;
+{$IFDEF SETUP}
+var
+  i: integer;
+  Param: string;
+  {$IFDEF SETUP_GUI}
+  F: TFormSetup;
+  {$ENDIF}
+{$ENDIF}
+begin
+  Result := Low(TStartupType);
+  // No parameters runs GUI if available, otherwise CLI
+  if ParamCount = 0 then
+    Result := {$IFDEF GUI} stGUI {$ENDIF}
+  // Otherwise check for startup-type parameters
+  {$IFDEF SETUP}
+  else for i := 1 to ParamCount do
+    begin
+    Param := ParamStr(i);
+    if False then
+      begin
+      end
+    {$IFDEF GUI}
+    else if Param = SETUP_PARAM_GUI then
+      begin
+      Result := stGUIexplicit;
+      Break;
+      end
+    {$ENDIF}
+    {$IFDEF SETUP_GUI}
+    else if Param = SETUP_PARAM_SETUP then
+      begin
+      {$IFNDEF DEBUG}
+        {$IFNDEF FPC}
+          FreeConsole;
+          IsConsole := False;
+        {$ENDIF}
+      {$ENDIF}
+      F := TFormSetup.Create(nil);
+      try
+        case F.ShowModal of
+          idOK:
+            begin
+            Result := stInstall;
+            InstallDir := F.DestinationDir;
+            DesktopShortcut := F.DesktopShortcut;
+            StartMenuShortcut := F.StartMenuShortcut;
+            RestartYTD := True;
+            end;
+          idIgnore:
+            Result := {$IFDEF GUI} stGUI {$ELSE} {$IFDEF CLI} stCli {$ELSE} stNone {$ENDIF} {$ENDIF} ;
+          else
+            Result := stNone;
+          end;
+      finally
+        F.Free;
+        end;
+      Break;
+      end
+    {$ENDIF}
+    else if (Param = SETUP_PARAM_UPGRADE) or (Param = SETUP_PARAM_UPGRADE_GUI) or (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI) then
+      begin
+      if i < ParamCount then
+        begin
+        Result := stInstall;
+        InstallDir := ParamStr(Succ(i));
+        DesktopShortcut := (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI);
+        StartMenuShortcut := (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI);
+        RestartYTD := (Param = SETUP_PARAM_UPGRADE_GUI) or (Param = SETUP_PARAM_INSTALL_GUI);
+        Sleep(500); // to give some time for the caller to quit
+        Break;
+        end;
+      end;
+    end;
+  {$ELSE}
+    ;
+  {$ENDIF}
+end;
+
+{$IFDEF CLI}
+procedure RunCLI;
+begin
+  ExitCode := ExecuteConsoleApp(TYTD);
+  if StartedFromIDE then
+    begin
+    Writeln;
+    Write(MSG_PRESS_ANY_KEY_TO_QUIT);
+    Readln;
+    end;
+end;
+{$ENDIF}
+
+{$IFDEF GUI}
+procedure RunGUI;
+begin
+  {$IFNDEF DEBUG}
+    {$IFNDEF FPC}
+      FreeConsole;
+      IsConsole := False;
+    {$ENDIF}
+  {$ENDIF}
+  {$IFDEF GUI_WINAPI}
+    with TFormMain.Create do
+      try
+        ShowModal;
+      finally
+        Free;
+        end;
+  {$ELSE}
+    Application.Initialize;
+    Application.Title := 'YouTube Downloader';
+    Application.CreateForm(TFormYTD, FormYTD);
+    Application.Run;
+  {$ENDIF}
+end;
+{$ENDIF}
+
+{$IFDEF SETUP}
+procedure RunInstall(const InstallDir: string; DesktopShortcut, StartMenuShortcut, RestartYTD: boolean);
+
+  function CopyFiles(const SourceDir, DestinationDir: string): boolean;
+    var SR: TSearchRec;
+    begin
+      Result := True;
+      ForceDirectories(DestinationDir);
+      if FindFirst(SourceDir + '*.*', faAnyFile, SR) = 0 then
+        try
+          repeat
+            if Longbool(SR.Attr and faDirectory) then
+              begin
+              if (SR.Name <> '.') and (SR.Name <> '..') then
+                if not CopyFiles(SourceDir + SR.Name + '\', DestinationDir + SR.Name + '\') then
+                  Result := False;
+              end
+            else
+              begin
+              if not CopyFile(PChar(SourceDir + SR.Name), PChar(DestinationDir + SR.Name), False) then
+                Result := False;
+              end;
+          until FindNext(SR) <> 0;
+        finally
+          SysUtils.FindClose(SR);
+          end;
+    end;
+
+var OK: boolean;
+    InstDir, InstExe: string;
+begin
+  OK := False;
+  InstDir := IncludeTrailingPathDelimiter(InstallDir);
+  InstExe := InstDir + ExtractFileName(ParamStr(0));
+  if InstallDir <> '' then
+    begin
+    OK := CopyFiles(ExtractFilePath(ParamStr(0)), InstDir);
+    if OK then
+      begin
+      if DesktopShortcut then
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe);
+      if StartMenuShortcut then
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe);
+      end;
+    end;
+  if not OK then
+    begin
+    {$IFDEF FPC}
+      Writeln(ERR_INSTALL_FAILED);
+    {$ELSE}
+      {$IFDEF CLI}
+      if TConsoleApp.HasConsole = csOwnConsole then
+        Writeln(ERR_INSTALL_FAILED)
+      else
+      {$ENDIF}
+        MessageBox(0, PChar(ERR_INSTALL_FAILED), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
+    {$ENDIF}
+    ExitCode := 253;
+    end
+  else
+    begin
+    ExitCode := 0;
+    if RestartYTD then
+      Run(InstExe, '', ExcludeTrailingPathDelimiter(InstDir));
+    end;
+end;
+{$ENDIF}
 
 begin
   try
     ExitCode := 0;
     InitCommonControls; // Needed because of the manifest file
-    {$IFDEF GUI}
-      if (ParamCount <= 0) then
-        begin
-        {$IFNDEF DEBUG}
-          {$IFNDEF FPC}
-            FreeConsole;
-            IsConsole := False;
-          {$ENDIF}
-        {$ENDIF}
-        {$IFDEF GUI_WINAPI}
-          with TFormMain.Create do
-            try
-              ShowModal;
-            finally
-              Free;
-              end;
-        {$ELSE}
-          Application.Initialize;
-          Application.Title := 'YouTube Downloader';
-          Application.CreateForm(TFormYTD, FormYTD);
-          Application.Run;
-        {$ENDIF}
-        end
-      else
+    // Test for IDE
+    StartedFromIDE := False;
+    {$IFNDEF FPC}
+      {$IFDEF DELPHI2009_UP}
+        {$WARN SYMBOL_PLATFORM OFF}
+      {$ENDIF}
+      if DebugHook <> 0 then
+        StartedFromIDE := True;
+      {$IFDEF DELPHI2009_UP}
+        {$WARN SYMBOL_PLATFORM ON}
+      {$ENDIF}
     {$ENDIF}
-      begin
+    // Determine the startup type and parameters
+    {$IFDEF SETUP}
+    InstallDir := '';
+    DesktopShortcut := False;
+    StartMenuShortcut := False;
+    RestartYTD := False;
+    {$ENDIF}
+    case FindStartupType( {$IFDEF SETUP} InstallDir, DesktopShortcut, StartMenuShortcut, RestartYTD {$ENDIF} ) of
       {$IFDEF CLI}
-        ExitCode := ExecuteConsoleApp(TYTD);
-        {$IFNDEF FPC}
-          {$IFDEF DELPHI2009_UP}
-            {$WARN SYMBOL_PLATFORM OFF}
-          {$ENDIF}
-          if DebugHook <> 0 then
-            begin
-            Writeln;
-            Write(MSG_PRESS_ANY_KEY_TO_QUIT);
-            Readln;
-            end;
-          {$IFDEF DELPHI2009_UP}
-            {$WARN SYMBOL_PLATFORM ON}
-          {$ENDIF}
-        {$ENDIF}
+      stCLI:
+        RunCLI;
+      {$ENDIF}
+      {$IFDEF GUI}
+      stGUIexplicit:
+        RunGUI;
+      stGUI:
+        if StartedFromIDE then
+          RunGUI
+        else if not Run(ParamStr(0), SETUP_PARAM_GUI) then
+          RunGUI;
+      {$ENDIF}
+      {$IFDEF SETUP}
+      stInstall:
+        RunInstall(InstallDir, DesktopShortcut, StartMenuShortcut, RestartYTD);
       {$ENDIF}
       end;
   except
@@ -429,10 +641,9 @@ begin
           Writeln(ErrorMsg)
         else
         {$ENDIF}
-          MessageBox(0, PChar(ErrorMsg), APPLICATION_TITLE, MB_OK or MB_ICONERROR or MB_TASKMODAL);
+          MessageBox(0, PChar(ErrorMsg), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
       {$ENDIF}
       ExitCode := 255;
       end;
     end;
 end.
-

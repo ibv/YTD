@@ -36,18 +36,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit guiFunctions;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE COMOBJ}
 
 interface
 
 uses
-  SysUtils, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
-  SynaCode,
-  uFunctions, uDownloadList, uMessages, uStringUtils;
+  SysUtils, Windows, ShellApi,
+  {$IFDEF SETUP}
+    uSetup,
+    {$IFNDEF GUI_WINAPI}
+      Forms, Dialogs,
+    {$ENDIF}
+  {$ENDIF}
+  SynaCode, SynaUtil,
+  uFunctions, uDownloadList, uMessages, uStringUtils, uOptions;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
-function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0): boolean;
+function IsHttpProtocol(const Url: string): boolean;
+procedure NewVersionFound(Options: TYTDOptions; const Url: string; OwnerHandle: THandle);
 
 implementation
 
@@ -70,45 +76,57 @@ begin
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
                        ]);
-  ShellExecute(0, 'open', PChar(BugReportUrl), nil, nil, SW_SHOWNORMAL);
+  Run(BugReportUrl);
 end;
 
-function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer): boolean;
-var IObject: IUnknown;
-    PIDL : PItemIDList;
-    Dir, FileName: string;
-    DirBuf: array[0..MAX_PATH] of char;
+function IsHttpProtocol(const Url: string): boolean;
+var Protocol, User, Password, Host, Port, Path, Params: string;
 begin
-  {$IFDEF COMOBJ}
-  IObject := CreateComObject(CLSID_ShellLink);
-  {$ELSE}
-  Result := False;
-  if (CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER or CLSCTX_LOCAL_SERVER, IUnknown, IObject) and $80000000) = 0 then
-  {$ENDIF}
-    try
-      with IObject as IShellLink do
+  ParseUrl(Url, Protocol, User, Password, Host, Port, Path, Params);
+  if AnsiCompareText(Protocol, 'http') = 0 then
+    Result := True
+  else if AnsiCompareText(Protocol, 'https') = 0 then
+    Result := True
+  else
+    Result := False;
+end;
+
+procedure NewVersionFound(Options: TYTDOptions; const Url: string; OwnerHandle: THandle);
+{$IFDEF SETUP}
+var FileName: string;
+{$ENDIF}
+begin
+  if Url <> '' then
+    {$IFDEF SETUP}
+      {$IFDEF GUI_WINAPI}
+      if MessageBox(OwnerHandle, PChar(MSG_DOWNLOAD_OR_UPGRADE), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+      {$ELSE}
+      if MessageDlg(MSG_DOWNLOAD_OR_UPGRADE, mtInformation, [mbYes, mbNo], 0) = idYes then
+      {$ENDIF}
         begin
-        SetPath(PChar(ParamStr(0)));
-        SetWorkingDirectory(PChar(ExtractFilePath(ParamStr(0))));
-        end;
-      if WhereCSIDL = 0 then
-        Dir := Where
+        if Options.DownloadNewestVersion(FileName) then
+          if (AnsiCompareText(ExtractFileExt(FileName), '.exe') = 0) and Run(FileName, Format('%s "%s"', [SETUP_PARAM_UPGRADE_GUI, ExtractFilePath(ParamStr(0))])) then
+            {$IFDEF GUI_WINAPI}
+            ExitProcess(0)
+            {$ELSE}
+            Application.Terminate
+            {$ENDIF}
+          else
+            {$IFDEF GUI_WINAPI}
+            MessageBox(OwnerHandle, PChar(Format(MSG_FAILED_TO_UPGRADE, [FileName])), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL)
+            {$ELSE}
+            MessageDlg(Format(MSG_FAILED_TO_UPGRADE, [FileName]), mtError, [mbOK], 0)
+            {$ENDIF}
+        else
+          {$IFDEF GUI_WINAPI}
+          MessageBox(OwnerHandle, PChar(MSG_FAILED_TO_DOWNLOAD_UPGRADE), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL);
+          {$ELSE}
+          MessageDlg(Format(MSG_FAILED_TO_DOWNLOAD_UPGRADE, [FileName]), mtError, [mbOK], 0)
+          {$ENDIF}
+        end
       else
-        begin
-        SHGetSpecialFolderLocation(0, WhereCSIDL, PIDL);
-        SHGetPathFromIDList(PIDL, DirBuf);
-        Dir := string(DirBuf);
-        end;
-      if Dir = '' then
-        FileName := ShortcutName
-      else
-        FileName := Dir + '\' + ShortcutName;
-      with IObject as IPersistFile do
-        Save(PWideChar(WideString(FileName)), False);
-      Result := True;
-    finally
-      IObject := nil;
-      end;
+    {$ENDIF}
+    Run(Url, OwnerHandle);
 end;
 
 end.

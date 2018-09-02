@@ -1,5 +1,5 @@
-HOW TO BUILD
-------------
+HOW TO BUILD YOUTUBE DOWNLOADER
+-------------------------------
 
 Several batch files for building YouTube Downloader are provided:
 

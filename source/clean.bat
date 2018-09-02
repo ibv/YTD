@@ -10,7 +10,7 @@ del /s /q *.~* >nul 2>&1
 del /s /q *.dcu >nul 2>&1
 del /s /q *.dsk >nul 2>&1
 del /s /q *.drc >nul 2>&1
-del /s /q *.exe >nul 2>&1
+rem del /s /q *.exe >nul 2>&1
 del /s /q *.map >nul 2>&1
 del /q %project%.res.bak >nul 2>&1
 del /q %project%.dproj.local >nul 2>&1

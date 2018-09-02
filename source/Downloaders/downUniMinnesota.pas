@@ -133,9 +133,9 @@ begin
       else
         begin
         MovieUrl := BaseUrl + Path;
-        AddRtmpDumpOption('r', MovieURL);
-        Result := True;
+        Self.RtmpUrl := MovieURL;
         SetPrepared(True);
+        Result := True;
         end;
     finally
       Xml.Free;

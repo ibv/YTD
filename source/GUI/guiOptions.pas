@@ -170,7 +170,7 @@ begin
   if not fLoadSuccessful then
     begin
     {$IFDEF GUI_WINAPI}
-    MessageBox(0, PChar(_(INITIALRUN_WELCOMEMSG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_TASKMODAL);
+    MessageBox(0, PChar(_(INITIALRUN_WELCOMEMSG)), PChar(APPLICATION_TITLE), MB_OK or MB_ICONWARNING or MB_TASKMODAL);
     {$ELSE}
     MessageDlg(_(INITIALRUN_WELCOMEMSG), mtWarning, [mbOK], 0);
     {$ENDIF}
@@ -178,12 +178,12 @@ begin
     Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
     {$ENDIF}
     {$IFDEF GUI_WINAPI}
-    PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
+    PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}
     PortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}
     {$IFDEF GUI_WINAPI}
-    CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), APPLICATION_TITLE, MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
+    CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}
     CheckForNewVersionOnStartup := MessageDlg(_(INITIALRUN_WANTNEWVERSIONCHECK), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}
@@ -198,7 +198,7 @@ begin
       fLoadSuccessful := True;
   except
     on E: Exception do
-      Result := (MessageBox(0, PChar(Format(_(ERROR_LOADING_CONFIG), [E.ClassName, E.Message])), APPLICATION_TITLE, MB_OK or MB_ICONSTOP or MB_TASKMODAL) = idYes);
+      Result := (MessageBox(0, PChar(Format(_(ERROR_LOADING_CONFIG), [E.ClassName, E.Message])), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL) = idYes);
     end;
 end;
 

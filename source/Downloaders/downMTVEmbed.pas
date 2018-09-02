@@ -162,7 +162,7 @@ begin
           begin
           SetName(Title);
           MovieUrl := BestUrl;
-          AddRtmpDumpOption('r', BestUrl);
+          Self.RtmpUrl := BestUrl;
           SetPrepared(True);
           Result := True;
           end;

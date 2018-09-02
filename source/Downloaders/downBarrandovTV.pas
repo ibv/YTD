@@ -42,21 +42,39 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
+  uOptions,
+  {$IFDEF GUI}
+    guiDownloaderOptions,
+    {$IFDEF GUI_WINAPI}
+      guiOptionsWINAPI_Barrandov,
+    {$ELSE}
+      guiOptionsVCL_Barrandov,
+    {$ENDIF}
+  {$ENDIF}
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
   TDownloader_BarrandovTV = class(TRtmpDownloader)
     private
+      fToken: string;
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
+
+const
+  OPTION_BARRANDOV_SECURETOKEN {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secure_token';
+  OPTION_BARRANDOV_SECURETOKEN_DEFAULT = '';
 
 implementation
 
@@ -83,6 +101,13 @@ class function TDownloader_BarrandovTV.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
+
+{$IFDEF GUI}
+class function TDownloader_BarrandovTV.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_Barrandov;
+end;
+{$ENDIF}
 
 constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
 begin
@@ -123,15 +148,24 @@ begin
     begin
     SetName(Title);
     MovieUrl := 'rtmpe://' + HostName + '/' + StreamName;
-    SetRtmpDumpOption('r', 'rtmpe://' + HostName);
-    SetRtmpDumpOption('y', StreamName);
-    SetRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
-    SetRtmpDumpOption('s', 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID);
-    SetRtmpDumpOption('t', 'rtmpe://' + HostName);
-    SetRtmpDumpOption('p', 'http://www.barrandov.tv/' + MovieID);
+    Self.RtmpUrl := 'rtmpe://' + HostName;
+    Self.Playpath := StreamName;
+    Self.FlashVer := FLASH_DEFAULT_VERSION;
+    //Self.SwfUrl := 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID;
+    Self.SwfVfy := 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID;
+    //Self.TcUrl := 'rtmpe://' + HostName;
+    Self.PageUrl := 'http://www.barrandov.tv/' + MovieID;
+    Self.SecureToken := fToken;
+    //Self.Live := True;
     SetPrepared(True);
     Result := True;
     end;
+end;
+
+procedure TDownloader_BarrandovTV.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  fToken := Value.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_SECURETOKEN, OPTION_BARRANDOV_SECURETOKEN_DEFAULT);
 end;
 
 initialization

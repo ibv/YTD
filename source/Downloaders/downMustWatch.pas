@@ -55,6 +55,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -87,6 +88,13 @@ const
 class function TDownloader_MustWatch.Provider: string;
 begin
   Result := 'MustWatch.cz';
+end;
+
+class function TDownloader_MustWatch.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles {$ENDIF}
+    ];
 end;
 
 class function TDownloader_MustWatch.UrlRegExp: string;

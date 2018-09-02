@@ -113,7 +113,7 @@ begin
   Result := Prepared;
   if Result then
     begin
-    AddRtmpDumpOption('r', MovieURL);
+    Self.RtmpUrl := MovieURL;
     end;
 end;
 

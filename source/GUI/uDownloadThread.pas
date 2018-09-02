@@ -40,8 +40,9 @@ unit uDownloadThread;
 interface
 
 uses
-  SysUtils, Classes,
-  uDownloader, uPlaylistDownloader;
+  SysUtils, Classes, 
+  uDownloader, uPlaylistDownloader,
+  uCompatibility;
 
 type
   TDownloadThread = class;

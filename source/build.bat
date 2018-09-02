@@ -8,6 +8,7 @@ set debug=0
 set release=0
 set cli=1
 set gui=1
+set setup=1
 set xxx=1
 set fastmm=0
 set upx=0
@@ -27,6 +28,8 @@ if /i "%~1"=="cli" set cli=1
 if /i "%~1"=="nocli" set cli=0
 if /i "%~1"=="gui" set gui=1
 if /i "%~1"=="nogui" set gui=0
+if /i "%~1"=="setup" set setup=1
+if /i "%~1"=="nosetup" set setup=0
 if /i "%~1"=="xxx" set xxx=1
 if /i "%~1"=="noxxx" set xxx=0
 if /i "%~1"=="fastmm" set fastmm=1
@@ -72,6 +75,7 @@ if "%debug%"=="1" (
 )
 if not "%cli%"=="1" set defs=%defs% -dNO_CLI
 if not "%gui%"=="1" set defs=%defs% -dNO_GUI
+if not "%setup%"=="1" set defs=%defs% -dNO_SETUP
 if not "%xxx%"=="1" set defs=%defs% -dNO_XXX
 if "%fastmm%"=="1" set defs=%defs% -dFASTMM
 if "%map%"=="1" if "%compiler%"=="delphi" set params=%params% -GD
@@ -83,7 +87,9 @@ rem --- Build YouTube Downloader ----------------------------------------------
 ren "%srcdir%ytd.cfg" ytd.cfg._
 ren "%srcdir%ytd.dof" ytd.dof._
 
-if not "%compiler%"=="fpc" call :%compiler% "%srcdir%lib\FastMM\FastMM4.pas"
+if not "%compiler%"=="fpc" (
+  call :%compiler% "%srcdir%lib\FastMM\FastMM4.pas"
+)
 if "%compver%"=="fpc" (
   call :%compiler% "%srcdir%lib\DxGetText\fpc\gnugettext.pas"
 ) else if "%compver%"=="d5" (
@@ -141,7 +147,7 @@ for %%i in (%~1) do (
   echo Compiling: %%i
   echo dcc32 -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
   call dcc32 -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
-  if errorlevel 1 pause
+  if errorlevel 1 goto halt
 )
 goto konec
 
@@ -152,19 +158,25 @@ for %%i in (%~1) do (
   echo.
   echo fpc -B -Mdelphi -FE%exedir% -Fu%srcdir%Units -FU%srcdir%Units %defs% %params% "%%i"
   call fpc -B -Mdelphi -FE%exedir% -Fu%srcdir%Units -FU%srcdir%Units %defs% %params% "%%i"
-  if errorlevel 1 pause
+  if errorlevel 1 goto halt
 )
 shift
 goto fpc
 
+rem --- Stop compile process prematurely --------------------------------------
+:halt
+ren "%srcdir%ytd.cfg._" ytd.cfg
+ren "%srcdir%ytd.dof._" ytd.dof
+exit
+
 rem --- Syntax ----------------------------------------------------------------
 :help
 echo Possible arguments:
-echo    fpc/delphi/delphi5/delphi2009 ... Build using FreePascal/Delphi/Delphi 5/Delphi 2009.
-echo    cli/nocli ....................... Include/exclude CLI support.
-echo    gui/nogui ....................... Include/exclude GUI support.
-echo    debug/nodebug ................... Include/exclude debug code.
-echo    xxx/noxxx ....................... Include/exclude XXX providers
+echo    delphi/fpc ...... Build using Delphi/FreePascal.
+echo    cli/nocli ....... Include/exclude CLI support.
+echo    gui/nogui ....... Include/exclude GUI support.
+echo    debug/nodebug ... Include/exclude debug code.
+echo    xxx/noxxx ....... Include/exclude XXX providers
 goto konec
 
 :konec

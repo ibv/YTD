@@ -87,7 +87,8 @@ implementation
 
 uses
   {$IFDEF CONVERTERS} guiConverterWINAPI, {$ENDIF}
-  guiOptionsWINAPI_Downloads, guiOptionsWINAPI_Main, guiOptionsWINAPI_Network;
+  guiOptionsWINAPI_Downloads, guiOptionsWINAPI_Main, guiOptionsWINAPI_Network,
+  guiOptionsWINAPI_Downloaders;
 
 // from resource.h
 const
@@ -127,6 +128,7 @@ begin
   AddPage(TFrameMainOptions, _('Main settings'));
   AddPage(TFrameDownloadOptions, _('Download settings'));
   AddPage(TFrameNetworkOptions, _('Network settings'));
+  AddPage(TFrameDownloaderOptions, _('Downloader settings'));
   PageOptions.ResizeTabs;
 end;
 

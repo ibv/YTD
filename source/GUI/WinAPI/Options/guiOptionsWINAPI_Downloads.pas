@@ -223,7 +223,7 @@ begin
   SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Rename automatically'))));
   SendMessage(ComboOverwriteMode, CB_SETCURSEL, OverwriteMode[Options.OverwriteMode], 0);
   // Download Directory
-  SendMessage(EditDownloadDir, WM_SETTEXT, 0, LPARAM(PChar(Options.DestinationPath)));
+  SetWindowText(EditDownloadDir, PChar(Options.DestinationPath));
   // Converter
   {$IFDEF CONVERTERS}
   PrepareConverterComboBox(ComboConverter, Options, Options.SelectedConverterID);
@@ -306,7 +306,7 @@ var Dir: string;
 begin
   Dir := GetWindowTextAsString(EditDownloadDir);
   if SelectDirectory(Dir, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
-    SendMessage(EditDownloadDir, WM_SETTEXT, 0, LPARAM(PChar(Dir)));
+    SetWindowText(EditDownloadDir, PChar(Dir));
 end;
 
 initialization

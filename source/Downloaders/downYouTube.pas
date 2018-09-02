@@ -45,6 +45,14 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
   uOptions,
+  {$IFDEF GUI}
+    guiDownloaderOptions,
+    {$IFDEF GUI_WINAPI}
+      guiOptionsWINAPI_YouTube,
+    {$ELSE}
+      guiOptionsVCL_YouTube,
+    {$ENDIF}
+  {$ENDIF}
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -74,12 +82,26 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       {$IFDEF SUBTITLES}
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       {$ENDIF}
     end;
+
+const
+  OPTION_YOUTUBE_MAXVIDEOWIDTH {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_video_width';
+  OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT = 0;
+  OPTION_YOUTUBE_MAXVIDEOHEIGHT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_video_height';
+  OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT = 0;
+  {$IFDEF SUBTITLES}
+    OPTION_YOUTUBE_PREFERREDLANGUAGES {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'preferred_languages';
+    OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'en';
+  {$ENDIF}
 
 implementation
 
@@ -116,10 +138,24 @@ begin
   Result := 'YouTube.com';
 end;
 
+class function TDownloader_YouTube.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles {$IFDEF CONVERTSUBTITLES} , dfSubtitlesConvert {$ENDIF} {$ENDIF}
+    ];
+end;
+
 class function TDownloader_YouTube.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
+
+{$IFDEF GUI}
+class function TDownloader_YouTube.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_YouTube;
+end;
+{$ENDIF}
 
 constructor TDownloader_YouTube.Create(const AMovieID: string);
 begin
@@ -130,10 +166,12 @@ begin
   FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
   FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST);
   FmtUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP);
+  MaxWidth := OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT;
+  MaxHeight := OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT;
   {$IFDEF SUBTITLES}
-    PreferredLanguages := 'en';
+    PreferredLanguages := OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT;
     {$IFDEF CONVERTSUBTITLES}
-    ConvertSubtitles := True;
+    ConvertSubtitles := OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT;
     {$ENDIF}
   {$ENDIF}
 end;
@@ -364,19 +402,14 @@ begin
 end;
 
 procedure TDownloader_YouTube.SetOptions(const Value: TYTDOptions);
-var s: string;
 begin
   inherited;
-  if Value.ReadProviderOption(Provider, 'max_video_width', s) then
-    MaxWidth := StrToIntDef(s, -1);
-  if Value.ReadProviderOption(Provider, 'max_video_height', s) then
-    MaxHeight := StrToIntDef(s, -1);
+  MaxWidth := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT);
+  MaxHeight := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT);
   {$IFDEF SUBTITLES}
-    if Value.ReadProviderOption(Provider, 'preferred_languages', s) then
-      PreferredLanguages := s;
+    PreferredLanguages := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_PREFERREDLANGUAGES, OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT);
     {$IFDEF CONVERTSUBTITLES}
-    if Value.ReadProviderOption(Provider, 'convert_subtitles', s) then
-      ConvertSubtitles := StrToIntDef(s, 0) <> 0;
+    ConvertSubtitles := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
     {$ENDIF}
   {$ENDIF}
 end;

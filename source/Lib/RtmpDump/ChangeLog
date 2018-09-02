@@ -1,8 +1,40 @@
 RTMPDump
 Copyright 2008-2009 Andrej Stepanchuk; Distributed under the GPL v2
-Copyright 2009-2010 Howard Chu
+Copyright 2009-2011 Howard Chu
 Copyright 2009 The Flvstreamer Team
 http://rtmpdump.mplayerhq.hu/
+
+11 July 2011, v2.4
+- add RTMPE type 9 handshake support
+
+30 June 2010, v2.3
+- fix RC4 cleanup for GnuTLS/gcrypt
+- declare RTMP_Write buf as const
+- cleanup Makefile
+- replace all use of bool with int
+- add RTMP_Socket() and RTMP_Pause() APIs
+- add ping/pong message handling
+- add basic shared library support
+- fix RTMP_ParseURL extension skipping
+- fix bad switch() from -r477 in RTMP_Read
+- fix rtmpsrv to always use .flv extension on output
+- fix crash on socket failure while RTMP_Read() is reading header
+- fix RTMP_ReadPacket signed/unsigned chars for m_nChannel
+- license cleanup, use current FSF address
+- fix RTMP_SetupURL tcUrl generation
+- ignore multiple spaces between URL options
+- only send CheckBW request once per session
+
+29 May 2010, v2.2e
+- port to Xbox
+- add explicit URL scheme for rtmpts
+- fix rtmpt clientID NUL-termination
+- use BufferEmpty trick in rtmpdump but not by default in librtmp
+- add librtmp manpage
+- fix RTMP_Read, return 0 on EOF, not -1
+- change RTMP_Read to return 1 packet at a time, fix buffer mgmt
+- fix request/result queue, fix server compatibility for Publishing
+- add RTMP_EnableWrite to enable Publishing
 
 29 April 2010, v2.2d
 - add RTMP_Alloc, RTMP_Free APIs

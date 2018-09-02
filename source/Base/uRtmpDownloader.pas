@@ -41,6 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  uFunctions,
   uDownloader, uCommonDownloader, uExternalDownloader,
   RtmpDump_DLL;
 
@@ -50,10 +51,34 @@ type
   TRtmpDownloader = class(TExternalDownloader)
     private
       fRtmpDumpOptions: TRtmpDumpOptions;
+      function GetFlashVer: string;
+      function GetLive: boolean;
+      function GetPageUrl: string;
+      function GetPlaypath: string;
+      function GetRtmpApp: string;
+      function GetRtmpUrl: string;
+      function GetSecureToken: string;
+      function GetSwfUrl: string;
+      function GetSwfVfy: string;
+      function GetTcUrl: string;
+      procedure SetFlashVer(const Value: string);
+      procedure SetLive(const Value: boolean);
+      procedure SetPageUrl(const Value: string);
+      procedure SetPlaypath(const Value: string);
+      procedure SetRtmpApp(const Value: string);
+      procedure SetRtmpUrl(const Value: string);
+      procedure SetSecureToken(const Value: string);
+      procedure SetSwfUrl(const Value: string);
+      procedure SetSwfVfy(const Value: string);
+      procedure SetTcUrl(const Value: string);
     protected
+    private
       procedure ClearRtmpDumpOptions; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure AddRtmpDumpOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function IndexOfRtmpDumpOption(ShortOption: char; out Index: integer): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRtmpDumpOption(ShortOption: char): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetRtmpDumpOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure DeleteRtmpDumpOption(ShortOption: char); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure AddRtmpDumpOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions;
     public
@@ -61,6 +86,20 @@ type
       destructor Destroy; override;
       function Prepare: boolean; override;
       function Download: boolean; override;
+      // These properties translate to RTMPDUMP command-line options
+      property RtmpUrl: string read GetRtmpUrl write SetRtmpUrl;
+      //property RtmpProtocol: string read GetRtmpProtocol write SetRtmpProtocol;
+      //property RtmpHost: string read GetRtmpHost write SetRtmpHost;
+      //property RtmpPort: string read GetRtmpPort write SetRtmpPort;
+      property RtmpApp: string read GetRtmpApp write SetRtmpApp;
+      property Playpath: string read GetPlaypath write SetPlaypath;
+      property SwfUrl: string read GetSwfUrl write SetSwfUrl;
+      property TcUrl: string read GetTcUrl write SetTcUrl;
+      property PageUrl: string read GetPageUrl write SetPageUrl;
+      property SwfVfy: string read GetSwfVfy write SetSwfVfy;
+      property FlashVer: string read GetFlashVer write SetFlashVer;
+      property SecureToken: string read GetSecureToken write SetSecureToken;
+      property Live: boolean read GetLive write SetLive;
     end;
 
 implementation
@@ -68,7 +107,19 @@ implementation
 uses
   uMessages;
 
-procedure RtmpDumpDownloadProgressCallback(Tag: integer; DownloadedSize: integer; PercentDone: double; var DoAbort: integer); cdecl;
+const
+  OPTION_FLASHVER = 'f';
+  OPTION_LIVE = 'v';
+  OPTION_PAGEURL = 'p';
+  OPTION_PLAYPATH = 'y';
+  OPTION_RTMPAPP = 'a';
+  OPTION_RTMPURL = 'r';
+  OPTION_TOKEN = 'T';
+  OPTION_SWFURL = 's';
+  OPTION_SWFVFY = 'W';
+  OPTION_TCURL = 't'; 
+
+procedure RtmpDumpDownloadProgressCallback(Tag, DownloadedSize: longint; PercentDone: double; var DoAbort: longint); cdecl;
 begin
   TRtmpDownloader(Tag).OnRtmpDownloadProgress(DownloadedSize, PercentDone, DoAbort);
 end;
@@ -90,6 +141,53 @@ begin
   SetLength(fRtmpDumpOptions, 0);
 end;
 
+function TRtmpDownloader.IndexOfRtmpDumpOption(ShortOption: char; out Index: integer): boolean;
+var i: integer;
+begin
+  Result := False;
+  for i := 0 to Pred(Length(fRtmpDumpOptions)) do
+    if fRtmpDumpOptions[i].ShortOption = AnsiChar(ShortOption) then
+      begin
+      Index := i;
+      Result := True;
+      Exit;
+      end;
+end;
+
+function TRtmpDownloader.GetRtmpDumpOption(ShortOption: char): string;
+var Index: integer;
+begin
+  if IndexOfRtmpDumpOption(ShortOption, Index) then
+    Result := string(fRtmpDumpOptions[Index].Argument)
+  else
+    Result := '';
+end;
+
+procedure TRtmpDownloader.SetRtmpDumpOption(ShortOption: char; const Argument: string);
+var Index: integer;
+begin
+  if IndexOfRtmpDumpOption(ShortOption, Index) then
+    fRtmpDumpOptions[Index].Argument := AnsiString(Argument)
+  else
+    AddRtmpDumpOption(ShortOption, Argument);
+end;
+
+procedure TRtmpDownloader.DeleteRtmpDumpOption(ShortOption: char);
+var n, Index: integer;
+begin
+  if IndexOfRtmpDumpOption(ShortOption, Index) then
+    begin
+    n := Length(fRtmpDumpOptions);
+    while Index <= Pred(n) do
+      begin
+      fRtmpDumpOptions[Index] := fRtmpDumpOptions[Succ(Index)];
+      Inc(Index);
+      end;
+    if n > 0 then
+      SetLength(fRtmpDumpOptions, Pred(n));
+    end;
+end;
+
 procedure TRtmpDownloader.AddRtmpDumpOption(ShortOption: char; const Argument: string);
 var n: integer;
 begin
@@ -97,19 +195,6 @@ begin
   SetLength(fRtmpDumpOptions, Succ(n));
   fRtmpDumpOptions[n].ShortOption := AnsiChar(ShortOption);
   fRtmpDumpOptions[n].Argument := AnsiString(Argument);
-end;
-
-procedure TRtmpDownloader.SetRtmpDumpOption(ShortOption: char; const Argument: string);
-var i: integer;
-begin
-  for i := 0 to Pred(Length(fRtmpDumpOptions)) do
-    if fRtmpDumpOptions[i].ShortOption = AnsiChar(ShortOption) then
-      begin
-      fRtmpDumpOptions[i].ShortOption := AnsiChar(ShortOption);
-      fRtmpDumpOptions[i].Argument := AnsiString(Argument);
-      Exit;
-      end;
-  AddRtmpDumpOption(ShortOption, Argument);
 end;
 
 procedure TRtmpDownloader.OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer);
@@ -162,6 +247,115 @@ begin
     2: // Incomplete download
          Result := (100*DownloadedBytes div TotalBytes) > 96; // May report incomplete even though it is not
     end;
+  if not Result then
+    if FileExists(LogFileName) then
+      begin
+      // TODO
+      end;
+end;
+
+function TRtmpDownloader.GetFlashVer: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_FLASHVER);
+end;
+
+procedure TRtmpDownloader.SetFlashVer(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_FLASHVER, Value);
+end;
+
+function TRtmpDownloader.GetLive: boolean;
+var Index: integer;
+begin
+  Result := IndexOfRtmpDumpOption(OPTION_LIVE, Index);
+end;
+
+procedure TRtmpDownloader.SetLive(const Value: boolean);
+begin
+  if Value then
+    SetRtmpDumpOption(OPTION_LIVE, '')
+  else
+    DeleteRtmpDumpOption(OPTION_LIVE);
+end;
+
+function TRtmpDownloader.GetPageUrl: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_PAGEURL);
+end;
+
+procedure TRtmpDownloader.SetPageUrl(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_PAGEURL, Value);
+end;
+
+function TRtmpDownloader.GetPlaypath: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_PLAYPATH);
+end;
+
+procedure TRtmpDownloader.SetPlaypath(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_PLAYPATH, Value);
+end;
+
+function TRtmpDownloader.GetRtmpApp: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_RTMPAPP);
+end;
+
+procedure TRtmpDownloader.SetRtmpApp(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_RTMPAPP, Value);
+end;
+
+function TRtmpDownloader.GetRtmpUrl: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_RTMPURL);
+end;
+
+procedure TRtmpDownloader.SetRtmpUrl(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_RTMPURL, Value);
+end;
+
+function TRtmpDownloader.GetSecureToken: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_TOKEN);
+end;
+
+procedure TRtmpDownloader.SetSecureToken(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_TOKEN, Value);
+end;
+
+function TRtmpDownloader.GetSwfUrl: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_SWFURL);
+end;
+
+procedure TRtmpDownloader.SetSwfUrl(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_SWFURL, Value);
+end;
+
+function TRtmpDownloader.GetSwfVfy: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_SWFVFY);
+end;
+
+procedure TRtmpDownloader.SetSwfVfy(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_SWFVFY, Value);
+end;
+
+function TRtmpDownloader.GetTcUrl: string;
+begin
+  Result := GetRtmpDumpOption(OPTION_TCURL);
+end;
+
+procedure TRtmpDownloader.SetTcUrl(const Value: string);
+begin
+  SetRtmpDumpOption(OPTION_TCURL, Value);
 end;
 
 end.

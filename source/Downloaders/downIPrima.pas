@@ -114,23 +114,28 @@ begin
 end;
 
 function TDownloader_iPrima.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, ID: string;
+var Url, ID, EmbeddedPage: string;
+    EmbeddedPageXml: TXmlDoc;
 begin
   Result := False;
   if GetRegExpVar(StreamIDRegExp, Page, 'STREAMID', ID) then
     begin
     Url := GetMovieInfoUrlForID(ID);
-    FreeAndNil(PageXml);
-    if not GetMovieInfoContent(Http, Url, Page, PageXml) then
+    if not GetMovieInfoContent(Http, Url, EmbeddedPage, EmbeddedPageXml) then
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
+      try
+        Result := inherited AfterPrepareFromPage(EmbeddedPage, EmbeddedPageXml, Http);
+      finally
+        FreeAndNil(EmbeddedPageXml);
+        end;
+    end;
+  if not Result then
+    if GetRegExpVar(StreamCDNIDRegExp, Page, 'STREAMID', ID) then
+      begin
+      ExternalCDNID := ID;
       Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    end
-  else if GetRegExpVar(StreamCDNIDRegExp, Page, 'STREAMID', ID) then
-    begin
-    ExternalCDNID := ID;
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    end
+      end
 end;
 
 initialization

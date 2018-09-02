@@ -42,16 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader, uVarNestedDownloader;
 
 type
-  TDownloader_CasSk = class(TNestedDownloader)
+  TDownloader_CasSk = class(TVarNestedDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -69,15 +66,16 @@ uses
 // http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
 // http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*cas\.sk/(?:clanok|clanky)/[0-9]+/.+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'cas\.sk/(?:clanok|clanky|video)/[0-9]+/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1 class="article">(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_TITLE;
+  REGEXP_NESTED_URLS: array[0..2] of string
     = ('<object[^>]*\sdata="(?P<URL>https?://.+?)"',
-       '\bso\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>https?://.+?)''');
+       '\bso\.addVariable\s*\(\s*''file''\s*,\s*''(?P<URL>https?://.+?)''',
+       REGEXP_URL_PARAM_FLASHVARS_FILE);
 
 { TDownloader_CasSk }
 
@@ -88,51 +86,27 @@ end;
 
 class function TDownloader_CasSk.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_CasSk.Create(const AMovieID: string);
-var i: integer;
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  SetLength(NestedUrlRegExps, Length(REGEXP_EXTRACT_NESTED_URLS));
-  for i := 0 to Pred(Length(REGEXP_EXTRACT_NESTED_URLS)) do
-    NestedUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_NESTED_URLS[i]);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  AddNestedUrlRegExps(REGEXP_NESTED_URLS);
 end;
 
 destructor TDownloader_CasSk.Destroy;
-var i: integer;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  for i := 0 to Pred(Length(NestedUrlRegExps)) do
-    RegExFreeAndNil(NestedUrlRegExps[i]);
+  ClearNestedUrlRegExps;
   inherited;
 end;
 
 function TDownloader_CasSk.GetMovieInfoUrl: string;
 begin
   Result := MovieID;
-end;
-
-function TDownloader_CasSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
-begin
-  Result := False;
-  try
-    for i := 0 to Pred(Length(NestedUrlRegExps)) do
-      begin
-      NestedUrlRegExp := NestedUrlRegExps[i];
-      if inherited AfterPrepareFromPage(Page, PageXml, Http) then
-        begin
-        Result := True;
-        Break;
-        end;
-      end;
-  finally
-    NestedUrlRegExp := nil;
-    end;
 end;
 
 initialization

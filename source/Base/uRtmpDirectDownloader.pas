@@ -114,7 +114,7 @@ begin
     if UnpreparedName = '' then
       SetName(ExtractUrlFileName(MovieID));
     MovieURL := MovieID;
-    SetRtmpDumpOption('r', MovieID);
+    RtmpUrl := MovieID;
     SetPrepared(True);
     Result := True;
     end;

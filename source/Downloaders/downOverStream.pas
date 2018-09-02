@@ -55,6 +55,7 @@ type
       {$ENDIF}
     public
       class function Provider: string; override;
+      class function Features: TDownloaderFeatures; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -95,6 +96,13 @@ const
 class function TDownloader_OverStream.Provider: string;
 begin
   Result := 'OverStream.net';
+end;
+
+class function TDownloader_OverStream.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles {$ENDIF}
+    ];
 end;
 
 class function TDownloader_OverStream.UrlRegExp: string;

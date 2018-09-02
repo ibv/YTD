@@ -1,11 +1,92 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.86                                     (c) 2009-11 Pepak
+YouTube Downloader v0.87                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.87:
+
+    * Barrandov.tv: Support for the new player. In order to download from
+      Barrandov.tv, you will need to find its Secure Token and enter it into
+      YTD's configuration (see the configuration settings in the documentation
+      or the new user interface to configuration settings as described below).
+      Don't ask me where to get the Token, for legal reasons I won't answer
+      (while I don't think it would violate the law for me to do so, I am not
+      willing to risk a lawsuit).
+
+      Thanks Killerman for discovering the required parameters.
+    
+    * Cas.sk: Added support for several new types of embedded videos.
+
+    * CeskaTelevize.cz: Fixed the missing extension in filename.
+
+    * DrsnySvet.cz: Support for media hosted directly on the server.
+
+    * iPrima.cz: Works again. I am not sure YTD downloads the highest-quality 
+      version - if it does not, please let me know.
+
+    * SportStream.cz: Updated to support SportStream.Tiscali.cz.
+
+    * New distribution archive: Until now a ZIP archive was used to distribute
+      YTD. Unfortunately, too many people failed to unpack it properly, running
+      only the .exe file without the supporting DLLs and then wondering why
+      the downloads don't work. Since this version a new .exe-based archive is 
+      used, with easy installation form available.
+
+      For the advanced users: You don't need to use the GUI installation. The
+      archive is simply a self-extracting 7-zip file which you can unpack
+      manually, then manually create the required shortcuts. Basically, this
+      is all the GUI installation does, anyway.
+
+      You can run the distribution archive straight away. The GUI installation
+      form offers a button to start YTD without installation, and you can also
+      start it with proper command-line arguments - either regular arguments
+      of the CLI version, or --gui to run the graphical version.
+
+      You can find more details under "Distribution archive" in the docs.
+
+    * The new distribution model also provides support for automatic upgrades.
+      In the GUI, all offers to download the newest version were amended to
+      offer a choice between a download (just like before) and an upgrade.
+      Note that the upgrade requires a restart of YTD, and thus will force all
+      transfers to stop.
+
+      You can also upgrade the program from the command-line with argument -u.
+      YTD will download and perform the upgrade, returning the result as an
+      errorlevel. Please note that due to technical reasons, if you run the
+      upgrade from a script, you should follow it with a delay of about 0.5
+      second, to allow proper overwriting of the files.
+       
+    * GUI: Added support for graphical editor of each downloader's settings:
+      In the configuration dialog (F9) is a new tab "Downloader settings",
+      where you can specify settings for each particular downloader more
+      comfortably than using the old method of editing the XML file. If a
+      downloader doesn't appear here, it has no configuration options.
+
+      When you start YTD without any command-line parameters, a new process
+      is spawned and the old one quits immediately. This slightly slows down 
+      the startup, but on the other hand frees the caller's console (if you
+      start YTD from a console program, e.g. CMD or FAR Manager). You can
+      still get the previous behavior (direct start without any new processes)
+      by running the CLI version of YTD, by starting it from Delphi IDE (for
+      debugging purposes) or by using the command-line argument --gui.
+
+      Fixed the bug which prevented creation of shortcuts on the desktop and
+      in the Start menu.
+
+    * RTMPDUMP_DLL library updated to version 2.4 (GIT date 20.7.2011).
+      This version supports Flash 10 handshake, which should solve bug
+      "HandShake: Type mismatch: client sent 6, server answered 9" with
+      many recently updated servers.
+
+    * Fixed several incompatibilities with Delphi 2009 and FreePascal.
+
+    * Updated the slovak translation (V. Kubala).
+
+
 
   v0.86:
 

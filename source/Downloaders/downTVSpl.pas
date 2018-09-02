@@ -135,11 +135,11 @@ begin
     Streamer := 'rtmp://' + Host + ':1935' + Path;
     {$ENDIF}
     MovieUrl := Streamer + '/mp4:' + Location;
-    AddRtmpDumpOption('r', Streamer);
-    AddRtmpDumpOption('y', 'mp4:' + Location);
-    AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-    AddRtmpDumpOption('W', 'http://www.tvs.pl/gfx/mediaplayer-5.3-licensed/player.swf');
-    AddRtmpDumpOption('p', 'http://www.tvs.pl/' + MovieID);
+    Self.RtmpUrl := Streamer;
+    Self.Playpath := 'mp4:' + Location;
+    Self.FlashVer := FLASH_DEFAULT_VERSION;
+    Self.SwfVfy := 'http://www.tvs.pl/gfx/mediaplayer-5.3-licensed/player.swf';
+    Self.PageUrl := 'http://www.tvs.pl/' + MovieID;
     SetPrepared(True);
     Result := True;
     end;

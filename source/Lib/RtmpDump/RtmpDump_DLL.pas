@@ -9,7 +9,7 @@ type
     end;
   TRtmpDumpOptions = array of TRtmpDumpOption;
 
-  TRtmpDumpDownloadProgressCallback = procedure(Tag: integer; DownloadedSize: integer; PercentDone: double; var DoAbort: integer); cdecl;
+  TRtmpDumpDownloadProgressCallback = procedure(Tag, DownloadedSize: longint; PercentDone: double; var DoAbort: longint); cdecl;
 
 function RtmpDump_Init: boolean;
 procedure RtmpDump_Done;

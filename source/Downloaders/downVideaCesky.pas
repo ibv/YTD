@@ -62,6 +62,7 @@ type
       function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
+      class function Features: TDownloaderFeatures; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -109,6 +110,13 @@ begin
   Result := 'VideaCesky.cz';
 end;
 
+class function TDownloader_VideaCesky.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles {$IFDEF CONVERTSUBTITLES} , dfSubtitlesConvert {$ENDIF} {$ENDIF}
+    ];
+end;
+
 class function TDownloader_VideaCesky.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
@@ -128,7 +136,7 @@ begin
   for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
     fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i]);
     {$IFDEF CONVERTSUBTITLES}
-    ConvertSubtitles := True;
+    ConvertSubtitles := OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT;
     {$ENDIF}
   {$ENDIF}
 end;
@@ -154,17 +162,11 @@ begin
 end;
 
 procedure TDownloader_VideaCesky.SetOptions(const Value: TYTDOptions);
-{$IFDEF SUBTITLES}
-  {$IFDEF CONVERTSUBTITLES}
-var s: string;
-  {$ENDIF}
-{$ENDIF}
 begin
   inherited;
   {$IFDEF SUBTITLES}
     {$IFDEF CONVERTSUBTITLES}
-    if Value.ReadProviderOption(Provider, 'convert_subtitles', s) then
-      ConvertSubtitles := StrToIntDef(s, 0) <> 0;
+    ConvertSubtitles := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
     {$ENDIF}
   {$ENDIF}
 end;

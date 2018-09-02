@@ -1,4 +1,4 @@
-.TH RTMPGW 8 "2010-03-22" "RTMPDump v2.2b"
+.TH RTMPGW 8 "2010-05-02" "RTMPDump v2.2e"
 .\" Copyright 2010 Howard Chu.
 .\" Copying permitted according to the GNU General Public License V2.
 .SH NAME
@@ -100,7 +100,8 @@ Overrides the protocol in the RTMP URL.
   1 = rtmpt
   2 = rtmpe
   3 = rtmpte
-  5 = rtmps
+  4 = rtmps
+  5 = rtmpts
 .fi
 .TP
 \fB\-\-socks		\-S\fP\ \fIhost:port\fP
@@ -148,7 +149,7 @@ prefixing the type with 'N' and specifying the name before the value, e.g.
 NB:myFlag:1. This option may be used multiple times to construct arbitrary
 AMF sequences. E.g.
 .nf
-  -C B:1 -C S:authMe -C O:1 -C NN:code:1.23 -C NS:flag:ok -C O:0
+  \-C B:1 \-C S:authMe \-C O:1 \-C NN:code:1.23 \-C NS:flag:ok \-C O:0
 .fi
 .SS "Session Parameters"
 These options take effect after the Connect request has succeeded.
@@ -259,7 +260,7 @@ is equivalent to the
 .BR rtrmpdump (1)
 invocation
 .nf
-	rtmpdump -r rtmp://server/myapp -y somefile
+	rtmpdump \-r rtmp://server/myapp \-y somefile
 .fi
 
 Note that only the shortform (single letter) options are supported.

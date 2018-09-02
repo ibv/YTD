@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.86                                     (c) 2009-11 Pepak
+YouTube Downloader v0.87                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -47,17 +47,14 @@ nedostatkù, se kterými je tøeba poèítat:
 
 3) Aby šlo stahovat z RTMP streamù, jsou vyžadovány následující DLL knihovny:
    - RTMPDUMP_DLL.DLL - je souèástí YTD.
-   - CRYPTOEAY32-0.9.8.DLL - souèást OpenSSL verze 0.9.8. V OpenSSL mùže být
-       pojmenována i CRYPTOEAY32.DLL.
-   - SSLEAY32-0.9.8.DLL - souèást OpenSSL. Alternativní jméno SSLEAY32.DLL.
 
 4) Nelze stoprocentnì detekovat, zda bylo video staženo kompletní.
 
 Od verze 0.78 lze pøímo stahovat URL založená na protokolu RTMP - mùžete tedy
 do programu vložit adresy jako "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4".
 Požadavkem ovšem je, aby pøíslušnému serveru staèila ke spuštìní videa právì
-jenom adresa (a nebyly vyžadovány dodateèné parametry) - v takovém pøípadì
-YTD použít nelze.
+jenom adresa (a nebyly vyžadovány dodateèné parametry) - v jiném pøípadì YTD
+použít nelze (použijte RTMPDUMP).
 
 
 
@@ -171,6 +168,51 @@ Ve verzi spouštìné z pøíkazového øádku tato funkce podporována není - tuto
 verzi je možné skriptovat "samu od sebe" a mì pøipadá zbyteèné zavádìt
 duplicitní funkci, která pøinese jen zvýšené riziko chyb a žádnou skuteènou
 výhodu.
+
+
+
+DISTRIBUÈNÍ ARCHÍV
+------------------
+
+Až do verze 0.86 vèetnì byl YTD distribuován v archívu ZIP s tím, že si ho
+uživatel sám rozbalí tam, kam bude potøebovat. Toto øešení jsem zvolil kvùli
+tomu, aby šlo YTD snadno pøenášet mezi poèítaèi a operaèními systémy, bohužel
+se ale postupnì zaèalo objevovat èím dál více lidí, kteøí prostì otevøeli
+ZIP jako adresáø (od Windows XP výše), odklikli ytd.exe, vesele ignorovali
+hlášení Windows, že to nemusí fungovat správnì, pokud se nerozbalí všechny
+soubory, a poté se na mì obraceli s dotazy, proè jim nefunguje stahování z
+Èeské televize...
+
+Od verze 0.87 tedy pøecházím k novému distribuènímu modelu, založeném na
+formátu .exe. Snažil jsem se ale zachovat co nejvíce výhod tradièního 
+distribuèního modelu a dokonce k nim pøidat:
+
+1. Distribuèní archív je bìžný samorozbalovací archív ve formátu 7-zip
+   (http://www.7-zip.org). Pokud tedy nemùžete nebo nechcete projít bìžnou
+   instalací, mùžete archív rozbalit pomocí 7-zipu "ruènì". Stejnì jako
+   døíve YTD žádnou skuteènou instalaci nepotøebuje, staèí ho nahrát do
+   libovolného adresáøe.
+
+2. Pokud spustíte distribuèní archív, nabídne vám možnost instalace, která
+   pouze zkopíruje soubory do zvoleného adresáøe, volitelnì založí zástupce, 
+   a spustí grafickou verzi YTD. Rozhodnì neprovádí žádné zápisy mimo zvolený 
+   adresáø (kromì volitelných zástupcù na Ploše a ve Start menu) ani v 
+   registrech, takže by nemìla nic poškodit.
+
+3. Z instalátoru máte dále možnost pøímo spustit YTD, bez instalace. Je to
+   pomalejší (distribuèní archív stejnì musí rozbalit do doèasného adresáøe)
+   a nepøátelské k firewallùm (protože vlastní pøenosy provádí pokaždé jiný
+   exe soubor), ale funkènì je to plnohodnotné.
+
+4. Pokud spustíte distribuèní archív s parametrem --gui, rovnou se spustí
+   grafická verze bez instalace (jako v bodu 3, ale bez zásahu uživatele).
+
+5. Pokud spustíte distribuèní archív s jinými parametry, spustí se standardní
+   command-line verze YTD a tyto parametry se jí pøedají. Mùžete tedy napø.
+   spustit stahování videa, aniž byste se museli obtìžovat s instalací.
+
+6. Tento model distribuce navíc umožòuje automatickou aktualizaci programu
+   (z grafického rozhraní i z pøíkazové øádky - viz parametr -u).
 
 
 
@@ -341,16 +383,21 @@ a "0" (ne).
   - Potomek <ytd>. V této sekci se nacházejí specifická nastavení pro 
     jednotlivé poskytovatele.
 
+  <Barrandov_tv>
+    - Potomek <modules>; obsahuje nastavení pro TV Barrandov.
+
+    <secure_token>
+      - Potomek <Barrandov_tv>; definuje tzv. SecureToken, který používá
+        pøehravaè Barrandova k identifikaci oprávnìného klienta. Bez tohoto
+        tokenu nelze videa pøehrávat ani stahovat. K získání tohoto tokenu
+        se nebudu z právních dùvodù vyjadøovat, použijte Google nebo jiný
+        vyhledávací nástroj.
+      - Možná je jakákoliv hodnota.
+      - Výchozí hodnotou je prázdný øetìzec (který ovšem nebude fungovat).
+
   <CeskaTelevize_cz>
     - Potomek <modules>; obsahuje nastavení pro Èeskou televizi a odvozené
       odkazy (Port, ÈT24 atd.).
-
-    <prefer_real_media>
-      - Potomek <CeskaTelevize_cz>; urèuje, ve kterém formátu se bude video
-        stahovat.
-      - Možné hodnoty jsou "0" (používat formáty Microsoftu) a "1" (používat
-        formáty Real Media).
-      - Výchozí hodnotou je "0" (stahovat ve formátech Microsoft).
 
     <live_stream>
       - Potomek <CeskaTelevize_cz>; urèuje, jestli se video stream stahuje
@@ -506,7 +553,7 @@ SYNTAXE
 
   kde <param> je buï URL, nebo jedna z následujících možností:
 
-    -?, -h ........ Zobrazí nápovìdu.
+    -h, -? ........ Zobrazí nápovìdu.
     -i <soubor> ... Stáhne všechna URL z textového souboru <soubor>, kde
                     každý øádek reprezentuje jednu URL.
     -o <cesta> .... Soubory se budou stahovat do adresáøe <cesta>. Výchozí
@@ -515,19 +562,29 @@ SYNTAXE
                     které skonèily chybou.
     -s <zdroj> .... <zdroj> (soubor nebo URL) se prohledá na podporované
                     odkazy a ty nalezené se stáhnou.
-    -l ............ Zobrazí seznam podporovaných poskytovatelù médií.
-    -v ............ Zkontroluje dostupnost novìjší verze programu.
     -n ............ Nikdy nepøepisovat existující soubory.
     -a ............ Vždy pøepsat existující soubory.
     -r ............ Pokud soubor se stejným názvem existuje, automaticky
                     vygenerovat nový název, který už bude jedineèný.
     -k ............ Pokud soubor existuje, zeptat se uživatele (výchozí).
+    -l ............ Zobrazí seznam podporovaných poskytovatelù médií.
+    -v ............ Zkontroluje dostupnost novìjší verze programu.
+    -u ............ Pokud existuje novìjší verze, stáhne ji a zaktualizuje se.
+                    Pozor, po aktualizaci byste nemìli YTD tak pùl sekundy
+                    spouštìt, aby mìl pøíležitost pøepsat svùj .exe soubor
+                    novou verzí.
+    -ah[-] ........ (Ne-) pokusit se použít HTML parser na neznámá URL.
+
 
   Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
          ytd.exe -i c:\temp\seznam.txt
          ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
+
+  K dispozici jsou i tøi speciální parametry, sloužící pro instalace resp.
+  aktualizace programu. Nejsou zdokumentovány, zájemce odkazuji na funkci
+  FindStartupType v YTD.dpr.
 
 
 
@@ -549,6 +606,8 @@ jsou:
   4 ..... Chybný obsah parametru. Chyba je vyvolána u parametrù s povinnou
           hodnotou, pokud sice hodnota je zadána, ale její obsah není oèekáván
           - napø. pokud za parametru -i zadáte název neexistujícího souboru).
+  5 ..... Nepodaøilo se zjistit nebo stáhnout aktuální verzi.
+  253 ... Instalace nebo upgrade selhala.
   254 ... Aplikace byla pøerušena z popudu uživatele.
   255 ... V aplikaci došlo k výjimce, tzn. chyba v programu.
 
@@ -637,6 +696,8 @@ následující parametry:
   -nogui ........ Do programu nebude zahrnuta grafická verze.
   -xxx .......... Do programu bude zahrnuta podpora pro porno providery.
   -noxxx ........ Do programu nebude zahrnuta podpora pro porno providery.
+  -setup ........ Do programu bude zahrnut kód pro instalace a upgrade.
+  -nosetup ...... Do programu nebude zahrnut kód pro instalace a upgrade.
 
   (a nìkolik dalších parametrù, které jsou nedokumentované a nedoporuèené)
 

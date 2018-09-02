@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.86                                     (c) 2009-11 Pepak
+YouTube Downloader v0.87                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -49,10 +49,6 @@ interface rather than command-line. The implementation has several problems:
 3) In order to download RTMP streams, including those which are not encrypted,
    these libraries are required in the exe-file's directory:
    - RTMPDUMP_DLL.DLL - provided with YouTube Downloader.
-   - CRYPTOEAY32-0.9.8.DLL - a component of OpenSSL version 0.9.8. It may be
-     called CRYPTOEAY32.DLL in the distribution archive, but YTD expects the
-     name which includes version number.
-   - SSLEAY32-0.9.8.DLL - again, a component of OpenSSL 0.9.8.
 
 4) It's impossible to reliably detect whether a download was complete or not.
    Please check each downloaded file to make sure it is complete.
@@ -176,6 +172,51 @@ reason being, the conversion introduces a lot of complexity and possible
 errors and since the command-line version is inherently scriptable, it would
 bring too few advantages to overcome this drawback. If you need to convert
 the downloaded files, you can always do so in a BAT file.
+
+
+
+THE DISTRIBUTION ARCHIVE
+------------------------
+
+Up to version 0.86, YTD was distrubuted in the form of a standard ZIP archive,
+which would be manually unpacked to any desired location. Unfortunately, many
+people failed to do that, and instead opened the archive as a folder (supported
+in Windows XP or newer) and executed the ytd.exe file, while blisfully ignoring
+Windows' warning that they should unpack all files or the product may not work
+properly. And it didn't.
+
+Since version 0.87, a new distribution scheme is used. YTD is now distributed
+as an .exe file. But I took a lot of pains to maintain as many good features
+of the ZIP archive as possible while adding new ones:
+
+1. The distribution archive is a standard self-extracting archive in 7-zip
+   (http://www.7-zip.org) format, which you can manually unpack using 7-zip
+   instead of performing the "installation" (quoted, because YTD traditionally
+   works without any installation if only you unpack it to any chosen folder).
+
+2. Upon execution, the distribution archive shows a basic install dialog. You
+   can select a desired target directory and decide which, if any, shortcuts
+   you want made, then click the Install button. All required files will be
+   copied to the chosen directory, shortcuts will be made and the GUI version
+   of YTD started. No changes are made to the registry or the filesystem, 
+   outside of the selected directory and (if enabled) the shortcuts.
+
+3. The install dialog also provides a button for running YTD right away,
+   without installation. That starts a full-featured YTD, only somewhat slower
+   to start (the files need to be unpacked to a temporary directory first)
+   and less friendly to firewalls (because a different temp directory will be 
+   used every time).
+
+4. If you start the distribution archive with --gui argument, the graphical
+   version from item 3 will be started right away, without user interaction.
+
+5. If you start the distribution archive with other arguments, these will be
+   passed to the command-line version of YTD and processed in the usual way.
+   That means you can e.g. download a movie without ever unpacking the archive.
+
+6. One nice side benefit of an .exe-based distribution is that it's quite easy
+   to provide automatic program upgrade, so I did that in both GUI and the
+   CLI (see argument -u).
 
 
 
@@ -352,16 +393,20 @@ except in file/directory names. Logical values (true-false) are stored as
 <modules>
   - Child of <ytd>. This section stores provider-specific options.
 
+  <Barrandov_tv>
+    - Child of <modules>; contains settings for TV Barrandov.
+
+    <secure_token>
+      - Child of <Barrandov_tv>; defines the SecureToken used by Barrandov's
+        servers to identify valid clients. In order to request movies from
+        the server, you need this token. I will not disclose how to get this
+        token, for legal reasons; try Google or other search engines.
+      - Any value is possible here.
+      - Default value is an empty string (which won't work).
+
   <CeskaTelevize_cz>
     - Child of <modules>; contains settings used by Czech television and
       related providers (Port, CT24 etc.).
-
-    <prefer_real_media>
-      - Child of <CeskaTelevize_cz>; determines the format of video files
-        downloaded from Czech television.
-      - Possible values are "0" (use Microsoft's formats) and "1" (use Real
-        Media's formats).
-      - Default value is "0" (use Microsoft's formats).
 
     <live_stream>
       - Child of <CeskaTelevize_cz>; gives you an option to choose, whether
@@ -524,7 +569,7 @@ SYNTAX
 
   where <param> is either an URL or one of the following:
 
-    -?, -h ........ Show help.
+    -h, -? ........ Show help.
     -i <file> ..... Downloads all URLs listed in the text file <file>, where
                     each line represents one URL.
     -o <dir> ...... Downloaded files will be stored in directory <dir>. If this
@@ -533,19 +578,29 @@ SYNTAX
     -e <file> ..... Log all failed downloads to file <file>.
     -s <source> ... <source> (local file or URL) is searched for known URLs and
                     these will be downloaded.
-    -l ............ Displays a list of supported media providers.
-    -v ............ Checks for availability of a newer version of YTD.
     -n ............ Never overwrite existing files. Skip the download instead.
     -a ............ Always overwrite existing files.
     -r ............ If a file with matching filename already exists, generate
                     a new unique filename.
     -k ............ Ask the user what to do if a file already exists (default).
+    -l ............ Displays a list of supported media providers.
+    -v ............ Checks for availability of a newer version of YTD.
+    -u ............ If a new version is available, downloads it and upgrades
+                    itself. Note that you should not call YTD again until about
+                    0.5 second after it returns from an upgrade, otherwise its
+                    .exe file may not be overwritten correctly.
+    -ah[-] ........ [Don't] try to use HTML parser on unknown URLs.
+
 
   Ex.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
        ytd.exe -i c:\temp\seznam.txt
        ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   If no arguments are provided, the graphical version of YTD is started.
+
+  Note: There are three undocumented arguments used for setup, install or 
+  upgrade. If you are interested in them, look at the FindStartupType function
+  in YTD.dpr.
 
 
 
@@ -568,6 +623,8 @@ are:
   4 ..... Invalid content of a parameter. A required parameter was provided,
           but its content was somehow invalid (file didn't exist, list file
           didn't contain any URLs etc.).
+  5 ..... Failed to find or download the newest version.
+  253 ... Installation or upgrade failed.
   254 ... User abort.
   255 ... Exception was raised. As all exceptions should be handled, this code
           indicates a bug in YouTube Downloader.
@@ -652,6 +709,8 @@ compiler-specific requirements. It can accept a number of arguments:
   -nogui ........ Remove the graphical version from YTD.
   -xxx .......... Include support for porn providers in YTD.
   -noxxx ........ Remove support for porn providers from YTD.
+  -setup ........ Include support for automatic installation and upgrade.
+  -nosetup ...... Remove support for automatic installation and upgrade.
 
   (and several others, which are undocumented and unsupported)
 

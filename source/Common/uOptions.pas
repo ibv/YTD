@@ -41,6 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, ShlObj, FileCtrl,
+  HttpSend,
   uLanguages, uXml;
 
 type
@@ -121,13 +122,19 @@ type
       function GetSubtitlesEnabled: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetSubtitlesEnabled(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
+      function CreateHttp: THttpSend; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create; virtual;
       destructor Destroy; override;
       procedure Init; virtual;
       procedure Save(IgnoreErrors: boolean = True); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ReadProviderOption(const Provider, Option: string; out Value: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure WriteProviderOption(const Provider, Option, Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ReadProviderOptionDef(const Provider, Option: string; const Default: string): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ReadProviderOptionDef(const Provider, Option: string; const Default: integer): integer; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ReadProviderOptionDef(const Provider, Option: string; const Default: boolean): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WriteProviderOption(const Provider, Option, Value: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WriteProviderOption(const Provider, Option: string; Value: integer); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WriteProviderOption(const Provider, Option: string; Value: boolean); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ReadUrlList(List: TStringList); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure WriteUrlList(List: TStringList); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
@@ -137,6 +144,9 @@ type
       function GetNewestVersion(out Version, Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF THREADEDVERSION}
       procedure GetNewestVersionInBackground(OnDone: TGetNewestVersionEvent); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      {$ENDIF}
+      {$IFDEF SETUP}
+      function DownloadNewestVersion(out FileName: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
       property FileName: string read fXmlFileName;
     public
@@ -169,7 +179,10 @@ type
 implementation
 
 uses
-  uCompatibility, HttpSend;
+  {$IFDEF SETUP}
+  uFunctions,
+  {$ENDIF}
+  uCompatibility;
 
 const
   OverwriteModeStrings: array[TOverwriteMode] of string
@@ -326,6 +339,9 @@ begin
   for i := 1 to Length(Result) do
     if not CharInSet(Result[i], ['A'..'Z', 'a'..'z', '0'..'9', '_']) then
       Result[i] := '_';
+  if Result <> '' then
+    if CharInSet(Result[1], ['0'..'9']) then
+      Result := '_' + Result;
 end;
 
 function TYTDOptions.ReadProviderOption(const Provider, Option: string; out Value: string): boolean;
@@ -343,9 +359,46 @@ begin
     end;
 end;
 
+function TYTDOptions.ReadProviderOptionDef(const Provider, Option: string; const Default: string): string;
+var s: string;
+begin
+  if ReadProviderOption(Provider, Option, s) then
+    Result := s
+  else
+    Result := Default;
+end;
+
+function TYTDOptions.ReadProviderOptionDef(const Provider, Option: string; const Default: integer): integer;
+var s: string;
+begin
+  if ReadProviderOption(Provider, Option, s) then
+    Result := StrToIntDef(s, Default)
+  else
+    Result := Default;
+end;
+
+function TYTDOptions.ReadProviderOptionDef(const Provider, Option: string; const Default: boolean): boolean;
+var s: string;
+begin
+  if ReadProviderOption(Provider, Option, s) then
+    Result := XmlToBoolean(s, Default)
+  else
+    Result := Default;
+end;
+
 procedure TYTDOptions.WriteProviderOption(const Provider, Option, Value: string);
 begin
   SetOption(Format(XML_PATH_PROVIDEROPTION, [TranslateNodeName(Provider), TranslateNodeName(Option)]), Value);
+end;
+
+procedure TYTDOptions.WriteProviderOption(const Provider, Option: string; Value: integer);
+begin
+  WriteProviderOption(Provider, Option, IntToStr(Value));
+end;
+
+procedure TYTDOptions.WriteProviderOption(const Provider, Option: string; Value: boolean);
+begin
+  WriteProviderOption(Provider, Option, BooleanToXml(Value));
 end;
 
 function TYTDOptions.BooleanToXml(const Value: boolean): string;
@@ -723,6 +776,26 @@ end;
 
 {$ENDIF}
 
+function TYTDOptions.CreateHttp: THttpSend;
+begin
+  Result := THttpSend.Create;
+  try
+    if ProxyActive then
+      begin
+      Result.ProxyHost := ProxyHost;
+      Result.ProxyPort := ProxyPort;
+      Result.ProxyUser := ProxyUser;
+      Result.ProxyPass := ProxyPassword;
+      end;
+  except
+    FreeAndNil(Result);
+    Raise;
+    end;
+end;
+
+const
+  NEWEST_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://ytd.pepak.net' {$IFNDEF XXX} + '/?lite=1' {$ENDIF} ;
+
 function TYTDOptions.GetNewestVersion(out Version, Url: string): boolean;
 
   function FindHeader(Http: THttpSend; Header: string; out Value: string): boolean;
@@ -747,16 +820,9 @@ var Http: THttpSend;
 begin
   Result := False;
   Version := '';
-  Url := 'http://ytd.pepak.net' {$IFNDEF XXX} + '/?lite=1' {$ENDIF};
-  Http := THttpSend.Create;
+  Url := NEWEST_VERSION_URL;
+  Http := CreateHttp;
   try
-    if ProxyActive then
-      begin
-      Http.ProxyHost := ProxyHost;
-      Http.ProxyPort := ProxyPort;
-      Http.ProxyUser := ProxyUser;
-      Http.ProxyPass := ProxyPassword;
-      end;
     if Http.HttpMethod('HEAD', Url) then
       if (Http.ResultCode >= 200) and (Http.ResultCode < 400) then
         if FindHeader(Http, 'X-YTD-Version', Version) then
@@ -782,5 +848,41 @@ begin
     Http.Free;
     end;
 end;
+
+{$IFDEF SETUP}
+function TYTDOptions.DownloadNewestVersion(out FileName: string): boolean;
+var Http: THttpSend;
+    Url: string;
+    Again: boolean;
+begin
+  Result := False;
+  Url := NEWEST_VERSION_URL;
+  Http := CreateHttp;
+  try
+    repeat
+      Again := False;
+      Http.Clear;
+      if Http.HttpMethod('HEAD', Url) then
+        if CheckRedirect(HTTP, Url) then
+          Again := True
+        else
+          begin
+          Http.Clear;
+          if Http.HttpMethod('GET', Url) then
+            if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
+              begin
+              FileName := GetTempDir + 'ytd-upgrade' + ExtractFileExt(Url);
+              if FileExists(FileName) then
+                SysUtils.DeleteFile(FileName);
+              Http.Document.SaveToFile(FileName);
+              Result := True;
+              end;
+          end;
+    until not Again;
+  finally
+    Http.Free;
+    end;
+end;
+{$ENDIF}
 
 end.

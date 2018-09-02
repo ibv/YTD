@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, CommCtrl,
-  {$IFDEF DELPHI2009_UP} RtlConsts, {$ELSE} Consts, {$ENDIF}
+  {$IFDEF DELPHI2009_UP} RtlConsts, {$ELSE} {$IFDEF FPC} RtlConsts, {$ELSE} Consts, {$ENDIF} {$ENDIF}
   uApiCommon, uApiFunctions, uApiForm;
 
 type

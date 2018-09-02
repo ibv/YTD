@@ -55,6 +55,7 @@ type
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
+      class function Features: TDownloaderFeatures; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -81,6 +82,13 @@ const
 class function TDownloader_PrahovaHD.Provider: string;
 begin
   Result := 'PrahovaHD.ro';
+end;
+
+class function TDownloader_PrahovaHD.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [
+    {$IFDEF SUBTITLES} dfSubtitles {$ENDIF}
+    ];
 end;
 
 class function TDownloader_PrahovaHD.UrlRegExp: string;
@@ -130,8 +138,8 @@ begin
     {$ENDIF}
     SetName(ChangeFileExt(Location, ''));
     MovieUrl := Streamer + '/mp4:' + Location;
-    AddRtmpDumpOption('r', Streamer);
-    AddRtmpDumpOption('y', 'mp4:' + Location);
+    Self.RtmpUrl := Streamer;
+    Self.Playpath := 'mp4:' + Location;
     SetPrepared(True);
     Result := True;
     end;

@@ -66,13 +66,13 @@ uses
 
 // http://www.drsnysvet.cz/proskoleni-mestske-policie-pri-silnicni-kontrole/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*drsnysvet\.cz/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*drsnysvet\.cz/(?!wp-content/uploads/)';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_EXTRACT_TITLE = '<p class="plug-title">\s*<a\s[^>]*>(?P<TITLE>.*?)</a>';
-  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="(?P<URL>.+?)"';
+  REGEXP_EXTRACT_URL = '<param\s+name="(?:movie|flashvars)"\s+value="(?:file=)?(?P<URL>https?://.+?)"';
 
 { TDownloader_DrsnySvet }
 

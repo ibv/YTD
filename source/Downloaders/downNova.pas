@@ -43,6 +43,14 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
+  {$IFDEF GUI}
+    guiDownloaderOptions,
+    {$IFDEF GUI_WINAPI}
+      guiOptionsWINAPI_Nova,
+    {$ELSE}
+      guiOptionsVCL_Nova,
+    {$ENDIF}
+  {$ENDIF}
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
@@ -60,10 +68,17 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       function Download: boolean; override;
     end;
+
+const
+  OPTION_NOVA_LOWQUALITY {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'low_quality';
+  OPTION_NOVA_LOWQUALITY_DEFAULT = False;
 
 implementation
 
@@ -97,11 +112,19 @@ begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
+{$IFDEF GUI}
+class function TDownloader_Nova.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_Nova;
+end;
+{$ENDIF}
+
 constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES)
+  MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES);
+  LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
 end;
 
 destructor TDownloader_Nova.Destroy;
@@ -198,9 +221,9 @@ begin
                 else
                   PlayPath := 'mp4:' + FlvStream;
                 MovieUrl := FlvServer + '/' + PlayPath;
-                AddRtmpDumpOption('r', MovieURL);
-                AddRtmpDumpOption('y', PlayPath);
-                //AddRtmpDumpOption('f', 'WIN 10,1,82,76');
+                Self.RtmpUrl := MovieURL;
+                Self.Playpath := PlayPath;
+                //AddRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
                 //AddRtmpDumpOption('W', 'http://voyo.nova.cz/static/shared/app/flowplayer/13-flowplayer.commercial-3.1.5-17-002.swf');
                 //AddRtmpDumpOption('t', FlvServer);
                 Result := True;
@@ -216,14 +239,6 @@ begin
     end;
 end;
 
-procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
-var s: string;
-begin
-  inherited;
-  if Value.ReadProviderOption(Provider, 'low_quality', s) then
-    LowQuality := StrToIntDef(s, 0) <> 0;
-end;
-
 function TDownloader_Nova.Download: boolean;
 begin
   Result := inherited Download;
@@ -234,10 +249,16 @@ begin
         if FileGetSize(FileName) = 0 then
           begin
           SysUtils.DeleteFile(FileName);
-          SetRtmpDumpOption('y', 'flv:' + FlvStream);
+          Self.Playpath := 'flv:' + FlvStream;
           Result := inherited Download;
           end;
   {$ENDIF}
+end;
+
+procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
 end;
 
 initialization

@@ -16,7 +16,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with librtmp see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
@@ -150,10 +151,10 @@ typedef BIGNUM * MP_t;
 #include "dhgroups.h"
 
 /* RFC 2631, Section 2.1.5, http://www.ietf.org/rfc/rfc2631.txt */
-static bool
+static int
 isValidPublicKey(MP_t y, MP_t p, MP_t q)
 {
-  int ret = true;
+  int ret = TRUE;
   MP_t bn;
   assert(y);
 
@@ -165,7 +166,7 @@ isValidPublicKey(MP_t y, MP_t p, MP_t q)
   if (MP_cmp(y, bn) < 0)
     {
       RTMP_Log(RTMP_LOGERROR, "DH public key must be at least 2");
-      ret = false;
+      ret = FALSE;
       goto failed;
     }
 
@@ -175,7 +176,7 @@ isValidPublicKey(MP_t y, MP_t p, MP_t q)
   if (MP_cmp(y, bn) > 0)
     {
       RTMP_Log(RTMP_LOGERROR, "DH public key must be at most p-2");
-      ret = false;
+      ret = FALSE;
       goto failed;
     }
 

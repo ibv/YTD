@@ -126,8 +126,8 @@ begin
   else
     begin
     MovieUrl := Server + '/' + Stream;
-    AddRtmpDumpOption('r', MovieURL);
-    AddRtmpDumpOption('y', Stream);
+    Self.RtmpUrl := MovieURL;
+    Self.Playpath := Stream;
     SetPrepared(True);
     Result := True;
     end;

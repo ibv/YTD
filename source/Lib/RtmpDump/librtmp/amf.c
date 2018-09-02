@@ -18,7 +18,8 @@
  *
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with librtmp see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
  *  http://www.gnu.org/copyleft/lgpl.html
  */
 
@@ -26,6 +27,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "rtmp_sys.h"
 #include "amf.h"
 #include "log.h"
 #include "bytes.h"
@@ -125,7 +127,7 @@ AMF_DecodeNumber(const char *data)
   return dVal;
 }
 
-bool
+int
 AMF_DecodeBoolean(const char *data)
 {
   return *data != 0;
@@ -254,7 +256,7 @@ AMF_EncodeNumber(char *output, char *outend, double dVal)
 }
 
 char *
-AMF_EncodeBoolean(char *output, char *outend, bool bVal)
+AMF_EncodeBoolean(char *output, char *outend, int bVal)
 {
   if (output+2 > outend)
     return NULL;
@@ -293,7 +295,7 @@ AMF_EncodeNamedNumber(char *output, char *outend, const AVal *strName, double dV
 }
 
 char *
-AMF_EncodeNamedBoolean(char *output, char *outend, const AVal *strName, bool bVal)
+AMF_EncodeNamedBoolean(char *output, char *outend, const AVal *strName, int bVal)
 {
   if (output+2+strName->av_len > outend)
     return NULL;
@@ -329,7 +331,7 @@ AMFProp_GetNumber(AMFObjectProperty *prop)
   return prop->p_vu.p_number;
 }
 
-bool
+int
 AMFProp_GetBoolean(AMFObjectProperty *prop)
 {
   return prop->p_vu.p_number != 0;
@@ -347,7 +349,7 @@ AMFProp_GetObject(AMFObjectProperty *prop, AMFObject *obj)
   *obj = prop->p_vu.p_object;
 }
 
-bool
+int
 AMFProp_IsValid(AMFObjectProperty *prop)
 {
   return prop->p_type != AMF_INVALID;
@@ -477,7 +479,7 @@ AMF3ReadString(const char *data, AVal *str)
 
 int
 AMF3Prop_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
-		bool bDecodeName)
+		int bDecodeName)
 {
   int nOriginalSize = nSize;
   AMF3DataType type;
@@ -574,7 +576,7 @@ AMF3Prop_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
       }
     case AMF3_OBJECT:
       {
-	int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, true);
+	int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
 	if (nRes == -1)
 	  return -1;
 	nSize -= nRes;
@@ -594,7 +596,7 @@ AMF3Prop_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
 
 int
 AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
-	       bool bDecodeName)
+	       int bDecodeName)
 {
   int nOriginalSize = nSize;
   int nRes;
@@ -666,7 +668,7 @@ AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
       }
     case AMF_OBJECT:
       {
-	int nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer, nSize, true);
+	int nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
 	if (nRes == -1)
 	  return -1;
 	nSize -= nRes;
@@ -694,7 +696,7 @@ AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
 	nSize -= 4;
 
 	/* next comes the rest, mixed array has a final 0x000009 mark and names, so its an object */
-	nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer + 4, nSize, true);
+	nRes = AMF_Decode(&prop->p_vu.p_object, pBuffer + 4, nSize, TRUE);
 	if (nRes == -1)
 	  return -1;
 	nSize -= nRes;
@@ -712,7 +714,7 @@ AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
 	nSize -= 4;
 
 	nRes = AMF_DecodeArray(&prop->p_vu.p_object, pBuffer + 4, nSize,
-				   nArrayLen, false);
+				   nArrayLen, FALSE);
 	if (nRes == -1)
 	  return -1;
 	nSize -= nRes;
@@ -762,7 +764,7 @@ AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
       }
     case AMF_AVMPLUS:
       {
-	int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, true);
+	int nRes = AMF3_Decode(&prop->p_vu.p_object, pBuffer, nSize, TRUE);
 	if (nRes == -1)
 	  return -1;
 	nSize -= nRes;
@@ -892,10 +894,10 @@ AMF_Encode(AMFObject *obj, char *pBuffer, char *pBufEnd)
 
 int
 AMF_DecodeArray(AMFObject *obj, const char *pBuffer, int nSize,
-		int nArrayLen, bool bDecodeName)
+		int nArrayLen, int bDecodeName)
 {
   int nOriginalSize = nSize;
-  bool bError = false;
+  int bError = FALSE;
 
   obj->o_num = 0;
   obj->o_props = NULL;
@@ -907,7 +909,7 @@ AMF_DecodeArray(AMFObject *obj, const char *pBuffer, int nSize,
 
       nRes = AMFProp_Decode(&prop, pBuffer, nSize, bDecodeName);
       if (nRes == -1)
-	bError = true;
+	bError = TRUE;
       else
 	{
 	  nSize -= nRes;
@@ -922,7 +924,7 @@ AMF_DecodeArray(AMFObject *obj, const char *pBuffer, int nSize,
 }
 
 int
-AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bAMFData)
+AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bAMFData)
 {
   int nOriginalSize = nSize;
   int32_t ref;
@@ -1006,7 +1008,7 @@ AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bAMFData)
 
 	  RTMP_Log(RTMP_LOGDEBUG, "Externalizable, TODO check");
 
-	  nRes = AMF3Prop_Decode(&prop, pBuffer, nSize, false);
+	  nRes = AMF3Prop_Decode(&prop, pBuffer, nSize, FALSE);
 	  if (nRes == -1)
 	    RTMP_Log(RTMP_LOGDEBUG, "%s, failed to decode AMF3 property!",
 		__FUNCTION__);
@@ -1024,7 +1026,7 @@ AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bAMFData)
 	  int nRes, i;
 	  for (i = 0; i < cd.cd_num; i++)	/* non-dynamic */
 	    {
-	      nRes = AMF3Prop_Decode(&prop, pBuffer, nSize, false);
+	      nRes = AMF3Prop_Decode(&prop, pBuffer, nSize, FALSE);
 	      if (nRes == -1)
 		RTMP_Log(RTMP_LOGDEBUG, "%s, failed to decode AMF3 property!",
 		    __FUNCTION__);
@@ -1041,7 +1043,7 @@ AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bAMFData)
 
 	      do
 		{
-		  nRes = AMF3Prop_Decode(&prop, pBuffer, nSize, true);
+		  nRes = AMF3Prop_Decode(&prop, pBuffer, nSize, TRUE);
 		  AMF_AddProp(obj, &prop);
 
 		  pBuffer += nRes;
@@ -1058,10 +1060,10 @@ AMF3_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bAMFData)
 }
 
 int
-AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bDecodeName)
+AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, int bDecodeName)
 {
   int nOriginalSize = nSize;
-  bool bError = false;		/* if there is an error while decoding - try to at least find the end mark AMF_OBJECT_END */
+  int bError = FALSE;		/* if there is an error while decoding - try to at least find the end mark AMF_OBJECT_END */
 
   obj->o_num = 0;
   obj->o_props = NULL;
@@ -1073,7 +1075,7 @@ AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bDecodeName)
       if (nSize >=3 && AMF_DecodeInt24(pBuffer) == AMF_OBJECT_END)
 	{
 	  nSize -= 3;
-	  bError = false;
+	  bError = FALSE;
 	  break;
 	}
 
@@ -1088,7 +1090,7 @@ AMF_Decode(AMFObject *obj, const char *pBuffer, int nSize, bool bDecodeName)
 
       nRes = AMFProp_Decode(&prop, pBuffer, nSize, bDecodeName);
       if (nRes == -1)
-	bError = true;
+	bError = TRUE;
       else
 	{
 	  nSize -= nRes;

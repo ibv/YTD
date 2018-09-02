@@ -146,12 +146,12 @@ begin
     else
       begin
       MovieUrl := Node + V;
-      AddRtmpDumpOption('r', Node);
-      AddRtmpDumpOption('y', V); 
-      AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-      AddRtmpDumpOption('W', 'http://www.tyzden.sk/fileadmin/template/swf/tyzden_player.swf?v=4');
-      AddRtmpDumpOption('p', GetMovieInfoUrl);
-      AddRtmpDumpOption('t', Node);
+      Self.RtmpUrl := Node;
+      Self.Playpath := V;
+      Self.FlashVer := FLASH_DEFAULT_VERSION;
+      Self.SwfVfy := 'http://www.tyzden.sk/fileadmin/template/swf/tyzden_player.swf?v=4';
+      Self.PageUrl := GetMovieInfoUrl;
+      Self.TcUrl := Node;
       SetPrepared(True);
       Result := True;
       end;

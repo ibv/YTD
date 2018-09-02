@@ -37,14 +37,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit guiOptionsVCL;
 {$INCLUDE 'ytd.inc'}
 
-
 interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ActnList, ComCtrls, ShlObj, 
-  uLanguages, uMessages, uOptions, uDialogs, guiConsts, guiFunctions;
-
+  StdCtrls, ExtCtrls, ActnList, ComCtrls, ShlObj,
+  uLanguages, uMessages, uOptions, uDialogs, uFunctions, guiConsts, guiFunctions,
+  uDownloadClassifier, uDownloader,
+  guiDownloaderOptions, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader;
+  
 type
   TFormOptions = class(TForm)
     LabelOverwriteMode: TLabel;
@@ -85,20 +86,33 @@ type
     CheckMonitorClipboard: TCheckBox;
     CheckAutoTryHtmlParser: TCheckBox;
     CheckAutoDownload: TCheckBox;
+    TabDownloaderOptions: TTabSheet;
+    ListDownloaderOptions: TListBox;
+    PanelDownloaderOptions: TPanel;
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
     procedure actDownloadDirExecute(Sender: TObject);
     procedure ComboConverterChange(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure actDesktopShortcutExecute(Sender: TObject);
     procedure actStartMenuShortcutExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure ListDownloaderOptionsClick(Sender: TObject);
   private
     fLoading: boolean;
     fOptions: TYTDOptions;
     {$IFDEF CONVERTERS}
     fConverterIndex: integer;
     {$ENDIF}
+    fCurrentDownloaderOptionIndex: integer;
+    procedure CreateDownloaderOptions;
+    procedure DestroyDownloaderOptions;
+    function GetDownloaderOptionsPageCount: integer;
+    function GetDownloaderOptionsPages(Index: integer): TFrameDownloaderOptionsPage;
   protected
+    procedure ShowDownloaderOptionsPage(Index: integer);
+    property DownloaderOptionsPages[Index: integer]: TFrameDownloaderOptionsPage read GetDownloaderOptionsPages;
+    property DownloaderOptionsPageCount: integer read GetDownloaderOptionsPageCount;
   public
     property Options: TYTDOptions read fOptions write fOptions;
   end;
@@ -111,6 +125,20 @@ implementation
 uses
   guiConverterVCL;
 {$ENDIF}
+
+procedure TFormOptions.FormCreate(Sender: TObject);
+begin
+  {$IFDEF GETTEXT}
+  TranslateProperties(self);
+  {$ENDIF}
+  PageOptions.ActivePageIndex := 0;
+  DestroyDownloaderOptions;
+end;
+
+procedure TFormOptions.FormDestroy(Sender: TObject);
+begin
+  DestroyDownloaderOptions;
+end;
 
 procedure TFormOptions.FormShow(Sender: TObject);
 const OverwriteMode: array [TOverwriteMode] of integer = (2, 1, 3, 0);
@@ -135,22 +163,100 @@ begin
     LabelConverter.Visible := False;
     ComboConverter.Visible := False;
     {$ENDIF}
-    // Network
+    // Network options
     CheckUseProxy.Checked := Options.ProxyActive;
     EditProxyHost.Text := Options.ProxyHost;
     EditProxyPort.Text := Options.ProxyPort;
     EditProxyUser.Text := Options.ProxyUser;
     EditProxyPass.Text := Options.ProxyPassword;
+    // Downloader options
+    CreateDownloaderOptions;
   finally
     fLoading := False;
     end;
 end;
 
+procedure TFormOptions.CreateDownloaderOptions;
+var
+  i: integer;
+  DC: TDownloadClassifier;
+  FrameClass: TFrameDownloaderOptionsPageClass;
+  Frame: TFrameDownloaderOptionsPage;
+begin
+  DestroyDownloaderOptions;
+  DC := TDownloadClassifier.Create;
+  try
+    for i := 0 to Pred(DC.ProviderCount) do
+      if DC.Providers[i] <> nil then
+        begin
+        FrameClass := DC.Providers[i].GuiOptionsClass;
+        if FrameClass = nil then
+          if (DC.Providers[i].Features <> []) and (DC.Providers[i].Features <> [dfDummy]) then
+            FrameClass := TFrameDownloaderOptionsPageCommon;
+        if FrameClass <> nil then
+          begin
+          Frame := FrameClass.Create(Self);
+          try
+            Frame.Name := Format('DownloadOptionsPage%d', [i]);
+            if Frame is TFrameDownloaderOptionsPageCommon then
+              TFrameDownloaderOptionsPageCommon(Frame).DownloaderClass := DC.Providers[i];
+            Frame.Provider := DC.Providers[i].Provider;
+            Frame.Options := Self.Options;
+            Frame.Visible := False;
+            Frame.Parent := PanelDownloaderOptions;
+            Frame.Align := alClient;
+            Frame.LoadFromOptions;
+            ListDownloaderOptions.Items.AddObject(DC.Providers[i].Provider, Frame);
+          except
+            FreeAndNil(Frame);
+            Raise;
+            end;
+          end;
+        end;
+    if ListDownloaderOptions.Items.Count > 0 then
+      begin
+      ListDownloaderOptions.ItemIndex := 0;
+      ShowDownloaderOptionsPage(ListDownloaderOptions.ItemIndex);
+      end
+    else
+      begin
+      TabDownloaderOptions.Visible := False;
+      end;
+  finally
+    DC.Free;
+    end;
+end;
+
+procedure TFormOptions.DestroyDownloaderOptions;
+var
+  i: integer;
+begin
+  for i := 0 to Pred(ListDownloaderOptions.Items.Count) do
+    begin
+    TObject(ListDownloaderOptions.Items.Objects[i]).Free;
+    ListDownloaderOptions.Items.Objects[i] := nil;
+    end;
+  ListDownloaderOptions.Items.Clear;
+  fCurrentDownloaderOptionIndex := -1;
+end;
+
+function TFormOptions.GetDownloaderOptionsPageCount: integer;
+begin
+  Result := ListDownloaderOptions.Items.Count;
+end;
+
+function TFormOptions.GetDownloaderOptionsPages(Index: integer): TFrameDownloaderOptionsPage;
+begin
+  Result := ListDownloaderOptions.Items.Objects[Index] as TFrameDownloaderOptionsPage;
+end;
+
 procedure TFormOptions.actOKExecute(Sender: TObject);
 const OverwriteMode: array[0..3] of TOverwriteMode = (omAsk, omAlways, omNever, omRename);
-{$IFDEF CONVERTERS}
-var NewID: string;
-{$ENDIF}
+var
+  i: integer;
+  {$IFDEF CONVERTERS}
+  NewID: string;
+  {$ENDIF}
 begin
   // Main options
   Options.PortableMode := CheckPortableMode.Checked;
@@ -174,6 +280,12 @@ begin
   Options.ProxyPort := EditProxyPort.Text;
   Options.ProxyUser := EditProxyUser.Text;
   Options.ProxyPassword := EditProxyPass.Text;
+  // Downloaders
+  for i := 0 to Pred(GetDownloaderOptionsPageCount) do
+    begin
+    DownloaderOptionsPages[i].Options := Options;
+    DownloaderOptionsPages[i].SaveToOptions;
+    end;
 end;
 
 procedure TFormOptions.actDownloadDirExecute(Sender: TObject);
@@ -197,14 +309,6 @@ begin
   {$ENDIF}
 end;
 
-procedure TFormOptions.FormCreate(Sender: TObject);
-begin
-  {$IFDEF GETTEXT}
-  TranslateProperties(self);
-  {$ENDIF}
-  PageOptions.ActivePageIndex := 0;
-end;
-
 procedure TFormOptions.actDesktopShortcutExecute(Sender: TObject);
 begin
   CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY);
@@ -213,6 +317,24 @@ end;
 procedure TFormOptions.actStartMenuShortcutExecute(Sender: TObject);
 begin
   CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS);
+end;
+
+procedure TFormOptions.ShowDownloaderOptionsPage(Index: integer);
+begin
+  if (fCurrentDownloaderOptionIndex >= 0) and (fCurrentDownloaderOptionIndex < DownloaderOptionsPageCount) then
+    DownloaderOptionsPages[fCurrentDownloaderOptionIndex].Visible := False;
+  if (Index >= 0) and (Index < DownloaderOptionsPageCount) then
+    begin
+    DownloaderOptionsPages[Index].Visible := True;
+    fCurrentDownloaderOptionIndex := Index;
+    end
+  else
+    fCurrentDownloaderOptionIndex := -1;
+end;
+
+procedure TFormOptions.ListDownloaderOptionsClick(Sender: TObject);
+begin
+  ShowDownloaderOptionsPage(ListDownloaderOptions.ItemIndex);
 end;
 
 end.

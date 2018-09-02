@@ -349,7 +349,7 @@ begin
   // Application
   SetClassLong(Self.Handle, GCL_HICON, Icon);
   // Caption
-  SetWindowText(Self.Handle, APPLICATION_CAPTION);
+  SetWindowText(Self.Handle, PChar(APPLICATION_CAPTION));
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'MAIN_ACTIONS');
   // Toolbar
@@ -438,7 +438,7 @@ begin
   if DownloadList.DownloadingCount <= 0 then
     Result := True
   else
-    Result := (MessageBox(0, PChar(_(MAINFORM_CAN_CLOSE)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes);
+    Result := (MessageBox(0, PChar(_(MAINFORM_CAN_CLOSE)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes);
 end;
 
 function TFormMain.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
@@ -680,7 +680,7 @@ begin
   Result := True;
   Index := ListViewGetSelectedItem(DownloadListHandle);
   if Index >= 0 then
-    if MessageBox(0, PChar(_(MAINFORM_REPORT_BUG)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+    if MessageBox(0, PChar(_(MAINFORM_REPORT_BUG)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
       ReportBug(DownloadList, Index);
 end;
 
@@ -748,7 +748,7 @@ begin
   Result := True;
   if ListViewGetSelectedItems(DownloadListHandle, L) then
     try
-      if MessageBox(0, PChar(_(MAINFORM_DELETE_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+      if MessageBox(0, PChar(_(MAINFORM_DELETE_TRANSFERS)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
         for i := Pred(L.Count) downto 0 do
           DeleteTask(Integer(L[i]));
     finally
@@ -759,16 +759,16 @@ end;
 function TFormMain.ActionDonate: boolean;
 begin
   Result := True;
-  ShellExecute(Handle, 'open', DONATE_URL, nil, nil, SW_SHOWNORMAL);
+  Run(DONATE_URL, Handle);
 end;
 
 function TFormMain.ActionEditConfig: boolean;
 begin
   Result := True;
   Options.Save;
-  MessageBox(0, PChar(_(MAINFORM_EDIT_CONFIG)), APPLICATION_TITLE, MB_OK or MB_ICONWARNING or MB_TASKMODAL);
+  MessageBox(0, PChar(_(MAINFORM_EDIT_CONFIG)), PChar(APPLICATION_TITLE), MB_OK or MB_ICONWARNING or MB_TASKMODAL);
   if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL) <= 32 then
-    ShellExecute(Handle, 'open', 'notepad', PChar('"' + Options.FileName + '"'), nil, SW_SHOWNORMAL);
+    Run('notepad', '"' + Options.FileName + '"', Handle);
 end;
 
 function TFormMain.ActionExploreFolder: boolean;
@@ -865,7 +865,7 @@ begin
   Result := True;
   if ListViewGetSelectedItems(DownloadListHandle, L) then
     try
-      if MessageBox(0, PChar(_(MAINFORM_STOP_TRANSFERS)), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+      if MessageBox(0, PChar(_(MAINFORM_STOP_TRANSFERS)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
         for i := 0 to Pred(L.Count) do
           StopTask(Integer(L[i]));
     finally
@@ -920,8 +920,8 @@ begin
     fBugReportDisabled := True;
     EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
     ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, False);
-    if MessageBox(0, PChar(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version])), APPLICATION_TITLE, MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
-      ShellExecute(Handle, 'open', PChar(Url), nil, nil, SW_SHOWNORMAL);
+    if MessageBox(0, PChar(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version])), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+      NewVersionFound(Options, Url, Handle);
     end;
 end;
 {$ENDIF}
