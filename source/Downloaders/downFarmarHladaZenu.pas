@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downBlipTv;
+unit downFarmarHladaZenu;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,16 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader, downBlipTv_Embed;
+  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
 
 type
-  TDownloader_BlipTv = class(TNestedDownloader)
+  TDownloader_FarmarHladaZenu = class(TDownloader_Joj_Porady2)
     private
     protected
-      function GetMovieInfoUrl: string; override;
+      function GetMovieInfoUrl: string; override;{*}
+      function TheServer: string; override;
     public
       class function Provider: string; override;
-      class function UrlRegExp: string; override;
+      class function UrlRegExp: string; override;{*}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -60,47 +61,48 @@ implementation
 
 uses
   uStringConsts,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://blip.tv/weird-america/weird-america-mark-mothersbaugh-111976
+// http://www.farmarhladazenu.sk/epizody/detail/farmar-hlada-zenu-2-novi-farmari.html
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!file/)';
+  URLREGEXP_BEFORE_ID = 'farmarhladazenu\.sk/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_MOVIE_URL =    '<meta\s+property="og:video"\s+content="(?P<URL>https?://.+?)"';
+{ TDownloader_FarmarHladaZenu }
 
-{ TDownloader_BlipTv }
-
-class function TDownloader_BlipTv.Provider: string;
+class function TDownloader_FarmarHladaZenu.Provider: string;
 begin
-  Result := TDownloader_BlipTv_Embed.Provider;
+  Result := 'FarmarHladaZenu.sk';
 end;
 
-class function TDownloader_BlipTv.UrlRegExp: string;
+class function TDownloader_FarmarHladaZenu.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_BlipTv.Create(const AMovieID: string);
+constructor TDownloader_FarmarHladaZenu.Create(const AMovieID: string);
 begin
-  inherited;
-  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-end;
-
-destructor TDownloader_BlipTv.Destroy;
-begin
-  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
-function TDownloader_BlipTv.GetMovieInfoUrl: string;
+destructor TDownloader_FarmarHladaZenu.Destroy;
 begin
-  Result := 'http://blip.tv/' + MovieID;
+  inherited;
+end;
+
+function TDownloader_FarmarHladaZenu.GetMovieInfoUrl: string;
+begin
+  Result := 'http://www.farmarhladazenu.sk/' + MovieID;
+end;
+
+function TDownloader_FarmarHladaZenu.TheServer: string;
+begin
+  Result := 'n03.joj.sk';
 end;
 
 initialization
-  RegisterDownloader(TDownloader_BlipTv);
+  RegisterDownloader(TDownloader_FarmarHladaZenu);
 
 end.

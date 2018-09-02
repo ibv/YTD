@@ -182,6 +182,9 @@ type
       property DownloadToProviderSubdirs: boolean read GetDownloadToProviderSubdirs write SetDownloadToProviderSubdirs;
     end;
 
+const
+  OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'live_stream';
+
 implementation
 
 uses

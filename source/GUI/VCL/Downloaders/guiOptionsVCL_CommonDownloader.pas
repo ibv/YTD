@@ -46,10 +46,11 @@ uses
 
 type
   TFrameDownloaderOptionsPageCommon = class(TFrameDownloaderOptionsPage)
-    CheckDownloadSubtitles: TCheckBox;
-    CheckConvertSubtitles: TCheckBox;
     PanelCommonOptions: TPanel;
     PanelSpecificOptions: TPanel;
+    CheckDownloadSubtitles: TCheckBox;
+    CheckConvertSubtitles: TCheckBox;
+    CheckLiveStream: TCheckBox;
   private
     fDownloaderClass: TDownloaderClass;
   protected
@@ -116,23 +117,30 @@ procedure TFrameDownloaderOptionsPageCommon.LoadFromOptions;
 begin
   inherited;
   {$IFDEF SUBTITLES}
-  CheckDownloadSubtitles.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True);
-  CheckConvertSubtitles.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
   if Supports(dfSubtitles, [CheckDownloadSubtitles, CheckConvertSubtitles]) then
+    begin
+    CheckDownloadSubtitles.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True);
     if Supports(dfSubtitlesConvert, [CheckConvertSubtitles]) then
-      ;
+      CheckConvertSubtitles.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
+    end;
   {$ENDIF}
+  if Supports(dfRtmpLiveStream, [CheckLiveStream]) then
+    CheckLiveStream.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features);
 end;
 
 procedure TFrameDownloaderOptionsPageCommon.SaveToOptions;
 begin
   inherited;
   {$IFDEF SUBTITLES}
-  if CheckDownloadSubtitles.Enabled then
+  if Supports(dfSubtitles) then
+    begin
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, CheckDownloadSubtitles.Checked);
-  if CheckConvertSubtitles.Enabled then
-    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, CheckConvertSubtitles.Checked);
+    if Supports(dfSubtitlesConvert) then
+      Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, CheckConvertSubtitles.Checked);
+    end;
   {$ENDIF}
+  if Supports(dfRtmpLiveStream) then
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, CheckLiveStream.Checked);
 end;
 
 end.

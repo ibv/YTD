@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.94                                     (c) 2009-11 Pepak
+YouTube Downloader v0.95                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -424,15 +424,6 @@ except in file/directory names. Logical values (true-false) are stored as
     - Child of <modules>; contains settings used by Czech television and
       related providers (Port, CT24 etc.).
 
-    <live_stream>
-      - Child of <CeskaTelevize_cz>; gives you an option to choose, whether
-        you want to download videos as files (faster download, but with 
-        the current CT's server software causes faulty files) or as live
-        streams (slower, but the files seem to play OK).
-      - Possible values are "0" (download as file) and "1" (download as
-        live stream).
-      - Default value is "1" (download as live stream).
-
   <Nova_cz>
     - Child of <modules>; contains settings used by Nova.cz.
 
@@ -512,6 +503,16 @@ except in file/directory names. Logical values (true-false) are stored as
       on or off for that provider.
     - Possible values are "1" (enable subtitle support) and "0" (disable).
     - Default value is "1" (enable subtitle support).
+
+  <live_stream>
+    - Child of a provider; gives you an option to choose, whether you want 
+      to download videos as files (faster download, but with sensitive to
+      client-server synchronization; can lead to damaged video or audio in the
+      downloaded file) or as live streams (slower, but more compatible).
+    - Note: This setting only applies to RTMP-based providers.
+    - Possible values are "0" (download as file) and "1" (download as
+      live stream).
+    - Default value is "1" (download as live stream).
 
 <converters>
   - Child of <ytd>. This section defines a list of converters (applications

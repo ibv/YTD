@@ -1,11 +1,39 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.94                                     (c) 2009-11 Pepak
+YouTube Downloader v0.95                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.95:
+
+    * Noví poskytovatelé:
+      - FarmarHladaZenu.sk
+      - HejbejSe.tv
+      - Metropol.cz
+      - Osobnosti.cz
+
+    * Blip.tv: Opìt funkèní.
+
+    * CeskaTelevize.cz: ÈT24 opìt funkèní.
+
+    * iPrima.cz: Pokud k poøadu existuje stránka http://prima.stream.cz/<id>,
+      bude se stahovat v ještì vyšší kvalitì než dosud.
+
+    * Stream.cz: Podpora videí v profilech uživatelù:
+      http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
+
+    * Všechny downloadery založené na RTMP protokolu mají nyní nastavení,
+      jestli se mají stahovat v režimu živého streamu. Živý stream je výraznì
+      pomalejší (zhruba v reálném èase), na druhou stranu je výraznì ménì
+      náchylný na sladìní serveru a klienta a z vìtší èásti zabraòuje rozpadání
+      obrazu èi zvuku èi pøeskakování tam a zpìt. Ve výchozím stavu je pro
+      všechny downloadery zapnutý, vypnout ho mùžete v grafické konfiguraci
+      nebo v XML (viz <live_stream> v dokumentaci).
+
+
 
   v0.94:
 

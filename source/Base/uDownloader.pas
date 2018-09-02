@@ -63,7 +63,7 @@ type
   TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
 
 type
-  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} );
+  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} , dfRtmpLiveStream, dfPreferRtmpLiveStream );
   TDownloaderFeatures = set of TDownloaderFeature;
 
 const

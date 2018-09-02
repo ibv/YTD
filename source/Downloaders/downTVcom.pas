@@ -130,6 +130,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
+      Xml.savetofile('x.xml');
       if not GetXmlVar(Xml, 'Video', VideoUrl) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else if not GetRegExpVar(MMSUrlRegExp, VideoUrl, 'URL', Url) then

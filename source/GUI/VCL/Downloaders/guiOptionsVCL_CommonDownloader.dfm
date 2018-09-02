@@ -25,6 +25,14 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
       Caption = '&Convert subtitles to .SRT format'
       TabOrder = 1
     end
+    object CheckLiveStream: TCheckBox
+      Left = 8
+      Top = 32
+      Width = 305
+      Height = 17
+      Caption = '&Live stream mode (much slower, but more stable)'
+      TabOrder = 2
+    end
   end
   object PanelSpecificOptions: TPanel
     Left = 0

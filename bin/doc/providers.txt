@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.94                                     (c) 2009-11 Pepak
+YouTube Downloader v0.95                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -84,6 +84,7 @@ ESPN.go.com         | HTTP     |       | http://espn.go.com/video/clip?id=516363
 EuroGamer.cz        | HTTP     |       | http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
 EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnum=15099&aid=
 Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php?v=1131482863478
+FarmarHladaZenu.sk  | HTTP     |       | http://www.farmarhladazenu.sk/epizody/detail/farmar-hlada-zenu-2-novi-farmari.html
 FileCabi.net        | HTTP     |       | http://www.filecabi.net/video/hiddendogstopsrobbery.html
 Fishki.net          | HTTP     | 4     | http://fishki.net/comment.php?id=79682
 Flickr.com          | HTTP     |       | http://www.flickr.com/photos/landersz/2403626167/
@@ -99,6 +100,7 @@ GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/j
 GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
 Guba.com            | HTTP     |       | http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
+HejbejSe.tv         | HTTP     |       | http://www.hejbejse.tv/video/klip/Petra-4-
 Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
 HudebniVideoKlipy.cz| HTTP     |       | http://www.hudebnivideoklipy.cz/chinaski-kerka-119555.html
@@ -125,14 +127,15 @@ LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272
                     |          |       | http://www.liveleak.com/e/57d_1278546690
 LiveVideo.com       | HTTP     |       | http://www.livevideo.com/liveshow/brian3maria
 Loupak.cz           | HTTP     |       | http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
+MamaOzenMa.sk       | HTTP     |       | http://www.mamaozenma.sk/video-mama-ozen-ma/detail/mama-ozen-ma-06-09-2011-3.html
 Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
                     |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
-MamaOzenMa.sk       | HTTP     |       | http://www.mamaozenma.sk/video-mama-ozen-ma/detail/mama-ozen-ma-06-09-2011-3.html
 MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
 MetaCafe.com        | HTTP     |       | http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
 Metoo.cz            | MS       |       | http://www.metoo.cz/tvstream/play/532
+Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
 MojeVideo.cz        | HTTP     |       | http://mojevideo.cz/view.php?id=5332
@@ -162,6 +165,7 @@ NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
                     |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
 OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
+Osobnosti.cz        | HTTP     |       | http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
 OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
                     |          |       | http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
 PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
@@ -203,6 +207,7 @@ Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
 Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
 Stream.cz           | HTTP     |       | http://www.stream.cz/video/437197-meziplyn-30
+                    |          |       | http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
 Music.Stream.cz     | HTTP     |       | http://music.stream.cz/klip/268709-avril-lavigne-what-the-hell
 StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270

@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
-  uFunctions,
+  uFunctions, uOptions,
   uDownloader, uCommonDownloader, uExternalDownloader,
   RtmpDump_DLL;
 
@@ -72,6 +72,7 @@ type
       procedure SetSwfVfy(const Value: string);
       procedure SetTcUrl(const Value: string);
     protected
+      procedure SetOptions(const Value: TYTDOptions); override;
       procedure ClearRtmpDumpOptions; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function IndexOfRtmpDumpOption(ShortOption: char; out Index: integer): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRtmpDumpOption(ShortOption: char): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -82,6 +83,7 @@ type
       function ParseErrorLog(const LogFileName: string; out Error: string): boolean;
       property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions write fRtmpDumpOptions;
     public
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       function Prepare: boolean; override;
@@ -126,9 +128,15 @@ end;
 
 { TRtmpDownloader }
 
+class function TRtmpDownloader.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRtmpLiveStream, dfPreferRtmpLiveStream];
+end;
+
 constructor TRtmpDownloader.Create(const AMovieID: string);
 begin
   inherited;
+  Self.Live := (dfRtmpLiveStream in Features) and (dfPreferRtmpLiveStream in Features);
 end;
 
 destructor TRtmpDownloader.Destroy;
@@ -414,6 +422,12 @@ begin
       FreeAndNil(L);
       end;
     end;
+end;
+
+procedure TRtmpDownloader.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
 end;
 
 end.

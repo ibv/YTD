@@ -156,8 +156,8 @@ uses
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
   downBBCNews in 'Downloaders\downBBCNews.pas',
   downBlennus in 'Downloaders\downBlennus.pas',
+  downBlipTv_Embed in 'Downloaders\downBlipTv_Embed.pas',
   downBlipTv in 'Downloaders\downBlipTv.pas',
-  downBlipTvV2 in 'Downloaders\downBlipTvV2.pas',
   downBofunk in 'Downloaders\downBofunk.pas',
   downBolt in 'Downloaders\downBolt.pas',
   downBomba in 'Downloaders\downBomba.pas',
@@ -194,6 +194,7 @@ uses
   downEuroGamer in 'Downloaders\downEuroGamer.pas',
   downEVTV1 in 'Downloaders\downEVTV1.pas',
   downFacebook in 'Downloaders\downFacebook.pas',
+  downFarmarHladaZenu in 'Downloaders\downFarmarHladaZenu.pas',
   downFileCabi in 'Downloaders\downFileCabi.pas',
   downFishki in 'Downloaders\downFishki.pas',
   downFlickr in 'Downloaders\downFlickr.pas',
@@ -210,6 +211,7 @@ uses
   downGuba in 'Downloaders\downGuba.pas',
   downGrindTV in 'Downloaders\downGrindTV.pas',
   downHasici150 in 'Downloaders\downHasici150.pas',
+  downHejbejSe in 'Downloaders\downHejbejSe.pas',
   downHellTV in 'Downloaders\downHellTV.pas',
   downHrej in 'Downloaders\downHrej.pas',
   downHudebniVideoKlipy in 'Downloaders\downHudebniVideoKlipy.pas',
@@ -238,6 +240,7 @@ uses
   downMegaVideo in 'Downloaders\downMegaVideo.pas',
   downMetaCafe in 'Downloaders\downMetaCafe.pas',
   downMetooCz in 'Downloaders\downMetooCz.pas',
+  downMetropolCZ in 'Downloaders\downMetropolCZ.pas',
   downMetropolTV in 'Downloaders\downMetropolTV.pas',
   downMojeTelevize in 'Downloaders\downMojeTelevize.pas',
   downMojeVideo in 'Downloaders\downMojeVideo.pas',
@@ -265,6 +268,7 @@ uses
   downNovaMov_Embed in 'Downloaders\downNovaMov_Embed.pas',
   downNovinky in 'Downloaders\downNovinky.pas',
   downOKTeam in 'Downloaders\downOKTeam.pas',
+  downOsobnostiCZ in 'Downloaders\downOsobnostiCZ.pas',
   downOverStream in 'Downloaders\downOverStream.pas',
   downPBS in 'Downloaders\downPBS.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
@@ -389,6 +393,8 @@ uses
   {$IFDEF NONWORKING}
     // Needs some improved RTMP handling
     downCrunchyRoll in 'Downloaders\Non-working\downCrunchyRoll.pas',
+    // Requires FTP support
+    downDosGamesArchive in 'Downloaders\Non-working\downDosGamesArchive.pas',
     // Download only works for logged-in users
     downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
     // Some transformation of movie ID is needed

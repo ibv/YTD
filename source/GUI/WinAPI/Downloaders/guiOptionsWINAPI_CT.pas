@@ -69,9 +69,6 @@ implementation
 uses
   downCT;
 
-const
-  IDC_CHECKBOX_LIVESTREAM = 1001;
-
 { TFrameDownloaderOptionsPage_CT }
 
 constructor TFrameDownloaderOptionsPage_CT.Create(AOwner: TApiForm);
@@ -99,25 +96,16 @@ end;
 function TFrameDownloaderOptionsPageSpec_CT.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
-  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_LIVESTREAM), [akLeft, akTop, akRight]);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_CT.LoadFromOptions;
-const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   inherited;
-  CheckDlgButton(Self.Handle, IDC_CHECKBOX_LIVESTREAM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_CT_LIVESTREAM, OPTION_CT_LIVESTREAM_DEFAULT)]);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_CT.SaveToOptions;
 begin
   inherited;
-  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_LIVESTREAM) of
-    BST_CHECKED:
-      Options.WriteProviderOption(Provider, OPTION_CT_LIVESTREAM, True);
-    BST_UNCHECKED:
-      Options.WriteProviderOption(Provider, OPTION_CT_LIVESTREAM, False);
-    end;
 end;
 
 end.

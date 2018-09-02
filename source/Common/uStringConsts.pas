@@ -67,13 +67,14 @@ const
 
   // Common regular expressions for getting Url
   REGEXP_URL_EMBED_SRC = '<embed\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
-  REGEXP_URL_PARAM_MOVIE = '<param\s+name="movie"[^>]*\s+value="(?P<URL>.+?)"';
+  REGEXP_URL_IFRAME_SRC = '<iframe\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
+  REGEXP_URL_PARAM_MOVIE = '<param\s+name\s*=\s*"movie"[^>]*\s+value="(?P<URL>.+?)"';
   REGEXP_URL_PARAM_FLASHVARS_OPTIONS = '<param\s+name="FlashVars"\s+value="options=(?P<URL>https?://.+?)"';
   REGEXP_URL_PARAM_FLASHVARS_FILE = '<param\s+name="FlashVars"\s+value="(?:[^"]*?&(?:mp;)?)?file=(?P<URL>https?://.+?)(?:"|&amp;|&)';
   REGEXP_URL_LINK_VIDEOSRC = '<link\s+rel="video_src"\s+href="(?P<URL>https?://.+?)"';
   REGEXP_URL_ADDVARIABLE_FILE = '\.addVariable\s*\(\s*(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*,\s*(?P<QUOTE2>[''"])(?P<URL>https?://.+?)(?P=QUOTE2)';
   REGEXP_URL_ADDVARIABLE_FILE_RELATIVE = '\.addVariable\s*\(\s*(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*,\s*(?P<QUOTE2>[''"])(?P<URL>.+?)(?P=QUOTE2)';
-  REGEXP_URL_ADDPARAM_FLASHVARS_FILE = '\.addParam\s*\(\s*"flashvars"\s*,\s*"(?:[^"]*(?:&amp;|&))*file=(?P<URL>https?://.+?)(?:&amp;|&|")';
+  REGEXP_URL_ADDPARAM_FLASHVARS_FILE = '\.addParam\s*\(\s*(?P<QUOTE1>[''"])flashvars(?P=QUOTE1)\s*,\s*(?P<QUOTE2>[''"])(?:[^"'']*(?:&amp;|&))*file=(?P<URL>https?://.+?)(?:&amp;|[&"''])';
   REGEXP_URL_FILE_COLON_VALUE = '(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*:\s*(?P<QUOTE2>[''"])(?P<URL>https?://.+?)(?P=QUOTE2)';
 
   HTTP_FORM_URLENCODING = 'application/x-www-form-urlencoded';

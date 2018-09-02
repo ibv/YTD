@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downBlipTv;
+unit downMetropolCZ;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,10 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader, downBlipTv_Embed;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_BlipTv = class(TNestedDownloader)
+  TDownloader_MetropolCZ = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -60,47 +60,52 @@ implementation
 
 uses
   uStringConsts,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://blip.tv/weird-america/weird-america-mark-mothersbaugh-111976
+// http://www.metropol.cz/porady/prazeni/282/archiv/
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!file/)';
+  URLREGEXP_BEFORE_ID = 'metropol\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_URL =    '<meta\s+property="og:video"\s+content="(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H2;
+  REGEXP_MOVIE_URL =    '\bfile\s*:\s*"(?P<URL>https?://.+?)"';
 
-{ TDownloader_BlipTv }
+{ TDownloader_MetropolCZ }
 
-class function TDownloader_BlipTv.Provider: string;
+class function TDownloader_MetropolCZ.Provider: string;
 begin
-  Result := TDownloader_BlipTv_Embed.Provider;
+  Result := 'Metropol.cz';
 end;
 
-class function TDownloader_BlipTv.UrlRegExp: string;
+class function TDownloader_MetropolCZ.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_BlipTv.Create(const AMovieID: string);
+constructor TDownloader_MetropolCZ.Create(const AMovieID: string);
 begin
-  inherited;
-  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_BlipTv.Destroy;
+destructor TDownloader_MetropolCZ.Destroy;
 begin
-  RegExFreeAndNil(NestedUrlRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_BlipTv.GetMovieInfoUrl: string;
+function TDownloader_MetropolCZ.GetMovieInfoUrl: string;
 begin
-  Result := 'http://blip.tv/' + MovieID;
+  Result := 'http://www.metropol.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_BlipTv);
+  RegisterDownloader(TDownloader_MetropolCZ);
 
 end.

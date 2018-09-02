@@ -81,6 +81,7 @@ const
   IDC_LABEL_EMPTYAREA = 1001;
   IDC_CHECKBOX_SUBTITLESENABLED = 1002;
   IDC_CHECKBOX_CONVERTSUBTITLES = 1003;
+  IDC_CHECKBOX_LIVESTREAM = 1004;
 
 { TFrameDownloaderOptionsPageCommon }
 
@@ -140,6 +141,7 @@ begin
   {$ENDIF}
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED), [akLeft, akTop, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES), [akLeft, akTop, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_LIVESTREAM), [akLeft, akTop, akRight]);
 end;
 
 function TFrameDownloaderOptionsPageCommon.GetProvider: string;
@@ -177,12 +179,15 @@ const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   inherited;
   {$IFDEF SUBTITLES}
-  CheckDlgButton(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True)]);
-  CheckDlgButton(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT)]);
   if Supports(dfSubtitles, [IDC_CHECKBOX_SUBTITLESENABLED, IDC_CHECKBOX_CONVERTSUBTITLES]) then
+    begin
+    CheckDlgButton(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True)]);
     if Supports(dfSubtitlesConvert, [IDC_CHECKBOX_CONVERTSUBTITLES]) then
-      ;
+      CheckDlgButton(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT)]);
+    end;
   {$ENDIF}
+  if Supports(dfRtmpLiveStream, [IDC_CHECKBOX_LIVESTREAM]) then
+    CheckDlgButton(Self.Handle, IDC_CHECKBOX_LIVESTREAM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features)]);
   if SubForm <> nil then
     begin
     SubForm.Options := Options;
@@ -194,21 +199,30 @@ procedure TFrameDownloaderOptionsPageCommon.SaveToOptions;
 begin
   inherited;
   {$IFDEF SUBTITLES}
-  if IsWindowEnabled(GetDlgItem(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED)) then
+  if Supports(dfSubtitles) then
+    begin
     case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED) of
       BST_CHECKED:
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True);
       BST_UNCHECKED:
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, False);
       end;
-  if IsWindowEnabled(GetDlgItem(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES)) then
-    case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED) of
-      BST_CHECKED:
-        Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, True);
-      BST_UNCHECKED:
-        Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, False);
-      end;
+    if Supports(dfSubtitlesConvert) then
+      case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED) of
+        BST_CHECKED:
+          Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, True);
+        BST_UNCHECKED:
+          Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, False);
+        end;
+    end;
   {$ENDIF}
+  if Supports(dfRtmpLiveStream) then
+    case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_LIVESTREAM) of
+      BST_CHECKED:
+        Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, True);
+      BST_UNCHECKED:
+        Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, False);
+      end;
   if SubForm <> nil then
     begin
     SubForm.Options := Options;

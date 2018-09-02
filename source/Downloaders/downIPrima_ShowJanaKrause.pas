@@ -153,7 +153,6 @@ begin
           MovieUrl := {RtmpUrl + ' ' +} ID;
           Self.RtmpUrl := RtmpUrl;
           Self.Playpath := ID;
-          Self.Live := True;
           SetPrepared(True);
           Result := True;
           {$IFDEF MULTIDOWNLOADS}

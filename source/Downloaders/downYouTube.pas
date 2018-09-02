@@ -163,6 +163,7 @@ class function TDownloader_YouTube.Features: TDownloaderFeatures;
 begin
   Result := inherited Features + [
     {$IFDEF SUBTITLES} dfSubtitles {$IFDEF CONVERTSUBTITLES} , dfSubtitlesConvert {$ENDIF} {$ENDIF}
+    , dfRtmpLiveStream, dfPreferRtmpLiveStream
     ];
 end;
 

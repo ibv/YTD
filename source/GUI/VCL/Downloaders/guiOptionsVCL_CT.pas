@@ -46,7 +46,6 @@ uses
 
 type
   TFrameDownloaderOptionsPage_CT = class(TFrameDownloaderOptionsPageCommon)
-    CheckLiveStream: TCheckBox;
   private
   protected
   public
@@ -78,13 +77,11 @@ end;
 procedure TFrameDownloaderOptionsPage_CT.LoadFromOptions;
 begin
   inherited;
-  CheckLiveStream.Checked := Options.ReadProviderOptionDef(Provider, OPTION_CT_LIVESTREAM, OPTION_CT_LIVESTREAM_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_CT.SaveToOptions;
 begin
   inherited;
-  Options.WriteProviderOption(Provider, OPTION_CT_LIVESTREAM, CheckLiveStream.Checked);
 end;
 
 end.

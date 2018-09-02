@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downBlipTvV2;
+unit downDosGamesArchive;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,13 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader, downBlipTv;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_BlipTvV2 = class(TNestedDownloader)
+  TDownloader_DosGamesArchive = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,47 +61,59 @@ implementation
 
 uses
   uStringConsts,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://blip.tv/file/108391
+// http://www.dosgamesarchive.com/download/quake/
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/file/';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_BEFORE_ID = 'dosgamesarchive\.com/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_URL =    REGEXP_URL_LINK_VIDEOSRC;
+  REGEXP_MOVIE_TITLE =  '<div\s+id="contenttitle">(?P<TITLE>.*?)</div>';
+  REGEXP_MOVIE_URL =    REGEXP_URL_ADDPARAM_FLASHVARS_FILE;
 
-{ TDownloader_BlipTvV2 }
+{ TDownloader_DosGamesArchive }
 
-class function TDownloader_BlipTvV2.Provider: string;
+class function TDownloader_DosGamesArchive.Provider: string;
 begin
-  Result := TDownloader_BlipTv.Provider;
+  Result := 'DosGamesArchive.com';
 end;
 
-class function TDownloader_BlipTvV2.UrlRegExp: string;
+class function TDownloader_DosGamesArchive.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_BlipTvV2.Create(const AMovieID: string);
+constructor TDownloader_DosGamesArchive.Create(const AMovieID: string);
 begin
-  inherited;
-  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_BlipTvV2.Destroy;
+destructor TDownloader_DosGamesArchive.Destroy;
 begin
-  RegExFreeAndNil(NestedUrlRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_BlipTvV2.GetMovieInfoUrl: string;
+function TDownloader_DosGamesArchive.GetMovieInfoUrl: string;
 begin
-  Result := 'http://blip.tv/file/' + MovieID;
+  Result := 'http://www.dosgamesarchive.com/' + MovieID;
+end;
+
+function TDownloader_DosGamesArchive.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  MovieUrl := UrlDecode(MovieUrl);
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_BlipTvV2);
+  RegisterDownloader(TDownloader_DosGamesArchive);
 
 end.

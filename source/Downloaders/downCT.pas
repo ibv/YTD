@@ -65,7 +65,8 @@ type
     protected
       MovieObjectRegExp: TRegExp;
       EmbeddedFrameRegExp: TRegExp;
-      LiveStream: boolean;
+      JavascriptPlayerRegExp: TRegExp;
+      VideoPlayerUrlRegExp: TRegExp;
       Extension: string;
     protected
       procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
@@ -74,7 +75,6 @@ type
       function GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
       function ConvertMovieObject(var Data: string): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
       {$IFDEF MULTIDOWNLOADS}
       property BaseUrls: TStringList read fBaseUrls;
       property Streams: TStringList read fStreams;
@@ -94,10 +94,6 @@ type
       function Next: boolean; override;
       {$ENDIF}
     end;
-
-const
-  OPTION_CT_LIVESTREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'live_stream';
-  OPTION_CT_LIVESTREAM_DEFAULT = True;
 
 implementation
 
@@ -119,6 +115,8 @@ const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*&mdash;\s*iVysílání)?(?:\s*&mdash;\s*Ceská televize)?\s*</title>';
   REGEXP_MOVIE_OBJECT = '\bcallSOAP\s*\(\s*(?P<OBJECT>.*?)\s*\)\s*;';
   REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
+  REGEXP_JS_PLAYER = '<a\s+href="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+id="videoPlayer_';
+  REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>https?:.+?)"';
 
 { TDownloader_CT }
 
@@ -146,7 +144,8 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT);
   EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
-  LiveStream := OPTION_CT_LIVESTREAM_DEFAULT;
+  JavascriptPlayerRegExp := RegExCreate(REGEXP_JS_PLAYER);
+  VideoPlayerUrlRegExp := RegExCreate(REGEXP_VIDEOPLAYERURL);
   {$IFDEF MULTIDOWNLOADS}
   fStreams := TStringList.Create;
   fBaseUrls := TStringList.Create;
@@ -158,6 +157,8 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
   RegExFreeAndNil(EmbeddedFrameRegExp);
+  RegExFreeAndNil(JavascriptPlayerRegExp);
+  RegExFreeAndNil(VideoPlayerUrlRegExp);
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fStreams);
   FreeAndNil(fBaseUrls);
@@ -176,10 +177,12 @@ begin
 end;
 
 function TDownloader_CT.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
-var Host, Path, Url, NewPage: string;
+var Host, Path, Url, NewPage, Param: string;
 begin
   Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJECT', MovieObject);
   if not Result then
+    begin
+    Url := '';
     if GetRegExpVars(EmbeddedFrameRegExp, Page, ['HOST', 'PATH'], [@Host, @Path]) then
       begin
       if Host = '' then
@@ -189,13 +192,19 @@ begin
       Path := StringReplace(Path, ' ', '%20', [rfReplaceAll]);
       Url := Host + Path;
         // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
+      end
+    else if GetRegExpVar(JavascriptPlayerRegExp, Page, 'PARAM', Param) then
+      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + UrlEncode(PARAM), HTTP_FORM_URLENCODING, NewPage) then
+        if GetRegExpVar(VideoPlayerUrlRegExp, NewPage, 'URL', Url) then
+          Url := StripSlashes(Url);
+    if Url <> '' then
       if DownloadPage(Http, Url, NewPage, InfoPageEncoding) then
         if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
           begin
           Page := NewPage;
           Result := True;
           end;
-      end;
+    end;
 end;
 
 function TDownloader_CT.ConvertMovieObject(var Data: string): boolean;
@@ -334,12 +343,6 @@ begin
       end;
 end;
 
-procedure TDownloader_CT.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  LiveStream := Value.ReadProviderOptionDef(Provider, OPTION_CT_LIVESTREAM, OPTION_CT_LIVESTREAM_DEFAULT);
-end;
-
 {$IFDEF MULTIDOWNLOADS}
 function TDownloader_CT.First: boolean;
 begin
@@ -386,8 +389,6 @@ begin
   //Self.SwfUrl := 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23';
   //Self.TcUrl := BaseUrl;
   //Self.PageUrl := MovieID;
-  if LiveStream then
-    Self.Live := True;
 end;
 
 initialization

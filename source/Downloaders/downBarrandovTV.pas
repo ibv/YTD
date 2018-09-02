@@ -158,7 +158,6 @@ begin
     //Self.TcUrl := 'rtmpe://' + HostName;
     Self.PageUrl := 'http://www.barrandov.tv/' + MovieID;
     Self.SecureToken := fToken;
-    //Self.Live := True;
     SetPrepared(True);
     Result := True;
     end;

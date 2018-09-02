@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.94                                     (c) 2009-11 Pepak
+YouTube Downloader v0.95                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -413,15 +413,6 @@ a "0" (ne).
     - Potomek <modules>; obsahuje nastavení pro Èeskou televizi a odvozené
       odkazy (Port, ÈT24 atd.).
 
-    <live_stream>
-      - Potomek <CeskaTelevize_cz>; urèuje, jestli se video stream stahuje
-        jako živé video nebo jako soubor. Hlavní rozdíl je v tom, že soubor
-        se stahuje mnohem rychleji, ale kvùli podivné implementaci ÈT flashe
-        se pak nedá pøehrát. Živý stream se stahuje pomaleji, ale podle ohlasù
-        je s ním pak ménì problémù.
-      - Možné hodnoty jsou "0" (stahovat jako soubor) a "1" (živé video).
-      - Výchozí hodnotou je "1" (stahovat jako živé video).
-
   <Nova_cz>
     - Potomek <modules>; obsahuje nastavení pro TV Nova.
 
@@ -498,6 +489,16 @@ a "0" (ne).
        pro tohoto konkrétního poskytovatele.
      - Možné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).
      - Výchozí hodnota je "1" (povolit stahování titulkù).
+
+  <live_stream>
+    - Potomek konkrétního poskytovatele; urèuje, jestli se video stream stahuje
+      jako živé video nebo jako soubor. Hlavní rozdíl je v tom, že soubor
+      se stahuje mnohem rychleji, ale je náchylný na pøesnou synchronizaci
+      mezi serverem a klientem a mùže vést k rozpadu obrazu a/nebo zvuku.
+    - Pozn.: Má smysl pouze pro poskytovatele fungující na protokolu RTMP.
+    - Možné hodnoty jsou "0" (stahovat jako soubor) a "1" (živé video).
+    - Výchozí hodnotou je "1" (stahovat jako živé video).
+
 
 <converters>
   - Potomek <ytd>. V této sekci jsou nadefinovány parametry jednotlivých 

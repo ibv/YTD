@@ -1,11 +1,37 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.94                                     (c) 2009-11 Pepak
+YouTube Downloader v0.95                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.95:
+
+    * New providers:
+      - FarmarHladaZenu.sk
+      - HejbejSe.tv
+      - Metropol.cz
+      - Osobnosti.cz
+
+    * Blip.tv: Works again.
+
+    * CeskaTelevize.cz: Works again.
+
+    * iPrima.cz: Provided that a page http://prima.stream.cz/<id> exists,
+      a yet higher quality video may be downloaded.
+
+    * Stream.cz: Support for videos in user profiles:
+      http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
+
+    * All RTMP-based downloaders now have a setting for Live Stream mode.
+      The Live Stream mode is slow (approximately real-time) but far less
+      likely to download damaged than a non-Live Stream. The default setting
+      is enabled Live Stream, but it can be disabled in both the GUI and the
+      XML configuration (see <live_stream> in the documentation).
+
+
 
   v0.94:
 

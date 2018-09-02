@@ -87,8 +87,9 @@ uses
 // http://www.stream.cz/reklamozrouti/410282-reklamozrouti-medvedi-reklama
 // http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
 // http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
+// http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!\bmusic\.)stream\.cz/(?:[^/]+/)*';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!\bmusic\.)stream\.cz/(?:[^/]+/|.*[&?]video_id=)';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 

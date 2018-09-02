@@ -5,3 +5,4 @@
 #define IDC_LABEL_EMPTYAREA                     1001
 #define IDC_CHECKBOX_SUBTITLESENABLED           1002
 #define IDC_CHECKBOX_CONVERTSUBTITLES           1003
+#define IDC_CHECKBOX_LIVESTREAM                 1004

@@ -65,6 +65,7 @@ type
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
     public
+      class function Features: TDownloaderFeatures; override;
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       {$IFDEF GUI}
@@ -146,6 +147,11 @@ const
   NOVA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://voyo.nova.cz/%s';
 
 { TDownloader_Nova }
+
+class function TDownloader_Nova.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRtmpLiveStream, dfPreferRtmpLiveStream];
+end;
 
 class function TDownloader_Nova.Provider: string;
 begin
@@ -278,7 +284,6 @@ begin
                     MovieUrl := Url;
                     Self.RtmpUrl := BaseUrl;
                     Self.Playpath := Url;
-                    Self.Live := True;
                     SetPrepared(True);
                     Result := True;
                     Break;

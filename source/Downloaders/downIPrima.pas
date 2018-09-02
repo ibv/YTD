@@ -71,8 +71,10 @@ type
     protected
       StreamIDRegExp: TRegExp;
       StreamCDNIDRegExp: TRegExp;
+      TryingHighestQuality: boolean;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetMovieInfoUrlForID(const ID: string): string; override;
       function GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -208,13 +210,23 @@ begin
   Result := Format(PRIMA_MOVIE_INFO_URL, [MovieID]);
 end;
 
+function TDownloader_iPrima_Stream.GetMovieInfoUrlForID(const ID: string): string;
+begin
+  if TryingHighestQuality then
+    Result := 'http://prima.stream.cz/' + ID
+  else
+    Result := inherited GetMovieInfoUrlForID(ID);
+end;
+
 function TDownloader_iPrima_Stream.GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean;
 begin
-  inherited GetFlashVarsIdStrings(ID, cdnLQ, cdnHQ, cdnHD, Title);
-  cdnLQ := 'lqID';
-  cdnHQ := 'hqID';
-  cdnHD := 'hdID';
-  Result := True;
+  Result := inherited GetFlashVarsIdStrings(ID, cdnLQ, cdnHQ, cdnHD, Title);
+  if not TryingHighestQuality then
+    begin
+    cdnLQ := 'lqID';
+    cdnHQ := 'hqID';
+    cdnHD := 'hdID';
+    end;
 end;
 
 function TDownloader_iPrima_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -224,18 +236,32 @@ begin
   Result := False;
   if GetRegExpVar(StreamIDRegExp, Page, 'STREAMID', ID) then
     begin
-    Url := GetMovieInfoUrlForID(ID);
-    if not GetMovieInfoContent(Http, Url, EmbeddedPage, EmbeddedPageXml) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-    else
+    // Chci zkusit "Highest quality"
+    if not Result then
+      begin
+      TryingHighestQuality := True;
       try
-        Result := inherited AfterPrepareFromPage(EmbeddedPage, EmbeddedPageXml, Http);
-        if not Result then
-          Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
+        Url := GetMovieInfoUrlForID(ID);
+        if GetMovieInfoContent(Http, Url, EmbeddedPage, EmbeddedPageXml) then
+          if inherited AfterPrepareFromPage(EmbeddedPage, EmbeddedPageXml, Http) then
+            Result := Prepared;
       finally
-        FreeAndNil(EmbeddedPageXml);
+        TryingHighestQuality := False;
         end;
+      end;
+    // Pokud se nepodari, zkusim normalni kvalitu, a to napred pres Primu
+    if not Result then
+      begin
+      Url := GetMovieInfoUrlForID(ID);
+      if GetMovieInfoContent(Http, Url, EmbeddedPage, EmbeddedPageXml) then
+        if inherited AfterPrepareFromPage(EmbeddedPage, EmbeddedPageXml, Http) then
+          Result := Prepared
+    // a pak pres Stream samotny
+        else if inherited AfterPrepareFromPage(Page, PageXml, Http) then
+          Result := Prepared
+      end;
     end;
+  // Nakonec zkusim primo stahnout cdnID
   if not Result then
     if GetRegExpVar(StreamCDNIDRegExp, Page, 'STREAMID', ID) then
       begin
@@ -294,7 +320,6 @@ begin
       Stream := LQStream;
     MovieUrl := 'rtmp://iprima.livebox.cz/iprima/' + Stream;
     Self.RtmpUrl := MovieURL;
-    Self.Live := True;
     Result := True;
     SetPrepared(True);
     end;

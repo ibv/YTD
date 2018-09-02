@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downBlipTv;
+unit downOsobnostiCZ;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,10 +42,11 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader, downBlipTv_Embed;
+  uDownloader, uCommonDownloader, uNestedDownloader, uVarNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_BlipTv = class(TNestedDownloader)
+  TDownloader_OsobnostiCZ = class(TVarNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -60,47 +61,56 @@ implementation
 
 uses
   uStringConsts,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://blip.tv/weird-america/weird-america-mark-mothersbaugh-111976
+// http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!file/)';
+  URLREGEXP_BEFORE_ID = 'videoklip\.osobnosti\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_URL =    '<meta\s+property="og:video"\s+content="(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URLS: array[0..2] of string
+    = (REGEXP_URL_PARAM_MOVIE,
+       REGEXP_URL_EMBED_SRC,
+       REGEXP_URL_IFRAME_SRC
+      );
 
-{ TDownloader_BlipTv }
+{ TDownloader_OsobnostiCZ }
 
-class function TDownloader_BlipTv.Provider: string;
+class function TDownloader_OsobnostiCZ.Provider: string;
 begin
-  Result := TDownloader_BlipTv_Embed.Provider;
+  Result := 'Osobnosti.cz';
 end;
 
-class function TDownloader_BlipTv.UrlRegExp: string;
+class function TDownloader_OsobnostiCZ.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_BlipTv.Create(const AMovieID: string);
+constructor TDownloader_OsobnostiCZ.Create(const AMovieID: string);
 begin
-  inherited;
-  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  AddNestedUrlRegExps(REGEXP_MOVIE_URLS);
 end;
 
-destructor TDownloader_BlipTv.Destroy;
+destructor TDownloader_OsobnostiCZ.Destroy;
 begin
-  RegExFreeAndNil(NestedUrlRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  ClearNestedUrlRegExps;
   inherited;
 end;
 
-function TDownloader_BlipTv.GetMovieInfoUrl: string;
+function TDownloader_OsobnostiCZ.GetMovieInfoUrl: string;
 begin
-  Result := 'http://blip.tv/' + MovieID;
+  Result := 'http://videoklip.osobnosti.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_BlipTv);
+  RegisterDownloader(TDownloader_OsobnostiCZ);
 
 end.
