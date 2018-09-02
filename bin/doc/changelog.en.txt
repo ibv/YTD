@@ -1,11 +1,20 @@
 ﻿______________________________________________________________________________
 
-YTD v1.33                                                    (c) 2009-13 Pepak
+YTD v1.34                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.34:
+
+    * Updated providers:
+      - CeskaTelevize.cz (author: secret)
+      - YouTube.com (author: mandel99)
+      Thanks to both of you.
+
+
 
   v1.33:
 

@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.33                                                    (c) 2009-13 Pepak
+YTD v1.34                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -883,7 +883,9 @@ Pokud potřebujete program přelicencovat pod jinou licenci, dejte mi vědět.
 
 Komponenty třetích stran, umístěné v adresáři SOURCE/LIB, se řídí svými 
 vlastními licencemi. Z tohoto důvodu nelze použít licenci GNU GPL (žádnou
-verzi) ani na YouTube Downloader, ani na odvozené programy!
+verzi) ani na YouTube Downloader, ani na odvozené programy! Licence samotného
+YTD by to sice dovolovala, ale licence jednotlivých komponent ne - odvozené
+dílo by muselo tyto komponenty nahradit.
 
 Knihovny a jejich licence:
 

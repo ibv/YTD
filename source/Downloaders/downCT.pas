@@ -518,7 +518,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/playlistURL.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/getPlaylistURL.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Copy(Url, 1, 4) <> 'http' then
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))

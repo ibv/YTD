@@ -105,6 +105,9 @@ const
 
 {$IFNDEF DELPHI2010_UP}
 const
+  INVALID_SET_FILE_POINTER = DWORD(-1);
+
+const
   CSIDL_PROGRAM_FILES = 38;
 
 const

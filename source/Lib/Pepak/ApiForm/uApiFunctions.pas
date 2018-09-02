@@ -93,7 +93,7 @@ var Buf: array[0..32768] of char;
 begin
   if LastError <> NO_ERROR then
     begin
-    n := FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, LastError, 0, Buf, Sizeof(Buf), nil);
+    n := FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, LastError, 0, Buf, Length(Buf), nil);
     if n = 0 then
       Msg := Format(WINDOWS_ERROR_UNKNOWN, [LastError, LastError])
     else

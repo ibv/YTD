@@ -118,12 +118,14 @@ function RunFile(const FileName, Params: string): Integer; overload;
 function RunFile(const FileName, Params, WorkDir: string): Integer; overload;
 function RunFile(const FileName, Params: string; Command: Word): Integer; overload;
 function RunFile(const FileName, Params, WorkDir: string; Command: Word): Integer; overload;
+function RunFile(const FileName, Params, WorkDir: string; Command: Word; out RunCode: integer): boolean; overload;
 function WaitForEnd(const FileName: string): Boolean; overload;
 function WaitForEnd(const FileName: string; out ResultCode: DWORD): Boolean; overload;
 function WaitForEnd(const FileName: string; Command: Word): Boolean; overload;
 function WaitForEnd(const FileName: string; Command: Word; out ResultCode: DWORD): Boolean; overload;
 function WaitForEnd(const FileName, Params: string; Command: Word): Boolean; overload;
 function WaitForEnd(const FileName, Params: string; Command: Word; out ResultCode: DWORD; NotValidAfter: TDateTime = 0): Boolean; overload;
+function WaitForEndElevated(const FileName, Params: string; Command: Word; out ResultCode: DWORD): Boolean;
 {$IFDEF USYSTEM_APPLICATION}
 function WaitForExclusiveAccess(FN: string): Boolean;
 {$ENDIF}
@@ -725,7 +727,14 @@ begin
   Result := RunFile(FileName, Params, ExtractFilePath(FileName), Command);
 end;
 
-function RunFile(const FileName, Params, WorkDir: string; Command: Word): Integer; overload;
+function RunFile(const FileName, Params, WorkDir: string; Command: Word): Integer;
+begin
+  if not RunFile(FileName, Params, WorkDir, Command, Result) then
+    if Result > 32 then
+      Result := 0;
+end;
+
+function RunFile(const FileName, Params, WorkDir: string; Command: Word; out RunCode: integer): boolean;
 {$DEFINE __RUNFILE_NOZONECHECK}
 {$IFDEF __RUNFILE_NOZONECHECK}
 var
@@ -744,21 +753,52 @@ begin
   ExecInfo.nShow := Command;
   CoInitializeEx(nil, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE);
   try
-    if ShellExecuteEx( {$IFDEF FPC} LPShellExecuteInfo {$ENDIF} (@ExecInfo)) then
-      Result := ExecInfo.hInstApp
+    if ShellExecuteEx(@ExecInfo) then
+      begin
+      RunCode := ExecInfo.hInstApp;
+      Result := True;
+      end
     else
       begin
-      Result := GetLastError;
-      if Result >= 32 then
-        Result := ERROR_ACCESS_DENIED;
+      RunCode := GetLastError;
+      if RunCode >= 32 then
+        RunCode := ERROR_ACCESS_DENIED;
+      Result := False;
       end;
   finally
     CoUninitialize;
     end;
   {$ELSE}
-  Result := ShellExecute(hInstance, 'open', PChar(FileName), PChar(Params), PChar(WorkDir), Command);
+  RunCode := ShellExecute(hInstance, 'open', PChar(FileName), PChar(Params), PChar(WorkDir), Command);
+  Result := RunCode > 32;
   {$ENDIF}
 {$UNDEF __RUNFILE_NOZONECHECK}
+end;
+
+function WaitForEndElevated(const FileName, Params: string; Command: Word; out ResultCode: DWORD): Boolean;
+var
+  ExecInfo: TShellExecuteInfo;
+begin
+  FillChar(ExecInfo, Sizeof(ExecInfo), 0);
+  ExecInfo.cbSize := Sizeof(ExecInfo);
+  ExecInfo.fMask := SEE_MASK_FLAG_NO_UI or SEE_MASK_NOCLOSEPROCESS {$IFDEF UNICODE} or SEE_MASK_UNICODE {$ENDIF} ;
+  ExecInfo.lpVerb := 'runas';
+  ExecInfo.lpFile := PChar(FileName);
+  if Params <> '' then
+    ExecInfo.lpParameters := PChar(Params);
+  ExecInfo.nShow := Command;
+  if ShellExecuteEx(@ExecInfo) then
+    begin
+    Result := True;
+    if ExecInfo.hProcess <> 0 then
+      begin
+      WaitForSingleObject(ExecInfo.hProcess, INFINITE);
+      GetExitCodeProcess(ExecInfo.hProcess, ResultCode);
+      CloseHandle(ExecInfo.hProcess);
+      end;
+    end
+  else
+    Result := False;
 end;
 
 function WaitForEnd(const FileName: string): Boolean;

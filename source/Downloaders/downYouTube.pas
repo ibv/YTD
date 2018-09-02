@@ -570,16 +570,20 @@ function TDownloader_YouTube.UpdateVevoSignature(const Signature: string): strin
 
 begin
   // Thanks to mandel99
+  // Da se to najit v html5player-vflwMrwdI.js, kdyz dam hledat Reverse. Potrebuju
+  // to trochu projit, jestli by se to nedalo vyziskat nejak automatizovane, abych
+  // to nemusel porad prepisovat. URL na skript se najde v konfiguracnim stringu
+  // v "assets"\s*:\s*\{\s*"js"\s*:\s*"(?P<URL>\\/\\/s.ytimg.com\\/[^"]+?)"
+  // (pozor, neobsahuje protokol, jen server a cestu).
   Result := Signature;
-  YoutubeSwap(Result, 32);
+  YoutubeSwap(Result, 3);
   Reverse(Result);
-  Slice(Result, 3);
+  YoutubeSwap(Result, 39);
   Reverse(Result);
+  YoutubeSwap(Result, 51);
   Slice(Result, 1);
-  Reverse(Result);
-  YoutubeSwap(Result, 19);
-  YoutubeSwap(Result, 24);
-  Slice(Result, 3);
+  YoutubeSwap(Result, 36);
+  YoutubeSwap(Result, 14);
 end;
 
 { TDownloader_YouTube_RTMP }

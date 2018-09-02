@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.33                                                    (c) 2009-13 Pepak
+YTD v1.34                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -887,8 +887,10 @@ full terms and conditions in file DOC/LICENSE.TXT.
 If you need to use a different license in your derived program, contact me.
 
 Third-party components, located in the SOURCE/LIB directory, are governed
-by their own respective licenses. For this reason can't YouTube Downloader
-be released under GNU GPL (any version), nor can be derived works!
+by their own respective licenses. For this reason YouTube Downloader as a
+whole can't be released under GNU GPL (any version). The same is true for
+derivative works - while YTD's license is compatible with GPL and could be
+re-licensed, you'd have to rewrite the concerned libraries.
 
 Used libraries and their licenses:
 
