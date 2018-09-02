@@ -112,7 +112,7 @@ begin
   for i := 1 to Length(FN) do
     if Pos(Char(FN[i]), INVALID_FILENAME_CHARS) > 0 then
       begin
-      FN := EncodeBase64(MD5(FN));
+      FN := EncodeBase64(MD5(FN)) + AnsiString(ExtractFileExt(FileName));
       if Options.DestinationPath = '' then
         Dir := ''
       else
@@ -121,7 +121,7 @@ begin
       while FileExists(Dir + string(FN)) do
         begin
         Inc(n);
-        FN := EncodeBase64(MD5(AnsiString(Result + IntToStr(n))));
+        FN := EncodeBase64(MD5(AnsiString(Result + IntToStr(n)))) + AnsiString(ExtractFileExt(FileName));
         end;
       Result := Dir + string(FN);
       Break;

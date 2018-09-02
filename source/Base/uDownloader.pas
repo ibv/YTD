@@ -133,7 +133,7 @@ type
       function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlDecode(const Text: string; Unicode: boolean = False): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlDecode(const Text: string; Encoding: TPageEncoding = peANSI): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Encode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -803,9 +803,12 @@ begin
       Result := StringReplace(Result, HtmlDecodeItems[i].Txt, HtmlDecodeItems[i].Html, [rfReplaceAll]);
 end;
 
-function TDownloader.UrlDecode(const Text: string): string;
+function TDownloader.UrlDecode(const Text: string; Encoding: TPageEncoding): string;
+var
+  Decoded: AnsiString;
 begin
-  Result := {$IFDEF UNICODE} string {$ENDIF} (DecodeUrl( {$IFDEF UNICODE} AnsiString {$ENDIF} (StringReplace(Text, '+', ' ', [rfReplaceAll]))));
+  Decoded := DecodeUrl( {$IFDEF UNICODE} AnsiString {$ENDIF} (StringReplace(Text, '+', ' ', [rfReplaceAll])));
+  Result := ConvertString(Decoded, Encoding);
 end;
 
 function TDownloader.UrlEncode(const Text: string): string;

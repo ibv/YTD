@@ -80,6 +80,7 @@ type
       function Download: boolean; override;
       procedure AbortTransfer; override;
       {$IFDEF MULTIDOWNLOADS}
+      function ValidatePrepare: boolean; override;
       function First: boolean; override;
       function Next: boolean; override;
       {$ENDIF}
@@ -244,6 +245,18 @@ begin
 end;
 
 {$IFDEF MULTIDOWNLOADS}
+function THttpDownloader.ValidatePrepare: boolean;
+var
+  DownIndex: integer;
+begin
+  DownIndex := DownloadIndex;
+  try
+    Result := inherited ValidatePrepare;
+  finally
+    DownloadIndex := DownIndex;
+    end;
+end;
+
 function THttpDownloader.First: boolean;
 begin
   if ValidatePrepare then

@@ -53,7 +53,7 @@ type
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
-      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
+      constructor CreateWithName(const AMovieID, AMovieName: string; ACookies: TStrings = nil); virtual;
       destructor Destroy; override;
       function Prepare: boolean; override;
     end;
@@ -83,10 +83,12 @@ begin
   inherited;
 end;
 
-constructor THttpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
+constructor THttpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string; ACookies: TStrings);
 begin
   Create(AMovieID);
   SetName(AMovieName);
+  if ACookies <> nil then
+    Cookies.Assign(ACookies);
 end;
 
 destructor THttpDirectDownloader.Destroy;

@@ -424,6 +424,10 @@ var MovieObject, Url, ID, BaseUrl, Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
+  {$IFDEF MULTIDOWNLOADS}
+  BaseUrls.Clear;
+  Streams.Clear;
+  {$ENDIF}
   if not GetMovieObject(Http, Page, MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then

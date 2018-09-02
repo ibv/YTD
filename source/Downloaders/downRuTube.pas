@@ -43,10 +43,10 @@ uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend, SynaUtil,
   uOptions,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TDownloader_RuTube = class(TRtmpDownloader)
+  TDownloader_RuTube = class(TNestedDownloader)
     private
     protected
       MovieInfoRegExp: TRegExp;
@@ -64,13 +64,24 @@ implementation
 
 uses
   uStringConsts,
+  uHttpDirectDownloader,
+  uRtmpDownloader,
   uDownloadClassifier,
   uMessages;
 
+// RTMP videos:
 // http://rutube.ru/video/54477e8b005020d309ef371dff690eb3/
 // http://bl.rutube.ru/c327d57926a628644fad3bc36d81ad08
 // http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
 // http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
+
+// HDS videos (not yet supported):
+// http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
+// http://rutube.ru/video/f364037be6e405ee18783cceebf25d61/
+
+// RTMPS videos:
+// http://rutube.ru/video/958d1a1eeb77c811a166e480dc98c6ec/
+// http://rutube.ru/video/95375a912bf7a48b74de49688627eef2/
 const
   URLREGEXP_BEFORE_ID = 'rutube\.ru/(?:video/|trackinfo/)?';
   URLREGEXP_ID =        '[0-9a-f]{32}';
@@ -79,6 +90,24 @@ const
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
   REGEXP_MOVIE_INFO =   '<param\s+name=\\"movie\\"\s+value=\\"(?P<URL>https?://.+?)\\"';
+
+type
+  TDownloader_RuTube_HTTP = class(THttpDirectDownloader);
+
+  TDownloader_RuTube_RTMP = class(TRTMPDownloader)
+    private
+      fName: string;
+      fServer: string;
+      fStream: string;
+      fMovieInfoUrl: string;
+    protected
+      function GetMovieInfoUrl: string; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor CreateWithParams(const AName, AServer, AStream, AMovieInfoUrl: string);
+      function Prepare: boolean; override;
+    end;
 
 { TDownloader_RuTube }
 
@@ -113,12 +142,14 @@ begin
 end;
 
 function TDownloader_RuTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+type
+  TUrlType = (utNone, utHttp, utRTMP);
 var
   Info, Url, Response, ResponseStr, Server: string;
   BestStream, Stream, Bitrate: string;
-  Protocol, User, Password, Host, Port, Path, Para: string;
   i, BestQuality, Quality: integer;
   Xml: TXmlDoc;
+  UrlType, BestUrlType: TUrlType;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -137,6 +168,7 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
     else
       try
+        //Xml.SaveToFile('rutube.xml');
         if not GetXmlVar(Xml, 'responseCode', Response) then
           SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
         else if StrToIntDef(Response, 0) <> 200 then
@@ -151,9 +183,16 @@ begin
           begin
           BestStream := '';
           BestQuality := -1;
+          BestUrlType := utNone;
           for i := 0 to Pred(Xml.Root.NodeCount) do
             if Xml.Root.Nodes[i].Name = 'media' then
-              if GetXmlAttr(Xml.Root.Nodes[i], '','url', Stream) then
+              begin
+              UrlType := utNone;
+              if GetXmlAttr(Xml.Root.Nodes[i], '','href', Stream) then
+                UrlType := utHTTP
+              else if GetXmlAttr(Xml.Root.Nodes[i], '','url', Stream) then
+                UrlType := utRTMP;
+              if UrlType <> utNone then
                 begin
                 if GetXmlAttr(Xml.Root.Nodes[i], '', 'bitrate', Bitrate) then
                   Quality := StrToIntDef(Bitrate, 0)
@@ -163,25 +202,84 @@ begin
                   begin
                   BestStream := Stream;
                   BestQuality := Quality;
+                  BestUrlType := UrlType;
                   end;
                 end;
+              end;
           if BestStream = '' then
             SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
           else
             begin
             MovieUrl := Server + BestStream;
-            Self.RtmpUrl := MovieUrl;
-            Self.Playpath := Copy(BestStream, 2, MaxInt);
-            ParseUrl(Server, Protocol, User, Password, Host, Port, Path, Para);
-            if Path = '/vod' then
-              Self.Live := True;
-            SetPrepared(True);
-            Result := True;
+            case BestUrlType of
+              utHttp:
+                begin
+                SetPrepared(True);
+                Result := CreateNestedDownloaderFromDownloader(TDownloader_RuTube_HTTP.CreateWithName(MovieUrl, Name, Http.Cookies));
+                end;
+              utRTMP:
+                begin
+                SetPrepared(True);
+                Result := CreateNestedDownloaderFromDownloader(TDownloader_RuTube_RTMP.CreateWithParams(Name, Server, BestStream, GetMovieInfoUrl));
+                end;
+              end;
             end;
           end;
       finally
         FreeAndNil(Xml);
         end;
+    end;
+end;
+
+{ TDownloader_RuTube_RTMP }
+
+class function TDownloader_RuTube_RTMP.Provider: string;
+begin
+  Result := TDownloader_RuTube.Provider;
+end;
+
+class function TDownloader_RuTube_RTMP.UrlRegExp: string;
+begin
+  Raise EDownloaderError.Create('TDownloader_RuTube_RTMP.UrlRegExp is not supported.');
+  {$IFDEF FPC}
+  Result := '';
+  {$ENDIF}
+end;
+
+constructor TDownloader_RuTube_RTMP.CreateWithParams(const AName, AServer, AStream, AMovieInfoUrl: string);
+begin
+  Create('');
+  fName := AName;
+  fServer := AServer;
+  fStream := AStream;
+  fMovieInfoUrl := AMovieInfoUrl;
+end;
+
+function TDownloader_RuTube_RTMP.GetMovieInfoUrl: string;
+begin
+  Result := '';
+end;
+
+function TDownloader_RuTube_RTMP.Prepare: boolean;
+var
+  Protocol, User, Password, Host, Port, Path, Para: string;
+begin
+  inherited Prepare;
+  Result := False;
+  if (fServer <> '') and (fStream <> '') then
+    begin
+    SetName(fName);
+    MovieUrl := fServer + fStream;
+    Self.RtmpUrl := MovieUrl;
+    Self.Playpath := Copy(fStream, 2, MaxInt);
+    Self.PageUrl := fMovieInfoUrl;
+    Self.SwfUrl := 'http://rutube.ru/player.swf';
+    Self.TcUrl := fServer;
+    ParseUrl(fServer, Protocol, User, Password, Host, Port, Path, Para);
+    if Path = '/vod' then
+      Self.Live := True;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

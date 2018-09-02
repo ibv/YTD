@@ -34,26 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downDailyMotion;
+unit xxxTeenMpegs;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_DailyMotion = class(THttpDownloader)
+  TDownloader_TeenMpegs = class(THttpDownloader)
     private
     protected
-      MovieParamsRegExp: TRegExp;
-      JSONVarsRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,89 +63,50 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun#hp-v-v2
 const
-  URLREGEXP_BEFORE_ID = 'dailymotion\.com/video/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = 'teenmpegs\.com/';
+  URLREGEXP_ID =        '(?:click/)?video/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_PARAMS = '[{,]\s*"sequence"\s*:\s*"(?P<PARAMS>.+?)"';
-  REGEXP_JSON_VARS = '"(?P<VARNAME>[a-z_][a-z0-9_]*)"\s*:\s*"(?P<VARVALUE>.*?)"';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H2;
+  REGEXP_MOVIE_URL = '\{\s*url\s*:\s*(?:escape\s*\(\s*)?''(?P<URL>https?://.+?)''';
 
-{ TDownloader_DailyMotion }
+{ TDownloader_TeenMpegs }
 
-class function TDownloader_DailyMotion.Provider: string;
+class function TDownloader_TeenMpegs.Provider: string;
 begin
-  Result := 'DailyMotion.com';
+  Result := 'TeenMpegs.com';
 end;
 
-class function TDownloader_DailyMotion.UrlRegExp: string;
+class function TDownloader_TeenMpegs.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_DailyMotion.Create(const AMovieID: string);
+constructor TDownloader_TeenMpegs.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
-  JSONVarsRegExp := RegExCreate(REGEXP_JSON_VARS);
+  inherited;
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_DailyMotion.Destroy;
+destructor TDownloader_TeenMpegs.Destroy;
 begin
-  RegExFreeAndNil(MovieParamsRegExp);
-  RegExFreeAndNil(JSONVarsRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_DailyMotion.GetMovieInfoUrl: string;
+function TDownloader_TeenMpegs.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.dailymotion.com/video/' + MovieID;
-end;
-
-function TDownloader_DailyMotion.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
-begin
-  {$IFDEF XXX}
-  Http.Cookies.Add('family_filter=off');
-  {$ENDIF}
-  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
-end;
-
-function TDownloader_DailyMotion.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  Params, Title, Url, HDUrl, HQUrl, SDUrl: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAMS', Params) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else
-    begin
-    Params := UrlDecode(Params);
-    GetRegExpVarPairs(JSONVarsRegExp, Params, ['videoTitle', 'sdURL', 'hqURL', 'hdURL'], [@Title, @SDUrl, @HQUrl, @HDUrl]);
-    if HDUrl <> '' then
-      Url := HDUrl
-    else if HQUrl <> '' then
-      Url := HQUrl
-    else
-      Url := SDUrl;
-    if Title = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-    else if Url = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      SetName(Title);
-      MovieURL := StripSlashes(Url);
-      Result := True;
-      SetPrepared(True);
-      end;
-    end;
+  Result := 'http://www.teenmpegs.com/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_DailyMotion);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_TeenMpegs);
+  {$ENDIF}
 
 end.

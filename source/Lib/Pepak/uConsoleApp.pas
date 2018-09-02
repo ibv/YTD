@@ -105,6 +105,7 @@ type
       procedure ShowHeader; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowError(const Msg: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowError(const Msg: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure ShowError(Error: Exception); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowSyntax(const Error: string = ''); overload; virtual;
       procedure ShowSyntax(const Error: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure Log(const LogFileName: string; const Msg: string); overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
@@ -319,6 +320,11 @@ end;
 procedure TConsoleApp.Log(const LogFileName: string; const Msg: string; const Params: array of const);
 begin
   Log(LogFileName, Format(Msg, Params));
+end;
+
+procedure TConsoleApp.ShowError(Error: Exception);
+begin
+  ShowError('%s: %s', [Error.ClassName, Error.Message]);
 end;
 
 procedure TConsoleApp.ShowError(const Msg: string; const Params: array of const);

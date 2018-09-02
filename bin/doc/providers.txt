@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.13                                                    (c) 2009-12 Pepak
+YTD v1.14                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -191,6 +191,7 @@ NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
                     |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
+Ocko.tv             | HTTP     |       | http://ocko.tv/video/particka-hd-4457/
 OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
 Online.hokej.cz     | RTMP     | 9     | http://online.hokej.cz/?date=2012-01-20&video=69421
 Osobnosti.cz        | HTTP     |       | http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
@@ -351,6 +352,7 @@ Shufuni.com         | HTTP     | F     |
 SlutLoad.com        | HTTP     | F     |
 SpankingTube.com    | HTTP     | F     |
 SpankWire.com       | HTTP     | F     |
+TeenMpegs.com       | HTTP     | F     |
 TheYNC.com          | HTTP     | F     |
 TnaFlix.com         | HTTP     | F     |
 Tube8.com           | HTTP     | F     |

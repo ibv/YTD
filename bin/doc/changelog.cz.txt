@@ -1,11 +1,27 @@
 ______________________________________________________________________________
 
-YTD v1.13                                                    (c) 2009-12 Pepak
+YTD v1.14                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.14:
+
+    * Noví poskytovatelé:
+      - Ocko.tv
+      - TeenMpegs.com (porno)
+
+    * Aktualizovaní poskytovatelé:
+      - DailyMotion.com
+      - RuTube.ru (víc podporovaných videí, ale zatím ne HDS)
+      - YouTube.com (unicode verze YTD špatnì dekódovala jméno videa)
+
+    * Opravena chyba, kvùli které se napøíklad z Èeské televize stahoval jeden
+      soubor stále dokola.
+
+
 
   v1.13:
 

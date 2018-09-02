@@ -362,7 +362,7 @@ begin
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else if CreateNestedDownloaderFromDownloader(D) then
         begin
-        Title := Utf8ToString(Utf8String(UrlDecode(Title)));
+        Title := UrlDecode(Title, peUtf8);
         Result := True;
         end;
       end;
