@@ -117,6 +117,8 @@ type
       EmbeddedFrameRegExp: TRegExp;
       JavascriptPlayerRegExp: TRegExp;
       VideoPlayerUrlRegExp: TRegExp;
+      GetAjaxPlaylistRegExp: TRegExp;
+      GetVideoUrlRegExp: TRegExp;
       {$IFDEF SUBTITLES}
       HasSubtitles: boolean;
       {$IFDEF CONVERTSUBTITLES}
@@ -195,6 +197,8 @@ const
   REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
   REGEXP_JS_PLAYER = '<a\s+(?:\w+="[^"]*"\s+)*\bhref="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+(?:id|target)="videoPlayer_';
   REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>(?:https?:|\\?/).+?)"';
+  REGEXP_AJAXPLAYLIST = '<script\b[^>]*\ssrc="(?P<URL>https?://[^/]*\.ceskatelevize\.cz/libraries/player/ajaxPlaylist[^"]*)"';
+  REGEXP_VIDEOURL = '\burl\s*:\s*"(?P<URL>.+?)"';
   {$IFDEF SUBTITLES}
   REGEXP_SUBTITLES = '<ul\s+id="subtitle[^>]+>(?P<SUBTITLES>.*?)</ul>';
   {$IFDEF CONVERTSUBTITLES}
@@ -319,6 +323,8 @@ begin
   EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
   JavascriptPlayerRegExp := RegExCreate(REGEXP_JS_PLAYER);
   VideoPlayerUrlRegExp := RegExCreate(REGEXP_VIDEOPLAYERURL);
+  GetAjaxPlaylistRegExp := RegExCreate(REGEXP_AJAXPLAYLIST);
+  GetVideoUrlRegExp := RegExCreate(REGEXP_VIDEOURL);
   {$IFDEF SUBTITLES}
   {$IFDEF CONVERTSUBTITLES}
   SubtitleItemRegExp := RegExCreate(REGEXP_SUBTITLE_ITEM);
@@ -339,6 +345,8 @@ begin
   RegExFreeAndNil(EmbeddedFrameRegExp);
   RegExFreeAndNil(JavascriptPlayerRegExp);
   RegExFreeAndNil(VideoPlayerUrlRegExp);
+  RegExFreeAndNil(GetAjaxPlaylistRegExp);
+  RegExFreeAndNil(GetVideoUrlRegExp);
   {$IFDEF SUBTITLES}
   {$IFDEF CONVERTSUBTITLES}
   RegExFreeAndNil(SubtitleItemRegExp);
@@ -499,7 +507,7 @@ end;
 function TDownloader_CT_old.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const REKLAMA = '-AD-';
       REKLAMA_LENGTH = Length(REKLAMA);
-var MovieObject, Url, ID, BaseUrl, Stream: string;
+var MovieObject, AjaxPlaylist, Url, InfoUrl, ID, BaseUrl, Stream: string;
     Xml: TXmlDoc;
     Body, Node: TXmlNode;
     i, RealMaxBitrate: integer;
@@ -518,7 +526,13 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/getPlaylistURI.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
+  else if not GetRegExpVar(GetAjaxPlaylistRegExp, Page, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), AjaxPlaylist) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(GetVideoUrlRegExp, AjaxPlaylist, 'URL', InfoUrl) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, InfoUrl), AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Copy(Url, 1, 4) <> 'http' then
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))

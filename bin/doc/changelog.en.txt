@@ -1,11 +1,23 @@
 ﻿______________________________________________________________________________
 
-YTD v1.35                                                    (c) 2009-14 Pepak
+YTD v1.36                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.36:
+
+    * New providers:
+      - Novinky.cz
+
+    * CeskaTelevize.cz: Third time in one week I have to update this provider.
+      Now we shall see whether it is just a webmaster who can't decide about
+      his URLs or a malicious intent which will force me to implement a
+      distributed solution. It won't be that difficult.
+
+
 
   v1.35:
 

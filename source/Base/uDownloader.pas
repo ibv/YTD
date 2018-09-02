@@ -1089,7 +1089,7 @@ begin
     begin
     i := Pos('://', Path);
     if i > 1 then
-      Result := CurrentUrl
+      Result := Path
     else if Path[1] = '/' then
       if (Length(Path) >= 2) and (Path[2] = '/') then
         Result := Copy(CurrentUrl, 1, Pos('://', CurrentUrl)) + Path // two slashes are already at the beginning of Path

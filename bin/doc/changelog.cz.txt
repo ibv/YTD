@@ -1,11 +1,23 @@
 ﻿______________________________________________________________________________
 
-YTD v1.35                                                    (c) 2009-14 Pepak
+YTD v1.36                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.36:
+
+    * Noví poskytovatelé:
+      - Novinky.cz
+
+    * CeskaTelevize.cz: Potřetí v jednom týdnu aktualizuji Českou televizi.
+      Teď se ukáže, jestli se jejich webmaster neumí rozhodnout, nebo jestli
+      to dělá naschvál a donutí mě udělat distribuované řešení. Už jsem o tom
+      uvažoval, zase tak složité to nebude.
+
+
 
   v1.35:
 

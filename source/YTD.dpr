@@ -290,6 +290,7 @@ uses
   {$ENDIF}
   downNovaMov in 'Downloaders\downNovaMov.pas',
   downNovaMov_Embed in 'Downloaders\downNovaMov_Embed.pas',
+  downNovinky in 'Downloaders\downNovinky.pas',
   downNRSR in 'Downloaders\downNRSR.pas',
   downOckoTV in 'Downloaders\downOckoTV.pas',
   downOKTeam in 'Downloaders\downOKTeam.pas',
