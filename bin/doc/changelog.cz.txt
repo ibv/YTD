@@ -1,11 +1,18 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.88                                     (c) 2009-11 Pepak
+YouTube Downloader v0.89                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.89:
+
+    * Odstranìno zapomenuté podrobné logování RTMP streamù. Promažte si prosím
+      adresáø pro doèasné soubory.
+
+
 
   v0.88:
 
