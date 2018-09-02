@@ -51,7 +51,7 @@ uses
   {$ENDIF}
   SynaCode,
   uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
-  guiOptions, guiFunctions, uDialogs,
+  guiOptions, guiFunctions, uDialogs, uUpgrade,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
 {$IFDEF SYSTRAY}
@@ -184,12 +184,14 @@ type
     procedure WMCopyData(var msg: TMessage); message WM_COPYDATA;
     {$ENDIF}
     {$IFDEF THREADEDVERSION}
-    procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
+    procedure NewYTDEvent(Sender: TYTDUpgrade);
+    procedure NewDefsEvent(Sender: TYTDUpgrade);
     {$ENDIF}
   protected
     DownloadList: TDownloadList;
     NextProgressUpdate: DWORD;
     Options: TYTDOptionsGUI;
+    Upgrade: TYTDUpgrade;
     NextClipboardViewer: WPARAM;
     LastClipboardText: string;
     {$IFDEF CONVERTERS}
@@ -242,7 +244,7 @@ begin
     {$ENDIF}
     Caption := APPLICATION_CAPTION {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ;
     Options := TYTDOptionsGUI.Create;
-    TScriptedDownloader.InitOptions(Options);
+    TScriptedDownloader.InitMainScriptEngine(Options.ScriptFileName);
     UseLanguage(Options.Language);
     {$IFDEF GETTEXT}
     TranslateProperties(self);
@@ -304,8 +306,11 @@ begin
     fLoading := False;
     end;
   {$IFDEF THREADEDVERSION}
+  Upgrade := TYTDUpgrade.Create(Options);
+  Upgrade.OnNewYTDFound := NewYTDEvent;
+  Upgrade.OnNewDefsFound := NewDefsEvent;
   if Options.CheckForNewVersionOnStartup then
-    Options.GetNewestVersionInBackground(NewVersionEvent);
+    Upgrade.TestUpgrades(True);
   {$ENDIF}
 end;
 
@@ -320,6 +325,9 @@ begin
   Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
   FreeAndNil(DownloadList);
+  {$IFDEF THREADEDVERSION}
+  FreeAndNil(Upgrade);
+  {$ENDIF}
   FreeAndNil(Options);
 end;
 
@@ -350,7 +358,10 @@ procedure TFormYTD.WMClickIcon(var msg: TMessage);
 begin
   case Msg.lParam of
     {WM_LBUTTONDBLCLK} WM_LBUTTONDOWN:
-      Show;
+      begin
+        Show;
+        BringToFront;
+      end;
     end;
 end;
 
@@ -412,20 +423,35 @@ begin
         SetLength(UrlW, Info^.cbData div Sizeof(WideChar));
         Move(Info^.lpData^, UrlW[1], Info^.cbData);
         AddTask(UrlW);
-        end; 
+        end;
   Msg.Result := 0;
 end;
 {$ENDIF}
 
 {$IFDEF THREADEDVERSION}
-procedure TFormYTD.NewVersionEvent(Sender: TObject; const Version, Url: string);
+procedure TFormYTD.NewYTDEvent(Sender: TYTDUpgrade);
 begin
-  if IsNewerVersion(Version) then
-    begin
-    actReportBug.Enabled := False;
-    if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version]), mtInformation, [mbYes, mbNo], 0) = mrYes then
-      NewVersionFound(Options, Url, Handle);
-    end;
+  if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
+    if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
+      begin
+      actReportBug.Enabled := False;
+      if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Sender.OnlineYTDVersion]), mtInformation, [mbYes, mbNo], 0) = mrYes then
+        guiFunctions.UpgradeYTD(Sender, Handle);
+      end;
+end;
+
+procedure TFormYTD.NewDefsEvent(Sender: TYTDUpgrade);
+begin
+  if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) >= 0 then
+    if TScriptedDownloader.MainScriptEngine <> nil then
+      if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
+        if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then
+          begin
+          actReportBug.Enabled := False;
+          if MessageDlg(Format(_(MAINFORM_NEW_DEFS_VERSION_AVAILABLE), [Sender.OnlineDefsVersion]), mtInformation, [mbYes, mbNo], 0) = mrYes then
+            if guiFunctions.UpgradeDefs(Sender, Handle) then
+              actReportBug.Enabled := True;
+          end;
 end;
 {$ENDIF}
 

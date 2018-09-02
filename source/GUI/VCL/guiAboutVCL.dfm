@@ -18,7 +18,7 @@ object FormAbout: TFormAbout
   object LabelYTD: TLabel
     Left = 8
     Top = 8
-    Width = 205
+    Width = 41
     Height = 24
     Caption = 'YTD'
     Font.Charset = DEFAULT_CHARSET
@@ -81,7 +81,7 @@ object FormAbout: TFormAbout
   object LabelHomepage: TLabel
     Left = 112
     Top = 72
-    Width = 307
+    Width = 150
     Height = 13
     Anchors = [akTop, akRight]
     Caption = 'http://www.pepak.net/ytd'
@@ -99,6 +99,35 @@ object FormAbout: TFormAbout
     Width = 78
     Height = 13
     Caption = 'Media providers:'
+  end
+  object LabelDefsVersion: TLabel
+    Left = 192
+    Top = 40
+    Width = 100
+    Height = 13
+    Anchors = [akTop, akRight]
+    Caption = 'LabelDefsVersion'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object LabelNewestDefsVersion: TLabel
+    Left = 192
+    Top = 56
+    Width = 55
+    Height = 13
+    Anchors = [akTop, akRight]
+    Caption = 'not found'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    OnClick = LabelNewestDefsVersionClick
   end
   object ListProviders: TListView
     Left = 8

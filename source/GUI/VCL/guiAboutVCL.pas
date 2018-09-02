@@ -46,6 +46,7 @@ uses
   UITypes,
   {$ENDIF}
   uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions,
+  uUpgrade,
   guiFunctions;
 
 const
@@ -62,24 +63,29 @@ type
     LabelHomepage: TLabel;
     LabelMediaProviders: TLabel;
     ListProviders: TListView;
+    LabelDefsVersion: TLabel;
+    LabelNewestDefsVersion: TLabel;
     procedure LabelNewestVersionClick(Sender: TObject);
     procedure LabelHomepageClick(Sender: TObject);
     procedure ListProvidersData(Sender: TObject; Item: TListItem);
+    procedure LabelNewestDefsVersionClick(Sender: TObject);
   private
     fFirstShow: boolean;
     fDownloadClassifier: TDownloadClassifier;
-    fNewVersionUrl: string;
     fOptions: TYTDOptions;
+    fUpgrade: TYTDUpgrade;
     procedure WMFirstShow(var Msg: TMessage); message WM_FIRSTSHOW;
   protected
     procedure DoShow; override;
     procedure DoFirstShow; {$IFDEF FPC} override; {$ELSE} virtual; {$ENDIF}
     procedure SetUrlStyle(ALabel: TLabel); virtual;
     procedure LoadProviders; virtual;
-    procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
-    property NewVersionUrl: string read fNewVersionUrl write fNewVersionUrl;
+    procedure NewYTDEvent(Sender: TYTDUpgrade); virtual;
+    procedure NewDefsEvent(Sender: TYTDUpgrade); virtual;
+    property Upgrade: TYTDUpgrade read fUpgrade;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     property Options: TYTDOptions read fOptions write fOptions;
     property DownloadClassifier: TDownloadClassifier read fDownloadClassifier write fDownloadClassifier;
   end;
@@ -88,6 +94,9 @@ implementation
 
 {$R *.DFM}
 
+uses
+  uScriptedDownloader;
+
 { TFormAbout }
 
 constructor TFormAbout.Create(AOwner: TComponent);
@@ -95,6 +104,12 @@ begin
   inherited;
   TranslateProperties(self);
   fFirstShow := True;
+end;
+
+destructor TFormAbout.Destroy;
+begin
+  FreeAndNil(fUpgrade);
+  inherited;
 end;
 
 procedure TFormAbout.DoShow;
@@ -124,28 +139,56 @@ begin
   {$ENDIF}
   // Show current version
   LabelVersion.Caption := APPLICATION_VERSION;
+  if TScriptedDownloader.MainScriptEngine <> nil then
+    LabelDefsVersion.Caption := TScriptedDownloader.MainScriptEngine.Version;
   // Homepage
   SetUrlStyle(LabelHomepage);
   // Providers
   LoadProviders;
   // Show available version
   LabelNewestVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found') {$ENDIF} ; // GUI: Check for a new version wasn't made yet - or failed.
+  LabelNewestDefsVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found') {$ENDIF} ; // GUI: Check for a new version wasn't made yet - or failed.
   Application.ProcessMessages;
   if Options <> nil then
-    {$IFDEF THREADEDVERSION}
-    Options.GetNewestVersionInBackground(NewVersionEvent);
-    {$ELSE}
-    if Options.GetNewestVersion(Version, Url) then
-      NewVersionEvent(Options, Version, Url);
-    {$ENDIF}
+    begin
+    FreeAndNil(fUpgrade);
+    fUpgrade := TYTDUpgrade.Create(Options);
+    fUpgrade.OnNewYTDFound := NewYTDEvent;
+    fUpgrade.OnNewDefsFound := NewDefsEvent;
+    fUpgrade.TestUpgrades( {$IFDEF THREADEDVERSION} True {$ELSE} False {$ENDIF} );
+    end;
 end;
 
+{
 procedure TFormAbout.NewVersionEvent(Sender: TObject; const Version, Url: string);
 begin
-  LabelNewestVersion.Caption := Version;
-  NewVersionUrl := Url;
-  if IsNewerVersion(Version) then
-    SetUrlStyle(LabelNewestVersion);
+end;
+}
+
+procedure TFormAbout.NewYTDEvent(Sender: TYTDUpgrade);
+begin
+  if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
+    begin
+    LabelNewestVersion.Caption := Sender.OnlineYTDVersion;
+    if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
+      begin
+      SetUrlStyle(LabelNewestVersion);
+      LabelNewestDefsVersion.Visible := False;
+      end;
+    end;
+end;
+
+procedure TFormAbout.NewDefsEvent(Sender: TYTDUpgrade);
+begin
+  if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
+    begin
+    LabelNewestDefsVersion.Caption := Sender.OnlineDefsVersion;
+    if TScriptedDownloader.MainScriptEngine <> nil then
+      if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then
+        begin
+        SetUrlStyle(LabelNewestDefsVersion);
+        end;
+    end;
 end;
 
 procedure TFormAbout.SetUrlStyle(ALabel: TLabel);
@@ -157,7 +200,20 @@ end;
 
 procedure TFormAbout.LabelNewestVersionClick(Sender: TObject);
 begin
-  NewVersionFound(Options, NewVersionUrl, Handle);
+  if fUpgrade <> nil then
+    guiFunctions.UpgradeYTD(fUpgrade, Handle);
+end;
+
+procedure TFormAbout.LabelNewestDefsVersionClick(Sender: TObject);
+begin
+  if fUpgrade <> nil then
+    if guiFunctions.UpgradeDefs(fUpgrade, Handle) then
+      begin
+      LabelNewestDefsVersion.Font.Assign(LabelDefsVersion.Font);
+      LabelNewestDefsVersion.Cursor := LabelDefsVersion.Cursor;
+      LabelNewestDefsVersion.Caption := fUpgrade.OnlineDefsVersion;
+      Invalidate;
+      end;
 end;
 
 procedure TFormAbout.LabelHomepageClick(Sender: TObject);

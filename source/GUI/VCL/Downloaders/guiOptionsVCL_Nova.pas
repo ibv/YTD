@@ -65,7 +65,7 @@ implementation
 {$R *.DFM}
 
 uses
-  downNova;
+  downVoyo;
 
 { TFrameDownloaderOptionsPage_Nova }
 
@@ -82,17 +82,17 @@ end;
 procedure TFrameDownloaderOptionsPage_Nova.LoadFromOptions;
 begin
   inherited;
-  CheckLowQuality.Checked := Options.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
-  EditSecretPassword.Text := Options.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT);
-  EditConfigPassword.Text := Options.ReadProviderOptionDef(Provider, OPTION_NOVA_CONFIG_PASSWORD, OPTION_NOVA_CONFIG_PASSWORD_DEFAULT);
+  CheckLowQuality.Checked := Options.ReadProviderOptionDef(Provider, OPTION_VOYO_LOWQUALITY, OPTION_VOYO_LOWQUALITY_DEFAULT);
+  EditSecretPassword.Text := Options.ReadProviderOptionDef(Provider, OPTION_VOYO_SECRET, OPTION_VOYO_SECRET_DEFAULT);
+  EditConfigPassword.Text := Options.ReadProviderOptionDef(Provider, OPTION_VOYO_CONFIG_PASSWORD, OPTION_VOYO_CONFIG_PASSWORD_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_Nova.SaveToOptions;
 begin
   inherited;
-  Options.WriteProviderOption(Provider, OPTION_NOVA_LOWQUALITY, CheckLowQuality.Checked);
-  Options.WriteProviderOption(Provider, OPTION_NOVA_SECRET, EditSecretPassword.Text);
-  Options.WriteProviderOption(Provider, OPTION_NOVA_CONFIG_PASSWORD, EditConfigPassword.Text);
+  Options.WriteProviderOption(Provider, OPTION_VOYO_LOWQUALITY, CheckLowQuality.Checked);
+  Options.WriteProviderOption(Provider, OPTION_VOYO_SECRET, EditSecretPassword.Text);
+  Options.WriteProviderOption(Provider, OPTION_VOYO_CONFIG_PASSWORD, EditConfigPassword.Text);
 end;
 
 end.

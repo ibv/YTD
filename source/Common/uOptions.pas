@@ -47,10 +47,6 @@ uses
 type
   TOverwriteMode = (omNever, omAlways, omRename, omAsk);
 
-  {$IFDEF THREADEDVERSION}
-  TGetNewestVersionEvent = procedure(Sender: TObject; const Version, Url: string) of object;
-  {$ENDIF}
-
   {$IFDEF CONVERTERS}
   TConverterVisibility = (cvVisible, cvMinimized, cvHidden);
 
@@ -128,7 +124,6 @@ type
       procedure SetDownloadToTempFiles(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetDownloadToProviderSubdirs: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetDownloadToProviderSubdirs(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function CreateHttp: THttpSend; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create; virtual;
       destructor Destroy; override;
@@ -148,13 +143,7 @@ type
       function ReadConverter(const ID: string; out Converter: TConverter): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function WriteConverter(const Converter: TConverter): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
-      function GetNewestVersion(out Version, Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      {$IFDEF THREADEDVERSION}
-      procedure GetNewestVersionInBackground(OnDone: TGetNewestVersionEvent); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      {$ENDIF}
-      {$IFDEF SETUP}
-      function DownloadNewestVersion(out FileName: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      {$ENDIF}
+      function CreateHttp: THttpSend; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property FileName: string read fXmlFileName;
     public
       property PortableMode: boolean read GetPortableMode write SetPortableMode;
@@ -837,57 +826,6 @@ end;
 
 {$ENDIF}
 
-{$IFDEF THREADEDVERSION}
-type
-  TGetNewestVersionThread = class(TThread)
-    private
-      fVersion: string;
-      fUrl: string;
-      procedure SyncReportVersion;
-    protected
-      Options: TYTDOptions;
-      OnDone: TGetNewestVersionEvent;
-      procedure Execute; override;
-    public
-      constructor Create(AOptions: TYTDOptions; AOnDone: TGetNewestVersionEvent); virtual;
-    end;
-
-constructor TGetNewestVersionThread.Create(AOptions: TYTDOptions; AOnDone: TGetNewestVersionEvent);
-begin
-  Options := AOptions;
-  OnDone := AOnDone;
-  FreeOnTerminate := True;
-  inherited Create(False);
-end;
-
-procedure TGetNewestVersionThread.Execute;
-var Version, Url: string;
-begin
-  if Assigned(OnDone) and Assigned(Options) then
-    if Options.GetNewestVersion(Version, Url) then
-      begin
-      fVersion := Version;
-      fUrl := Url;
-      {$IFDEF DELPHITHREADS}
-      Synchronize(SyncReportVersion);
-      {$ELSE}
-      SyncReportVersion;
-      {$ENDIF}
-      end;
-end;
-
-procedure TGetNewestVersionThread.SyncReportVersion;
-begin
-  OnDone(Options, fVersion, fUrl);
-end;
-
-procedure TYTDOptions.GetNewestVersionInBackground(OnDone: TGetNewestVersionEvent);
-begin
-  TGetNewestVersionThread.Create(Self, OnDone);
-end;
-
-{$ENDIF}
-
 function TYTDOptions.CreateHttp: THttpSend;
 begin
   Result := THttpSend.Create;
@@ -904,100 +842,5 @@ begin
     Raise;
     end;
 end;
-
-const
-  NEWEST_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF}
-    = 'http://ytd.pepak.net/'
-      {$IFNDEF XXX} + 'lite' {$ELSE} {$IFDEF UNICODE} + 'unicode' {$ELSE} + 'ansi' {$ENDIF} {$ENDIF}
-      ;
-
-function TYTDOptions.GetNewestVersion(out Version, Url: string): boolean;
-
-  function FindHeader(Http: THttpSend; Header: string; out Value: string): boolean;
-    var i: integer;
-        HdrLen: integer;
-    begin
-      Result := False;
-      Header := Trim(Header) + ':';
-      HdrLen := Length(Header);
-      for i := 0 to Pred(Http.Headers.Count) do
-        if AnsiCompareText(Copy(Http.Headers[i], 1, HdrLen), Header) = 0 then
-          begin
-          Value := Trim(Copy(Http.Headers[i], Succ(HdrLen), MaxInt));
-          Result := True;
-          Break;
-          end;
-    end;
-
-var Http: THttpSend;
-    Ver: string;
-    n: integer;
-begin
-  Result := False;
-  Version := '';
-  Url := NEWEST_VERSION_URL;
-  Http := CreateHttp;
-  try
-    if Http.HttpMethod('HEAD', Url) then
-      if (Http.ResultCode >= 200) and (Http.ResultCode < 400) then
-        if FindHeader(Http, 'X-YTD-Version', Version) then
-          Result := True
-        else if FindHeader(Http, 'Location', Url) then
-          begin
-          Ver := ChangeFileExt(Url, '');
-          n := Length(Ver);
-          while (n >= 1) and CharInSet(Ver[n], ['0'..'9']) do
-            Dec(n);
-          if (n >= 1) and (Ver[n] = '.') then
-            repeat
-              Dec(n);
-              if (n < 1) or (not CharInSet(Ver[n], ['0'..'9'])) then
-                begin
-                Version := Copy(Ver, Succ(n), MaxInt);
-                Result := True;
-                Break;
-                end;
-            until False;
-          end;
-  finally
-    FreeAndNil(Http);
-    end;
-end;
-
-{$IFDEF SETUP}
-function TYTDOptions.DownloadNewestVersion(out FileName: string): boolean;
-var Http: THttpSend;
-    Url: string;
-    Again: boolean;
-begin
-  Result := False;
-  Url := NEWEST_VERSION_URL;
-  Http := CreateHttp;
-  try
-    repeat
-      Again := False;
-      Http.Clear;
-      if Http.HttpMethod('HEAD', Url) then
-        if CheckRedirect(HTTP, Url) then
-          Again := True
-        else
-          begin
-          Http.Clear;
-          if Http.HttpMethod('GET', Url) then
-            if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
-              begin
-              FileName := GetTempDir + 'ytd-upgrade' + ExtractFileExt(Url);
-              if FileExists(FileName) then
-                SysUtils.DeleteFile(FileName);
-              Http.Document.SaveToFile(FileName);
-              Result := True;
-              end;
-          end;
-    until not Again;
-  finally
-    FreeAndNil(Http);
-    end;
-end;
-{$ENDIF}
 
 end.

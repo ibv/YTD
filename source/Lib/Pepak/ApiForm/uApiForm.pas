@@ -124,6 +124,7 @@ type
       function ShowFrame(Parent: THandle): THandle; virtual;
       function Close: boolean; overload; virtual;
       function Close(ModalResult: integer): boolean; overload; virtual;
+      procedure Update;
       {$IFDEF APIFORM_ANCHORS}
         // Simulate anchors from VCL, to achieve easy resizing. If no anchor is defined
         // for a control, it behaves as if [akLeft, akTop] was assigned to it.
@@ -785,6 +786,11 @@ procedure TApiForm.SetMenu(Value: HMENU);
 begin
   Windows.SetMenu(Self.Handle, Value);
   fMenu := Value;
+end;
+
+procedure TApiForm.Update;
+begin
+  UpdateWindow(Handle);
 end;
 
 initialization

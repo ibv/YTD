@@ -556,7 +556,7 @@ begin
   ParseUrl(Referer, Prot, User, Pass, Host, Port, Part, Para);
   if not GetRegExpVars(GetPlaylistUrlRegExp, Page, ['TYPE', 'ID'], [@MediaType, @MediaID]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ivysilani/ajax/get-playlist-url', 'playlist%5B0%5D%5Btype%5D=' + MediaType + '&playlist%5B0%5D%5Bid%5D=' + MediaID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani', HTTP_FORM_URLENCODING_UTF8, ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'], PlaylistData) then
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ivysilani/ajax/get-playlist-url', {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + MediaType + '&playlist%5B0%5D%5Bid%5D=' + MediaID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani'), HTTP_FORM_URLENCODING_UTF8, ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'], PlaylistData) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(GetPlaylistUrlFromJSONRegExp, PlaylistData, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)

@@ -49,6 +49,7 @@ uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
   uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions,
+  uUpgrade,
   guiFunctions;
 
 type
@@ -76,16 +77,22 @@ type
     private
       fDownloadClassifier: TDownloadClassifier;
       fOptions: TYTDOptions;
+      fUpgrade: TYTDUpgrade;
       fNewestVersionColor: TColor;
       fNewestVersionUrl: string;
+      fNewestDefsColor: TColor;
+      fNewestDefsUrl: string;
     protected
-      procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
+      procedure NewYTDEvent(Sender: TYTDUpgrade); virtual;
+      procedure NewDefsEvent(Sender: TYTDUpgrade); virtual;
       procedure LabelHomepageClick; virtual;
       procedure LabelNewestVersionClick; virtual;
+      procedure LabelNewestDefsClick; virtual;
       {$IFNDEF STATICPROVIDERLIST}
       function ListProvidersGetDisplayInfo(DispInfo: PLVDispInfo): boolean; virtual;
       {$ENDIF}
       procedure LoadProviders; virtual;
+      property Upgrade: TYTDUpgrade read fUpgrade;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -97,6 +104,9 @@ implementation
 
 {$RESOURCE *.res}
 
+uses
+  uScriptedDownloader;
+
 // from resource.h
 const
   IDC_LABEL_VERSIONCAPTION = 1000;
@@ -106,6 +116,8 @@ const
   IDC_LABEL_VERSION = 1004;
   IDC_LABEL_NEWESTVERSION = 1007;
   IDC_LABEL_HOMEPAGE = 1008;
+  IDC_LABEL_NEWESTDEFSVERSION = 1009;
+  IDC_LABEL_DEFSVERSION = 1010;
   IDC_LIST_PROVIDERS = 1006;
 
   ACTION_CLOSE = 40000;
@@ -124,6 +136,7 @@ end;
 
 destructor TFormAbout.Destroy;
 begin
+  FreeAndNil(fUpgrade);
   inherited;
 end;
 
@@ -216,13 +229,22 @@ begin
   // Label "Version:" and version number
   SetDlgItemText(Self.Handle, IDC_LABEL_VERSION, PChar(APPLICATION_VERSION));
   SendDlgItemMessage(Handle, IDC_LABEL_VERSION, WM_SETFONT, Font_Info, 1);
+  if TScriptedDownloader.MainScriptEngine <> nil then
+    begin
+    SetDlgItemText(Self.Handle, IDC_LABEL_DEFSVERSION, PChar(TScriptedDownloader.MainScriptEngine.Version));
+    SendDlgItemMessage(Handle, IDC_LABEL_DEFSVERSION, WM_SETFONT, Font_Info, 1);
+    end;
   // Label "Newest version:"
   fNewestVersionColor := {$IFDEF THREADEDVERSION} clBlack {$ELSE} clRed {$ENDIF} ;
   fNewestVersionUrl := '';
+  fNewestDefsColor := {$IFDEF THREADEDVERSION} clBlack {$ELSE} clRed {$ENDIF} ;
+  fNewestDefsUrl := '';
   {$IFDEF THREADEDVERSION}
   SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_('checking...')));
+  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION, PChar(_('checking...')));
   {$ENDIF}
   SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Info, 1);
+  SendDlgItemMessage(Handle, IDC_LABEL_NEWESTDEFSVERSION, WM_SETFONT, Font_Info, 1);
   // Label "Homepage:"
   {$IFDEF OVERRIDETITLEANDURL}
   SetDlgItemText(Self.Handle, IDC_LABEL_HOMEPAGE, PChar(APPLICATION_URL));
@@ -230,12 +252,13 @@ begin
   SendDlgItemMessage(Handle, IDC_LABEL_HOMEPAGE, WM_SETFONT, Font_Link, 1);
   // Get the newest version info
   if Options <> nil then
-    {$IFDEF THREADEDVERSION}
-    Options.GetNewestVersionInBackground(NewVersionEvent);
-    {$ELSE}
-    if Options.GetNewestVersion(fVersion, fUrl) then
-      NewVersionEvent(Options, fVersion, fUrl);
-    {$ENDIF}
+    begin
+    FreeAndNil(fUpgrade);
+    fUpgrade := TYTDUpgrade.Create(Options);
+    fUpgrade.OnNewYTDFound := NewYTDEvent;
+    fUpgrade.OnNewDefsFound := NewDefsEvent;
+    fUpgrade.TestUpgrades( {$IFDEF THREADEDVERSION} True {$ELSE} False {$ENDIF} );
+    end;
   // ListView with provider info
   LoadProviders;
   // Make sure everything can be resized easily
@@ -274,6 +297,11 @@ begin
           LabelNewestVersionClick;
           Result := True;
           end;
+        IDC_LABEL_NEWESTDEFSVERSION:
+          begin
+          LabelNewestDefsClick;
+          Result := True;
+          end;
         end;
     end;
   if not Result then
@@ -301,6 +329,13 @@ begin
     Brush := Brush_Form;
     Result := True;
     end
+  else if Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION) then
+    begin
+    SetTextColor(DeviceContext, fNewestDefsColor);
+    SetBkMode(DeviceContext, TRANSPARENT);
+    Brush := Brush_Form;
+    Result := True;
+    end
   else if Control = GetDlgItem(Self.Handle, IDC_LABEL_HOMEPAGE) then
     begin
     SetTextColor(DeviceContext, clBlue);
@@ -313,21 +348,44 @@ end;
 function TFormAbout.DoSetCursor(Control: THandle; HitTestCode, Identifier: Word): boolean;
 begin
   Result := False;
-  if (Control = GetDlgItem(Self.Handle, IDC_LABEL_HOMEPAGE)) or ((Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTVERSION)) and (fNewestVersionUrl <> '')) then
+  if False
+     or (Control = GetDlgItem(Self.Handle, IDC_LABEL_HOMEPAGE))
+     or ((Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTVERSION)) and (fNewestVersionUrl <> ''))
+     or ((Control = GetDlgItem(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION)) and (fNewestDefsUrl <> ''))
+  then
     begin
     SetCursor(Cursor_Hand);
     Result := True;
     end;
 end;
 
-procedure TFormAbout.NewVersionEvent(Sender: TObject; const Version, Url: string);
+procedure TFormAbout.NewYTDEvent(Sender: TYTDUpgrade);
 begin
-  fNewestVersionUrl := Url;
-  SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_( Version )));
-  if IsNewerVersion(Version) then
+  if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
     begin
-    fNewestVersionColor := clBlue;
-    SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Link, 1);
+    fNewestVersionUrl := Sender.OnlineYTDUrl;
+    SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_( Sender.OnlineYTDVersion )));
+    if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
+      begin
+      fNewestVersionColor := clBlue;
+      SendDlgItemMessage(Handle, IDC_LABEL_NEWESTVERSION, WM_SETFONT, Font_Link, 1);
+      ShowWindow(GetDlgItem(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION), SW_HIDE);
+      end;
+    end;
+end;
+
+procedure TFormAbout.NewDefsEvent(Sender: TYTDUpgrade);
+begin
+  if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
+    begin
+    fNewestDefsUrl := Sender.OnlineDefsUrl;
+    SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION, PChar(_( Sender.OnlineDefsVersion )));
+    if TScriptedDownloader.MainScriptEngine <> nil then
+      if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then
+        begin
+        fNewestDefsColor := clBlue;
+        SendDlgItemMessage(Handle, IDC_LABEL_NEWESTDEFSVERSION, WM_SETFONT, Font_Link, 1);
+        end;
     end;
 end;
 
@@ -338,7 +396,22 @@ end;
 
 procedure TFormAbout.LabelNewestVersionClick;
 begin
-  NewVersionFound(Options, fNewestVersionUrl, Handle);
+  if fUpgrade <> nil then
+    guiFunctions.UpgradeYTD(fUpgrade, Handle);
+end;
+
+procedure TFormAbout.LabelNewestDefsClick;
+begin
+  if fUpgrade <> nil then
+    if guiFunctions.UpgradeDefs(fUpgrade, Handle) then
+      begin
+      fNewestDefsColor := clBlack;
+      fNewestDefsUrl := '';
+      SetDlgItemText(Self.Handle, IDC_LABEL_DEFSVERSION, PChar(_( fUpgrade.OnlineDefsVersion )));
+      SendDlgItemMessage(Handle, IDC_LABEL_DEFSVERSION, WM_SETFONT, Font_Info, 1);
+      SendDlgItemMessage(Handle, IDC_LABEL_NEWESTDEFSVERSION, WM_SETFONT, Font_Info, 1);
+      Update;
+      end;
 end;
 
 {$IFNDEF STATICPROVIDERLIST}

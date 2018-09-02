@@ -321,6 +321,7 @@ begin
   Result := Trim(Name);
   Result := StrTr(Result, INVALID_FILENAME_CHARS, INVALID_FILENAME_CHARS_REPLACEMENTS);
   Ext := GetFileNameExt;
+  Ext := StrTr(Ext, INVALID_FILENAME_CHARS, INVALID_FILENAME_CHARS_REPLACEMENTS);
   if AnsiCompareText(ExtractFileExt(Result), Ext) = 0 then
     Ext := '';
   // Limit the filename's length

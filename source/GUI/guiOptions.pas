@@ -119,6 +119,9 @@ const
   DEFAULT_CONVERTER_TO_H264 =
       'Convert movie to AVI/H264'
       ;
+  DEFAULT_CONVERTER_TO_MP3 =
+      'Convert movie to MP3'
+      ;
   ERROR_LOADING_CONFIG =
     'Error loading configuration file. Error %s:'#10 +
     '%s'#10 +
@@ -186,11 +189,13 @@ procedure TYTDOptionsGUI.BuildDefaultConfig;
       CONVERTER_ID_TO_AVI      {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-to-avi';
       CONVERTER_ID_TO_XVID     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-xvid';
       CONVERTER_ID_TO_H264     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-h264';
+      CONVERTER_ID_TO_MP3      {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-mp3';
       CONVERTER_TITLE_MENCODER {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'Mencoder - ';
       CONVERTER_TITLE_FFMPEG   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'FFmpeg - ';
       CONVERTER_TITLE_TO_AVI   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_AVI;
       CONVERTER_TITLE_TO_XVID  {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_XVID;
       CONVERTER_TITLE_TO_H264  {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_H264;
+      CONVERTER_TITLE_TO_MP3   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_MP3;
       CONVERTER_EXE_MENCODER   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'mencoder.exe';
       CONVERTER_EXE_FFMPEG     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'ffmpeg.exe';
   {$ENDIF}
@@ -202,6 +207,7 @@ begin
     InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_AVI,  CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_AVI),  CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -acodec copy -vcodec copy -y "{$FULLPATH}.avi"', cvMinimized);
     InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_XVID, CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_XVID), CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -acodec libmp3lame -vcodec mpeg4 -b 1200k -vtag DX50 -y "{$FULLPATH}.avi"', cvMinimized);
     InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_H264, CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_H264), CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -vcodec libx264 -preset fast -tune film -profile main -crf 22 -threads 0  -acodec aac -strict experimental -y "{$FULLPATH}.avi"', cvMinimized);
+    InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_MP3,  CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_MP3),  CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -q:a 0 -vn -y "{$FULLPATH}.mp3"', cvMinimized);
     InitConverter(CONVERTER_ID_MENCODER + CONVERTER_ID_TO_AVI,  CONVERTER_TITLE_MENCODER + _(CONVERTER_TITLE_TO_AVI),  CONVERTER_EXE_MENCODER, '-oac copy -ovc copy -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"', cvMinimized);
     InitConverter(CONVERTER_ID_MENCODER + CONVERTER_ID_TO_XVID, CONVERTER_TITLE_MENCODER + _(CONVERTER_TITLE_TO_XVID), CONVERTER_EXE_MENCODER, '-oac mp3lame -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200 -ffourcc xvid -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"', cvMinimized);
     InitConverter(CONVERTER_ID_MENCODER + CONVERTER_ID_TO_H264, CONVERTER_TITLE_MENCODER + _(CONVERTER_TITLE_TO_H264), CONVERTER_EXE_MENCODER, '-oac mp3lame -ovc x264 -x264encopts bitrate=1200 -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"', cvMinimized);

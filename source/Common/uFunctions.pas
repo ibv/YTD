@@ -49,7 +49,6 @@ uses
   uMessages, uCompatibility, uFiles, uStrings;
 
 function PrettySize(Size: int64): string;
-function IsNewerVersion(OnlineVersion: string): boolean;
 function GetSpecialFolder(FolderID: integer): string;
 function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean;
 function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle = 0): boolean; overload;
@@ -60,6 +59,7 @@ function CheckRedirect(Http: THttpSend; var Url: string): boolean;
 function CheckProtocol(const Url: string; const Protocols: array of string): integer;
 function IsHttpProtocol(const Url: string): boolean;
 function IncludeTrailingSlash(const Path: string): string;
+function FindHttpHeader(Http: THttpSend; Header: string; out Value: string): boolean;
 
 implementation
 
@@ -84,57 +84,6 @@ begin
     Result := PrettySizeInternal(Size, 30, 'G')
   else
     Result := PrettySizeInternal(Size, 40, 'T')
-end;
-
-function IsNewerVersion(OnlineVersion: string): boolean;
-
-  function ExtractVersionPartAsInteger(var Version: string; out Part: integer): boolean;
-    var i: integer;
-        s: string;
-    begin
-      i := Pos('.', Version);
-      if i > 0 then
-        begin
-        s := Copy(Version, 1, Pred(i));
-        Delete(Version, 1, i);
-        end
-      else
-        begin
-        s := Version;
-        Version := '';
-        end;
-      try
-        Part := StrToInt(s);
-        Result := True;
-      except
-        on EConvertError do
-          begin
-          Part := 0;
-          Result := False;
-          end;
-        end;
-    end;
-
-var Version: string;
-    NumCurrent, NumOnline: integer;
-    FoundCurrent, FoundOnline: boolean;
-begin
-  Result := False;
-  Version := APPLICATION_VERSION;
-  repeat
-    FoundCurrent := ExtractVersionPartAsInteger(Version, NumCurrent);
-    FoundOnline := ExtractVersionPartAsInteger(OnlineVersion, NumOnline);
-    if not (FoundCurrent or FoundOnline) then
-      Break
-    else
-      if NumCurrent < NumOnline then
-        begin
-        Result := True;
-        Break;
-        end
-      else if NumCurrent > NumOnline then
-        Break;
-  until False;
 end;
 
 function GetSpecialFolder(FolderID: integer): string;
@@ -223,49 +172,45 @@ const
   Location {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Location:';
   Localhost {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'localhost';
 var
-  i: integer;
   Redirect: string;
   RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara: string;
   OldURL, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara: string;
 begin
   Result := False;
   if (Http.ResultCode >= 300) and (Http.ResultCode < 400) then
-    for i := 0 to Pred(Http.Headers.Count) do
-      if AnsiCompareText(Location, Copy(Http.Headers[i], 1, Length(Location))) = 0 then
+    if FindHttpHeader(Http, 'Location', Redirect) then
+      begin
+      OldUrl := Url;
+      ParseUrl(Redirect, RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara);
+      if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
         begin
-        OldUrl := Url;
-        Redirect := Trim(Copy(Http.Headers[i], Length(Location)+1, MaxInt));
-        ParseUrl(Redirect, RedirProtocol, RedirUser, RedirPass, RedirHost, RedirPort, RedirPath, RedirPara);
+        ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
+        if RedirProtocol = '' then
+          RedirProtocol := UrlProtocol;
+        if RedirUser = '' then
+          RedirUser := UrlUser;
+        if RedirPass = '' then
+          RedirPass := UrlPass;
         if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
+          RedirHost := UrlHost;
+        if RedirPort = '' then
+          RedirPort := UrlPort;
+        Url := RedirProtocol + '://';
+        if RedirUser <> '' then
           begin
-          ParseUrl(Url, UrlProtocol, UrlUser, UrlPass, UrlHost, UrlPort, UrlPath, UrlPara);
-          if RedirProtocol = '' then
-            RedirProtocol := UrlProtocol;
-          if RedirUser = '' then
-            RedirUser := UrlUser;
-          if RedirPass = '' then
-            RedirPass := UrlPass;
-          if (RedirHost = '') or (AnsiCompareText(RedirHost, Localhost) = 0) then
-            RedirHost := UrlHost;
-          if RedirPort = '' then
-            RedirPort := UrlPort;
-          Url := RedirProtocol + '://';
-          if RedirUser <> '' then
-            begin
-            Url := Url + RedirUser;
-            if RedirPass <> '' then
-              Url := Url + ':' + RedirPass;
-            Url := Url + '@';
-            end;
-          Url := Url + RedirHost + ':' + RedirPort + RedirPath;
-          if RedirPara <> '' then
-            Url := Url + '?' + RedirPara ;
-          end
-        else
-          Url := Redirect;
-        Result := Url <> OldUrl;
-        Break;
-        end;
+          Url := Url + RedirUser;
+          if RedirPass <> '' then
+            Url := Url + ':' + RedirPass;
+          Url := Url + '@';
+          end;
+        Url := Url + RedirHost + ':' + RedirPort + RedirPath;
+        if RedirPara <> '' then
+          Url := Url + '?' + RedirPara ;
+        end
+      else
+        Url := Redirect;
+      Result := Url <> OldUrl;
+      end;
 end;
 
 function CheckProtocol(const Url: string; const Protocols: array of string): integer;
@@ -295,5 +240,22 @@ begin
   else
     Result := Path + '/';
 end;
+
+function FindHttpHeader(Http: THttpSend; Header: string; out Value: string): boolean;
+  var
+    i: integer;
+    HdrLen: integer;
+  begin
+    Result := False;
+    Header := Trim(Header) + ':';
+    HdrLen := Length(Header);
+    for i := 0 to Pred(Http.Headers.Count) do
+      if AnsiCompareText(Copy(Http.Headers[i], 1, HdrLen), Header) = 0 then
+        begin
+        Value := Trim(Copy(Http.Headers[i], Succ(HdrLen), MaxInt));
+        Result := True;
+        Break;
+        end;
+  end;
 
 end.

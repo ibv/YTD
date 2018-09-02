@@ -51,12 +51,13 @@ uses
     {$ENDIF}
   {$ENDIF}
   SynaCode, SynaUtil,
-  uFunctions, uDownloadList, uMessages, uStrings, uOptions;
+  uFunctions, uDownloadList, uMessages, uStrings, uOptions, uUpgrade;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 function IsHttpProtocol(const Url: string): boolean;
-procedure NewVersionFound(Options: TYTDOptions; const Url: string; OwnerHandle: THandle);
+procedure UpgradeYTD(Upgrade: TYTDUpgrade; OwnerHandle: THandle);
+function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle): boolean;
 
 {$IFDEF SINGLEINSTANCE}
 procedure RegisterMainInstance(const MainFormHandle: THandle);
@@ -65,6 +66,9 @@ function FindMainInstance(out MainFormHandle: THandle): boolean;
 {$ENDIF}
 
 implementation
+
+uses
+  uScriptedDownloader;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 var n: int64;
@@ -100,21 +104,17 @@ begin
     Result := False;
 end;
 
-procedure NewVersionFound(Options: TYTDOptions; const Url: string; OwnerHandle: THandle);
-{$IFDEF SETUP}
-var FileName: string;
-{$ENDIF}
+procedure UpgradeYTD(Upgrade: TYTDUpgrade; OwnerHandle: THandle);
 begin
-  if Url <> '' then
+  if Upgrade <> nil then
+    begin
     {$IFDEF SETUP}
-      {$IFDEF GUI_WINAPI}
+    if Upgrade.OnlineYTDUrl = '' then
+      Upgrade.TestUpgrades(False, False);
+    if Upgrade.OnlineYTDUrl <> '' then
       if MessageBox(OwnerHandle, PChar(MSG_DOWNLOAD_OR_UPGRADE), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
-      {$ELSE}
-      if MessageDlg(MSG_DOWNLOAD_OR_UPGRADE, mtInformation, [mbYes, mbNo], 0) = idYes then
-      {$ENDIF}
-        begin
-        if Options.DownloadNewestVersion(FileName) then
-          if (AnsiCompareText(ExtractFileExt(FileName), '.exe') = 0) and Run(FileName, Format('%s "%s"', [SETUP_PARAM_UPGRADE_GUI, ExtractFilePath(ParamStr(0))])) then
+        if (Upgrade.OnlineYTD <> nil) or Upgrade.DownloadYTDUpgrade(False, False) then
+          if Upgrade.UpgradeYTD then
             {$IFDEF GUI_WINAPI}
             ExitProcess(0)
             {$ELSE}
@@ -122,20 +122,40 @@ begin
             {$ENDIF}
           else
             {$IFDEF GUI_WINAPI}
-            MessageBox(OwnerHandle, PChar(Format(MSG_FAILED_TO_UPGRADE, [FileName])), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL)
+            MessageBox(OwnerHandle, PChar(MSG_FAILED_TO_UPGRADE), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL)
             {$ELSE}
-            MessageDlg(Format(MSG_FAILED_TO_UPGRADE, [FileName]), mtError, [mbOK], 0)
+            MessageDlg(MSG_FAILED_TO_UPGRADE, mtError, [mbOK], 0)
             {$ENDIF}
         else
           {$IFDEF GUI_WINAPI}
-          MessageBox(OwnerHandle, PChar(MSG_FAILED_TO_DOWNLOAD_UPGRADE), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL);
+          MessageBox(OwnerHandle, PChar(MSG_FAILED_TO_DOWNLOAD_UPGRADE + Upgrade.OnlineYTDUrl), PChar(APPLICATION_TITLE), MB_OK or MB_ICONSTOP or MB_TASKMODAL)
           {$ELSE}
-          MessageDlg(Format(MSG_FAILED_TO_DOWNLOAD_UPGRADE, [FileName]), mtError, [mbOK], 0)
+          MessageDlg(MSG_FAILED_TO_DOWNLOAD_UPGRADE + Upgrade.OnlineYTDUrl, mtError, [mbOK], 0)
           {$ENDIF}
-        end
       else
+    else
     {$ENDIF}
-    Run(Url, OwnerHandle);
+    if Upgrade.OnlineYTDUrl <> '' then
+      Run(Upgrade.OnlineYTDUrl, OwnerHandle);
+    end;
+end;
+
+function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle): boolean;
+begin
+  Result := False;
+  if Upgrade <> nil then
+    begin
+    if Upgrade.OnlineDefs = nil then
+      Upgrade.DownloadDefsUpgrade(False, False);
+    if Upgrade.OnlineDefs <> nil then
+      if Upgrade.OnlineDefs.Size > 0 then
+        if TScriptedDownloader.MainScriptEngine <> nil then
+          begin
+          TScriptedDownloader.MainScriptEngine.LoadFromStream(Upgrade.OnlineDefs);
+          TScriptedDownloader.MainScriptEngine.SaveToFile;
+          Result := True;
+          end;
+    end;
 end;
 
 {$IFDEF SINGLEINSTANCE}

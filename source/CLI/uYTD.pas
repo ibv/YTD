@@ -41,7 +41,8 @@ interface
 
 uses
   SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
-  uConsoleApp, uOptions, uLanguages, uMessages, uFunctions,
+  HttpSend,
+  uConsoleApp, uOptions, uLanguages, uMessages, uFunctions, uUpgrade,
   uDownloader, uCommonDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   {$IFDEF SETUP}
@@ -103,7 +104,7 @@ constructor TYTD.Create;
 begin
   inherited;
   fOptions := TYTDOptions.Create;
-  TScriptedDownloader.InitOptions(fOptions);
+  TScriptedDownloader.InitMainScriptEngine(fOptions.ScriptFileName);
   UseLanguage(Options.Language);
   fDownloadClassifier := TDownloadClassifier.Create;
   fHtmlPlaylist := TPlaylist_HTML.Create('');
@@ -187,47 +188,84 @@ begin
 end;
 
 function TYTD.ShowVersion(DoUpgrade: boolean): boolean;
-var Url, Version: string;
-    {$IFDEF SETUP}
-    FileName: string;
-    {$ENDIF}
+var
+  Upgrade: TYTDUpgrade;
 begin
-  Write(_('Current version: ')); WriteColored(ccWhite, AppVersion); Writeln; // CLI: Note: pad with spaces to the same length as "Newest version:"
-  Write(_('Newest version:  ')); // CLI: Note: pad with spaces to the same length as "Current version:"
-  Result := Options.GetNewestVersion(Version, Url);
-  if not Result then
-    WriteColored(ccLightRed, _('check failed')) // CLI: Couldn't check for a newer version
-  else if IsNewerVersion(Version) then
+  Result := True;
+  Write(_('Current version: ')); WriteColored(ccWhite, AppVersion);
+  if TScriptedDownloader.MainScriptEngine <> nil then
     begin
-    WriteColored(ccLightCyan, Version); Writeln;
-    {$IFDEF SETUP}
-    if DoUpgrade then
+    Write(_(', definitions ')); WriteColored(ccWhite, TScriptedDownloader.MainScriptEngine.Version);
+    end;
+  Writeln;
+  Write(_('Newest version:  '));
+  Upgrade := TYTDUpgrade.Create(Options);
+  try
+    Upgrade.TestUpgrades(False);
+    if Upgrade.OnlineYTDVersion = '' then
+      WriteColored(ccLightRed, _('check failed')) // CLI: Couldn't check for a newer version
+    else if Upgrade.CompareVersions(APPLICATION_VERSION, Upgrade.OnlineYTDVersion) < 0 then
       begin
-      Result := False;
-      if Options.DownloadNewestVersion(FileName) then
-        if (AnsiCompareText(ExtractFileExt(FileName), '.exe') = 0) and Run(FileName, Format('%s "%s"', [SETUP_PARAM_UPGRADE, ExtractFilePath(ParamStr(0))])) then
-          begin
-          Write(MSG_UPGRADING);
-          Result := True;
-          end
+      WriteColored(ccLightCyan, Upgrade.OnlineYTDVersion); Writeln;
+      {$IFDEF SETUP}
+      if DoUpgrade then
+        if Upgrade.DownloadYTDUpgrade(False, False) then
+          if Upgrade.UpgradeYTD then
+            Write(MSG_UPGRADING)
+          else
+            begin
+            WriteColored(ccLightRed, MSG_FAILED_TO_UPGRADE); // CLI: Failed to start the update code
+            Result := False;
+            end
         else
-          WriteColored(ccLightRed, Format(MSG_FAILED_TO_UPGRADE, [FileName])) // CLI: Failed to start the update code
+          begin
+          WriteColored(ccLightRed, MSG_FAILED_TO_DOWNLOAD_UPGRADE); // CLI: Couldn't download the upgraded version
+          WriteColored(ccWhite, Upgrade.OnlineYTDUrl);
+          Result := False;
+          end
       else
+      {$ENDIF}
         begin
-        WriteColored(ccLightRed, MSG_FAILED_TO_DOWNLOAD_UPGRADE); // CLI: Couldn't download the upgraded version
-        WriteColored(ccWhite, Url);
+        Write(_('Download URL:    ')); WriteColored(ccWhite, Upgrade.OnlineYTDUrl); // CLI: Note: pad with spaces to the same length as "Current version:"
         end;
       end
     else
-    {$ENDIF}
       begin
-      Write(_('Download URL:    ')); WriteColored(ccWhite, Url); // CLI: Note: pad with spaces to the same length as "Current version:"
+      WriteColored(ccWhite, Upgrade.OnlineYTDVersion);
+      if TScriptedDownloader.MainScriptEngine <> nil then
+        if Upgrade.OnlineDefsVersion <> '' then
+          begin
+          Write(_(', definitions '));
+          if Upgrade.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Upgrade.OnlineDefsVersion) < 0 then
+            begin
+            WriteColored(ccLightCyan, Upgrade.OnlineDefsVersion);
+            if Upgrade.OnlineDefs = nil then
+              Upgrade.DownloadDefsUpgrade(False, False);
+            if Upgrade.OnlineDefs <> nil then
+              try
+                TScriptedDownloader.MainScriptEngine.LoadFromStream(Upgrade.OnlineDefs);
+                TScriptedDownloader.MainScriptEngine.SaveToFile;
+                Write(_(', upgraded to '));
+                WriteColored(ccLightCyan, TScriptedDownloader.MainScriptEngine.Version);
+              except
+                WriteColored(ccLightRed, MSG_FAILED_TO_UPGRADE_DEFINITIONS);
+                Raise;
+                end
+            else
+              begin
+              WriteColored(ccLightRed, MSG_FAILED_TO_DOWNLOAD_DEFINITIONS);
+              Result := False;
+              end;
+            end
+          else
+            WriteColored(ccWhite, TScriptedDownloader.MainScriptEngine.Version);
+          end;
       end;
-    end
-  else
-    WriteColored(ccWhite, Version);
-  Writeln;
-  Writeln;
+    Writeln;
+    Writeln;
+  finally
+    FreeAndNil(Upgrade);
+    end;
 end;
 
 procedure TYTD.ParamInitialize;

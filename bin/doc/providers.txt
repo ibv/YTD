@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.38                                                    (c) 2009-14 Pepak
+YTD v1.40                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -157,6 +157,7 @@ Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-marki
                     |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
 Matrix-2001.cz      | HTTP     |       | http://www.matrix-2001.cz/clanek-detail/4650-david-wilcock-enigma-2012/
+MC2.sk              | RTMP     |       | http://www.mc2.sk/archiv/benzinaci/20/
 MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
                     |          |       | http://www.megavideo.com/v/HF2OV2PPf800ca3bd438e6d30c2490a75932d6331

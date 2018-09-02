@@ -88,6 +88,10 @@ resourcestring
   MAINFORM_NEW_VERSION_AVAILABLE =
     'A newer version (%s) is available.'#10 +
     'Do you want to download it?';
+  MAINFORM_NEW_DEFS_VERSION_AVAILABLE =
+    'A newer version (%s) of script definitions'#10 +
+    'is available.'#10 +
+    'Do you want to download it?';
   MAINFORM_ENTER_VIDEO_URL =
     'Enter video URL:';
   MAINFORM_ENTER_PAGE_URL =

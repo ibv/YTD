@@ -42,15 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXML, HttpSend, blcksock,
-  uDownloader, uOptions, uScriptedDownloaderTools;
+  uDownloader, uOptions, uScripts;
 
 type
   TScriptedDownloader = class(TDownloader)
     private
+      fScriptEngine: TScriptEngine;
       fScriptNode: TXmlNode;
       fDownloaderList: TList;
       fCurrentDownloadIndex: integer;
       fDebugFileName: string;
+      fRelativeUrl: string;
     private
       function GetDownloaderCount: integer;
       function GetDownloader(Index: integer): TDownloader;
@@ -60,12 +62,15 @@ type
       function GetFileNameExt: string; override;
       procedure Clear;
       procedure AddDownloader(Downloader: TDownloader);
+      property ScriptEngine: TScriptEngine read fScriptEngine;
       property ScriptNode: TXmlNode read fScriptNode;
       property DownloaderCount: integer read GetDownloaderCount;
       property Downloaders[Index: integer]: TDownloader read GetDownloader; default;
       property CurrentDownloadIndex: integer read fCurrentDownloadIndex;
       property DebugFileName: string read fDebugFileName write fDebugFileName;
+      property RelativeUrl: string read fRelativeUrl write fRelativeUrl;
     protected
+      class function ExtractWord(var Source: string; const Separator: string; out TheWord: string): boolean;
       function GetNodeContent(Node: TXmlNode; const Path, AttrName, AttrValue: string; Vars: TScriptVariables; out Content: string): boolean; overload;
       function GetNodeContent(Node: TXmlNode; const Path: string; Vars: TScriptVariables; out Content: string): boolean; overload;
       function GetNodeContent(Node: TXmlNode; const Path: string; Vars: TScriptVariables): string; overload;
@@ -73,22 +78,29 @@ type
       procedure ProcessScript(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessDebug(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessSetVar(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessCommonDownload(Node: TXmlNode; Vars: TScriptVariables; out Url, Title, FileNameExt: string);
       procedure ProcessHttpDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessRtmpDownload(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
       function ProcessNodeContent(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessCopy(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessDecodeHtml(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessDecodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
     public
-      class procedure InitOptions(AOptions: TYTDOptions);
+      class function MainScriptEngine: TScriptEngine;
+      class procedure InitMainScriptEngine(const FileName: string);
       class function IsSupportedUrl(const AUrl: string; out AMovieID: string): boolean; override;
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      constructor Create(const AScriptID, AMovieID: string); reintroduce; overload;
+      constructor Create(const AScriptID, AMovieID: string; AScriptEngine: TScriptEngine = nil); reintroduce; overload;
       constructor Create(const AMovieID: string); overload; override;
       destructor Destroy; override;
       function Prepare: boolean; override;
@@ -111,18 +123,30 @@ uses
   uDownloadClassifier,
   uHttpDirectDownloader,
   uRtmpDirectDownloader,
+  uNestedDirectDownloader,
   NativeXml;
 
 const
   SCRIPTVAR_MOVIE_ID = '_movie_id';
   SCRIPTVAR_LAST_URL = '_http_last_url';
   SCRIPTVAR_LAST_COOKIES = '_http_last_cookies';
-  
+
 var
-  ScriptXml: TXmlDoc = nil;
-  ScriptUrlRegExps: TRegExpCache = nil;
+  fMainScriptEngine: TScriptEngine = nil;
 
 { TScriptedDownloader }
+
+class function TScriptedDownloader.MainScriptEngine: TScriptEngine;
+begin
+  Result := fMainScriptEngine;
+end;
+
+class procedure TScriptedDownloader.InitMainScriptEngine(const FileName: string);
+begin
+  FreeAndNil(fMainScriptEngine);
+  fMainScriptEngine := TScriptEngine.Create;
+  fMainScriptEngine.LoadFromFile(FileName);
+end;
 
 class function TScriptedDownloader.Provider: string;
 begin
@@ -134,71 +158,28 @@ begin
   Raise EScriptedDownloaderError.Create(_('TScriptedDownloader.UrlRegExp may not be called.'));
 end;
 
-class procedure TScriptedDownloader.InitOptions(AOptions: TYTDOptions);
-begin
-  FreeAndNil(ScriptUrlRegExps);
-  ScriptUrlRegExps := TRegExpCache.Create;
-  FreeAndNil(ScriptXml);
-  ScriptXml := TXmlDoc.Create;
-  ScriptXml.LoadFromFile(AOptions.ScriptFileName);
-end;
-
 class function TScriptedDownloader.IsSupportedUrl(const AUrl: string; out AMovieID: string): boolean;
 var
-  UrlsNode, UrlNode, BaseUrlNode, ScriptNode: TXmlNode;
-  Script, BaseUrlID, UrlRegExp, SubexpressionName: string;
-  RE: TRegExp;
-  i: integer;
+  ScriptNode: TXmlNode;
 begin
   Result := False;
-  if ScriptXml <> nil then
-    if XmlNodeByPath(ScriptXml, 'urls', UrlsNode) then
-      for i := 0 to Pred(UrlsNode.NodeCount) do
-        begin
-        UrlNode := UrlsNode.Nodes[i];
-        if UrlNode.Name = 'url' then
-          begin
-          UrlRegExp := XmlValueIncludingCData(UrlNode);
-          BaseUrlID := XmlAttribute(UrlNode, 'base');
-          if BaseUrlID <> '' then
-            if not XmlNodeByPathAndAttr(ScriptXml, 'url_bases/url_base', 'id', BaseUrlID, BaseUrlNode) then
-              ScriptError(ERR_SCRIPTS_BASEURL_NOT_FOUND, UrlNode)
-            else
-              UrlRegExp := XmlAttribute(BaseUrlNode, 'before') + UrlRegExp + XmlAttribute(BaseUrlNode, 'after');
-          if UrlRegExp = '' then
-            ScriptError(ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED, UrlNode)
-          else
-            begin
-            RE := ScriptUrlRegExps.GetRegExp(UrlRegExp);
-            if RE.Match(AUrl) then
-              begin
-              Script := XmlAttribute(UrlNode, 'script');
-              if Script = '' then
-                ScriptError(ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY, UrlNode)
-              else if not XmlNodeByPathAndAttr(ScriptXml, 'scripts/script', 'id', Script, ScriptNode) then
-                ScriptError(Format(ERR_SCRIPTS_SCRIPT_NOT_FOUND, [Script]), UrlNode)
-              else
-                begin
-                SubexpressionName := XmlAttribute(UrlNode, 'subexpression');
-                if SubexpressionName = '' then
-                  AMovieID := AUrl
-                else if not RE.SubexpressionByName(SubexpressionName, AMovieID) then
-                  ScriptError(Format(ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND, [SubexpressionName]), UrlNode);
-                AMovieID := Script + #0 + AMovieID;
-                Result := True;
-                Break;
-                end;
-              end;
-            end;
-          end;
-        end;
+  if MainScriptEngine <> nil then
+    if MainScriptEngine.GetScriptForUrl(AUrl, ScriptNode, AMovieID) then
+      begin
+      AMovieID := XmlAttribute(ScriptNode, 'id') + #0 + AMovieID;
+      Result := True;
+      end;
 end;
 
-constructor TScriptedDownloader.Create(const AScriptID, AMovieID: string);
+constructor TScriptedDownloader.Create(const AScriptID, AMovieID: string; AScriptEngine: TScriptEngine = nil);
 begin
-  inherited Create(AMovieID);
-  if (ScriptXml = nil) or (not XmlNodeByPathAndAttr(ScriptXml, 'scripts/script', 'id', AScriptID, fScriptNode)) then
+  if AScriptEngine = nil then
+    fScriptEngine := MainScriptEngine
+  else
+    fScriptEngine := AScriptEngine;
+  if not ScriptEngine.GetScript(AScriptID, fScriptNode) then
     Raise EScriptedDownloaderError.CreateFmt(ERR_SCRIPTS_SCRIPT_NOT_FOUND, [AScriptID]);
+  inherited Create(AMovieID);
   fDownloaderList := TList.Create;
 end;
 
@@ -227,6 +208,7 @@ begin
     Downloaders[i].Free;
   fDownloaderList.Clear;
   DebugFileName := '';
+  RelativeUrl := '';
   First;
 end;
 
@@ -341,6 +323,29 @@ begin
     Result := inherited FileNameExt;
 end;
 
+class function TScriptedDownloader.ExtractWord(var Source: string; const Separator: string; out TheWord: string): boolean;
+var
+  ix: integer;
+begin
+  if Source = '' then
+    Result := False
+  else
+    begin
+    ix := Pos(Separator, Source);
+    if ix <= 0 then
+      begin
+      TheWord := Source;
+      Source := '';
+      end
+    else
+      begin
+      TheWord := Copy(Source, 1, Pred(ix));
+      System.Delete(Source, 1, ix + Length(Separator) - 1);
+      end;
+    Result := True;
+    end;
+end;
+
 procedure TScriptedDownloader.ProcessScript(Node: TXmlNode; Vars: TScriptVariables);
 var
   i: integer;
@@ -356,10 +361,14 @@ begin
         ProcessDebug(ChildNode, Vars)
       else if ChildNode.Name = 'set_var' then
         ProcessSetVar(ChildNode, Vars)
+      else if ChildNode.Name = 'best_var' then
+        ProcessBestVar(ChildNode, Vars)
       else if ChildNode.Name = 'http_download' then
         ProcessHttpDownload(ChildNode, Vars)
       else if ChildNode.Name = 'rtmp_download' then
         ProcessRtmpDownload(ChildNode, Vars)
+      else if ChildNode.Name = 'nested_download' then
+        ProcessNestedDownload(ChildNode, Vars)
       else if ChildNode.Name = 'multi_regexp' then
         ProcessMultiRegExp(ChildNode, Vars)
       else
@@ -376,6 +385,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
     Exit;
     end;
+  Url := GetRelativeUrl(RelativeUrl, Url);
   Title := GetNodeContent(Node, 'title', Vars);
   FileNameExt := GetNodeContent(Node, 'extension', Vars);
 end;
@@ -439,6 +449,22 @@ begin
     end;
 end;
 
+procedure TScriptedDownloader.ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
+var
+  Downloader: TNestedDirectDownloader;
+  Url, Title, Ext: string;
+begin
+  ProcessCommonDownload(Node, Vars, Url, Title, Ext);
+  Downloader := TNestedDirectDownloader.CreateWithName(Url, Title);
+  try
+    Downloader.SetFileNameExt(Ext);
+    AddDownloader(Downloader);
+  except
+    FreeAndNil(Downloader);
+    Raise;
+    end;
+end;
+
 procedure TScriptedDownloader.ProcessSetVar(Node: TXmlNode; Vars: TScriptVariables);
 var
   VarName, VarValue: string;
@@ -448,6 +474,61 @@ begin
     ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node);
   VarValue := ProcessNodeContent(Node, Vars);
   Vars[VarName] := VarValue;
+end;
+
+procedure TScriptedDownloader.ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
+
+  function GetVarOrder(const Value, Order: string): integer;
+    begin
+      Result := Pos(Value, ',' + Order + ',');
+      if Result <= 0 then
+        Result := MaxInt;
+    end;
+const
+  BEST_VAR_PREFIX = '__BEST_';
+var
+  VarName, BestVarName, VarValue, BestVarValue: string;
+  SortType, Order: string;
+  ResetVars, ResetVar: string;
+  WasReset, BetterValue: boolean;
+begin
+  WasReset := False;
+  if XmlAttribute(Node, 'reset', ResetVars) then
+    while ExtractWord(ResetVars, ',', ResetVar) do
+      if ResetVar <> '' then
+        begin
+        Vars[BEST_VAR_PREFIX + ResetVar] := '';
+        WasReset := True;
+        end;
+  VarName := XmlAttribute(Node, 'id');
+  if VarName = '' then
+    if WasReset then
+      Exit
+    else
+      ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node);
+  VarValue := Vars[VarName];
+  BestVarName := BEST_VAR_PREFIX + VarName;
+  if not Vars.Exists[BestVarName] then
+    Vars[BestVarName] := '';
+  BestVarValue := Vars[BestVarName];
+  SortType := XmlAttribute(Node, 'type');
+  BetterValue := False;
+  if SortType = 'numeric_ascending' then
+    BetterValue := StrToInt(VarValue) > StrToIntDef(BestVarValue, -MaxInt)
+  else if SortType = 'numeric_descending' then
+    BetterValue := StrToInt(VarValue) < StrToIntDef(BestVarValue, MaxInt)
+  else if SortType = 'enumeration' then
+    if not XmlAttribute(Node, 'order', Order) then
+      ScriptError(Format(ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY, ['order']), Node)
+    else
+      BetterValue := GetVarOrder(VarValue, Order) < GetVarOrder(BestVarValue, Order)
+  else
+    ScriptError(Format(ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE, ['type', SortType]), Node);
+  if BetterValue then
+    begin
+    Vars[BestVarName] := VarValue;
+    ProcessScript(Node, Vars);
+    end;
 end;
 
 function TScriptedDownloader.GetNodeContent(Node: TXmlNode; const Path: string; Vars: TScriptVariables; out Content: string): boolean;
@@ -507,6 +588,14 @@ begin
             Result := Result + ProcessRegExp(ChildNode, Vars)
           else if ChildNode.Name = 'copy' then
             Result := Result + ProcessCopy(ChildNode, Vars)
+          else if ChildNode.Name = 'decode_html' then
+            Result := Result + ProcessDecodeHtml(ChildNode, Vars)
+          else if ChildNode.Name = 'decode_url' then
+            Result := Result + ProcessDecodeUrl(ChildNode, Vars)
+          else if ChildNode.Name = 'decode_js' then
+            Result := Result + ProcessDecodeJS(ChildNode, Vars)
+          else if ChildNode.Name = 'decode_base64' then
+            Result := Result + ProcessDecodeBase64(ChildNode, Vars)
           else
             ScriptError(MSG_SCRIPTS_UNKNOWN_COMMAND, ChildNode)
         else
@@ -598,6 +687,8 @@ begin
         ExtraHeaders[n] := ProcessNodeContent(HeadersNode, Vars);
         end;
   // Actual download
+  if RelativeUrl = '' then
+    RelativeUrl := Url;
   Http := CreateHttp;
   try
     if WantXml then
@@ -675,10 +766,10 @@ begin
   else
     if XmlNodeByPathAndAttr(ScriptNode, 'regexps/regexp', 'id', PatternID, RegExpNode) then
       Pattern := ProcessNodeContent(RegExpNode, Vars)
-    else if XmlNodeByPathAndAttr(ScriptXml, 'regexps/regexp', 'id', PatternID, RegExpNode) then
+    else if ScriptEngine.GetRegExp(PatternID, RegExpNode) then
       Pattern := ProcessNodeContent(RegExpNode, Vars)
     else
-      ScriptError(ERR_SCRIPTS_PATTERN_NOT_FOUND, Node);
+      ScriptError(Format(ERR_SCRIPTS_PATTERN_NOT_FOUND, [PatternID]), Node);
   if Pattern = '' then
     ScriptError(ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY, Node)
   else
@@ -711,8 +802,8 @@ procedure TScriptedDownloader.ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVa
 var
   RE: TRegExp;
   RegExpNode: TXmlNode;
-  i, ix, n, Skip, Count: integer;
-  Text, VarName, MatchesStr, Match, VarPrefix, SkipStr, CountStr: string;
+  i, n, Skip, Count: integer;
+  Text, VarName, MatchesStr, MatchesStrCopy, Match, VarPrefix, SkipStr, CountStr: string;
   Matches: array of string;
 begin
   RE := CreateRegExpFromNode(Node, Vars, RegExpNode);
@@ -721,37 +812,23 @@ begin
       ScriptError(Format(ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY, ['content']), Node)
     else
       Text := Vars[VarName];
-    if (not XmlAttribute(Node, 'var-prefix', VarPrefix)) or (VarPrefix = '') then
+    if (not XmlAttribute(Node, 'var_prefix', VarPrefix)) or (VarPrefix = '') then
       ScriptError(Format(ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY, ['var-prefix']), Node);
     if not XmlAttribute(Node, 'match', MatchesStr) then
       if not XmlAttribute(RegExpNode, 'match', MatchesStr) then
         ScriptError(ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY, Node);
     if MatchesStr = '' then
       ScriptError(ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY, Node);
-    n := 1;
-    for i := 1 to Length(MatchesStr) do
-      if MatchesStr[i] = ',' then
-        Inc(n);
+    n := 0;
+    MatchesStrCopy := MatchesStr;
+    while ExtractWord(MatchesStrCopy, ',', Match) do
+      Inc(n);
     SetLength(Matches, n);
     n := 0;
-    while MatchesStr <> '' do
+    while ExtractWord(MatchesStr, ',', Match) do
       begin
-      ix := Pos(',', MatchesStr);
-      if ix <= 0 then
-        begin
-        Match := Trim(MatchesStr);
-        MatchesStr := '';
-        end
-      else
-        begin
-        Match := Trim(Copy(MatchesStr, 1, Pred(ix)));
-        System.Delete(MatchesStr, 1, ix);
-        end;
-      if Match <> '' then
-        begin
-        Matches[n] := Match;
-        Inc(n);
-        end;
+      Matches[n] := Match;
+      Inc(n);
       end;
     SetLength(Matches, n);
     if XmlAttribute(Node, 'skip', SkipStr) then
@@ -774,7 +851,9 @@ begin
             ProcessScript(Node, Vars);
             Dec(Count);
             end;
-        until (Count <= 0) or (not RE.MatchAgain);
+        until (Count <= 0) or (not RE.MatchAgain)
+      else
+        ScriptError(ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP, Node);
   finally
     RegExFreeAndNil(RE);
     end;
@@ -829,13 +908,31 @@ begin
     end;
 end;
 
+function TScriptedDownloader.ProcessDecodeHtml(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := HtmlDecode(ProcessNodeContent(Node, Vars));
+end;
+
+function TScriptedDownloader.ProcessDecodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := UrlDecode(ProcessNodeContent(Node, Vars));
+end;
+
+function TScriptedDownloader.ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := JSDecode(ProcessNodeContent(Node, Vars));
+end;
+
+function TScriptedDownloader.ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := Base64Decode(ProcessNodeContent(Node, Vars));
+end;
+
 initialization
+  fMainScriptEngine := nil;
   RegisterDownloader(TScriptedDownloader);
-  ScriptXml := nil;
-  ScriptUrlRegExps := nil;
 
 finalization
-  FreeAndNil(ScriptXml);
-  FreeAndNil(ScriptUrlRegExps);
+  FreeAndNil(fMainScriptEngine);
 
 end.

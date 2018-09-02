@@ -1,13 +1,68 @@
 ﻿______________________________________________________________________________
 
-YTD v1.37                                                    (c) 2009-14 Pepak
+YTD v1.40                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v1.40:
+
+    * Fixed a last-minute bug in version check for script definitions :-(
+
+
+
+  v1.39:
+
+    * Updated providers:
+      - Aktualne.cz
+      - CestyKSobe.cz
+      - CSFD.cz
+      - Facebook.com
+      - Vimeo.com
+
+    * Expanded the available script functions.
+
+    * Support for automatic script updates. In all places where YTD updates
+      were being checked now the script updates are checked as well. In case
+      a newer script is available, it will be downloaded and installed
+      automatically.
+
+    * Updated the english changelog.
+
+    * The default configuration file now contains a setting for conversion
+      to MP3 (of course, the video will get discarded). You can get the new
+      config file by deleting the current one (ytd.xml). Thanks to Jey for
+      providing the conversion command.
+
+    * Clicking on the tray icon will always bring YTD's main window to the
+      foreground, even if the program wasn't hidden in tray.
+
+
+
   v1.38:
+
+    * Support for script-based definition of providers. The scripts are
+      extremely basic at this moment, but you can already define some
+      servers with simple streaming. The scripts will be eventually expanded
+      to support as much of YTD's functionality as possible. That will solve
+      the problem of providers such as iprima.cz, because it will be possible
+      to update the definition file very quickly without having to build a
+      full version, and it will be possible for you to take part in that.
+      The scripts are not documented yet, but you can check the demo scripts
+      in ytd-defs.xml and the source code in Source/Base/uScriptedDownloader.pas.
+
+    * New providers:
+      - MC2.sk
+
+    * Updated providers:
+      - 123video.nl
+      - Aktualne.cz
+
+    * Updated the build script.
+
+
 
   v1.37:
 

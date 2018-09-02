@@ -1,11 +1,45 @@
 ﻿______________________________________________________________________________
 
-YTD v1.38                                                    (c) 2009-14 Pepak
+YTD v1.40                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.40:
+
+    * Opravena chybka v zjišťování nových verzí skriptů, kterou jsem do YTD
+      zavlekl těsně před uvolněním verze :-(
+
+
+
+  v1.39:
+
+    * Aktualizovaní poskytovatelé:
+      - Aktualne.cz
+      - CestyKSobe.cz
+      - CSFD.cz
+      - Facebook.com
+      - Vimeo.com
+
+    * Rozšířeny funkce dostupné ze skriptů.
+
+    * Podpora pro automatickou aktualizaci skriptů. Tam, kde dosud probíhala
+      aktualizace samotného YTD, se nyní kontrolují i aktualizace skriptů
+      a v případě dostupnosti se automaticky stáhnou a nainstalují.
+
+    * Doplněn jazykový soubor pro češtinu o nové řetězce z minulé verze.
+
+    * Do výchozího konfiguračního souboru doplněno nastavení pro konverzi
+      staženého souboru do formátu MP3 (samozřejmě zůstane jen zvuk, video se
+      zahodí). Výchozí konfigurační soubor můžete vytvořit, pokud smažete
+      existující (ytd.xml). Konverzní příkaz sestavil Jey, díky.
+
+    * Po kliknutí na ikonku v trayi se vždy zobrazí hlavní okno YTD, i pokud
+      proces nebyl minimalizovaný, ale jen schovaný za ostatními okny.	
+
+
 
   v1.38:
 

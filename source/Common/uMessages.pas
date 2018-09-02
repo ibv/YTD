@@ -60,8 +60,10 @@ resourcestring
   MSG_PLAYLIST_ITEM = 'Playlist item %d'; // Default playlist item name, %d is count
   MSG_DOWNLOAD_OR_UPGRADE = 'Do you want to upgrade (YES)'#10'or just download the newest version (NO)?'#10#10'Note: Upgrade will stop all transfers.'; // What to do with the newest version
   MSG_UPGRADING = 'Upgrading...'; // Downloading the upgrade data
-  MSG_FAILED_TO_UPGRADE = 'Failed to upgrade. Upgrade file: %s'; // Failed to execute the upgrade file
+  MSG_FAILED_TO_UPGRADE = 'Failed to execute the upgrade file.'; // Failed to execute the upgrade file
   MSG_FAILED_TO_DOWNLOAD_UPGRADE = 'Failed to download upgrade data: '; // Failed to download the upgrade file
+  MSG_FAILED_TO_UPGRADE_DEFINITIONS = 'Failed to upgrade the script definitions.';
+  MSG_FAILED_TO_DOWNLOAD_DEFINITIONS = 'Failed to download the script definitions.';
 
   // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!'; // Attempted to access data which depends Prepare without running Prepare
@@ -114,6 +116,7 @@ resourcestring
   ERR_SCRIPTS_VARIABLE_NOT_FOUND = 'Variable "%s" not found.';
   ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY = 'Variable name may not be empty.';
   ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY = 'Attribute "%s" may not be empty.';
+  ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE = 'Attribute "%s" has invalid value "%s".';
   MSG_SCRIPTS_UNKNOWN_COMMAND = 'Unknown command.';
   MSG_SCRIPTS_DOWNLOAD_FAILED = 'Download failed: %s';
   MSG_SCRIPTS_UNEXPECTED_NODE_TYPE = 'Unexpected node type.';

@@ -59,6 +59,8 @@ uses
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
   uStringConsts in 'Common\uStringConsts.pas',
+  uScripts in 'Common\uScripts.pas',
+  uUpgrade in 'Common\uUpgrade.pas',
   {$IFDEF SUBTITLES}
   uSubtitles in 'Common\uSubtitles.pas',
   {$ENDIF}
@@ -74,6 +76,7 @@ uses
   uMSDownloader in 'Base\uMSDownloader.pas',
   uMSDirectDownloader in 'Base\uMSDirectDownloader.pas',
   uNestedDownloader in 'Base\uNestedDownloader.pas',
+  uNestedDirectDownloader in 'Base\uNestedDirectDownloader.pas',
   uVarNestedDownloader in 'Base\uVarNestedDownloader.pas',
   uRtmpDownloader in 'Base\uRtmpDownloader.pas',
   uRtmpDirectDownloader in 'Base\uRtmpDirectDownloader.pas',
@@ -81,7 +84,6 @@ uses
   uHDSDownloader in 'Base\uHDSDownloader.pas',
   uHDSDirectDownloader in 'Base\uHDSDirectDownloader.pas',
   uScriptedDownloader in 'Base\uScriptedDownloader.pas',
-  uScriptedDownloaderTools in 'Base\uScriptedDownloaderTools.pas',
   // Command Line Version
   {$IFDEF CLI}
     uYTD in 'CLI\uYTD.pas',
@@ -169,7 +171,6 @@ uses
   downCekniTo in 'Downloaders\downCekniTo.pas',
   downCeskeDrahy in 'Downloaders\downCeskeDrahy.pas',
   downCesnet in 'Downloaders\downCesnet.pas',
-  downCestyKSobe in 'Downloaders\downCestyKSobe.pas',
   downCKKlic in 'Downloaders\downCKKlic.pas',
   downClevver in 'Downloaders\downClevver.pas',
   downClipfish in 'Downloaders\downClipfish.pas',
@@ -177,7 +178,6 @@ uses
   downCNBC in 'Downloaders\downCNBC.pas',
   downCollegeHumor in 'Downloaders\downCollegeHumor.pas',
   downCriticalPast in 'Downloaders\downCriticalPast.pas',
-  downCSFD in 'Downloaders\downCSFD.pas',
   downCT in 'Downloaders\downCT.pas',
   downCurrent in 'Downloaders\downCurrent.pas',
   downDailyHaha in 'Downloaders\downDailyHaha.pas',
@@ -198,7 +198,6 @@ uses
   downEuroSeptik in 'Downloaders\downEuroseptik.pas',
   downEVTV1 in 'Downloaders\downEVTV1.pas',
   downEyeneer in 'Downloaders\downEyeneer.pas',
-  downFacebook in 'Downloaders\downFacebook.pas',
   downFileCabi in 'Downloaders\downFileCabi.pas',
   downFishki in 'Downloaders\downFishki.pas',
   downFlickr in 'Downloaders\downFlickr.pas',
@@ -382,8 +381,6 @@ uses
   downVideu in 'Downloaders\downVideu.pas',
   downViiSk in 'Downloaders\downViiSk.pas',
   downViki in 'Downloaders\downViki.pas',
-  downVimeo in 'Downloaders\downVimeo.pas',
-  downVimeo_Embed in 'Downloaders\downVimeo_Embed.pas',
   downVineCo in 'Downloaders\downVineCo.pas',
   downVitalMtb in 'Downloaders\downVitalMtb.pas',
   downVKontakteRuEmbed in 'Downloaders\downVKontakteRuEmbed.pas',

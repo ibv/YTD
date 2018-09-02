@@ -43,9 +43,9 @@ interface
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
-  SynaCode,
+  HttpSend, SynaCode,
   uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
-  guiOptions, guiFunctions, uDialogs,
+  guiOptions, guiFunctions, uDialogs, uUpgrade,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
 {$IFDEF SYSTRAY}
@@ -79,6 +79,9 @@ type
     protected
       // Moje properties a pomocne funkce
       Options: TYTDOptionsGUI;
+      {$IFDEF THREADEDVERSION}
+      Upgrade: TYTDUpgrade;
+      {$ENDIF}
       DownloadList: TDownloadList;
       DownloadListHandle: THandle;
       NextProgressUpdate: DWORD;
@@ -118,7 +121,8 @@ type
       function ActionPlay: boolean;
       function ActionExploreFolder: boolean;
       {$IFDEF THREADEDVERSION}
-      procedure NewVersionEvent(Sender: TObject; const Version, Url: string);
+      procedure NewYTDEvent(Sender: TYTDUpgrade);
+      procedure NewDefsEvent(Sender: TYTDUpgrade);
       {$ENDIF}
       procedure LoadSettings;
       procedure SaveSettings;
@@ -219,7 +223,7 @@ begin
   fLoading := True;
   try
     Options := TYTDOptionsGUI.Create;
-    TScriptedDownloader.InitOptions(Options);
+    TScriptedDownloader.InitMainScriptEngine(Options.ScriptFileName);
     UseLanguage(Options.Language);
     DownloadList := TDownloadList.Create;
     DownloadList.OnListChange := DownloadListChange;
@@ -236,14 +240,20 @@ begin
     fLoading := False;
     end;
   {$IFDEF THREADEDVERSION}
+  Upgrade := TYTDUpgrade.Create(Options);
+  Upgrade.OnNewYTDFound := NewYTDEvent;
+  Upgrade.OnNewDefsFound := NewDefsEvent;
   if Options.CheckForNewVersionOnStartup then
-    Options.GetNewestVersionInBackground(NewVersionEvent);
+    Upgrade.TestUpgrades(True);
   {$ENDIF}
 end;
 
 destructor TFormMain.Destroy;
 begin
   FreeAndNil(DownloadList);
+  {$IFDEF THREADEDVERSION}
+  FreeAndNil(Upgrade);
+  {$ENDIF}
   FreeAndNil(Options);
   inherited;
 end;
@@ -330,11 +340,12 @@ end;
 function TFormMain.DialogProc(var Msg: TMessage): boolean;
 begin
   Result := inherited DialogProc(Msg);
-  {$IFDEF SYSTRAY}
   if not Result then
     case Msg.Msg of
+      {$IFDEF SYSTRAY}
       WM_NOTIFYICON:
         Result := NotifyIconClick(Msg.lParam);
+      {$ENDIF}
       WM_DRAWCLIPBOARD:
         Result := ClipboardChanged;
       WM_CHANGECBCHAIN:
@@ -344,7 +355,6 @@ begin
         Result := CopyData(Msg.wParam, PCopyDataStruct(Msg.lParam));
       {$ENDIF}
       end;
-  {$ENDIF}
 end;
 
 function TFormMain.DoInitDialog: boolean;
@@ -623,10 +633,10 @@ end;
 
 function TFormMain.DoSize(ResizeType, NewWidth, NewHeight: integer): boolean;
 begin
+  {$IFDEF SYSTRAY}
   if ResizeType = SIZE_MINIMIZED then
-    begin
     ShowWindow(Self.Handle, SW_HIDE);
-    end;
+  {$ENDIF}
   Result := inherited DoSize(ResizeType, NewWidth, NewHeight);
 end;
 
@@ -952,16 +962,33 @@ begin
 end;
 
 {$IFDEF THREADEDVERSION}
-procedure TFormMain.NewVersionEvent(Sender: TObject; const Version, Url: string);
+procedure TFormMain.NewYTDEvent(Sender: TYTDUpgrade);
 begin
-  if IsNewerVersion(Version) then
-    begin
-    fBugReportDisabled := True;
-    EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
-    ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, False);
-    if MessageBox(0, PChar(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Version])), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
-      NewVersionFound(Options, Url, Handle);
-    end;
+  if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
+    if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
+      begin
+      fBugReportDisabled := True;
+      EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
+      ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, False);
+      if MessageBox(0, PChar(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Sender.OnlineYTDVersion])), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+        guiFunctions.UpgradeYTD(Sender, Handle);
+      end;
+end;
+
+procedure TFormMain.NewDefsEvent(Sender: TYTDUpgrade);
+begin
+  if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) >= 0 then
+    if TScriptedDownloader.MainScriptEngine <> nil then
+      if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
+        if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then
+          begin
+          fBugReportDisabled := True;
+          if MessageBox(0, PChar(Format(_(MAINFORM_NEW_DEFS_VERSION_AVAILABLE), [Sender.OnlineDefsVersion])), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+            if guiFunctions.UpgradeDefs(Sender, Handle) then
+              fBugReportDisabled := False;
+          EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
+          ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, False);
+          end;
 end;
 {$ENDIF}
 
@@ -972,8 +999,8 @@ begin
   case Buttons of
     {WM_LBUTTONDBLCLK} WM_LBUTTONDOWN:
       begin
-      if not ShowWindow(Self.Handle, SW_SHOW) then
-        ShowWindow(Self.Handle, SW_RESTORE);
+      ShowWindow(Self.Handle, SW_SHOWNORMAL);
+      SetForegroundWindow(Self.Handle);
       Result := True;
       end;
     end;

@@ -34,91 +34,102 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCestyKSobe;
+unit uNestedDirectDownloader;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uPCRE, uXml, HttpSend, blcksock, 
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  uOptions;
 
 type
-  TDownloader_CestyKSobe = class(THttpDownloader)
+  TNestedDirectDownloader = class(TNestedDownloader)
     private
+      fForcedName: string;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
+      function GetTransformedUrl(out Url: string): boolean; override;
+      function GetFileName: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
+      constructor CreateWithName(const AMovieID, AMovieName: string); virtual;
       destructor Destroy; override;
     end;
 
 implementation
 
 uses
-  uStringConsts,
-  uDownloadClassifier,
   uMessages;
+  
+{ TNestedDirectDownloader }
 
-// http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html?quality=high
-const
-  URLREGEXP_BEFORE_ID = 'cestyksobe\.cz/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
-  URLREGEXP_AFTER_ID =  '';
-
-const
-  REGEXP_EXTRACT_TITLE = '<title>\s*(?P<TITLE>.*?)\s*(?:\|\s*Cestyksobe\.cz\s*)?</title>';
-  REGEXP_EXTRACT_MOVIEURL = '\bstreamer\s*:\s*"(?P<URL>https?://.+?)"';
-
-{ TDownloader_CestyKSobe }
-
-class function TDownloader_CestyKSobe.Provider: string;
+class function TNestedDirectDownloader.Provider: string;
 begin
-  Result := 'CestyKSobe.cz';
+  Result := 'Nested direct download';
 end;
 
-class function TDownloader_CestyKSobe.UrlRegExp: string;
+class function TNestedDirectDownloader.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Raise EDownloaderError.Create('TNestedDirectDownloader.UrlRegExp is not supported.');
+  {$IFDEF FPC}
+  Result := '';
+  {$ENDIF}
 end;
 
-constructor TDownloader_CestyKSobe.Create(const AMovieID: string);
+constructor TNestedDirectDownloader.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_MOVIEURL);
-end;
-
-destructor TDownloader_CestyKSobe.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_CestyKSobe.GetMovieInfoUrl: string;
-var s: string;
+constructor TNestedDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
 begin
-  if Pos('?', MovieID) > 0 then
-    s := MovieID
+  Create(AMovieID);
+  fForcedName := AMovieName;
+end;
+
+destructor TNestedDirectDownloader.Destroy;
+begin
+  inherited;
+end;
+
+function TNestedDirectDownloader.GetMovieInfoUrl: string;
+begin
+  Result := '.';
+end;
+
+function TNestedDirectDownloader.GetTransformedUrl(out Url: string): boolean;
+begin
+  Url := MovieID;
+  Result := True;
+end;
+
+function TNestedDirectDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+begin
+  Page := '';
+  Xml := nil;
+  Result := True;
+end;
+
+function TNestedDirectDownloader.GetFileName: string;
+begin
+  if fForcedName <> '' then
+    Result := GetThisFileName
   else
-    s := MovieID + '?resolution=high';
-  Result := 'http://www.cestyksobe.cz/' + s;
+    Result := inherited GetFileName;
 end;
 
-function TDownloader_CestyKSobe.GetFileNameExt: string;
+function TNestedDirectDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.php') = 0 then
-    Result := '.flv';
+  Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
+  if fForcedName <> '' then
+    SetName(fForcedName);
 end;
-
-initialization
-  RegisterDownloader(TDownloader_CestyKSobe);
 
 end.
