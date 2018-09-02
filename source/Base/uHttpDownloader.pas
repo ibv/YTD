@@ -189,7 +189,9 @@ begin
 end;
 
 function THttpDownloader.Download: boolean;
-var Size: integer;
+var
+  Size: integer;
+  FN, FinalFN: string;
 begin
   inherited Download;
   BytesTransferred := 0;
@@ -204,15 +206,20 @@ begin
         SetLastErrorMsg(ERR_DOWNLOAD_NOT_INITIALIZED)
       else
         try
-          if FileExists(FileName) then
-            DeleteFile(PChar(FileName));
-          VideoDownloader.OutputStream := TFileStream.Create(FileName, fmCreate or fmShareDenyWrite);
+          FinalFN := FileName;
+          if Options.DownloadToTempFiles then
+            FN := FinalFN + '.part'
+          else
+            FN := FinalFN;
+          if FileExists(FN) then
+            DeleteFile(PChar(FN));
+          VideoDownloader.OutputStream := TFileStream.Create(FN, fmCreate or fmShareDenyWrite);
           try
             // For some reason, Delphi don't allow fmCreate with sharing flags
             {$IFDEF SHAREABLEFILES}
             VideoDownloader.OutputStream.Free;
             VideoDownloader.OutputStream := nil;
-            VideoDownloader.OutputStream := TFileStream.Create(FileName, fmOpenWrite or fmShareDenyWrite);
+            VideoDownloader.OutputStream := TFileStream.Create(FN, fmOpenWrite or fmShareDenyWrite);
             VideoDownloader.Sock.OnStatus := SockStatusMonitor;
             {$ENDIF}
             BytesTransferred := 0;
@@ -224,18 +231,27 @@ begin
               SetLastErrorMsg(ERR_HTTP_NO_DATA_READ)
             else
               Result := True;
+            if Result then
+              if FN <> FinalFN then
+                begin
+                if FileExists(FinalFN) then
+                  DeleteFile(PChar(FinalFN));
+                if FileExists(FN) then
+                  if RenameFile(FN, FinalFN) then
+                    FN := FinalFN;
+                end;
           finally
             Size := VideoDownloader.OutputStream.Size;
             VideoDownloader.Sock.OnStatus := nil;
             VideoDownloader.OutputStream.Free;
             VideoDownloader.OutputStream := nil;
             if not Result then
-              if FileExists(FileName) and (Size <= 1024) then
-                DeleteFile(PChar(FileName));
+              if FileExists(FN) and (Size <= 1024) then
+                DeleteFile(PChar(FN));
             end;
         except
-          if FileExists(FileName) then
-            DeleteFile(PChar(FileName));
+          if FileExists(FN) then
+            DeleteFile(PChar(FN));
           Raise;
           end;
     finally

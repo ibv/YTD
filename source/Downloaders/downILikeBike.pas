@@ -34,22 +34,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMediaSport;
+unit downILikeBike;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SynaUtil,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TDownloader_MediaSport = class(THttpDownloader)
+  TDownloader_ILikeBike = class(TMSDownloader)
     private
     protected
+      YearMonthRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function BuildMovieUrl(out Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,58 +66,58 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
+// http://www.ilikebike.cz/?year=2011&week=11
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mediasport\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'ilikebike\.cz/\?(?:.*?&)*';
+  URLREGEXP_ID =        'year=[0-9]{4}&week=[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
-  REGEXP_EXTRACT_URL = REGEXP_URL_ADDVARIABLE_FILE_RELATIVE;
+  REGEXP_YEAR_MONTH = 'year=(?P<YEAR>[0-9]{4})&week=(?P<MONTH>[0-9]+)';
 
-{ TDownloader_MediaSport }
+{ TDownloader_ILikeBike }
 
-class function TDownloader_MediaSport.Provider: string;
+class function TDownloader_ILikeBike.Provider: string;
 begin
-  Result := 'MediaSport.cz';
+  Result := 'ILikeBike.cz';
 end;
 
-class function TDownloader_MediaSport.UrlRegExp: string;
+class function TDownloader_ILikeBike.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_MediaSport.Create(const AMovieID: string);
+constructor TDownloader_ILikeBike.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  inherited;
+  InfoPageEncoding := peNone;
+  YearMonthRegExp := RegExCreate(REGEXP_YEAR_MONTH);
 end;
 
-destructor TDownloader_MediaSport.Destroy;
+destructor TDownloader_ILikeBike.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(YearMonthRegExp);
   inherited;
 end;
 
-function TDownloader_MediaSport.GetMovieInfoUrl: string;
+function TDownloader_ILikeBike.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mediasport.cz/' + MovieID;
+  Result := 'http://www.ilikebike.cz/?' + MovieID;
 end;
 
-function TDownloader_MediaSport.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_ILikeBike.BuildMovieUrl(out Url: string): boolean;
+var
+  Year, Month: string;
 begin
-  Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := GetRegExpVars(YearMonthRegExp, MovieID, ['YEAR', 'MONTH'], [@Year, @Month]);
   if Result then
     begin
-    MovieUrl := 'http://www.mediasport.cz' + MovieUrl;
+    SetName(Format('I Like Bike %s-%s', [Month, Year]));
+    Url := Format('http://bcastb.livebox.cz/up/ilikebike/%s/_%s%s.wmv', [Year, Month, Year]);
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MediaSport);
+  RegisterDownloader(TDownloader_ILikeBike);
 
 end.

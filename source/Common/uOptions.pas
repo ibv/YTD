@@ -119,9 +119,13 @@ type
         {$ENDIF}
       {$ENDIF}
       {$IFDEF SUBTITLES}
-      function GetSubtitlesEnabled: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure SetSubtitlesEnabled(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+        function GetSubtitlesEnabled: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+        procedure SetSubtitlesEnabled(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
+      function GetDownloadToTempFiles: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetDownloadToTempFiles(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetDownloadToProviderSubdirs: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetDownloadToProviderSubdirs(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function CreateHttp: THttpSend; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       constructor Create; virtual;
@@ -174,6 +178,8 @@ type
       {$IFDEF SUBTITLES}
       property SubtitlesEnabled: boolean read GetSubtitlesEnabled write SetSubtitlesEnabled;
       {$ENDIF}
+      property DownloadToTempFiles: boolean read GetDownloadToTempFiles write SetDownloadToTempFiles;
+      property DownloadToProviderSubdirs: boolean read GetDownloadToProviderSubdirs write SetDownloadToProviderSubdirs;
     end;
 
 implementation
@@ -232,6 +238,8 @@ const
   {$IFDEF SUBTITLES}
   XML_PATH_SUBTITLESENABLED = 'config/subtitles_enabled';
   {$ENDIF}
+  XML_PATH_DOWNLOADTOTEMPFILES = 'config/download_to_temp_files';
+  XML_PATH_DOWNLOADTOPROVIDERSUBDIRS = 'config/download_to_provider_subdirectories';
 
 const
   XML_DEFAULT_PORTABLEMODE = False;
@@ -259,6 +267,8 @@ const
   {$IFDEF SUBTITLES}
   XML_DEFAULT_SUBTITLESENABLED = True;
   {$ENDIF}
+  XML_DEFAULT_DOWNLOADTOTEMPFILES = False;
+  XML_DEFAULT_DOWNLOADTOPROVIDERSUBDIRS = False;
 
 { TYTDOptions }
 
@@ -321,9 +331,9 @@ procedure TYTDOptions.Save(IgnoreErrors: boolean);
 var Dir: string;
 begin
   try
-    Dir := ExtractFilePath(XmlFileName);
+    Dir := ExcludeTrailingPathDelimiter(ExtractFilePath(XmlFileName));
     if Dir <> '' then
-      ForceDirectories(ExcludeTrailingPathDelimiter(Dir));
+      ForceDirectories(ExpandFileName(Dir));
     Xml.SetIndentation(#9);
     Xml.SaveToFile(XmlFileName);
   except
@@ -611,6 +621,26 @@ begin
 end;
 {$ENDIF}
 
+function TYTDOptions.GetDownloadToTempFiles: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_DOWNLOADTOTEMPFILES), XML_DEFAULT_DOWNLOADTOTEMPFILES);
+end;
+
+procedure TYTDOptions.SetDownloadToTempFiles(const Value: boolean);
+begin
+  SetOption(XML_PATH_DOWNLOADTOTEMPFILES, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetDownloadToProviderSubdirs: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_DOWNLOADTOPROVIDERSUBDIRS), XML_DEFAULT_DOWNLOADTOPROVIDERSUBDIRS);
+end;
+
+procedure TYTDOptions.SetDownloadToProviderSubdirs(const Value: boolean);
+begin
+  SetOption(XML_PATH_DOWNLOADTOPROVIDERSUBDIRS, BooleanToXml(Value));
+end;
+
 procedure TYTDOptions.ReadUrlList(List: TStringList);
 var Node: TXmlNode;
     i: integer;
@@ -845,7 +875,7 @@ begin
             until False;
           end;
   finally
-    Http.Free;
+    FreeAndNil(Http);
     end;
 end;
 
@@ -880,7 +910,7 @@ begin
           end;
     until not Again;
   finally
-    Http.Free;
+    FreeAndNil(Http);
     end;
 end;
 {$ENDIF}

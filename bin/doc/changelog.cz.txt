@@ -1,11 +1,67 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.91                                     (c) 2009-11 Pepak
+YouTube Downloader v0.92                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.92:
+  
+    * Noví poskytovatelé:
+      - EuroGamer.cz
+      - ILikeBike.cz
+      - R1ZAK.cz
+        - Pozor, nelze vybrat poøad, stahují se vždy všechny, které na zvolené
+          stránce jsou.
+
+    * Poskytovatelé aktualizovaní na souèasný tvar stránek:
+      - CSmaTalent.cz, CSmaTalent.sk
+      - Facebook.com
+      - iDnes.cz
+      - MediaSport.cz
+      - Music.Stream.cz
+      - TN.Nova.cz
+
+    * Hasici150.tv: Momentálnì jsou nefunkèní, protože nejsem schopen najít
+      jediné video, které by šlo pøehrát (i normálním zpùsobem v prohlížeèi,
+      ne jen v YTD).
+
+    * iPrima.cz: Podpora pro nová videa. Stará videa na Streamu fungovala 
+      i døíve a fungují i teï.
+
+      Zajímavá informace: Show Jana Krause zjevnì nìkdy v uplynulých mìsících
+      pøešla na nového provozovatele, takže lze nyní v YTD stahovat. Buï 
+      všechny díly najednou, pokud do YTD vložíte adresu http://www.iprima.cz/showjanakrause
+      (buï pomocí funkce "Vložit URL z HTML stránky", nebo pøi zapnuté volbì
+      "Automaticky používat HTML parser" i bìžným zpùsobem.
+
+    * Particka.Markiza.sk: Podpora pro videa tvoøená nìkolika èástmi.
+
+    * VideaCesky.cz: Podpora pro titulky u http://www.videacesky.cz/reklamy-reklamni-spot-video/super-heineken
+      Zlepšena podpora pro videa pøímo hostovaná na serveru videacesky.cz.
+      Zlepšena podpora pro stránky, na kterých je flashová reklama.
+
+    * U vnoøených objektù (napø. VideaCesky.cz) se zobrazuje URL skuteèného
+      obsahu, ne URL vnoøeného objektu.
+
+    * Zmìnìno výchozí nastavení pro stahování titulkù na "ano", aby bylo v
+      souladu s dokumentací i požadovaným chováním.
+
+    * Ke právì stahovaným souborùm se volitelnì pøidává pøípona .part. Po
+      skonèení stahování se soubor pøejmenuje na svùj definitivní název (bez
+      .part). Standardnì je funkce vypnutá, protože má vìtší nároky na práva
+      než standardní chování, mùžete ji ale zapnout v Nastavení na stránce 
+      Stahování.
+
+    * V Nastavení na stránce Stahování lze dále zapnout možnost, aby se média
+      ukládala do podadresáøù podle názvu poskytovatele (média z Novy do
+      podadresáøe Nova.cz, média z Primy do iPrima.cz atd.).
+
+    * Rùzné úpravy v kódu za úèelem lepší udržovatelnosti.
+
+
 
   v0.91:
 

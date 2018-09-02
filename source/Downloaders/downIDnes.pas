@@ -73,7 +73,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_URL =    '\.videoFLV\s*\(\s*\{\s*data\s*:\s*"(?P<URL>https?://servis\.idnes\.cz/.+?)"';
+  REGEXP_MOVIE_URL =    '\.videoFLV\s*\(\s*\{\s*data\s*:\s*"(?P<URL>https?://servi[sx]\.idnes\.cz/.+?)"';
 
 { TDownloader_IDnes }
 

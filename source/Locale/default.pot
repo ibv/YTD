@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-08-07 14:41\n"
-"PO-Revision-Date: 2011-08-07 14:41\n"
+"POT-Creation-Date: 2011-09-20 18:02\n"
+"PO-Revision-Date: 2011-09-20 18:02\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -115,14 +115,14 @@ msgstr ""
 #. FormSelectConverter..ActionList..actOK..Caption
 #: GUI/VCL/guiConverterVCL.dfm:60
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:313
+#: GUI/VCL/guiOptionsVCL.dfm:331
 msgid "&OK"
 msgstr ""
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #: GUI/VCL/guiConverterVCL.dfm:64
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:318
+#: GUI/VCL/guiOptionsVCL.dfm:336
 msgid "&Cancel"
 msgstr ""
 
@@ -439,26 +439,26 @@ msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:159
-#. Overwrite Mode
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:220
+#. Overwrite mode
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:228
 msgid "Ask user"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:160
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:221
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:229
 msgid "Overwrite"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:161
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:222
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:230
 msgid "Skip"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:162
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:223
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:231
 msgid "Rename automatically"
 msgstr ""
 
@@ -474,59 +474,70 @@ msgstr ""
 msgid "Automatically try &HTML parser"
 msgstr ""
 
+#. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToTempFiles..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:216
+msgid "Append a .part e&xtension while downloading"
+msgstr ""
+
+#. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:225
+msgid "Store media into su&bdirectories according to their "
+"providers"
+msgstr ""
+
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:212
+#: GUI/VCL/guiOptionsVCL.dfm:230
 #: GUI/WinAPI/guiOptionsWINAPI.pas:130
 msgid "Network settings"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:219
+#: GUI/VCL/guiOptionsVCL.dfm:237
 msgid "Proxy &host:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:227
+#: GUI/VCL/guiOptionsVCL.dfm:245
 msgid "Proxy &port:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:235
+#: GUI/VCL/guiOptionsVCL.dfm:253
 msgid "Proxy &username:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:243
+#: GUI/VCL/guiOptionsVCL.dfm:261
 msgid "Proxy pass&word:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:252
+#: GUI/VCL/guiOptionsVCL.dfm:270
 msgid "U&se proxy server"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloaderOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:285
+#: GUI/VCL/guiOptionsVCL.dfm:303
 #: GUI/WinAPI/guiOptionsWINAPI.pas:131
 msgid "Downloader settings"
 msgstr ""
 
 #. FormOptions..ActionList..actDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:322
+#: GUI/VCL/guiOptionsVCL.dfm:340
 #. FormSetup..BtnDestinationDir..Caption
 #: GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr ""
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:327
+#: GUI/VCL/guiOptionsVCL.dfm:345
 #. FormSetup..CheckDesktopShortcut..Caption
 #: GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
 msgstr ""
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:331
+#: GUI/VCL/guiOptionsVCL.dfm:349
 #. FormSetup..CheckStartMenuShortcut..Caption
 #: GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
@@ -884,74 +895,74 @@ msgstr ""
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #: CLI/uYTD.pas:455
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:588
+#: CLI/uYTD.pas:587
 msgid "    File name: "
 msgstr ""
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:457
+#: CLI/uYTD.pas:456
 msgid "  Content URL: "
 msgstr ""
 
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:463
+#: CLI/uYTD.pas:462
 msgid "  SUCCESS."
 msgstr ""
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:479
+#: CLI/uYTD.pas:478
 msgid "  ABORTED BY USER"
 msgstr ""
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:484
+#: CLI/uYTD.pas:483
 msgid "ERROR %s: %s"
 msgstr ""
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:499
+#: CLI/uYTD.pas:498
 msgid "Unknown URL."
 msgstr ""
 
-#: CLI/uYTD.pas:517
+#: CLI/uYTD.pas:516
 msgid "Trying to parse as HTML page..."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:594
+#: CLI/uYTD.pas:593
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:596
+#: CLI/uYTD.pas:595
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:597
+#: CLI/uYTD.pas:596
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:598
+#: CLI/uYTD.pas:597
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:599
+#: CLI/uYTD.pas:598
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:600
+#: CLI/uYTD.pas:599
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:616
+#: CLI/uYTD.pas:615
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:627
+#: CLI/uYTD.pas:626
 msgid "Incorrect answer."
 msgstr ""
 

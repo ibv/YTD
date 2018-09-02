@@ -68,7 +68,7 @@ uses
 
 // http://servis.idnes.cz/stream/flv/data.asp?idvideo=V110523_130926_tv-spolecnost_zkl&reklama=1&idrubriky=hobby-zahrada&idostrova=hobby&idclanku=A110523_110238_hobby-zahrada_mce
 const
-  URLREGEXP_BEFORE_ID = 'servis\.idnes\.cz/stream/flv/data\.asp\?';
+  URLREGEXP_BEFORE_ID = 'servix\.idnes\.cz/media/video\.aspx\?';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
@@ -98,7 +98,7 @@ end;
 
 function TDownloader_IDnes_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://servis.idnes.cz/stream/flv/data.asp?' + MovieID;
+  Result := 'http://servix.idnes.cz/media/video.aspx?' + MovieID;
 end;
 
 function TDownloader_IDnes_Embed.GetFileNameExt: string;

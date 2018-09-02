@@ -68,6 +68,10 @@ const
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
+const
+  REGEXP_MOVIE_PARAMS = '\bwriteSWF\s*\((?P<PARAM>.+?)\)\s*;';
+  REGEXP_FLASHVARS_PARSER = '[''&](?P<VARNAME>.+?)=(?P<VARVALUE>.*?)(?=[''&])';
+
 { TDownloader_MusicStreamCz }
 
 class function TDownloader_MusicStreamCz.UrlRegExp: string;
@@ -79,10 +83,16 @@ constructor TDownloader_MusicStreamCz.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
+  RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(FlashVarsParserRegExp);
+  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
 end;
 
 destructor TDownloader_MusicStreamCz.Destroy;
 begin
+  RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(FlashVarsParserRegExp);
   inherited;
 end;
 

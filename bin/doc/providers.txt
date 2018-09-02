@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.91                                     (c) 2009-11 Pepak
+YouTube Downloader v0.92                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -58,7 +58,9 @@ CNBC.com            | RTMP     |       | http://www.cnbc.com/id/15840232?video=3
 CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:1934920
 CrunchyRoll.com     | RTMP     | X     | http://www.crunchyroll.com/library/Naruto_Shippuden
 CSmaTalent.cz       | HTTP     |       | http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
+                    |          |       | http://www.csmatalent.cz/video-cz/detail/cesko-slovensko-ma-talent-04-09-2011.html
 CSmaTalent.sk       | HTTP     |       | http://www.csmatalent.sk/epizody/detail/divadlo-29-8-2010.html
+                    |          |       | http://www.csmatalent.sk/novinky-divadla/clanok/sila-lasky-z-armenska.html
 CT24.cz             | HTTP     | 3     | http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
                     |          | 3     | http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
                     |          | 3     | http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
@@ -79,6 +81,7 @@ DUB.cz              | HTTP     |       | http://www.dub.cz/clanek.php?id=tv-1010
 EbaumsWorld.com     | HTTP     |       | http://www.ebaumsworld.com/video/watch/80973186/
 eHow.com            | HTTP     |       | http://www.ehow.com/video_4871930_clean-computer-monitor-glass.html
 ESPN.go.com         | HTTP     |       | http://espn.go.com/video/clip?id=5163631
+EuroGamer.cz        | HTTP     |       | http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
 EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnum=15099&aid=
 Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php?v=1131482863478
 FileCabi.net        | HTTP     |       | http://www.filecabi.net/video/hiddendogstopsrobbery.html
@@ -103,10 +106,12 @@ i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/conce
 iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
                     |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
 iHned.cz            | RTMP     |       | http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
+ILikeBike.cz        | MS       | 4     | http://www.ilikebike.cz/?year=2011&week=11
 ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
 iPrima.cz           | HTTP     |       | http://www.iprima.cz/videoarchiv/44524/all/all
                     |          |       | http://www.iprima.cz/videoplayer/85680
                     |          | N     | http://www.iprima.cz/showjanakrause
+                    | RTMP     |       | http://www.iprima.cz/videoarchiv/164106
 iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/beastie-boys-make-some-noise-(official-music-video) 
 Joj.sk              | HTTP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
                     |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
@@ -164,6 +169,7 @@ Proglas.cz          | MS       |       | http://www.proglas.cz/audioarchiv-detai
 PublicTV.cz         | HTTP     |       | http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-535-re-play/1718/
                     |          |       | http://www.publictv.cz/videoarchiv/535/1718/
 Qip.ru              | HTTP     |       | http://file.qip.ru/embed/141785477/17228276
+R1ZAK.cz            | HTTP     |       | http://www.r1zak.cz/archiv-vysilani/
 Raajje.tv           | HTTP     |       | http://www.raajje.tv/video/991/president-anni-diving
 Revver.com          | HTTP     |       | http://www.revver.com/video/2378230/super-mario-bros-2-on-the-nes-level-x/
 RingTV.com          | HTTP     |       | http://www.ringtv.com/video/frankie_gomez_training/

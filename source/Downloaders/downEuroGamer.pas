@@ -34,19 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMediaSport;
+unit downEuroGamer;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SynaUtil,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MediaSport = class(THttpDownloader)
+  TDownloader_EuroGamer = class(THttpDownloader)
     private
+    protected
+      MovieIDRegExp: TRegExp;
+      MovieUrlFromInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -64,58 +67,71 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
+// http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mediasport\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'eurogamer\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
-  REGEXP_EXTRACT_URL = REGEXP_URL_ADDVARIABLE_FILE_RELATIVE;
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1_CLASS;
+  REGEXP_MOVIE_ID = '\.addVariable\s*\(\s*"playlist_id"\s*,\s*"(?P<ID>[0-9]+)"';
+  REGEXP_MOVIE_URL = '(?:^|&)file(?:\[[^\]]*\])?=(?P<URL>https?[^&]+)';
 
-{ TDownloader_MediaSport }
+{ TDownloader_EuroGamer }
 
-class function TDownloader_MediaSport.Provider: string;
+class function TDownloader_EuroGamer.Provider: string;
 begin
-  Result := 'MediaSport.cz';
+  Result := 'EuroGamer.cz';
 end;
 
-class function TDownloader_MediaSport.UrlRegExp: string;
+class function TDownloader_EuroGamer.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_MediaSport.Create(const AMovieID: string);
+constructor TDownloader_EuroGamer.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  inherited;
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['title']));
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  MovieUrlFromInfoRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_MediaSport.Destroy;
+destructor TDownloader_EuroGamer.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(MovieUrlFromInfoRegExp);
   inherited;
 end;
 
-function TDownloader_MediaSport.GetMovieInfoUrl: string;
+function TDownloader_EuroGamer.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mediasport.cz/' + MovieID;
+  Result := 'http://www.eurogamer.cz/' + MovieID;
 end;
 
-function TDownloader_MediaSport.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_EuroGamer.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var ID, Info, Url: string;
 begin
-  Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-  if Result then
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, Format('http://www.eurogamer.cz/get_pls.php?playlist_id=%s&profile_id=hd&r=957&player_mode=normal', [ID]), Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(MovieUrlFromInfoRegExp, Info, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
     begin
-    MovieUrl := 'http://www.mediasport.cz' + MovieUrl;
+    MovieUrl := UrlDecode(Url);
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MediaSport);
+  RegisterDownloader(TDownloader_EuroGamer);
 
 end.

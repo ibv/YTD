@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.91                                     (c) 2009-11 Pepak
+YouTube Downloader v0.92                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -320,11 +320,27 @@ except in file/directory names. Logical values (true-false) are stored as
     - Default value is "1" (enable automatic HTML parser).
     - Can be overriden by parameters -ah and -ah- on command-line.
 
-  <subtitle_support>
+  <subtitles_enabled>
     - Child of <config>; provides you with the ability to turn subtitle support
       on or off in the whole application.
     - Possible values are "1" (enable subtitle support) and "0" (disable).
     - Default value is "1" (enable subtitle support).
+
+  <download_to_temp_files>
+    - Child of <config>; if turned on, media currently being downloaded have
+      an additional extension ".part", which will be removed after the download
+      has finished. If turned off, media will be saved under the final name
+      even while downloading.
+    - Possible values are "1" (enable extension .part) and "0" (disable).
+    - Default value is "0" (disable extension .part).
+
+  <download_to_provider_subdirectories>
+    - Child of <config>; determines whether the media files will be stored
+      directly in directory <destination_path> or in its subdirectory with
+      name based on media provider's name (e.g. YouTube videos would be stored
+      in YouTube.com subdirectory).
+    - Possible values are "1" (enable subdirectories) and "0" (disable).
+    - Default value is "0" (disable subdirectories).
 
   <proxy_server>
     - Child of <config>; let's you specify a proxy server if your network
@@ -483,7 +499,7 @@ except in file/directory names. Logical values (true-false) are stored as
 
   - All providers have these settings:
 
-  <subtitle_support>
+  <subtitles_enabled>
     - Child of a provider; gives you with the ability to turn subtitle support
       on or off for that provider.
     - Possible values are "1" (enable subtitle support) and "0" (disable).

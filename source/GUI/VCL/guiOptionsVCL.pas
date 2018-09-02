@@ -89,6 +89,8 @@ type
     TabDownloaderOptions: TTabSheet;
     ListDownloaderOptions: TListBox;
     PanelDownloaderOptions: TPanel;
+    CheckDownloadToTempFiles: TCheckBox;
+    CheckDownloadToProviderSubdirs: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
@@ -154,6 +156,8 @@ begin
     CheckAutoDownload.Checked := Options.AutoStartDownloads;
     CheckAutoTryHtmlParser.Checked := Options.AutoTryHtmlParser;
     CheckSubtitlesEnabled.Checked := Options.SubtitlesEnabled;
+    CheckDownloadToTempFiles.Checked := Options.DownloadToTempFiles;
+    CheckDownloadToProviderSubdirs.Checked := Options.DownloadToProviderSubdirs;
     EditDownloadDir.Text := Options.DestinationPath;
     ComboOverwriteMode.ItemIndex := OverwriteMode[Options.OverwriteMode];
     {$IFDEF CONVERTERS}
@@ -223,7 +227,7 @@ begin
       TabDownloaderOptions.Visible := False;
       end;
   finally
-    DC.Free;
+    FreeAndNil(DC);
     end;
 end;
 
@@ -267,6 +271,8 @@ begin
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
   Options.AutoTryHtmlParser := CheckAutoTryHtmlParser.Checked;
   Options.SubtitlesEnabled := CheckSubtitlesEnabled.Checked;
+  Options.DownloadToTempFiles := CheckDownloadToTempFiles.Checked;
+  Options.DownloadToProviderSubdirs := CheckDownloadToProviderSubdirs.Checked;
   Options.DestinationPath := EditDownloadDir.Text;
   Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];
   {$IFDEF CONVERTERS}

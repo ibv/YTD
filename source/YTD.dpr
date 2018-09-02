@@ -191,6 +191,7 @@ uses
   downEbaumsWorld in 'Downloaders\downEbaumsWorld.pas',
   downEHow in 'Downloaders\downEHow.pas',
   downESPN in 'Downloaders\downESPN.pas',
+  downEuroGamer in 'Downloaders\downEuroGamer.pas',
   downEVTV1 in 'Downloaders\downEVTV1.pas',
   downFacebook in 'Downloaders\downFacebook.pas',
   downFileCabi in 'Downloaders\downFileCabi.pas',
@@ -214,6 +215,7 @@ uses
   downiDnes_Embed in 'Downloaders\downIDnes_Embed.pas',
   downiDnes in 'Downloaders\downIDnes.pas',
   downiHned in 'Downloaders\downIHned.pas',
+  downILikeBike in 'Downloaders\downILikeBike.pas',
   downiPrima in 'Downloaders\downIPrima.pas',
   downiViewTube in 'Downloaders\downIViewTube.pas',
   downJoj in 'Downloaders\downJoj.pas',
@@ -267,6 +269,7 @@ uses
   downProglas in 'Downloaders\downProglas.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downQipRu_Embed in 'Downloaders\downQipRu_Embed.pas',
+  downR1ZAK in 'Downloaders\downR1ZAK.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
   downRevver in 'Downloaders\downRevver.pas',
   downRingTV in 'Downloaders\downRingTV.pas',
@@ -463,7 +466,7 @@ begin
             Result := stNone;
           end;
       finally
-        F.Free;
+        FreeAndNil(F);
         end;
       Break;
       end
@@ -532,7 +535,7 @@ procedure RunInstall(const InstallDir: string; DesktopShortcut, StartMenuShortcu
     var SR: TSearchRec;
     begin
       Result := True;
-      ForceDirectories(DestinationDir);
+      ForceDirectories(ExpandFileName(DestinationDir));
       if FindFirst(SourceDir + '*.*', faAnyFile, SR) = 0 then
         try
           repeat

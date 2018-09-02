@@ -62,6 +62,11 @@ type
       destructor Destroy; override;
     end;
 
+  TDownloader_Joj_Porady2 = class(TDownloader_Joj_Porady)
+    public
+      constructor Create(const AMovieID: string); override;
+    end;
+
 implementation
 
 uses
@@ -72,6 +77,9 @@ uses
 const
   REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"(?P<FLASHVARS>.+?)"';
   REGEXP_VARIABLES = '(?P<VARNAME>[^=]+)=(?P<VARVALUE>.*?)(?:&|$)';
+
+  REGEXP_FLASHVARS2 = '\.embedSWF\s*\(\s*(?P<FLASHVARS>.+?)\s*\)\s*;';
+  REGEXP_VARIABLES2 = '\b(?P<VARNAME>[a-z_][a-z0-9_]*)\s*:\s*"(?P<VARVALUE>[^"]*)"';
 
 { TDownloader_Joj_Porady }
 
@@ -121,6 +129,17 @@ begin
     SetPrepared(True);
     Result := True;
     end;
+end;
+
+{ TDownloader_Joj_Porady2 }
+
+constructor TDownloader_Joj_Porady2.Create(const AMovieID: string);
+begin
+  inherited;
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(VariablesRegExp);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS2);
+  VariablesRegExp := RegExCreate(REGEXP_VARIABLES2);
 end;
 
 initialization

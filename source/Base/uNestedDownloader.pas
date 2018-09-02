@@ -58,6 +58,7 @@ type
       DirectUrlRegExp: TRegExp;
     protected
       function GetFileName: string; override;
+      function GetContentUrl: string; override;
       function GetLastErrorMsg: string; override;
       function GetThisFileName: string; virtual;
       function GetNestedID(out ID: string): boolean; virtual;
@@ -65,6 +66,7 @@ type
       function CreateNestedDownloaderFromID(const MovieID: string): boolean; virtual;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; virtual;
       function CreateNestedDownloaderFromDownloader(Downloader: TDownloader): boolean; virtual;
+      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
       property NestedDownloader: TDownloader read fNestedDownloader write SetNestedDownloader;
@@ -135,7 +137,7 @@ begin
   try
     DC.OwnsDownloader := False;
     DC.Url := Url;
-    if DC.Downloader <> nil then
+    if (DC.Downloader <> nil) and (DC.Downloader.ClassType <> ClassType) then
       begin
       Result := CreateNestedDownloaderFromDownloader(DC.Downloader);
       if Result then
@@ -148,10 +150,10 @@ begin
       if Result then
         MovieURL := Url
       else
-        Downloader.Free;
+        FreeAndNil(Downloader);
       end;
   finally
-    DC.Free;
+    FreeAndNil(DC);
     end;
 end;
 
@@ -188,6 +190,14 @@ end;
 function TNestedDownloader.GetThisFileName: string;
 begin
   Result := inherited GetFileName;
+end;
+
+function TNestedDownloader.GetContentUrl: string;
+begin
+  if NestedDownloader <> nil then
+    Result := NestedDownloader.ContentUrl
+  else
+    Result := inherited GetContentUrl;
 end;
 
 function TNestedDownloader.GetNestedID(out ID: string): boolean;
@@ -274,8 +284,15 @@ begin
 end;
 {$ENDIF}
 
+function TNestedDownloader.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+begin
+  Result := False;
+  Downloader := nil;
+end;
+
 function TNestedDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var ID, Url: string;
+    Downloader: TDownloader;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -293,7 +310,15 @@ begin
     MovieUrl := Url;
     SetPrepared(True);
     Result := True;
-    end;
+    end
+  else if IdentifyDownloader(Page, PageXml, Http, Downloader) then
+    if CreateNestedDownloaderFromDownloader(Downloader) then
+      begin
+      SetPrepared(True);
+      Result := True;
+      end
+    else
+      FreeAndNil(Downloader);
 end;
 
 procedure TNestedDownloader.NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);

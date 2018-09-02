@@ -84,7 +84,7 @@ begin
         Result := True;
         end;
   finally
-    F.Free;
+    FreeAndNil(F);
     end;
 end;
 
@@ -108,7 +108,7 @@ begin
         end;
     Combo.ItemIndex := Index;
   finally
-    L.Free;
+    FreeAndNil(L);
     end;
 end;
 
@@ -127,7 +127,7 @@ begin
       Index := integer(Combo.Items.Objects[Combo.ItemIndex]);
       SelectedID := L[Index];
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
     end;
 end;

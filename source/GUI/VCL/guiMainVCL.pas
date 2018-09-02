@@ -667,7 +667,7 @@ begin
           if AddTask(L[i]) then
             Inc(Result);
       finally
-        L.Free;
+        FreeAndNil(L);
         end;
       end;
     end;
@@ -765,7 +765,7 @@ begin
       if n = 0 then
         MessageDlg(_(MAINFORM_NO_SUPPORTED_URL), mtError, [mbOK], 0);
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
     end;
 end;
@@ -783,7 +783,7 @@ begin
           L.Add(DownloadList.Urls[i]);
       L.SaveToFile(SaveUrlList.FileName);
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
     end;
 end;
@@ -849,7 +849,7 @@ begin
       StartClipboardMonitor;
       end;
   finally
-    F.Free;
+    FreeAndNil(F);
     end;
 end;
 

@@ -45,7 +45,7 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
 
 type
-  TDownloader_CSmaTalent = class(TDownloader_Joj_Porady)
+  TDownloader_CSmaTalent = class(TDownloader_Joj_Porady2)
     private
     protected
       function GetMovieInfoUrl: string; override;{*}
@@ -66,9 +66,11 @@ uses
 
 // http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
 // http://www.csmatalent.sk/epizody/detail/divadlo-29-8-2010.html
+// http://www.csmatalent.cz/video-cz/detail/cesko-slovensko-ma-talent-04-09-2011.html
+// http://www.csmatalent.sk/novinky-divadla/clanok/sila-lasky-z-armenska.html
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*csmatalent\.';
-  URLREGEXP_ID =        '(cz|sk)/.+?\.html';
+  URLREGEXP_ID =        '(cz|sk)/.+';
   URLREGEXP_AFTER_ID =  '';
 
 { TDownloader_CSmaTalent }

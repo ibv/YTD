@@ -40,7 +40,7 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes, Windows, FileCtrl,
   HttpSend, SynaUtil, SynaCode,
   uOptions, uPCRE, uXML, uAMF, uFunctions,
   {$IFDEF GUI}
@@ -95,6 +95,7 @@ type
       procedure SetLastUrl(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); virtual;
       function GetFileName: string; virtual;
+      function GetContentUrl: string; virtual;
       procedure SetFileName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property UnpreparedName: string read fName;
       property LastURL: string read fLastUrl;
@@ -125,6 +126,7 @@ type
       function UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function ExtractUrlRoot(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -171,6 +173,7 @@ type
       property Prepared: boolean read fPrepared;
       property Name: string read GetName;
       property FileName: string read GetFileName;
+      property ContentUrl: string read GetContentUrl;
       property LastErrorMsg: string read GetLastErrorMsg;
       property TotalSize: int64 read GetTotalSize;
       property DownloadedSize: int64 read GetDownloadedSize;
@@ -273,6 +276,8 @@ begin
   MaxLength := MAX_PATH - 5 - Length(Ext);
   if Options.DestinationPath <> '' then
     MaxLength := MaxLength - Length(ExpandFileName(Options.DestinationPath));
+  if Options.DownloadToProviderSubdirs then
+    MaxLength := MaxLength - Succ(Length(Provider));
   if MaxLength > 0 then
     begin
     n := Length(Result);
@@ -285,6 +290,8 @@ begin
     end;
   {$ENDIF}
   Result := {AnsiToOem}(Result + Ext);
+  if Options.DownloadToProviderSubdirs then
+    Result := IncludeTrailingPathDelimiter(Provider) + Result;
   if Options.DestinationPath <> '' then
     Result := Options.DestinationPath + Result;
 end;
@@ -303,6 +310,11 @@ begin
 end;
 
 function TDownloader.GetFileNameExt: string;
+begin
+  Result := '';
+end;
+
+function TDownloader.GetContentUrl: string;
 begin
   Result := '';
 end;
@@ -397,7 +409,7 @@ begin
       Http.InputStream := OldInputStream;
       end;
   finally
-    InputStream.Free;
+    FreeAndNil(InputStream);
     end;
 end;
 
@@ -536,8 +548,7 @@ begin
           Http.Document.Seek(0, 0);
           Result := True;
         except
-          Response.Free;
-          Response := nil;
+          FreeAndNil(Response);
           end;
         end;
 end;
@@ -589,7 +600,12 @@ begin
 end;
 
 function TDownloader.ValidateFileName(var FileName: string): boolean;
+var
+  Dir: string;
 begin
+  Dir := ExcludeTrailingPathDelimiter(ExtractFilePath(FileName));
+  if Dir <> '' then
+    ForceDirectories(ExpandFileName(Dir));
   Result := (FileName <> '') and (not FileExists(FileName));
   if Assigned(OnFileNameValidate) then
     OnFileNameValidate(Self, FileName, Result);
@@ -707,6 +723,24 @@ end;
 function TDownloader.Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
 begin
   Result := string(DecodeBase64(AnsiString(Text)));
+end;
+
+function TDownloader.JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+var
+  i: integer;
+begin
+  Result := Text;
+  i := 1;
+  while i < Length(Result) do
+    begin
+    if Result[i] = '\' then
+      if Result[i+1] = 'u' then
+        begin
+        System.Insert(WideChar(StrToInt('$' + Copy(Result, i+2, 4))), Result, i);
+        System.Delete(Result, i+1, 6);
+        end;
+    Inc(i);
+    end;
 end;
 
 function TDownloader.ConvertString(const Text: TStream; Encoding: TPageEncoding): string;

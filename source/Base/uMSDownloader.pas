@@ -127,6 +127,7 @@ end;
 function TMSDownloader.Download: boolean;
 var LogFileName, ProxyString: string;
     RetCode: integer;
+    FN, FinalFN: string;
 begin
   inherited Download;
   DownloadedBytes := 0;
@@ -143,7 +144,12 @@ begin
         ProxyString := Options.ProxyUser + '@' + ProxyString;
     AddMsdlOption('y', ProxyString); // Note: MSDL has no option 'y', it's an extra option of MSDL_DLL
     end;
-  AddMsdlOption('o', FileName);
+  FinalFN := FileName;
+  if Options.DownloadToTempFiles then
+    FN := FinalFN + '.part'
+  else
+    FN := FinalFN;
+  AddMsdlOption('o', FN);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));
@@ -157,6 +163,15 @@ begin
     RetCode := Msdl_Download(Integer(Self), MsdlDownloadProgressCallback, MsdlOptions);
     if RetCode >= 0 then
       Result := True;
+    if Result then
+      if FN <> FinalFN then
+        begin
+        if FileExists(FinalFN) then
+          DeleteFile(PChar(FinalFN));
+        if FileExists(FN) then
+          if RenameFile(FN, FinalFN) then
+            FN := FinalFN;
+        end;
     end;
 end;
 

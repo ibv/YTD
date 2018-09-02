@@ -247,7 +247,7 @@ begin
     Move(Data^, Stream.Memory^, Length);
     LoadFromStream(Stream);
   finally
-    Stream.Free;
+    FreeAndNil(Stream);
     end;
 end;
 
@@ -265,7 +265,7 @@ begin
     SetLength(Result, Stream.Size);
     Move(Stream.Memory^, (@(Result[1]))^, Stream.Size);
   finally
-    Stream.Free;
+    FreeAndNil(Stream);
     end;
 end;
 

@@ -167,7 +167,7 @@ begin
       {$ENDIF}
       end;
   finally
-    DC.Free;
+    FreeAndNil(DC);
     end;
 end;
 

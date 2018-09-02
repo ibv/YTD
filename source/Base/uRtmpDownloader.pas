@@ -326,6 +326,7 @@ end;
 function TRtmpDownloader.Download: boolean;
 var LogFileName, ErrorMsg: string;
     RetCode: integer;
+    FN, FinalFN: string;
 begin
   inherited Download;
   DownloadedBytes := 0;
@@ -337,7 +338,12 @@ begin
   {$ENDIF}
   if Options.ProxyActive and (Options.ProxyHost <> '') then
     AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
-  AddRtmpDumpOption('o', FileName);
+  FinalFN := FileName;
+  if Options.DownloadToTempFiles then
+    FN := FinalFN + '.part'
+  else
+    FN := FinalFN;
+  AddRtmpDumpOption('o', FN);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));
@@ -356,6 +362,15 @@ begin
     if not Result then
       if ParseErrorLog(LogFileName, ErrorMsg) then
         SetLastErrorMsg(Format(ERR_RTMPDUMP_ERROR, [ErrorMsg]));
+    if Result then
+      if FN <> FinalFN then
+        begin
+        if FileExists(FinalFN) then
+          DeleteFile(PChar(FinalFN));
+        if FileExists(FN) then
+          if RenameFile(FN, FinalFN) then
+            FN := FinalFN;
+        end;
     end;
 end;
 
@@ -396,7 +411,7 @@ begin
         end;
       Result := Error <> '';
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
     end;
 end;

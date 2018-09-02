@@ -36,16 +36,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downIPrima;
 {$INCLUDE 'ytd.inc'}
+{$DEFINE PRIMA_LIVEBOX}
 
 interface
 
 uses
   SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downStream;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  {$IFDEF PRIMA_LIVEBOX}
+  uRtmpDownloader,
+  {$ENDIF}
+  uHttpDownloader, downStream;
 
 type
-  TDownloader_iPrima = class(TDownloader_Stream)
+  TDownloader_iPrima = class(TNestedDownloader)
+    private
+    protected
+      {$IFDEF PRIMA_LIVEBOX}
+      LiveBoxRegExp: TRegExp;
+      {$ENDIF}
+    protected
+      function GetMovieInfoUrl: string; override;
+      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
+    end;
+
+  TDownloader_iPrima_Stream = class(TDownloader_Stream)
     private
     protected
       StreamIDRegExp: TRegExp;
@@ -59,6 +80,23 @@ type
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
+
+  {$IFDEF PRIMA_LIVEBOX}
+  TDownloader_iPrima_LiveBox = class(TRtmpDownloader)
+    private
+    protected
+      LiveBoxRegExp: TRegExp;
+    protected
+      function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
+    end;
+  {$ENDIF}
 
 implementation
 
@@ -74,23 +112,79 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3\s+id="videoTitle">(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '<h3\s+id="videoTitle">(?P<TITLE>.*?)</h3>';
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
   REGEXP_STREAM_CDNID = '<param\s+name="flashvars"\s+value="[^"]*&cdnID=(?P<STREAMID>[0-9]+)';
+  {$IFDEF PRIMA_LIVEBOX}
+  REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,){3}\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
+  {$ENDIF}
+
+const
+  PRIMA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'iPrima.cz';
+  PRIMA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  PRIMA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.iprima.cz/videoarchiv/%s/all/all';
 
 { TDownloader_iPrima }
 
 class function TDownloader_iPrima.Provider: string;
 begin
-  Result := 'iPrima.cz';
+  Result := PRIMA_PROVIDER;
 end;
 
 class function TDownloader_iPrima.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(PRIMA_URLREGEXP, [MovieIDParamName]);
 end;
 
 constructor TDownloader_iPrima.Create(const AMovieID: string);
+begin
+  inherited;
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  {$IFDEF PRIMA_LIVEBOX}
+  LiveBoxRegExp := RegExCreate(REGEXP_LIVEBOX);
+  {$ENDIF}
+end;
+
+destructor TDownloader_iPrima.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  {$IFDEF PRIMA_LIVEBOX}
+  RegExFreeAndNil(LiveBoxRegExp);
+  {$ENDIF}
+  inherited;
+end;
+
+function TDownloader_iPrima.GetMovieInfoUrl: string;
+begin
+  Result := Format(PRIMA_MOVIE_INFO_URL, [MovieID]);
+end;
+
+function TDownloader_iPrima.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+begin
+  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
+  {$IFDEF PRIMA_LIVEBOX}
+  if GetRegExpVars(LiveBoxRegExp, Page, [], []) then
+    Downloader := TDownloader_iPrima_LiveBox.Create(MovieID)
+  else
+  {$ENDIF}
+    Downloader := TDownloader_iPrima_Stream.Create(MovieID);
+  Result := True;
+end;
+
+{ TDownloader_iPrima_Stream }
+
+class function TDownloader_iPrima_Stream.Provider: string;
+begin
+  Result := PRIMA_PROVIDER;
+end;
+
+class function TDownloader_iPrima_Stream.UrlRegExp: string;
+begin
+  Result := Format(PRIMA_URLREGEXP, [MovieIDParamName]);
+end;
+
+constructor TDownloader_iPrima_Stream.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
@@ -100,7 +194,7 @@ begin
   StreamCDNIDRegExp := RegExCreate(REGEXP_STREAM_CDNID);
 end;
 
-destructor TDownloader_iPrima.Destroy;
+destructor TDownloader_iPrima_Stream.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(StreamIDRegExp);
@@ -108,12 +202,12 @@ begin
   inherited;
 end;
 
-function TDownloader_iPrima.GetMovieInfoUrl: string;
+function TDownloader_iPrima_Stream.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.iprima.cz/videoarchiv/' + MovieID + '/all/all';
+  Result := Format(PRIMA_MOVIE_INFO_URL, [MovieID]);
 end;
 
-function TDownloader_iPrima.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_iPrima_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, ID, EmbeddedPage: string;
     EmbeddedPageXml: TXmlDoc;
 begin
@@ -138,7 +232,71 @@ begin
       end
 end;
 
+{$IFDEF PRIMA_LIVEBOX}
+
+{ TDownloader_iPrima_LiveBox }
+
+class function TDownloader_iPrima_LiveBox.Provider: string;
+begin
+  Result := PRIMA_PROVIDER;
+end;
+
+class function TDownloader_iPrima_LiveBox.UrlRegExp: string;
+begin
+  Result := Format(PRIMA_URLREGEXP, [MovieIDParamName]);
+end;
+
+constructor TDownloader_iPrima_LiveBox.Create(const AMovieID: string);
+begin
+  inherited;
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  LiveBoxRegExp := RegExCreate(REGEXP_LIVEBOX);
+end;
+
+destructor TDownloader_iPrima_LiveBox.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(LiveBoxRegExp);
+  inherited;
+end;
+
+function TDownloader_iPrima_LiveBox.GetMovieInfoUrl: string;
+begin
+  Result := Format(PRIMA_MOVIE_INFO_URL, [MovieID]);
+end;
+
+function TDownloader_iPrima_LiveBox.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  HQStream, LQStream, Stream: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVars(LiveBoxRegExp, Page, ['HQ', 'LQ'], [@HQStream, @LQStream]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else
+    begin
+    if HQStream <> '' then
+      Stream := HQStream
+    else
+      Stream := LQStream;
+    MovieUrl := 'rtmp://iprima.livebox.cz/iprima/' + Stream;
+    Self.RtmpUrl := MovieURL;
+    Result := True;
+    SetPrepared(True);
+    end;
+end;
+
+{$ENDIF}
+
+function TDownloader_iPrima_LiveBox.GetFileNameExt: string;
+begin
+  Result := '.flv';
+end;
+
 initialization
   RegisterDownloader(TDownloader_iPrima);
+  //RegisterDownloader(TDownloader_iPrima_Stream);
+  //RegisterDownloader(TDownloader_iPrima_LiveBox);
 
 end.

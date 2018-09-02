@@ -62,7 +62,7 @@ type
       SilverlightParamsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
@@ -129,7 +129,7 @@ uses
 // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 // http://voyo.nova.cz/home/plus-video/321-kriminalka-andel-podraz
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*nova\.cz/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!tn\.)nova\.cz/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -183,25 +183,16 @@ begin
   Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
 end;
 
-function TDownloader_Nova.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
 var
-  Downloader: TDownloader;
   Silverlight: string;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
+  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
   if GetRegExpVar(SilverlightParamsRegExp, Page, REGEXP_MS_INFO_NAME, Silverlight) then
     Downloader := TDownloader_Nova_MS.Create(MovieID)
   else
     Downloader := TDownloader_Nova_RTMP.Create(MovieID);
-  if Downloader <> nil then
-    if CreateNestedDownloaderFromDownloader(Downloader) then
-      begin
-      SetPrepared(True);
-      Result := True;
-      end
-    else
-      Downloader.Free;
+  Result := True;
 end;
 
 procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);

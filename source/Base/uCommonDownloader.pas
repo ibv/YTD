@@ -62,6 +62,7 @@ type
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
     protected
       function GetFileNameExt: string; override;
+      function GetContentUrl: string; override;
       function BuildMovieUrl(out Url: string): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
@@ -86,7 +87,6 @@ type
       destructor Destroy; override;
       function Prepare: boolean; override;
       function Download: boolean; override;
-      property ContentUrl: string read fMovieUrl;
     end;
 
 const
@@ -139,6 +139,11 @@ end;
 function TCommonDownloader.GetFileNameExt: string;
 begin
   Result := ExtractUrlExt(MovieURL);
+end;
+
+function TCommonDownloader.GetContentUrl: string;
+begin
+  Result := fMovieURL;
 end;
 
 function TCommonDownloader.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
@@ -286,7 +291,7 @@ begin
         FreeAndNil(PageXml);
         end;
   finally
-    Info.Free;
+    FreeAndNil(Info);
     end;
 end;
 
@@ -317,7 +322,7 @@ procedure TCommonDownloader.SetOptions(const Value: TYTDOptions);
 begin
   inherited;
   {$IFDEF SUBTITLES}
-  fSubtitlesEnabled := Value.SubtitlesEnabled and Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, False);
+  fSubtitlesEnabled := Value.SubtitlesEnabled and Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True);
   {$ENDIF}
 end;
 

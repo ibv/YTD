@@ -70,6 +70,10 @@
   // this allows YTD to work as a simplified RTMPDUMP/MSDL (without support
   // for extra parameters, only URL is supported).
 
+{$DEFINE DOWNLOADTOTEMPFILES}
+  // Use temporary files for downloads, then rename them when the download
+  // is complete.
+
 {.DEFINE JSON}
   // Many providers use JSON for their data storage. While it may be a good idea
   // to use a JSON parser for this data, in fact it is often better to simply

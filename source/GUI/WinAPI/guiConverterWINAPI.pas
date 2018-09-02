@@ -92,7 +92,7 @@ begin
       Result := True;
       end;
   finally
-    F.Free;
+    FreeAndNil(F);
     end;
 end;
 
@@ -119,7 +119,7 @@ begin
           end;
         end;
   finally
-    L.Free;
+    FreeAndNil(L);
     end;
   SendMessage(Combo, CB_SETCURSEL, SelectedIndex, 0);
 end;
@@ -147,7 +147,7 @@ begin
           SelectedID := L[idx];
           Result := True;
         finally
-          L.Free;
+          FreeAndNil(L);
           end;
         end;
       end;

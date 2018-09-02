@@ -51,6 +51,7 @@ type
   TDownloader_VideaCesky = class(TVarNestedDownloader)
     private
     protected
+      MovieUrlAreaRegExp: TRegExp;
       {$IFDEF SUBTITLES}
         {$IFDEF CONVERTSUBTITLES}
         ConvertSubtitles: boolean;
@@ -58,6 +59,7 @@ type
       {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
@@ -90,6 +92,7 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
+  REGEXP_MOVIE_AREA = '(?P<AREA><div\b[^>]*\bid="contentArea".*)';
   REGEXP_EXTRACT_NESTED_URLS: array[0..4] of string
     = ('\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
@@ -98,7 +101,7 @@ const
        '<embed\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"');
   {$IFDEF SUBTITLES}
   REGEXP_EXTRACT_SUBTITLE_URLS: array[0..2] of string
-    = ('\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
+    = ('\sflashvars="(?:[^"]*&amp;)?captions\.file=\s*(?P<SUBTITLES>https?://[^&"]+)',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
        '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)');
   {$ENDIF}
@@ -130,6 +133,7 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  MovieUrlAreaRegExp := RegExCreate(REGEXP_MOVIE_AREA);
   AddNestedUrlRegExps(REGEXP_EXTRACT_NESTED_URLS);
   {$IFDEF SUBTITLES}
   SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
@@ -147,6 +151,7 @@ var i: integer;
 {$ENDIF}
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlAreaRegExp);
   ClearNestedUrlRegExps;
   {$IFDEF SUBTITLES}
   for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
@@ -184,7 +189,7 @@ begin
   {$IFDEF CONVERTSUBTITLES}
   if Result then
     if fSubtitles <> '' then
-      if AnsiCompareText(fSubtitlesExt, '.xml') = 0 then
+      if AnsiCompareText(Trim(fSubtitlesExt), '.xml') = 0 then
         try
           Xml := TXmlDoc.Create;
           try
@@ -219,6 +224,14 @@ function TDownloader_VideaCesky.CreateNestedDownloaderFromURL(var Url: string): 
 begin
   Url := UrlDecode(Url);
   Result := inherited CreateNestedDownloaderFromURL(Url);
+end;
+
+function TDownloader_VideaCesky.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Area: string;
+begin
+  if GetRegExpVar(MovieUrlAreaRegExp, Page, 'AREA', Area) then
+    Page := Area;
+  Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
 end;
 
 initialization

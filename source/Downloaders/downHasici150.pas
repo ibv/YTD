@@ -69,13 +69,13 @@ uses
 
 // http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*hasici150\.tv/cz/Media-galerie/Video/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*hasici150\.tv/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\b[^>]*>(?P<TITLE>[^<>]*?)</div>\s*<div\s+id=''player''';
-  REGEXP_EXTRACT_CONFIG = '\bsrc="(?P<CONFIG>https?://[^"]+/player/[^"]+\?stream=(?P<STREAM>.+?))"';
+  REGEXP_EXTRACT_TITLE = '<title>(.*?\|\s*)([^|]*)</title>';
+  REGEXP_EXTRACT_CONFIG = '<script\b[^<]*\bsrc="(?P<CONFIG>https?://(?:[a-z0-9-]+\.)*hasici150\.tv/player/vod2.php\?stream=(?P<STREAM>.+?))"';
   REGEXP_EXTRACT_RTMP = '\bstreamhosting\s*:\s*\{[^}]*\bnetConnectionUrl\s*:\s*''(?P<RTMP>rtmpe?://.+?)''';
 
 { TDownloader_Hasici150 }
@@ -109,7 +109,7 @@ end;
 
 function TDownloader_Hasici150.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.hasici150.tv/cz/Media-galerie/Video/' + MovieID + '/';
+  Result := 'http://www.hasici150.tv/' + MovieID;
 end;
 
 function TDownloader_Hasici150.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

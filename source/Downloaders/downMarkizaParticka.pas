@@ -103,20 +103,43 @@ begin
 end;
 
 function TDownloader_Markiza_Particka.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Title, Url: string;
+var
+  Title, Url: string;
+  ChannelNode: TXmlNode;
+  i, n: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlVar(PageXml, 'channel/title', Title) then
+  if not XmlNodeByPath(PageXml, 'channel', ChannelNode) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetXmlVar(ChannelNode, 'title', Title) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-  else if not GetXmlAttr(PageXml, 'channel/item/media:content', 'url', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    SetName(Title);
-    MovieUrl := Url;
-    SetPrepared(True);
-    Result := True;
+    n := 1;
+    for i := 0 to Pred(ChannelNode.NodeCount) do
+      if ChannelNode[i].Name = 'item' then
+        if GetXmlAttr(ChannelNode[i], 'media:content', 'url', Url) then
+          begin
+          {$IFDEF MULTIDOWNLOADS}
+          NameList.Add(Format('%s (%d)', [Title, n]));
+          UrlList.Add(Url);
+          Inc(n);
+          {$ELSE}
+          SetName(Title);
+          MovieUrl := Url;
+          SetPrepared(True);
+          Result := True;
+          Exit;
+          {$ENDIF}
+          end;
+    {$IFDEF MULTIDOWNLOADS}
+    if UrlList.Count > 0 then
+      begin
+      SetPrepared(True);
+      Result := First;
+      end;
+    {$ENDIF}
     end;
 end;
 

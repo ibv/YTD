@@ -191,11 +191,8 @@ initialization
   RegisteredProviderNames := TStringList.Create;
 
 finalization
-  RegisteredDownloaders.Free;
-  RegisteredDownloaders := nil;
-  RegisteredProviders.Free;
-  RegisteredProviders := nil;
-  RegisteredProviderNames.Free;
-  RegisteredProviderNames := nil;
+  FreeAndNil(RegisteredDownloaders);
+  FreeAndNil(RegisteredProviders);
+  FreeAndNil(RegisteredProviderNames);
 
 end.

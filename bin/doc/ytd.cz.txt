@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.91                                     (c) 2009-11 Pepak
+YouTube Downloader v0.92                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -312,10 +312,24 @@ a "0" (ne).
     - Vıchozí hodnota je "1" (povolit automatické pouití HTML parseru).
     - Odpovídá parametrùm -ah (povolit), -ah- (zakázat) na pøíkazové øádce.
 
-  <subtitle_support>
+  <subtitles_enabled>
     - Potomek <config>; umoòuje vypnout podporu titulkù v celé aplikaci.
     - Moné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).
     - Vıchozí hodnota je "1" (povolit stahování titulkù).
+
+  <download_to_temp_files>
+    - Potomek <config>; urèuje, jestli se soubory ukládají rovnou pod svım
+      definitivním jménem nebo s dodateènou pøíponou .part, která je po
+      skonèení downloadu odstranìna.
+    - Moné hodnoty jsou "1" (povolit dodateènou pøíponu) nebo "0" (zakázat).
+    - Vıchozí hodnota je "0" (zakázat dodateènou pøíponu).
+
+  <download_to_provider_subdirectories>
+    - Potomek <config>; urèuje, jestli se soubory ukládají rovnou do adresáøe
+      <destination_path> nebo do jeho podadresáøe podle jména poskytovatele
+      médií (tzn. soubory z YouTube do podadresáøe YouTube.com apod.).
+    - Moné hodnoty jsou "1" (povolit podadresáøe) nebo "0" (zakázat).
+    - Vıchozí hodnota je "0" (zakázat podadresáøe).
 
   <proxy_server>
     - Potomek <config>; umoòuje nastavit proxy server pro vaši sí. Proxy 
@@ -471,7 +485,7 @@ a "0" (ne).
 
   - Všichni poskytovatelé mají následující nastavení:
 
-   <subtitle_support>
+   <subtitles_enabled>
      - Potomek konkrétního poskytovatele; umoòuje vypnout podporu titulkù 
        pro tohoto konkrétního poskytovatele.
      - Moné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).

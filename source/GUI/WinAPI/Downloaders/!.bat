@@ -7,9 +7,6 @@ call :build guiOptionsWINAPI_YouTube.rc
 goto konec
 
 :build
-rem brcc32 -id:\progs\mingw\include %1
-brcc32 -ii:\. %1
-if errorlevel 1 pause
-goto konec
+call ..\build_res.bat %1
 
 :konec

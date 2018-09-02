@@ -115,7 +115,7 @@ object FormOptions: TFormOptions
       ImageIndex = 1
       object LabelOverwriteMode: TLabel
         Left = 8
-        Top = 116
+        Top = 164
         Width = 60
         Height = 13
         Caption = '&Existing files:'
@@ -123,7 +123,7 @@ object FormOptions: TFormOptions
       end
       object LabelDownloadDir: TLabel
         Left = 8
-        Top = 92
+        Top = 140
         Width = 94
         Height = 13
         Caption = '&Download directory:'
@@ -131,7 +131,7 @@ object FormOptions: TFormOptions
       end
       object LabelConverter: TLabel
         Left = 8
-        Top = 148
+        Top = 196
         Width = 49
         Height = 13
         Caption = '&Converter:'
@@ -148,13 +148,13 @@ object FormOptions: TFormOptions
       end
       object ComboOverwriteMode: TComboBox
         Left = 112
-        Top = 112
+        Top = 160
         Width = 416
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 4
+        TabOrder = 7
         Items.Strings = (
           'Ask user'
           'Overwrite'
@@ -163,30 +163,30 @@ object FormOptions: TFormOptions
       end
       object EditDownloadDir: TEdit
         Left = 112
-        Top = 88
+        Top = 136
         Width = 400
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 2
+        TabOrder = 5
       end
       object BtnDownloadDir: TButton
         Left = 511
-        Top = 88
+        Top = 136
         Width = 17
         Height = 21
         Action = actDownloadDir
         Anchors = [akTop, akRight]
-        TabOrder = 3
+        TabOrder = 6
       end
       object ComboConverter: TComboBox
         Left = 112
-        Top = 144
+        Top = 192
         Width = 416
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 5
+        TabOrder = 8
         OnChange = ComboConverterChange
       end
       object CheckSubtitlesEnabled: TCheckBox
@@ -196,16 +196,34 @@ object FormOptions: TFormOptions
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Download &subtitles if available'
-        TabOrder = 1
+        TabOrder = 2
       end
       object CheckAutoTryHtmlParser: TCheckBox
-        Left = 7
+        Left = 8
         Top = 32
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Automatically try &HTML parser'
-        TabOrder = 6
+        TabOrder = 1
+      end
+      object CheckDownloadToTempFiles: TCheckBox
+        Left = 8
+        Top = 80
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Append a .part e&xtension while downloading'
+        TabOrder = 3
+      end
+      object CheckDownloadToProviderSubdirs: TCheckBox
+        Left = 8
+        Top = 104
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Store media into su&bdirectories according to their providers'
+        TabOrder = 4
       end
     end
     object TabNetworkOptions: TTabSheet

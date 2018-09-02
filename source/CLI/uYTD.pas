@@ -453,8 +453,7 @@ begin
         {$ENDIF}
         Write(_('  Media title: ')); WriteColored(ccWhite, Downloader.Name); Writeln; // CLI: Title shown before media title. Pad to the same length as "File name:'
         Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln; // CLI: Title shown before media file name. Pad to the same length as "Media title:'
-        if Downloader is TCommonDownloader then
-          Write(_('  Content URL: ')); WriteColored(ccWhite, TCommonDownloader(Downloader).ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
+        Write(_('  Content URL: ')); WriteColored(ccWhite, Downloader.ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
         Result := Downloader.ValidateFileName and Downloader.Download;
         if fNextProgressUpdate <> 0 then
           Writeln;

@@ -301,7 +301,7 @@ begin
           if Valid then
             FileName := D.FileName;
         finally
-          D.Free;
+          FreeAndNil(D);
           end;
         {$ENDIF}
         end;
@@ -471,7 +471,7 @@ begin
       if L[i] <> '' then
         Add(L[i]);
   finally
-    L.Free;
+    FreeAndNil(L);
     end;
 end;
 
@@ -486,7 +486,7 @@ begin
         L.Add(Urls[i]);
     Options.WriteUrlList(L);
   finally
-    L.Free;
+    FreeAndNil(L);
     end;
 end;
 

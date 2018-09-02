@@ -641,7 +641,7 @@ begin
       if n = 0 then
         ErrorMessageBox(_(MAINFORM_NO_SUPPORTED_URL), APPLICATION_TITLE);
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
     end;
 end;
@@ -713,7 +713,7 @@ begin
           ConvertTask(Integer(L[i]), ConverterID);
         end;
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
   {$ELSE}
   Result := False;
@@ -735,7 +735,7 @@ begin
         else
           Urls := Urls + EOLN + DownloadList.Urls[Integer(L[i])];
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
   if Urls <> '' then
     SetClipboardAsText(Self.Handle, Urls);
@@ -752,7 +752,7 @@ begin
         for i := Pred(L.Count) downto 0 do
           DeleteTask(Integer(L[i]));
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
 end;
 
@@ -795,7 +795,7 @@ begin
       StartClipboardMonitor;
       end;
   finally
-    F.Free;
+    FreeAndNil(F);
     end;
 end;
 
@@ -830,7 +830,7 @@ begin
           L.Add(DownloadList.Urls[i]);
       L.SaveToFile(FileName);
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
     end;
 end;
@@ -854,7 +854,7 @@ begin
       for i := 0 to Pred(L.Count) do
         StartPauseResumeTask(Integer(L[i]));
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
 end;
 
@@ -869,7 +869,7 @@ begin
         for i := 0 to Pred(L.Count) do
           StopTask(Integer(L[i]));
     finally
-      L.Free;
+      FreeAndNil(L);
       end;
 end;
 
@@ -971,7 +971,7 @@ begin
           if AddTask(L[i]) then
             Inc(Result);
       finally
-        L.Free;
+        FreeAndNil(L);
         end;
       end;
 end;

@@ -128,7 +128,7 @@ end;
 
 procedure TFrameDownloaderOptionsPageCommon.DestroyObjects;
 begin
-  SubForm.Free;
+  FreeAndNil(SubForm);
 end;
 
 function TFrameDownloaderOptionsPageCommon.DoInitDialog: boolean;

@@ -1,11 +1,65 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.91                                     (c) 2009-11 Pepak
+YouTube Downloader v0.92                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.92:
+
+    * New providers:
+      - EuroGamer.cz
+      - ILikeBike.cz
+      - R1ZAK.cz
+        - Note: It is not possible to select a particular movie; instead, all
+          available will be downloaded one after another.
+
+    * Updated providers:
+      - CSmaTalent.cz, CSmaTalent.sk
+      - Facebook.com
+      - iDnes.cz
+      - MediaSport.cz
+      - Music.Stream.cz
+      - TN.Nova.cz
+
+    * Hasici150.tv: Doesn't work at the moment, because I can't find a single
+      video which would play in the browser. The downloader is ready, but I
+      need that one sample to finish the work.
+
+    * iPrima.cz: Support for the new storage provider Livebox.cz. Old movies
+      (stored at Stream.cz) still work, of course.
+
+      A change of providers allowed YTD (even old versions) to download Show 
+      Jana Krause, which seemed to be impossible to download before.
+
+    * Particka.Markiza.sk: Support for multi-part videos.
+
+    * VideaCesky.cz: Support for subtitles for http://www.videacesky.cz/reklamy-reklamni-spot-video/super-heineken
+      Improved support for videos hosted on VideaCesky.cz itself.
+      Improved support for pages with Flash banners (which used to be mistaken
+      for videos in older versions).
+
+    * Nested downloaders (e.g. VideaCesky.cz) now display the URL of actual
+      content rather than the URL of nested object.
+
+    * Default setting for "download subtitles" was changed to "yes", as written
+      in the documentation and as expected by most users.
+
+    * A new option to add ".part" extension to unfinished videos. When the
+      download is complete, the movie will be renamed to the actual name.
+      The option is disabled by default, because it requires higher access
+      rights than the original implementation. You can enable it in the
+      configuration dialog.
+
+    * An option to download videos into subdirectories per providers (e.g.
+      movies from YouTube would get stored to subdirectory "YouTube.com" etc.).
+
+    * Various minor updates to make the source code more readable and/or 
+      manageable.
+
+
 
   v0.91:
 

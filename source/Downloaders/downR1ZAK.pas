@@ -34,19 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMediaSport;
+unit downR1ZAK;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SynaUtil,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MediaSport = class(THttpDownloader)
+  TDownloader_R1ZAK = class(THttpDownloader)
     private
+    protected
+      MovieInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -64,58 +66,90 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
+// http://www.r1zak.cz/porady/sumava_na_dlani/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mediasport\.cz/';
+  URLREGEXP_BEFORE_ID = 'r1zak\.cz';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
-  REGEXP_EXTRACT_URL = REGEXP_URL_ADDVARIABLE_FILE_RELATIVE;
+  REGEXP_MOVIE_INFO = '<iframe\s+src="https?://(?:[a-z0-9-]+\.)*regionplzen\.cz/video/export/\?jmeno=(?P<PATH>[^"&]+)';
 
-{ TDownloader_MediaSport }
+{ TDownloader_R1ZAK }
 
-class function TDownloader_MediaSport.Provider: string;
+class function TDownloader_R1ZAK.Provider: string;
 begin
-  Result := 'MediaSport.cz';
+  Result := 'R1ZAK.cz';
 end;
 
-class function TDownloader_MediaSport.UrlRegExp: string;
+class function TDownloader_R1ZAK.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_MediaSport.Create(const AMovieID: string);
+constructor TDownloader_R1ZAK.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  inherited;
+  InfoPageEncoding := peAnsi;
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
-destructor TDownloader_MediaSport.Destroy;
+destructor TDownloader_R1ZAK.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
-function TDownloader_MediaSport.GetMovieInfoUrl: string;
+function TDownloader_R1ZAK.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mediasport.cz/' + MovieID;
+  Result := 'http://www.r1zak.cz/' + MovieID;
 end;
 
-function TDownloader_MediaSport.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_R1ZAK.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, Path: string;
+    InfoXml: TXmlDoc;
+    ListNode: TXmlNode;
+    i: integer;
 begin
-  Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-  if Result then
-    begin
-    MovieUrl := 'http://www.mediasport.cz' + MovieUrl;
-    end;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(MovieInfoRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, 'http://www.regionplzen.cz/video/export/' + Path, InfoXml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else
+    try
+      if XmlNodeByPath(InfoXml, 'trackList', ListNode) then
+        for i := 0 to Pred(ListNode.NodeCount) do
+          if ListNode[i].Name = 'track' then
+            if GetXmlVar(ListNode[i], 'title', Title) then
+              if GetXmlVar(ListNode[i], 'location', Path) then
+                begin
+                Path := UrlEncode(Path);
+                {$IFDEF MULTIDOWNLOADS}
+                NameList.Add(Title);
+                UrlList.Add('http://www.regionplzen.cz' + Path);
+                {$ELSE}
+                SetName(Title);
+                MovieUrl := 'http://www.regionplzen.cz' + Path;
+                SetPrepared(True);
+                Result := True;
+                Exit;
+                {$ENDIF}
+                end;
+      {$IFDEF MULTIDOWNLOADS}
+      if UrlList.Count > 0 then
+        begin
+        SetPrepared(True);
+        Result := First;
+        end;
+      {$ENDIF}
+    finally
+      FreeAndNil(InfoXml);
+      end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MediaSport);
+  RegisterDownloader(TDownloader_R1ZAK);
 
 end.

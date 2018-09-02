@@ -124,7 +124,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    MovieURL := UrlDecode(Url);
+    MovieURL := UrlDecode(JSDecode(Url));
     SetPrepared(True);
     Result := True;
     end;

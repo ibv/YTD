@@ -94,7 +94,7 @@ begin
   {$ENDIF}
   EditMaximumVideoWidth.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT));
   EditMaximumVideoHeight.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT));
-  CheckAvoidWebM := Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT);
+  CheckAvoidWebM.Checked := Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_YouTube.SaveToOptions;

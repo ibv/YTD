@@ -96,6 +96,8 @@ const
   IDC_LABEL_CONVERTER = 1008;
   IDC_COMBO_CONVERTER = 1009;
   IDC_CHECKBOX_AUTOTRYHTMLPARSER = 1010;
+  IDC_CHECKBOX_DOWNLOADTOTEMPFILES = 1011;
+  IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS = 1012;
 
 const
   ACTION_DOWNLOADDIR = 40001;
@@ -137,6 +139,8 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTOSTARTDOWNLOADS), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DOWNLOADTOTEMPFILES), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_COMBO_OVERWRITEMODE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_DOWNLOADDIR), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_DOWNLOADDIR), [akTop, akRight]);
@@ -215,7 +219,11 @@ begin
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER, CheckboxConsts[Options.AutoTryHtmlParser]);
   // Download Subtitles
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES, CheckboxConsts[Options.SubtitlesEnabled]);
-  // Overwrite Mode
+  // Download to temp files
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_DOWNLOADTOTEMPFILES, CheckboxConsts[Options.DownloadToTempFiles]);
+  // Download to temp files
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS, CheckboxConsts[Options.DownloadToProviderSubdirs]);
+  // Overwrite mode
   SendMessage(ComboOverwriteMode, CB_RESETCONTENT, 0, 0);
   SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Ask user'))));
   SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Overwrite'))));
@@ -259,6 +267,20 @@ begin
       Options.SubtitlesEnabled := True;
     BST_UNCHECKED:
       Options.SubtitlesEnabled := False;
+    end;
+  // Download to temp files
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_DOWNLOADTOTEMPFILES) of
+    BST_CHECKED:
+      Options.DownloadToTempFiles := True;
+    BST_UNCHECKED:
+      Options.DownloadToTempFiles := False;
+    end;
+  // Download to provider subdirs
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS) of
+    BST_CHECKED:
+      Options.DownloadToProviderSubdirs := True;
+    BST_UNCHECKED:
+      Options.DownloadToProviderSubdirs := False;
     end;
   // Overwrite Mode
   idx := SendMessage(ComboOverwriteMode, CB_GETCURSEL, 0, 0);
