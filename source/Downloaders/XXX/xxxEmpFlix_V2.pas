@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVKontakteRuEmbed;
+unit xxxEmpFlix_V2;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, xxxEmpFlix;
 
 type
-  TDownloader_VKontakteRuEmbed = class(THttpDownloader)
+  TDownloader_EmpFlix_V2 = class(TDownloader_EmpFlix)
     private
     protected
-      FlashVarsRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -65,68 +62,36 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1
-// http://vk.com/video_ext.php?oid=106919938&id=161961696&hash=bb3e2d1a73bdb262
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:vkontakte\.ru|vk\.com)/video_ext\.php\?.+';
-  URLREGEXP_AFTER_ID =  '';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*empflix\.com/videos/[^?]*-';
+  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_AFTER_ID =  '\.html';
 
-const
-  REGEXP_FLASHVARS = '\bvar\s+video_(?P<VARNAME>[a-z0-9_]+)\s*=\s*''(?P<VARVALUE>.*?)''';
+{ TDownloader_EmpFlix }
 
-{ TDownloader_VKontakteRuEmbed }
-
-class function TDownloader_VKontakteRuEmbed.Provider: string;
+class function TDownloader_EmpFlix_V2.UrlRegExp: string;
 begin
-  Result := 'VKontakte.ru';
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-class function TDownloader_VKontakteRuEmbed.UrlRegExp: string;
+constructor TDownloader_EmpFlix_V2.Create(const AMovieID: string);
 begin
-  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
-end;
-
-constructor TDownloader_VKontakteRuEmbed.Create(const AMovieID: string);
-begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peAnsi;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
-end;
-
-destructor TDownloader_VKontakteRuEmbed.Destroy;
-begin
-  RegExFreeAndNil(FlashVarsRegExp);
   inherited;
 end;
 
-function TDownloader_VKontakteRuEmbed.GetMovieInfoUrl: string;
+destructor TDownloader_EmpFlix_V2.Destroy;
 begin
-  Result := MovieID;
+  inherited;
 end;
 
-function TDownloader_VKontakteRuEmbed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Host, UID, VTag, Title: string;
+function TDownloader_EmpFlix_V2.GetMovieInfoUrl: string;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  GetRegExpVarPairs(FlashVarsRegExp, Page, ['host', 'uid', 'vtag', 'title'], [@Host, @UID, @VTag, @Title]);
-  if Host = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Host']))
-  else if UID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UID']))
-  else if VTag = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['VTag']))
-  else
-    begin
-    SetName(UrlDecode(Title));
-    MovieUrl := Host + 'u' + UID + '/video/' + VTag + '.720.mp4';
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.empflix.com/view.php?id=' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_VKontakteRuEmbed);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_EmpFlix_V2);
+  {$ENDIF}
 
 end.

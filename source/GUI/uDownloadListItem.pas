@@ -370,14 +370,15 @@ end;
 procedure TDownloadListItem.ExploreMedia;
 var FN: string;
 begin
-  if State in [dtsDownloading, dtsFinished, dtsFailed, dtsAborted] then
+  if (State in [dtsDownloading, dtsFinished, dtsFailed, dtsAborted]) and FileExists(Downloader.FileName) then
+    FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(Downloader.FileName)))
+  else
     begin
-    if FileExists(Downloader.FileName) then
-      begin
-      FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(Downloader.FileName)));
-      Run(FN);
-      end;
+    FN := Options.DestinationPath;
+    if FN = '' then
+      FN := GetCurrentDir;
     end;
+  Run(FN);
 end;
 
 function TDownloadListItem.Download: boolean;

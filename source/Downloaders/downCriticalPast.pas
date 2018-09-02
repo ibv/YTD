@@ -34,21 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVKontakteRuEmbed;
+unit downCriticalPast;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uOptions,
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_VKontakteRuEmbed = class(THttpDownloader)
+  TDownloader_CriticalPast = class(TRtmpDownloader)
     private
     protected
-      FlashVarsRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -62,71 +62,61 @@ implementation
 
 uses
   uStringConsts,
-  uDownloadClassifier,
-  uMessages;
+  uStringUtils,
+  uMessages,
+  uDownloadClassifier;
 
-// http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1
-// http://vk.com/video_ext.php?oid=106919938&id=161961696&hash=bb3e2d1a73bdb262
+// http://www.criticalpast.com/video/65675022388_Nazi-dignitary-at-harvest-festival_Sudeten-German-Party_Nazi
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:vkontakte\.ru|vk\.com)/video_ext\.php\?.+';
+  URLREGEXP_BEFORE_ID = 'criticalpast\.com/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_FLASHVARS = '\bvar\s+video_(?P<VARNAME>[a-z0-9_]+)\s*=\s*''(?P<VARVALUE>.*?)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =   '''flvurl\s*=\s*(?P<URL>rtmpt?e?://.+?)''';
 
-{ TDownloader_VKontakteRuEmbed }
+{ TDownloader_CriticalPast }
 
-class function TDownloader_VKontakteRuEmbed.Provider: string;
+class function TDownloader_CriticalPast.Provider: string;
 begin
-  Result := 'VKontakte.ru';
+  Result := 'CriticalPast.com';
 end;
 
-class function TDownloader_VKontakteRuEmbed.UrlRegExp: string;
+class function TDownloader_CriticalPast.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_VKontakteRuEmbed.Create(const AMovieID: string);
+constructor TDownloader_CriticalPast.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peAnsi;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  inherited;
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_VKontakteRuEmbed.Destroy;
+destructor TDownloader_CriticalPast.Destroy;
 begin
-  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_VKontakteRuEmbed.GetMovieInfoUrl: string;
+function TDownloader_CriticalPast.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
+  Result := 'http://www.criticalpast.com/video/' + MovieID;
 end;
 
-function TDownloader_VKontakteRuEmbed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Host, UID, VTag, Title: string;
+function TDownloader_CriticalPast.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  GetRegExpVarPairs(FlashVarsRegExp, Page, ['host', 'uid', 'vtag', 'title'], [@Host, @UID, @VTag, @Title]);
-  if Host = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Host']))
-  else if UID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UID']))
-  else if VTag = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['VTag']))
-  else
-    begin
-    SetName(UrlDecode(Title));
-    MovieUrl := Host + 'u' + UID + '/video/' + VTag + '.720.mp4';
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := Prepared;
+  if Prepared then
+    Self.RtmpUrl := MovieUrl;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_VKontakteRuEmbed);
+  RegisterDownloader(TDownloader_CriticalPast);
 
 end.

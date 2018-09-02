@@ -48,6 +48,8 @@ type
   TPlaylist_YouTube = class(TPlaylistDownloader)
     private
     protected
+      ItemIDRegExp: TRegExp;
+      ItemTitleRegExp: TRegExp;
       NextPageRegExp: TRegExp;
       function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
       function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
@@ -66,14 +68,18 @@ uses
   uDownloadClassifier;
 
 // http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+// http://www.youtube.com/embed/videoseries?list=PLA0862DE02BF19ECB
+// http://gdata.youtube.com/feeds/api/playlists/A0862DE02BF19ECB
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:view_play_list\?p=|embed/videoseries\?list=(?:PL)?|feeds/api/playlists/)';
   URLREGEXP_ID =        '[^/?&"]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  //REGEXP_PLAYLIST_ITEM = '<a[^>]*\sid="video-long-title-(?P<ID>[^"]+)[^>]*>(?P<NAME>[^<]+)</a>';
-  REGEXP_PLAYLIST_ITEM = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;p=%s"[^>]*>(?P<NAME>[^<]+)</a>';
+  REGEXP_PLAYLIST_ITEM = '(?P<ITEM><li\b.*?</?li>)';
+  REGEXP_ITEM_ID = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL)?%s(?:"|&amp;)';
+  REGEXP_ITEM_TITLE = '<span\s+class="(?:video-)?title\b[^>]*>(?P<TITLE>.*?)</span>';
+  //REGEXP_PLAYLIST_ITEM = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL)?%s(?:"|&amp;)[^>]*>(?P<NAME>[^<]+)</a>';
   REGEXP_NEXT_PAGE = '<a\s+href="(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=[^"&]+&sort_field=[^&"]*&page=[0-9]+)"\s+class="yt-uix-pager-link"\s+data-page="(?P<PAGE>[0-9]+)"';
 
 { TPlaylist_YouTube }
@@ -92,13 +98,17 @@ constructor TPlaylist_YouTube.Create(const AMovieID: string);
 begin
   inherited;
   //PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  PlayListItemRegExp := RegExCreate(Format(REGEXP_PLAYLIST_ITEM, [MovieID]));
+  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
+  ItemIDRegExp := RegExCreate(Format(REGEXP_ITEM_ID, [MovieID]));
+  ItemTitleRegExp := RegExCreate(REGEXP_ITEM_TITLE);
   NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
 
 destructor TPlaylist_YouTube.Destroy;
 begin
   RegExFreeAndNil(PlayListItemRegExp);
+  RegExFreeAndNil(ItemIDRegExp);
+  RegExFreeAndNil(ItemTitleRegExp);
   RegExFreeAndNil(NextPageRegExp);
   inherited;
 end;
@@ -109,13 +119,23 @@ begin
 end;
 
 function TPlaylist_YouTube.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
+var
+  Item: string;
 begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
+  Item := Match.SubexpressionByName('ITEM');
+  GetRegExpVar(ItemTitleRegExp, Item, 'TITLE', Result);
 end;
 
 function TPlaylist_YouTube.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
+var
+  Item: string;
+  ID: string;
 begin
-  Result := 'http://www.youtube.com/watch?v=' + Match.SubexpressionByName('ID');
+  Item := Match.SubexpressionByName('ITEM');
+  if GetRegExpVar(ItemIDRegExp, Item, 'ID', ID) then
+    Result := 'http://www.youtube.com/watch?v=' + ID
+  else
+    Result := '';
 end;
 
 function TPlaylist_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

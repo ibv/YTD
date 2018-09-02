@@ -48,10 +48,11 @@ type
   TFileEncoding = (feAuto, feANSI, feOEM, feUnicode, feUTF8);
 
 function GuessFileEncoding(Data: Pointer; DataLength: Integer; out BomLength: integer): TFileEncoding;
-function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding): TMemoryStream;
+function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding; out FoundEncoding: TFileEncoding): TMemoryStream;
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);
-function LoadFileIntoStringW(const FileName: string; Encoding: TFileEncoding): WideString;
-function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+function LoadFileIntoStringW(const FileName: string; Encoding: TFileEncoding; out FoundEncoding: TFileEncoding): WideString;
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding; out FoundEncoding: TFileEncoding): string; overload;
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string; overload;
 function FileGetSize(const FileName: string): int64;
 function FileGetDateTime(const FileName: string): TDateTime;
 
@@ -103,15 +104,17 @@ begin
     end;
 end;
 
-function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding): TMemoryStream;
+function LoadFileIntoMemoryW(const FileName: string; Encoding: TFileEncoding; out FoundEncoding: TFileEncoding): TMemoryStream;
 var Source: TMemoryStream;
-    CodePage, Size, BomLength: integer;
+    CodePage, Size, NewSize, BomLength: integer;
+    Content: WideString;
     P: Pointer;
 begin
   Source := LoadFileIntoMemory(FileName);
   try
     if Encoding = feAuto then
       Encoding := GuessFileEncoding(Source.Memory, Source.Size, BomLength);
+    FoundEncoding := Encoding;
     if Source.Size = 0 then
       Result := Source
     else if Encoding = feUnicode then
@@ -132,14 +135,17 @@ begin
       begin
       P := PChar(LongWord(Source.Memory) + LongWord(BomLength));
       CodePage := EncodingToCodePage(Encoding);
-      Size := MultiByteToWideChar(CodePage, MB_ERR_INVALID_CHARS, P, Source.Size, nil, 0);
+      Size := MultiByteToWideChar(CodePage, 0 {MB_ERR_INVALID_CHARS}, P, Source.Size - BomLength, nil, 0);
       if Size = 0 then
+        Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
+      Inc(Size);
+      SetLength(Content, Size);
+      NewSize := MultiByteToWideChar(CodePage, 0 {MB_ERR_INVALID_CHARS}, P, Source.Size - BomLength, @Content[1], Size);
+      if NewSize = 0 then
         Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
       Result := TMemoryStream.Create;
       try
-        Result.Size := Size * Sizeof(WideChar);
-        if MultiByteToWideChar(CodePage, MB_ERR_INVALID_CHARS, P, Source.Size, Result.Memory, Size) <> Size then
-          Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
+        Result.WriteBuffer(Content[1], NewSize * Sizeof(WideChar));
         Result.Position := 0;
         FreeAndNil(Source);
       except
@@ -153,10 +159,10 @@ begin
     end;
 end;
 
-function LoadFileIntoStringW(const FileName: string; Encoding: TFileEncoding): WideString;
+function LoadFileIntoStringW(const FileName: string; Encoding: TFileEncoding; out FoundEncoding: TFileEncoding): WideString;
 var MS: TMemoryStream;
 begin
-  MS := LoadFileIntoMemoryW(FileName, Encoding);
+  MS := LoadFileIntoMemoryW(FileName, Encoding, FoundEncoding);
   if MS = nil then
     Result := ''
   else
@@ -173,14 +179,21 @@ begin
       end;
 end;
 
-function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding; out FoundEncoding: TFileEncoding): string;
 begin
-  Result := string(LoadFileIntoStringW(FileName, Encoding));
+  Result := string(LoadFileIntoStringW(FileName, Encoding, FoundEncoding));
+end;
+
+function LoadFileIntoString(const FileName: string; Encoding: TFileEncoding): string;
+var
+  OutputEncoding: TFileEncoding;
+begin
+  Result := LoadFileIntoString(FileName, Encoding, OutputEncoding);
 end;
 
 procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: integer; Encoding: TFileEncoding);
 var Stream: TMemoryStream;
-    CodePage, Size: integer;
+    CodePage, Size, NewSize: integer;
     SavedOK: boolean;
 begin
   SavedOK := False;
@@ -190,14 +203,17 @@ begin
     if Encoding <> feUnicode then
       begin
       CodePage := EncodingToCodePage(Encoding);
-      Size := WideCharToMultiByte(CodePage, MB_ERR_INVALID_CHARS, Data, DataLength div Sizeof(WideChar), nil, 0, nil, nil);
+      Size := WideCharToMultiByte(CodePage, 0 {MB_ERR_INVALID_CHARS}, Data, DataLength div Sizeof(WideChar), nil, 0, nil, nil);
       if Size = 0 then
         Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
       Stream := TMemoryStream.Create;
       try
+        Inc(Size);
         Stream.Size := Size;
-        if WideCharToMultiByte(CodePage, MB_ERR_INVALID_CHARS, Data, DataLength div Sizeof(WideChar), Stream.Memory, Size, nil, nil) <> Size then
+        NewSize := WideCharToMultiByte(CodePage, 0 {MB_ERR_INVALID_CHARS}, Data, DataLength div Sizeof(WideChar), Stream.Memory, Size, nil, nil);
+        if NewSize = 0 then
           Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
+        Stream.Size := NewSize;
         SaveMemoryToFile(FileName, Stream.Memory, Stream.Size);
         SavedOK := True;
       finally

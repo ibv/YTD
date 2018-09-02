@@ -48,8 +48,7 @@ type
   TDownloader_NovaTN = class(THttpDownloader)
     private
     protected
-      VideoListRegExp: TRegExp;
-      VideoParamsRegExp: TRegExp;
+      VideoIdRegExp: TRegExp;
       ArticleDateRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
@@ -77,8 +76,7 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<meta\s+property="og:title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_VIDEO_LIST = '<a\s+href="https?://(?:[a-z0-9-]+\.)*blog\.cz/insert\?(?P<VIDEO>.*?)"';
-  REGEXP_VIDEO_PARAMS = '&amp;(?P<VARNAME>[^&=]+)(?:=(?P<VARVALUE>[^&]*))?';
+  REGEXP_VIDEO_ID = '\bvideo_at_thumb\s*\(\s*''(?P<ID>[0-9]+)''';
   REGEXP_ARTICLE_DATE = '\bvar\s+article_date\s*=\s*"(?P<YEAR>[0-9]{4})(?P<MONTH>[0-9]{2})(?P<DAY>[0-9]{2})"';
 
 {$IFDEF DIRTYHACKS}
@@ -103,16 +101,14 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  VideoListRegExp := RegExCreate(REGEXP_VIDEO_LIST);
-  VideoParamsRegExp := RegExCreate(REGEXP_VIDEO_PARAMS);
+  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
   ArticleDateRegExp := RegExCreate(REGEXP_ARTICLE_DATE);
 end;
 
 destructor TDownloader_NovaTN.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoListRegExp);
-  RegExFreeAndNil(VideoParamsRegExp);
+  RegExFreeAndNil(VideoIdRegExp);
   RegExFreeAndNil(ArticleDateRegExp);
   inherited;
 end;
@@ -124,7 +120,7 @@ end;
 
 function TDownloader_NovaTN.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Year, Month, Day: string;
-    Video, Content, ID, Title, Url: string;
+    ID, Url: string;
     {$IFDEF DIRTYHACKS}
     UrlTester: THttpSend;
     Host: string;
@@ -136,72 +132,49 @@ begin
   Result := False;
   if not GetRegExpVars(ArticleDateRegExp, Page, ['YEAR', 'MONTH', 'DAY'], [@Year, @Month, @Day]) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['article_date']))
-  else if VideoListRegExp.Match(Page) then
+  else if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else
     begin
-    repeat
-      Video := VideoListRegExp.SubexpressionByName('VIDEO');
-      if GetRegExpVarPairs(VideoParamsRegExp, Video, ['content', 'id', 'title'], [@Content, @ID, @Title]) then
-        if (Content = 'video') and (StrToIntDef(ID, -1) > 0) then
+    {$IFDEF DIRTYHACKS}
+      // The problem is, I don't know how to get the subdomain for a particular video.
+      // So I try all of them.
+      {$IFDEF DELPHI6_UP}
+        {$MESSAGE WARN 'This is a dirty hack!'}
+      {$ENDIF}
+      Url := '';
+      Found := False;
+      i := 1;
+      repeat
+        Host := Format('vid%d.tn.cz', [i]);
+        Inc(i);
+        if GetHostByName(PAnsiChar(AnsiString(Host))) = nil then
+          Break
+        else
           begin
-          Title := Utf8ToString(Utf8String(UrlDecode(Title)));
-          {$IFDEF DIRTYHACKS}
-            // The problem is, I don't know how to get the subdomain for a particular video.
-            // So I try all of them.
-            {$IFDEF DELPHI6_UP}
-              {$MESSAGE WARN 'This is a dirty hack!'}
-            {$ENDIF}
-            Url := '';
-            Found := False;
-            i := 1;
-            repeat
-              Host := Format('vid%d.tn.cz', [i]);
-              Inc(i);
-              if GetHostByName(PAnsiChar(AnsiString(Host))) = nil then
-                Break
-              else
-                begin
-                Url := Format('http://%s/%s/%s/%s/%s-hq.mp4', [Host, Year, Month, Day, ID]);
-                UrlTester := CreateHttp;
-                try
-                  if UrlTester.HTTPMethod('HEAD', Url) and (UrlTester.ResultCode >= 200) and (UrlTester.ResultCode < 300) then
-                    begin
-                    Found := True;
-                    Break;
-                    end;
-                finally
-                  FreeAndNil(UrlTester);
-                  end;
-                end;
-            until i > SERVER_COUNT;
-            if not Found then
-              Continue;
-          {$ELSE}
-            Url := '';
-            'tn.nova.cz is not supported without dirty hacks!';
-          {$ENDIF}
-          {$IFDEF MULTIDOWNLOADS}
-          NameList.Add(Title);
-          UrlList.Add(Url);
-          {$ELSE}
-          SetName(Title);
-          MovieUrl := Url;
-          Result := True;
-          SetPrepared(True);
-          Exit;
-          {$ENDIF}
+          Url := Format('http://%s/%s/%s/%s/%s-hq.mp4', [Host, Year, Month, Day, ID]);
+          UrlTester := CreateHttp;
+          try
+            if UrlTester.HTTPMethod('HEAD', Url) and (UrlTester.ResultCode >= 200) and (UrlTester.ResultCode < 300) then
+              begin
+              Found := True;
+              Break;
+              end;
+          finally
+            FreeAndNil(UrlTester);
+            end;
           end;
-    until not VideoListRegExp.MatchAgain;
-    {$IFDEF MULTIDOWNLOADS}
-    if UrlList.Count <= 0 then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      SetPrepared(True);
-      Result := First;
-      end;
+      until i > SERVER_COUNT;
     {$ELSE}
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
+      Url := '';
+      'tn.nova.cz is not supported without dirty hacks!';
     {$ENDIF}
+    if Found then
+      begin
+      MovieUrl := Url;
+      Result := True;
+      SetPrepared(True);
+      end;
     end;
 end;
 

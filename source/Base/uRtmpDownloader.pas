@@ -208,7 +208,7 @@ begin
   if IndexOfRtmpDumpOption(ShortOption, Index) then
     begin
     n := Length(fRtmpDumpOptions);
-    while Index <= Pred(n) do
+    while Index < Pred(n) do
       begin
       fRtmpDumpOptions[Index] := fRtmpDumpOptions[Succ(Index)];
       Inc(Index);

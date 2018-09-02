@@ -141,7 +141,6 @@ uses
   downAncensored in 'Downloaders\downAncensored.pas',
   downAngryAlien in 'Downloaders\downAngryAlien.pas',
   downArchive in 'Downloaders\downArchive.pas',
-  downAutoSalonTV in 'Downloaders\downAutoSalonTV.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
   downBahnorama in 'Downloaders\downBahnorama.pas',
   downBandZone in 'Downloaders\downBandZone.pas',
@@ -169,6 +168,7 @@ uses
   downClipfishV2 in 'Downloaders\downClipfishV2.pas',
   downCNBC in 'Downloaders\downCNBC.pas',
   downCollegeHumor in 'Downloaders\downCollegeHumor.pas',
+  downCriticalPast in 'Downloaders\downCriticalPast.pas',
   downCSFD in 'Downloaders\downCSFD.pas',
   downCSmaTalent in 'Downloaders\downCSmaTalent.pas',
   downCT in 'Downloaders\downCT.pas',
@@ -304,6 +304,7 @@ uses
   downSevenLoad in 'Downloaders\downSevenLoad.pas',
   downShackNews in 'Downloaders\downShackNews.pas',
   downSmeSK in 'Downloaders\downSmeSK.pas',
+  downSmotri in 'Downloaders\downSmotri.pas',
   downSnotr in 'Downloaders\downSnotr.pas',
   downSoundCloud in 'Downloaders\downSoundCloud.pas',
   downSpike in 'Downloaders\downSpike.pas',
@@ -373,6 +374,7 @@ uses
     xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
     xxxDancingBear in 'Downloaders\XXX\xxxDancingBear.pas',
     xxxEmpFlix in 'Downloaders\XXX\xxxEmpFlix.pas',
+    xxxEmpFlix_V2 in 'Downloaders\XXX\xxxEmpFlix_V2.pas',
     xxxExtremeTube in 'Downloaders\XXX\xxxExtremeTube.pas',
     xxxFreePornoZdarma in 'Downloaders\XXX\xxxFreePornoZdarma.pas',
     xxxFreeVideoCz in 'Downloaders\XXX\xxxFreeVideoCz.pas',
@@ -418,6 +420,8 @@ uses
   {$IFDEF NONWORKING}
     // No idea why it doesn't work
     downArchivioLuce in 'Downloaders\Non-working\downArchivioLuce.pas',
+    // Removed support because it now uses Silverlight streaming and downloads in thousands little chunks
+    downAutoSalonTV in 'Downloaders\Non-working\downAutoSalonTV.pas',
     // Needs some improved RTMP handling
     downCrunchyRoll in 'Downloaders\Non-working\downCrunchyRoll.pas',
     // Requires FTP support

@@ -1,11 +1,46 @@
 ______________________________________________________________________________
 
-YTD v1.04                                                    (c) 2009-12 Pepak
+YTD v1.05                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.05:
+
+    * New providers:
+      - CriticalPast.com
+      - Smotri.com
+
+    * Updated providers:
+      - EmpFlix.com
+      - iPrima.cz
+      - MojeVideo.sk (old videos may not work anymore)
+      - TN.Nova.cz
+      - UStream.tv
+      - Vimeo.com (support for HD)
+      - YouTube.com (playlists)
+
+    * AutosalonTV.cz
+      Support removed because now uses ISM streaming, which sends media as
+      a great number of separate video and audio parts. Technically, it is
+      possible to download such a video, but it would be unusable.
+
+    * Nova.cz: If an incorrect token is used, it is reported so in the error
+      message.
+
+    * VKontakte.ru: Support for vk.com/video_ext.php?...
+
+    * Fixed the naming logic of nested downloaders (such as iDnes.cz, which
+      benefits from this change; I hope the other nested downloaders also
+      benefit, or at least aren't harmed).
+
+    * GUI: Explore folder now works even for movies which haven't started
+      downloading yet or are even unknown to YTD. In such a case, the default
+      download directory is explored.
+
+
 
   v1.04:
 

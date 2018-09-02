@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.04                                                    (c) 2009-12 Pepak
+YTD v1.05                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -64,6 +64,7 @@ Clipfish.de         | HTTP     |       | http://www.clipfish.de/video/3306089/ba
 CNBC.com            | RTMP     |       | http://www.cnbc.com/id/15840232?video=3000016920&play=1
                     |          |       | http://video.cnbc.com/gallery/?video=3000016920
 CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:1934920
+CriticalPast.com    | RTMP     |       | http://www.criticalpast.com/video/65675022388_Nazi-dignitary-at-harvest-festival_Sudeten-German-Party_Nazi
 CrunchyRoll.com     | RTMP     | X     | http://www.crunchyroll.com/library/Naruto_Shippuden
 CSFD.cz             | HTTP     |       | http://www.csfd.cz/film/241720-lidice/videa/
 CSmaTalent.cz       | HTTP     |       | http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
@@ -225,6 +226,7 @@ SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drin
 ShackNews.com       |          |       | http://www.shacknews.com/file/29576/minecraft-xbox-live-trailer
 Sme.sk              | HTTP     |       | http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
                     |          |       | http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
+Smotri.com          | HTTP     |       | http://smotri.com/video/view/?id=v203531694dc#as
 Snotr.com           | HTTP     |       | http://www.snotr.com/video/4280
 SoundCloud.com      | HTTP     |       | http://soundcloud.com/ubi_irina/1-campaign-menu
 Spike.com           | HTTP     |       | http://www.spike.com/video/prince-of-persia/3355664
@@ -275,6 +277,7 @@ Videu.de            | HTTP     |       | http://www.videu.de/video/4etN3FlaaY
 Vimeo.com           | HTTP     |       | http://www.vimeo.com/10777111
 VitalMtb.com        | HTTP     |       | http://www.vitalmtb.com/videos/member/Practice-at-the-bmx-track,2631/bubb120491,1836
 VKontakte.ru        | HTTP     |       | http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1
+                    |          |       | http://vk.com/video_ext.php?oid=106919938&id=161961696&hash=bb3e2d1a73bdb262
 WeGame.com          | HTTP     |       | http://www.wegame.com/watch/Pick_up_the_can/
 Wimp.com            | HTTP     |       | http://www.wimp.com/frazilice/
 WordPress.tv        | HTTP     |       | http://wordpress.tv/2010/09/18/jane-wells-how-wordpress-decisions-get-made/

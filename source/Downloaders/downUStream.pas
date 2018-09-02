@@ -128,7 +128,7 @@ begin
       SetValueByPath('videoId', MovieID);
       SetValueByPath('pageUrl', GetMovieInfoUrl);
       end;
-    if DownloadAMF(Http, 'http://216.52.240.138/gateway.php', AMFRequest, AMFResponse) then
+    if DownloadAMF(Http, 'http://rgw.ustream.tv/gateway.php', AMFRequest, AMFResponse) then
       try
         if AMFResponse.HasBody(0) then
           if AMFResponse.Body[0].Content.FindValueByPath('error/message', ErrorMsg, TAMFString) then

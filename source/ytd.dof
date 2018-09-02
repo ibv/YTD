@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.iprima.cz/videoarchiv/227458/1187/all
+RunParams=
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=0
 Release=0
-Build=767
+Build=770
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.0.0.767
+FileVersion=1.0.0.770
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
@@ -93,7 +93,7 @@ Item0=Units
 Count=1
 Item0=..\Bin
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6101
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -253,6 +253,7 @@ loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
+cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

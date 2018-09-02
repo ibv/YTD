@@ -246,7 +246,7 @@ begin
       Result := NestedDownloader.Prepare;
       if Result then
         begin
-        if Name = '' then
+        if (Name = '') or (Name = ExtractUrlFileName(MovieUrl)) then
           SetName(NestedDownloader.Name);
         {
         if MovieUrl = '' then

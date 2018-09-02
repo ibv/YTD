@@ -68,6 +68,7 @@ const
   // Common regular expressions for getting Url
   REGEXP_URL_EMBED_SRC = '<embed\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_IFRAME_SRC = '<iframe\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
+  REGEXP_URL_VIDEO_SRC = '<video\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_PARAM_MOVIE = '<param\s+name\s*=\s*"movie"[^>]*\s+value="(?P<URL>.+?)"';
   REGEXP_URL_PARAM_FLASHVARS_OPTIONS = '<param\s+name="FlashVars"\s+value="options=(?P<URL>https?://.+?)"';
   REGEXP_URL_PARAM_FLASHVARS_FILE = '<param\s+name="FlashVars"\s+value="(?:[^"]*?&(?:amp;)?)*?file=(?P<URL>https?://.+?)(?:"|&amp;|&)';

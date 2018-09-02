@@ -276,13 +276,13 @@ begin
     Timestamp := FormatDateTime('yyyymmddhhnnss', Now);
     ID := UrlEncode(NOVA_APP_ID + '|' + Media_ID);
     Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (EncodeBase64(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret)))));
-    Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&h=0&c=%s&s=%s', [Timestamp, ID, Signature]);
+    Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&c=%s&h=0&tm=nova&s=%s&d=1', [Timestamp, ID, Signature]);
     if not DownloadXml(Http, Url, InfoXml) then
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
         if (not GetXmlVar(InfoXml, 'status', Status)) or (Status <> 'Ok') then
-          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE + ' ' + Status)
         else if not GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then
           SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
         else if not XmlNodeByPath(InfoXml, 'mediaList', Node) then

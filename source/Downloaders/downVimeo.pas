@@ -129,7 +129,8 @@ begin
   else
     begin
     SetName(HtmlDecode(Caption));
-    MovieUrl := 'http://www.vimeo.com/moogaloop/play/clip:' + MovieID + '/' + Signature + '/' + Expires + '/';
+    //MovieUrl := 'http://www.vimeo.com/moogaloop/play/clip:' + MovieID + '/' + Signature + '/' + Expires + '/';
+    MovieUrl := 'http://player.vimeo.com/play_redirect?clip_id=' + MovieID + '&sig=' + Signature + '&time=' + Expires + '&quality=hd&codecs=H264,VP8,VP6&type=moogaloop_local&embed_location=&seek=0&initial_play=1';
     Result := True;
     SetPrepared(True);
     end;

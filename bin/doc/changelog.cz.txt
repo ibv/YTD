@@ -1,11 +1,47 @@
 ______________________________________________________________________________
 
-YTD v1.04                                                    (c) 2009-12 Pepak
+YTD v1.05                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.05:
+
+    * Noví poskytovatelé:
+      - CriticalPast.com
+      - Smotri.com
+
+    * Aktualizovaní poskytovatelé:
+      - EmpFlix.com
+      - iPrima.cz
+      - MojeVideo.sk (stará videa moná nebudou chodit)
+      - TN.Nova.cz
+      - UStream.tv
+      - Vimeo.com (podpora pro HD)
+      - YouTube.com (playlisty)
+
+    * AutosalonTV.cz
+      Zrušena podpora, protoe se nyní pouívá streamování pomocí ISM, kde
+      je video rozdìleno na mnoho malıch èástí a je posíláno po kouskách,
+      video zvláš a zvuk taky zvláš. Šlo by to stáhnout, ale nebylo by to
+      k nièemu.
+
+    * Nova.cz: Pokud je špatné heslo, tak na to program v chybové hlášce 
+      upozorní.
+
+    * VKontakte.ru: Podpora pro vk.com/video_ext.php?...
+
+    * Opravena logika pro získávání názvu z vnoøenıch dowloaderù (pozitivnì
+      to ovlivòuje napø. iDnes, ostatním to snad nevadí nebo je to také
+      zlepšuje).
+
+    * GUI: Funkce pro otevøení sloky nyní funguje i na videa, jejich 
+      stahování dosud nezaèalo nebo je program ani nezná. V takovém pøípadì
+      se otevøe vıchozí adresáø pro stahovaná videa.
+
+
 
   v1.04:
 

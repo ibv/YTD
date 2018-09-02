@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVKontakteRuEmbed;
+unit downSmotri;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,12 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_VKontakteRuEmbed = class(THttpDownloader)
+  TDownloader_Smotri = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,68 +63,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1
-// http://vk.com/video_ext.php?oid=106919938&id=161961696&hash=bb3e2d1a73bdb262
+// http://smotri.com/video/view/?id=v203531694dc#as
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:vkontakte\.ru|vk\.com)/video_ext\.php\?.+';
+  URLREGEXP_BEFORE_ID = 'smotri\.com/video/view/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_FLASHVARS = '\bvar\s+video_(?P<VARNAME>[a-z0-9_]+)\s*=\s*''(?P<VARVALUE>.*?)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    REGEXP_URL_VIDEO_SRC;
 
-{ TDownloader_VKontakteRuEmbed }
+{ TDownloader_Smotri }
 
-class function TDownloader_VKontakteRuEmbed.Provider: string;
+class function TDownloader_Smotri.Provider: string;
 begin
-  Result := 'VKontakte.ru';
+  Result := 'Smotri.com';
 end;
 
-class function TDownloader_VKontakteRuEmbed.UrlRegExp: string;
+class function TDownloader_Smotri.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_VKontakteRuEmbed.Create(const AMovieID: string);
+constructor TDownloader_Smotri.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peAnsi;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_VKontakteRuEmbed.Destroy;
+destructor TDownloader_Smotri.Destroy;
 begin
-  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_VKontakteRuEmbed.GetMovieInfoUrl: string;
+function TDownloader_Smotri.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
-end;
-
-function TDownloader_VKontakteRuEmbed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Host, UID, VTag, Title: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  GetRegExpVarPairs(FlashVarsRegExp, Page, ['host', 'uid', 'vtag', 'title'], [@Host, @UID, @VTag, @Title]);
-  if Host = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Host']))
-  else if UID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UID']))
-  else if VTag = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['VTag']))
-  else
-    begin
-    SetName(UrlDecode(Title));
-    MovieUrl := Host + 'u' + UID + '/video/' + VTag + '.720.mp4';
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := 'http://www.smotri.com/video/view/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_VKontakteRuEmbed);
+  RegisterDownloader(TDownloader_Smotri);
 
 end.

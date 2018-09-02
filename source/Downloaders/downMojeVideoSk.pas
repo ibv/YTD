@@ -117,7 +117,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.flv';
+    MovieUrl := 'http://fs5.mojevideo.sk/videos/' + ID + '.mp4';
     SetPrepared(True);
     Result := True;
     end;
