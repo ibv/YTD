@@ -1,6 +1,6 @@
 1 VERSIONINFO
-FILEVERSION 1,58,0,1395
-PRODUCTVERSION 1,58,0,1395
+FILEVERSION 1,59,0,1413
+PRODUCTVERSION 1,59,0,1413
 FILEOS 0x4
 FILETYPE 0x2
 {
@@ -10,13 +10,13 @@ BLOCK "StringFileInfo"
 	{
 		VALUE "CompanyName", "Pepak"
 		VALUE "FileDescription", "YTD"
-		VALUE "FileVersion", "1.58.0.1395"
+		VALUE "FileVersion", "1.59.0.1413"
 		VALUE "InternalName", "YTD"
 		VALUE "LegalCopyright", "(c) 2010-16 Pepak"
 		//VALUE "LegalTrademarks", ""
 		VALUE "OriginalFilename", "ytd.exe"
 		VALUE "ProductName", "YTD"
-		VALUE "ProductVersion", "1.58.0.1395"
+		VALUE "ProductVersion", "1.59.0.1413"
 		VALUE "Comments", "http://www.pepak.net/ytd"
 	}
 }

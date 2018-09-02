@@ -1030,7 +1030,7 @@ Used libraries and their licenses:
   - description: Regular expressions support
 
 - RTMPDUMP
-  - autoři: Andrej Stepanchuk, Howard Chu
+  - author: Andrej Stepanchuk, Howard Chu
   - source: http://rtmpdump.mplayerhq.hu/
             https://github.com/svnpenn/rtmpdump
   - license: GNU GPL v2
@@ -1047,6 +1047,12 @@ Used libraries and their licenses:
   - source: http://www.famfamfam.com/lab/icons/silk/
   - license: Creative Common Attribution 2.5
   - description: Icons used in the GUI version of YouTube Downloader
+
+- SuperObject
+  - author: Henri Gourvest
+  - source: https://github.com/hgourvest/superobject
+  - license: Mozilla Public License 1.1
+  - description: Library providing JSON support
 
 - Synapse
   - author: Lukáš Gebauer

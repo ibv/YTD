@@ -1,12 +1,31 @@
 ﻿______________________________________________________________________________
 
-YTD v1.58                                                    (c) 2009-16 Pepak
+YTD v1.59                                                    (c) 2009-17 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v1.59:
+
+    * Opravena chyba "List index out of bounds" po stáhnutí videa.
+
+    * Aktualizovaní poskytovatelé:
+      - Aktualne.cz
+      - iDnes.cz
+      - Novinky.cz
+      - VideaCesky.cz
+
+    * Odstranění poskytovatelé:
+      - PornHub.com - vyžaduje napsat vlastní javascript parser
+
+    * Knihovna LkJSON pro zpracování JSON dat byla nahrazena knihovnou
+      SuperObject, která je modernější a podstatně kompatibilnější s JSON
+      než stará LkJSON.
+
+
+  
   v1.58:
 
     * Aktualizovaní poskytovatelé:

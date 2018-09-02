@@ -135,8 +135,8 @@ function WaitForExclusiveAccess(FN: string): Boolean;
 function GetComputerName: string;
 function FindSpecialDirectory(const ID: integer; out Dir: string): boolean;
 function FindShortcutByTarget(Dir, Target: string; out FileName: string): boolean;
-function CreateShortcut(FileName, Target: string): boolean; overload;
-function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean; overload;
+function CreateShortcut(FileName, Target: string): boolean;
+function CreateShortcutEx(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean; 
 function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
 function RegisterUninstallApplication(const KeyName, DisplayName, CommandLine: string): boolean;
 function UnregisterUninstallApplication(const KeyName: string): boolean;
@@ -185,6 +185,8 @@ function GetFileContent(const FileName: string): string;
 function GetFileVersion(const FileName: string; out VersionHigh, VersionLow, BuildNumber: LongWord): boolean;
 function GetDrives(out Drives: TDriveInfoArray; OnlyOfType: integer = -1): boolean;
 function GetRealFileName(const FileName: string): string;
+function GetVeryLongFileName(const FileName: string): string;
+function ExpandEnvironmentVars(const FileName: string): string;
 {$ENDIF}
 
 {$IFDEF USYSTEM_WOW64}
@@ -1005,7 +1007,7 @@ begin
     end;
 end;
 
-function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer; const FileName, Parameters: string): boolean;
+function CreateShortcutEx(const ShortcutName, Where: string; WhereCSIDL: integer; const FileName, Parameters: string): boolean;
 var
   IObject: IUnknown;
   FN, Dir, ShortcutFile: string;
@@ -1064,7 +1066,7 @@ begin
 end;
 
 const
-  BaseKeyForUninstallData {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\';
+  BaseKeyForUninstallData = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\';
 
 function RegisterUninstallApplication(const KeyName, DisplayName, CommandLine: string): boolean;
 var
@@ -1208,6 +1210,8 @@ end;
 {$IFDEF USYSTEM_FILES}
 var
   GetFileInformationByHandleEx: function(hFile: THandle; FileInformationClass: DWORD; lpFileInformation: Pointer; dwBufferSize: DWORD): BOOL; stdcall;
+  GetVolumePathNameA: function(FileName, VolumePathName: PAnsiChar; cchBufferLength: DWORD): BOOL; stdcall;
+  GetVolumePathNameW: function(FileName, VolumePathName: PWideChar; cchBufferLength: DWORD): BOOL; stdcall;
   GetVolumePathName: function(FileName, VolumePathName: PChar; cchBufferLength: DWORD): BOOL; stdcall;
 
 procedure Init_Files;
@@ -1215,18 +1219,24 @@ begin
   if Kernel32Dll = 0 then
     begin
     GetFileInformationByHandleEx := nil;
+    GetVolumePathNameA := nil;
+    GetVolumePathNameW := nil;
     GetVolumePathName := nil;
     end
   else
     begin
     GetFileInformationByHandleEx := GetProcAddress(Kernel32Dll, 'GetFileInformationByHandleEx');
-    GetVolumePathName := GetProcAddress(Kernel32Dll, {$IFDEF UNICODE} 'GetVolumePathNameW' {$ELSE} 'GetVolumePathNameA' {$ENDIF} );
+    GetVolumePathNameA := GetProcAddress(Kernel32Dll, 'GetVolumePathNameA');
+    GetVolumePathNameW := GetProcAddress(Kernel32Dll, 'GetVolumePathNameW');
+    GetVolumePathName := {$IFDEF UNICODE} GetVolumePathNameW {$ELSE} GetVolumePathNameA {$ENDIF} ;
     end;
 end;
 
 procedure Done_Files;
 begin
   GetFileInformationByHandleEx := nil;
+  GetVolumePathNameA := nil;
+  GetVolumePathNameW := nil;
   GetVolumePathName := nil;
 end;
 
@@ -1293,11 +1303,22 @@ var
   ppidl : PItemIDList; // Needs ShlObj.pas
 begin
 //  GetMem(pszPath, MAX_PATH);    // required if pszPath is pChar
+  {$IFDEF UNICODE}
+  if (SHGetFolderLocation(0, AFolder, 0, 0, ppidl) ) = S_OK then
+  {$ELSE}
   if (SHGetSpecialFolderLocation(0, AFolder, ppidl) ) = S_OK then
+  {$ENDIF}
   begin
-    SHGetPathFromIDList(ppidl, pszPath);
-    Result := string(pszPath); // cast not strictly needed
-                               // but better to be unambiguous
+    try
+      SHGetPathFromIDList(ppidl, pszPath);
+      Result := string(pszPath);
+    finally
+      {$IFDEF DELPHIXE2_UP}
+      ILFree(ppidl);
+      {$ELSE}
+      CoTaskMemFree(ppidl);
+      {$ENDIF}
+    end;
   end
   else
     Result := '';
@@ -1603,6 +1624,28 @@ begin
   Result := n > 0;
 end;
 
+function GetVeryLongFileName(const FileName: string): string;
+{$IFDEF UNICODE}
+const
+  LONGPATH_LOCAL = '\\?\';
+  LONGPATH_NETWORK = '\\?\UNC\';
+  LONGPATH_DEVICE = '\\.\';
+  SHORTPATH_NETWORK = '\\';
+{$ENDIF}
+begin
+  Result := ExpandFileName(FileName);
+  {$IFDEF UNICODE}
+  if Copy(Result, 1, Length(LONGPATH_LOCAL)) <> LONGPATH_LOCAL then
+    if UpperCase(Copy(Result, 1, Length(LONGPATH_NETWORK))) <> LONGPATH_NETWORK then
+      if Copy(Result, 1, Length(LONGPATH_DEVICE)) <> LONGPATH_DEVICE then begin
+        if Copy(Result, 1, Length(SHORTPATH_NETWORK)) = SHORTPATH_NETWORK then
+          Result := LONGPATH_NETWORK + Copy(Result, Succ(Length(SHORTPATH_NETWORK)), MaxInt)
+        else
+          Result := LONGPATH_LOCAL + Result;
+      end;
+  {$ENDIF}
+end;
+
 function GetRealFileName(const FileName: string): string;
 type
   FILE_NAME_INFO = record
@@ -1641,6 +1684,18 @@ begin
       end;
     end;
   Result := ExpandFileName(FileName);
+end;
+
+function ExpandEnvironmentVars(const FileName: string): string;
+var
+  Buffer: array[0..32768 div Sizeof(Char)] of Char;
+  n: integer;
+begin
+  n := ExpandEnvironmentStrings(PChar(FileName), Buffer, Length(Buffer)-1);
+  if n > 0 then
+    SetString(Result, Buffer, n-1)
+  else
+    Result := FileName;
 end;
 {$ENDIF}
 

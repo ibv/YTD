@@ -45,7 +45,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, uXml, uJSON, uLkJSON, HttpSend, SynaCode,
+  uPCRE, uXml, uJSON, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader, uHttpDirectDownloader;
 
 type
@@ -56,8 +56,8 @@ type
       function GetApiPassword: string;
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; override;
-      procedure ProcessMediaList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
-      procedure ProcessMediaFormatList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+      procedure ProcessMediaList(const ElName: string; Elem: TJSONNode; data: pointer);
+      procedure ProcessMediaFormatList(const ElName: string; Elem: TJSONNode; data: pointer);
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -148,7 +148,7 @@ type
     Found: boolean;
   end;
 
-procedure TDownloader_Stream.ProcessMediaFormatList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+procedure TDownloader_Stream.ProcessMediaFormatList(const ElName: string; Elem: TJSONNode; data: pointer);
 var
   BestUrl: PBestUrlInfo;
   Url, sQuality: string;
@@ -174,14 +174,13 @@ begin
     end;
 end;
 
-procedure TDownloader_Stream.ProcessMediaList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+procedure TDownloader_Stream.ProcessMediaList(const ElName: string; Elem: TJSONNode; data: pointer);
 var
   Items: TJSONnode;
 begin
   //Writeln(TlkJSON.GenerateText(Elem));
   if JSONNodeByPath(Elem, 'formats', Items) then
-    if Items is TlkJSONcustomlist then
-      TlkJSONcustomlist(Items).ForEach(ProcessMediaFormatList, data);
+    JSONForEach(Items, ProcessMediaFormatList, data);
 end;
 
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -200,14 +199,12 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
     else if not JSONNodeByPath(Info, 'video_qualities', UrlList) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-    else if not (UrlList is TlkJSONcustomlist) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
     else
       begin
       BestUrl.Url := '';
       BestUrl.Quality := -1;
       BestUrl.Found := False;
-      TlkJSONcustomlist(UrlList).ForEach(ProcessMediaList, @BestUrl);
+      JSONForEach(UrlList, ProcessMediaList, @BestUrl);
       if not BestUrl.Found then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else

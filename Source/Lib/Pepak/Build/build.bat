@@ -513,6 +513,11 @@ if exist "%srcdir%lib\SqliteWrapper\." (
   set lib=%lib%;%srcdir%lib\SqliteWrapper
 )
 
+rem SuperObject
+if exist "%srcdir%lib\SuperObject\." (
+  set lib=%lib%;%srcdir%lib\SuperObject
+)
+
 rem Synapse
 if exist "%srcdir%lib\Synapse\source\lib\." (
   set lib=%lib%;%srcdir%lib\Synapse\source\lib

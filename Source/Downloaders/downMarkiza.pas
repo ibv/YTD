@@ -71,7 +71,7 @@ implementation
 uses
   uStringConsts,
   {$IFDEF JSON}
-  uJSON, uLkJSON,
+  uJSON,
   {$ENDIF}
   uDownloadClassifier,
   uMessages;

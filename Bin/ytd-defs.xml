@@ -1,5 +1,5 @@
 <ytd-defs>
-	<version>1.58.20170203.0</version>
+	<version>1.59.20170218.0</version>
 	<scripts>
 
 		<script id="1tv.ru" provider="1tv.ru">
@@ -30,7 +30,7 @@
 			</multi_regexp>
 		</script>
 
-		<script id="aktualne.cz" provider="Aktualne.cz">
+		<script id="aktualne.cz" provider="Aktualne.cz" changed="20170208">
 			<regexps>
 				<regexp id="youtube" match="ID"><![CDATA[\{\s*type\s*:\s*'youtube'\s*,\s*data\s*:\s*'(?P<ID>[^/?&%']+)']]></regexp>
 				<regexp id="url_bitrate" match="BITRATE"><![CDATA[[?&]s=(?P<BITRATE>\d+)]]></regexp>
@@ -51,7 +51,7 @@
 						<set_var id="format"><regexp id="url_format" content="urls_CONTENT"/></set_var>
 						<best_var id="bitrate" type="numeric_ascending" reset="format">
 							<best_var id="format" type="enumeration" order="mp4,webm">
-								<set_var id="url"><get_var id="urls_CONTENT"/></set_var>
+								<set_var id="url"><decode_js><get_var id="urls_CONTENT"/></decode_js></set_var>
 							</best_var>
 						</best_var>
 					</multi_regexp>
@@ -457,14 +457,14 @@
 			</multi_xml>
 		</script>
 
-		<script id="idnes.cz" provider="iDNES.cz" changed="20160723">
+		<script id="idnes.cz" provider="iDNES.cz" changed="20170208">
 			<regexps>
-				<regexp id="url" match="URL"><![CDATA[\.videoFLV\s*\(\s*\{\s*data\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
+				<regexp id="url" match="URL"><![CDATA[\.videoFLV\s*\(\s*\{\s*data\s*:\s*"(?P<URL>(?:https?:)?//.+?)"]]></regexp>
 			</regexps>
 			<set_var id="page"><download_page encoding="ansi"><url><get_var id="_movie_id"/></url></download_page></set_var>
 			<nested_download>
 				<title><regexp id="meta_ogtitle" content="page"/></title>
-				<url><regexp id="url" content="page"/></url>
+				<url><relative_url><url><regexp id="url" content="page"/></url></relative_url></url>
 			</nested_download>
 		</script>
 
@@ -659,19 +659,23 @@
 			</if>
 		</script>
 
-		<script id="novinky.cz" provider="Novinky.cz" changed="20160723">
+		<script id="novinky.cz" provider="Novinky.cz" changed="20170218">
 			<regexps>
-				<regexp id="url" match="URL"><![CDATA[(?:&amp;|&|^:)cdn2(?P<QUALITY>HD|HQ|LQ)=(?P<URL>[^&]+)]]></regexp>
+				<regexp id="json_info" match="INFO"><![CDATA[\bvar\s+content\s*=\s*(?P<INFO>\{.*?\})\s*;]]></regexp>
 			</regexps>
 			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
-			<set_var id="flashvars"><regexp id="param_name_flashvars" content="page"/></set_var>
-			<multi_regexp id="url" content="flashvars" var_prefix="urls_" match="QUALITY,URL">
-				<best_var id="urls_QUALITY" type="enumeration" order="HD,HQ,LQ">
-					<set_var id="url"><get_var id="urls_URL"/></set_var>
+			<set_var id="json_info"><regexp id="json_info" content="page"/></set_var>
+			<set_var id="info_url"><get_json_var id="json_info" path="source/src"/>spl,1,<get_json_var id="json_info" path="source/options/scheme"/>,<get_json_var id="json_info" path="source/options/type"/></set_var>
+			<set_var id="info"><download_page encoding="utf8"><url><get_var id="info_url"/></url></download_page></set_var>
+			<set_var id="list"><get_json_var id="info" path="data/mp4"/></set_var>
+			<multi_json id="list" var="item" namevar="item_name" node="">
+				<set_var id="item_bandwidth"><get_json_var id="item" path="bandwidth"/></set_var>
+				<best_var id="item_bandwidth" type="numeric_ascending">
+					<set_var id="url"><get_json_var id="item" path="url"/></set_var>
 				</best_var>
-			</multi_regexp>
+			</multi_json>
 			<http_download>
-				<title><strip_tags><regexp id="h1" content="page"/></strip_tags></title>
+				<title><strip_tags><regexp id="meta_ogtitle" content="page"/></strip_tags></title>
 				<url><get_var id="url"/></url>
 			</http_download>
 		</script>
@@ -1169,22 +1173,6 @@
 			</http_download>
 		</script>
 
-		<script id="pornhub.com" provider="PornHub.com" changed="20170122">
-			<regexps>
-				<regexp id="url" match="URL"><![CDATA[\bvar\s+player_quality_(?P<QUALITY>\d+)p\s*=\s*'(?P<URL>https?://.+?)']]></regexp>
-			</regexps>
-			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
-			<multi_regexp id="url" content="page" var_prefix="urls_" match="QUALITY,URL">
-				<best_var id="urls_QUALITY" type="numeric_ascending">
-					<set_var id="url"><get_var id="urls_URL"/></set_var>
-				</best_var>
-			</multi_regexp>
-			<http_download>
-				<title><strip_tags><regexp id="h1" content="page"/></strip_tags></title>
-				<url><get_var id="url"/></url>
-			</http_download>
-		</script>
-
 		<script id="randyblue.com" provider="RandyBlue.com">
 			<regexps>
 				<regexp id="info" match="ID"><![CDATA[\bvid\s*\(\s*'(?P<ID>\d+)'\s*,\s*'(?P<TYPE>\w+)'\s*\)\s*;]]></regexp>
@@ -1438,7 +1426,6 @@
 		<url script="jenpromuze.cz"><![CDATA[jenpromuze\.cz/video/.+$]]></url>
 		<url script="navratdoreality.cz"><![CDATA[navratdoreality\.cz/.+$]]></url>
 		<url script="perfectgirls.net"><![CDATA[perfectgirls\.net/.+$]]></url>
-		<url script="pornhub.com"><![CDATA[pornhub\.com/.+$]]></url>
 		<url script="randyblue.com"><![CDATA[randyblue\.com/.+$]]></url>
 		<url script="redtube.com"><![CDATA[redtube\.com/.+$]]></url>
 		<url script="sextubespot.com"><![CDATA[sextubespot\.com/videos/.+$]]></url>

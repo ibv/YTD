@@ -41,14 +41,27 @@ interface
 
 uses
   SysUtils, 
-  {$IFDEF DELPHI6_UP} Variants, {$ENDIF} 
+  {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
   {$IFDEF FPC} Variants, {$ENDIF}
-  uLkJSON ;
+  {$IFDEF JSON_SUPEROBJECT}
+    SuperObject,
+    SuperTypes
+  {$ELSE}
+    uLkJSON
+  {$ENDIF}
+  ;
 
 type
+  {$IFDEF JSON_SUPEROBJECT}
+  TJSON = ISuperObject;
+  TJSONNode = TJSON;
+  TJSONString = SOString;
+  {$ELSE}
   TJSON = TlkJSONbase;
   TJSONNode = TlkJSONbase;
   TJSONString = string;
+  {$ENDIF}
+  TJSONForEachCallback = procedure(const ElName: string; Elem: TJSONNode; UserData: pointer) of object;
 
 function JSONCreate(const Source: TJSONString): TJSON; overload;
 procedure JSONFree(JSON: TJSON);
@@ -59,18 +72,27 @@ function JSONNodeByPath(JSON: TJSONNode; Path: string; out FoundNode: TJSONNode)
 function JSONValue(JSON: TJSON): string; overload;
 function JSONValue(JSON: TJSON; const Path: string): string; overload;
 function JSONValue(JSON: TJSON; const Path: string; out Value: string): boolean; overload;
+procedure JSONForEach(JSON: TJSONNode; Callback: TJSONForEachCallback; UserData: Pointer);
 
 implementation
 
 function JSONCreate(const Source: TJSONString): TJSON;
 begin
+  {$IFDEF JSON_SUPEROBJECT}
+  Result := SuperObject.SO(Source);
+  {$ELSE}
   Result := TlkJSON.ParseText(Source);
+  {$ENDIF}
 end;
 
 procedure JSONFree(JSON: TJSON);
 begin
+  {$IFDEF JSON_SUPEROBJECT}
+  // Nothing to do, it's a ref-counted interface
+  {$ELSE}
   if JSON <> nil then
     JSON.Free;
+  {$ENDIF}
 end;
 
 procedure JSONFreeAndNil(var JSON: TJSON);
@@ -104,6 +126,9 @@ begin
         VarName := Path;
         Path := '';
         end;
+      {$IFDEF JSON_SUPEROBJECT}
+      Result := JSONNodeByPath(JSON.O[VarName], Path, FoundNode);
+      {$ELSE}
       if JSON is TlkJSONobject then
         Result := JSONNodeByPath(TlkJSONobject(JSON).Field[VarName], Path, FoundNode)
       else if JSON is TlkJSONcustomlist then
@@ -112,11 +137,31 @@ begin
         if (i >= 0) and (i < JSON.Count) then
           Result := JSONNodeByPath(JSON.Child[i], Path, FoundNode);
         end;
+      {$ENDIF}
       end;
 end;
 
 function JSONValue(JSON: TJSON): string;
 begin
+  {$IFDEF JSON_SUPEROBJECT}
+  case JSON.DataType of
+    stDouble:
+      Result := FloatToStr(JSON.AsDouble);
+    stCurrency:
+      Result := CurrToStr(JSON.AsCurrency);
+    stString:
+      Result := JSON.AsString;
+    stBoolean:
+      if JSON.AsBoolean then
+        Result := '1'
+      else
+        Result := '0';
+    stNull:
+      Result := '';
+    else
+      Result := JSON.AsJSON;
+  end;
+  {$ELSE}
   if JSON is TlkJSONnumber then
     Result := FloatToStr(TlkJSONnumber(JSON).Value)
   else if JSON is TlkJSONstring then
@@ -130,6 +175,7 @@ begin
     Result := ''
   else
     Result := TlkJSON.GenerateText(JSON);
+  {$ENDIF}
 end;
 
 function JSONValue(JSON: TJSON; const Path: string; out Value: string): boolean;
@@ -145,6 +191,61 @@ function JSONValue(JSON: TJSON; const Path: string): string;
 begin
   if not JSONValue(JSON, Path, Result) then
     Result := '';
+end;
+
+{$IFNDEF JSON_SUPEROBJECT}
+type
+  TJsonCallbackInfo = class
+    Callback: TJSONForEachCallback;
+    procedure LkJsonCallback(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+  end;
+
+procedure TJsonCallbackInfo.LkJsonCallback(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+begin
+  Continue := True;
+  try
+    Self.Callback(ElName, Elem, data);
+  except
+    on EAbort do
+      Continue := False;
+  end;
+end;
+{$ENDIF}
+
+procedure JSONForEach(JSON: TJSONNode; Callback: TJSONForEachCallback; UserData: Pointer);
+{$IFDEF JSON_SUPEROBJECT}
+var
+  Item: TSuperObjectIter;
+{$ELSE}
+var
+  Info: TJsonCallbackInfo;
+{$ENDIF}
+begin
+  {$IFDEF JSON_SUPEROBJECT}
+  if ObjectFindFirst(JSON, Item) then
+    try
+      repeat
+        try
+          Callback(Item.key, Item.val, UserData);
+        except
+          on EAbort do
+            Break;
+        end;
+      until not ObjectFindNext(Item);
+    finally
+      ObjectFindClose(Item);
+    end;
+  {$ELSE}
+  if JSON is TlkJSONcustomlist then begin
+    Info := TJsonCallbackInfo.Create;
+    try
+      Info.Callback := Callback;
+      TlkJSONcustomlist(JSON).ForEach(Info.LkJsonCallback, UserData);
+    finally
+      FreeAndNil(Info);
+    end;
+  end;
+  {$ENDIF}
 end;
 
 end.

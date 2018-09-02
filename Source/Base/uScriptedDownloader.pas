@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, uXML, uJSON, uLkJSON, HttpSend, blcksock,
+  uPCRE, uXML, uJSON, HttpSend, blcksock,
   uDownloader, uOptions, uScripts;
 
 type
@@ -122,7 +122,7 @@ type
       function ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRelativeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
-      procedure MultiJsonEnum(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+      procedure MultiJsonEnum(const ElName: string; Elem: TJSONNode; data: pointer);
     public
       class function MainScriptEngine: TScriptEngine;
       class procedure InitMainScriptEngine(const FileName: string);
@@ -339,7 +339,7 @@ begin
       end
     else if Downloaders[fCurrentDownloadIndex].Next then
       DownloaderReady := True
-    else if fCurrentDownloadIndex < DownloaderCount then
+    else if Succ(fCurrentDownloadIndex) < DownloaderCount then
       begin
       fCurrentDownloadIndex := Succ(fCurrentDownloadIndex);
       DownloaderReady := Downloaders[fCurrentDownloadIndex].First;
@@ -1183,7 +1183,7 @@ type
     Found: boolean;
   end;
 
-procedure TScriptedDownloader.MultiJsonEnum(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+procedure TScriptedDownloader.MultiJsonEnum(const ElName: string; Elem: TJSONNode; data: pointer);
 var
   Info: PProcessMultiJsonEnumInfo;
 begin
@@ -1216,8 +1216,7 @@ begin
     EnumInfo.NameVarName := XmlAttribute(Node, 'namevar');
     EnumInfo.NodeName := XmlAttribute(Node, 'node');
     EnumInfo.Found := False;
-    if OwnerNode is TlkJSONcustomlist then
-      TlkJSONcustomlist(OwnerNode).ForEach(MultiJsonEnum, @EnumInfo);
+    JSONForEach(OwnerNode, MultiJsonEnum, @EnumInfo);
     if not EnumInfo.Found then
       ScriptError(ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND, Node)
     end;

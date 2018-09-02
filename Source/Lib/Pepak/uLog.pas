@@ -2,6 +2,10 @@ unit uLog;
 {$INCLUDE 'pepak.inc'}
 {$INCLUDE 'uLog.inc'}
 
+{$IFNDEF DEBUG}
+  {$UNDEF DEBUGLOG}
+{$ENDIF}
+
 interface
 
 uses

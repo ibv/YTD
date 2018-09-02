@@ -1035,6 +1035,12 @@ Knihovny a jejich licence:
   - licence: Creative Common Attribution 2.5
   - popis: Ikonky Silk použité v grafické verzi programu.
 
+- SuperObject
+  - autor: Henri Gourvest
+  - zdroj: https://github.com/hgourvest/superobject
+  - licence: Mozilla Public License 1.1
+  - popis: Knihovna pro práci s JSON
+
 - Synapse
   - autor: Lukáš Gebauer
   - zdroj: http://synapse.ararat.cz/

@@ -40,7 +40,7 @@ unit uCompatibility;
 interface
 
 uses
-  SysUtils, Classes, Windows, ShellApi;
+  SysConst, SysUtils, Classes, Windows, ShellApi;
 
 {$IFNDEF DELPHI7_UP}
 type
@@ -49,10 +49,52 @@ type
 type
   UInt64 = int64; // unsigned not available in Delphi 5
   TByteArray = array[0..65535] of byte; 
+  Utf8String = type AnsiString;
+
+type
+  TFormatSettings = record
+    CurrencyFormat: Byte;
+    NegCurrFormat: Byte;
+    ThousandSeparator: Char;
+    DecimalSeparator: Char;
+    CurrencyDecimals: Byte;
+    DateSeparator: Char;
+    TimeSeparator: Char;
+    ListSeparator: Char;
+    CurrencyString: string;
+    ShortDateFormat: string;
+    LongDateFormat: string;
+    TimeAMString: string;
+    TimePMString: string;
+    ShortTimeFormat: string;
+    LongTimeFormat: string;
+    ShortMonthNames: array[1..12] of string;
+    LongMonthNames: array[1..12] of string;
+    ShortDayNames: array[1..7] of string;
+    LongDayNames: array[1..7] of string;
+    TwoDigitYearCenturyWindow: Word;
+  end;
+
+resourcestring
+  SInvalidBoolean = '''%s'' is not a valid boolean value';
 
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
 function DirectoryExists(const Directory: string): boolean;
+
+function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
+function StrToBool(const S: string): Boolean;
+function TextToFloat(Buffer: PChar; var Value; ValueType: TFloatValue): Boolean; overload;
+function TextToFloat(Buffer: PChar; var Value; ValueType: TFloatValue; const FormatSettings: TFormatSettings): Boolean; overload;
+function StrToFloat(const S: string): Extended; overload;
+function StrToFloat(const S: string; const FormatSettings: TFormatSettings): Extended; overload;
+function StrToFloatDef(const S: string; const Default: Extended; const FormatSettings: TFormatSettings): Extended; overload;
+function StrToFloatDef(const S: string; const Default: Extended): Extended; overload;
+function StrToFloatDef(const S: string; const Default: double; const FormatSettings: TFormatSettings): double; overload;
+function StrToFloatDef(const S: string; const Default: double): double; overload;
+function StrToFloatDef(const S: string; const Default: single; const FormatSettings: TFormatSettings): single; overload;
+function StrToFloatDef(const S: string; const Default: single): single; overload;
+
 {$ENDIF}
 
 {$IFNDEF DELPHI2009_UP}
@@ -60,7 +102,6 @@ type
   TSysCharSet = set of Char;
 
 type
-  Utf8String = AnsiString;
   RawByteString = AnsiString;
 
 type
@@ -250,6 +291,111 @@ begin
   Result := (Attr <> INVALID_FILE_ATTRIBUTES) and ((FILE_ATTRIBUTE_DIRECTORY and Attr) <> 0);
 end;
 
+function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
+begin
+  try
+    Result := StrToBool(S);
+  except
+    Result := Default;
+  end;
+end;
+
+function StrToBool(const S: string): Boolean;
+var
+  n: Extended;
+begin
+  n := StrToFloatDef(S, -1);
+  if n = 0 then
+    Result := False
+  else if n = 1 then
+    Result := True
+  else if AnsiCompareText(S, 'False') = 0 then
+    Result := False
+  else if AnsiCompareText(S, 'True') = 0 then
+    Result := True
+  else
+    raise EConvertError.CreateResFmt(@SInvalidBoolean, [S]);
+end;
+
+function TextToFloat(Buffer: PChar; var Value; ValueType: TFloatValue): Boolean;
+begin
+  Result := SysUtils.TextToFloat(Buffer, Value, ValueType);
+end;
+
+function TextToFloat(Buffer: PChar; var Value; ValueType: TFloatValue; const FormatSettings: TFormatSettings): Boolean;
+var
+  s: string;
+  i: integer;
+begin
+  s := string(Buffer);
+  for i := 1 to Length(s) do
+    if s[i] = FormatSettings.DecimalSeparator then
+      s[i] := DecimalSeparator;
+  Result := TextToFloat(PChar(Buffer), Value, ValueType);
+end;
+
+function StrToFloat(const S: string): Extended;
+begin
+  Result := SysUtils.StrToFloat(S);
+end;
+
+function StrToFloat(const S: string; const FormatSettings: TFormatSettings): Extended;
+begin
+  if not TextToFloat(PChar(S), Result, fvExtended, FormatSettings) then
+    raise EConvertError.CreateResFmt(@SInvalidFloat, [S]);
+end;
+
+function StrToFloatDef(const S: string; const Default: Extended; const FormatSettings: TFormatSettings): Extended;
+begin
+  if not TextToFloat(PChar(S), Result, fvExtended, FormatSettings) then
+    Result := Default;
+end;
+
+function StrToFloatDef(const S: string; const Default: double; const FormatSettings: TFormatSettings): double;
+var
+  E: Extended;
+begin
+  if TextToFloat(PChar(S), E, fvExtended, FormatSettings) then
+    Result := E
+  else
+    Result := Default;
+end;
+
+function StrToFloatDef(const S: string; const Default: single; const FormatSettings: TFormatSettings): single;
+var
+  E: Extended;
+begin
+  if TextToFloat(PChar(S), E, fvExtended, FormatSettings) then
+    Result := E
+  else
+    Result := Default;
+end;
+
+function StrToFloatDef(const S: string; const Default: Extended): Extended;
+begin
+  if not TextToFloat(PChar(S), Result, fvExtended) then
+    Result := Default;
+end;
+
+function StrToFloatDef(const S: string; const Default: double): double;
+var
+  E: Extended;
+begin
+  if TextToFloat(PChar(S), E, fvExtended) then
+    Result := E
+  else
+    Result := Default;
+end;
+
+function StrToFloatDef(const S: string; const Default: single): single;
+var
+  E: Extended;
+begin
+  if TextToFloat(PChar(S), E, fvExtended) then
+    Result := E
+  else
+    Result := Default;
+end;
 {$ENDIF}
 
 {$IFNDEF DELPHI2009_UP}

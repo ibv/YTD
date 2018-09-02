@@ -21,7 +21,7 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_ExeOutput>..\bin</DCC_ExeOutput>
-			<DCC_UnitSearchPath>lib\pepak;lib\pepak\apiform;lib\dxgettext\delphi2009;lib\fastmm;lib\lkjson;lib\msdl\src;lib\NativeXml;lib\perlregex;lib\rtmpdump;lib\scizipfile;lib\synapse\source\lib;Units;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UnitSearchPath>lib\pepak;lib\pepak\apiform;lib\dxgettext\delphi2009;lib\fastmm;lib\lkjson;lib\msdl\src;lib\NativeXml;lib\perlregex;lib\rtmpdump;lib\scizipfile;lib\superobject;lib\synapse\source\lib;Units;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_Define>PEPAK;PEPAK_YTD;XXX;$(DCC_Define)</DCC_Define>
 			<DCC_DcuOutput>units</DCC_DcuOutput>
 			<DCC_DependencyCheckOutputName>..\bin\YTD.exe</DCC_DependencyCheckOutputName>

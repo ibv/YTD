@@ -64,7 +64,7 @@ implementation
 
 uses
   uStringConsts,
-  uJSON, uLkJSON,
+  uJSON,
   uDownloadClassifier,
   uMessages;
 
@@ -136,7 +136,7 @@ begin
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
-        MovieUrl := Base64Decode(JsonUrl.Value);
+        MovieUrl := Base64Decode(JSONValue(JsonUrl));
         SetPrepared(True);
         Result := True;
         end;

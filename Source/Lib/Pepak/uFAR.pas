@@ -5,7 +5,8 @@ unit uFAR;
 interface
 
 uses
-  SysUtils, Windows, Classes, {$IFDEF FPC} Contnrs, {$ELSE} Generics.Collections, {$ENDIF}
+  SysUtils, Windows, Classes, Variants,
+  {$IFDEF FPC} Contnrs, {$ELSE} Generics.Collections, {$ENDIF}
   {$IFDEF FAR3} Plugin3, {$ELSE} PluginW, {$ENDIF} FarKeysW, FarColor,
   uSystem, uCompatibility, uLog;
 
@@ -26,6 +27,10 @@ type
   TIntPtr = NativeInt;
   TUIntPtr = NativeUInt;
   TEditorFlags = DWORD;
+  TFarMacroValueArray = Pointer;
+  POpenMacroInfo = Pointer;
+  PFarMacroCall = Pointer;
+  PFarGetPluginInformation = Pointer;
 {$ENDIF}
 
 type
@@ -115,14 +120,18 @@ type
     function GetFlag(const Index: Integer): boolean;
     function GetHasSelectedItems: boolean;
     function GetIsPluginPanel: boolean;
+    function GetCommandLine: string;
+    procedure SetCommandLine(const Value: string);
   protected
     procedure Load(APanelHandle: THandle; ALoadItems: boolean = True);
   public
+    class procedure Refresh(APanelHandle: THandle); overload;
+    class procedure Refresh(AActivePanel: boolean); overload;
     constructor Create(APanelHandle: THandle; ALoadItems: boolean = True); overload;
     constructor Create(AActivePanel: boolean; ALoadItems: boolean = True); overload;
     destructor Destroy; override;
     procedure ApplySelection;
-    procedure Refresh;
+    procedure Refresh; overload;
     {$IFDEF FAR3_UP}
     property PluginHandle: THandle read fPluginHandle;
     property OwnerGUID: TGUID read fOwnerGUID;
@@ -145,6 +154,7 @@ type
     property DirectoryPlugin: TGUID read fDirectoryPlugin;
     property DirectoryFile: string read fDirectoryFile;
     {$ENDIF}
+    property CommandLine: string read GetCommandLine write SetCommandLine;
     //
     property Handle: THandle read fHandle;
     property Left: boolean index PFLAGS_PANELLEFT read GetFlag;
@@ -262,6 +272,7 @@ type
     fWidth: int64;
     fTitle: string;
     fFirstDisplay: boolean;
+    fFullRedraw: boolean;
     fLastProgressTicks: DWORD;
     fGranularityMSec: DWORD;
     fCheckForEscape: boolean;
@@ -319,6 +330,9 @@ type
   end;
 
 type
+  TVariantArray = array of Variant;
+  TFarMacroLanguage = (fmlKeys, fmlMoonScript, fmlLua);
+
   TFarUtils = class
   public
     class function CopyString(const s: PFarChar): string; overload;
@@ -336,6 +350,17 @@ type
     class function Menu(const MenuID: TGUID; Title, HelpTopic: PFarChar; Items: TStrings; out ItemIndex: integer): boolean;
     class function SetProgressState(State: DWORD; Progress, Total: Int64): boolean; overload;
     class function SetProgressState(State: DWORD): boolean; overload;
+    class function FarMacroValueArrayToDelphi(const Values: TFarMacroValueArray; Count: integer): TVariantArray;
+    class function OpenMacroInfoToDelphi(const OpenInfo: POpenMacroInfo): TVariantArray;
+    class function DelphiToFarMacroCall(const Values: array of const): PFarMacroCall;
+    class function SetCurrentDir(const Directory: string; PanelHandle: THandle): boolean; overload;
+    class function SetCurrentDir(const Directory, Param, HostFile: string; PluginID: TGUID; PanelHandle: THandle): boolean; overload;
+    class function CommandToMacro(const Command: string; out Macro: string): boolean;
+    class function ExecuteMacro(const Sequence: string; Language: TFarMacroLanguage): boolean;
+    class function FindPlugin(const CommandLine: string; out Info: PFarGetPluginInformation): boolean; overload;
+    class function FindPlugin(const CommandLine: string): boolean; overload;
+    class function ExecuteCommandLine(const CommandLine: string): boolean;
+    class function LuaString(const Str: string): string;
   end;
 
 {$IFDEF FAR3_UP}
@@ -364,6 +389,41 @@ var
 
 { TFarUtils }
 
+class function TFarUtils.CommandToMacro(const Command: string; out Macro: string): boolean;
+{$IFDEF FAR3_UP}
+var
+  MacroKey: string;
+  InputRec: TInputRecord;
+  i, MacroKeySize: integer;
+{$ENDIF}
+begin
+  // Convert command line to a sequence of keys for use as a macro
+  Result := False;
+  Macro := '';
+  {$IFDEF FAR3_UP}
+  for i := 1 to Length(Command) do begin
+    FillChar(InputRec, Sizeof(InputRec), 0);
+    InputRec.EventType := KEY_EVENT;
+    InputRec.Event.KeyEvent.bKeyDown := True;
+    InputRec.Event.KeyEvent.wRepeatCount := 1;
+    InputRec.Event.KeyEvent.UnicodeChar := Command[i];
+    MacroKeySize := FarApi.FSF.FarInputRecordToName(InputRec, nil, 0);
+    if MacroKeySize = 0 then
+      Exit;
+    SetLength(MacroKey, MacroKeySize);
+    MacroKeySize := FarApi.FSF.FarInputRecordToName(InputRec, @MacroKey[1], MacroKeySize);
+    if MacroKeySize = 0 then
+      Exit;
+    SetLength(MacroKey, Pred(MacroKeySize));
+    if Macro = '' then
+      Macro := MacroKey
+    else
+      Macro := Macro + ' ' + MacroKey;
+  end;
+  Result := True;
+  {$ENDIF}
+end;
+
 class function TFarUtils.CopyLString(const s: PFarChar; Length: integer): string;
 begin
   if s = nil then
@@ -378,6 +438,371 @@ begin
     Result := ''
   else
     Result := CopyLString(s, StrLen(s));
+end;
+
+class function TFarUtils.FarMacroValueArrayToDelphi(const Values: TFarMacroValueArray; Count: integer): TVariantArray;
+{$IFDEF FAR3_UP}
+var
+  i: Integer;
+  Value: TFarMacroValue;
+  P: Pointer;
+{$ENDIF}
+begin
+  {$IFDEF FAR3_UP}
+  SetLength(Result, Count);
+  for i := 0 to Pred(Count) do begin
+    Value := Values[i];
+    case Value.fType of
+      FMVT_INTEGER:
+        Result[i] := Value.Value.fInteger;
+      FMVT_STRING:
+        Result[i] := TFarUtils.CopyString(Value.Value.fString);
+      FMVT_DOUBLE:
+        Result[i] := Value.Value.fDouble;
+      FMVT_BOOLEAN:
+        Result[i] := Value.Value.fInteger <> 0;
+      FMVT_BINARY:
+        if (Value.Value.fBinary.Data <> nil) and (Value.Value.fBinary.Length > 0) then begin
+          Result[i] := VarArrayCreate([0, Pred(Value.Value.fBinary.Length)], varByte);
+          P := VarArrayLock(Result[i]);
+          try
+            Move(Value.Value.fBinary.Data^, P^, Value.Value.fBinary.Length);
+          finally
+            VarArrayUnlock(Result[i]);
+          end;
+        end
+        else begin
+          Result[i] := null;
+        end
+      else
+        Result[i] := null;
+    end;
+  end;
+  {$ELSE}
+  SetLength(Result, 0);
+  {$ENDIF}
+end;
+
+class function TFarUtils.FindPlugin(const CommandLine: string): boolean;
+var
+  Info: PFarGetPluginInformation;
+begin
+  Result := False;
+  if FindPlugin(CommandLine, Info) then begin
+    FreeMem(Info);
+    Result := True;
+  end;
+end;
+
+class function TFarUtils.FindPlugin(const CommandLine: string; out Info: PFarGetPluginInformation): boolean;
+{$IFDEF FAR3_UP}
+var
+  i, ColonIndex, HandleCount: integer;
+  Command, Drive, ColonCommand, Prefixes: string;
+  Drives, NextDrive, DrivesEnd: PChar;
+  BufLength: DWORD;
+  Handles: array of THandle;
+  PluginInfoSize, PluginInfoSizeNeeded: TIntPtr;
+{$ENDIF}
+begin
+  Result := False;
+  Info := nil;
+  {$IFDEF FAR3_UP}
+  ColonIndex := Pos(':', CommandLine);
+  if ColonIndex > 1 then begin
+    Command := Copy(CommandLine, 1, Pred(ColonIndex));
+    // Skip DOS drive letters
+    if Length(Command) = 1 then begin
+      BufLength := GetLogicalDriveStrings(0, nil);
+      if BufLength > 0 then begin
+        GetMem(Drives, BufLength * Sizeof(Char));
+        try
+          FillChar(Drives^, BufLength * Sizeof(Char), 0);
+          if GetLogicalDriveStrings(BufLength, Drives) <= BufLength then begin
+            NextDrive := Drives;
+            DrivesEnd := NextDrive;
+            Inc(DrivesEnd, BufLength);
+            while (NextDrive^ <> #0) and (NextDrive^ < DrivesEnd) do begin
+              Drive := string(NextDrive^);
+              NextDrive := StrEnd(NextDrive);
+              Inc(NextDrive);
+              if AnsiCompareText(Command, Drive) = 0 then
+                Exit;
+            end;
+          end;
+        finally
+          FreeMem(Drives);
+        end;
+      end;
+    end;
+    // Test for valid command line prefixes
+    HandleCount := FarApi.PluginsControl(INVALID_HANDLE_VALUE, PCTL_GETPLUGINS, 0, nil);
+    if HandleCount > 0 then begin
+      SetLength(Handles, HandleCount);
+      if FarApi.PluginsControl(INVALID_HANDLE_VALUE, PCTL_GETPLUGINS, HandleCount, @Handles[0]) >= HandleCount then begin
+        PluginInfoSize := 0;
+        ColonCommand := ':' + Command + ':';
+        try
+          for i := 0 to Pred(HandleCount) do begin
+            PluginInfoSizeNeeded := FarApi.PluginsControl(Handles[i], PCTL_GETPLUGININFORMATION, PluginInfoSize, Info);
+            if PluginInfoSizeNeeded > PluginInfoSize then begin
+              PluginInfoSize := PluginInfoSizeNeeded;
+              ReallocMem(Info, PluginInfoSize);
+              FillChar(Info^, PluginInfoSize, 0);
+              Info^.StructSize := Sizeof(Info^);
+              PluginInfoSizeNeeded := FarApi.PluginsControl(Handles[i], PCTL_GETPLUGININFORMATION, PluginInfoSize, Info);
+            end;
+            if (PluginInfoSizeNeeded > 0) and (PluginInfoSizeNeeded <= PluginInfoSize) then begin
+              if (Info^.PInfo <> nil) then begin
+                Prefixes := ':' + TFarUtils.CopyString(Info^.PInfo^.CommandPrefix) + ':';
+                if Pos(ColonCommand, Prefixes) > 0 then begin
+                  Result := True;
+                  Exit;
+                end;
+              end;
+            end;
+          end;
+        finally
+          if (not Result) and (Info <> nil) then
+            FreeMem(Info);
+        end;
+      end;
+    end;
+  end;
+  {$ENDIF}
+end;
+
+class function TFarUtils.OpenMacroInfoToDelphi(const OpenInfo: POpenMacroInfo): TVariantArray;
+begin
+  SetLength(Result, 0);
+  {$IFDEF FAR3_UP}
+  if OpenInfo <> nil then begin
+    if OpenInfo.StructSize >= Sizeof(OpenInfo) then begin
+      Result := FarMacroValueArrayToDelphi(OpenInfo.Values^, OpenInfo.Count);
+    end;
+  end;
+  {$ENDIF}
+end;
+
+{$IFDEF FAR3_UP}
+procedure ReturnValuesCallback(CallbackData: Pointer; Values: PFarMacroValueArray; Count: SIZE_T); stdcall;
+var
+  i: integer;
+begin
+  if CallbackData <> nil then begin
+    if Values <> nil then begin
+      for i := 0 to Pred(Count) do begin
+        if Values[I].fType = FMVT_STRING then begin
+          StrDispose(Values[I].Value.fString);
+        end;
+      end;
+      FreeMem(Values);
+    end;
+    FreeMem(CallbackData);
+  end;
+end;
+{$ENDIF}
+
+class function TFarUtils.DelphiToFarMacroCall(const Values: array of const): PFarMacroCall;
+{$IFDEF FAR3_UP}
+
+  procedure SetInt(var MacroValue: TFarMacroValue; const Value: Int64);
+  begin
+    MacroValue.fType := FMVT_INTEGER;
+    MacroValue.Value.fInteger := Value;
+  end;
+
+  procedure SetBoolean(var MacroValue: TFarMacroValue; const Value: boolean);
+  begin
+    MacroValue.fType := FMVT_BOOLEAN;
+    if Value
+      then MacroValue.Value.fInteger := 1
+      else MacroValue.Value.fInteger := 0;
+  end;
+
+  procedure SetString(var MacroValue: TFarMacroValue; const Value: string);
+  begin
+    MacroValue.fType := FMVT_STRING;
+    MacroValue.Value.fString := StrNew(PChar(Value));
+  end;
+
+  procedure SetFloat(var MacroValue: TFarMacroValue; const Value: Double);
+  begin
+    MacroValue.fType := FMVT_DOUBLE;
+    MacroValue.Value.fDouble := Value;
+  end;
+
+  procedure SetPointer(var MacroValue: TFarMacroValue; const Value: Pointer);
+  begin
+    MacroValue.fType := FMVT_POINTER;
+    MacroValue.Value.fPointer := Value;
+  end;
+
+  procedure SetObject(var MacroValue: TFarMacroValue; const Value: TObject);
+  begin
+    MacroValue.fType := FMVT_PANEL;
+    MacroValue.Value.fPointer := Value;
+  end;
+
+  procedure SetNull(var MacroValue: TFarMacroValue);
+  begin
+    MacroValue.fType := FMVT_NIL;
+    MacroValue.Value.fPointer := nil;
+  end;
+
+const
+  BoolToInt: array[boolean] of integer = (0, 1);
+var
+  Val: PFarMacroValueArray;
+  i: integer;
+{$ENDIF}
+begin
+  Result := nil;
+  {$IFDEF FAR3_UP}
+  Val := nil;
+  try
+    GetMem(Result, Sizeof(Result^));
+    FillChar(Result^, Sizeof(Result^), 0);
+    Result^.StructSize := Sizeof(Result^);
+    Result^.Count := Length(Values);
+    if Result^.Count > 0 then begin
+      GetMem(Val, Sizeof(Val[0]) * Result^.Count);
+      FillChar(Val^, Sizeof(Val[0]) * Result^.Count, 0);
+      Result^.Values := Val;
+      for i := 0 to Pred(Length(Values)) do begin
+        case Values[i].VType of
+          vtInteger:       SetInt    (Val^[i], Values[i].VInteger);
+          vtBoolean:       SetBoolean(Val^[i], Values[i].VBoolean);
+          vtChar:          SetString (Val^[i], {$IFDEF UNICODE} string {$ENDIF} (AnsiString(Values[i].VChar)));
+          vtExtended:      SetFloat  (Val^[i], Values[i].VExtended^);
+          vtString:        SetString (Val^[i], {$IFDEF UNICODE} string {$ENDIF} (Values[i].VString^));
+          vtPointer:       SetPointer(Val^[i], Values[i].VPointer);
+          vtPChar:         SetString (Val^[i], {$IFDEF UNICODE} string {$ENDIF} (AnsiString(Values[i].VPChar^)));
+          vtObject:        SetObject (Val^[i], Values[i].VObject);
+          vtWideChar:      SetString (Val^[i], Values[i].VWideChar);
+          vtPWideChar:     SetString (Val^[i], Values[i].VPWideChar);
+          vtAnsiString:    SetString (Val^[i], {$IFDEF UNICODE} string {$ENDIF} (AnsiString(Values[i].VAnsiString)));
+          vtCurrency:      SetFloat  (Val^[i], Values[i].VCurrency^);
+          vtWideString:    SetString (Val^[i], WideString(Values[i].VWideString));
+          vtUnicodeString: SetString (Val^[i], UnicodeString(Values[i].VUnicodeString));
+          //vtClass
+          //vtVariant
+          //vtInterface
+          else            raise EConvertError.CreateFmt('Invalid data format for value #%d', [i]);
+        end;
+      end;
+    end;
+    Result^.Callback := ReturnValuesCallback;
+    Result^.CallbackData := Result;
+  except
+    if Result <> nil then
+      FreeMem(Result);
+    if Val <> nil then
+      FreeMem(Val);
+    Raise;
+  end;
+  {$ENDIF}
+end;
+
+class function TFarUtils.ExecuteCommandLine(const CommandLine: string): boolean;
+{$IFDEF FAR3_UP}
+var
+  Info: PFarGetPluginInformation;
+  Guid, Script: string;
+  n: integer;
+  ActivePanel: TFarPanelInfo;
+  PanelHandle, PluginHandle: THandle;
+  WorkDirectory: string;
+{$ENDIF}
+begin
+  Result := False;
+  {$IFDEF FAR3_UP}
+  if FindPlugin(CommandLine, Info) then begin
+    try
+      Guid := GUIDToString(Info^.GInfo^.Guid);
+      n := Length(Guid);
+      if n > 0 then
+        if Guid[n] = '}' then
+          SetLength(Guid, n-1);
+      if Guid <> '' then
+        if Guid[1] = '{' then
+          Delete(Guid, 1, 1);
+      //Script := Format('Plugin.Command("%s", "%s")', [LuaString(Guid), LuaString(CommandLine)]);
+      Script := Format('mf.postmacro(Plugin.Command, "%s", "%s")', [LuaString(Guid), LuaString(CommandLine)]);
+      if ExecuteMacro(Script, fmlLua) then begin
+        Result := True;
+      end;
+    finally
+      FreeMem(Info);
+    end;
+  end
+  else begin
+    {$MESSAGE WARN 'No idea how to reliably execute a non-plugin command line'}
+      // Beware, this approach heavily depends on the context. The command line
+      // must be active and empty for the call to work!
+    Script := Format(''
+                   + 'mf.postmacro(mf.print, "%s")'#13#10
+                   + 'mf.postmacro(Keys, "Enter")'#13#10
+                   , [LuaString(CommandLine)]);
+                // mf.postmacro is able to prepare the command line but not execute it.
+                // If I add \r or \n (or both) to the command, they will simply appear as
+                // ascii characters on the command line.
+    // Get information about the active panel
+    ActivePanel := TFarPanelInfo.Create(True);
+    try
+      PanelHandle := ActivePanel.Handle;
+      PluginHandle := ActivePanel.PluginHandle;
+    finally
+      FreeAndNil(ActivePanel);
+    end;
+    // Plugin panels need to first switch to standard panel
+    if PluginHandle <> 0 then begin
+      WorkDirectory := GetEnvironmentVariable('FARHOME');
+      SetCurrentDir(WorkDirectory, PanelHandle);
+    end;
+    // Run the script
+    if ExecuteMacro(Script, fmlLua) then begin
+      Result := True;
+    end;
+  end;
+  {$ENDIF}
+end;
+
+class function TFarUtils.ExecuteMacro(const Sequence: string; Language: TFarMacroLanguage): boolean;
+{$IFDEF FAR3_UP}
+const
+  LanguageToKMFlags: array[TFarMacroLanguage] of TFarKeyMacroFlags = (KMFLAGS_NONE, KMFLAGS_MOONSCRIPT, KMFLAGS_LUA);
+var
+  InfoScript: TMacroExecuteString;
+  InfoKeys: TMacroSendMacroText;
+  LuaSequence: string;
+{$ENDIF}
+begin
+  Result := False;
+  {$IFDEF FAR3_UP}
+  //Log('TFarUtils.ExecuteMacro "%s"', [Sequence]);
+  if Language = fmlKeys then begin
+    LuaSequence := 'Keys(''' + Sequence + ''')';
+    FillChar(InfoKeys, Sizeof(InfoKeys), 0);
+    InfoKeys.StructSize := Sizeof(InfoKeys);
+    InfoKeys.Flags := KMFLAGS_NOSENDKEYSTOPLUGINS {or KMFLAGS_SILENTCHECK} or KMFLAGS_LUA;
+    InfoKeys.SequenceText := PFarChar(LuaSequence);
+    if FarApi.MacroControl(PluginID, MCTL_SENDSTRING, MSSC_CHECK, @InfoKeys) <> 0 then begin
+      Result := FarApi.MacroControl(PluginID, MCTL_SENDSTRING, MSSC_POST, @InfoKeys) <> 0;
+    end;
+  end
+  else begin
+    FillChar(InfoScript, Sizeof(InfoScript), 0);
+    InfoScript.StructSize := Sizeof(InfoScript);
+    InfoScript.Flags := KMFLAGS_NOSENDKEYSTOPLUGINS {or KMFLAGS_SILENTCHECK} or LanguageToKMFlags[Language];
+    InfoScript.SequenceText := PFarChar(Sequence);
+    InfoScript.InCount := 0;
+    InfoScript.InValues := nil;
+    InfoScript.OutCount := 0;
+    InfoScript.OutValues := nil;
+    Result := FarApi.MacroControl(PluginID, MCTL_EXECSTRING, 0, @InfoScript) <> 0;
+  end;
+  {$ENDIF}
 end;
 
 class function TFarUtils.CopyString(const s: TFarCharArray): string;
@@ -447,6 +872,36 @@ begin
     Result := FarApi.GetMsg( {$IFDEF FAR3_UP} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , MsgId);
 end;
 
+class function TFarUtils.LuaString(const Str: string): string;
+type
+  TReplacementItem = record
+    Source: string;
+    Destination: string;
+  end;
+const
+  Replacements: array[0..11] of TReplacementItem = (
+    (Source: '\'; Destination: '\\'),
+    (Source:  #7; Destination: '\a'),
+    (Source:  #8; Destination: '\b'),
+    (Source:  #9; Destination: '\t'),
+    (Source: #10; Destination: '\n'),
+    (Source: #11; Destination: '\v'),
+    (Source: #12; Destination: '\f'),
+    (Source: #13; Destination: '\r'),
+    (Source: '"'; Destination: '\"'),
+    (Source: #39; Destination: '\'''),
+    (Source: '['; Destination: '\['),
+    (Source: ']'; Destination: '\]')
+  );
+var
+  i: integer;
+begin
+  Result := Str;
+  for i := Low(Replacements) to High(Replacements) do begin
+    Result := StringReplace(Result, Replacements[i].Source, Replacements[i].Destination, [rfReplaceAll]);
+  end;
+end;
+
 class function TFarUtils.Menu(const MenuID: TGUID; Title, HelpTopic: PFarChar; Items: TStrings; out ItemIndex: integer): boolean;
 var
   Res: TIntPtr;
@@ -508,6 +963,36 @@ begin
       if FarApi.AdvControl( {$IFDEF FAR3_UP} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSVALUE, {$IFDEF FAR3_UP} 0, {$ENDIF} @Value) = 0 then
         Result := False;
     end;
+end;
+
+class function TFarUtils.SetCurrentDir(const Directory: string; PanelHandle: THandle): boolean;
+begin
+  Result := SetCurrentDir(Directory, '', '',  GUID_NULL, PanelHandle);
+end;
+
+class function TFarUtils.SetCurrentDir(const Directory, Param, HostFile: string; PluginID: TGUID; PanelHandle: THandle): boolean;
+{$IFDEF FAR3_UP}
+var
+  Rec: TFarPanelDirectory;
+{$ENDIF}
+begin
+  {$IFDEF FAR3_UP}
+  FillChar(Rec, Sizeof(Rec), 0);
+  Rec.StructSize := Sizeof(Rec);
+  if Directory <> '' then
+    Rec.Name := PFarChar(Directory);
+  if Param <> '' then
+    Rec.Param := PFarChar(Param);
+  Rec.PluginId := PluginID;
+  if HostFile <> '' then
+    Rec.fFile := PFarChar(HostFile);
+  Result := FarApi.Control(PanelHandle, FCTL_SETPANELDIRECTORY, 0, @Rec) <> 0;
+  {$ELSE}
+  if IsEqualGUID(PluginID, GUID_NULL) and (Param = '') and (HostFile = '') then
+    Result := FarApi.Control(PanelHandle, FCTL_SETPANELDIR, 0, PFarChar(Directory)) <> 0
+  else
+    Result := False;
+  {$ENDIF}
 end;
 
 class function TFarUtils.SetProgressState(State: DWORD): boolean;
@@ -608,6 +1093,22 @@ begin
   inherited;
 end;
 
+function TFarPanelInfo.GetCommandLine: string;
+var
+  BufSize: TIntPtr;
+begin
+  Result := '';
+  BufSize := FarApi.Control(Handle, FCTL_GETCMDLINE, 0, nil);
+  if BufSize > 0 then begin
+    SetLength(Result, BufSize);
+    BufSize := FarApi.Control(Handle, FCTL_GETCMDLINE, BufSize, @Result[1]);
+    if BufSize = 0 then
+      Result := ''
+    else
+      SetLength(Result, Pred(BufSize));
+  end;
+end;
+
 function TFarPanelInfo.GetFlag(const Index: Integer): boolean;
 begin
   Result := (fFlags and Index) <> 0;
@@ -696,9 +1197,24 @@ begin
   end;
 end;
 
+class procedure TFarPanelInfo.Refresh(APanelHandle: THandle);
+begin
+  FarApi.Control(APanelHandle, FCTL_UPDATEPANEL, 1, nil);
+end;
+
+class procedure TFarPanelInfo.Refresh(AActivePanel: boolean);
+begin
+  Refresh(hPanel[AActivePanel]);
+end;
+
 procedure TFarPanelInfo.Refresh;
 begin
-  FarApi.Control(Handle, FCTL_UPDATEPANEL, 1, nil);
+  Refresh(Handle);
+end;
+
+procedure TFarPanelInfo.SetCommandLine(const Value: string);
+begin
+  FarApi.Control(Handle, FCTL_SETCMDLINE, 0, PFarChar(Value));
 end;
 
 { TFarPanelItem }
@@ -1533,6 +2049,7 @@ begin
   fPluginHandle := APluginHandle;
   {$ENDIF}
   fFirstDisplay := True;
+  fFullRedraw := True;
   fIsConsoleTitle := False;
   fConsoleTitle := '';
   fSavedScreen := INVALID_HANDLE_VALUE;
@@ -1553,13 +2070,14 @@ procedure TFarProgress.Hide;
 begin
   CleanupConsole;
   fFirstDisplay := True;
+  fFullRedraw := True;
 end;
 
 function TFarProgress.NeedsRefresh: boolean;
 var
   Ticks, NextTicks: DWORD;
 begin
-  if fFirstDisplay then
+  if fFirstDisplay or fFullRedraw then
     Result := True
   else begin
     NextTicks := fLastProgressTicks + fGranularityMSec;
@@ -1618,7 +2136,11 @@ begin
   if fFirstDisplay then begin
     PrepareConsole;
     fFirstDisplay := False;
+    fFullRedraw := True;
+  end;
+  if fFullRedraw then begin
     Flags := FMSG_LEFTALIGN;
+    fFullRedraw := False;
   end
   else begin
     Flags := FMSG_LEFTALIGN or FMSG_KEEPBACKGROUND;
@@ -1631,6 +2153,7 @@ begin
       ReadConsoleInput(fStdInput, InputRec, 1, ReadCount);
       if (InputRec.EventType = KEY_EVENT) and (InputRec.Event.KeyEvent.wVirtualKeyCode = VK_ESCAPE) and InputRec.Event.KeyEvent.bKeyDown then begin
         EscPressed := True;
+        fFullRedraw := True;
         if Assigned(OnEscapePressed) then
           OnEscapePressed(Self, EscPressed);
         if EscPressed then
