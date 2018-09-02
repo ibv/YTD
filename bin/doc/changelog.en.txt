@@ -1,6 +1,43 @@
 CHANGELOG
 ---------
 
+  v0.82:
+
+    * New provider: Hell.tv.
+
+    * New provider: JenProMuze.cz (contains porn).
+
+    * New provider: MachoVideo.com (contains porn).
+
+    * New provider: Metoo.cz.
+
+    * New provider: Muvi.cz.
+
+    * New provider: NovaMov.com.
+
+    * New provider: PornoZdarma.cz (porn).
+
+    * New provider: TheYNC.com (not porn per se, but certainly adult-only).
+
+    * CT24.cz: Support for http://www.ct24.cz/regionalni/125040-v-kralupech-zrusili-jesle-rodice-s-tim-nesouhlasi/.
+      It is likely that this fix breaks some URLs which used to work before;
+      please let me know if you find such URLs, and until I write a proper
+      support, download them using YTD version 0.81. I can't write a perfect
+      solution at the moment, unfortunately.
+
+    * iDnes.cz: Support for videos in regular pages, not just video.idnes.cz.
+      Make sure you properly escape the URLs when downloading from the 
+      command-line.
+
+    * Joj.sk: Support for videos with their own subdomain ("Ano, šéfe", "Nové
+      bývanie" etc.).
+
+    * PornHub.com: Updated to the current page code.
+
+    * SerialyCZ.cz: Support for additional video embedding code.
+
+
+
   v0.81:
 
     * New provider: Bahnorama.com.

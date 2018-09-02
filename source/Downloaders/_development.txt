@@ -61,6 +61,7 @@ HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
 HTTP	HTML	HTML	downGuba
 RTMP	HTML	HTML	downHasici150
+HTTP	HTML	HTML	downHellTV
 HTTP	HTML	HTML	downIConcerts
 RTMP	XML	XML	downIDnes
 RTMP	HTML	HTML	downIHned
@@ -76,6 +77,7 @@ HTTP	JSON	JSON	downMarkiza
 HTTP	HTML	HTML	downMediaSport
 HTTP	XML	XML	downMegaVideo
 HTTP	HTML	HTML	downMetaCafe
+MS	HTML	HTML	downMetooCz
 HTTP	HTML	XML	downMetropolTV
 HTTP	HTML	HTML	downMojeTelevize
 HTTP	HTML	HTML	downMojeVideo
@@ -85,6 +87,7 @@ RTMP	XML	XML	downMTV
 RTMP	XML	XML	downMTVEmbed
 MS	HTML	HTML	downMultimediaVseCz
 HTTP	HTML	Nested	downMustWatch
+HTTP	HTML	XML	downMuvi
 HTTP	XML	XML	downMuzu
 HTTP	XML	XML	downMySpace
 HTTP	HTML	HTML	downMyUbo
@@ -94,6 +97,8 @@ HTTP	HTML	HTML	downNJoy
 HTTP	HTML	HTML	downNothingToxic
 HTTP	HTML	HTML	downNovinky
 RTMP	XML	XML	downNova
+HTTP	HTML	Nested	downNovaMov
+HTTP	-	HTML	downNovaMov_Embed
 HTTP	HTML	Nested	downOverStream
 HTTP	HTML	Nested	downPBS
 HTTP	XML	XML	downPCPlanets

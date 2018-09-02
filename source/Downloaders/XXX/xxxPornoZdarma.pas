@@ -34,24 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSerialyCZ;
+unit xxxPornoZdarma;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uVarNestedDownloader;
+  uPCRE, uXml, HttpSend, 
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TDownloader_SerialyCZ = class(TVarNestedDownloader)
+  TDownloader_PornoZdarma = class(TNestedDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -66,59 +63,51 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.serialycz.cz/2011/01/chuck-04x12/
-// http://www.serialycz.cz/2010/08/futurama-06x09/
+//http://www.pornozdarma.cz/video/64684/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*serialycz\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'pornozdarma\.cz/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"',
-       '<iframe\s+[^>]*\bsrc=(?P<QUOTES>["''])(?P<URL>https?://.+?)(?P=QUOTES)'
-       );
+  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
+  REGEXP_EXTRACT_URL = REGEXP_URL_PARAM_FLASHVARS_OPTIONS;
 
-{ TDownloader_SerialyCZ }
+{ TDownloader_PornoZdarma }
 
-class function TDownloader_SerialyCZ.Provider: string;
+class function TDownloader_PornoZdarma.Provider: string;
 begin
-  Result := 'SerialyCZ.cz';
+  Result := 'PornoZdarma.cz';
 end;
 
-class function TDownloader_SerialyCZ.UrlRegExp: string;
+class function TDownloader_PornoZdarma.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_SerialyCZ.Create(const AMovieID: string);
+constructor TDownloader_PornoZdarma.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUtf8;
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  AddNestedUrlRegExps(REGEXP_EXTRACT_NESTED_URLS);
+  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
 end;
 
-destructor TDownloader_SerialyCZ.Destroy;
+destructor TDownloader_PornoZdarma.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  ClearNestedUrlRegExps;
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_SerialyCZ.GetMovieInfoUrl: string;
+function TDownloader_PornoZdarma.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.serialycz.cz/' + MovieID;
-end;
-
-function TDownloader_SerialyCZ.CreateNestedDownloaderFromURL(var Url: string): boolean;
-begin
-  Url := HtmlDecode(Url);
-  Result := inherited CreateNestedDownloaderFromURL(Url);
+  Result := 'http://www.pornozdarma.cz/video/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_SerialyCZ);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_PornoZdarma);
+  {$ENDIF}
 
 end.

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.81                                     (c) 2009-11 Pepak
+YouTube Downloader v0.82                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -94,9 +94,11 @@ GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/j
 GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
 Guba.com            | HTTP     |       | http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
+Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
 i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
 iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
+                    |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
 iHned.cz            | RTMP     |       | http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
 ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
 iPrima.cz           | HTTP     |       | http://www.iprima.cz/videoarchiv/44524/all/all
@@ -104,6 +106,7 @@ iPrima.cz           | HTTP     |       | http://www.iprima.cz/videoarchiv/44524/
                     |          | N     | http://www.iprima.cz/showjanakrause
 Joj.sk              | HTTP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
                     |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
+                    |          |       | http://anosefe.joj.sk/anosefe-epizody/2011-05-16-ano-sefe-.html
 Kukaj.sk            | HTTP     |       | http://www.kukaj.sk/videa/5860/
 LibimSeTi.cz        | HTTP     |       | http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
 LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272904024
@@ -115,6 +118,7 @@ Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-marki
 MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
 MetaCafe.com        | HTTP     |       | http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
+Metoo.cz            | MS       |       | http://www.metoo.cz/tvstream/play/532
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
 MojeVideo.cz        | HTTP     |       | http://mojevideo.cz/view.php?id=5332
@@ -124,6 +128,7 @@ MTV.com             | RTMP     |       | http://www.mtv.com/videos/movie-trailer
                     |          |       | http://media.mtvnservices.com/mgid:uma:video:mtv.com:602324
 Multimedia.vse.cz   | MS       |       | http://multimedia.vse.cz/media/Viewer/?peid=e847bd00891e47389492f06651a0a7761d
 MustWatch.cz        | HTTP     |       | http://www.mustwatch.cz/film/reel-bad-arabs
+Muvi.cz             | HTTP     |       | http://www.muvi.cz/klip/344-jak-otevrit-vino-bez-vyvrtky-vasi-botou-22-bota-misto-vyvrtky
 Muzu.tv             | HTTP     |       | http://www.muzu.tv/elizarickman/cinnamon-bone-music-video/670078?country=cz
 MySpace.com         | RTMP     |       | http://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=63620005
 Myubo.sk            | HTTP     |       | http://www.myubo.sk/page/media_detail.html?movieid=deac5b36-9efe-4176-a1e9-01088aa24696
@@ -136,8 +141,10 @@ NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=57
 NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
 News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
-Nova.cz             | RTMP     |       | http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+Nova.cz             | RTMP     | 2     | http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
                     | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
+NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
+                    |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
                     |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
 OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
@@ -237,11 +244,14 @@ ExtremeTube.com     | HTTP     | F     |
 FreePornoZdarma.cz  | HTTP     | F     |
 Grinvi.com          | HTTP     | F     |
 HardSexTube.com     | HTTP     | F     |
+JenProMuze.cz       | HTTP     | F     |
 KeezMovies.com      | HTTP     | F     |
+MachoVideo.com      | HTTP     | F     |
 MegaPorn.com        | HTTP     | F     |
 PornHost.com        | HTTP     | F     |
 PornHub.com         | HTTP     | F     |
 PornoTube.com       | HTTP     | F     |
+PornoZdarma.cz      | HTTP     | F     |
 RedTube.com         | HTTP     | F     |
 Rude.com            | HTTP     | F     |
 Sex-Doma.cz         | HTTP     | F     |
@@ -249,6 +259,7 @@ Shufuni.com         | HTTP     | F     |
 SlutLoad.com        | HTTP     | F     |
 SpankingTube.com    | HTTP     | F     |
 SpankWire.com       | HTTP     | F     |
+TheYNC.com          | HTTP     | F     |
 TnaFlix.com         | HTTP     | F     |
 Tube8.com           | HTTP     | F     |
 TubeSSS.com         | HTTP     | F     |
@@ -329,3 +340,12 @@ X ... Momentálnì nefunkèní.
       a very dirty hack, which sequentially tries a number of possible servers 
       to see if it can find the real one. That's slow, unreliable and above 
       all the provider could ban you for this kind of abuse of his servers.
+
+
+
+7 ... Pøi použití command-line verze YTD je tøeba vìnovat pozornost správnému
+      zapsání URL, aby vyhovovalo požadavkùm pøíkazového interpretu (CMD.EXE).
+
+      When using the command-line version of YTD, please make sure to properly
+      escape the URL, so that it satisfied the requirements of command 
+      interpreter (e.g. CMD.EXE).

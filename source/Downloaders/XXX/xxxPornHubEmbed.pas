@@ -103,7 +103,7 @@ var Url, Title: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlVar(PageXml, 'flv_url', Url) then
+  if not GetXmlVar(PageXml, 'video_url', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin

@@ -59,6 +59,7 @@ type
     protected
       function GetFileName: string; override;
       function GetThisFileName: string; virtual;
+      function GetNestedID(out ID: string): boolean; virtual;
       procedure SetNestedDownloader(Value: TDownloader); virtual;
       function CreateNestedDownloaderFromID(const MovieID: string): boolean; virtual;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; virtual;
@@ -188,6 +189,12 @@ begin
   Result := inherited GetFileName;
 end;
 
+function TNestedDownloader.GetNestedID(out ID: string): boolean;
+begin
+  Result := False;
+  ID := '';
+end;
+
 {$IFDEF SUBTITLES}
 function TNestedDownloader.GetSubtitlesFileName: string;
 begin
@@ -267,7 +274,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
-  if (NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID) and (ID <> '') and CreateNestedDownloaderFromID(ID) then
+  if (GetNestedID(ID) or ((NestedIDRegExp <> nil) and GetRegExpVar(NestedIDRegExp, Page, 'ID', ID))) and (ID <> '') and CreateNestedDownloaderFromID(ID) then
     begin
     if NestedUrlRegExp <> nil then
       if GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) then

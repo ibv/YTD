@@ -1,6 +1,41 @@
 CHANGELOG
 ---------
 
+  v0.82:
+
+    * Nový poskytovatel: Hell.tv.
+
+    * Nový poskytovatel: JenProMuze.cz (èásteènì porno).
+
+    * Nový poskytovatel: MachoVideo.com (èásteènì porno).
+
+    * Nový poskytovatel: Metoo.cz.
+
+    * Nový poskytovatel: Muvi.cz.
+
+    * Nový poskytovatel: NovaMov.com.
+
+    * Nový poskytovatel: PornoZdarma.cz (porno).
+
+    * Nový poskytovatel: TheYNC.com (není porno, ale urèitì jen pro dospìlé).
+
+    * CT24.cz: Podpora pro http://www.ct24.cz/regionalni/125040-v-kralupech-zrusili-jesle-rodice-s-tim-nesouhlasi/.
+      Je pravdìpodobné, že tím naopak pøestanou fungovat nìkterá dosud funkèní 
+      videa; když na nìjaké narazíte, tak mì prosím upozornìte a stáhnìte je
+      zatím verzí 0.81. Bohužel to nemohu vyøešit pøímo.
+
+    * iDnes.cz: Podpora pro videa pøímo ve stránkách, nejen na video.idnes.cz.
+      Pozor na správné escapování URL pøi stahování z pøíkazového øádku!
+
+    * Joj.sk: Podpora pro poøady s vlastní subdoménou ("Ano, šéfe", "Nové
+      bývanie" apod.).
+
+    * PornHub.com: Aktualizováno na souèasnou podobu stránek.
+
+    * SerialyCZ.cz: Podpora dalšího zápisu vložených videí.
+
+
+
   v0.81:
 
     * Nový poskytovatel: Bahnorama.com.

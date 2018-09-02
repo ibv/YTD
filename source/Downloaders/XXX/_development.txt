@@ -9,18 +9,22 @@ HTTP	HTML	XML	xxxEmpFlix
 HTTP	HTML	HTML	xxxExtremeTube
 HTTP	HTML	HTML	xxxFreePornoZdarma (<- XHamster)
 HTTP	HTML	Nested	xxxGrinvi
+HTTP	HTML	HTML	xxxJenProMuze
 HTTP	HTML	HTML	xxxKeezMovies
+HTTP	HTML	HTML	xxxMachoVideo
 HTTP	XML	XML	xxxMegaPorn
 HTTP	HTML	HTML	xxxPornHost
 HTTP	HTML	HTML	xxxPornHub
 HTTP	XML	XML	xxxPornHubEmbed
 HTTP	HTML	HTML1	xxxPornoTube
+HTTP	HTML	Nested	xxxPornoZdarma
 HTTP	HTML	HTML	xxxRedTube
 HTTP	HTML	HTML	xxxRozzlobeniMuzi
 HTTP	XML	XML	xxxRude
 HTTP	HTML	HTML	xxxSexDoma
 HTTP	HTML	HTML	xxxShufuni
 HTTP	HTML	XML	xxxSpankingTube
+HTTP	HTML	HTML	xxxTheYNC
 HTTP	HTML	XML	xxxTnaFlix
 HTTP	HTML	HTML	xxxTube8
 HTTP	HTML	HTML	xxxTubeSSS

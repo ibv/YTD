@@ -42,15 +42,15 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downIDnes_Embed {Important - downIDnes_Embed must be registered first}
+  ;
 
 type
-  TDownloader_IDnes = class(TRtmpDownloader)
+  TDownloader_IDnes = class(TNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -62,15 +62,18 @@ implementation
 
 uses
   uStringConsts,
-  uStringUtils,
   uMessages,
   uDownloadClassifier;
 
+// http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
 // http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.idnes\.cz/[^?]*\?';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'idnes\.cz/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
+
+const
+  REGEXP_MOVIE_URL =    '\.videoFLV\s*\(\s*\{\s*data\s*:\s*"(?P<URL>https?://servis\.idnes\.cz/.+?)"';
 
 { TDownloader_IDnes }
 
@@ -81,79 +84,25 @@ end;
 
 class function TDownloader_IDnes.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_IDnes.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peXml;
-  InfoPageIsXml := True;
+  InfoPageEncoding := peAnsi;
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_IDnes.Destroy;
 begin
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
 function TDownloader_IDnes.GetMovieInfoUrl: string;
 begin
-  Result := 'http://servis.idnes.cz/stream/flv/data.asp?' + MovieID;
-end;
-
-function TDownloader_IDnes.GetFileNameExt: string;
-begin
-  Result := '.mp4';
-end;
-
-function TDownloader_IDnes.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ItemType, Server, Path, VideoFile, Title, Stream: string;
-    Items: TXmlNode;
-    i: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not XmlNodeByPath(PageXml, 'items', Items) then
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-  else
-    begin
-    for i := 0 to Pred(Items.NodeCount) do
-      if string(Items.Nodes[i].Name) = 'item' then
-        if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
-          if ItemType = 'video' then
-            begin
-            {$IFNDEF DIRTYHACKS}
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['server']))
-            else
-            {$ENDIF}
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['path']))
-            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['file']))
-            else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
-              SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-            else
-              begin
-              SetName(Title);
-              Stream := 'mp4:' + Path + VideoFile;
-              {$IFDEF DIRTYHACKS}
-              Server := 'stream7.idnes.cz/vod/'; // For some reason the "real" server does not work!
-              {$ENDIF}
-              MovieUrl := 'rtmpt://' + Server + Stream;
-              AddRtmpDumpOption('r', 'rtmpt://' + Server);
-              AddRtmpDumpOption('y', Stream);
-              AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-              AddRtmpDumpOption('s', 'http://g.idnes.cz/swf/flv/player.swf?v=20101103');
-              AddRtmpDumpOption('t', 'rtmpt://' + Server);
-              AddRtmpDumpOption('p', 'http://video.idnes.cz/?' + MovieID);
-              Result := True;
-              SetPrepared(True);
-              end;
-            Exit;
-            end;
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-    end;
+  Result := MovieID;
 end;
 
 initialization

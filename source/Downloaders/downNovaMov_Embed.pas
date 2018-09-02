@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSerialyCZ;
+unit downNovaMov_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,16 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uVarNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_SerialyCZ = class(TVarNestedDownloader)
+  TDownloader_NovaMov_Embed = class(THttpDownloader)
     private
     protected
-      NestedUrlRegExps: array of TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -66,59 +64,53 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.serialycz.cz/2011/01/chuck-04x12/
-// http://www.serialycz.cz/2010/08/futurama-06x09/
+// http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*serialycz\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'embed\.novamov\.com/embed\.php\?';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..1] of string
-    = ('<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"',
-       '<iframe\s+[^>]*\bsrc=(?P<QUOTES>["''])(?P<URL>https?://.+?)(?P=QUOTES)'
-       );
+  REGEXP_MOVIE_URL =    '\bflashvars\.file\s*=\s*"(?P<URL>https?://.+?)"';
 
-{ TDownloader_SerialyCZ }
+{ TDownloader_NovaMov_Embed }
 
-class function TDownloader_SerialyCZ.Provider: string;
+class function TDownloader_NovaMov_Embed.Provider: string;
 begin
-  Result := 'SerialyCZ.cz';
+  Result := 'NovaMov.com';
 end;
 
-class function TDownloader_SerialyCZ.UrlRegExp: string;
+class function TDownloader_NovaMov_Embed.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_SerialyCZ.Create(const AMovieID: string);
+constructor TDownloader_NovaMov_Embed.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  AddNestedUrlRegExps(REGEXP_EXTRACT_NESTED_URLS);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_SerialyCZ.Destroy;
+destructor TDownloader_NovaMov_Embed.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  ClearNestedUrlRegExps;
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_SerialyCZ.GetMovieInfoUrl: string;
+function TDownloader_NovaMov_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.serialycz.cz/' + MovieID;
+  Result := 'http://embed.novamov.com/embed.php?' + MovieID;
 end;
 
-function TDownloader_SerialyCZ.CreateNestedDownloaderFromURL(var Url: string): boolean;
+function TDownloader_NovaMov_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Url := HtmlDecode(Url);
-  Result := inherited CreateNestedDownloaderFromURL(Url);
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  SetName(ExtractUrlFileName(MovieUrl));
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_SerialyCZ);
+  RegisterDownloader(TDownloader_NovaMov_Embed);
 
 end.

@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.tvlux.sk/archiv/play/2511
+RunParams=http://www.ceskatelevize.cz/ivysilani/10114956110-fotbal/211471290080021-fk-teplice-fc-viktoria-plzen/
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=79
+MinorVer=81
 Release=0
-Build=606
+Build=611
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +68,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.79.0.606
+FileVersion=0.81.0.611
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
-ProductVersion=0.79.0.599
+ProductVersion=0.81.0.609
 Comments=http://www.pepak.net/download/youtube-downloader/
 [HistoryLists\hlDebugSourcePath]
 Count=2

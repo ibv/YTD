@@ -154,7 +154,8 @@ begin
       begin
       if Host = '' then
         Host := ExtractUrlRoot(MovieID);
-      Url := Host + UrlEncode(StringReplace(HtmlDecode(Path), '&autoStart=false', '', []));
+      Url := Host + StringReplace(HtmlDecode(Path), '&autoStart=false', '', []);
+        // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
       if DownloadPage(Http, Url, NewPage, InfoPageEncoding) then
         if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
           begin

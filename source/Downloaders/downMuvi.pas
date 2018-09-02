@@ -34,23 +34,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downJoj;
+unit downMuvi;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE ALLOW_MDY_DATE} // Allow switching of day and month. Not recommended!
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, uCompatibility, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Joj = class(THttpDownloader)
+  TDownloader_Muvi = class(THttpDownloader)
     private
-    protected
-      MovieIdRegExp: TRegExp;
-      PageIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,106 +64,77 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
-// http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
+// http://www.muvi.cz/klip/344-jak-otevrit-vino-bez-vyvrtky-vasi-botou-22-bota-misto-vyvrtky
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'joj\.sk/' + REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = 'muvi\.cz/klip/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_ID = '\bvideoId\s*:\s*"(?P<ID>[0-9]+)"';
-  REGEXP_PAGE_ID = '\bpageId\s*:\s*"(?P<ID>[0-9]+)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
 
-{ TDownloader_Joj }
+{ TDownloader_Muvi }
 
-class function TDownloader_Joj.Provider: string;
+class function TDownloader_Muvi.Provider: string;
 begin
-  Result := 'Joj.sk';
+  Result := 'Muvi.cz';
 end;
 
-class function TDownloader_Joj.UrlRegExp: string;
+class function TDownloader_Muvi.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Joj.Create(const AMovieID: string);
+constructor TDownloader_Muvi.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
-  PageIdRegExp := RegExCreate(REGEXP_PAGE_ID);
 end;
 
-destructor TDownloader_Joj.Destroy;
+destructor TDownloader_Muvi.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIdRegExp);
-  RegExFreeAndNil(PageIdRegExp);
   inherited;
 end;
 
-function TDownloader_Joj.GetMovieInfoUrl: string;
+function TDownloader_Muvi.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
+  Result := 'http://www.muvi.cz/klip/' + MovieID;
 end;
 
-function TDownloader_Joj.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Muvi.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
-    Files: TXmlNode;
-    VideoID, PageID, BestPath, Path, sQuality: string;
-    i, j, BestQuality, Quality: integer;
+    Sources: TXmlNode;
+    i: integer;
+    Host, Port, Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', VideoID) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['videoId']))
-  else if not GetRegExpVar(PageIdRegExp, Page, 'ID', PageID) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['pageId']))
-  else if not DownloadXml(Http, 'http://www.joj.sk/services/Video.php?clip=' + VideoID + '&pageId=' + PageID, Xml) then
+  if not DownloadXml(Http, 'http://muvistar.cz/dispatcher/?id=' + MovieID, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
-      //if GetXmlAttr(Xml, '', 'title', Title) then
-      //  SetName(Title);
-      if not XmlNodeByPath(Xml, 'files', Files) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else
-        begin
-        BestQuality := -1;
-        BestPath := '';
-        for i := 0 to Pred(Files.NodeCount) do
-          if Files.Nodes[i].Name = 'file' then
-            if GetXmlAttr(Files.Nodes[i], '', 'path', Path) then
-              begin
-              Quality := 0;
-              if GetXmlAttr(Files.Nodes[i], '', 'label', sQuality) then
-                for j := 1 to Length(sQuality) do
-                  if CharInSet(sQuality[j], ['0'..'9']) then
-                    Quality := 10 * Quality + Ord(sQuality[j]) - Ord('0')
-                  else
-                    Break;
-              if Quality > BestQuality then
+      if Xml.NodeByPath('source_list', Sources) then
+        for i := 0 to Pred(Sources.NodeCount) do
+          if Sources.Nodes[i].Name = 'server' then
+            if GetXmlAttr(Sources.Nodes[i], '', 'host', Host) then
+              if GetXmlAttr(Sources.Nodes[i], '', 'path', Path) then
                 begin
-                BestPath := Path;
-                BestQuality := Quality;
+                if not GetXmlAttr(Sources.Nodes[i], '', 'port', Port) then
+                  Port := '80';
+                MovieUrl := Format('http://%s:%s/%s', [Host, Port, Path]);
+                SetPrepared(True);
+                Result := True;
+                Exit;
                 end;
-              end;
-        if BestPath <> '' then
-          begin
-          MovieUrl := 'http://n14.joj.sk/' + BestPath;
-          SetPrepared(True);
-          Result := True;
-          end;
-        end;
     finally
       FreeAndNil(Xml);
       end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Joj);
+  RegisterDownloader(TDownloader_Muvi);
 
 end.
+
