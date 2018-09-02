@@ -57,6 +57,9 @@ function Run(const FileName, CommandLine: string; OwnerHandle: THandle = 0): boo
 function Run(const FileName: string; OwnerHandle: THandle = 0): boolean; overload;
 function GetTempDir: string;
 function CheckRedirect(Http: THttpSend; var Url: string): boolean;
+function CheckProtocol(const Url: string; const Protocols: array of string): integer;
+function IsHttpProtocol(const Url: string): boolean;
+function IncludeTrailingSlash(const Path: string): string;
 
 implementation
 
@@ -263,6 +266,34 @@ begin
         Result := Url <> OldUrl;
         Break;
         end;
+end;
+
+function CheckProtocol(const Url: string; const Protocols: array of string): integer;
+var
+  i: integer;
+begin
+  Result := -1;
+  for i := 0 to Pred(Length(Protocols)) do
+    if AnsiCompareText(Protocols[i], Copy(Url, 1, Length(Protocols[i]))) = 0 then
+      begin
+      Result := i;
+      Break;
+      end;
+end;
+
+function IsHttpProtocol(const Url: string): boolean;
+begin
+  Result := CheckProtocol(Url, ['http://', 'https://']) >= 0;
+end;
+
+function IncludeTrailingSlash(const Path: string): string;
+begin
+  if Path = '' then
+    Result := ''
+  else if Path[Length(Path)] = '/' then
+    Result := Path
+  else
+    Result := Path + '/';
 end;
 
 end.

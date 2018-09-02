@@ -46,6 +46,10 @@ uses
 type
   EOSError = EWin32Error;
 
+type
+  UInt64 = int64; // unsigned not available in Delphi 5
+  TByteArray = array[0..65535] of byte; 
+
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
 {$ENDIF}

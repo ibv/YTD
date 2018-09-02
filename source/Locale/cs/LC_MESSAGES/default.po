@@ -5,17 +5,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: YouTube Downloader 1.13\n"
-"POT-Creation-Date: 2012-08-05 05:18\n"
-"PO-Revision-Date: 2012-08-05 05:20+0100\n"
+"Project-Id-Version: YTD 1.15\n"
+"POT-Creation-Date: 2012-08-19 15:51\n"
+"PO-Revision-Date: 2012-08-19 15:53+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
+"Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: dxgettext 1.2.2\n"
-"X-Poedit-Language: Czech\n"
-"X-Poedit-Country: CZECH REPUBLIC\n"
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
@@ -31,22 +30,17 @@ msgstr "O aplikaci YTD"
 #. FormYTD..Font.Name
 #. FormOptions..Font.Name
 #. FormSetup..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:11
-#: GUI/VCL/guiAboutVCL.dfm:27
-#: GUI/VCL/guiAboutVCL.dfm:48
-#: GUI/VCL/guiAboutVCL.dfm:69
-#: GUI/VCL/guiAboutVCL.dfm:91
-#: GUI/VCL/guiConverterVCL.dfm:12
-#: GUI/VCL/guiMainVCL.dfm:11
-#: GUI/VCL/guiOptionsVCL.dfm:11
+#: GUI/VCL/guiAboutVCL.dfm:11 GUI/VCL/guiAboutVCL.dfm:27
+#: GUI/VCL/guiAboutVCL.dfm:48 GUI/VCL/guiAboutVCL.dfm:69
+#: GUI/VCL/guiAboutVCL.dfm:91 GUI/VCL/guiConverterVCL.dfm:12
+#: GUI/VCL/guiMainVCL.dfm:11 GUI/VCL/guiOptionsVCL.dfm:11
 #: GUI/VCL/guiSetupVCL.dfm:11
 msgid "MS Sans Serif"
 msgstr "MS Sans Serif"
 
 #. FormAbout..LabelYTD..Caption
 #. FormYTD..Caption
-#: GUI/VCL/guiAboutVCL.dfm:23
-#: GUI/VCL/guiMainVCL.dfm:6
+#: GUI/VCL/guiAboutVCL.dfm:23 GUI/VCL/guiMainVCL.dfm:6
 msgid "YTD"
 msgstr "YTD"
 
@@ -66,8 +60,7 @@ msgid "Newest version:"
 msgstr "Nejnovější verze:"
 
 #. FormAbout..LabelNewestVersion..Caption
-#: GUI/VCL/guiAboutVCL.dfm:65
-#: GUI/VCL/guiAboutVCL.pas:129
+#: GUI/VCL/guiAboutVCL.dfm:65 GUI/VCL/guiAboutVCL.pas:129
 msgid "not found"
 msgstr "nenalezena"
 
@@ -89,16 +82,13 @@ msgstr "Poskytovatelé médií:"
 #. FormAbout..ListProviders......Caption
 #. FormYTD..Downloads......Caption
 #. Create columns
-#: GUI/VCL/guiAboutVCL.dfm:111
-#: GUI/VCL/guiMainVCL.dfm:171
-#: GUI/WinAPI/guiAboutWINAPI.pas:366
-#: GUI/WinAPI/guiMainWINAPI.pas:376
+#: GUI/VCL/guiAboutVCL.dfm:111 GUI/VCL/guiMainVCL.dfm:171
+#: GUI/WinAPI/guiAboutWINAPI.pas:366 GUI/WinAPI/guiMainWINAPI.pas:376
 msgid "Provider"
 msgstr "Poskytovatel"
 
 #. FormAbout..ListProviders......Caption
-#: GUI/VCL/guiAboutVCL.dfm:115
-#: GUI/WinAPI/guiAboutWINAPI.pas:367
+#: GUI/VCL/guiAboutVCL.dfm:115 GUI/WinAPI/guiAboutWINAPI.pas:367
 msgid "Components"
 msgstr "Komponenty"
 
@@ -109,53 +99,45 @@ msgstr "Vyberte si konvertor"
 
 #. FormSelectConverter..LabelConverter..Caption
 #. FormOptions..PageOptions..TabDownloadOptions..LabelConverter..Caption
-#: GUI/VCL/guiConverterVCL.dfm:24
-#: GUI/VCL/guiOptionsVCL.dfm:137
+#: GUI/VCL/guiConverterVCL.dfm:24 GUI/VCL/guiOptionsVCL.dfm:137
 msgid "&Converter:"
 msgstr "&Konvertor:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiConverterVCL.dfm:60
-#: GUI/VCL/guiOptionsVCL.dfm:331
+#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:331
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiConverterVCL.dfm:64
-#: GUI/VCL/guiOptionsVCL.dfm:336
+#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:336
 msgid "&Cancel"
 msgstr "&Storno"
 
 #. FormYTD..Downloads......Caption
 #. Download list
-#: GUI/VCL/guiMainVCL.dfm:167
-#: GUI/WinAPI/guiMainWINAPI.pas:375
+#: GUI/VCL/guiMainVCL.dfm:167 GUI/WinAPI/guiMainWINAPI.pas:375
 msgid "URL"
 msgstr "URL"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:176
-#: GUI/WinAPI/guiMainWINAPI.pas:377
+#: GUI/VCL/guiMainVCL.dfm:176 GUI/WinAPI/guiMainWINAPI.pas:377
 msgid "Status"
 msgstr "Status"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:180
-#: GUI/WinAPI/guiMainWINAPI.pas:378
+#: GUI/VCL/guiMainVCL.dfm:180 GUI/WinAPI/guiMainWINAPI.pas:378
 msgid "Title"
 msgstr "Název"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:185
-#: GUI/WinAPI/guiMainWINAPI.pas:379
+#: GUI/VCL/guiMainVCL.dfm:185 GUI/WinAPI/guiMainWINAPI.pas:379
 msgid "Size"
 msgstr "Velikost"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:190
-#: GUI/WinAPI/guiMainWINAPI.pas:380
+#: GUI/VCL/guiMainVCL.dfm:190 GUI/WinAPI/guiMainWINAPI.pas:380
 msgid "Progress"
 msgstr "Průběh stahování"
 
@@ -201,29 +183,25 @@ msgstr "Přerušit stahování vybraných URL"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
-#: GUI/VCL/guiMainVCL.dfm:247
-#: GUI/VCL/guiMainVCL.dfm:254
+#: GUI/VCL/guiMainVCL.dfm:247 GUI/VCL/guiMainVCL.dfm:254
 msgid "Add URLs from Clipboard"
 msgstr "Přidat URL ze schránky"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
-#: GUI/VCL/guiMainVCL.dfm:248
-#: GUI/VCL/guiMainVCL.dfm:255
+#: GUI/VCL/guiMainVCL.dfm:248 GUI/VCL/guiMainVCL.dfm:255
 msgid "Add URLs from Clipboard to the list"
 msgstr "Přidat nové URL ze schránky do seznamu"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
-#: GUI/VCL/guiMainVCL.dfm:261
-#: GUI/VCL/guiMainVCL.dfm:268
+#: GUI/VCL/guiMainVCL.dfm:261 GUI/VCL/guiMainVCL.dfm:268
 msgid "Copy URLs to Clipboard"
 msgstr "Zkopírovat URL do schránky"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
-#: GUI/VCL/guiMainVCL.dfm:262
-#: GUI/VCL/guiMainVCL.dfm:269
+#: GUI/VCL/guiMainVCL.dfm:262 GUI/VCL/guiMainVCL.dfm:269
 msgid "Copy URLs from the list to Clipboard"
 msgstr "Zkopírovat URL ze seznamu do schránky"
 
@@ -339,8 +317,7 @@ msgstr "Otevřít aktivní konfigurační soubor v editoru"
 
 #. FormYTD..YTDActions..actOptions..Caption
 #. FormOptions..Caption
-#: GUI/VCL/guiMainVCL.dfm:351
-#: GUI/VCL/guiOptionsVCL.dfm:6
+#: GUI/VCL/guiMainVCL.dfm:351 GUI/VCL/guiOptionsVCL.dfm:6
 msgid "Options"
 msgstr "Nastavení"
 
@@ -364,24 +341,20 @@ msgstr "Otevřít složku"
 #. FormYTD..DownloadsPopup..N2..Caption
 #. FormYTD..DownloadsPopup..N3..Caption
 #. FormYTD..DownloadsPopup..N1..Caption
-#: GUI/VCL/guiMainVCL.dfm:1466
-#: GUI/VCL/guiMainVCL.dfm:1475
-#: GUI/VCL/guiMainVCL.dfm:1493
-#: GUI/VCL/guiMainVCL.dfm:1502
+#: GUI/VCL/guiMainVCL.dfm:1466 GUI/VCL/guiMainVCL.dfm:1475
+#: GUI/VCL/guiMainVCL.dfm:1493 GUI/VCL/guiMainVCL.dfm:1502
 #: GUI/VCL/guiMainVCL.dfm:1508
 msgid "-"
 msgstr "-"
 
 #. FormYTD..OpenHtmlFile..Filter
-#: GUI/VCL/guiMainVCL.dfm:1527
-#: GUI/WinAPI/guiMainWINAPI.pas:680
+#: GUI/VCL/guiMainVCL.dfm:1527 GUI/WinAPI/guiMainWINAPI.pas:680
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
 
 #. FormYTD..OpenUrlList..Filter
 #. FormYTD..SaveUrlList..Filter
-#: GUI/VCL/guiMainVCL.dfm:1533
-#: GUI/VCL/guiMainVCL.dfm:1540
+#: GUI/VCL/guiMainVCL.dfm:1533 GUI/VCL/guiMainVCL.dfm:1540
 #: GUI/WinAPI/guiMainWINAPI.pas:657
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
@@ -392,8 +365,7 @@ msgid "lst"
 msgstr "lst"
 
 #. FormOptions..PageOptions..TabMain..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:51
-#: GUI/WinAPI/guiOptionsWINAPI.pas:128
+#: GUI/VCL/guiOptionsVCL.dfm:51 GUI/WinAPI/guiOptionsWINAPI.pas:128
 msgid "Main settings"
 msgstr "Základní"
 
@@ -418,8 +390,7 @@ msgid "&Monitor clipboard for downloadable URLs"
 msgstr "Sledovat s&chránku na podporovaná URL"
 
 #. FormOptions..PageOptions..TabDownloadOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:114
-#: GUI/WinAPI/guiOptionsWINAPI.pas:129
+#: GUI/VCL/guiOptionsVCL.dfm:114 GUI/WinAPI/guiOptionsWINAPI.pas:129
 msgid "Download settings"
 msgstr "Stahování"
 
@@ -486,8 +457,7 @@ msgid "Store media into su&bdirectories according to their providers"
 msgstr "Ukládat &média do podadresářů podle názvu poskytovatele"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:230
-#: GUI/WinAPI/guiOptionsWINAPI.pas:130
+#: GUI/VCL/guiOptionsVCL.dfm:230 GUI/WinAPI/guiOptionsWINAPI.pas:130
 msgid "Network settings"
 msgstr "Síť"
 
@@ -517,29 +487,25 @@ msgid "U&se proxy server"
 msgstr "Použít prox&y server"
 
 #. FormOptions..PageOptions..TabDownloaderOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:303
-#: GUI/WinAPI/guiOptionsWINAPI.pas:131
+#: GUI/VCL/guiOptionsVCL.dfm:303 GUI/WinAPI/guiOptionsWINAPI.pas:131
 msgid "Downloader settings"
 msgstr "Nastavení stahovačů"
 
 #. FormOptions..ActionList..actDownloadDir..Caption
 #. FormSetup..BtnDestinationDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:340
-#: GUI/VCL/guiSetupVCL.dfm:38
+#: GUI/VCL/guiOptionsVCL.dfm:340 GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr "..."
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
 #. FormSetup..CheckDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:345
-#: GUI/VCL/guiSetupVCL.dfm:48
+#: GUI/VCL/guiOptionsVCL.dfm:345 GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
 msgstr "Vytvořit odkaz na &Ploše"
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
 #. FormSetup..CheckStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:349
-#: GUI/VCL/guiSetupVCL.dfm:59
+#: GUI/VCL/guiOptionsVCL.dfm:349 GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
 msgstr "Vytvořit odkaz ve &Start menu"
 
@@ -627,93 +593,6 @@ msgstr "Maximální &výška videa:"
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:59
 msgid "&Avoid .webm format"
 msgstr "Nestahovat formát .&webm"
-
-#. HTTP socket status: resolving began
-#. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:97
-msgid "Resolving began"
-msgstr "Zahájeno zjišťování adresy"
-
-#. HTTP socket status: resolving ended
-#. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:98
-msgid "Resolving ended"
-msgstr "Dokončeno zjišťování adresy"
-
-#. HTTP socket status: socket created
-#. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:99
-msgid "Socket created"
-msgstr "Vytvořen socket"
-
-#. HTTP socket status: socket closed
-#. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:100
-msgid "Socket closed"
-msgstr "Uzavřen socket"
-
-#. HTTP socket status: bound to IP address and port
-#. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:101
-msgid "Bound to IP/port"
-msgstr "Napojeno na IP/port"
-
-#. HTTP socket status: connected
-#. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:102
-msgid "Connected"
-msgstr "Spojeno"
-
-#. HTTP socket status: can read data
-#. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:103
-msgid "Can read data"
-msgstr "Možno číst data"
-
-#. HTTP socket status: can write data
-#. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:104
-msgid "Can write data"
-msgstr "Možno psát data"
-
-#. HTTP socket status: listening for connections
-#. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:105
-msgid "Listening"
-msgstr "Čeká se na požadavek"
-
-#. HTTP socket status: connection accepted
-#. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:106
-msgid "Accepted connection"
-msgstr "Požadavek přijat"
-
-#. HTTP socket status: data was read
-#. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:107
-msgid "Read data"
-msgstr "Data přečtena"
-
-#. HTTP socket status: data was written
-#. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:108
-msgid "Wrote data"
-msgstr "Data zapsána"
-
-#. HTTP socket status: data is waiting
-#. Programmer's name for it: SOCKSTATUS_WAITING
-#. GUI: Download thread state: Waiting for its turn
-#. Programmer's name for it: THREADSTATE_WAITING
-#: Base/uHttpDownloader.pas:109
-#: GUI/guiConsts.pas:46
-msgid "Waiting"
-msgstr "Čeká se"
-
-#. HTTP socket status: socket error
-#. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:110
-msgid "Socket error"
-msgstr "Chyba socketu"
 
 #. Intentionally no _(...) - this should not be translated
 #: CLI/uYTD.pas:135
@@ -932,8 +811,7 @@ msgstr "  Nazev média: "
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:469
-#: CLI/uYTD.pas:606
+#: CLI/uYTD.pas:469 CLI/uYTD.pas:606
 msgid "    File name: "
 msgstr "Nazev souboru: "
 
@@ -1003,6 +881,92 @@ msgstr "  Novy nazev: "
 #: CLI/uYTD.pas:645
 msgid "Incorrect answer."
 msgstr "Nespravna odpoved."
+
+#. HTTP socket status: resolving began
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
+#: Common/uHttp.pas:47
+msgid "Resolving began"
+msgstr "Zahájeno zjišťování adresy"
+
+#. HTTP socket status: resolving ended
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
+#: Common/uHttp.pas:48
+msgid "Resolving ended"
+msgstr "Dokončeno zjišťování adresy"
+
+#. HTTP socket status: socket created
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
+#: Common/uHttp.pas:49
+msgid "Socket created"
+msgstr "Vytvořen socket"
+
+#. HTTP socket status: socket closed
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
+#: Common/uHttp.pas:50
+msgid "Socket closed"
+msgstr "Uzavřen socket"
+
+#. HTTP socket status: bound to IP address and port
+#. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
+#: Common/uHttp.pas:51
+msgid "Bound to IP/port"
+msgstr "Napojeno na IP/port"
+
+#. HTTP socket status: connected
+#. Programmer's name for it: SOCKSTATUS_CONNECTED
+#: Common/uHttp.pas:52
+msgid "Connected"
+msgstr "Spojeno"
+
+#. HTTP socket status: can read data
+#. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
+#: Common/uHttp.pas:53
+msgid "Can read data"
+msgstr "Možno číst data"
+
+#. HTTP socket status: can write data
+#. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
+#: Common/uHttp.pas:54
+msgid "Can write data"
+msgstr "Možno psát data"
+
+#. HTTP socket status: listening for connections
+#. Programmer's name for it: SOCKSTATUS_LISTENING
+#: Common/uHttp.pas:55
+msgid "Listening"
+msgstr "Čeká se na požadavek"
+
+#. HTTP socket status: connection accepted
+#. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
+#: Common/uHttp.pas:56
+msgid "Accepted connection"
+msgstr "Požadavek přijat"
+
+#. HTTP socket status: data was read
+#. Programmer's name for it: SOCKSTATUS_READ_DATA
+#: Common/uHttp.pas:57
+msgid "Read data"
+msgstr "Data přečtena"
+
+#. HTTP socket status: data was written
+#. Programmer's name for it: SOCKSTATUS_WROTE_DATA
+#: Common/uHttp.pas:58
+msgid "Wrote data"
+msgstr "Data zapsána"
+
+#. HTTP socket status: data is waiting
+#. Programmer's name for it: SOCKSTATUS_WAITING
+#. GUI: Download thread state: Waiting for its turn
+#. Programmer's name for it: THREADSTATE_WAITING
+#: Common/uHttp.pas:59 GUI/guiConsts.pas:46
+msgid "Waiting"
+msgstr "Čeká se"
+
+#. HTTP socket status: socket error
+#. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
+#: Common/uHttp.pas:60
+msgid "Socket error"
+msgstr "Chyba socketu"
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
@@ -1439,9 +1403,7 @@ msgid "Automatically convert with"
 msgstr "Automaticky konvertovat pomocí"
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:87
-#: GUI/guiOptions.pas:144
-#: GUI/guiOptions.pas:146
+#: GUI/guiOptions.pas:87 GUI/guiOptions.pas:144 GUI/guiOptions.pas:146
 msgid ""
 "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
@@ -1522,9 +1484,7 @@ msgstr "Zkonvertovat film do AVI/H264"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #. {$ENDIF}
-#: GUI/guiOptions.pas:120
-#: GUI/guiOptions.pas:153
-#: GUI/guiOptions.pas:155
+#: GUI/guiOptions.pas:120 GUI/guiOptions.pas:153 GUI/guiOptions.pas:155
 msgid ""
 "Error loading configuration file. Error %s:\n"
 "%s\n"
@@ -1536,15 +1496,13 @@ msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:289
-#: GUI/uDownloadList.pas:299
+#: GUI/uDownloadList.pas:289 GUI/uDownloadList.pas:299
 msgid "File already exists."
 msgstr "Soubor už existuje."
 
 #. GUI: Check for a new version wasn't made yet - or failed.
 #. Label "Newest version:"
-#: GUI/VCL/guiAboutVCL.pas:129
-#: GUI/WinAPI/guiAboutWINAPI.pas:223
+#: GUI/VCL/guiAboutVCL.pas:129 GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
 msgstr "zjišťuji..."
 

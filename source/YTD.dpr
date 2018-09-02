@@ -53,7 +53,9 @@ uses
   uLanguages in 'Common\uLanguages.pas',
   // Base objects and units
   uMain in 'Common\uMain.pas',
+  uFlvFile in 'Common\uFlvFile.pas',
   uFunctions in 'Common\uFunctions.pas',
+  uHttp in 'Common\uHttp.pas',
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
   uStringConsts in 'Common\uStringConsts.pas',
@@ -76,6 +78,8 @@ uses
   uRtmpDownloader in 'Base\uRtmpDownloader.pas',
   uRtmpDirectDownloader in 'Base\uRtmpDirectDownloader.pas',
   uPlaylistDownloader in 'Base\uPlaylistDownloader.pas',
+  uHDSDownloader in 'Base\uHDSDownloader.pas',
+  uHDSDirectDownloader in 'Base\uHDSDirectDownloader.pas',
   // Command Line Version
   {$IFDEF CLI}
     uYTD in 'CLI\uYTD.pas',
@@ -184,6 +188,7 @@ uses
   downDUB in 'Downloaders\downDUB.pas',
   downEbaumsWorld in 'Downloaders\downEbaumsWorld.pas',
   downEHow in 'Downloaders\downEHow.pas',
+  downEKucharkaNet in 'Downloaders\downEKucharkaNet.pas',
   downESPN in 'Downloaders\downESPN.pas',
   downEuroGamer in 'Downloaders\downEuroGamer.pas',
   downEVTV1 in 'Downloaders\downEVTV1.pas',
@@ -335,6 +340,7 @@ uses
   downThatVideoSite in 'Downloaders\downThatVideoSite.pas',
   downTodaysBigThing in 'Downloaders\downTodaysBigThing.pas',
   downTontuyau in 'Downloaders\downTontuyau.pas',
+  downTopReceptyCZ in 'Downloaders\downTopReceptyCZ.pas',
   downTotallyCrap in 'Downloaders\downTotallyCrap.pas',
   downTV2Nord in 'Downloaders\downTV2Nord.pas',
   downTV4PlaySE in 'Downloaders\downTV4PlaySE.pas',

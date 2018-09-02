@@ -34,26 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downHasici150;
+unit downTopReceptyCZ;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uPCRE, uXml, uStrings, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader, downEKucharkaNet;
 
 type
-  TDownloader_Hasici150 = class(TMSDownloader)
+  TDownloader_TopReceptyCZ = class(TDownloader_EKucharkaNet)
     private
     protected
-      ConfigRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -66,80 +62,46 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.hasici150.tv/cz/Media-galerie/Video/Kolsovska-stovka-2010_____88/kolsovska-stovka-2010_____358/
+// http://www.toprecepty.cz/recept/18507-bramborak-+-videorecept/
 const
-  URLREGEXP_BEFORE_ID = 'hasici150\.tv/';
+  URLREGEXP_BEFORE_ID = 'toprecepty\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<title>(.*?\|\s*)([^|]*)</title>';
-  REGEXP_EXTRACT_CONFIG = '<iframe\s[^>]*[?&]configxml=(?P<URL>https?://[^&"]+)';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_ID =     '\bvar\s+videoID\s*=\s*"(?P<ID>\d+)"';
 
-{ TDownloader_Hasici150 }
+{ TDownloader_TopReceptyCZ }
 
-class function TDownloader_Hasici150.Provider: string;
-begin
-  Result := 'Hasici150.tv';
-end;
-
-class function TDownloader_Hasici150.UrlRegExp: string;
+class function TDownloader_TopReceptyCZ.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Hasici150.Create(const AMovieID: string);
+constructor TDownloader_TopReceptyCZ.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  ConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG);
+  RegExFreeAndNil(MovieTitleRegExp);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  RegExFreeAndNil(MovieIDRegExp);
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
-destructor TDownloader_Hasici150.Destroy;
+destructor TDownloader_TopReceptyCZ.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(ConfigRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
   inherited;
 end;
 
-function TDownloader_Hasici150.GetMovieInfoUrl: string;
+function TDownloader_TopReceptyCZ.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.hasici150.tv/' + MovieID;
-end;
-
-function TDownloader_Hasici150.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  InfoUrl, Url, Role, Title: string;
-  Info: TXmlDoc;
-  i: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(ConfigRegExp, Page, 'URL', InfoUrl) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, StringReplace(InfoUrl, '.php;params:', '.php?params=', []), Info) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      for i := 0 to Pred(Info.Root.NodeCount) do
-        if Info.Root.Nodes[i].Name = 'media' then
-          if GetXmlAttr(Info.Root.Nodes[i], '', 'src', Url) then
-            if (not GetXmlAttr(Info.Root.Nodes[i], '', 'role', Role)) or (Role <> 'advertisement') then
-              begin
-              if GetXmlAttr(Info.Root.Nodes[i], '', 'title', Title) then
-                SetName(Title);
-              MovieUrl := Url;
-              SetPrepared(True);
-              Result := True;
-              Break;
-              end;
-    finally
-      FreeAndNil(Info);
-      end;
+  Result := 'http://www.toprecepty.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Hasici150);
+  RegisterDownloader(TDownloader_TopReceptyCZ);
 
 end.

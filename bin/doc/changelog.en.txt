@@ -1,11 +1,45 @@
 ______________________________________________________________________________
 
-YTD v1.14                                                    (c) 2009-12 Pepak
+YTD v1.15                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.15:
+
+    * The default version is now Unicode. Its advantage is that it supports
+      national characters of all languages, which makes it easy to download
+      from e.g. czech, russian or japanese servers even in US Windows. The
+      disadvantages are a slightly larger filesize and the fact that this
+      version will not run on Windows older than Windows 2000 (not because of
+      Unicode per se, but because Delphi 2009 dropped support for older
+      Windows). If you still want to use the ANSI version, you can download
+      it from my page and it will then upgrade itself to other ANSI versions.
+      But unless you are still using Windows 98, there is little point in
+      using the ANSI version.
+
+    * New protocol supported: Adobe HDS. It is used by e.g. RuTube.ru. It
+      is based on HTTP(S), over which it downloads multiple separate fragments 
+      of a media file and plays them back separately. YTD combines these 
+      fragments together into one file. For now only a simplified version of
+      the protocol is implemented, but if it proves usable, I may add the
+      unimplemented functions (out-of-order packets, support for transfer
+      resuming, perhaps one day even multiple fragments downloading at the 
+      same time etc.).
+
+      I would like to thank Litew for his invaluable help during betatesting.
+
+    * New providers:
+      - eKucharka.net
+      - TopRecepty.cz
+
+    * Updated providers:
+      - Hasici150.tv
+      - Rutube.ru (HDS stream support)
+
+
 
   v1.14:
 

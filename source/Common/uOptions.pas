@@ -867,7 +867,10 @@ begin
 end;
 
 const
-  NEWEST_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://ytd.pepak.net' {$IFNDEF XXX} + '/?lite=1' {$ENDIF} ;
+  NEWEST_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF}
+    = 'http://ytd.pepak.net/'
+      {$IFNDEF XXX} + 'lite' {$ELSE} {$IFDEF UNICODE} + 'unicode' {$ELSE} + 'ansi' {$ENDIF} {$ENDIF}
+      ;
 
 function TYTDOptions.GetNewestVersion(out Version, Url: string): boolean;
 

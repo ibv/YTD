@@ -852,10 +852,29 @@ begin
   while i < Length(Result) do
     begin
     if Result[i] = '\' then
-      if Result[i+1] = 'u' then
-        begin
-        System.Insert(WideChar(StrToInt('$' + Copy(Result, i+2, 4))), Result, i);
-        System.Delete(Result, i+1, 6);
+      case Result[i+1] of
+        'u':
+          begin
+            System.Insert(WideChar(StrToInt('$' + Copy(Result, i+2, 4))), Result, i);
+            System.Delete(Result, i+1, 6);
+          end;
+        'r':
+          begin
+            Result[i] := #13;
+            System.Delete(Result, i+1, 1);
+          end;
+        'n':
+          begin
+            Result[i] := #10;
+            System.Delete(Result, i+1, 1);
+          end;
+        't':
+          begin
+            Result[i] := #9;
+            System.Delete(Result, i+1, 1);
+          end;
+        else
+          System.Delete(Result, i, 1);
         end;
     Inc(i);
     end;
@@ -1007,14 +1026,17 @@ begin
 end;
 
 function TDownloader.ExtractUrlPath(const Url: string): string;
-var i: integer;
+var
+  Prot, User, Pass, Host, Port, Part, Para: string;
+  i: integer;
 begin
+  ParseUrl(Url, Prot, User, Pass, Host, Port, Part, Para);
   i := Pos('?', Url);
   if i <= 0 then
     Result := Url
   else
     Result := Copy(Url, 1, Pred(i));
-  for i := Length(Result) downto 1 do
+  for i := Length(Result) downto (Length(Prot)+Length(Host)+3) do
     if Result[i] = '/' then
       begin
       Result := Copy(Result, 1, i);

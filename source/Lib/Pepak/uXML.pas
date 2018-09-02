@@ -45,6 +45,8 @@ uses
   NativeXml;
 
 type
+  TXmlString = UTF8String;
+  
   TXmlNode = NativeXml.TXmlNode;
 
   TXmlDoc = class(TNativeXml)
@@ -106,8 +108,8 @@ function XmlNodeByPathAndAttr(Node: TXmlNode; const Path, AttributeName, Attribu
         if AttributeName = '' then
           Result := True
         else
-          if Node.HasAttribute(UTF8String(AttributeName)) then
-            if Node.AttributeByNameWide[UTF8String(AttributeName)] = AttributeValue then
+          if Node.HasAttribute(TXmlString(AttributeName)) then
+            if Node.AttributeByNameWide[TXmlString(AttributeName)] = AttributeValue then
               Result := True;
     end;
 
@@ -147,7 +149,7 @@ begin
           begin
           NodeName := Copy(NodePath, 1, Pred(i));
           System.Delete(NodePath, 1, i);
-          Node := Node.NodeByName(UTF8String(NodeName));
+          Node := Node.NodeByName(TXmlString(NodeName));
           end;
         end;
       end;
@@ -192,7 +194,7 @@ begin
       Result := ExistingNode
     else
       begin
-      NewNode := TXmlNode.CreateName(Result.Document, UTF8String(NodeName));
+      NewNode := TXmlNode.CreateName(Result.Document, TXmlString(NodeName));
       Result.NodeAdd(NewNode);
       Result := NewNode;
       end;
@@ -286,7 +288,7 @@ end;
 
 procedure TXmlDoc.SetIndentation(const Value: string);
 begin
-  IndentString := UTF8String(Value);
+  IndentString := TXmlString(Value);
   XmlFormat := xfReadable;
 end;
 

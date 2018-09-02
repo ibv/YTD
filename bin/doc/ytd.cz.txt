@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.14                                                    (c) 2009-12 Pepak
+YTD v1.15                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -17,17 +17,18 @@ HD video, pokud je k dispozici.
 2. Protokol HTTPS
 3. Protokol RTMP
 4. Protokoly MMS/RTSP
-5. Playlisty
-6. Konverze stáhnutıch souborù
-7. Distribuèní archív
-8. Konfigurace
-9. Syntaxe pøíkazového øádku
-10. Návratové kódy
-11. Lokalizace
-12. Podpora
-13. Kompilace
-14. Napsali o programu
-15. Licence
+5. Protokol HDS
+6. Playlisty
+7. Konverze stáhnutıch souborù
+8. Distribuèní archív
+9. Konfigurace
+10. Syntaxe pøíkazového øádku
+11. Návratové kódy
+12. Lokalizace
+13. Podpora
+14. Kompilace
+15. Napsali o programu
+16. Licence
 
 
 
@@ -102,7 +103,25 @@ YTD pouít nelze.
 
 
 
-5. PLAYLISTY
+5. PROTOKOL HDS
+---------------
+
+Od verze 1.15 je podporován protokol Adobe HDS. Jde o protokol postavenı na
+HTTP, ve kterém je video tvoøeno tzv. manifestem (záhlavím) a potom sekvencí
+mnoha fragmentù FLV souboru, které se stahují samostatnì a které je tøeba
+vhodnì zkombinovat. Implementace protokolu vychází ze skriptu AdobeHDS.php
+(https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php) od autora K-S-V,
+kterı jsem v øadì ohledù upravil.
+
+V základní implementaci (DEFINE SIMPLIFIEDHDSDOWNLOADER) jsem pøijal nìkolik
+zjednodušujících pøedpokladù, které potøebám YTD plnì vyhovují a mìly by bıt
+u drtivé vìtšiny serverù splnìny. Vıhodou je øádovì jednodušší implementace,
+by za cenu moné nefunkènosti u nìkterıch serverù a zejména bez monosti
+navazovat pøerušené spojení (které YTD stejnì nepodporuje).
+
+
+
+6. PLAYLISTY
 ------------
 
 Od verze 0.19 jsou podporovány zdroje, ve kterıch je jeden poøad tvoøen
@@ -112,7 +131,7 @@ které ne - stahují se vdy všechny.
 
 
 
-6. KONVERZE STÁHNUTİCH SOUBORÙ
+7. KONVERZE STÁHNUTİCH SOUBORÙ
 ------------------------------
 
 Od verze 0.50 podporuje YouTube Downloader funkci, která do jisté míry
@@ -196,7 +215,7 @@ vıhodu.
 
 
 
-7. DISTRIBUÈNÍ ARCHÍV
+8. DISTRIBUÈNÍ ARCHÍV
 ---------------------
 
 A do verze 0.86 vèetnì byl YTD distribuován v archívu ZIP s tím, e si ho
@@ -241,7 +260,7 @@ distribuèního modelu a dokonce k nim pøidat:
 
 
 
-8. KONFIGURACE
+9. KONFIGURACE
 --------------
 
 Od verze 0.50 pouívá YouTube Downloader pro svoji konfiguraci XML soubor
@@ -621,8 +640,8 @@ a "0" (ne).
 
 
 
-9. SYNTAXE PØÍKAZOVÉHO ØÁDKU
-----------------------------
+10. SYNTAXE PØÍKAZOVÉHO ØÁDKU
+-----------------------------
 
   ytd.exe <param> [<param>] [<param>] ...
 
@@ -679,7 +698,7 @@ a "0" (ne).
 
 
 
-10. NÁVRATOVÉ KÓDY
+11. NÁVRATOVÉ KÓDY
 ------------------
 
 Verze pro pøíkazovı øádek podporuje návratové kódy (errorlevel). Moné hodnoty
@@ -704,7 +723,7 @@ jsou:
 
 
 
-11. LOKALIZACE
+12. LOKALIZACE
 --------------
 
 Pro lokalizaci pouívá YouTube Downloader GNU GetText. Pro pøípadné zájemce
@@ -736,7 +755,7 @@ i "default.po"), rád ho zaøadím do budoucích verzí YouTube Downloaderu.
 
 
 
-12. PODPORA
+13. PODPORA
 -----------
 
 Podporu naleznete na následujících stránkách:
@@ -750,7 +769,7 @@ Podporu naleznete na následujících stránkách:
 
 
 
-13. KOMPILACE
+14. KOMPILACE
 -------------
 
 Na domácí stránce programu naleznete i jeho zdrojovı kód, kterı si mùete sami
@@ -761,7 +780,10 @@ ve standardní instalaci pøíslušného programovacího jazyka.
 Podporovány jsou následující kompilátory:
 
 - Delphi 5.0
+- Delphi 7.0
+- Delphi 2007
 - Delphi 2009
+- Delphi XE2
 - FreePascal
 
 Program by mìl jít s minimálními úpravami zkompilovat i na ostatních verzích
@@ -776,19 +798,19 @@ následující parametry:
   -? ............ Zobrazit nápovìdu.
   -h ............ Zobrazit nápovìdu.
 
-  -delphi ....... Pro kompilaci pouít Delphi (obecnou verzi). Kompiluje se 
+  delphi ........ Pro kompilaci pouít Delphi (obecnou verzi). Kompiluje se 
                   pøíkazem DCC32, kterı musí bıt v cestì (PATH).
-  -fpc .......... Pro kompilaci pouít FreePascal. Kompiluje se pøíkazem FPC,
+  fpc ........... Pro kompilaci pouít FreePascal. Kompiluje se pøíkazem FPC,
                   kterı musí bıt v cestì (PATH).
 
-  -cli .......... Do programu bude zahrnuta command-line verze.
-  -nocli ........ Do programu nebude zahrnuta command-line verze.
-  -gui .......... Do programu bude zahrnuta grafická verze.
-  -nogui ........ Do programu nebude zahrnuta grafická verze.
-  -xxx .......... Do programu bude zahrnuta podpora pro porno providery.
-  -noxxx ........ Do programu nebude zahrnuta podpora pro porno providery.
-  -setup ........ Do programu bude zahrnut kód pro instalace a upgrade.
-  -nosetup ...... Do programu nebude zahrnut kód pro instalace a upgrade.
+  cli ........... Do programu bude zahrnuta command-line verze.
+  nocli ......... Do programu nebude zahrnuta command-line verze.
+  gui ........... Do programu bude zahrnuta grafická verze.
+  nogui ......... Do programu nebude zahrnuta grafická verze.
+  xxx ........... Do programu bude zahrnuta podpora pro porno providery.
+  noxxx ......... Do programu nebude zahrnuta podpora pro porno providery.
+  setup ......... Do programu bude zahrnut kód pro instalace a upgrade.
+  nosetup ....... Do programu nebude zahrnut kód pro instalace a upgrade.
 
   (a nìkolik dalších parametrù, které jsou nedokumentované a nedoporuèené)
 
@@ -800,15 +822,16 @@ nastavení adresáøù v Project Options; Search path se liší v nìkolika polokách:
   diskusí na webu i Delphi 6.0) a NESMÍ bıt vùbec uvedena ve vyšších verzích.
 - Cesta ke knihovnì DxGetText se liší podle kompilátoru:
   - Delphi 5.0 - "lib\dxgettext\delphi5"
-  - Delphi 2009 - "lib\dxgettext\delphi2009"
+  - Delphi 2009 a vyšší - "lib\dxgettext\delphi2009"
   - FreePascal - "lib\dxgettext\fpc"
-  - ostatní - buï "lib\dxgettext" (verze mezi 5.0 a 2009) nebo jako Delphi 2009
+  - ostatní - "lib\dxgettext"
 
-Pro FreePascal není podporováno grafické prostøedí (DEFINE NO_GUI v ytd.inc).
+Pro FreePascal je grafické prostøedí podporováno pouze pøi pøímém vyuití
+WinAPI (DEFINE GUI_WINAPI v ytd.inc).
 
 
 
-14. NAPSALI O PROGRAMU
+54. NAPSALI O PROGRAMU
 ----------------------
 
 http://blog.zarohem.cz/clanek.asp?cislo=1605
@@ -821,7 +844,7 @@ http://magazin.stahuj.centrum.cz/youtube-downloader-stahujte-videa-i-z-ceskych-w
 
 
 
-15. LICENCE
+16. LICENCE
 -----------
 
 YouTube Downloader je publikován pod tzv. novou BSD licencí. Její text 
@@ -834,6 +857,12 @@ vlastními licencemi. Z tohoto dùvodu nelze pouít licenci GNU GPL (ádnou
 verzi) ani na YouTube Downloader, ani na odvozené programy!
 
 Knihovny a jejich licence:
+
+- AdobeHDS
+  - autor: K-S-V
+  - zdroj: https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php
+  - licence: neznámá open-source
+  - popis: Stahování Adobe HDS streamù.
 
 - DxGetText
   - autoøi: Lars B. Dybdahl, Peter Thörnqvist
@@ -905,6 +934,7 @@ Knihovny a jejich licence:
 
 Jazykové verze:
 
+- Ruština: Litew (litew9@gmail.com).
 - Slovenština: Vladimír Kubala (kubalav@gmail.com).
 
 Grafika:

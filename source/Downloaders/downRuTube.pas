@@ -64,7 +64,7 @@ implementation
 
 uses
   uStringConsts,
-  uHttpDirectDownloader,
+  uHDSDirectDownloader,
   uRtmpDownloader,
   uDownloadClassifier,
   uMessages;
@@ -75,11 +75,11 @@ uses
 // http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
 // http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
 
-// HDS videos (not yet supported):
+// HDS videos:
 // http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
 // http://rutube.ru/video/f364037be6e405ee18783cceebf25d61/
 
-// RTMPS videos:
+// Encrypted RTMP videos (not supported):
 // http://rutube.ru/video/958d1a1eeb77c811a166e480dc98c6ec/
 // http://rutube.ru/video/95375a912bf7a48b74de49688627eef2/
 const
@@ -92,7 +92,7 @@ const
   REGEXP_MOVIE_INFO =   '<param\s+name=\\"movie\\"\s+value=\\"(?P<URL>https?://.+?)\\"';
 
 type
-  TDownloader_RuTube_HTTP = class(THttpDirectDownloader);
+  TDownloader_RuTube_HDS = class(THDSDirectDownloader);
 
   TDownloader_RuTube_RTMP = class(TRTMPDownloader)
     private
@@ -142,14 +142,13 @@ begin
 end;
 
 function TDownloader_RuTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-type
-  TUrlType = (utNone, utHttp, utRTMP);
 var
-  Info, Url, Response, ResponseStr, Server: string;
+  Info, Url, InfoUrl, Response, ResponseStr, Server: string;
+  Prot, User, Pass, Host, Port, Path, Para: string;
   BestStream, Stream, Bitrate: string;
   i, BestQuality, Quality: integer;
+  BestStreamIsHDSManifest, IsHDSManifest: boolean;
   Xml: TXmlDoc;
-  UrlType, BestUrlType: TUrlType;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -161,8 +160,11 @@ begin
     begin
     Xml := nil;
     Url := Url + '.f4m?referer=' + UrlEncode(GetMovieInfoUrl);
-    if not DownloadXml(Http, StringReplace(Url, 'http://video.', 'http://bl.', []), Xml) then
-      if not DownloadXml(Http, Url, Xml) then
+    InfoUrl := StringReplace(Url, 'http://video.', 'http://bl.', []);
+    if not DownloadXml(Http, InfoUrl, Xml) then
+      if DownloadXml(Http, Url, Xml) then
+        InfoUrl := Url
+      else
         FreeAndNil(Xml);
     if Xml = nil then
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
@@ -182,27 +184,26 @@ begin
         else
           begin
           BestStream := '';
+          BestStreamIsHDSManifest := False;
           BestQuality := -1;
-          BestUrlType := utNone;
           for i := 0 to Pred(Xml.Root.NodeCount) do
             if Xml.Root.Nodes[i].Name = 'media' then
               begin
-              UrlType := utNone;
-              if GetXmlAttr(Xml.Root.Nodes[i], '','href', Stream) then
-                UrlType := utHTTP
-              else if GetXmlAttr(Xml.Root.Nodes[i], '','url', Stream) then
-                UrlType := utRTMP;
-              if UrlType <> utNone then
+              if not GetXmlAttr(Xml.Root.Nodes[i], '','href', Stream) then
+                if not GetXmlAttr(Xml.Root.Nodes[i], '','url', Stream) then
+                  Stream := '';
+              if Stream <> '' then
                 begin
                 if GetXmlAttr(Xml.Root.Nodes[i], '', 'bitrate', Bitrate) then
                   Quality := StrToIntDef(Bitrate, 0)
                 else
                   Quality := 0;
+                IsHDSManifest := Xml.Root.Nodes[i].HasAttribute('bootstrapInfoId');
                 if Quality > BestQuality then
                   begin
                   BestStream := Stream;
                   BestQuality := Quality;
-                  BestUrlType := UrlType;
+                  BestStreamIsHDSManifest := IsHDSManifest;
                   end;
                 end;
               end;
@@ -211,17 +212,15 @@ begin
           else
             begin
             MovieUrl := Server + BestStream;
-            case BestUrlType of
-              utHttp:
-                begin
-                SetPrepared(True);
-                Result := CreateNestedDownloaderFromDownloader(TDownloader_RuTube_HTTP.CreateWithName(MovieUrl, Name, Http.Cookies));
-                end;
-              utRTMP:
-                begin
-                SetPrepared(True);
-                Result := CreateNestedDownloaderFromDownloader(TDownloader_RuTube_RTMP.CreateWithParams(Name, Server, BestStream, GetMovieInfoUrl));
-                end;
+            SetPrepared(True);
+            ParseUrl(Server, Prot, User, Pass, Host, Port, Path, Para);
+            if AnsiCompareText(Copy(Prot, 1, 4), 'rtmp') = 0 then
+              Result := CreateNestedDownloaderFromDownloader(TDownloader_RuTube_RTMP.CreateWithParams(Name, Server, BestStream, GetMovieInfoUrl))
+            else
+              begin
+              if BestStreamIsHDSManifest then
+                MovieUrl := InfoUrl;
+              Result := CreateNestedDownloaderFromDownloader(TDownloader_RuTube_HDS.CreateWithName(MovieUrl, Name, Http.Cookies));
               end;
             end;
           end;

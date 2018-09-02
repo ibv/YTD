@@ -85,6 +85,25 @@
   // Support for running the GUI version as single instance. A new instance can
   // be spawned by using the --newinstance argument.
 
+{$DEFINE SIMPLIFIEDHDSDOWNLOADER}
+  // Use a simplified HDS downloader. It's the only one that works now :-)
+  // It's heavily based on K-S-V's AdobeHDS.php
+  // https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php
+  // The most significant deficiencies are:
+  // - Data packets are saved as they come. This requires that the Fragments are
+  //   stored in the order of their playback and that they will have correct
+  //   timestamps.
+  // - No support for Live streaming. Since YTD is not meant to download live
+  //   streams, it should be no big deal. Support for Live streaming requires
+  //   the ability to refresh the manifest and continue with additional fragments.
+  //   Also, it needs to deal with downloads being slower than the server's
+  //   sending window.
+  // - Resuming download requires the ability to parse the FLV file and match
+  //   the latest timestamp in the file with an appropriate timestamp in the
+  //   fragment list, deleting a part of the FLV file and starting download
+  //   from a particular fragment.
+  // - Multiple fragments downloaded at the same time. This is not planned.
+
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
 

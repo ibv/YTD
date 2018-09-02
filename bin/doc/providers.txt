@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.14                                                    (c) 2009-12 Pepak
+YTD v1.15                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -89,6 +89,7 @@ DUB.cz              | HTTP     |       | http://www.dub.cz/clanek.php?id=tv-1010
                     |          |       | http://www.dub.cz/cs/koncert-spolecna-vec-2009-mlada-boleslav.php
 EbaumsWorld.com     | HTTP     |       | http://www.ebaumsworld.com/video/watch/80973186/
 eHow.com            | HTTP     |       | http://www.ehow.com/video_4871930_clean-computer-monitor-glass.html
+eKucharka.net       | HTTP     |       | http://ekucharka.net/jablka-v-zupanu
 ESPN.go.com         | HTTP     |       | http://espn.go.com/video/clip?id=5163631
 EuroGamer.cz        | HTTP     |       | http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
 EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnum=15099&aid=
@@ -224,10 +225,11 @@ RTA.cz              | MS       |       | http://www.rta.cz/?article=140331
                     |          |       | http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 Rtl.nl              | MS       |       | http://www.rtl.nl/xl/#/u/e6820785-1c71-381e-a3fa-37c6acc343b9/
                     |          |       | http://www.rtl.nl/system/s4m/xldata/uuid/e6820785-1c71-381e-a3fa-37c6acc343b9.xml
-RuTube.ru           | HTTP     |       | http://rutube.ru/video/54477e8b005020d309ef371dff690eb3/
+RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d309ef371dff690eb3/
                     |          |       | http://bl.rutube.ru/c327d57926a628644fad3bc36d81ad08
                     |          |       | http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
                     |          |       | http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
+                    | HDS      |       | http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
 Sefka.cz            | HTTP     |       | http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
 Sefka.sk            | HTTP     |       | http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
 Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx
@@ -263,6 +265,7 @@ ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/peng
 TN.Nova.cz          | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
+TopRecepty.cz       | HTTP     |       | http://www.toprecepty.cz/recept/18507-bramborak-+-videorecept/
 TotallyCrap.com     | RTMP     |       | http://www.totallycrap.com/videos/videos_man_tries_to_commit_suicide_by_laying_under_a_truck/
 TV2Nord.dk          | RTMP     |       | http://www.tv2nord.dk/arkiv/2011/11/10?video_id=30106&autoplay=1
 TV4Play.se          | HTTP     |       | http://www.tv4play.se/sport/alpint?title=inga_svenska_skidskyttemedaljer&videoid=1295009

@@ -1,11 +1,44 @@
 ______________________________________________________________________________
 
-YTD v1.14                                                    (c) 2009-12 Pepak
+YTD v1.15                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.15:
+
+    * Výchozí verze je nyní Unicode. Výhodou je, že podporuje všechny svìtové
+      jazyky, tzn. není problém stahovat z ruských nebo japonských serverù
+      s pùvodními názvy souborù. Nevýhodou je, že Unicode verze nefunguje s
+      Windows 98 (ani ne tak kvùli Unicode jako takovému, jako kvùli tomu, že
+      Delphi 2009 prostì už podporu pro Windows øady 9x nemají) a je o nìco
+      delší. Pokud chcete stále používat ANSI verzi, mùžete si ji stáhnout z
+      mých stránek a ta se nadále bude aktualizovat opìt na ANSI verze. Ale
+      pokud nepoužíváte Windows 98, tak podle mì není dùvod se k ANSI verzi
+      vracet.
+
+    * Nový streamovací protokol: Adobe HDS. Používá ho napøíklad RuTube.ru
+      a vyzvaèuje se tím, že se stream skládá ze spousty samostatnì 
+      stahovaných souborù, které je následnì tøeba zkombinovat. Zatím je 
+      implementována jen znaènì zjednodušená verze. Pokud se osvìdèí, mùže
+      být pøípadnì doplnìna o zatím neøešené funkce (podpora packetù mimo
+      poøadí, nìkdy možná i navazování spadlého spojení nebo download víc
+      fragmentù souèasnì).
+
+      Tímto bych chtìl podìkovat uživateli Litew za jeho neocenitelnou pomoc
+      pøi betatestování protokolu.
+
+    * Noví poskytovatelé:
+      - eKucharka.net
+      - TopRecepty.cz
+
+    * Aktualizovaní poskytovatelé:
+      - Hasici150.tv
+      - Rutube.ru (podpora pro HDS streamy)
+
+
 
   v1.14:
 

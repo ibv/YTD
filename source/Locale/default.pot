@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-08-05 05:18\n"
-"PO-Revision-Date: 2012-08-05 05:18\n"
+"Project-Id-Version: YTD 1.15\n"
+"POT-Creation-Date: 2012-08-19 15:51\n"
+"PO-Revision-Date: 2012-08-19 15:51\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -631,93 +631,6 @@ msgstr ""
 msgid "&Avoid .webm format"
 msgstr ""
 
-#. HTTP socket status: resolving began
-#. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:97
-msgid "Resolving began"
-msgstr ""
-
-#. HTTP socket status: resolving ended
-#. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:98
-msgid "Resolving ended"
-msgstr ""
-
-#. HTTP socket status: socket created
-#. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:99
-msgid "Socket created"
-msgstr ""
-
-#. HTTP socket status: socket closed
-#. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:100
-msgid "Socket closed"
-msgstr ""
-
-#. HTTP socket status: bound to IP address and port
-#. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:101
-msgid "Bound to IP/port"
-msgstr ""
-
-#. HTTP socket status: connected
-#. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:102
-msgid "Connected"
-msgstr ""
-
-#. HTTP socket status: can read data
-#. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:103
-msgid "Can read data"
-msgstr ""
-
-#. HTTP socket status: can write data
-#. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:104
-msgid "Can write data"
-msgstr ""
-
-#. HTTP socket status: listening for connections
-#. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:105
-msgid "Listening"
-msgstr ""
-
-#. HTTP socket status: connection accepted
-#. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:106
-msgid "Accepted connection"
-msgstr ""
-
-#. HTTP socket status: data was read
-#. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:107
-msgid "Read data"
-msgstr ""
-
-#. HTTP socket status: data was written
-#. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:108
-msgid "Wrote data"
-msgstr ""
-
-#. HTTP socket status: data is waiting
-#. Programmer's name for it: SOCKSTATUS_WAITING
-#: Base/uHttpDownloader.pas:109
-#. GUI: Download thread state: Waiting for its turn
-#. Programmer's name for it: THREADSTATE_WAITING
-#: GUI/guiConsts.pas:46
-msgid "Waiting"
-msgstr ""
-
-#. HTTP socket status: socket error
-#. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:110
-msgid "Socket error"
-msgstr ""
-
 #. Intentionally no _(...) - this should not be translated
 #: CLI/uYTD.pas:135
 msgid "Command-line version options:"
@@ -1019,6 +932,93 @@ msgstr ""
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
 #: CLI/uYTD.pas:645
 msgid "Incorrect answer."
+msgstr ""
+
+#. HTTP socket status: resolving began
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
+#: Common/uHttp.pas:47
+msgid "Resolving began"
+msgstr ""
+
+#. HTTP socket status: resolving ended
+#. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
+#: Common/uHttp.pas:48
+msgid "Resolving ended"
+msgstr ""
+
+#. HTTP socket status: socket created
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
+#: Common/uHttp.pas:49
+msgid "Socket created"
+msgstr ""
+
+#. HTTP socket status: socket closed
+#. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
+#: Common/uHttp.pas:50
+msgid "Socket closed"
+msgstr ""
+
+#. HTTP socket status: bound to IP address and port
+#. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
+#: Common/uHttp.pas:51
+msgid "Bound to IP/port"
+msgstr ""
+
+#. HTTP socket status: connected
+#. Programmer's name for it: SOCKSTATUS_CONNECTED
+#: Common/uHttp.pas:52
+msgid "Connected"
+msgstr ""
+
+#. HTTP socket status: can read data
+#. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
+#: Common/uHttp.pas:53
+msgid "Can read data"
+msgstr ""
+
+#. HTTP socket status: can write data
+#. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
+#: Common/uHttp.pas:54
+msgid "Can write data"
+msgstr ""
+
+#. HTTP socket status: listening for connections
+#. Programmer's name for it: SOCKSTATUS_LISTENING
+#: Common/uHttp.pas:55
+msgid "Listening"
+msgstr ""
+
+#. HTTP socket status: connection accepted
+#. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
+#: Common/uHttp.pas:56
+msgid "Accepted connection"
+msgstr ""
+
+#. HTTP socket status: data was read
+#. Programmer's name for it: SOCKSTATUS_READ_DATA
+#: Common/uHttp.pas:57
+msgid "Read data"
+msgstr ""
+
+#. HTTP socket status: data was written
+#. Programmer's name for it: SOCKSTATUS_WROTE_DATA
+#: Common/uHttp.pas:58
+msgid "Wrote data"
+msgstr ""
+
+#. HTTP socket status: data is waiting
+#. Programmer's name for it: SOCKSTATUS_WAITING
+#: Common/uHttp.pas:59
+#. GUI: Download thread state: Waiting for its turn
+#. Programmer's name for it: THREADSTATE_WAITING
+#: GUI/guiConsts.pas:46
+msgid "Waiting"
+msgstr ""
+
+#. HTTP socket status: socket error
+#. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
+#: Common/uHttp.pas:60
+msgid "Socket error"
 msgstr ""
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message

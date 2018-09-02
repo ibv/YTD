@@ -49,15 +49,19 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://rutube.ru/video/95375a912bf7a48b74de49688627eef2/
+RunParams=-v
 HostApplication=
+[Language]
+ActiveLang=
+ProjectLang=$00000405
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
 MinorVer=7
 Release=0
-Build=873
+Build=883
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +72,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.7.0.873
+FileVersion=1.7.0.883
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
@@ -77,9 +81,10 @@ ProductName=YTD
 ProductVersion=1.7.0.776
 Comments=http://www.pepak.net/ytd
 [HistoryLists\hlConditionals]
-Count=2
+Count=3
 Item0=PEPAK;PEPAK_YTD;XXX;
 Item1=PEPAK;PEPAK_YTD;XXX;DEBUG
+Item2=PEPAK;PEPAK_YTD;XXX;DEBUG;
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
@@ -93,7 +98,7 @@ Item0=Units
 Count=1
 Item0=..\Bin
 [Exception Log]
-EurekaLog Version=6101
+EurekaLog Version=6104
 Activate=0
 Activate Handle=1
 Save Log File=1
