@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downGameAnyone;
+unit downAcademicEarth;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,14 +42,15 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_GameAnyone = class(TNestedDownloader)
+  TDownloader_AcademicEarth = class(TNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function CreateNestedDownloaderFromID(const MovieID: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,77 +65,55 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.gameanyone.com/video/88319
+// http://academicearth.org/lectures/measurements-space-and-time
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*gameanyone\.com/video/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'academicearth\.org/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\s+style="font-weight:bold;padding-left:25px;width:910px;text-align:left;font-size:15px;padding-bottom:3px;float:left;">\s*(?P<TITLE>.*?)\s*</div>';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H1;
+  REGEXP_MOVIE_ID = '\.ytID\s*=\s*"(?P<ID>.+?)"';
 
-{ TDownloader_GameAnyone }
+{ TDownloader_AcademicEarth }
 
-class function TDownloader_GameAnyone.Provider: string;
+class function TDownloader_AcademicEarth.Provider: string;
 begin
-  Result := 'GameAnyone.com';
+  Result := 'AcademicEarth.org';
 end;
 
-class function TDownloader_GameAnyone.UrlRegExp: string;
+class function TDownloader_AcademicEarth.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_GameAnyone.Create(const AMovieID: string);
+constructor TDownloader_AcademicEarth.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  inherited;
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  NestedIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
-destructor TDownloader_GameAnyone.Destroy;
+destructor TDownloader_AcademicEarth.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(NestedIDRegExp);
   inherited;
 end;
 
-function TDownloader_GameAnyone.GetMovieInfoUrl: string;
+function TDownloader_AcademicEarth.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.gameanyone.com/video/' + MovieID;
+  Result := 'http://academicearth.org/' + MovieID;
 end;
 
-function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Tracklist: TXmlNode;
-    ID, Url: string;
-    i: integer;
+function TDownloader_AcademicEarth.CreateNestedDownloaderFromID(const MovieID: string): boolean;
 begin
-  Result := False;
-  if not DownloadXml(Http, 'http://www.gameanyone.com/pl.php?id=' + MovieID + '&l=1' + MovieID, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
-      if XmlNodeByPath(Xml, 'tracklist', Tracklist) then
-        for i := 0 to Pred(Tracklist.NodeCount) do
-          if Tracklist.Nodes[i].Name = 'track' then
-            if GetXmlVar(Tracklist.Nodes[i], 'jwplayer:mediaid', ID) then
-              if ID = MovieID then
-                begin
-                if GetXmlVar(Tracklist.Nodes[i], 'location', Url) then
-                  if CreateNestedDownloaderFromURL(Url) then
-                    begin
-                    SetPrepared(True);
-                    Result := True;
-                    end;
-                Break;
-                end;
-    finally
-      Xml.Free;
-      end;
+  Result := CreateNestedDownloaderFromDownloader(TDownloader_YouTube.Create(MovieID));
 end;
 
 initialization
-  RegisterDownloader(TDownloader_GameAnyone);
+  RegisterDownloader(TDownloader_AcademicEarth);
 
 end.
+

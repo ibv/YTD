@@ -79,6 +79,7 @@ type
     private
     protected
       MovieVariablesRegExp: TRegExp;
+      MediaDataRegExp: TRegExp;
       LowQuality: boolean;
       Secret: string;
     protected
@@ -137,9 +138,12 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
+  REGEXP_RTMP_MOVIE_TITLE = REGEXP_TITLE_H1_CLASS;
+  REGEXP_RTMP_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
+  REGEXP_RTMP_MEDIADATA = '\bmediadata\s*\(\s*[0-9]+\s*,\s*[0-9]+\s*,\s*(?P<ID>[0-9]+)';
+  REGEXP_MS_TITLE = REGEXP_MOVIE_TITLE;
   REGEXP_MS_INFO {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '<object\s[^>]*\btype="application/x-silverlight-2"(?:(?!</object\b).)*?<param\s+name=''initparams''\s+value=''(?P<INFO>identifier=.+?)''';
   REGEXP_MS_INFO_NAME {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'INFO';
-  REGEXP_RTMP_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
   REGEXP_MS_VARIABLES = '\s*(?P<VARNAME>[^=&]+)=(?P<VARVALUE>[^,]*)';
 
 const
@@ -229,8 +233,9 @@ constructor TDownloader_Nova_RTMP.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_RTMP_MOVIE_TITLE, ['original_title']));
   MovieVariablesRegExp := RegExCreate(REGEXP_RTMP_VARIABLES);
+  MediaDataRegExp := RegExCreate(REGEXP_RTMP_MEDIADATA);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
   Secret := OPTION_NOVA_SECRET_DEFAULT;
 end;
@@ -239,6 +244,7 @@ destructor TDownloader_Nova_RTMP.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieVariablesRegExp);
+  RegExFreeAndNil(MediaDataRegExp);
   inherited;
 end;
 
@@ -260,6 +266,8 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   GetRegExpVarPairs(MovieVariablesRegExp, Page, ['media_id'], [@Media_ID]);
+  if Media_ID = '' then
+    GetRegExpVar(MediaDataRegExp, Page, 'ID', Media_ID);
   if Media_ID = '' then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['media_id']))
   else if Secret = '' then
@@ -323,7 +331,7 @@ constructor TDownloader_Nova_MS.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieTitleRegExp := RegExCreate(REGEXP_MS_TITLE);
   SilverlightParamsRegExp := RegExCreate(REGEXP_MS_INFO);
   SilverlightVarsRegExp := RegExCreate(REGEXP_MS_VARIABLES);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;

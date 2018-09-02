@@ -57,7 +57,8 @@ type
       MovieUrlRegExp: TRegExp;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
-      property MovieUrl: string read fMovieUrl write fMovieUrl;
+      procedure SetMovieUrl(const Value: string); virtual;
+      property MovieUrl: string read fMovieUrl write SetMovieUrl;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
     protected
@@ -165,6 +166,13 @@ begin
       FreeAndNil(Xml);
       end;
     end;
+end;
+
+procedure TCommonDownloader.SetMovieUrl(const Value: string);
+begin
+  fMovieUrl := Value;
+  if (Value <> '') and (UnpreparedName = '') then
+    SetName(ExtractUrlFileName(MovieUrl));
 end;
 
 {$IFDEF SUBTITLES}

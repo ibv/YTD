@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downGameAnyone;
+unit downTVVysocina;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,11 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uMSDownloader;
 
 type
-  TDownloader_GameAnyone = class(TNestedDownloader)
+  TDownloader_TVVysocina = class(TMSDownloader)
     private
+    protected
+      MoviePathRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -55,6 +57,9 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      {$IFDEF DIRTYHACKS}
+      function Download: boolean; override;
+      {$ENDIF}
     end;
 
 implementation
@@ -64,77 +69,98 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.gameanyone.com/video/88319
+// http://www.tv-vysocina.cz/index.php?page=2&datum=2011-12-16%2018:10:00&vselect1=4927&jednotlive=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*gameanyone\.com/video/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'tv-vysocina\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\s+style="font-weight:bold;padding-left:25px;width:910px;text-align:left;font-size:15px;padding-bottom:3px;float:left;">\s*(?P<TITLE>.*?)\s*</div>';
+  REGEXP_MOVIE_PATH = '<embed\b[^>]*\s+src="(?P<PATH>.+?\.asx)"\s+name="MediaPlayer"';
 
-{ TDownloader_GameAnyone }
+const
+  URL_ROOT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.tv-vysocina.cz/';
 
-class function TDownloader_GameAnyone.Provider: string;
+{ TDownloader_TVVysocina }
+
+class function TDownloader_TVVysocina.Provider: string;
 begin
-  Result := 'GameAnyone.com';
+  Result := 'TV-Vysocina.cz';
 end;
 
-class function TDownloader_GameAnyone.UrlRegExp: string;
+class function TDownloader_TVVysocina.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_GameAnyone.Create(const AMovieID: string);
+constructor TDownloader_TVVysocina.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  inherited;
+  InfoPageEncoding := peUtf8;
+  MoviePathRegExp := RegExCreate(REGEXP_MOVIE_PATH);
 end;
 
-destructor TDownloader_GameAnyone.Destroy;
+destructor TDownloader_TVVysocina.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MoviePathRegExp);
   inherited;
 end;
 
-function TDownloader_GameAnyone.GetMovieInfoUrl: string;
+function TDownloader_TVVysocina.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.gameanyone.com/video/' + MovieID;
+  Result := URL_ROOT + MovieID;
 end;
 
-function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Tracklist: TXmlNode;
-    ID, Url: string;
-    i: integer;
+function TDownloader_TVVysocina.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Path: string;
 begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not DownloadXml(Http, 'http://www.gameanyone.com/pl.php?id=' + MovieID + '&l=1' + MovieID, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  if not GetRegExpVar(MoviePathRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
-    try
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
-      if XmlNodeByPath(Xml, 'tracklist', Tracklist) then
-        for i := 0 to Pred(Tracklist.NodeCount) do
-          if Tracklist.Nodes[i].Name = 'track' then
-            if GetXmlVar(Tracklist.Nodes[i], 'jwplayer:mediaid', ID) then
-              if ID = MovieID then
-                begin
-                if GetXmlVar(Tracklist.Nodes[i], 'location', Url) then
-                  if CreateNestedDownloaderFromURL(Url) then
-                    begin
-                    SetPrepared(True);
-                    Result := True;
-                    end;
-                Break;
-                end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    MovieUrl := URL_ROOT + Path;
+    SetName(ChangeFileExt(ExtractUrlFileName(MovieUrl), ''));
+    SetPrepared(True);
+    Result := True;
+    Exit;
+    end;
 end;
+
+{$IFDEF DIRTYHACKS}
+function TDownloader_TVVysocina.Download: boolean;
+var
+  Http: THttpSend;
+  InfoXml: TXmlDoc;
+  Href: string;
+begin
+  Result := inherited Download;
+  if not Result then
+    begin
+    Http := CreateHttp;
+    try
+      if DownloadXml(Http, MovieUrl, InfoXml) then
+        try
+          if GetXmlAttr(InfoXml, 'ENTRY/REF', 'HREF', Href) then
+            if Href <> '' then
+              if Href[1] = '.' then
+                begin
+                MovieUrl := ExtractUrlPath(MovieUrl) + Href;
+                Result := inherited Download;
+                end;
+        finally
+          FreeAndNil(InfoXml);
+          end;
+    finally
+      FreeAndNil(Http);
+      end;
+    end;
+end;
+{$ENDIF}
 
 initialization
-  RegisterDownloader(TDownloader_GameAnyone);
+  RegisterDownloader(TDownloader_TVVysocina);
 
 end.

@@ -70,7 +70,7 @@ type
 implementation
 
 uses
-  uMessages;
+  uFiles, uMessages;
 
 procedure MsdlDownloadProgressCallback(Tag: integer; DownloadedSize, TotalSize: integer; var DoAbort: integer); cdecl;
 begin
@@ -100,7 +100,7 @@ begin
       s := Format('%s -%s', [s, MsdlOptions[i].ShortOption])
     else
       s := Format('%s -%s "%s"', [s, MsdlOptions[i].ShortOption, MsdlOptions[i].Argument]);
-  Result := Format('msdl %s -o "%s"', [s, FileName]);
+  Result := Format('msdl %s -o "%s" "%s"', [s, FileName, MovieUrl]);
 end;
 
 procedure TMSDownloader.SetProxyUrl;
@@ -115,7 +115,7 @@ begin
         ProxyString := Options.ProxyUser + ':' + Options.ProxyPassword + '@' + ProxyString
       else
         ProxyString := Options.ProxyUser + '@' + ProxyString;
-    AddMsdlOption('y', ProxyString); // Note: MSDL has no option 'y', it's an extra option of MSDL_DLL
+    SetMsdlOption('y', ProxyString); // Note: MSDL has no option 'y', it's an extra option of MSDL_DLL
     end;
 end;
 
@@ -173,19 +173,20 @@ begin
     FN := FinalFN + '.part'
   else
     FN := FinalFN;
-  AddMsdlOption('o', FN);
+  SetMsdlOption('v');
+  SetMsdlOption('o', FN);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));
-  AddMsdlOption('l', LogFileName);
-  AddMsdlOption(MSDL_OPTION_URL, MovieURL);
+  SetMsdlOption('l', LogFileName);
+  SetMsdlOption(MSDL_OPTION_URL, MovieURL);
   if not Msdl_Init then
     SetLastErrorMsg(Format(ERR_FAILED_TO_LOAD_DLL, ['msdl_dll.dll']))
   else
     begin
     SetLastErrorMsg(Format(ERR_SEE_LOGFILE, [LogFileName]));
     RetCode := Msdl_Download(Integer(Self), MsdlDownloadProgressCallback, MsdlOptions);
-    if RetCode >= 0 then
+    if (RetCode >= 0) and (FileExists(FN)) and (FileGetSize(FN) > 65536) then
       Result := True;
     if Result then
       if FN <> FinalFN then

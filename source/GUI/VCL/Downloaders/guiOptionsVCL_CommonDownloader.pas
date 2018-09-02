@@ -51,12 +51,15 @@ type
     CheckDownloadSubtitles: TCheckBox;
     CheckConvertSubtitles: TCheckBox;
     CheckLiveStream: TCheckBox;
+    LabelSecureToken: TLabel;
+    EditSecureToken: TEdit;
   private
     fDownloaderClass: TDownloaderClass;
   protected
     function GetProvider: string; override;
     function Supports(Feature: TDownloaderFeature): boolean; overload;
     function Supports(Feature: TDownloaderFeature; const Controls: array of TControl): boolean; overload;
+    function Supports(Feature: TDownloaderFeature; const Controls: array of TControl; Hide: boolean): boolean; overload;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -105,12 +108,20 @@ begin
 end;
 
 function TFrameDownloaderOptionsPageCommon.Supports(Feature: TDownloaderFeature; const Controls: array of TControl): boolean;
+begin
+  Result := Supports(Feature, Controls, False);
+end;
+
+function TFrameDownloaderOptionsPageCommon.Supports(Feature: TDownloaderFeature; const Controls: array of TControl; Hide: boolean): boolean;
 var i: integer;
 begin
   Result := Supports(Feature);
   if not Result then
     for i := 0 to Pred(Length(Controls)) do
-      Controls[i].Enabled := False;
+      if Hide then
+        Controls[i].Visible := False
+      else
+        Controls[i].Enabled := False;
 end;
 
 procedure TFrameDownloaderOptionsPageCommon.LoadFromOptions;
@@ -126,6 +137,8 @@ begin
   {$ENDIF}
   if Supports(dfRtmpLiveStream, [CheckLiveStream]) then
     CheckLiveStream.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features);
+  if Supports(dfRequireSecureToken, [LabelSecureToken, EditSecureToken]) then
+    EditSecureToken.Text := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, '');
 end;
 
 procedure TFrameDownloaderOptionsPageCommon.SaveToOptions;
@@ -141,6 +154,8 @@ begin
   {$ENDIF}
   if Supports(dfRtmpLiveStream) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, CheckLiveStream.Checked);
+  if Supports(dfRequireSecureToken) then
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, EditSecureToken.Text);
 end;
 
 end.

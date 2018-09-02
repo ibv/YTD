@@ -42,8 +42,7 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader,
-  downYouTube;
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
   TDownloader_StastneVdovy = class(TNestedDownloader)

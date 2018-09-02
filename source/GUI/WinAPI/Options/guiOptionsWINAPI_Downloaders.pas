@@ -113,58 +113,66 @@ var
   FrameClass: TFrameDownloaderOptionsPageClass;
   Frame: TFrameDownloaderOptionsPage;
   FormRect, ListRect: TRect;
+  PagesCreated: TStringList;
+  Provider: string;
 begin
   DestroyDownloaderOptions;
   DC := TDownloadClassifier.Create;
   try
-    for i := 0 to Pred(DC.ProviderCount) do
-      if DC.Providers[i] <> nil then
+    PagesCreated := TStringList.Create;
+    try
+      if GetClientRect(Self.Handle, FormRect) then
+        if GetClientRect(ListPages, ListRect) then
+          for i := 0 to Pred(DC.ProviderCount) do
+            if DC.Providers[i] <> nil then
+              begin
+              Provider := DC.Providers[i].Provider;
+              FrameClass := DC.Providers[i].GuiOptionsClass;
+              if FrameClass = nil then
+                if (DC.Providers[i].Features <> []) and (DC.Providers[i].Features <> [dfDummy]) then
+                  FrameClass := TFrameDownloaderOptionsPageCommon;
+              if FrameClass <> nil then
+                if PagesCreated.IndexOf(Provider) < 0 then
+                  begin
+                  PagesCreated.Add(Provider);
+                  Frame := FrameClass.Create(Self);
+                  try
+                    if Frame is TFrameDownloaderOptionsPageCommon then
+                      TFrameDownloaderOptionsPageCommon(Frame).DownloaderClass := DC.Providers[i];
+                    Frame.Provider := DC.Providers[i].Provider;
+                    Frame.Options := Self.Options;
+                    Frame.Show;
+                    Left := ListRect.Right + 4;
+                    Top := ListRect.Top;
+                    Width := (FormRect.Right - FormRect.Left) - Left;
+                    Height := (FormRect.Bottom - FormRect.Top) - Top;
+                    MoveWindow(Frame.Handle, Left, Top, Width, Height, False);
+                    SetControlAnchors(Frame.Handle, [akLeft, akTop, akRight, akBottom]);
+                    ShowWindow(Frame.Handle, SW_HIDE);
+                    Index := SendMessage(ListPages, LB_ADDSTRING, 0, LPARAM(PChar(DC.Providers[i].Provider)));
+                    if Index < 0 then
+                      FreeAndNil(Frame)
+                    else if SendMessage(ListPages, LB_SETITEMDATA, Index, LPARAM(Frame)) = LB_ERR then
+                      FreeAndNil(Frame);
+                  except
+                    FreeAndNil(Frame);
+                    Raise;
+                    end;
+                  end;
+              end;
+      if PageCount > 0 then
         begin
-        FrameClass := DC.Providers[i].GuiOptionsClass;
-        if FrameClass = nil then
-          if (DC.Providers[i].Features <> []) and (DC.Providers[i].Features <> [dfDummy]) then
-            FrameClass := TFrameDownloaderOptionsPageCommon;
-        if FrameClass <> nil then
-          begin
-          Frame := FrameClass.Create(Self);
-          try
-            if Frame is TFrameDownloaderOptionsPageCommon then
-              TFrameDownloaderOptionsPageCommon(Frame).DownloaderClass := DC.Providers[i];
-            Frame.Provider := DC.Providers[i].Provider;
-            Frame.Options := Self.Options;
-            Frame.Show;
-            if GetClientRect(Self.Handle, FormRect) then
-              if GetClientRect(ListPages, ListRect) then
-                begin
-                Left := ListRect.Right + 4;
-                Top := ListRect.Top;
-                Width := (FormRect.Right - FormRect.Left) - Left;
-                Height := (FormRect.Bottom - FormRect.Top) - Top;
-                MoveWindow(Frame.Handle, Left, Top, Width, Height, False);
-                SetControlAnchors(Frame.Handle, [akLeft, akTop, akRight, akBottom]);
-                end;
-            ShowWindow(Frame.Handle, SW_HIDE);
-            Index := SendMessage(ListPages, LB_ADDSTRING, 0, LPARAM(PChar(DC.Providers[i].Provider)));
-            if Index < 0 then
-              FreeAndNil(Frame)
-            else if SendMessage(ListPages, LB_SETITEMDATA, Index, LPARAM(Frame)) = LB_ERR then
-              FreeAndNil(Frame);
-          except
-            FreeAndNil(Frame);
-            Raise;
-            end;
-          end;
+        SendMessage(ListPages, LB_SETCURSEL, 0, 0);
+        ListPagesChanged;
+        end
+      else
+        begin
+        {$IFNDEF TODO}
+        'TODO: How to hide this window from the pageControl?'
+        {$ENDIF}
         end;
-    if PageCount > 0 then
-      begin
-      SendMessage(ListPages, LB_SETCURSEL, 0, 0);
-      ListPagesChanged;
-      end
-    else
-      begin
-      {$IFNDEF TODO}
-      'TODO: How to hide this window from the pageControl?'
-      {$ENDIF}
+    finally
+      FreeAndNil(PagesCreated);
       end;
   finally
     FreeAndNil(DC);

@@ -46,8 +46,6 @@ uses
 
 type
   TFrameDownloaderOptionsPage_Barrandov = class(TFrameDownloaderOptionsPageCommon)
-    LabelSecureToken: TLabel;
-    EditSecureToken: TEdit;
   private
   protected
   public
@@ -79,13 +77,11 @@ end;
 procedure TFrameDownloaderOptionsPage_Barrandov.LoadFromOptions;
 begin
   inherited;
-  EditSecureToken.Text := Options.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_SECURETOKEN, OPTION_BARRANDOV_SECURETOKEN_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_Barrandov.SaveToOptions;
 begin
   inherited;
-  Options.WriteProviderOption(Provider, OPTION_BARRANDOV_SECURETOKEN, EditSecureToken.Text);
 end;
 
 end.

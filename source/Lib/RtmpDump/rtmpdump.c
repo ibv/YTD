@@ -686,7 +686,7 @@ void usage(char *prog)
 	  RTMP_LogPrintf
 	    ("--resume|-e             Resume a partial RTMP download\n");
 	  RTMP_LogPrintf
-	    ("--timeout|-m num        Timeout connection num seconds (default: %lu)\n",
+	    ("--timeout|-m num        Timeout connection num seconds (default: %u)\n",
 	     DEF_TIMEOUT);
 	  RTMP_LogPrintf
 	    ("--start|-A num          Start at num seconds into stream (not valid when using --live)\n");
@@ -699,7 +699,7 @@ void usage(char *prog)
 	  RTMP_LogPrintf
 	    ("--hashes|-#             Display progress with hashes, not with the byte counter\n");
 	  RTMP_LogPrintf
-	    ("--buffer|-b             Buffer time in milliseconds (default: %lu)\n",
+	    ("--buffer|-b             Buffer time in milliseconds (default: %u)\n",
 	     DEF_BUFTIME);
 	  RTMP_LogPrintf
 	    ("--skip|-k num           Skip num keyframes when looking for last keyframe to resume from. Useful if resume fails (default: %d)\n\n",
@@ -1152,13 +1152,14 @@ main(int argc, char **argv)
 
   if (tcUrl.av_len == 0)
     {
-      char str[512] = { 0 };
-
-      tcUrl.av_len = snprintf(str, 511, "%s://%.*s:%d/%.*s",
+	  tcUrl.av_len = strlen(RTMPProtocolStringsLower[protocol]) +
+	  	hostname.av_len + app.av_len + sizeof("://:65535/");
+      tcUrl.av_val = (char *) malloc(tcUrl.av_len);
+	  if (!tcUrl.av_val)
+	    return RD_FAILED;
+      tcUrl.av_len = snprintf(tcUrl.av_val, tcUrl.av_len, "%s://%.*s:%d/%.*s",
 	  	   RTMPProtocolStringsLower[protocol], hostname.av_len,
 		   hostname.av_val, port, app.av_len, app.av_val);
-      tcUrl.av_val = (char *) malloc(tcUrl.av_len + 1);
-      strcpy(tcUrl.av_val, str);
     }
 
   int first = 1;

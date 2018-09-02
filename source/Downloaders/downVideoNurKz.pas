@@ -48,7 +48,11 @@ type
   TDownloader_VideoNurKz = class(THttpDownloader)
     private
     protected
+      Extension: string;
+    protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -103,6 +107,24 @@ end;
 function TDownloader_VideoNurKz.GetMovieInfoUrl: string;
 begin
   Result := 'http://video.nur.kz/view=' + MovieID;
+end;
+
+function TDownloader_VideoNurKz.GetFileNameExt: string;
+begin
+  Result := Extension;
+end;
+
+function TDownloader_VideoNurKz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if Prepared then
+    begin
+    Extension := '';
+    if DownloadPage(Http, MovieUrl, hmHead) then
+      Extension := ExtractUrlExt(LastUrl);
+    Result := True;
+    end;
 end;
 
 initialization

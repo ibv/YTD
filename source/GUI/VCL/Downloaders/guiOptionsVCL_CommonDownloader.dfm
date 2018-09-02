@@ -3,10 +3,18 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     Left = 0
     Top = 0
     Width = 320
-    Height = 57
+    Height = 81
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    object LabelSecureToken: TLabel
+      Left = 8
+      Top = 50
+      Width = 71
+      Height = 13
+      Caption = 'Secure &Token:'
+      FocusControl = EditSecureToken
+    end
     object CheckDownloadSubtitles: TCheckBox
       Left = 8
       Top = 0
@@ -33,12 +41,20 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
       Caption = '&Live stream mode (much slower, but more stable)'
       TabOrder = 2
     end
+    object EditSecureToken: TEdit
+      Left = 112
+      Top = 48
+      Width = 193
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 3
+    end
   end
   object PanelSpecificOptions: TPanel
     Left = 0
-    Top = 57
+    Top = 81
     Width = 320
-    Height = 183
+    Height = 159
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1

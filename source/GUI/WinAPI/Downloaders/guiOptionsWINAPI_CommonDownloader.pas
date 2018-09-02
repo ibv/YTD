@@ -48,9 +48,12 @@ type
   TFrameDownloaderOptionsPageCommon = class(TFrameDownloaderOptionsPage)
     protected
       function DoInitDialog: boolean; override;
+      function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
     private
       EmptyAreaRect: TRect;
       SubForm: TFrameDownloaderOptionsPage;
+      LabelSecureToken: THandle;
+      EditSecureToken: THandle;
     private
       fDownloaderClass: TDownloaderClass;
     private
@@ -60,7 +63,9 @@ type
       function GetProvider: string; override;
       function Supports(Feature: TDownloaderFeature): boolean; overload;
       function Supports(Feature: TDownloaderFeature; const ControlIDs: array of integer): boolean; overload;
+      function Supports(Feature: TDownloaderFeature; const ControlIDs: array of integer; Hide: boolean): boolean; overload;
       function SubFormClass: TFrameDownloaderOptionsPageClass; virtual;
+      procedure LabelSecureTokenClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -82,6 +87,8 @@ const
   IDC_CHECKBOX_SUBTITLESENABLED = 1002;
   IDC_CHECKBOX_CONVERTSUBTITLES = 1003;
   IDC_CHECKBOX_LIVESTREAM = 1004;
+  IDC_LABEL_SECURETOKEN = 1005;
+  IDC_EDIT_SECURETOKEN = 1006;
 
 { TFrameDownloaderOptionsPageCommon }
 
@@ -99,6 +106,8 @@ procedure TFrameDownloaderOptionsPageCommon.CreateObjects;
 var
   ControlPlacement: TWindowPlacement;
 begin
+  EditSecureToken := GetDlgItem(Self.Handle, IDC_EDIT_SECURETOKEN);
+  LabelSecureToken := GetDlgItem(Self.Handle, IDC_LABEL_SECURETOKEN);
   ShowWindow(GetDlgItem(Self.Handle, IDC_LABEL_EMPTYAREA), SW_HIDE);
   FillChar(ControlPlacement, Sizeof(ControlPlacement), 0);
   ControlPlacement.length := Sizeof(ControlPlacement);
@@ -129,6 +138,8 @@ end;
 
 procedure TFrameDownloaderOptionsPageCommon.DestroyObjects;
 begin
+  EditSecureToken := 0;
+  LabelSecureToken := 0;
   FreeAndNil(SubForm);
 end;
 
@@ -142,6 +153,24 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED), [akLeft, akTop, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES), [akLeft, akTop, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_LIVESTREAM), [akLeft, akTop, akRight]);
+  SetControlAnchors(EditSecureToken, [akLeft, akTop, akRight]);
+end;
+
+function TFrameDownloaderOptionsPageCommon.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
+begin
+  Result := False;
+  case NotificationCode of
+    STN_CLICKED {, BN_CLICKED, CBN_SELCHANGE} : // Click on a label, button etc.
+      case Identifier of
+        IDC_LABEL_SECURETOKEN:
+          begin
+          LabelSecureTokenClick;
+          Result := True;
+          end;
+        end;
+    end;
+  if not Result then
+    Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
 end;
 
 function TFrameDownloaderOptionsPageCommon.GetProvider: string;
@@ -161,12 +190,20 @@ begin
 end;
 
 function TFrameDownloaderOptionsPageCommon.Supports(Feature: TDownloaderFeature; const ControlIDs: array of integer): boolean;
+begin
+  Result := Supports(Feature, ControlIDs, False);
+end;
+
+function TFrameDownloaderOptionsPageCommon.Supports(Feature: TDownloaderFeature; const ControlIDs: array of integer; Hide: boolean): boolean;
 var i: integer;
 begin
   Result := Supports(Feature);
   if not Result then
     for i := 0 to Pred(Length(ControlIDs)) do
-      EnableWindow(GetDlgItem(Self.Handle, ControlIDs[i]), False);
+      if Hide then
+        ShowWindow(GetDlgItem(Self.Handle, ControlIDs[i]), SW_HIDE)
+      else
+        EnableWindow(GetDlgItem(Self.Handle, ControlIDs[i]), False);
 end;
 
 function TFrameDownloaderOptionsPageCommon.SubFormClass: TFrameDownloaderOptionsPageClass;
@@ -188,6 +225,8 @@ begin
   {$ENDIF}
   if Supports(dfRtmpLiveStream, [IDC_CHECKBOX_LIVESTREAM]) then
     CheckDlgButton(Self.Handle, IDC_CHECKBOX_LIVESTREAM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features)]);
+  if Supports(dfRequireSecureToken, [IDC_LABEL_SECURETOKEN, IDC_EDIT_SECURETOKEN]) then
+    SetWindowText(EditSecureToken, PChar(Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, '')));
   if SubForm <> nil then
     begin
     SubForm.Options := Options;
@@ -223,11 +262,18 @@ begin
       BST_UNCHECKED:
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, False);
       end;
+  if Supports(dfRequireSecureToken) then
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, GetWindowTextAsString(EditSecureToken));
   if SubForm <> nil then
     begin
     SubForm.Options := Options;
     SubForm.SaveToOptions;
     end;
+end;
+
+procedure TFrameDownloaderOptionsPageCommon.LabelSecureTokenClick;
+begin
+  SetFocus(EditSecureToken);
 end;
 
 end.

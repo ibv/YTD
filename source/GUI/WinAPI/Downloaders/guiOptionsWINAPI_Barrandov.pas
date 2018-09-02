@@ -55,12 +55,6 @@ type
   TFrameDownloaderOptionsPageSpec_Barrandov = class(TFrameDownloaderOptionsPage)
     protected
       function DoInitDialog: boolean; override;
-      function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
-    protected
-      EditSecureToken: THandle;
-      procedure CreateObjects; override;
-      procedure DestroyObjects; override;
-      procedure LabelSecureTokenClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -74,10 +68,6 @@ implementation
 
 uses
   downBarrandovTV;
-
-const
-  IDC_LABEL_SECURETOKEN = 1001;
-  IDC_EDIT_SECURETOKEN = 1002;
 
 { TFrameDownloaderOptionsPage_Barrandov }
 
@@ -103,56 +93,19 @@ begin
   inherited;
 end;
 
-procedure TFrameDownloaderOptionsPageSpec_Barrandov.CreateObjects;
-begin
-  inherited;
-  EditSecureToken := GetDlgItem(Self.Handle, IDC_EDIT_SECURETOKEN);
-end;
-
-procedure TFrameDownloaderOptionsPageSpec_Barrandov.DestroyObjects;
-begin
-  EditSecureToken := 0;
-  inherited;
-end;
-
 function TFrameDownloaderOptionsPageSpec_Barrandov.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
-  SetControlAnchors(EditSecureToken, [akLeft, akTop, akRight]);
-end;
-
-function TFrameDownloaderOptionsPageSpec_Barrandov.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
-begin
-  Result := False;
-  case NotificationCode of
-    STN_CLICKED {, BN_CLICKED, CBN_SELCHANGE} : // Click on a label, button etc.
-      case Identifier of
-        IDC_LABEL_SECURETOKEN:
-          begin
-          LabelSecureTokenClick;
-          Result := True;
-          end;
-        end;
-    end;
-  if not Result then
-    Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Barrandov.LoadFromOptions;
 begin
   inherited;
-  SetWindowText(EditSecureToken, PChar(Options.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_SECURETOKEN, OPTION_BARRANDOV_SECURETOKEN_DEFAULT)));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Barrandov.SaveToOptions;
 begin
   inherited;
-  Options.WriteProviderOption(Provider, OPTION_BARRANDOV_SECURETOKEN, GetWindowTextAsString(EditSecureToken));
-end;
-
-procedure TFrameDownloaderOptionsPageSpec_Barrandov.LabelSecureTokenClick;
-begin
-  SetFocus(EditSecureToken);
 end;
 
 end.

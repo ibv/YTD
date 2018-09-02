@@ -18,5 +18,4 @@ TFrameDownloaderOptionsPageSpec_CT DIALOG 0, 0, 270, 83
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILDWINDOW | WS_MAXIMIZEBOX | WS_VISIBLE
 FONT 8, "Ms Shell Dlg"
 BEGIN
-//  AUTOCHECKBOX    "&Live stream mode (much slower, but more stable)", IDC_CHECKBOX_LIVESTREAM, 8, 0, 253, 10
 END

@@ -42,11 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader,
-  downYouTube;
+  uDownloader, uCommonDownloader, downIPrima;
 
 type
-  TDownloader_PrimaCool = class(TNestedDownloader)
+  TDownloader_PrimaCool = class(TDownloader_iPrima_LiveBox)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -64,21 +63,20 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.prima-cool.cz/video/drsnejsi-simpsonovi
+// http://www.prima-cool.cz/tezkadrina/epizody/sklarny
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*prima-cool\.cz/video/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*prima-cool\.cz/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\s+class="boxik-nadpis">\s*(?P<TITLE>.*?)\s*</div>';
-  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="(?P<URL>https?://.+?)"';
+  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_TITLE;
 
 { TDownloader_PrimaCool }
 
 class function TDownloader_PrimaCool.Provider: string;
 begin
-  Result := 'Prima-Cool.cz';
+  Result := TDownloader_iPrima.Provider; //'Prima-Cool.cz';
 end;
 
 class function TDownloader_PrimaCool.UrlRegExp: string;
@@ -90,20 +88,19 @@ constructor TDownloader_PrimaCool.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
+  RegExFreeAndNil(MovieTitleRegExp);
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
 end;
 
 destructor TDownloader_PrimaCool.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
 function TDownloader_PrimaCool.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.prima-cool.cz/video/' + MovieID;
+  Result := 'http://www.prima-cool.cz/' + MovieID;
 end;
 
 initialization

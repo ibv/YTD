@@ -1,11 +1,42 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.98                                     (c) 2009-11 Pepak
+YouTube Downloader v0.99                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.99:
+
+    * New providers:
+      - AcademicEarth.org
+      - TV-Vysocina.cz
+
+    * CeskaTelevize.cz: The new pages require a secure token. You are on your
+      own finding it, I cannot provide it for legal reasons.
+
+    * Nova.cz: Works again.
+
+    * Prima-Cool.cz: Works again.
+
+    * Video.Nur.kz: Fixed the filename extension.
+
+    * The universal HTML parser modified to support <param name="movie">.
+      That allows a number of websites which link to third-party providers
+      (e.g. Topky.sk, Pluska.sk) to work.
+
+    * The MMS/RTSP protocol handler now checks the filesize of the downloaded
+      file, and if it is less than 64 KB, it returns an error. The reason is,
+      some downloads seemingly succeed, but without actually downloading a
+      single frame of a movie.
+
+    * RTMPDUMP updated to the most current version (GIT tag 60218d0af0f4bd683ecdebe49986f188820cf8ce).
+
+    * GUI: The downloader settings no longer show 2 or more pages for providers
+      such as YouTube. Now each provider only has a single page.
+
+
 
   v0.98:
 

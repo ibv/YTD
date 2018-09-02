@@ -61,7 +61,7 @@ type
 implementation
 
 const
-  REGEXP_URL = '(?:href|src)=(["''])(?P<URL>https?://.*?)\1';
+  REGEXP_URL = '(?:\bhref|\bsrc|<param\s+name=(?P<Q1>["''])movie(?P=Q1)\s+value=)\s*=\s*(?P<Q>["''])(?P<URL>(?:https?|mmsh?|rtmpt?e?)://.+?)(?P=Q)';
 
 { TPlaylist_HTML }
 

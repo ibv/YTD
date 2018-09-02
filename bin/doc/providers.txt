@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.98                                     (c) 2009-11 Pepak
+YouTube Downloader v0.99                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -18,6 +18,7 @@ Provider            | Protocol | Notes | URL(s)
 1hd.ro              | RTMP     |       | http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
 4tv.cz              | HTTP     |       | http://4tv.cz/serialy/simpsonovi-1989/s01e01/8
 5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
+AcademicEarth.org   | HTTP     |       | http://academicearth.org/lectures/measurements-space-and-time
 Agresori.com        | HTTP     |       | http://www.agresori.com/13913-zkurvene-naledi.html
 Aktualne.cz         | HTTP     |       | http://aktualne.centrum.cz/video/?id=316586
 AlternativaTV.cz    | HTTP     |       | http://alternativatv.cz/video/play/12225/
@@ -46,10 +47,10 @@ Cas.sk              | HTTP     |       | http://www.cas.sk/clanok/172890/testova
 CD.cz               | HTTP     |       | http://www.cd.cz/tv/aktuality/300_rekonstrukce-nadrazi-v-ceskem-brode
 CekniTo.cz          | HTTP     |       | http://www.ceknito.cz/video/446074
 CekniTo.sk          | HTTP     |       | http://www.ceknito.sk/video/446074
-CeskaTelevize.cz    | RTMP     | 2     | http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
-                    |          | 2     | http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
-                    |          | 2     | http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
-                    |          | 2     | http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/
+CeskaTelevize.cz    | RTMP     | 2,8   | http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
+                    |          | 2,8   | http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
+                    |          | 2,8   | http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
+                    |          | 2,8   | http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/
 Cesnet.cz           | MS       | 4     | http://server3.streaming.cesnet.cz/others/av/tydenvedy/2009/amazonie.wmv
 CestyKSobe.cz       | HTTP     |       | http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
 CKKlic.cz           | HTTP     |       | http://www.ckklic.cz/zajezdy/rafting/dlouhe-a-expedicni-rafting-akce-na-raftech-nebo-na-dvoumistnych-yukonech/albanie-rafting-na-panenskych-rekach-vodacka-expedice-zajezd-na-yukonech.56.151.html
@@ -248,6 +249,7 @@ TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
 TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
 TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
 TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
+TV-Vysocina.cz      | MS       | 9     | http://www.tv-vysocina.cz/index.php?page=2&datum=2011-12-16%2018:10:00&vselect1=4927&jednotlive=1
 Tyzden.sk           | HTTP     |       | http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
 UStream.tv          | HTTP     |       | http://www.ustream.tv/recorded/7022540
 VeeHD.com           | HTTP     |       | http://veehd.com/video/4639434_Solar-Sinter

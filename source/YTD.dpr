@@ -146,6 +146,7 @@ uses
   down1hdRo in 'Downloaders\down1hdRo.pas',
   down4TV in 'Downloaders\down4TV.pas',
   down5min in 'Downloaders\down5min.pas',
+  downAcademicEarth in 'Downloaders\downAcademicEarth.pas',
   downAgresori in 'Downloaders\downAgresori.pas',
   downAktualne in 'Downloaders\downAktualne.pas',
   downAlternativaTV in 'Downloaders\downAlternativaTV.pas',
@@ -337,6 +338,7 @@ uses
   downTVLux in 'Downloaders\downTVLux.pas',
   downTVNoe in 'Downloaders\downTVNoe.pas',
   downTVSpl in 'Downloaders\downTVSpl.pas',
+  downTVVysocina in 'Downloaders\downTVVysocina.pas',
   downTyzdenSk in 'Downloaders\downTyzdenSk.pas',
   downUniMinnesota in 'Downloaders\downUniMinnesota.pas',
   downUStream in 'Downloaders\downUStream.pas',
@@ -414,6 +416,8 @@ uses
     xxxZakulisi in 'Downloaders\XXX\xxxZakulisi.pas',
   {$ENDIF}
   {$IFDEF NONWORKING}
+    // No idea why it doesn't work
+    downArchivioLuce in 'Downloaders\Non-working\downArchivioLuce.pas',
     // Needs some improved RTMP handling
     downCrunchyRoll in 'Downloaders\Non-working\downCrunchyRoll.pas',
     // Requires FTP support

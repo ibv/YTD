@@ -63,7 +63,7 @@ type
   TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
 
 type
-  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} , dfRtmpLiveStream, dfPreferRtmpLiveStream );
+  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} , dfRtmpLiveStream, dfPreferRtmpLiveStream, dfRequireSecureToken );
   TDownloaderFeatures = set of TDownloaderFeature;
 
 const
@@ -136,6 +136,7 @@ type
     protected
       function ExtractUrlRoot(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ExtractUrlPath(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -920,6 +921,22 @@ begin
     if Result[i] = '/' then
       begin
       Result := Copy(Result, Succ(i), MaxInt);
+      Break;
+      end;
+end;
+
+function TDownloader.ExtractUrlPath(const Url: string): string;
+var i: integer;
+begin
+  i := Pos('?', Url);
+  if i <= 0 then
+    Result := Url
+  else
+    Result := Copy(Url, 1, Pred(i));
+  for i := Length(Result) downto 1 do
+    if Result[i] = '/' then
+      begin
+      Result := Copy(Result, 1, i);
       Break;
       end;
 end;

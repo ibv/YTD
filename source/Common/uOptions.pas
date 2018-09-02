@@ -184,6 +184,7 @@ type
 
 const
   OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'live_stream';
+  OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secure_token';
 
 implementation
 

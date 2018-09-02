@@ -348,9 +348,23 @@ begin
 end;
 
 function TRtmpDownloader.Prepare: boolean;
+var
+  Token: string;
 begin
   ClearRtmpDumpOptions;
   Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
+  if dfRequireSecureToken in Features then
+    begin
+    Token := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, '');
+    if Token = '' then
+      begin
+      SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET);
+      Result := False;
+      Exit;
+      end
+    else
+      Self.SecureToken := Token;
+    end;
   Result := inherited Prepare;
 end;
 

@@ -42,8 +42,7 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader, uVarNestedDownloader,
-  downYouTube;
+  uDownloader, uCommonDownloader, uNestedDownloader, uVarNestedDownloader;
 
 type
   TDownloader_OsobnostiCZ = class(TVarNestedDownloader)

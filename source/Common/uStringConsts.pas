@@ -75,7 +75,10 @@ const
   REGEXP_URL_ADDVARIABLE_FILE = '\.addVariable\s*\(\s*(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*,\s*(?P<QUOTE2>[''"])(?P<URL>https?://.+?)(?P=QUOTE2)';
   REGEXP_URL_ADDVARIABLE_FILE_RELATIVE = '\.addVariable\s*\(\s*(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*,\s*(?P<QUOTE2>[''"])(?P<URL>.+?)(?P=QUOTE2)';
   REGEXP_URL_ADDPARAM_FLASHVARS_FILE = '\.addParam\s*\(\s*(?P<QUOTE1>[''"])flashvars(?P=QUOTE1)\s*,\s*(?P<QUOTE2>[''"])(?:[^"'']*(?:&amp;|&))*file=(?P<URL>https?://.+?)(?:&amp;|[&"''])';
-  REGEXP_URL_FILE_COLON_VALUE = '(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*:\s*(?P<QUOTE2>[''"])(?P<URL>https?://.+?)(?P=QUOTE2)';
+  REGEXP_URL_FILE_COLON_VALUE = '(?P<QUOTE1>[''"])file(?P=QUOTE1)\s*:\s*(?P<QUOTE2>[''"])(?P<URL>(?:https?|mmsh?)://.+?)(?P=QUOTE2)';
+
+  REGEXP_FLASHVARS = '<param\s+name="flashvars"\s+value="(?P<FLASHVARS>.*?)"';
+  REGEXP_PARSER_HTMLVARS = '(?:^|&amp;)(?P<VARNAME>[^=]+?)(?:=(?P<VARVALUE>.*?))?(?=$|&amp;)';
 
   HTTP_FORM_URLENCODING = 'application/x-www-form-urlencoded';
   HTTP_FORM_URLENCODING_UTF8 = HTTP_FORM_URLENCODING + '; charset=UTF-8';

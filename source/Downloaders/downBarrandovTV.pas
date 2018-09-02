@@ -56,12 +56,10 @@ uses
 type
   TDownloader_BarrandovTV = class(TRtmpDownloader)
     private
-      fToken: string;
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -72,10 +70,6 @@ type
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
-
-const
-  OPTION_BARRANDOV_SECURETOKEN {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secure_token';
-  OPTION_BARRANDOV_SECURETOKEN_DEFAULT = '';
 
 implementation
 
@@ -112,7 +106,7 @@ end;
 
 class function TDownloader_BarrandovTV.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfPreferRtmpLiveStream];
+  Result := inherited Features + [dfPreferRtmpLiveStream, dfRequireSecureToken];
 end;
 
 constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
@@ -150,8 +144,6 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
   else if not GetXmlVar(PageXml, 'streamname', StreamName) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
-  else if fToken = '' then
-    SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET)
   else
     begin
     SetName(Title);
@@ -163,16 +155,9 @@ begin
     Self.SwfVfy := 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID;
     //Self.TcUrl := 'rtmpe://' + HostName;
     Self.PageUrl := 'http://www.barrandov.tv/' + MovieID;
-    Self.SecureToken := fToken;
     SetPrepared(True);
     Result := True;
     end;
-end;
-
-procedure TDownloader_BarrandovTV.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  fToken := Value.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_SECURETOKEN, OPTION_BARRANDOV_SECURETOKEN_DEFAULT);
 end;
 
 initialization

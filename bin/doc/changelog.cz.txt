@@ -1,11 +1,41 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.98                                     (c) 2009-11 Pepak
+YouTube Downloader v0.99                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.99:
+
+    * Noví poskytovatelé:
+      - AcademicEarth.org
+      - TV-Vysocina.cz
+
+    * CeskaTelevize.cz: Nové stránky používají secure token, který si nìkde 
+      musíte získat sami, já ho rozšiøovat nemohu.
+
+    * Nova.cz: Opìt funkèní.
+
+    * Prima-Cool.cz: Opìt funkèní.
+
+    * Video.Nur.kz: Opravena pøípona u souborù.
+
+    * Obecný parser HTML stránek doplnìn o podporu <param name="movie">. Tím
+      je zajištìna podpora øady dalších webù, které pøebírají obsah napø.
+      z YouTube apod., napøíklad Topky.sk, Pluska.sk.
+
+    * Do stahovaèe protokolù MMS/RTSP byl pøidán test, jestli je stažený
+      soubor dlouhý aspoò 64 KB. To by mìlo vyvolat chybové hlášení v 
+      pøípadech, kdy server sám chybu nenahlásí, jen nic nestáhne.
+
+    * RTMPDUMP aktualizován na nejnovìjší verzi (GIT tag 60218d0af0f4bd683ecdebe49986f188820cf8ce).
+
+    * GUI: V nastavení stahovaèù už se pro každého poskytovatele zobrazuje
+      maximálnì jedna stránka.
+
+
 
   v0.98:
 
