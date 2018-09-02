@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.24                                                    (c) 2009-13 Pepak
+YTD v1.25                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -474,6 +474,19 @@ except in file/directory names. Logical values (true-false) are stored as
         At the moment (2012-06-03), CeskaTelevize.cz uses bitrates 2000, 1000
         and 500.
       - Default value is "0" (no limit on video bitrate).
+
+  <Joj_sk>
+    - Child of <modules>; contains settings used by Joj.sk.
+
+    <server>
+      - Child of <Joj_sk>; enables you to manually enforce server used to 
+        download videos. At the moment it seems that all servers contain the
+        same content, so there's no need to set the server, but the option is
+        here in case of future need.
+      - Possible values are the server names. I know of servers "n06.joj.sk"
+        and "n15.joj.sk", and likely there are others. Empty string means
+        that the hard-coded server will be used.
+      - Default value is an empty string (use the hardcoded server).
 
   <Nova_cz>
     - Child of <modules>; contains settings used by Nova.cz.

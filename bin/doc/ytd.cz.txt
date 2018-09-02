@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.24                                                    (c) 2009-13 Pepak
+YTD v1.25                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -461,6 +461,19 @@ a "0" (ne).
         nebo nula, budou se stahovat videa s libovolným bitrate.
         Česká televize nyní (6.3.2012) používá bitraty 2000, 1000 a 500.
       - Výchozí hodnotou je "0" (neomezovat bitrate).
+
+  <Joj_sk>
+    - Potomek <modules>; obsahuje nastavení pro Joj.sk.
+
+    <server>
+      - Potomek <Joj_sk>; umožňuje ručně vynutit server, ze kterého se bude
+        stahovat. Momentálně se zdá, že položka není potřeba, ale je zde 
+        uvedena pro případ, že by někdy v budoucnu potřeba byla.
+      - Možnou hodnotou je název serveru. Vím o serverech "n06.joj.sk" a
+        "n15.joj.sk", pravděpodobně jsou i další. Pokud je uveden prázdný
+        řetězec, použije se server zadrátovaný do programu.
+      - Výchozí hodnotou je prázdný řetězec (použít server zadrátovaný do 
+        programu).
 
   <Nova_cz>
     - Potomek <modules>; obsahuje nastavení pro TV Nova.

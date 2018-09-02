@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downR1ZAK;
+unit downZAKTV;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,12 +45,13 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_R1ZAK = class(THttpDownloader)
+  TDownloader_ZAKTV = class(THttpDownloader)
     private
     protected
       MovieInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -66,90 +67,77 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.r1zak.cz/porady/sumava_na_dlani/
+// http://www.zaktv.cz/cz/videos/index
 const
-  URLREGEXP_BEFORE_ID = 'r1zak\.cz';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'zaktv\.cz';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_INFO = '<iframe\s+src="https?://(?:[a-z0-9-]+\.)*regionplzen\.cz/video/export/\?jmeno=(?P<PATH>[^"&]+)';
+  REGEXP_MOVIE_INFO = '\sonclick="run_player\s*\(\s*''(?P<TITLE>[^'']*)''\s*,\s*''(?P<PATH>/[^'']+)''';
 
-{ TDownloader_R1ZAK }
+{ TDownloader_ZAKTV }
 
-class function TDownloader_R1ZAK.Provider: string;
+class function TDownloader_ZAKTV.Provider: string;
 begin
-  Result := 'R1ZAK.cz';
+  Result := 'ZAKTV.cz';
 end;
 
-class function TDownloader_R1ZAK.UrlRegExp: string;
+class function TDownloader_ZAKTV.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_R1ZAK.Create(const AMovieID: string);
+constructor TDownloader_ZAKTV.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peAnsi;
+  InfoPageEncoding := peUtf8;
   MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
-destructor TDownloader_R1ZAK.Destroy;
+destructor TDownloader_ZAKTV.Destroy;
 begin
   RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
-function TDownloader_R1ZAK.GetMovieInfoUrl: string;
+function TDownloader_ZAKTV.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.r1zak.cz/' + MovieID;
+  Result := 'http://www.zaktv.cz/' + MovieID;
 end;
 
-function TDownloader_R1ZAK.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Title, Path: string;
-    InfoXml: TXmlDoc;
-    ListNode: TXmlNode;
-    i: integer;
+function TDownloader_ZAKTV.GetFileNameExt: string;
+begin
+  Result := inherited GetFileNameExt;
+  if Result = '.f4v' then
+    Result := '.flv';
+end;
+
+function TDownloader_ZAKTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Title, Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieInfoRegExp, Page, 'PATH', Path) then
+  if not GetRegExpVars(MovieInfoRegExp, Page, ['TITLE', 'PATH'], [@Title, @Path]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, 'http://www.regionplzen.cz/video/export/' + Path, InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    try
-      if XmlNodeByPath(InfoXml, 'trackList', ListNode) then
-        for i := 0 to Pred(ListNode.NodeCount) do
-          if ListNode[i].Name = 'track' then
-            if GetXmlVar(ListNode[i], 'title', Title) then
-              if GetXmlVar(ListNode[i], 'location', Path) then
-                begin
-                Path := UrlEncode(Path);
-                {$IFDEF MULTIDOWNLOADS}
-                NameList.Add(Title);
-                UrlList.Add('http://www.regionplzen.cz' + Path);
-                {$ELSE}
-                SetName(Title);
-                MovieUrl := 'http://www.regionplzen.cz' + Path;
-                SetPrepared(True);
-                Result := True;
-                Exit;
-                {$ENDIF}
-                end;
-      {$IFDEF MULTIDOWNLOADS}
-      if UrlList.Count > 0 then
+    repeat
+      if Path <> '' then
         begin
+        SetName(Title);
+        MovieUrl := GetRelativeUrl(GetMovieInfoUrl, Path);
+        {$IFDEF MULTIDOWNLOADS}
+        NameList.Add(Title);
+        UrlList.Add(MovieUrl);
+        {$ENDIF}
         SetPrepared(True);
-        Result := First;
+        Result := True;
         end;
-      {$ENDIF}
-    finally
-      FreeAndNil(InfoXml);
-      end;
+    until not GetRegExpVarsAgain(MovieInfoRegExp, ['TITLE', 'PATH'], [@Title, @Path]);
 end;
 
 initialization
-  RegisterDownloader(TDownloader_R1ZAK);
+  RegisterDownloader(TDownloader_ZAKTV);
 
 end.

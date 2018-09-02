@@ -1,11 +1,24 @@
 ﻿______________________________________________________________________________
 
-YTD v1.24                                                    (c) 2009-13 Pepak
+YTD v1.25                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.25:
+
+    * Aktualizovaní poskytovatelé:
+      - ZAKTV.cz (původně R1ZAK.cz)
+
+    * Joj.sk
+      - Převedeno na protokol RTMP.
+      - Stále neumím detekovat server, ale zdá se, že na něm nezáleží (že
+        všechny obsahují stejná data). V případě nutnosti lze v konfiguraci
+        server ručně nastavit, např. na "n06.joj.sk".
+
+
 
   v1.24:
 

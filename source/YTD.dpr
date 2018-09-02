@@ -102,6 +102,7 @@ uses
       guiOptionsWINAPI_Barrandov in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Barrandov.pas',
       guiOptionsWINAPI_CT in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CT.pas',
       guiOptionsWINAPI_EuroSeptik in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_EuroSeptik.pas',
+      guiOptionsWINAPI_Joj in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Joj.pas',
       guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
       guiOptionsWINAPI_YouTube in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_YouTube.pas',
       {$IFDEF CONVERTERS}
@@ -119,6 +120,7 @@ uses
       guiOptionsVCL_Barrandov in 'GUI\VCL\Downloaders\guiOptionsVCL_Barrandov.pas' {FrameDownloaderOptionsPage_Barrandov: TFrame},
       guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
       guiOptionsVCL_EuroSeptik in 'GUI\VCL\Downloaders\guiOptionsVCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
+      guiOptionsVCL_Joj in 'GUI\VCL\Downloaders\guiOptionsVCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
       guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
       guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       {$IFDEF CONVERTERS}
@@ -316,7 +318,6 @@ uses
   downProstoPleer in 'Downloaders\downProstoPleer.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downQipRu_Embed in 'Downloaders\downQipRu_Embed.pas',
-  downR1ZAK in 'Downloaders\downR1ZAK.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
   downRajce in 'Downloaders\downRajce.pas',
   downReflex in 'Downloaders\downReflex.pas',
@@ -401,6 +402,7 @@ uses
   downYouTu_Be in 'Downloaders\downYouTu_Be.pas',
   downYouTubeNoCookie in 'Downloaders\downYouTubeNoCookie.pas',
   downZ1TV in 'Downloaders\downZ1TV.pas',
+  downZAKTV in 'Downloaders\downZAKTV.pas',
   downZapiksFr in 'Downloaders\downZapiksFr.pas',
   downZDF in 'Downloaders\downZDF.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',

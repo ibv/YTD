@@ -43,23 +43,41 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, uCompatibility, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uOptions, 
+  {$IFDEF GUI}
+    guiDownloaderOptions,
+    {$IFDEF GUI_WINAPI}
+      guiOptionsWINAPI_Joj,
+    {$ELSE}
+      guiOptionsVCL_Joj,
+    {$ENDIF}
+  {$ENDIF}
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_Joj = class(THttpDownloader)
+  TDownloader_Joj = class(TRtmpDownloader)
     private
     protected
+      Server: string;
       MovieIdRegExp: TRegExp;
       PageIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
+
+const
+  OPTION_JOJ_SERVER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'server';
+  OPTION_JOJ_SERVER_DEFAULT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'n15.joj.sk';
 
 implementation
 
@@ -97,10 +115,18 @@ begin
   Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
+{$IFDEF GUI}
+class function TDownloader_Joj.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_Joj;
+end;
+{$ENDIF}
+
 constructor TDownloader_Joj.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
+  Server := OPTION_JOJ_SERVER_DEFAULT;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
   PageIdRegExp := RegExCreate(REGEXP_PAGE_ID);
@@ -166,7 +192,9 @@ begin
             {$IFDEF DELPHI6_UP}
               {$MESSAGE WARN 'Joj.sk: nevim, jak zjistit jmeno serveru'}
             {$ENDIF}
-            MovieUrl := 'http://n06.joj.sk/' + BestPath;
+            //MovieUrl := 'rtmp://n15.joj.sk/' + BestPath;
+            Self.RtmpUrl := 'rtmp://' + Server;
+            Self.Playpath := BestPath;
             SetPrepared(True);
             Result := True;
           {$ENDIF}
@@ -175,6 +203,16 @@ begin
     finally
       FreeAndNil(Xml);
       end;
+end;
+
+procedure TDownloader_Joj.SetOptions(const Value: TYTDOptions);
+var
+  s: string;
+begin
+  inherited;
+  s := Value.ReadProviderOptionDef(Provider, OPTION_JOJ_SERVER, OPTION_JOJ_SERVER_DEFAULT);
+  if s <> '' then
+    Server := s;
 end;
 
 initialization
