@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.28                                                    (c) 2009-13 Pepak
+YTD v1.29                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -34,7 +34,7 @@ Azet.sk             | HTTP     |       | http://tivi.azet.sk/video/1371198/tento
                     |          |       | http://adam.azet.sk/clanky/13149/adam-girl-simona-divoska-co-nepokazi-ziadnu-zabavu.html
 Bahnorama.com       | HTTP     |       | http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
 BandZone.cz         | HTTP     |       | http://bandzone.cz/teensjazzbandvelkelosiny?at=video;vi=9556
-Barrandov.tv        | RTMP     | 8     | http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+Barrandov.tv        | HTTP     |       | http://www.barrandov.tv/video/15468-hlavni-zpravy-24-6-2013
 Bing.com            | HTTP     |       | http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
 Blenus.com          | HTTP     |       | http://www.blennus.com/index.php?option=content&task=view&id=1027&Itemid=
 Blip.tv             | HTTP     |       | http://blip.tv/play/hIVV4tIUAg
@@ -126,6 +126,7 @@ i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/conce
 iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
                     |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
 iHned.cz            | RTMP     |       | http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
+                    | HTTP     |       | http://dialog.ihned.cz/komentare/c1-52351350-vondraczech-at-se-urednici-uci-v-jaderne-elektrarne
 ILikeBike.cz        | MS       | 4     | http://www.ilikebike.cz/?year=2011&week=11
 ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
 iPrima.cz           | RTMP     |       | http://play.iprima.cz/iprima/233409
@@ -203,6 +204,7 @@ NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
                     |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
+NRSR.sk             | RTMP     |       | http://mmserv2.nrsr.sk/NRSRInternet/Rokovanie/709/
 Ocko.tv             | HTTP     |       | http://ocko.tv/video/particka-hd-4457/
 OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
 Online.hokej.cz     | RTMP     | 9     | http://online.hokej.cz/?date=2012-01-20&video=69421
@@ -294,6 +296,7 @@ TVcom.cz            | MS       |       | http://bojove-sporty.tvcom.cz/video/545
                     | MS       |       | http://basketbal.tvcom.cz/Zapas/Soutez-U19-Extraliga/Cast-Zakladni/Pohlavi-Muzi/Sezona-2011-2012/10952-BC-Vysocina-BK-Kondori-Liberec.htm
 TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
 TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
+TVNoviny.sk         | HTTP     | 8     | http://tvnoviny.sk/video/videospravy/televizne-noviny/2432970
 TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
 TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
 TV-Vysocina.cz      | MS       | 9     | http://www.tv-vysocina.cz/index.php?page=2&datum=2011-12-16%2018:10:00&vselect1=4927&jednotlive=1
@@ -315,6 +318,7 @@ Vii.sk              | HTTP     |       | http://www.vii.sk/video/35sfxgmr0l/simp
 Viki.com            | HTTP     |       | http://a1.vikiassets.com/channels/1565-secret-garden/videos/32690
                     |          |       | http://www.viki.com/channels/1565-secret-garden/videos/32690
 Vimeo.com           | HTTP     |       | http://www.vimeo.com/10777111
+Vine.co             | HTTP     |       | https://vine.co/v/blJBYtDQPd3
 VitalMtb.com        | HTTP     |       | http://www.vitalmtb.com/videos/member/Practice-at-the-bmx-track,2631/bubb120491,1836
 VKontakte.ru        | HTTP     |       | http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1
                     |          |       | http://vk.com/video_ext.php?oid=106919938&id=161961696&hash=bb3e2d1a73bdb262
@@ -369,6 +373,7 @@ PornHost.com        | HTTP     | F     |
 PornHub.com         | HTTP     | F     |
 PornoTube.com       | HTTP     | F     |
 PornoZdarma.cz      | HTTP     | F     |
+PornTube.com        | HTTP     | F     |
 RawTube.com         | HTTP     | F     |
 RedTube.com         | HTTP     | F     |
 Rude.com            | HTTP     | F     |

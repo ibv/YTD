@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downIDnes_Embed;
+unit downNRSR;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,11 +45,12 @@ uses
   uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_IDnes_Embed = class(TRtmpDownloader)
+  TDownloader_NRSR = class(TRtmpDownloader)
     private
     protected
+      MovieInfoRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -62,92 +63,75 @@ implementation
 
 uses
   uStringConsts,
-  uStrings,
-  uMessages,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://servis.idnes.cz/stream/flv/data.asp?idvideo=V110523_130926_tv-spolecnost_zkl&reklama=1&idrubriky=hobby-zahrada&idostrova=hobby&idclanku=A110523_110238_hobby-zahrada_mce
+// http://mmserv2.nrsr.sk/NRSRInternet/Rokovanie/709/
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        'servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+';
+  URLREGEXP_BEFORE_ID = 'mmserv2\.nrsr\.sk/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_IDnes_Embed }
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_INFO = '\.addVariable\s*\(\s*''(?P<VARNAME>[^'']+)''\s*,\s*''(?P<VARVALUE>[^'']*)''';
 
-class function TDownloader_IDnes_Embed.Provider: string;
+{ TDownloader_NRSR }
+
+class function TDownloader_NRSR.Provider: string;
 begin
-  Result := 'iDnes.cz';
+  Result := 'NRSR.sk';
 end;
 
-class function TDownloader_IDnes_Embed.UrlRegExp: string;
+class function TDownloader_NRSR.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_IDnes_Embed.Create(const AMovieID: string);
+constructor TDownloader_NRSR.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+end;
+
+destructor TDownloader_NRSR.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
-  InfoPageEncoding := peXml;
-  InfoPageIsXml := True;
 end;
 
-destructor TDownloader_IDnes_Embed.Destroy;
+function TDownloader_NRSR.GetMovieInfoUrl: string;
 begin
-  inherited;
+  Result := 'http://mmserv2.nrsr.sk/' + MovieID;
 end;
 
-function TDownloader_IDnes_Embed.GetMovieInfoUrl: string;
-begin
-  Result := MovieID;
-end;
-
-function TDownloader_IDnes_Embed.GetFileNameExt: string;
-begin
-  Result := '.mp4';
-end;
-
-function TDownloader_IDnes_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ItemType, Server, Path, VideoFile, Title: string;
-    Items: TXmlNode;
-    i: integer;
+function TDownloader_NRSR.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Server, Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not XmlNodeByPath(PageXml, 'items', Items) then
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+  if not GetRegExpVarPairs(MovieInfoRegExp, Page, ['streamer', 'file'], [@Server, @Stream]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if Server = '' then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+  else if Stream = '' then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
   else
     begin
-    for i := 0 to Pred(Items.NodeCount) do
-      if string(Items.Nodes[i].Name) = 'item' then
-        if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
-          if ItemType = 'video' then
-            begin
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['server']))
-            else
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['path']))
-            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['file']))
-            else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
-              SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-            else
-              begin
-              SetName(Title);
-              //Self.AppName := 'vod/';
-              Self.PlayPath := 'mp4:' + Path + VideoFile;
-              Self.RtmpUrl := 'rtmpt://' + Server;
-              MovieUrl := Self.RtmpUrl + Self.PlayPath;
-              SetPrepared(True);
-              Result := True;
-              end;
-            Exit;
-            end;
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+    SetName(StripTags(UnpreparedName));
+    Self.RtmpUrl := Server;
+    Self.Playpath := ChangeFileExt(Stream, '');
+    MovieUrl := Self.RtmpUrl + '/' + Self.Playpath;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_IDnes_Embed);
+  RegisterDownloader(TDownloader_NRSR);
 
 end.

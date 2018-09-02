@@ -41,8 +41,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList, ActnList,
+  StdCtrls, Buttons, ComCtrls, ClipBrd, Menus, ImgList, ActnList,
   ToolWin, CommDlg, ShellApi, CommCtrl,
+  {$IFNDEF DELPHI2009_UP}
+  FileCtrl,
+  {$ENDIF}
+  {$IFDEF DELPHIXE4_UP}
+  UITypes,
+  {$ENDIF}
   SynaCode,
   uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
   guiOptions, guiFunctions, uDialogs,
@@ -184,7 +190,7 @@ type
     DownloadList: TDownloadList;
     NextProgressUpdate: DWORD;
     Options: TYTDOptionsGUI;
-    NextClipboardViewer: integer;
+    NextClipboardViewer: WPARAM;
     LastClipboardText: string;
     {$IFDEF CONVERTERS}
     LastConverterID: string;

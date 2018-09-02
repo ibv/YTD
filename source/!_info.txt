@@ -45,12 +45,21 @@ Delphi 5
 Delphi 2009
 -----------
 
-- Works, but is only tested from time to time.
+- Main platform for releases. Generally works, but may still have unexpected 
+  side-effects due to Unicode in places.
+
+
+
+Delphi XE4
+----------
+
+- Works, rarely tested.
+
 
 
 Free Pascal
 -----------
 
-- Works, but is tested even less often than Delphi 2009.
+- Works, rarely tested.
 - Can only use the WinAPI GUI, VCL is not supported.
 - Use the "fpc" argument.

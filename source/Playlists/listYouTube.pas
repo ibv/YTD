@@ -51,6 +51,8 @@ type
       ItemIDRegExp: TRegExp;
       ItemTitleRegExp: TRegExp;
       NextPageRegExp: TRegExp;
+    protected
+      function PlaylistID: string;
       function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
       function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
@@ -78,7 +80,7 @@ const
 
 const
   REGEXP_PLAYLIST_ITEM = '(?P<ITEM><li\b.*?</?li>)';
-  REGEXP_ITEM_ID = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL)?%s(?:"|&amp;)';
+  REGEXP_ITEM_ID = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL|SP)?%s(?:"|&amp;)';
   REGEXP_ITEM_TITLE = '<span\s+class="(?:video-)?title\b[^>]*>(?P<TITLE>.*?)</span>';
   //REGEXP_PLAYLIST_ITEM = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL)?%s(?:"|&amp;)[^>]*>(?P<NAME>[^<]+)</a>';
   REGEXP_NEXT_PAGE = '<a\s+href="(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=[^"&]+&sort_field=[^&"]*&page=[0-9]+)"\s+class="yt-uix-pager-link"\s+data-page="(?P<PAGE>[0-9]+)"';
@@ -100,7 +102,7 @@ begin
   inherited;
   //PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
   PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  ItemIDRegExp := RegExCreate(Format(REGEXP_ITEM_ID, [MovieID]));
+  ItemIDRegExp := RegExCreate(Format(REGEXP_ITEM_ID, [PlaylistID]));
   ItemTitleRegExp := RegExCreate(REGEXP_ITEM_TITLE);
   NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
@@ -163,6 +165,14 @@ begin
       b := GetRegExpVarsAgain(NextPageRegExp, ['PAGE', 'URL'], [@sPageNumber, @Url]);
       end;
   until not Again;
+end;
+
+function TPlaylist_YouTube.PlaylistID: string;
+begin
+  if Copy(MovieID, 1, 2) = 'PL' then
+    Result := Copy(MovieID, 3, MaxInt)
+  else
+    Result := MovieID;
 end;
 
 initialization

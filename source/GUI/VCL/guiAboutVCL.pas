@@ -42,6 +42,9 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, HttpSend, ShellApi, ComCtrls, 
+  {$IFDEF DELPHIXE4_UP}
+  UITypes,
+  {$ENDIF}
   uLanguages, uMessages, uFunctions, uDownloadClassifier, uDownloader, uOptions,
   guiFunctions;
 

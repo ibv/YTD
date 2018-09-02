@@ -1,11 +1,43 @@
 ﻿______________________________________________________________________________
 
-YTD v1.28                                                    (c) 2009-13 Pepak
+YTD v1.29                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.29:
+
+    * New providers:
+      - NRSR.sk
+      - PornTube.com
+      - TVNoviny.sk
+        - This is an extremely ugly hack, but seems to work.
+        - You must provide the passwords and tokens in the Markiza.sk
+          configuration.
+      - Vine.co
+
+    * Updated providers:
+      - iDnes.cz
+      - iHned.cz
+      - RTVS.sk
+      - XHamster.com
+      - Zdf.de
+
+    * Barrandov.tv:
+      - The provider now uses a completely different streaming service, which
+        uses HTTP protocol and doesn't need the secret token anymore.
+
+    * YouTube.com:
+      - Updated playlist support, e.g.
+        https://www.youtube.com/playlist?list=PLwKJlrLDPPOGNiFfpbcyQ385DBse_5FVB
+      - Many videos fail to download with error code 403. This is caused by
+        a new streaming system which I wasn't able to decipher yet.
+
+    * Program now compiles under Delphi XE4.
+
+
 
   v1.28:
 

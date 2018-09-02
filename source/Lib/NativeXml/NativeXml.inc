@@ -58,6 +58,24 @@
   {$define D12UP}
   {$define D15UP}
 {$endif}
+// Delphi XE2
+{$ifdef VER230}
+  {$define D7UP}
+  {$define D12UP}
+  {$define D15UP}
+{$endif}
+// Delphi XE3
+{$ifdef VER240}
+  {$define D7UP}
+  {$define D12UP}
+  {$define D15UP}
+{$endif}
+// Delphi XE4
+{$ifdef VER250}
+  {$define D7UP}
+  {$define D12UP}
+  {$define D15UP}
+{$endif}
 
 // Uncomment to save memory space for large documents if you don't need tags.
 // Tags are an additional integer field that can be used by the application.

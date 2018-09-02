@@ -34,23 +34,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRTVSSk;
+unit downTVNovinySk;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uOptions,
-  uDownloader, uCommonDownloader, downSTV;
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  uPCRE, uXml, uCrypto, HttpSend, SynaCode,
+  uOptions, uCompatibility,
+  uDownloader, uCommonDownloader, downVoyo;
 
 type
-  TDownloader_RTVSSk = class(TDownloader_STV)
-    private
+  TDownloader_TVNovinySk = class(TDownloader_Voyo)
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFlowPlayerConfigRegExp: string; override;
     public
+      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -60,39 +61,54 @@ implementation
 
 uses
   uStringConsts,
+  {$IFDEF DIRTYHACKS}
+  uFiles,
+  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
-// http://www.rtvs.sk/televizia/program/detail/4686/milujem-slovensko/archiv?date=17.05.2013
-// http://www.rtvs.sk/tv.programmes.detail/archive/4686?date=14.06.2013
+// http://tvnoviny.sk/video/videospravy/televizne-noviny/2432970
 const
-  URLREGEXP_BEFORE_ID = 'rtvs\.sk/';
+  URLREGEXP_BEFORE_ID = 'tvnoviny\.sk/video/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_RTVSSk }
+const
+  REGEXP_CONFIG = 'var\s+flowConf\d*\s*=\s*\\?''(?P<CONFIG>.+?)\\?''';
+  
+{ TDownloader_TVNovinySk }
 
-class function TDownloader_RTVSSk.UrlRegExp: string;
+class function TDownloader_TVNovinySk.Provider: string;
+begin
+  Result := 'Markiza.sk';
+end;
+
+class function TDownloader_TVNovinySk.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_RTVSSk.Create(const AMovieID: string);
+constructor TDownloader_TVNovinySk.Create(const AMovieID: string);
 begin
   inherited;
 end;
 
-destructor TDownloader_RTVSSk.Destroy;
+destructor TDownloader_TVNovinySk.Destroy;
 begin
   inherited;
 end;
 
-function TDownloader_RTVSSk.GetMovieInfoUrl: string;
+function TDownloader_TVNovinySk.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.rtvs.sk/' + MovieID;
+  Result := 'http://tvnoviny.sk/video/' + MovieID;
+end;
+
+function TDownloader_TVNovinySk.GetFlowPlayerConfigRegExp: string;
+begin
+  Result := REGEXP_CONFIG;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_RTVSSk);
+  RegisterDownloader(TDownloader_TVNovinySk);
 
 end.

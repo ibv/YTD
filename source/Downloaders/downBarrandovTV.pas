@@ -37,46 +37,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit downBarrandovTV;
 {$INCLUDE 'ytd.inc'}
 
-{
-  Barrandov pouziva Secure Token. Da se zjistit dekompilaci
-  prehravaciho Flashe, kde je volani:
-      this._nc.call("secureTokenResponse", null, com.wowza.encryptionAS3.TEA.decrypt(arg1.info.secureToken, "...token..."));
-  viz http://stream-recorder.com/forum/barrandov-tv-cant-decode-rtmpe-stream-find-t9199.html
-}
-
 interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions, uCompatibility,
-  {$IFDEF GUI}
-    guiDownloaderOptions,
-    {$IFDEF GUI_WINAPI}
-      guiOptionsWINAPI_Barrandov,
-    {$ELSE}
-      guiOptionsVCL_Barrandov,
-    {$ENDIF}
-  {$ENDIF}
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_BarrandovTV = class(TRtmpDownloader)
+  TDownloader_BarrandovTV = class(THttpDownloader)
     private
     protected
-      AvoidHD: boolean;
+      MovieUrlsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function Features: TDownloaderFeatures; override;
-      {$IFDEF GUI}
-      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
-      {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -93,11 +72,15 @@ uses
   uMessages,
   uDownloadClassifier;
 
-// http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
+// http://www.barrandov.tv/video/15468-hlavni-zpravy-24-6-2013
 const
   URLREGEXP_BEFORE_ID = 'barrandov\.tv/';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
+
+const
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URLS = '\{\s*file\s*:\s*"(?P<URL>[^"]+\.mp4)"\s*,\s*label\s*:\s*"(?P<QUALITY>\d+)[^"]*"\s*\}';
 
 { TDownloader_BarrandovTV }
 
@@ -111,91 +94,55 @@ begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-{$IFDEF GUI}
-class function TDownloader_BarrandovTV.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
-begin
-  Result := TFrameDownloaderOptionsPage_Barrandov;
-end;
-{$ENDIF}
-
-class function TDownloader_BarrandovTV.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features + [dfPreferRtmpLiveStream, dfRequireSecureToken];
-end;
-
 constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  InfoPageIsXml := True;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlsRegExp := RegExCreate(REGEXP_MOVIE_URLS);
 end;
 
 destructor TDownloader_BarrandovTV.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlsRegExp);
   inherited;
 end;
 
 function TDownloader_BarrandovTV.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.barrandov.tv/special/videoplayerdata/' + MovieID;
-end;
-
-function TDownloader_BarrandovTV.GetFileNameExt: string;
-begin
-  Result := inherited GetFileNameExt;
-  if AnsiCompareText(Result, '.f4v') = 0 then
-    Result := '.flv';
+  Result := 'http://barrandov.tv/' + MovieID;
 end;
 
 function TDownloader_BarrandovTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Title, HostName, StreamName, HasHD: string;
-  i, j: integer;
+  BestUrl, Url, sQuality: string;
+  BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlVar(PageXml, 'videotitle', Title) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-  else if not GetXmlVar(PageXml, 'hostname', HostName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
-  else if (not GetXmlVar(PageXml, 'streamname', StreamName)) or (StreamName = '') then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
+  BestUrl := '';
+  BestQuality := -1;
+  if GetRegExpVars(MovieUrlsRegExp, Page, ['URL', 'QUALITY'], [@Url, @sQuality]) then
+    repeat
+      if Url <> '' then
+        begin
+        Quality := StrToIntDef(sQuality, 0);
+        if Quality > BestQuality then
+          begin
+          BestUrl := Url;
+          BestQuality := Quality;
+          end;
+        end;
+    until not GetRegExpVarsAgain(MovieUrlsRegExp, ['URL', 'QUALITY'], [@Url, @sQuality]);
+  if BestUrl = '' then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    {$IFDEF DIRTYHACKS}
-    if not AvoidHD then
-      if GetXmlVar(PageXml, 'hashdquality', HasHD) then
-        if AnsiCompareText(HasHD, 'true') = 0 then
-          for i := Length(StreamName) downto 1 do
-            if StreamName[i] = '.' then
-              begin
-              for j := Pred(i) downto 1 do
-                if not CharInSet(StreamName[j], ['0'..'9']) then
-                  begin
-                  StreamName := Copy(StreamName, 1, j) + 'HD' + Copy(StreamName, i, MaxInt);
-                  Break;
-                  end;
-              Break;
-              end;
-    {$ENDIF}
-    SetName(Title);
-    MovieUrl := 'rtmpe://' + HostName + '/' + StreamName;
-    Self.RtmpUrl := 'rtmpe://' + HostName;
-    Self.Playpath := StreamName;
-    Self.FlashVer := FLASH_DEFAULT_VERSION;
-    //Self.SwfUrl := 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID;
-    Self.SwfVfy := 'http://www.barrandov.tv/flash/unigramPlayer_v1.swf?itemid=' + MovieID;
-    //Self.TcUrl := 'rtmpe://' + HostName;
-    Self.PageUrl := 'http://www.barrandov.tv/' + MovieID;
+    MovieUrl := GetRelativeUrl(GetMovieInfoUrl, BestUrl);
     SetPrepared(True);
     Result := True;
     end;
-end;
-
-procedure TDownloader_BarrandovTV.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  AvoidHD := Value.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_AVOIDHD, OPTION_BARRANDOV_AVOIDHD_DEFAULT);
 end;
 
 initialization

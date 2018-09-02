@@ -34,57 +34,78 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit guiOptionsVCL_Barrandov;
+unit downVineCo;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
-uses 
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls,
-  uDownloader, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader;
+uses
+  SysUtils, Classes,
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TFrameDownloaderOptionsPage_Barrandov = class(TFrameDownloaderOptionsPageCommon)
-    CheckAvoidHD: TCheckBox;
-  private
-  protected
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-    procedure LoadFromOptions; override;
-    procedure SaveToOptions; override;
-  end;
+  TDownloader_VineCo = class(THttpDownloader)
+    private
+    protected
+      function GetMovieInfoUrl: string; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
+    end;
 
 implementation
 
-{$R *.DFM}
-
 uses
-  downBarrandovTV;
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-{ TFrameDownloaderOptionsPage_Barrandov }
+// https://vine.co/v/blJBYtDQPd3
+const
+  URLREGEXP_BEFORE_ID = 'vine\.co/v/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
-constructor TFrameDownloaderOptionsPage_Barrandov.Create(AOwner: TComponent);
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    REGEXP_URL_VIDEO_SOURCE_SRC;
+
+{ TDownloader_VineCo }
+
+class function TDownloader_VineCo.Provider: string;
 begin
+  Result := 'Vine.co';
+end;
+
+class function TDownloader_VineCo.UrlRegExp: string;
+begin
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+end;
+
+constructor TDownloader_VineCo.Create(const AMovieID: string);
+begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_VineCo.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-destructor TFrameDownloaderOptionsPage_Barrandov.Destroy;
+function TDownloader_VineCo.GetMovieInfoUrl: string;
 begin
-  inherited;
+  Result := 'http://vine.co/v/' + MovieID;
 end;
 
-procedure TFrameDownloaderOptionsPage_Barrandov.LoadFromOptions;
-begin
-  inherited;
-  CheckAvoidHD.Checked := Options.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_AVOIDHD, OPTION_BARRANDOV_AVOIDHD_DEFAULT);
-end;
-
-procedure TFrameDownloaderOptionsPage_Barrandov.SaveToOptions;
-begin
-  inherited;
-  Options.WriteProviderOption(Provider, OPTION_BARRANDOV_AVOIDHD, CheckAvoidHD.Checked);
-end;
+initialization
+  RegisterDownloader(TDownloader_VineCo);
 
 end.

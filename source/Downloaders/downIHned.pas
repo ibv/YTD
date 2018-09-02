@@ -42,14 +42,18 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  uHttpDirectDownloader, uRtmpDirectDownloader;
 
 type
-  TDownloader_IHned = class(TRtmpDownloader)
+  TDownloader_IHned = class(TNestedDownloader)
     private
     protected
+      MovieInfoRegExp: TRegExp;
+      MovieUrlsRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -60,20 +64,23 @@ type
 implementation
 
 uses
+  uFunctions,
   uStringConsts,
   uDownloadClassifier,
   uMessages;
 
 // http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
 // http://video.ihned.cz/c1-44411910
+// http://dialog.ihned.cz/komentare/c1-52351350-vondraczech-at-se-urednici-uci-v-jaderne-elektrarne
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.ihned\.cz/';
-  URLREGEXP_ID =        '[^/?&]+?-[0-9]+';
-  URLREGEXP_AFTER_ID =  '($|-)';
+  URLREGEXP_BEFORE_ID = '^';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'ihned\.cz/.+';
+  URLREGEXP_AFTER_ID =  '$';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h1>(?P<TITLE>.*?)</h1>';
-  REGEXP_EXTRACT_URL = '\bvar\s+mm_str\s*=\s*"[^"]*?\bfilename1\s*:\s*''(?P<URL>rtmpt?e?://.+?)''';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H1;
+  REGEXP_MOVIE_INFO = '"video_urls"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_MOVIE_URLS = '"(?:alt)?(?P<BITRATE>\d+)"\s*:\s*\[\s*"(?P<URL>(?:https?|rtmpt?e?):[^"]+)"\s*\]';
 
 { TDownloader_IHned }
 
@@ -91,29 +98,58 @@ constructor TDownloader_IHned.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+  MovieUrlsRegExp := RegExCreate(REGEXP_MOVIE_URLS);
 end;
 
 destructor TDownloader_IHned.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
+  RegExFreeAndNil(MovieUrlsRegExp);
   inherited;
 end;
 
 function TDownloader_IHned.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.ihned.cz/' + MovieID;
+  Result := MovieID;
 end;
 
-function TDownloader_IHned.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_IHned.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+var
+  sBitrate, BestUrl, Url, VideoDef: string;
+  Bitrate, BestBitrate: integer;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
+  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
+  Result := False;
+  if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, JSDecode(Url), VideoDef, peAnsi) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if GetRegExpVars(MovieUrlsRegExp, VideoDef, ['BITRATE', 'URL'], [@sBitrate, @Url]) then
     begin
-    Self.RtmpUrl := MovieURL;
+    BestUrl := '';
+    BestBitrate := -1;
+    repeat
+      Url := JSDecode(Url);
+      Bitrate := StrToIntDef(sBitrate, 0);
+      if IsHttpProtocol(Url) then
+        Inc(Bitrate);
+      if Bitrate > BestBitrate then
+        begin
+        BestUrl := Url;
+        BestBitrate := Bitrate;
+        end;
+    until not GetRegExpVarsAgain(MovieUrlsRegExp, ['BITRATE', 'URL'], [@sBitrate, @Url]);
+    if BestUrl <> '' then
+      begin
+      if IsHttpProtocol(BestUrl) then
+        Downloader := THttpDirectDownloader.Create(BestUrl)
+      else
+        Downloader := TRtmpDirectDownloader.Create(BestUrl);
+      Result := True;
+      end;
     end;
 end;
 

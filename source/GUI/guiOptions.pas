@@ -41,7 +41,12 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  {$IFNDEF GUI_WINAPI} Dialogs, {$ENDIF}
+  {$IFNDEF GUI_WINAPI} 
+    Dialogs,
+    {$IFDEF DELPHIXE4_UP}
+    UITypes,
+    {$ENDIF}
+  {$ENDIF}
   uOptions, uLanguages, uMessages, uXml;
 
 type

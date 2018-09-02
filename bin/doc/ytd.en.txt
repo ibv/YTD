@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.28                                                    (c) 2009-13 Pepak
+YTD v1.29                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -452,16 +452,6 @@ except in file/directory names. Logical values (true-false) are stored as
 <modules>
   - Child of <ytd>. This section stores provider-specific options.
 
-  <Barrandov_tv>
-    - Child of <modules>; contains settings used by Barrandov.tv.
-
-    <avoid_hd>
-      - Child of <Barrandov_tv>; provides an option to avoid trying to locate
-        HD content (the HD-locating code is rather wacky).
-        najít HD verzi videa a stáhnout tu, kterou mu server sám předhodí.
-      - Possible values are "0" (try to locate HD content) a "1" (don't try).
-      - Default value is "0" (try to locate HD content).
-
   <CeskaTelevize_cz>
     - Potomek <modules>; contains settings used by CeskaTelevize.cz.
 
@@ -487,6 +477,10 @@ except in file/directory names. Logical values (true-false) are stored as
         and "n15.joj.sk", and likely there are others. Empty string means
         that the hard-coded server will be used.
       - Default value is an empty string (use the hardcoded server).
+
+  <Markiza_sk>
+    - Child of <modules>; contains settings used by Markiza.sk. The settings
+      are exactly the same as those for <Nova_cz>.
 
   <Nova_cz>
     - Child of <modules>; contains settings used by Nova.cz.
@@ -837,6 +831,7 @@ These compilers are supported:
 - Delphi 2007
 - Delphi 2009
 - Delphi XE2
+- Delphi XE4
 - FreePascal
 
 It should be possible to compile the program with other versions of Delphi

@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.28                                                    (c) 2009-13 Pepak
+YTD v1.29                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -441,15 +441,6 @@ a "0" (ne).
   - Potomek <ytd>. V této sekci se nacházejí specifická nastavení pro 
     jednotlivé poskytovatele.
 
-  <Barrandov_tv>
-    - Potomek <modules>; obsahuje nastavení pro TV Barrandov.
-
-    <avoid_hd>
-      - Potomek <Barrandov_tv>; určuje, že se program vůbec nemá pokoušet
-        najít HD verzi videa a stáhnout tu, kterou mu server sám předhodí.
-      - Možné hodnoty jsou "0" (zkoušet vysokou kvalitu) a "1" (nezkoušet).
-      - Výchozí hodnotou je "0" (zkoušet vysokou kvalitu).
-
   <CeskaTelevize_cz>
     - Potomek <modules>; obsahuje nastavení pro Českou televizi.
 
@@ -475,6 +466,10 @@ a "0" (ne).
       - Výchozí hodnotou je prázdný řetězec (použít server zadrátovaný do 
         programu).
 
+  <Markiza_sk>
+    - Potomek <modules>; obsahuje nastavení pro TV Markíza. Používá přesně
+      stejné nastavení jako <Nova_cz>.
+    
   <Nova_cz>
     - Potomek <modules>; obsahuje nastavení pro TV Nova.
 
@@ -817,6 +812,7 @@ Podporovány jsou následující kompilátory:
 - Delphi 2007
 - Delphi 2009
 - Delphi XE2
+- Delphi XE4
 - FreePascal
 
 Program by měl jít s minimálními úpravami zkompilovat i na ostatních verzích

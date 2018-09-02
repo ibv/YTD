@@ -42,13 +42,12 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uMSDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_ZDF = class(TMSDownloader)
+  TDownloader_ZDF = class(THttpDownloader)
     protected
-      UrlListRegExp: TRegExp;
-      BitrateRegExp: TRegExp;
+      AssetIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,14 +67,12 @@ uses
 
 // http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/Ägypten---4-Geheimnis-des-ewigen-Lebens
 const
-  URLREGEXP_BEFORE_ID = 'zdf\.de/.*(?<=/)video/';
-  URLREGEXP_ID =        '[0-9]+';
-  URLREGEXP_AFTER_ID =  '[^#]*$';
+  URLREGEXP_BEFORE_ID = 'zdf\.de/ZDFmediathek/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
-  REGEXP_MOVIE_URLS =   '<a\s+href="(?P<URL>https?://[^/"]*streaming\.zdf\.de/.+?)"';
-  REGEXP_MOVIE_BITRATE = '/(?P<BITRATE>[^/]+)/[0-9]+[^/]*$';
+  REGEXP_ASSET_ID = '\bassetID\s*:\s*(?P<ID>\d+)';
 
 { TDownloader_ZDF }
 
@@ -93,61 +90,74 @@ constructor TDownloader_ZDF.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  UrlListRegExp := RegExCreate(REGEXP_MOVIE_URLS);
-  BitrateRegExp := RegExCreate(REGEXP_MOVIE_BITRATE);
+  AssetIdRegExp := RegExCreate(REGEXP_ASSET_ID);
 end;
 
 destructor TDownloader_ZDF.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(UrlListRegExp);
-  RegExFreeAndNil(BitrateRegExp);
+  RegExFreeAndNil(AssetIdRegExp);
   inherited;
 end;
 
 function TDownloader_ZDF.GetMovieInfoUrl: string;
 begin
-  Result := Format('http://www.zdf.de/ZDFmediathek//beitrag/video/%s/', [MovieID]);
+  Result := 'http://www.zdf.de/ZDFmediathek/' + MovieID;
 end;
 
 function TDownloader_ZDF.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Urls: TStringArray;
-    Url, sBitrate: string;
-    i, BestUrlIndex, BestBitrate, Bitrate: integer;
+const
+  ServiceUrl = 'http://www.zdf.de/ZDFmediathek/xmlservice/web/beitragsDetails?id=%s&ak=web';
+var
+  AssetID: string;
+  InfoXml: TXmlDoc;
+  FormatsNode: TXmlNode;
+  i, Size, BestSize: integer;
+  Status, Title, BestUrl, Url, sSize: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpAllVar(UrlListRegExp, Page, 'URL', Urls) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  if not GetRegExpVar(AssetIdRegExp, Page, 'ID', AssetID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, Format(ServiceUrl, [AssetID]), InfoXml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    BestUrlIndex := -1;
-    BestBitrate := -1;
-    for i := 0 to Pred(Length(Urls)) do
-      if GetRegExpVar(BitrateRegExp, Urls[i], 'BITRATE', sBitrate) then
+    try
+      if not GetXmlVar(InfoXml, 'status/statuscode', Status) then
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+      else if Status <> 'ok' then
+        SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Status]))
+      else if not GetXmlVar(InfoXml, 'video/information/title', Title) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      else if not XmlNodeByPath(InfoXml, 'video/formitaeten', FormatsNode) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else
         begin
-        if sBitrate = 'veryhigh' then
-          Bitrate := 2000
-        else
-          Bitrate := StrToIntDef(sBitrate, 0);
-        if Bitrate > BestBitrate then
+        BestUrl := '';
+        BestSize := -1;
+        for i := 0 to Pred(FormatsNode.NodeCount) do
+          if FormatsNode.Nodes[i].Name = 'formitaet' then
+            if GetXmlVar(FormatsNode.Nodes[i], 'url', Url) then
+              if Url <> '' then
+                if GetXmlVar(FormatsNode.Nodes[i], 'filesize', sSize) then
+                  begin
+                  Size := StrToIntDef(sSize, 0);
+                  if Size > BestSize then
+                    begin
+                    BestUrl := Url;
+                    BestSize := Size;
+                    end;
+                  end;
+        if BestUrl <> '' then
           begin
-          BestUrlIndex := i;
-          BestBitrate := Bitrate;
+          MovieUrl := Url;
+          SetName(Title);
+          SetPrepared(True);
+          Result := True;
           end;
         end;
-    if BestUrlIndex < 0 then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-    else if not DownloadXmlAttr(Http, Urls[BestUrlIndex], 'Entry/Ref', 'href', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieUrl := Url;
-      SetPrepared(True);
-      Result := True;
+    finally
+      FreeAndNil(InfoXml);
       end;
-    end;
 end;
 
 initialization

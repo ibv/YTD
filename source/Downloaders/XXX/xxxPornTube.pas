@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVideoBB;
+unit xxxPornTube;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,16 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
+  uCompatibility,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_VideoBB = class(THttpDownloader)
+  TDownloader_PornTube = class(THttpDownloader)
     private
     protected
-      MovieParamsRegExp: TRegExp;
+      MovieInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -64,89 +64,106 @@ implementation
 
 uses
   uStringConsts,
-  uJSON, uLkJSON,
   uDownloadClassifier,
   uMessages;
 
-// http://www.videobb.com/video/oh53koNnCV5S
-// http://videobb.com/watch_video.php?v=vxDeVeCYyzx5
 const
-  URLREGEXP_BEFORE_ID = 'videobb\.com/';
+  URLREGEXP_BEFORE_ID = 'porntube\.com/videos/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<meta\s+content="(?:videobb\s*-\s*)?(?P<TITLE>[^"]*)"\s*name="title"';
-  REGEXP_MOVIE_PARAMS = '<param\s+value="setting=(?P<PARAM>[^"]*)"\s+name="FlashVars"';
+  REGEXP_MOVIE_INFO =   '\.addVariable\s*\(\s*''config''\s*,\s*''(?P<URL>.+?)''';
 
-{ TDownloader_VideoBB }
+{ TDownloader_PornTube }
 
-class function TDownloader_VideoBB.Provider: string;
+class function TDownloader_PornTube.Provider: string;
 begin
-  Result := 'VideoBB.com';
+  Result := 'PornTube.com';
 end;
 
-class function TDownloader_VideoBB.UrlRegExp: string;
+class function TDownloader_PornTube.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_VideoBB.Create(const AMovieID: string);
+constructor TDownloader_PornTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
-destructor TDownloader_VideoBB.Destroy;
+destructor TDownloader_PornTube.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
-function TDownloader_VideoBB.GetMovieInfoUrl: string;
+function TDownloader_PornTube.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.videobb.com/' + MovieID;
+  Result := 'http://www.porntube.com/videos/' + MovieID;
 end;
 
-function TDownloader_VideoBB.GetFileNameExt: string;
-begin
-  Result := '.flv';
-end;
-
-function TDownloader_VideoBB.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_PornTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Param: string;
-  Settings: TJSON;
-  JsonUrl: TJSONNode;
+  InfoUrl, Title, Url, BestUrl, sQuality: string;
+  InfoXml: TXmlDoc;
+  StreamListNode: TXmlNode;
+  i, n, BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAM', Param) then
+  if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', InfoUrl) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, Base64Decode(Param), Page) then
+  else if not DownloadXml(Http, GetRelativeUrl(GetMovieInfoUrl, InfoUrl), InfoXml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    Settings := JSONCreate(Page);
     try
-      if not JSONNodeByPath(Settings, 'settings/res/0/u', JsonUrl) then
+      if not GetXmlVar(InfoXml, 'videotitle', Title) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+      else if not XmlNodeByPath(InfoXml, 'qualityselector.streams', StreamListNode) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
-        MovieUrl := Base64Decode(JsonUrl.Value);
-        SetPrepared(True);
-        Result := True;
+        BestUrl := '';
+        BestQuality := -1;
+        for i := 0 to Pred(StreamListNode.NodeCount) do
+          if StreamListNode.Nodes[i].Name = 'stream' then
+            if GetXmlVar(StreamListNode.Nodes[i], 'file', Url) then
+              if Url <> '' then
+                if GetXmlAttr(StreamListNode.Nodes[i], '', 'label', sQuality) then
+                  begin
+                  n := Length(sQuality);
+                  while n > 0 do
+                    if CharInSet(sQuality[n], ['0'..'9']) then
+                      Break
+                    else
+                      Dec(n);
+                  sQuality := Copy(sQuality, 1, n);
+                  Quality := StrToIntDef(sQuality, 0);
+                  if Quality > BestQuality then
+                    begin
+                    BestUrl := Url;
+                    BestQuality := Quality;
+                    end;
+                  end;
+        if BestUrl <> '' then
+          begin
+          MovieUrl := BestUrl;
+          SetName(Title);
+          SetPrepared(True);
+          Result := True;
+          end;
         end;
     finally
-      JSONFreeAndNil(Settings);
+      FreeAndNil(InfoXml);
       end;
-    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_VideoBB);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_PornTube);
+  {$ENDIF}
 
 end.

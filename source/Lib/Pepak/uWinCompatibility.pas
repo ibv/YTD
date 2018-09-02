@@ -83,11 +83,15 @@ var
   Locale: LCID;
 begin
   Locale := GetThreadLocale;
+  {$IFDEF DELPHIXE2_UP}
+  FixFormatSettingsForWindows8(Locale, SysUtils.FormatSettings);
+  {$ELSE}
   SysUtils.ThousandSeparator := GetLocaleChar(Locale, LOCALE_STHOUSAND, SysUtils.ThousandSeparator);
   SysUtils.DecimalSeparator := GetLocaleChar(Locale, LOCALE_SDECIMAL, SysUtils.DecimalSeparator);
   SysUtils.DateSeparator := GetLocaleChar(Locale, LOCALE_SDATE, SysUtils.DateSeparator);
   SysUtils.TimeSeparator := GetLocaleChar(Locale, LOCALE_STIME, SysUtils.TimeSeparator);
   SysUtils.ListSeparator := GetLocaleChar(Locale, LOCALE_SLIST, SysUtils.ListSeparator);
+  {$ENDIF}
 end;
 
 initialization

@@ -163,6 +163,8 @@ type
       function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlNode; const Path, AttributeName, AttributeValue, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetXmlAttr(Xml: TXmlDoc; const Path, AttributeName, AttributeValue, Attribute: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXmlVar(Http: THttpSend; const Url, Path: string; out VarValue: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXmlVar(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Path: string; out VarValue: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXmlAttr(Http: THttpSend; const Url, Path, Attribute: string; out VarValue: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -1145,20 +1147,26 @@ end;
 function TDownloader.GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean; const VarNameSubExprName, VarValueSubExprName: string): boolean;
 var i, j: integer;
     VarName: string;
+    Found: array of Boolean;
 begin
   if InitValues then
     for i := 0 to High(VarValues) do
       VarValues[i]^ := '';
+  SetLength(Found, Length(VarNames));
+  for i := 0 to High(VarNames) do
+    Found[i] := False;
   Result := RegExp.Match(Text);
   if Result then
     repeat
       VarName := RegExp.SubexpressionByName(VarNameSubExprName);
       for j := 0 to High(VarNames) do
         if VarName = VarNames[j] then
-          begin
-          if j <= High(VarValues) then
-            VarValues[j]^ := RegExp.SubexpressionByName(VarValueSubExprName);
-          end;
+          if not Found[j] then
+            begin
+            Found[j] := True;
+            if j <= High(VarValues) then
+              VarValues[j]^ := RegExp.SubexpressionByName(VarValueSubExprName);
+            end;
     until not RegExp.MatchAgain;
 end;
 
@@ -1192,14 +1200,34 @@ begin
     end;
 end;
 
-function TDownloader.GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean;
-begin
-  Result := GetXmlVar(Xml.Root, Path, VarValue);
-end;
-
 function TDownloader.GetXmlAttr(Xml: TXmlDoc; const Path, Attribute: string; out VarValue: string): boolean;
 begin
   Result := GetXmlAttr(Xml.Root, Path, Attribute, VarValue);
+end;
+
+function TDownloader.GetXmlAttr(Xml: TXmlNode; const Path, AttributeName, AttributeValue, Attribute: string; out VarValue: string): boolean;
+var Node: TXmlNode;
+begin
+  if XmlNodeByPathAndAttr(Xml, Path, AttributeName, AttributeValue, Node) and Node.HasAttribute(Utf8String(Attribute)) then
+    begin
+    VarValue := Node.AttributeByNameWide[Utf8String(Attribute)];
+    Result := True;
+    end
+  else
+    begin
+    VarValue := '';
+    Result := False;
+    end;
+end;
+
+function TDownloader.GetXmlAttr(Xml: TXmlDoc; const Path, AttributeName, AttributeValue, Attribute: string; out VarValue: string): boolean;
+begin
+  Result := GetXmlAttr(Xml.Root, Path, AttributeName, AttributeValue, Attribute, VarValue);
+end;
+
+function TDownloader.GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean;
+begin
+  Result := GetXmlVar(Xml.Root, Path, VarValue);
 end;
 
 function TDownloader.DownloadXmlVar(Http: THttpSend; const Url, Path: string; out VarValue: string; Method: THttpMethod; Clear: boolean): boolean;

@@ -75,7 +75,7 @@ implementation
 {$RESOURCE *.res}
 
 uses
-  downNova;
+  downVoyo;
 
 const
   IDC_CHECKBOX_LOWQUALITY = 1001;
@@ -156,9 +156,9 @@ procedure TFrameDownloaderOptionsPageSpec_Nova.LoadFromOptions;
 const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   inherited;
-  CheckDlgButton(Self.Handle, IDC_CHECKBOX_LOWQUALITY, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT)]);
-  SetWindowText(EditSecretPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT)));
-  SetWindowText(EditConfigPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_NOVA_CONFIG_PASSWORD, OPTION_NOVA_CONFIG_PASSWORD_DEFAULT)));
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_LOWQUALITY, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_VOYO_LOWQUALITY, OPTION_VOYO_LOWQUALITY_DEFAULT)]);
+  SetWindowText(EditSecretPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_VOYO_SECRET, OPTION_VOYO_SECRET_DEFAULT)));
+  SetWindowText(EditConfigPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_VOYO_CONFIG_PASSWORD, OPTION_VOYO_CONFIG_PASSWORD_DEFAULT)));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.SaveToOptions;
@@ -166,12 +166,12 @@ begin
   inherited;
   case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_LOWQUALITY) of
     BST_CHECKED:
-      Options.WriteProviderOption(Provider, OPTION_NOVA_LOWQUALITY, True);
+      Options.WriteProviderOption(Provider, OPTION_VOYO_LOWQUALITY, True);
     BST_UNCHECKED:
-      Options.WriteProviderOption(Provider, OPTION_NOVA_LOWQUALITY, False);
+      Options.WriteProviderOption(Provider, OPTION_VOYO_LOWQUALITY, False);
     end;
-  Options.WriteProviderOption(Provider, OPTION_NOVA_SECRET, GetWindowTextAsString(EditSecretPassword));
-  Options.WriteProviderOption(Provider, OPTION_NOVA_CONFIG_PASSWORD, GetWindowTextAsString(EditConfigPassword));
+  Options.WriteProviderOption(Provider, OPTION_VOYO_SECRET, GetWindowTextAsString(EditSecretPassword));
+  Options.WriteProviderOption(Provider, OPTION_VOYO_CONFIG_PASSWORD, GetWindowTextAsString(EditConfigPassword));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.LabelSecretPasswordClick;

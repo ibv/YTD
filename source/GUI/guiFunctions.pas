@@ -45,6 +45,9 @@ uses
     uSetup,
     {$IFNDEF GUI_WINAPI}
       Forms, Dialogs,
+      {$IFDEF DELPHIXE4_UP}
+      UITypes,
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF}
   SynaCode, SynaUtil,

@@ -69,6 +69,7 @@ const
   REGEXP_URL_EMBED_SRC = '<embed\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_IFRAME_SRC = '<iframe\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_VIDEO_SRC = '<video\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
+  REGEXP_URL_VIDEO_SOURCE_SRC = '<video\b.*?<source\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_META_OGVIDEO = '<meta\s+(?:property|name)="og:video"\s+content="(?P<URL>.+?)"';
   REGEXP_URL_EMBED_FLASHVARS_FILE = '<embed\b[^>]*\sflashvars="(?:[^"]*?&(?:amp;|#038;)?)*?file=(?P<URL>https?://.+?)(?:"|&amp;|&)';
   REGEXP_URL_PARAM_MOVIE = '<param\s+name\s*=\s*"movie"[^>]*\s+value="(?P<URL>.+?)"';

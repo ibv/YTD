@@ -1,11 +1,42 @@
 ﻿______________________________________________________________________________
 
-YTD v1.28                                                    (c) 2009-13 Pepak
+YTD v1.29                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.29:
+
+    * Noví poskytovatelé:
+      - NRSR.sk
+      - PornTube.com
+      - TVNoviny.sk
+        - Tohle je hodně prasácký hack, ale funguje.
+        - Nutnou podmínkou jsou vyplněná hesla a tokeny pro Markiza.sk.
+      - Vine.co
+
+    * Aktualizovaní poskytovatelé:
+      - iDnes.cz
+      - iHned.cz
+      - RTVS.sk
+      - XHamster.com
+      - Zdf.de
+
+    * Barrandov.tv:
+      - Server používá úplně nový přehrávač, který běží na protokolu HTTP a
+        už nevyžaduje znalost tokenu. Prima by se mohla poučit...
+
+    * YouTube.com:
+      - Aktualizována podpora playlistů, např. 
+        https://www.youtube.com/playlist?list=PLwKJlrLDPPOGNiFfpbcyQ385DBse_5FVB
+      - Mnoho videí nejde stáhnout (vrací chybu 403) kvůli novému způsobu
+        streamingu, který zatím neumím zpracovat.
+
+    * Program lze nyní zkompilovat pomocí Delphi XE4.
+
+
 
   v1.28:
 

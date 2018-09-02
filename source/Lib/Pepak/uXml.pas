@@ -162,7 +162,7 @@ end;
 
 function XmlNodeByPath(Node: TXmlNode; const Path: string; out FoundNode: TXmlNode): boolean;
 begin
-  Result := XmlNodeByPathAndAttr(Node, Path, '', '', FoundNode);
+  Result := XmlNodeByPathAndAttr(Node, Path, '', '', FoundNode)
 end;
 
 function XmlNodeByPath(Node: TXmlDoc; const Path: string; out FoundNode: TXmlNode): boolean;

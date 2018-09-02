@@ -81,6 +81,8 @@ set is_delphi2009=0
 set is_delphi2010=0
 set is_delphixe=0
 set is_delphixe2=0
+set is_delphixe3=0
+set is_delphixe4=0
 set is_delphi5_up=0
 set is_delphi6_up=0
 set is_delphi7_up=0
@@ -92,6 +94,8 @@ set is_delphi2009_up=0
 set is_delphi2010_up=0
 set is_delphixe_up=0
 set is_delphixe2_up=0
+set is_delphixe3_up=0
+set is_delphixe4_up=0
 set has_unicode=0
 set has_namespaces=0
 
@@ -224,6 +228,43 @@ if not "%compiler%"=="delphi" (
       set has_unicode=1
       set has_namespaces=1
     )
+    %compexe% | find /i "Version 24.0"
+    if not errorlevel 1 (
+      set is_delphixe3=1
+      set is_delphi5_up=1
+      set is_delphi6_up=1
+      set is_delphi7_up=1
+      set is_delphi8_up=1
+      set is_delphi2005_up=1
+      set is_delphi2006_up=1
+      set is_delphi2007_up=1
+      set is_delphi2009_up=1
+      set is_delphi2010_up=1
+      set is_delphixe_up=1
+      set is_delphixe2_up=1
+      set is_delphixe3_up=1
+      set has_unicode=1
+      set has_namespaces=1
+    )
+    %compexe% | find /i "Version 25.0"
+    if not errorlevel 1 (
+      set is_delphixe4=1
+      set is_delphi5_up=1
+      set is_delphi6_up=1
+      set is_delphi7_up=1
+      set is_delphi8_up=1
+      set is_delphi2005_up=1
+      set is_delphi2006_up=1
+      set is_delphi2007_up=1
+      set is_delphi2009_up=1
+      set is_delphi2010_up=1
+      set is_delphixe_up=1
+      set is_delphixe2_up=1
+      set is_delphixe3_up=1
+      set is_delphixe4_up=1
+      set has_unicode=1
+      set has_namespaces=1
+    )
   )
 )
 
@@ -241,7 +282,7 @@ if "%debug%"=="1" (
 )
 if "%fastmm%"=="1" set defs=%defs% -dFASTMM
 if "%map%"=="1" if "%compiler%"=="delphi" set params=%params% -GD
-if "%has_namespaces%"=="1" set params=%params% -NSSystem;WinApi;Vcl
+if "%has_namespaces%"=="1" set params=%params% -NSSystem;WinApi;Vcl;Xml
 if not "%cli%"=="1" set defs=%defs% -dNO_CLI
 if not "%gui%"=="1" set defs=%defs% -dNO_GUI
 if not "%setup%"=="1" set defs=%defs% -dNO_SETUP
@@ -371,8 +412,13 @@ if "%~1"=="" goto konec
 for %%i in (%~1) do (
   echo.
   echo Compiling: %%i
-  echo %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
-  call %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+  if "%is_delphixe4_up%"=="1" (
+    echo %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+    call %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+  ) else (
+    echo %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+    call %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+  )
   if errorlevel 1 goto halt
 )
 goto konec

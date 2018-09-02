@@ -34,22 +34,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downIDnes_Embed;
+unit downBeAtTv;
 {$INCLUDE 'ytd.inc'}
+
+// Basically, it's working, but the server streams video and audio as separate
+// files, which would need to be combined. Plus I can't get the audio to play.
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_IDnes_Embed = class(TRtmpDownloader)
+  TDownloader_BeAtTv_Embed = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -62,92 +64,90 @@ implementation
 
 uses
   uStringConsts,
-  uStrings,
-  uMessages,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://servis.idnes.cz/stream/flv/data.asp?idvideo=V110523_130926_tv-spolecnost_zkl&reklama=1&idrubriky=hobby-zahrada&idostrova=hobby&idclanku=A110523_110238_hobby-zahrada_mce
+// http://www.be-at.tv/embed.swf?p=342526&ap=1
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        'servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+';
+  URLREGEXP_BEFORE_ID = 'be-at\.tv/embed\.swf\?p=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_IDnes_Embed }
+{ TDownloader_BeAtTv }
 
-class function TDownloader_IDnes_Embed.Provider: string;
+class function TDownloader_BeAtTv_Embed.Provider: string;
 begin
-  Result := 'iDnes.cz';
+  Result := 'Be-at.tv';
 end;
 
-class function TDownloader_IDnes_Embed.UrlRegExp: string;
+class function TDownloader_BeAtTv_Embed.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_IDnes_Embed.Create(const AMovieID: string);
+constructor TDownloader_BeAtTv_Embed.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peXml;
+  inherited Create(AMovieID);
   InfoPageIsXml := True;
+  InfoPageEncoding := peXml;
 end;
 
-destructor TDownloader_IDnes_Embed.Destroy;
+destructor TDownloader_BeAtTv_Embed.Destroy;
 begin
   inherited;
 end;
 
-function TDownloader_IDnes_Embed.GetMovieInfoUrl: string;
+function TDownloader_BeAtTv_Embed.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
+  Result := 'http://old.be-at.tv/CMS/Feeds/Playlist.ashx?page=' + MovieID;
 end;
 
-function TDownloader_IDnes_Embed.GetFileNameExt: string;
-begin
-  Result := '.mp4';
-end;
-
-function TDownloader_IDnes_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ItemType, Server, Path, VideoFile, Title: string;
-    Items: TXmlNode;
-    i: integer;
+function TDownloader_BeAtTv_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Title, SessionID, VideoID: string;
+  {$IFDEF MULTIDOWNLOADS}
+  AudioID, AudioPath, AudioURL: string;
+  {$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not XmlNodeByPath(PageXml, 'items', Items) then
+  if not GetXmlAttr(PageXml, '', 'id', SessionID) then
     SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+  else if not GetXmlAttr(PageXml, '', 'title', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+  else if not GetXmlAttr(PageXml, 'part/video', 'id', VideoID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  {$IFDEF MULTIDOWNLOADS}
+  else if not GetXmlAttr(PageXml, 'part/video', 'audio', AudioID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else if not GetXmlAttr(PageXml, 'part/audio', 'id', AudioID, 'url', AudioPath) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  {$ENDIF}
   else
     begin
-    for i := 0 to Pred(Items.NodeCount) do
-      if string(Items.Nodes[i].Name) = 'item' then
-        if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
-          if ItemType = 'video' then
-            begin
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['server']))
-            else
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['path']))
-            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['file']))
-            else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
-              SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-            else
-              begin
-              SetName(Title);
-              //Self.AppName := 'vod/';
-              Self.PlayPath := 'mp4:' + Path + VideoFile;
-              Self.RtmpUrl := 'rtmpt://' + Server;
-              MovieUrl := Self.RtmpUrl + Self.PlayPath;
-              SetPrepared(True);
-              Result := True;
-              end;
-            Exit;
-            end;
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+    SetName(Title);
+    MovieUrl := Format('http://video.aws.be-at.tv/%s/%s/1000/0.flv', [SessionID, VideoID]);
+    {$IFDEF MULTIDOWNLOADS}
+{
+    if DownloadPage(Http, MovieUrl, hmHEAD) then
+      begin
+      AudioUrl := GetRelativeUrl('http://audio.cdn.be-at.tv/', AudioPath);
+      if DownloadPage(Http, AudioUrl, hmHEAD) then
+        begin
+        UrlList.Add(AudioUrl);
+        NameList.Add(Title + '(audio)');
+        UrlList.Add(MovieUrl);
+        NameList.Add(Title);
+        end;
+      end;
+}
+    {$ENDIF}
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_IDnes_Embed);
+  RegisterDownloader(TDownloader_BeAtTv_Embed);
 
 end.

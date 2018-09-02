@@ -123,10 +123,10 @@ begin
   Result := False;
   if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['file']))
-  else if not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
   else if not GetRegExpVar(MovieModeRegExp, Page, 'MODE', Mode) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mode']))
+  else if (not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server)) and (Mode <> '3') then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
   else
     begin
     if Mode = '1' then
