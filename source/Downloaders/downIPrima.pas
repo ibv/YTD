@@ -110,8 +110,8 @@ uses
 
 // http://www.iprima.cz/videoarchiv/44524/all/all
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima\.cz/(?:videoarchiv|videoplayer)/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima\.cz/';
+  URLREGEXP_ID =        '(?:videoarchiv|videoplayer)/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -125,7 +125,7 @@ const
 const
   PRIMA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'iPrima.cz';
   PRIMA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
-  PRIMA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.iprima.cz/videoarchiv/%s/all/all';
+  PRIMA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.iprima.cz/%s';
 
 { TDownloader_iPrima }
 

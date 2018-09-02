@@ -48,8 +48,11 @@ type
   TDownloader_FreeSk = class(THttpDownloader)
     private
     protected
+      FlashVideoRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -72,9 +75,8 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<input\s+type="hidden"\s+name="module_name"\s+value="(?P<TITLE>[^"]+)"';
-
-  //<param name="movie" value="http://free.zoznam.sk/media/player/player.swf?fID=66598&emb=0&sads=true&image=http://free.zoznam.sk/openMedia.php?path=440f093c8401bbcf2713b6e36ebd6aed229f435bfe9100a8886152214efd5c245bfd51fd16c659ef&from=free.zoznam.sk&video=http://free.zoznam.sk/openMedia.php?path=440f093c8401bbcf2713b6e36ebd6aed229f435bfe9100a8886152214efd5c249a265a4652e49fa3&furi=Splhajuci-buldozer&__toto_replacenut__" />
-  REGEXP_EXTRACT_URL = '<param\s+name="movie"\s+value="[^">]*[?&]video=(?P<URL>https?://[^"]+)"';
+  REGEXP_EXTRACT_URL = '<param\s+name="flashvars"\s+value="(?:[^">]*&)?file=(?P<URL>https?://.+?)[&"]';
+  REGEXP_FLASH_VIDEO = '^(?P<URL>https?://[^/]+/viewflv/.+)$';
 
 { TDownloader_FreeSk }
 
@@ -94,12 +96,14 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  FlashVideoRegExp := RegExCreate(REGEXP_FLASH_VIDEO);
 end;
 
 destructor TDownloader_FreeSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(FlashVideoRegExp);
   inherited;
 end;
 
@@ -110,7 +114,22 @@ end;
 
 function TDownloader_FreeSk.GetFileNameExt: string;
 begin
-  Result := '.flv';
+  Result := inherited GetFileNameExt;
+  if Result = '' then
+    Result := '.flv';
+end;
+
+function TDownloader_FreeSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Dummy: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    begin
+    if not GetRegExpVar(FlashVideoRegExp, MovieUrl, 'URL', Dummy) then
+      MovieUrl := MovieUrl + '.mp4';
+    end;
 end;
 
 initialization

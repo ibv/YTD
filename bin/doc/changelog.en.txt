@@ -1,11 +1,40 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.96                                     (c) 2009-11 Pepak
+YouTube Downloader v0.97                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.97:
+
+    * CeskaTelevize.cz: 
+      - Reverted the code back to 0.94: Only the first video on a page can be
+        downloaded, but at least it works reliably.
+      - Some movies with unexpected character combinations in the description
+        couldn't be downloaded.
+
+    * Free.Zoznam.sk: Support for MP4-format videos.
+
+    * iPrima.cz: Relaxed URL-format requirements so more videos work.
+
+    * KeezMovies.com: Works again.
+
+    * RedTube.com: Support for both HQ and LQ videos.
+
+    * TV7.cz: Works again.
+
+    * TVcom.cz: Relaxed URL-format requirements so more videos work.
+
+    * XHamster.com: Support for both HQ and LQ videos (pre-0.96 versions only
+      supported LQ, 0.96 only supported HQ, 0.97 supports both; if there are
+      other formats, they don't work because I don't know about them).
+
+    * CLI: Instead of the content URL, a command-line for WGET, RTMPDUMP or
+      MDSL is displayed.
+
+
 
   v0.96:
 

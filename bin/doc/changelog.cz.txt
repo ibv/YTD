@@ -1,11 +1,41 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.96                                     (c) 2009-11 Pepak
+YouTube Downloader v0.97                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.97:
+
+    * CeskaTelevize.cz: 
+      - Vrací se kód z verze 0.94 - tzn. funguje jen první video na stránce, 
+        ale funguje spolehlivì.
+      - Nìkterá videa nešla stáhnout, pokud mìla v popisku neèekané kombinace
+        znakù.
+
+    * Free.Zoznam.sk: Podpora pro videa ve formátu MP4.
+
+    * iPrima.cz: Uvolnìn formát adres, takže je rozpoznáváno víc videí.
+
+    * KeezMovies.com: Opìt funkèní.
+
+    * RedTube.com: Podpora pro HQ i LQ videa.
+
+    * TV7.cz: Opìt funkèní.
+
+    * TVcom.cz: Uvolnìn formát adres, takže je rozpoznáváno víc videí.
+
+    * XHamster.com: Podpora pro HQ i LQ videa (pøed 0.96 šly jenom LQ, v 0.96
+      jenom HQ, teï jde oboje; možná jsou i nìkteré další režimy, pokud ano,
+      tak nejdou).
+
+    * CLI: Místo toho, aby se zobrazovalo skuteèné URL videa jako dosud, se
+      zobrazuje pøímo pøíkaz (WGET, RTMPDUMP, MSDL), který dokáže video
+      stáhnout. Hodí se to hlavnì pro ladìní RTMP stahování.
+
+
 
   v0.96:
 

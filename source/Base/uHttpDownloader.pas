@@ -60,6 +60,7 @@ type
     protected
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
+      function GetContentUrl: string; override;
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function BeforeDownload(Http: THttpSend): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -311,6 +312,30 @@ begin
     Result := VideoDownloader.DownloadSize
   else
     Result := -1;
+end;
+
+function THttpDownloader.GetContentUrl: string;
+var
+  Http: THttpSend;
+  s: string;
+  i: integer;
+begin
+  Http := THttpSend.Create;
+  try
+    if not BeforeDownload(Http) then
+      Result := inherited GetContentUrl
+    else
+      begin
+      s := '';
+      for i := 0 to Pred(Headers.Count) do
+        s := Format('%s --header="%s"', [s, Headers[i]]);
+      for i := 0 to Pred(Cookies.Count) do
+        s := Format('%s --header="Cookie: %s"', [s, Cookies[i]]);
+      Result := Format('wget --user-agent="%s"%s -O "%s" "%s"', [Http.UserAgent, s, FileName, inherited GetContentUrl]);
+      end;
+  finally
+    FreeAndNil(Http);
+    end;
 end;
 
 procedure THttpDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string);

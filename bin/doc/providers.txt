@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.96                                     (c) 2009-11 Pepak
+YouTube Downloader v0.97                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -225,6 +225,7 @@ TotallyCrap.com     | RTMP     |       | http://www.totallycrap.com/videos/video
 TV4Play.se          | HTTP     |       | http://www.tv4play.se/sport/alpint?title=inga_svenska_skidskyttemedaljer&videoid=1295009
 TV7.cz              | HTTP     |       | http://www.tv7.cz/?vid=1062
 TVcom.cz            | MS       |       | http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+                    | MS       |       | http://basketbal.tvcom.cz/Zapas/Soutez-U19-Extraliga/Cast-Zakladni/Pohlavi-Muzi/Sezona-2011-2012/10952-BC-Vysocina-BK-Kondori-Liberec.htm
 TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
 TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
 TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66

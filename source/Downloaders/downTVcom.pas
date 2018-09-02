@@ -50,6 +50,7 @@ type
     protected
       ConfigXmlRegExp: TRegExp;
       MMSUrlRegExp: TRegExp;
+      MovieTitle2RegExp: TRegExp;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -69,13 +70,15 @@ uses
   uMessages;
 
 // http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
+// http://basketbal.tvcom.cz/Zapas/Soutez-U19-Extraliga/Cast-Zakladni/Pohlavi-Muzi/Sezona-2011-2012/10952-BC-Vysocina-BK-Kondori-Liberec.htm
 const
   URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*tvcom\.cz/video/.+';
+  URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*tvcom\.cz/.+';
   URLREGEXP_AFTER_ID =  '$';
 
 const
   REGEXP_MOVIE_TITLE = '<h2>\s*(?P<TITLE>.*?)\s*</h2>';
+  REGEXP_MOVIE_TITLE2 = REGEXP_TITLE_TITLE;
   REGEXP_CONFIG_XML = '<param name="initParams" value="config=(?P<URL>https?://[^,"]+)';
   REGEXP_MMSURL = 'playlist\.asx\?video=(?P<URL>[^&]+)';
 
@@ -96,6 +99,7 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieTitle2RegExp := RegExCreate(REGEXP_MOVIE_TITLE2);
   ConfigXmlRegExp := RegExCreate(REGEXP_CONFIG_XML);
   MMSUrlRegExp := RegExCreate(REGEXP_MMSURL);
 end;
@@ -103,6 +107,7 @@ end;
 destructor TDownloader_TVcom.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieTitle2RegExp);
   RegExFreeAndNil(ConfigXmlRegExp);
   RegExFreeAndNil(MMSUrlRegExp);
   inherited;
@@ -119,7 +124,7 @@ begin
 end;
 
 function TDownloader_TVcom.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, VideoUrl: string;
+var Url, VideoUrl, Title: string;
     Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
@@ -130,13 +135,15 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
-      Xml.savetofile('x.xml');
       if not GetXmlVar(Xml, 'Video', VideoUrl) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else if not GetRegExpVar(MMSUrlRegExp, VideoUrl, 'URL', Url) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
+        if UnpreparedName = '' then
+          if GetRegExpVar(MovieTitle2RegExp, Page, 'TITLE', Title) then
+            SetName(Title);
         MovieURL := URL;
         Result := True;
         SetPrepared(True);

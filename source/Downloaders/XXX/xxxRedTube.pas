@@ -49,7 +49,7 @@ type
     private
     protected
       FlashVarsRegExp: TRegExp;
-      FlashMovieUrlRegExp: TRegExp;
+      FlashVarsParserRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -75,7 +75,7 @@ const
 const
   REGEXP_MOVIE_TITLE = '<h1\s[^>]*class="videoTitle"[^>]*>(?P<TITLE>.*?)</h1>';
   REGEXP_FLASHVARS = '\bso\.addParam\s*\(\s*"flashvars"\s*,\s*"(?P<VARS>.*?)"';
-  REGEXP_FLASHMOVIEURL = '[?&]hashlink=(?P<URL>[^&]+)';
+  REGEXP_FLASHVARSPARSER = '(?:^|&)(?P<VARNAME>[^=&]+)(?:=(?P<VARVALUE>[^&]*))?';
 
 { TDownloader_RedTube }
 
@@ -92,17 +92,17 @@ end;
 constructor TDownloader_RedTube.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUnknown;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
-  FlashMovieUrlRegExp := RegExCreate(REGEXP_FLASHMOVIEURL);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARSPARSER);
 end;
 
 destructor TDownloader_RedTube.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(FlashVarsRegExp);
-  RegExFreeAndNil(FlashMovieUrlRegExp);
+  RegExFreeAndNil(FlashVarsParserRegExp);
   inherited;
 end;
 
@@ -112,23 +112,24 @@ begin
 end;
 
 function TDownloader_RedTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var FlashVars, Url: string;
+var
+  FlashVars: string;
+  FlvUrl, Mp4Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(FlashVarsRegExp, Page, 'VARS', FlashVars) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetRegExpVarPairs(FlashVarsParserRegExp, Page, ['flv_url', 'mp4_url'], [@FlvUrl, @Mp4Url]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    FlashVars := HtmlDecode(FlashVars);
-    if not GetRegExpVar(FlashMovieUrlRegExp, FlashVars, 'URL', Url) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    if Mp4Url <> '' then
+      MovieUrl := Trim(UrlDecode(Mp4Url))
     else
-      begin
-      MovieUrl := Trim(UrlDecode(Url));
-      SetPrepared(True);
-      Result := True;
-      end;
+      MovieUrl := Trim(UrlDecode(FlvUrl));
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

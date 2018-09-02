@@ -70,8 +70,9 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_MOVIE_URL = '\bflashvars\.video_url\s*=\s*''(?P<URL>https?(?::|%3A)(?:/|%2F){2}.+?)''';
+  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*-\s*KeezMovies.com)?</title>';
+  //REGEXP_MOVIE_URL = '\bflashvars\.video_url\s*=\s*''(?P<URL>https?(?::|%3A)(?:/|%2F){2}.+?)''';
+  REGEXP_MOVIE_URL = '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?video_url=(?P<URL>https?(?::|%3A)(?:/|%2F){2}.+?)[&"]';
 
 { TDownloader_KeezMovies }
 

@@ -241,9 +241,11 @@ begin
         begin
         if Name = '' then
           SetName(NestedDownloader.Name);
+        {
         if MovieUrl = '' then
           if NestedDownloader is TCommonDownloader then
             MovieUrl := TCommonDownloader(NestedDownloader).ContentUrl;
+        }
         end;
       end;
 end;

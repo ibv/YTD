@@ -57,6 +57,9 @@ type
       procedure SetMsdlOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure OnMsdlDownloadProgress(DownloadedSize, TotalSize: integer; var DoAbort: integer); virtual;
       property MsdlOptions: TMsdlOptions read fMsdlOptions;
+    protected
+      function GetContentUrl: string; override;
+      procedure SetProxyUrl;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -84,6 +87,36 @@ end;
 destructor TMSDownloader.Destroy;
 begin
   inherited;
+end;
+
+function TMSDownloader.GetContentUrl: string;
+var
+  s: string;
+  i: integer;
+begin
+  SetProxyUrl;
+  for i := 0 to Pred(Length(MsdlOptions)) do
+    if MsdlOptions[i].Argument = '' then
+      s := Format('%s -%s', [s, MsdlOptions[i].ShortOption])
+    else
+      s := Format('%s -%s "%s"', [s, MsdlOptions[i].ShortOption, MsdlOptions[i].Argument]);
+  Result := Format('msdl %s -o "%s"', [s, FileName]);
+end;
+
+procedure TMSDownloader.SetProxyUrl;
+var
+  ProxyString: string;
+begin
+  if Options.ProxyActive and (Options.ProxyHost <> '') then
+    begin
+    ProxyString := Options.ProxyHost + ':' + Options.ProxyPort;
+    if Options.ProxyUser <> '' then
+      if Options.ProxyPassword <> '' then
+        ProxyString := Options.ProxyUser + ':' + Options.ProxyPassword + '@' + ProxyString
+      else
+        ProxyString := Options.ProxyUser + '@' + ProxyString;
+    AddMsdlOption('y', ProxyString); // Note: MSDL has no option 'y', it's an extra option of MSDL_DLL
+    end;
 end;
 
 procedure TMSDownloader.ClearMsdlOptions;
@@ -125,7 +158,7 @@ begin
 end;
 
 function TMSDownloader.Download: boolean;
-var LogFileName, ProxyString: string;
+var LogFileName: string;
     RetCode: integer;
     FN, FinalFN: string;
 begin
@@ -134,16 +167,7 @@ begin
   TotalBytes := -1;
   Aborted := False;
   Result := False;
-  if Options.ProxyActive and (Options.ProxyHost <> '') then
-    begin
-    ProxyString := Options.ProxyHost + ':' + Options.ProxyPort;
-    if Options.ProxyUser <> '' then
-      if Options.ProxyPassword <> '' then
-        ProxyString := Options.ProxyUser + ':' + Options.ProxyPassword + '@' + ProxyString
-      else
-        ProxyString := Options.ProxyUser + '@' + ProxyString;
-    AddMsdlOption('y', ProxyString); // Note: MSDL has no option 'y', it's an extra option of MSDL_DLL
-    end;
+  SetProxyUrl;
   FinalFN := FileName;
   if Options.DownloadToTempFiles then
     FN := FinalFN + '.part'

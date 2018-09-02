@@ -70,8 +70,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h2[^>]*>(?P<TITLE>.*?)\s*\|';
-  REGEXP_EXTRACT_URL = '\.addVariable\s*\(\s*"file","(?P<URL>https?://.+?)"';
+  REGEXP_EXTRACT_TITLE = '<div\s+id="nadpis">(?P<TITLE>.*?)</div>';
+  REGEXP_EXTRACT_URL = '''file''\s*:\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_TV7 }
 

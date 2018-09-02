@@ -81,6 +81,9 @@ type
       procedure OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ParseErrorLog(const LogFileName: string; out Error: string): boolean;
       property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions write fRtmpDumpOptions;
+      procedure SetProxyUrl;
+    protected
+      function GetContentUrl: string; override;
     public
       class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
@@ -118,7 +121,7 @@ const
   OPTION_TOKEN = 'T';
   OPTION_SWFURL = 's';
   OPTION_SWFVFY = 'W';
-  OPTION_TCURL = 't'; 
+  OPTION_TCURL = 't';
 
 procedure RtmpDumpDownloadProgressCallback(Tag, DownloadedSize: longint; PercentDone: double; var DoAbort: longint); cdecl;
 begin
@@ -141,6 +144,26 @@ end;
 destructor TRtmpDownloader.Destroy;
 begin
   inherited;
+end;
+
+function TRtmpDownloader.GetContentUrl: string;
+var
+  s: string;
+  i: integer;
+begin
+  SetProxyUrl;
+  for i := 0 to Pred(Length(RtmpDumpOptions)) do
+    if RtmpDumpOptions[i].Argument = '' then
+      s := Format('%s -%s', [s, RtmpDumpOptions[i].ShortOption])
+    else
+      s := Format('%s -%s "%s"', [s, RtmpDumpOptions[i].ShortOption, RtmpDumpOptions[i].Argument]);
+  Result := Format('rtmpdump %s -o "%s"', [s, FileName]);
+end;
+
+procedure TRtmpDownloader.SetProxyUrl;
+begin
+  if Options.ProxyActive and (Options.ProxyHost <> '') then
+    SetRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
 end;
 
 procedure TRtmpDownloader.ClearRtmpDumpOptions;
@@ -342,16 +365,15 @@ begin
   Aborted := False;
   Result := False;
   {$IFDEF DEBUG}
-  AddRtmpDumpOption('z');
+  SetRtmpDumpOption('z');
   {$ENDIF}
-  if Options.ProxyActive and (Options.ProxyHost <> '') then
-    AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
+  SetProxyUrl;
   FinalFN := FileName;
   if Options.DownloadToTempFiles then
     FN := FinalFN + '.part'
   else
     FN := FinalFN;
-  AddRtmpDumpOption('o', FN);
+  SetRtmpDumpOption('o', FN);
   LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));

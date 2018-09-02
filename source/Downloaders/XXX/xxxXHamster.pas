@@ -50,6 +50,7 @@ type
     protected
       MovieServerRegExp: TRegExp;
       MovieFileNameRegExp: TRegExp;
+      MovieModeRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -76,6 +77,7 @@ const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
   REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
   REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[^'']+)';
+  REGEXP_MOVIE_URLMODE = '''url_mode''\s*:\s*''(?P<MODE>[0-9]+)''';
 
 { TDownloader_XHamster }
 
@@ -96,6 +98,7 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
   MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME);
+  MovieModeRegExp := RegExCreate(REGEXP_MOVIE_URLMODE);
 end;
 
 destructor TDownloader_XHamster.Destroy;
@@ -103,6 +106,7 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieServerRegExp);
   RegExFreeAndNil(MovieFileNameRegExp);
+  RegExFreeAndNil(MovieModeRegExp);
   inherited;
 end;
 
@@ -112,7 +116,7 @@ begin
 end;
 
 function TDownloader_XHamster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Server, FileName: string;
+var Server, FileName, Mode: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -122,7 +126,10 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
   else
     begin
-    MovieUrl := Server + '/key=' + FileName;
+    if GetRegExpVar(MovieModeRegExp, Page, 'MODE', Mode) and (StrToIntDef(Mode,-1)=1) then
+      MovieUrl := Server + '/key=' + FileName
+    else
+      MovieUrl := Server + '/flv2/' + FileName;
     SetPrepared(True);
     Result := True;
     end;

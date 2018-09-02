@@ -406,7 +406,6 @@ uses
   {$ENDIF}
   // Playlist handlers
   listBlipTV in 'Playlists\listBlipTV.pas',
-  listCT in 'Playlists\listCT.pas',
   listGameAnyone in 'Playlists\listGameAnyone.pas',
   listHTML in 'Playlists\listHTML.pas',
   listHTMLfile in 'Playlists\listHTMLfile.pas',
