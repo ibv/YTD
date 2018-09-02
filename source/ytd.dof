@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.ceknito.sk/video/190561
+RunParams=https://www.youtube.com/watch?v=WaChM8-2lc4
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=45
 Release=0
-Build=1142
+Build=1145
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.45.0.1142
+FileVersion=1.45.0.1145
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=

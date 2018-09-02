@@ -177,6 +177,7 @@ function GetFileDateTime(const FileName: string): TDateTime; overload;
 function GetFileContent(const FileName: string): string;
 function GetFileVersion(const FileName: string; out VersionHigh, VersionLow, BuildNumber: LongWord): boolean;
 function GetDrives(out Drives: TDriveInfoArray; OnlyOfType: integer = -1): boolean;
+function GetRealFileName(const FileName: string): string;
 {$ENDIF}
 
 {$IFDEF USYSTEM_WOW64}
@@ -207,6 +208,9 @@ uses
   TlHelp32,
   {$ENDIF}
   uCompatibility;
+
+var
+  Kernel32Dll: THandle = 0;
 
 {$IFDEF USYSTEM_CONSOLE}
 function GetConsoleOutput(const Command: string; Input, Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean;
@@ -1103,6 +1107,38 @@ end;
 {$ENDIF}
 
 {$IFDEF USYSTEM_FILES}
+var
+  GetFileInformationByHandleEx: function(hFile: THandle; FileInformationClass: DWORD; lpFileInformation: Pointer; dwBufferSize: DWORD): BOOL; stdcall;
+  GetVolumePathNameA: function(FileName, VolumePathName: PAnsiChar; cchBufferLength: DWORD): BOOL; stdcall;
+  GetVolumePathNameW: function(FileName, VolumePathName: PWideChar; cchBufferLength: DWORD): BOOL; stdcall;
+  GetVolumePathName: function(FileName, VolumePathName: PChar; cchBufferLength: DWORD): BOOL; stdcall;
+
+procedure Init_Files;
+begin
+  if Kernel32Dll = 0 then
+    begin
+    GetFileInformationByHandleEx := nil;
+    GetVolumePathNameA := nil;
+    GetVolumePathNameW := nil;
+    GetVolumePathName := nil;
+    end
+  else
+    begin
+    GetFileInformationByHandleEx := GetProcAddress(Kernel32Dll, 'GetFileInformationByHandleEx');
+    GetVolumePathNameA := GetProcAddress(Kernel32Dll, 'GetVolumePathNameA');
+    GetVolumePathNameW := GetProcAddress(Kernel32Dll, 'GetVolumePathNameW');
+    GetVolumePathName := {$IFDEF UNICODE} GetVolumePathNameW {$ELSE} GetVolumePathNameA {$ENDIF} ;
+    end;
+end;
+
+procedure Done_Files;
+begin
+  GetFileInformationByHandleEx := nil;
+  GetVolumePathNameA := nil;
+  GetVolumePathNameW := nil;
+  GetVolumePathName := nil;
+end;
+
 function IsExclusiveAccess(FN: string): Boolean;
 var
   FileHandle: Integer;
@@ -1469,6 +1505,46 @@ begin
   SetLength(Drives, n);
   Result := n > 0;
 end;
+
+function GetRealFileName(const FileName: string): string;
+type
+  FILE_NAME_INFO = record
+    FileNameLength: DWORD;
+    FileName: array[0..65535] of WideChar;
+  end;
+var
+  Handle: THandle;
+  NameBuffer: FILE_NAME_INFO;
+  VolumePathName: array[0..65536] of Char;
+  Volume: string;
+begin
+  if Assigned(GetFileInformationByHandleEx) and Assigned(GetVolumePathName) and FileExists(FileName) then
+    begin
+    Handle := CreateFile(PChar(FileName), GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL or FILE_FLAG_NO_BUFFERING, 0);
+    if Handle <> INVALID_HANDLE_VALUE then
+      try
+        if GetFileInformationByHandleEx(Handle, 2 {FileNameInfo}, @NameBuffer, Sizeof(NameBuffer)) then
+          begin
+          SetString(Result, NameBuffer.FileName, NameBuffer.FileNameLength div Sizeof(WideChar));
+          if GetVolumePathName(PChar(FileName), VolumePathName, Length(VolumePathName)) then
+            begin
+            Volume := ExcludeTrailingPathDelimiter(string(PChar(@VolumePathName[0])));
+            if Copy(FileName, 1, 4) = '\\?\' then
+              if Copy(Volume, 1, 4) <> '\\?\' then
+                if Copy(FileName, 5, 4) = 'UNC\' then
+                  Volume := '\\?\UNC\' + Volume
+                else
+                  Volume := '\\?\' + Volume;
+            Result := Volume + Result;
+            Exit;
+            end;
+          end;
+      finally
+        CloseHandle(Handle);
+      end;
+    end;
+  Result := ExpandFileName(FileName);
+end;
 {$ENDIF}
 
 {$IFDEF USYSTEM_WOW64}
@@ -1478,16 +1554,12 @@ type
   TWow64RevertWow64FsRedirectionFn = function(var OldValueDONOTCHANGE: Pointer): BOOL; stdcall;
 
 var
-  Kernel32Dll: THandle = 0;
-
-var
   IsWow64ProcessFn: TIsWow64ProcessFn = nil;
   Wow64DisableWow64FsRedirectionFn: TWow64DisableWow64FsRedirectionFn = nil;
   Wow64RevertWow64FsRedirectionFn: TWow64RevertWow64FsRedirectionFn = nil;
 
 procedure Init_Wow64;
 begin
-  Kernel32Dll := LoadLibrary('kernel32.dll');
   if Kernel32Dll = 0 then
     begin
     IsWow64ProcessFn := nil;
@@ -1504,14 +1576,9 @@ end;
 
 procedure Done_Wow64;
 begin
-  if Kernel32Dll <> 0 then
-    begin
-    FreeLibrary(Kernel32Dll);
-    Kernel32Dll := 0;
-    IsWow64ProcessFn := nil;
-    Wow64DisableWow64FsRedirectionFn := nil;
-    Wow64RevertWow64FsRedirectionFn := nil;
-    end;
+  IsWow64ProcessFn := nil;
+  Wow64DisableWow64FsRedirectionFn := nil;
+  Wow64RevertWow64FsRedirectionFn := nil;
 end;
 
 function IsWow64Process(hProcess: THandle; var Wow64Process: BOOL): BOOL;
@@ -1594,6 +1661,10 @@ end;
 {$ENDIF}
 
 initialization
+  Kernel32Dll := LoadLibrary('kernel32.dll');
+  {$IFDEF USYSTEM_FILES}
+  Init_Files;
+  {$ENDIF}
   {$IFDEF USYSTEM_WOW64}
   Init_Wow64;
   {$ENDIF}
@@ -1602,6 +1673,11 @@ initialization
   {$ENDIF}
 
 finalization
+  FreeLibrary(Kernel32Dll);
+  Kernel32Dll := 0;
+  {$IFDEF USYSTEM_FILES}
+  Done_Files;
+  {$ENDIF}
   {$IFDEF USYSTEM_WOW64}
   Done_Wow64;
   {$ENDIF}

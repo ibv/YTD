@@ -1,12 +1,19 @@
 ﻿______________________________________________________________________________
 
-YTD v1.48                                                    (c) 2009-15 Pepak
+YTD v1.49                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v1.49:
+
+    * Updated providers:
+      - CeskaTelevize.cz
+
+  
+  
   v1.48:
 
     * New providers:
@@ -27,7 +34,7 @@ CHANGELOG
 
     * Removed providers:
       - Prima.cz
-      - Serialy.cz
+      - SerialyCZ.cz
       - Stream.cz
       - Video.nur.kz
 

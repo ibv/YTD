@@ -128,7 +128,7 @@ begin
   Result := False;
   if GetRegExpVar(IFrameRegExp, Page, 'URL', Url) and (Url <> '') then
     begin
-    Url := GetRelativeUrl(GetMovieInfoUrl, Url);
+    Url := UrlEncode(HtmlDecode(GetRelativeUrl(GetMovieInfoUrl, Url)));
     Result := True;
     end;
 end;
