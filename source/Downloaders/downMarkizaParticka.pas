@@ -34,9 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downTyzdenSk;
+unit downMarkizaParticka;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE ALLOW_MDY_DATE} // Allow switching of day and month. Not recommended!
 
 interface
 
@@ -46,11 +45,9 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_TyzdenSk = class(THttpDownloader)
+  TDownloader_Markiza_Particka = class(THttpDownloader)
     private
     protected
-      FlashVarsRegExp: TRegExp;
-      FlashVarsItemsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -65,94 +62,65 @@ implementation
 
 uses
   uStringConsts,
+  {$IFDEF JSON}
+  uJSON, uLkJSON,
+  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
-// http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
+// http://particka.markiza.sk/archiv.php?vid=65598
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tyzden\.sk/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*particka\.markiza\.sk/archiv\.php\?(?:.*?&)?vid=';
+  URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>(?:[^|]*\|)?[^|]*)[|<]';
-  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"FlashVars"\s*,\s*"(?P<FLASHVARS>.*?)"';
-  REGEXP_FLASHVARS_ITEMS = '(?P<VARNAME>[^="]+)=(?P<VARVALUE>.*?)(?:&amp;|$)';
+{ TDownloader_Markiza_Particka }
 
-{ TDownloader_TyzdenSk }
-
-class function TDownloader_TyzdenSk.Provider: string;
+class function TDownloader_Markiza_Particka.Provider: string;
 begin
-  Result := 'Tyzden.sk';
+  Result := 'Markiza.sk';
 end;
 
-class function TDownloader_TyzdenSk.UrlRegExp: string;
+class function TDownloader_Markiza_Particka.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_TyzdenSk.Create(const AMovieID: string);
+constructor TDownloader_Markiza_Particka.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
-  FlashVarsItemsRegExp := RegExCreate(REGEXP_FLASHVARS_ITEMS);
+  InfoPageIsXml := True;
 end;
 
-destructor TDownloader_TyzdenSk.Destroy;
+destructor TDownloader_Markiza_Particka.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(FlashVarsRegExp);
-  RegExFreeAndNil(FlashVarsItemsRegExp);
   inherited;
 end;
 
-function TDownloader_TyzdenSk.GetMovieInfoUrl: string;
+function TDownloader_Markiza_Particka.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.tyzden.sk/' + MovieID;
+  Result := 'http://particka.markiza.sk/xml/video/parts_flowplayer.rss?ID_entity=' + MovieID;
 end;
 
-function TDownloader_TyzdenSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var FlashVars, Node, V: string;
-    i: integer;
+function TDownloader_Markiza_Particka.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else if not GetRegExpVarPairs(FlashVarsItemsRegExp, FlashVars, ['node', 'v'], [@Node, @V]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else if (Node = '') or (V = '') then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  if not GetXmlVar(PageXml, 'channel/title', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+  else if not GetXmlAttr(PageXml, 'channel/item/media:content', 'url', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    Node := UrlDecode(Node);
-    repeat
-      i := Pos(';', Node);
-      if i <= 0 then
-        Break
-      else if i > 1 then
-        begin
-        SetLength(Node, Pred(i));
-        Break;
-        end
-      else
-        System.Delete(Node, 1, 1);
-    until Node <> '';
-    V := UrlDecode(V);
-    if Node = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-    else
-      begin
-      MovieUrl := Node + V;
-      SetPrepared(True);
-      Result := True;
-      end;
+    SetName(Title);
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_TyzdenSk);
+  RegisterDownloader(TDownloader_Markiza_Particka);
 
 end.

@@ -79,6 +79,7 @@ function CharInSet(C: Char; S: TSysCharSet): boolean;
 
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
+function StartsText(const SubStr, Str: string): boolean; 
 {$ENDIF}
 
 {$IFNDEF DELPHI2010_UP}
@@ -108,6 +109,11 @@ end;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
 begin
   Result := ExcludeTrailingBackslash(Path);
+end;
+
+function StartsText(const SubStr, Str: string): boolean;
+begin
+  Result := AnsiCompareText(SubStr, Copy(Str, 1, Length(SubStr))) = 0;
 end;
 {$ENDIF}
 

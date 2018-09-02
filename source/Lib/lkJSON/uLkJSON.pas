@@ -489,7 +489,9 @@ function GenerateReadableText(vObj: TlkJSONbase; var vLevel:
 
 implementation
 
-uses math {$IFNDEF VER130} ,strutils {$ENDIF} ;
+{$IFNDEF VER130}
+uses math ,strutils;
+{$ENDIF}
 
 type
   ElkIntException = class(Exception)

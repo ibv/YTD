@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, HttpSend,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
 
 type
@@ -49,7 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,12 +65,9 @@ uses
 // http://www.youtube.com/titanicpiano14
 // http://www.youtube.com/user/titanicpiano14
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/';
-  URLREGEXP_ID =        '(?:user/)?[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:user/)?';
+  URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '$';
-
-const
-  REGEXP_PAGE_ITEM = '<div\s+id="playnav-video-play-uploads-[0-9]+-(?P<ID>[^"]{11})["-]';
 
 { TPlaylist_YouTube_Page }
 
@@ -87,7 +84,7 @@ end;
 constructor TPlaylist_YouTube_Page.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PAGE_ITEM);
+  InfoPageIsXml := True;
 end;
 
 destructor TPlaylist_YouTube_Page.Destroy;
@@ -98,12 +95,33 @@ end;
 
 function TPlaylist_YouTube_Page.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.youtube.com/' + MovieID;
+  Result := 'http://gdata.youtube.com/feeds/base/users/' + MovieID + '/uploads?alt=rss&v=2&orderby=published&client=ytapi-youtube-profile';
 end;
 
-function TPlaylist_YouTube_Page.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
+function TPlaylist_YouTube_Page.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var Channel: TXmlNode;
+    i, ItemNr: integer;
+    Url, Title: string;
 begin
-  Result := 'http://www.youtube.com/watch?v=' + Match.SubexpressionByName('ID');
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  ItemNr := 0;
+  if XmlNodeByPath(PageXml, 'channel', Channel) then
+    for i := 0 to Pred(Channel.NodeCount) do
+      if Channel.Nodes[i].Name = 'item' then
+        if GetXmlVar(Channel.Nodes[i], 'link', Url) then
+          begin
+          if not GetXmlVar(Channel.Nodes[i], 'title', Title) then
+            Title := Format('%s [%d]', [MovieID, ItemNr]);
+          UrlList.Add(Url);
+          NameList.Add(Title);
+          Inc(ItemNr);
+          end;
+  if UrlList.Count > 0 then
+    begin
+    Result := True;
+    SetPrepared(True);
+    end;
 end;
 
 initialization

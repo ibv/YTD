@@ -209,6 +209,7 @@ uses
   downHasici150 in 'Downloaders\downHasici150.pas',
   downHellTV in 'Downloaders\downHellTV.pas',
   downHrej in 'Downloaders\downHrej.pas',
+  downHudebniVideoKlipy in 'Downloaders\downHudebniVideoKlipy.pas',
   downiConcerts in 'Downloaders\downIConcerts.pas',
   downiDnes_Embed in 'Downloaders\downIDnes_Embed.pas',
   downiDnes in 'Downloaders\downIDnes.pas',
@@ -225,6 +226,7 @@ uses
   downLiveVideo in 'Downloaders\downLiveVideo.pas',
   downLoupak in 'Downloaders\downLoupak.pas',
   downMarkiza in 'Downloaders\downMarkiza.pas',
+  downMarkizaParticka in 'Downloaders\downMarkizaParticka.pas',
   downMediaSport in 'Downloaders\downMediaSport.pas',
   downMegaVideo in 'Downloaders\downMegaVideo.pas',
   downMetaCafe in 'Downloaders\downMetaCafe.pas',
@@ -255,7 +257,6 @@ uses
   downNovaMov in 'Downloaders\downNovaMov.pas',
   downNovaMov_Embed in 'Downloaders\downNovaMov_Embed.pas',
   downNovinky in 'Downloaders\downNovinky.pas',
-  downNovinkyV2 in 'Downloaders\downNovinkyV2.pas',
   downOverStream in 'Downloaders\downOverStream.pas',
   downPBS in 'Downloaders\downPBS.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
@@ -396,6 +397,11 @@ type
 
 var
   StartedFromIDE: boolean;
+  {$IFDEF GUI}
+    {$IFDEF CLI}
+    RunExternal: boolean;
+    {$ENDIF}
+  {$ENDIF}
   ErrorMsg: string;
   {$IFDEF SETUP}
   InstallDir: string;
@@ -619,10 +625,21 @@ begin
       stGUIexplicit:
         RunGUI;
       stGUI:
-        if StartedFromIDE then
-          RunGUI
-        else if not Run(ParamStr(0), SETUP_PARAM_GUI) then
+        begin
+        {$IFDEF CLI}
+          RunExternal := (not StartedFromIDE);
+          {$IFNDEF FPC}
+            if RunExternal then
+              begin
+              FreeConsole;
+              if not TConsoleApp.ParentHasConsole then
+                RunExternal := False;
+              end;
+          {$ENDIF}
+          if (not RunExternal) or (not Run(ParamStr(0), SETUP_PARAM_GUI)) then
+        {$ENDIF}
           RunGUI;
+        end;
       {$ENDIF}
       {$IFDEF SETUP}
       stInstall:

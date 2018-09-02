@@ -84,8 +84,8 @@ uses
 // http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
 // http://www.videacesky.cz/autori/Jandis/videa/BeerNation.flv
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*videacesky\.cz/(?!autori/[^/?&]*/videa/)[^/]+/';
-  URLREGEXP_ID =        '[^/?&]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*videacesky\.cz/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -158,7 +158,7 @@ end;
 
 function TDownloader_VideaCesky.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.videacesky.cz/dummy/' + MovieID;
+  Result := 'http://www.videacesky.cz/' + MovieID;
 end;
 
 procedure TDownloader_VideaCesky.SetOptions(const Value: TYTDOptions);

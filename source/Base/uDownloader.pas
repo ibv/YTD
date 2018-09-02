@@ -89,6 +89,7 @@ type
       function GetName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetPrepared(Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetLastErrorMsg: string; virtual;
       procedure SetLastErrorMsg(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetMovieID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetLastUrl(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -170,7 +171,7 @@ type
       property Prepared: boolean read fPrepared;
       property Name: string read GetName;
       property FileName: string read GetFileName;
-      property LastErrorMsg: string read fLastErrorMsg;
+      property LastErrorMsg: string read GetLastErrorMsg;
       property TotalSize: int64 read GetTotalSize;
       property DownloadedSize: int64 read GetDownloadedSize;
       property DefaultHttp: THttpSend read fHttp;
@@ -235,6 +236,11 @@ end;
 procedure TDownloader.SetPrepared(Value: boolean);
 begin
   fPrepared := Value;
+end;
+
+function TDownloader.GetLastErrorMsg: string;
+begin
+  Result := fLastErrorMsg;
 end;
 
 procedure TDownloader.SetLastErrorMsg(const Value: string);

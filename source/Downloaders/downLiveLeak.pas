@@ -73,8 +73,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h4\s+id="s_hd">(?P<TITLE>.*?)</h4>';
-  REGEXP_INFO_URL = '\.addVariable\s*\(\s*''config''\s*,\s*''(?P<URL>.*?)''';
+  REGEXP_EXTRACT_TITLE = '<title>\s*(?:LiveLeak\.com\s*-\s*)?(?P<TITLE>.*?)\s*</title>';
+  REGEXP_INFO_URL = '\bconfig\s*:\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_LiveLeak }
 
@@ -109,37 +109,20 @@ begin
 end;
 
 function TDownloader_LiveLeak.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-    Xml, Location: TXmlDoc;
+var InfoUrl, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', Url) then
+  if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', InfoUrl) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
+  else if not DownloadXmlVar(Http, InfoUrl, 'file', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    try
-      if not GetXmlVar(Xml, 'file', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-      else if not DownloadXml(Http, Url, Location) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-      else
-        try
-          if not GetXmlVar(Location, 'trackList/track/location', Url) then
-            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-          else
-            begin
-            MovieURL := Url;
-            SetPrepared(True);
-            Result := True;
-            end;
-        finally
-          Location.Free;
-          end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    MovieURL := Url;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

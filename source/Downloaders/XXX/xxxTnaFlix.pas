@@ -68,13 +68,13 @@ uses
   uMessages;
 
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tnaflix\.com/view_video\.php\?(?:[^&]*&)*viewkey=';
-  URLREGEXP_ID =        '[0-9a-f]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tnaflix\.com/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE = '<h2[^>]*>(?P<TITLE>.*?)</h2>';
-  REGEXP_MOVIE_INFOURL = '\bso\.addVariable\s*\(\s*''config''\s*,\s*''(?P<URL>http.+?)''';
+  REGEXP_MOVIE_INFOURL = '(?!<//\s*)\bflashvars\.config\s*=\s*(?:escape\s*\(\s*)?"(?P<URL>https?://.+?)"';
 
 { TDownloader_TnaFlix }
 
@@ -105,7 +105,7 @@ end;
 
 function TDownloader_TnaFlix.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.tnaflix.com/view_video.php?viewkey=' + MovieID;
+  Result := 'http://www.tnaflix.com/' + MovieID;
 end;
 
 function TDownloader_TnaFlix.GetFileNameExt: string;
@@ -125,7 +125,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
-      if not GetXmlVar(Xml, 'file', Url) then
+      if not GetXmlVar(Xml, 'videoLink', Url) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin

@@ -72,7 +72,6 @@ type
       procedure SetSwfVfy(const Value: string);
       procedure SetTcUrl(const Value: string);
     protected
-    private
       procedure ClearRtmpDumpOptions; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function IndexOfRtmpDumpOption(ShortOption: char; out Index: integer): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRtmpDumpOption(ShortOption: char): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -80,7 +79,8 @@ type
       procedure DeleteRtmpDumpOption(ShortOption: char); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure AddRtmpDumpOption(ShortOption: char; const Argument: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions;
+      function ParseErrorLog(const LogFileName: string; out Error: string): boolean;
+      property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions write fRtmpDumpOptions;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -105,7 +105,7 @@ type
 implementation
 
 uses
-  uMessages;
+  uMessages, uCompatibility;
 
 const
   OPTION_FLASHVER = 'f';
@@ -195,63 +195,6 @@ begin
   SetLength(fRtmpDumpOptions, Succ(n));
   fRtmpDumpOptions[n].ShortOption := AnsiChar(ShortOption);
   fRtmpDumpOptions[n].Argument := AnsiString(Argument);
-end;
-
-procedure TRtmpDownloader.OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer);
-begin
-  DownloadedBytes := DownloadedSize;
-  if PercentDone >= 99.9 then
-    TotalBytes := DownloadedSize
-  else if PercentDone > 0 then
-    TotalBytes := Trunc(int64(DownloadedSize) * (100 / PercentDone))
-  else
-    TotalBytes := -1;
-  DoProgress;
-  if Aborted then
-    DoAbort := 1
-  else
-    DoAbort := 0;
-end;
-
-function TRtmpDownloader.Prepare: boolean;
-begin
-  ClearRtmpDumpOptions;
-  Result := inherited Prepare;
-end;
-
-function TRtmpDownloader.Download: boolean;
-var LogFileName: string;
-    RetCode: integer;
-begin
-  inherited Download;
-  DownloadedBytes := 0;
-  TotalBytes := -1;
-  Aborted := False;
-  Result := False;
-  {$IFDEF DEBUG}
-  AddRtmpDumpOption('z');
-  {$ENDIF}
-  if Options.ProxyActive and (Options.ProxyHost <> '') then
-    AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
-  AddRtmpDumpOption('o', FileName);
-  LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
-  if FileExists(LogFileName) then
-    DeleteFile(PChar(LogFileName));
-  SetLastErrorMsg(Format(ERR_SEE_LOGFILE, [LogFileName]));
-  if not RtmpDump_Init then
-    Raise ERTMPDownloaderError.CreateFmt(ERR_FAILED_TO_LOAD_DLL, ['rtmpdump_dll.dll']);
-  RetCode := RtmpDump_Download(Integer(Self), RtmpDumpDownloadProgressCallback, PAnsiChar(AnsiString(LogFileName)), RtmpDumpOptions);
-  case RetCode of
-    0: // Download complete
-         Result := True;
-    2: // Incomplete download
-         Result := (100*DownloadedBytes div TotalBytes) > 96; // May report incomplete even though it is not
-    end;
-  if not Result then
-    if FileExists(LogFileName) then
-      begin
-      // TODO
-      end;
 end;
 
 function TRtmpDownloader.GetFlashVer: string;
@@ -356,6 +299,106 @@ end;
 procedure TRtmpDownloader.SetTcUrl(const Value: string);
 begin
   SetRtmpDumpOption(OPTION_TCURL, Value);
+end;
+
+procedure TRtmpDownloader.OnRtmpDownloadProgress(DownloadedSize: integer; PercentDone: double; var DoAbort: integer);
+begin
+  DownloadedBytes := DownloadedSize;
+  if PercentDone >= 99.9 then
+    TotalBytes := DownloadedSize
+  else if PercentDone > 0 then
+    TotalBytes := Trunc(int64(DownloadedSize) * (100 / PercentDone))
+  else
+    TotalBytes := -1;
+  DoProgress;
+  if Aborted then
+    DoAbort := 1
+  else
+    DoAbort := 0;
+end;
+
+function TRtmpDownloader.Prepare: boolean;
+begin
+  ClearRtmpDumpOptions;
+  Result := inherited Prepare;
+end;
+
+function TRtmpDownloader.Download: boolean;
+var LogFileName, ErrorMsg: string;
+    RetCode: integer;
+begin
+  inherited Download;
+  DownloadedBytes := 0;
+  TotalBytes := -1;
+  Aborted := False;
+  Result := False;
+  {$IFDEF DEBUG}
+  AddRtmpDumpOption('z');
+  {$ENDIF}
+  if Options.ProxyActive and (Options.ProxyHost <> '') then
+    AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
+  AddRtmpDumpOption('o', FileName);
+  LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
+  if FileExists(LogFileName) then
+    DeleteFile(PChar(LogFileName));
+  if not RtmpDump_Init then
+    SetLastErrorMsg(Format(ERR_FAILED_TO_LOAD_DLL, ['rtmpdump_dll.dll']))
+  else
+    begin
+    SetLastErrorMsg(Format(ERR_SEE_LOGFILE, [LogFileName]));
+    RetCode := RtmpDump_Download(Integer(Self), RtmpDumpDownloadProgressCallback, PAnsiChar(AnsiString(LogFileName)), RtmpDumpOptions);
+    case RetCode of
+      0: // Download complete
+           Result := True;
+      2: // Incomplete download
+           Result := (100*DownloadedBytes div TotalBytes) > 96; // May report incomplete even though it is not
+      end;
+    if not Result then
+      if ParseErrorLog(LogFileName, ErrorMsg) then
+        SetLastErrorMsg(Format(ERR_RTMPDUMP_ERROR, [ErrorMsg]));
+    end;
+end;
+
+function TRtmpDownloader.ParseErrorLog(const LogFileName: string; out Error: string): boolean;
+const
+  CRLF {$IFDEF MINIMIZESIZE} : string {$ENDIF} = #13#10;
+  RTMPDUMP_ERROR = 'ERROR: ';
+  RTMPDUMP_ERROR_LENGTH = Length(RTMPDUMP_ERROR);
+  RTMPDUMP_WARNING = 'WARNING: ';
+  RTMPDUMP_WARNING_LENGTH = Length(RTMPDUMP_WARNING);
+var
+  L: TStringList;
+  s: string;
+  i: integer;
+begin
+  Result := False;
+  Error := '';
+  if FileExists(LogFileName) then
+    begin
+    L := TStringList.Create;
+    try
+      L.LoadFromFile(LogFileName);
+      for i := Pred(L.Count) downto 0 do
+        begin
+        s := L[i];
+        if StartsText(RTMPDUMP_ERROR, s) then
+          if Error = '' then
+            Error := Trim(Copy(s, Succ(RTMPDUMP_ERROR_LENGTH), MaxInt))
+          else
+            Error := Trim(Copy(s, Succ(RTMPDUMP_ERROR_LENGTH), MaxInt)) + CRLF + Error
+        else if StartsText(RTMPDUMP_WARNING, s) then
+          if Error = '' then
+            Error := Trim(Copy(s, Succ(RTMPDUMP_WARNING_LENGTH), MaxInt))
+          else
+            Error := Trim(Copy(s, Succ(RTMPDUMP_WARNING_LENGTH), MaxInt)) + CRLF + Error
+        else if Error <> '' then
+          Break;
+        end;
+      Result := Error <> '';
+    finally
+      L.Free;
+      end;
+    end;
 end;
 
 end.

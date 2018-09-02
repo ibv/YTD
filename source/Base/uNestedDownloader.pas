@@ -58,6 +58,7 @@ type
       DirectUrlRegExp: TRegExp;
     protected
       function GetFileName: string; override;
+      function GetLastErrorMsg: string; override;
       function GetThisFileName: string; virtual;
       function GetNestedID(out ID: string): boolean; virtual;
       procedure SetNestedDownloader(Value: TDownloader); virtual;
@@ -299,6 +300,14 @@ procedure TNestedDownloader.NestedFileNameValidate(Sender: TObject; var FileName
 begin
   FileName := GetThisFileName;
   Valid := ValidateFileName(FileName);
+end;
+
+function TNestedDownloader.GetLastErrorMsg: string;
+begin
+  Result := inherited GetLastErrorMsg;
+  if NestedDownloader <> nil then
+    if NestedDownloader.LastErrorMsg <> '' then
+      Result := NestedDownloader.LastErrorMsg;
 end;
 
 end.

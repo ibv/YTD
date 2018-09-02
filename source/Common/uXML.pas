@@ -75,6 +75,14 @@ function XmlGetNamespace(Node: TXmlDoc): string; overload;
 implementation
 
 function XmlValueIncludingCData(Node: TXmlNode): string;
+
+  function UnicodeStringOrMalformedUtf8(Node: TXmlNode): string;
+    begin
+      Result := Node.ValueAsUnicodeString;
+      if (Result = '') and (Node.ValueAsString <> '') then
+        Result := string(Node.ValueAsString);
+    end;
+
 var CData: TXmlNode;
 begin
   if Node = nil then
@@ -83,9 +91,9 @@ begin
     begin
     CData := Node.NodeByElementType(xeCData);
     if CData = nil then
-      Result := Trim(Node.ValueAsUnicodeString)
+      Result := Trim(UnicodeStringOrMalformedUtf8(Node))
     else
-      Result := CData.ValueAsUnicodeString;
+      Result := UnicodeStringOrMalformedUtf8(CData);
     end;
 end;
 

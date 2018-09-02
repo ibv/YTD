@@ -75,7 +75,7 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<div\b[^>]*>(?P<TITLE>[^<>]*?)</div>\s*<div\s+id=''player''';
-  REGEXP_EXTRACT_CONFIG = '\bsrc="(?P<CONFIG>https?://[^"]+/vod\.php\?stream=(?P<STREAM>.+?))"';
+  REGEXP_EXTRACT_CONFIG = '\bsrc="(?P<CONFIG>https?://[^"]+/player/[^"]+\?stream=(?P<STREAM>.+?))"';
   REGEXP_EXTRACT_RTMP = '\bstreamhosting\s*:\s*\{[^}]*\bnetConnectionUrl\s*:\s*''(?P<RTMP>rtmpe?://.+?)''';
 
 { TDownloader_Hasici150 }
@@ -113,12 +113,20 @@ begin
 end;
 
 function TDownloader_Hasici150.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ConfigUrl, Stream, VodProvider, Server: string;
+var ConfigUrl, Stream, {StreamInfo,} VodProvider, Server: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVars(ConfigRegExp, Page, ['CONFIG', 'STREAM'], [@ConfigUrl, @Stream]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+{
+  // Takhle to zrejme bude vypadat, az jim to zacne fungovat
+  else if not DownloadPage(Http, 'http://www.vysilej.cz/streamer.php/' + Stream, StreamInfo) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if True then
+
+
+}
   else if not DownloadPage(Http, ConfigUrl, VodProvider) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(RtmpRegExp, VodProvider, 'RTMP', Server) then

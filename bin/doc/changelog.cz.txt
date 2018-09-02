@@ -1,11 +1,69 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.90                                     (c) 2009-11 Pepak
+YouTube Downloader v0.91                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.91:
+
+    * Nový poskytovatel: HudebniVideoKlipy.cz.
+
+    * Poskytovatelé aktualizovaní na souèasný tvar stránek:
+      - CestyKSobe.cz
+      - LiveLeak.com
+      - Muvi.cz
+      - Novinky.cz
+      - TnaFlix.com
+      - Tube8.com
+      - Tyzden.sk
+
+    * Markiza.sk: Podpora pro projekt Partièka.Markíza.sk.
+
+    * Stream.cz: Aktualizováno na souèasný stav. Podpora pro stahování pøímo
+      z CDN cache.
+
+    * TVNoe.tbsystem.cz: Pøidána podpora pro chybnì zakódovaná XML.
+
+    * Vimeo.com: Natvrdo vyžadováno HD video.
+
+    * YouTube.com: Podpora pro stahování videí uložených jako RTMP streamy.
+
+      Pøepracován zpùsob hledání nejlepšího video formátu tak, že se video
+      ve formátu .webm stáhne i v pøípadì, že je tento formát zakázaný, pokud
+      není žádný jiný formát k dispozici.
+
+      Opravena podpora pro uživatelské stránky (napø. http://www.youtube.com/user/bemylovepenguin).
+      Momentálnì si nejsem jistý, jestli se stahují všechna videa nebo jen
+      posledních 25 - potøeboval bych vzorovou stránku, která má videí øeknìme
+      padesát.
+
+    * Odstranìna zavádìjící chybová zpráva "Stahování tohoto obsahu není
+      podporováno." v situacích, kdy stahování podporováno je, ale z nìjakého
+      dùvodu se ho nepodaøilo spustit.
+
+    * Chyby pøi downloadech RTMP streamù dostaly podrobnìjší chybová hlášení
+      (vypreparovaná z logu RTMPDUMPu).
+
+    * GUI: Pozmìnìno spouštìní grafické verze YTD ve standardním režimu (bez
+      parametru --gui): chování z verze 0.87, kdy se spustí nová kopie YTD
+      a stará se ukonèí*) se nyní provádí jen pøi spouštìní programu z konzole,
+      pøi spuštìní z grafických aplikací zùstává spuštìná jen pùvodní instance.
+      (Viditelnì by to nemìlo nic udìlat, ale mohlo by to pomoci paranoidním
+      bezpeènostním programùm).
+
+      *) Tato operace se provádí proto, aby se grafická verze YTD chovala 
+         podobnì jako normální GUI aplikace a ne jako aplikace konzolová,
+         která si konzoli drží až do svého ukonèení.
+
+    * GUI: Opraveny nefunkèní horké klávesy v podøízených formuláøích (napø.
+      CTRL+V ve formuláøi nastavení nenaèetlo obsah clipboardu do vybraného
+      editaèního pole, ale spustilo stahování obsahu clipboardu v hlavním
+      formuláøi).
+
+
 
   v0.90:
 

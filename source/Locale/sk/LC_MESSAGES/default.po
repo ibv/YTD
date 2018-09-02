@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-07-23 12:44\n"
-"PO-Revision-Date: 2011-07-23 12:44\n"
+"POT-Creation-Date: 2011-08-07 14:41\n"
+"PO-Revision-Date: 2011-08-07 14:41\n"
 "Last-Translator: Vladimír Kubala <kubala.v@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -588,6 +588,11 @@ msgstr "Maximálna &šírka videa:"
 msgid "Maximum video &height:"
 msgstr "Maximálna &výška videa:"
 
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..CheckAvoidWebM..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:59
+msgid "&Avoid .webm format"
+msgstr "&Nesťahovať .webm formát"
+
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
 #: Base/uHttpDownloader.pas:100
@@ -665,7 +670,7 @@ msgstr "Zapisovanie dát"
 #: Base/uHttpDownloader.pas:112
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
-#: GUI/guiConsts.pas:47
+#: GUI/guiConsts.pas:46
 msgid "Waiting"
 msgstr "Čaká sa"
 
@@ -1033,214 +1038,242 @@ msgstr "Downloader nie je pripravený!"
 msgid "Download of this content is not implemented."
 msgstr "Sťahovanie tohto obsahu nie je implementované."
 
-#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #: Common/uMessages.pas:69
-#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #: Common/uMessages.pas:69
+msgid "Download URL was not set."
+msgstr "URL nebola nastavená."
+
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
+#: Common/uMessages.pas:70
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
+#: Common/uMessages.pas:70
+msgid "Failed to initialize the download structures."
+msgstr "Zlyhala inicializácia sťahovania."
+
+#. Programmer's name for it: ERR_DOWNLOAD_FAILED
+#: Common/uMessages.pas:71
+#. Programmer's name for it: ERR_DOWNLOAD_FAILED
+#: Common/uMessages.pas:71
+msgid "Download failed."
+msgstr "Sťahovanie zlyhalo."
+
+#. Programmer's name for it: ERR_RTMPDUMP_ERROR
+#: Common/uMessages.pas:72
+#. Programmer's name for it: ERR_RTMPDUMP_ERROR
+#: Common/uMessages.pas:72
+msgid "RTMPDUMP error: %s"
+msgstr "Chyba RTMPDUMPu: %s"
+
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: Common/uMessages.pas:73
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: Common/uMessages.pas:73
 msgid "Download to file \"%s\" was not allowed."
 msgstr "Sťahovanie do súboru \"%s\" nebolo povolené."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:75
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:75
 msgid "Failed to locate embedded object."
 msgstr "Nepodarilo sa nájsť vložený objekt."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:76
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:76
 msgid "Failed to locate media info page."
 msgstr "Nepodarilo sa nájsť stránku s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:77
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:77
 msgid "Failed to download media info page."
 msgstr "Nepodarilo sa stiahnuť stránky s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:78
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:78
 msgid "Failed to prepare media info page."
 msgstr "Nepodarilo sa pripraviť stránku s informáciami o médiu."
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:79
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:79
 msgid "Invalid media info page."
 msgstr "Neplatná stránka s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:80
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:80
 msgid "Failed to download server list."
 msgstr "Nepodarilo sa stiahnuť zoznam serverov."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:82
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:82
 msgid "Failed to locate media info."
 msgstr "Nepodarilo sa nájsť adresu média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:83
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:83
 msgid "Failed to find media title."
 msgstr "Nepodarilo sa nájsť názov média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:84
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:84
 msgid "Failed to find media URL."
 msgstr "Nepodarilo sa nájsť URL média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:85
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:85
 msgid "Failed to find media server."
 msgstr "Nepodarilo sa nájsť stream média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:86
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:86
 msgid "Failed to find media stream."
 msgstr "Nepodarilo sa nájsť ."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:88
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:88
 msgid "HTTP request failed with error code "
 "%d."
 msgstr "HTTP požiadavka zlyhala s kódom chyby %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:89
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:89
 msgid "No data read from the connection."
 msgstr "Nepodarilo sa prečítať žiadne dáta."
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:87
+#: Common/uMessages.pas:91
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:87
+#: Common/uMessages.pas:91
 msgid "Variable \"%s\" not found."
 msgstr "Premenná \"%s\" sa nenašla."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:92
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:92
 msgid "Error message listed in file \"%s\"."
 msgstr "Chybová správa uvedená v súbore \"%s\"."
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:93
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:93
 msgid "Media file was removed from the server."
 msgstr "Súbor bol zo servera vymazaný."
 
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:90
+#: Common/uMessages.pas:94
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:90
+#: Common/uMessages.pas:94
 msgid "Server returned an error: %s"
 msgstr "Server hlási chybu: %s"
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:96
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:96
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Zlyhalo načítanie knižnice \"%s\" alebo jej závislosti."
 
 #. GUI: Download thread state: Preparing download (getting title, URL...)
 #. Programmer's name for it: THREADSTATE_PREPARING
-#: GUI/guiConsts.pas:48
+#: GUI/guiConsts.pas:47
 msgid "Preparing"
 msgstr "Príprava"
 
 #. GUI: Download thread state: Downloading
 #. Programmer's name for it: THREADSTATE_DOWNLOADING
-#: GUI/guiConsts.pas:49
+#: GUI/guiConsts.pas:48
 msgid "Downloading"
 msgstr "Sťahovanie"
 
 #. GUI: Download thread state: Download finished successfully
 #. Programmer's name for it: THREADSTATE_FINISHED
-#: GUI/guiConsts.pas:50
+#: GUI/guiConsts.pas:49
 msgid "Finished"
 msgstr "Ukončené"
 
 #. GUI: Download thread state: Download failed
 #. Programmer's name for it: THREADSTATE_FAILED
-#: GUI/guiConsts.pas:51
+#: GUI/guiConsts.pas:50
 msgid "Failed"
 msgstr "Neúspešné"
 
 #. GUI: Download thread state: Download was aborted by user
 #. Programmer's name for it: THREADSTATE_ABORTED
-#: GUI/guiConsts.pas:52
+#: GUI/guiConsts.pas:51
 msgid "Aborted"
 msgstr "Zrušené"
 
 #. GUI: Download thread state: Download was paused by user
 #. Programmer's name for it: THREADSTATE_PAUSED
-#: GUI/guiConsts.pas:53
+#: GUI/guiConsts.pas:52
 msgid "Paused"
 msgstr "Pozastavené"
 
 #. GUI: Convert thread state: Waiting for its turn
 #. Programmer's name for it: CONVERTTHREADSTATE_WAITING
-#: GUI/guiConsts.pas:57
+#: GUI/guiConsts.pas:56
 msgid "Awaiting conversion"
 msgstr "Čakajúce konvertovanie"
 
 #. GUI: Convert thread state: Converting
 #. Programmer's name for it: CONVERTTHREADSTATE_CONVERTING
-#: GUI/guiConsts.pas:58
+#: GUI/guiConsts.pas:57
 msgid "Converting"
 msgstr "Konvertovanie"
 
 #. GUI: Convert thread state: Conversion finishes successfully
 #. Programmer's name for it: CONVERTTHREADSTATE_FINISHED
-#: GUI/guiConsts.pas:59
+#: GUI/guiConsts.pas:58
 msgid "Converted"
 msgstr "Prekonvertované"
 
 #. GUI: Convert thread state: Conversion failed
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILED
-#: GUI/guiConsts.pas:60
+#: GUI/guiConsts.pas:59
 msgid "Conversion failed"
 msgstr "Konvertovanie zlyhalo"
 
 #. GUI: Convert thread state: Failed to start the converter
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
-#: GUI/guiConsts.pas:61
+#: GUI/guiConsts.pas:60
 msgid "Converter not found"
 msgstr "Konvertor nebol nájdený"
 
 #. GUI: description of a "no converter"
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:64
+#: GUI/guiConsts.pas:63
 msgid "** None **"
 msgstr "** Žiadny **"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:76
+#: GUI/guiConsts.pas:75
 msgid "Converters are not activated.\n"
 "\nYou must activate them through manually editing\n"
 "the configuration file. You can find the steps\n"
@@ -1253,7 +1286,7 @@ msgid "Converters are not activated.\n"
 msgstr "Konvertory nie sú aktivované.\n\nMusíte ich ručne aktivovať editovaním konfiguračného\nsúboru. Potrebné kroky nájdete v dokumentácii.\n\nDôvod pre aktiváciu je ten, že konvertory\nMUSIA byť správne nastavené podľa dokumentácie,\nale mnoho ľudí si ju neprečítalo a teraz si sťažujú,\nže konvertovanie nefunguje."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:86
+#: GUI/guiConsts.pas:85
 msgid "Config file will open now, but please do not edit\n"
 "it right away: YouTube Downloader will overwrite\n"
 "the file before it quits, so any changes made would\n"
@@ -1262,64 +1295,64 @@ msgid "Config file will open now, but please do not edit\n"
 msgstr "Teraz sa otvorí konfiguračný súbor, ale prosím\nneupravujte ho zatiaľ: YouTube Downloader ho prepíše\npred svojim ukončením, takže všetky vaše zmeny by sa\nstratili. Najprv ukončite YTD a až potom začnite editovať\nkonfiguračný súbor."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:89
+#: GUI/guiConsts.pas:88
 msgid "There are downloads in progress\n"
 "Do you really want to quit?"
 msgstr "Práve prebieha sťahovanie.\nNaozaj chcete program ukončiť?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:92
+#: GUI/guiConsts.pas:91
 msgid "A newer version (%s) is available.\n"
 "Do you want to download it?"
 msgstr "Je dostupná novšia verzia (%s)\nChcete ju teraz stiahnuť?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:94
+#: GUI/guiConsts.pas:93
 msgid "Enter video URL:"
 msgstr "Vložte URL videa:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:96
+#: GUI/guiConsts.pas:95
 msgid "Enter page URL:"
 msgstr "Zadajte URL:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:99
+#: GUI/guiConsts.pas:98
 msgid "This URL is not supported.\n"
 "See the documenation for supported URLs."
 msgstr "Táto URL nie je podporovaná\nPodporované URL nájdete v priloženej dokumentácii."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:102
+#: GUI/guiConsts.pas:101
 msgid "No supported URLs found.\n"
 "See the documenation for supported URLs."
 msgstr "Žiadna podporovaná URL nebola nájdená\nPodporované URL nájdete v priloženej dokumentácii."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:104
+#: GUI/guiConsts.pas:103
 msgid "Do you really want to delete selected "
 "transfer(s)?"
 msgstr "Naozaj chcete vymazať označené prenos(y)?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:106
+#: GUI/guiConsts.pas:105
 msgid "Do you really want to stop selected "
 "transfer(s)?"
 msgstr "Naozaj chcete zastaviť vybrané prenosy?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:108
+#: GUI/guiConsts.pas:107
 msgid "Do you really want to report a bug for this "
 "transfer?"
 msgstr "Naozaj chcete nahlásiť chybu pre tento prenos?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:110
+#: GUI/guiConsts.pas:109
 msgid "Convert selected files with"
 msgstr "Konvertovať vybrané súbory s"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:112
+#: GUI/guiConsts.pas:111
 msgid "Automatically convert with"
 msgstr "Automaticky konvertovať s"
 
@@ -1401,14 +1434,14 @@ msgstr "zisťuje sa..."
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
-#: Lib/Pepak/ApiForm/uApiFunctions.pas:79
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
 msgid "Windows error %u = %08.8x\n"
 "%s"
 msgstr "Chyba systému %u = %08.8x\n%s"
 
 #. error code, error code
 #. Programmer's name for it: WINDOWS_ERROR_UNKNOWN
-#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:81
 msgid "Unknown error %u = %08.8x."
 msgstr "Neznáma chyba %u = %08.8x."
 

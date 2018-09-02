@@ -1,11 +1,65 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.90                                     (c) 2009-11 Pepak
+YouTube Downloader v0.91                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.91:
+
+    * New provider: HudebniVideoKlipy.cz.
+
+    * Providers updated to work again:
+      - CestyKSobe.cz
+      - LiveLeak.com
+      - Muvi.cz
+      - Novinky.cz
+      - TnaFlix.com
+      - Tube8.com
+      - Tyzden.sk
+
+    * Markiza.sk: Support for Particka.Markiza.sk.
+
+    * Stream.cz: Updated to the current player. Added support for direct
+      download from CDN cache.
+
+    * TVNoe.tbsystem.cz: Added support for incorrectly encoded XMLs.
+
+    * Vimeo.com: HD video is explicitly requested rather than left on default
+      settings.
+
+    * YouTube.com: Support for downloading media over RTMP protocol.
+
+      Updated the algorithm for finding the best video format to allow .webm
+      videos even if "avoid .webm format" (see version 0.88) is activated, if
+      there is no alternative format available.
+
+      Fixed the support for user pages (such as http://www.youtube.com/user/bemylovepenguin).
+      At the moment I am not sure if all movies are downloaded or just the
+      newest 25 - I need a 50+ movie page as a demo.
+
+    * Updated the misleading error message "Download of this content is not 
+      implemented" to properly signalize that while the download should work,
+      it didn't.
+
+    * Added more descriptive error messages to RTMP stream downloads (extracted
+      from the RTMPDUMP log file).
+
+    * GUI: Changed the startup sequence in the default mode (without the --gui
+      argument): the behavior of version 0.87, which launched a new instance
+      of YTD and killed the old one (in order to detach from the console) is
+      only applied if YTD was actually started from a console application.
+      (This should not be visible to the user in any way, but it might appear
+      a bit safer to paranoid security software).
+
+    * GUI: Fixed the incorrect behavior of hotkeys in secondary forms (e.g.
+      if CTRL+V was pressed in the Options form, it started a download of
+      clipboards's contents in the main form rather than enter the contents
+      of clipboard into the focused editbox).
+
+
 
   v0.90:
 

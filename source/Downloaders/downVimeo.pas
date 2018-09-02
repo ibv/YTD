@@ -52,6 +52,7 @@ type
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -105,6 +106,12 @@ end;
 function TDownloader_Vimeo.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.vimeo.com/moogaloop/load/clip:' + MovieID + '/';
+end;
+
+function TDownloader_Vimeo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+begin
+  Http.Cookies.Add('hd_preference=1');
+  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
 end;
 
 function TDownloader_Vimeo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

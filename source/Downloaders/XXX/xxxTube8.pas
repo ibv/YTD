@@ -49,6 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -69,8 +70,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h1\s[^>]*\bclass="main-title[\s"][^>]*>(?P<TITLE>.+?)</h1>';
-  REGEXP_MOVIE_URL = '\.videoUrl\s*=\s*([''"])(?P<URL>.+?)\1\s*;';
+  REGEXP_MOVIE_TITLE = '<title>\s*(?P<TITLE>.+?)(?:\s*-\s*Tube8\.com)?\s*</title>';
+  REGEXP_MOVIE_URL = '"video_url"\s*:\s*"(?P<URL>http[^"]+)';
 
 { TDownloader_Tube8 }
 
@@ -87,7 +88,7 @@ end;
 constructor TDownloader_Tube8.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUnknown;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
@@ -102,6 +103,14 @@ end;
 function TDownloader_Tube8.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.tube8.com/' + MovieID;
+end;
+
+function TDownloader_Tube8.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    MovieUrl := UrlDecode(MovieUrl);
 end;
 
 initialization

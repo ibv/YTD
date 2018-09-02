@@ -69,7 +69,7 @@ uses
 
 // http://www.iprima.cz/videoarchiv/44524/all/all
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima.cz/(?:videoarchiv|videoplayer)/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima\.cz/(?:videoarchiv|videoplayer)/';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 

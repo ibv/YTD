@@ -81,7 +81,7 @@ function SelectConverter(Options: TYTDOptions; var SelectedID: string; Owner: TA
 var F: TFormSelectConverter;
 begin
   Result := False;
-  F := TFormSelectConverter.Create(Owner);
+  F := TFormSelectConverter.Create;
   try
     F.Options := Options;
     F.ConverterID := SelectedID;

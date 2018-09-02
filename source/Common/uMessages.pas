@@ -66,6 +66,10 @@ resourcestring
   // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!'; // Attempted to access data which depends Prepare without running Prepare
   ERR_DOWNLOAD_NOT_IMPLEMENTED = 'Download of this content is not implemented.';
+  ERR_DOWNLOAD_EMPTY_URL = 'Download URL was not set.';
+  ERR_DOWNLOAD_NOT_INITIALIZED = 'Failed to initialize the download structures.';
+  ERR_DOWNLOAD_FAILED = 'Download failed.';
+  ERR_RTMPDUMP_ERROR = 'RTMPDUMP error: %s';
   ERR_VALIDATE_FILENAME_FAILED = 'Download to file "%s" was not allowed.';
 
   ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT = 'Failed to locate embedded object.';

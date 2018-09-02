@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-07-31 18:03\n"
-"PO-Revision-Date: 2011-07-31 18:03\n"
+"POT-Creation-Date: 2011-08-07 14:41\n"
+"PO-Revision-Date: 2011-08-07 14:41\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -670,7 +670,7 @@ msgstr ""
 #: Base/uHttpDownloader.pas:112
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
-#: GUI/guiConsts.pas:47
+#: GUI/guiConsts.pas:46
 msgid "Waiting"
 msgstr ""
 
@@ -1038,214 +1038,242 @@ msgstr ""
 msgid "Download of this content is not implemented."
 msgstr ""
 
-#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #: Common/uMessages.pas:69
-#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #: Common/uMessages.pas:69
+msgid "Download URL was not set."
+msgstr ""
+
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
+#: Common/uMessages.pas:70
+#. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
+#: Common/uMessages.pas:70
+msgid "Failed to initialize the download structures."
+msgstr ""
+
+#. Programmer's name for it: ERR_DOWNLOAD_FAILED
+#: Common/uMessages.pas:71
+#. Programmer's name for it: ERR_DOWNLOAD_FAILED
+#: Common/uMessages.pas:71
+msgid "Download failed."
+msgstr ""
+
+#. Programmer's name for it: ERR_RTMPDUMP_ERROR
+#: Common/uMessages.pas:72
+#. Programmer's name for it: ERR_RTMPDUMP_ERROR
+#: Common/uMessages.pas:72
+msgid "RTMPDUMP error: %s"
+msgstr ""
+
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: Common/uMessages.pas:73
+#. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
+#: Common/uMessages.pas:73
 msgid "Download to file \"%s\" was not allowed."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:75
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:75
 msgid "Failed to locate embedded object."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:76
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:76
 msgid "Failed to locate media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:77
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:77
 msgid "Failed to download media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:78
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:78
 msgid "Failed to prepare media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:79
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:79
 msgid "Invalid media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:80
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:80
 msgid "Failed to download server list."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:82
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:82
 msgid "Failed to locate media info."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:83
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:83
 msgid "Failed to find media title."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:84
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:84
 msgid "Failed to find media URL."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:85
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:85
 msgid "Failed to find media server."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:86
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:86
 msgid "Failed to find media stream."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:88
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:88
 msgid "HTTP request failed with error code "
 "%d."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:89
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:89
 msgid "No data read from the connection."
 msgstr ""
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:87
+#: Common/uMessages.pas:91
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:87
+#: Common/uMessages.pas:91
 msgid "Variable \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:92
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:92
 msgid "Error message listed in file \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:93
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:93
 msgid "Media file was removed from the server."
 msgstr ""
 
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:90
+#: Common/uMessages.pas:94
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:90
+#: Common/uMessages.pas:94
 msgid "Server returned an error: %s"
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:96
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:96
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr ""
 
 #. GUI: Download thread state: Preparing download (getting title, URL...)
 #. Programmer's name for it: THREADSTATE_PREPARING
-#: GUI/guiConsts.pas:48
+#: GUI/guiConsts.pas:47
 msgid "Preparing"
 msgstr ""
 
 #. GUI: Download thread state: Downloading
 #. Programmer's name for it: THREADSTATE_DOWNLOADING
-#: GUI/guiConsts.pas:49
+#: GUI/guiConsts.pas:48
 msgid "Downloading"
 msgstr ""
 
 #. GUI: Download thread state: Download finished successfully
 #. Programmer's name for it: THREADSTATE_FINISHED
-#: GUI/guiConsts.pas:50
+#: GUI/guiConsts.pas:49
 msgid "Finished"
 msgstr ""
 
 #. GUI: Download thread state: Download failed
 #. Programmer's name for it: THREADSTATE_FAILED
-#: GUI/guiConsts.pas:51
+#: GUI/guiConsts.pas:50
 msgid "Failed"
 msgstr ""
 
 #. GUI: Download thread state: Download was aborted by user
 #. Programmer's name for it: THREADSTATE_ABORTED
-#: GUI/guiConsts.pas:52
+#: GUI/guiConsts.pas:51
 msgid "Aborted"
 msgstr ""
 
 #. GUI: Download thread state: Download was paused by user
 #. Programmer's name for it: THREADSTATE_PAUSED
-#: GUI/guiConsts.pas:53
+#: GUI/guiConsts.pas:52
 msgid "Paused"
 msgstr ""
 
 #. GUI: Convert thread state: Waiting for its turn
 #. Programmer's name for it: CONVERTTHREADSTATE_WAITING
-#: GUI/guiConsts.pas:57
+#: GUI/guiConsts.pas:56
 msgid "Awaiting conversion"
 msgstr ""
 
 #. GUI: Convert thread state: Converting
 #. Programmer's name for it: CONVERTTHREADSTATE_CONVERTING
-#: GUI/guiConsts.pas:58
+#: GUI/guiConsts.pas:57
 msgid "Converting"
 msgstr ""
 
 #. GUI: Convert thread state: Conversion finishes successfully
 #. Programmer's name for it: CONVERTTHREADSTATE_FINISHED
-#: GUI/guiConsts.pas:59
+#: GUI/guiConsts.pas:58
 msgid "Converted"
 msgstr ""
 
 #. GUI: Convert thread state: Conversion failed
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILED
-#: GUI/guiConsts.pas:60
+#: GUI/guiConsts.pas:59
 msgid "Conversion failed"
 msgstr ""
 
 #. GUI: Convert thread state: Failed to start the converter
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
-#: GUI/guiConsts.pas:61
+#: GUI/guiConsts.pas:60
 msgid "Converter not found"
 msgstr ""
 
 #. GUI: description of a "no converter"
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:64
+#: GUI/guiConsts.pas:63
 msgid "** None **"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:76
+#: GUI/guiConsts.pas:75
 msgid "Converters are not activated.\n"
 "\nYou must activate them through manually editing\n"
 "the configuration file. You can find the steps\n"
@@ -1258,7 +1286,7 @@ msgid "Converters are not activated.\n"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:86
+#: GUI/guiConsts.pas:85
 msgid "Config file will open now, but please do not edit\n"
 "it right away: YouTube Downloader will overwrite\n"
 "the file before it quits, so any changes made would\n"
@@ -1267,64 +1295,64 @@ msgid "Config file will open now, but please do not edit\n"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:89
+#: GUI/guiConsts.pas:88
 msgid "There are downloads in progress\n"
 "Do you really want to quit?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:92
+#: GUI/guiConsts.pas:91
 msgid "A newer version (%s) is available.\n"
 "Do you want to download it?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:94
+#: GUI/guiConsts.pas:93
 msgid "Enter video URL:"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:96
+#: GUI/guiConsts.pas:95
 msgid "Enter page URL:"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:99
+#: GUI/guiConsts.pas:98
 msgid "This URL is not supported.\n"
 "See the documenation for supported URLs."
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:102
+#: GUI/guiConsts.pas:101
 msgid "No supported URLs found.\n"
 "See the documenation for supported URLs."
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:104
+#: GUI/guiConsts.pas:103
 msgid "Do you really want to delete selected "
 "transfer(s)?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:106
+#: GUI/guiConsts.pas:105
 msgid "Do you really want to stop selected "
 "transfer(s)?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:108
+#: GUI/guiConsts.pas:107
 msgid "Do you really want to report a bug for this "
 "transfer?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:110
+#: GUI/guiConsts.pas:109
 msgid "Convert selected files with"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:112
+#: GUI/guiConsts.pas:111
 msgid "Automatically convert with"
 msgstr ""
 

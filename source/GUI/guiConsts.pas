@@ -42,8 +42,7 @@ interface
 uses
   uDownloadThread;
   
-{gnugettext: scan-all}
-const
+resourcestring
   THREADSTATE_WAITING = 'Waiting'; // GUI: Download thread state: Waiting for its turn
   THREADSTATE_PREPARING = 'Preparing'; // GUI: Download thread state: Preparing download (getting title, URL...)
   THREADSTATE_DOWNLOADING = 'Downloading'; // GUI: Download thread state: Downloading
@@ -53,18 +52,18 @@ const
   THREADSTATE_PAUSED = 'Paused'; // GUI: Download thread state: Download was paused by user
 
 {$IFDEF CONVERTERS}
-const
+resourcestring
   CONVERTTHREADSTATE_WAITING = 'Awaiting conversion'; // GUI: Convert thread state: Waiting for its turn
   CONVERTTHREADSTATE_CONVERTING = 'Converting'; // GUI: Convert thread state: Converting
   CONVERTTHREADSTATE_FINISHED = 'Converted'; // GUI: Convert thread state: Conversion finishes successfully
   CONVERTTHREADSTATE_FAILED = 'Conversion failed'; // GUI: Convert thread state: Conversion failed
   CONVERTTHREADSTATE_FAILEDRUN = 'Converter not found'; // GUI: Convert thread state: Failed to start the converter
 
-const
+resourcestring
   CONVERTERS_NOCONVERTER = '** None **'; // GUI: description of a "no converter"
 
 {$IFDEF CONVERTERSMUSTBEACTIVATED}
-const
+resourcestring
   CONVERTERS_INACTIVE_WARNING =
     'Converters are not activated.'#10#10 +
     'You must activate them through manually editing'#10 +
@@ -77,7 +76,7 @@ const
 {$ENDIF}
 {$ENDIF}
 
-const
+resourcestring
   MAINFORM_EDIT_CONFIG =
     'Config file will open now, but please do not edit'#10 +
     'it right away: YouTube Downloader will overwrite'#10 +
@@ -110,8 +109,6 @@ const
     'Convert selected files with';
   MAINFORM_AUTOCONVERT_WITH =
     'Automatically convert with';
-
-{gnugettext: reset}
 
 const
   ThreadStates: array[TDownloadThreadState] of string

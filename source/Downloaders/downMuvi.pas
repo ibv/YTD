@@ -48,6 +48,9 @@ type
   TDownloader_Muvi = class(THttpDownloader)
     private
     protected
+      InfoUrlRegExp: TRegExp;
+      VideoIdRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -72,6 +75,8 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_INFO_URL =     '''video_id_url=(?P<URL>https?://[^&'']+)';
+  REGEXP_VIDEO_ID =     '[''&](?:high_id|low_id)=(?P<ID>[0-9]+)[''&]';
 
 { TDownloader_Muvi }
 
@@ -90,11 +95,15 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  InfoUrlRegExp := RegExCreate(REGEXP_INFO_URL);
+  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
 end;
 
 destructor TDownloader_Muvi.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(InfoUrlRegExp);
+  RegExFreeAndNil(VideoIdRegExp);
   inherited;
 end;
 
@@ -107,14 +116,20 @@ function TDownloader_Muvi.AfterPrepareFromPage(var Page: string; PageXml: TXmlDo
 var Xml: TXmlDoc;
     Sources: TXmlNode;
     i: integer;
-    Host, Port, Path: string;
+    Url, ID, Status, Host, Port, Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not DownloadXml(Http, 'http://muvistar.cz/dispatcher/?id=' + MovieID, Xml) then
+  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['ID']))
+  else if not GetRegExpVar(InfoUrlRegExp, Page, 'URL', URL) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, Url + ID, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
+      if GetXmlVar(Xml, 'status_message', Status) then
+        SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Status]));
       if Xml.NodeByPath('source_list', Sources) then
         for i := 0 to Pred(Sources.NodeCount) do
           if Sources.Nodes[i].Name = 'server' then

@@ -194,12 +194,15 @@ begin
   inherited Download;
   BytesTransferred := 0;
   Result := False;
-  if MovieURL <> '' then
+  if MovieURL = '' then
+    SetLastErrorMsg(ERR_DOWNLOAD_EMPTY_URL)
+  else
     begin
     VideoDownloader := CreateHttp;
     try
-      if BeforeDownload(VideoDownloader) then
-        begin
+      if not BeforeDownload(VideoDownloader) then
+        SetLastErrorMsg(ERR_DOWNLOAD_NOT_INITIALIZED)
+      else
         try
           if FileExists(FileName) then
             DeleteFile(PChar(FileName));
@@ -213,13 +216,14 @@ begin
             VideoDownloader.Sock.OnStatus := SockStatusMonitor;
             {$ENDIF}
             BytesTransferred := 0;
-            if DownloadPage(VideoDownloader, MovieURL) then
-              if (VideoDownloader.ResultCode < 200) or (VideoDownloader.ResultCode >= 300) then
-                SetLastErrorMsg(Format(ERR_HTTP_RESULT_CODE, [VideoDownloader.ResultCode]))
-              else if VideoDownloader.OutputStream.Size <= 0 then
-                SetLastErrorMsg(ERR_HTTP_NO_DATA_READ)
-              else
-                Result := True;
+            if not DownloadPage(VideoDownloader, MovieURL) then
+              SetLastErrorMsg(ERR_DOWNLOAD_FAILED)
+            else if (VideoDownloader.ResultCode < 200) or (VideoDownloader.ResultCode >= 300) then
+              SetLastErrorMsg(Format(ERR_HTTP_RESULT_CODE, [VideoDownloader.ResultCode]))
+            else if VideoDownloader.OutputStream.Size <= 0 then
+              SetLastErrorMsg(ERR_HTTP_NO_DATA_READ)
+            else
+              Result := True;
           finally
             Size := VideoDownloader.OutputStream.Size;
             VideoDownloader.Sock.OnStatus := nil;
@@ -234,7 +238,6 @@ begin
             DeleteFile(PChar(FileName));
           Raise;
           end;
-        end;
     finally
       VideoDownloader.Free;
       VideoDownloader := nil;

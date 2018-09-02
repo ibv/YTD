@@ -42,13 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, downStream;
 
 type
-  TDownloader_Novinky = class(THttpDownloader)
+  TDownloader_Novinky = class(TDownloader_Stream)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,14 +65,11 @@ uses
   uMessages;
 
 // http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
+// http://www.novinky.cz/koktejl/238591-chlapec-si-kratil-prestavku-tancem-jako-jackson-sklidil-ovace-celeho-stadionu.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.novinky\.cz/video/';
-  URLREGEXP_ID =        '[^/?&]+/\?videoId=[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*novinky\.cz/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
-
-const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_URL = '<param\s+name="FlashVars"\s+value="(?:[^"]*&amp;)*video_src=(?P<URL>https?://.+?)(?:&amp|")';
 
 { TDownloader_Novinky }
 
@@ -89,20 +87,27 @@ constructor TDownloader_Novinky.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  RegExFreeAndNil(MovieTitleRegExp);
 end;
 
 destructor TDownloader_Novinky.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
 function TDownloader_Novinky.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.novinky.cz/video/' + MovieID;
+  Result := 'http://www.novinky.cz/' + MovieID;
+end;
+
+function TDownloader_Novinky.GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean;
+begin
+  ID := '';
+  cdnLQ := 'cdnLQ';
+  cdnHQ := 'cdnHQ';
+  cdnHD := 'cdnHD';
+  Title := 'gemius_name';
+  Result := True;
 end;
 
 initialization

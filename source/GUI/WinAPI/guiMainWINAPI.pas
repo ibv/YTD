@@ -604,7 +604,7 @@ end;
 function TFormMain.ActionAbout: boolean;
 begin
   Result := True;
-  with TFormAbout.Create(Self) do
+  with TFormAbout.Create do
     try
       DownloadClassifier := Self.DownloadList.DownloadClassifier;
       Options := Self.Options;
@@ -783,7 +783,7 @@ function TFormMain.ActionOptions: boolean;
 var F: TFormOptions;
 begin
   Result := True;
-  F := TFormOptions.Create(Self);
+  F := TFormOptions.Create;
   try
     F.Options := Options;
     if F.ShowModal = idOK then
