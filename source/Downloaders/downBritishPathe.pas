@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSibnet;
+unit downBritishPathe;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,13 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_Sibnet = class(THttpDownloader)
+  TDownloader_BritishPathe = class(TRtmpDownloader)
     private
     protected
+      MovieInfoRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,51 +66,67 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
-// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+// http://www.britishpathe.com/video/british-aircraft-carrier-corsairs/
 const
-  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
+  URLREGEXP_BEFORE_ID = 'britishpathe\.com/video/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '''file''\s*:\s*''(?P<URL>.+?)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H2;
+  REGEXP_MOVIE_INFO =    '\bclip\s*:\s*\{.*?\burl\s*:\s*''(?P<STREAM>[^'']+)''.*?\bbaseUrl\s*:\s*''(?P<SERVER>rtmpt?e?://.+?)''';
 
-{ TDownloader_Sibnet }
+{ TDownloader_BritishPathe }
 
-class function TDownloader_Sibnet.Provider: string;
+class function TDownloader_BritishPathe.Provider: string;
 begin
-  Result := 'Video.Sibnet.ru';
+  Result := 'BritishPathe.com';
 end;
 
-class function TDownloader_Sibnet.UrlRegExp: string;
+class function TDownloader_BritishPathe.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sibnet.Create(const AMovieID: string);
+constructor TDownloader_BritishPathe.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  UrlIsRelative := True;
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
-destructor TDownloader_Sibnet.Destroy;
+destructor TDownloader_BritishPathe.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
-function TDownloader_Sibnet.GetMovieInfoUrl: string;
+function TDownloader_BritishPathe.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.sibnet.ru/video' + MovieID;
+  Result := 'http://www.britishpathe.com/video/' + MovieID;
+end;
+
+function TDownloader_BritishPathe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Server, Stream: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVars(MovieInfoRegExp, Page, ['SERVER', 'STREAM'], [@Server, @Stream]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else
+    begin
+    MovieUrl := Server + Stream;
+    Self.RtmpUrl := Server;
+    Self.PlayPath := Stream;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sibnet);
+  RegisterDownloader(TDownloader_BritishPathe);
 
 end.

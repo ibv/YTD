@@ -38,19 +38,28 @@ unit downNova;
 {$INCLUDE 'ytd.inc'}
 
 {
+  Podweby Novy maji konfiguraci ulozenou v zasifrovanem konfiguracnim souboru,
+  napr. "http://tn.nova.cz/bin/player/flowplayer/config.php?site=23000&realSite=77000&subsite=574&section=77300&media=752873&jsVar=flowConf1&mute=0&size=&pWidth=600&pHeight=383"
+  Jeho desifrovani je v metode IdentifyDownloader, heslo se ziska dekompilaci
+  13-flowplayer.swf a hledanim "AES". Toto se tyka napr. poker.nova.cz,
+  poklicka.nova.cz a dalsich.
+
   Udaje pro ziskani playlistu pro RTMP verzi se daji ziskat dekompilovanim
   http://voyo.nova.cz/static/shared/app/flowplayer/13-flowplayer.nacevi-3.1.5-06-002.swf
-  ve skriptech org.flowplayer.nacevi.Config (konfiguracni udaje, napr. token)
-  a org.flowplayer.nacevi.Nacevi (sestaveni URL a ziskani a zpracovani playlistu -
-  zejmena jde o metody getHashString a onGetTimeStamp).
-
+  ve skriptu org.flowplayer.nacevi.Nacevi (sestaveni URL a ziskani a zpracovani
+  playlistu - zejmena jde o metody getHashString a onGetTimeStamp). Potreba je
+  pro to ResolverSecret, ktery se da najit v desifrovanem konfiguracnim souboru
+  jako polozka "secret" (primo v SWF je jen falesna hodnota pro zmatelni nepritele).
 }
+
+{.$DEFINE VOYO_PLUS}
+  // Zatim nefunguje
 
 interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
-  uPCRE, uXml, HttpSend, SynaCode,
+  uPCRE, uXml, uCrypto, HttpSend, SynaCode,
   uOptions, uCompatibility,
   {$IFDEF GUI}
     guiDownloaderOptions,
@@ -68,11 +77,15 @@ type
     private
     protected
       LowQuality: boolean;
-      Secret: string;
+      ResolverSecret: string;
+      ConfigPassword: string;
       MediaDataRegExp: TRegExp;
       MovieIDRegExp: TRegExp;
       PlayerParamsRegExp: TRegExp;
       PlayerParamsItemRegExp: TRegExp;
+      RegExpFlowPlayerConfigUrl: TRegExp;
+      RegExpFlowPlayerConfig: TRegExp;
+      JSONConfigRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
@@ -95,6 +108,8 @@ const
   OPTION_NOVA_LOWQUALITY_DEFAULT = False;
   OPTION_NOVA_SECRET {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secret';
   OPTION_NOVA_SECRET_DEFAULT = '';
+  OPTION_NOVA_CONFIG_PASSWORD {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'config_password';
+  OPTION_NOVA_CONFIG_PASSWORD_DEFAULT = '';
 
 implementation
 
@@ -121,10 +136,16 @@ const
   REGEXP_STREAMID = '<param\s+value=\\"(?:[^,]*,)*identifier=(?P<ID>(?P<YEAR>\d{4})-(?P<MONTH>\d{2})-[^",]+)';
   REGEXP_PLAYERPARAMS = 'voyoPlayer\.params\s*=\s*\{(?P<PARAMS>.*?)\}\s*;';
   REGEXP_PLAYERPARAMS_ITEM = '\b(?P<VARNAME>[a-z0-9_]+)\s*:\s*(?P<QUOTE>["'']?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*(?:,|$)';
+  REGEXP_CONFIG_URL = '<script\b[^>]*?\ssrc="(?P<URL>https?://[^"]+?/config\.php\?.+?)"';
+  REGEXP_CONFIG = '''(?P<CONFIG>[a-zA-Z0-9+/=]+)''';
+  REGEXP_JSON_CONFIG = '"(?P<VARNAME>[^"]+)"\s*:\s*(?P<VARVALUE>(?:"[^"]*"|\w+))';
 
 const
   NOVA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Nova.cz';
   NOVA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+
+resourcestring
+  ERR_MISSING_CONFIG_PASSWORD = 'Invalid configuration: Config password not set.';
 
 type
   TDownloader_Nova_MS = class(TMSDirectDownloader);
@@ -167,8 +188,12 @@ begin
   MovieIDRegExp := RegExCreate(REGEXP_STREAMID);
   PlayerParamsRegExp := RegExCreate(REGEXP_PLAYERPARAMS);
   PlayerParamsItemRegExp := RegExCreate(REGEXP_PLAYERPARAMS_ITEM);
+  RegExpFlowPlayerConfigUrl := RegExCreate(REGEXP_CONFIG_URL);
+  RegExpFlowPlayerConfig := RegExCreate(REGEXP_CONFIG);
+  JSONConfigRegExp := RegExCreate(REGEXP_JSON_CONFIG);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
-  Secret := OPTION_NOVA_SECRET_DEFAULT;
+  ResolverSecret := OPTION_NOVA_SECRET_DEFAULT;
+  ConfigPassword := OPTION_NOVA_CONFIG_PASSWORD_DEFAULT;
 end;
 
 destructor TDownloader_Nova.Destroy;
@@ -178,6 +203,9 @@ begin
   RegExFreeAndNil(MovieIDRegExp);
   RegExFreeAndNil(PlayerParamsRegExp);
   RegExFreeAndNil(PlayerParamsItemRegExp);
+  RegExFreeAndNil(RegExpFlowPlayerConfigUrl);
+  RegExFreeAndNil(RegExpFlowPlayerConfig);
+  RegExFreeAndNil(JSONConfigRegExp);
   inherited;
 end;
 
@@ -190,24 +218,55 @@ procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
 begin
   inherited;
   LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
-  Secret := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT);
+  ResolverSecret := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT);
+  ConfigPassword := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_CONFIG_PASSWORD, OPTION_NOVA_CONFIG_PASSWORD_DEFAULT);
 end;
 
 function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+const
+  AES_KEY_BITS = 128;
 var
   Params, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string;
+  ConfigUrl, ConfigPage, Config, DecryptedConfig: string;
+  HaveParams: boolean;
 begin
   inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
   Result := False;
-  // Vytahnu si spolecne parametry videa
-  if not GetRegExpVar(PlayerParamsRegExp, Page, 'PARAMS', Params) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not GetRegExpVarPairs(PlayerParamsItemRegExp, Params, ['siteId', 'sectionId', 'subsite'], [@SiteID, @SectionID, @Subsite]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if (SiteID = '') or (SectionID = '') or (Subsite = '') then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not GetRegExpVars(MediaDataRegExp, Page, ['PROD_ID', 'UNIT_ID', 'MEDIA_ID'], [@ProductID, @UnitID, @MediaID]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  // Konfigurace prehravace muze mit nekolik zdroju
+  HaveParams := False;
+  SiteID := '';
+  SectionID := '';
+  Subsite := '';
+  ProductID := '';
+  UnitID := '';
+  MediaID := '';
+  // a) Mohou byt zasifrovane v javascriptove konfiguraci
+  if not HaveParams then
+    if GetRegExpVar(RegExpFlowPlayerConfigUrl, Page, 'URL', ConfigUrl) then
+      if DownloadPage(Http, ConfigUrl, ConfigPage) then
+        if GetRegExpVar(RegExpFlowPlayerConfig, ConfigPage, 'CONFIG', Config) then
+          if ConfigPassword = '' then
+            begin
+            SetLastErrorMsg(ERR_MISSING_CONFIG_PASSWORD);
+            Exit;
+            end
+          else
+            begin
+            DecryptedConfig :=  {$IFDEF UNICODE} string {$ENDIF} (AESCTR_Decrypt(DecodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (Config)),  {$IFDEF UNICODE} AnsiString {$ENDIF} (ConfigPassword), AES_KEY_BITS));
+            if GetRegExpVarPairs(JSONConfigRegExp, DecryptedConfig, ['mediaID', 'sectionID', 'siteID'], [@MediaID, @SectionID, @SiteID]) then
+              HaveParams := True;
+            end;
+  // b)Mohou byt primo ve zdrojove strance
+  if not HaveParams then
+    if GetRegExpVar(PlayerParamsRegExp, Page, 'PARAMS', Params) then
+      if GetRegExpVarPairs(PlayerParamsItemRegExp, Params, ['siteId', 'sectionId', 'subsite'], [@SiteID, @SectionID, @Subsite]) then
+        if GetRegExpVars(MediaDataRegExp, Page, ['PROD_ID', 'UNIT_ID', 'MEDIA_ID'], [@ProductID, @UnitID, @MediaID]) then
+          HaveParams := True;
+  // Aspon nektere z tech parametru jsou povinne
+  if not HaveParams then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if (SiteID = '') or (SectionID = '') or (MediaID = '') then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   // Ted postupne vyzkousim jednotlive downloadery
   else if TryMSDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, Downloader) then
     Result := True
@@ -221,11 +280,25 @@ function TDownloader_Nova.TryMSDownloader(Http: THttpSend; const SiteID, Section
 const
   QualitySuffix: array[boolean] of string = ('-LQ', '-HQ');
 var
-  StreamInfo, Year, Month, ID: string;
+  InfoUrl, StreamInfo, Year, Month, ID: string;
   MSDownloader: TMSDirectDownloader;
 begin
   Result := False;
-  if DownloadPage(Http, Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash&prod=%s&unit=%s&media=%s&site=%s&section=%s&subsite=%s&embed=0&mute=0&size=&realSite=%s&width=704&height=441&hdEnabled=%d', [ProductID, UnitID, MediaID, SiteID, SectionID, Subsite, SiteID, Integer(LowQuality)]), StreamInfo) then
+  InfoUrl := Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash'
+                    + '&prod=%0:s&unit=%1:s&media=%2:s&site=%3:s&section=%4:s&subsite=%5:s'
+                    + '&embed=0&mute=0&size=&realSite=%3:s&width=704&height=441&hdEnabled=%6:d'
+                    {$IFDEF VOYO_PLUS}
+                    + '&hash=%7:s&dev=&8:s&wv=1&sts=%9:s&r=%10:d
+                    {$ENDIF}
+                    + '&finish=finishedPlayer', [
+                    {0}ProductID, {1}UnitID, {2}MediaID, {3}SiteID, {4}SectionID, {5}Subsite
+                    , {6}Integer(LowQuality)
+                    {$IFDEF VOYO_PLUS}
+                    , {7}Hash, {8}Device, {9}Timestamp, {10}Random(65535)
+                    {$ENDIF}
+                    ]);
+  Writeln(InfoUrl);
+  if DownloadPage(Http, InfoUrl, StreamInfo) then
     if GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
       begin
       MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
@@ -254,14 +327,13 @@ begin
     begin
     Timestamp := Copy(Timestamp, 1, 14);
     AppID := UrlEncode(NOVA_APP_ID + '|' + MediaID);
-    SignatureBytes := {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + MediaID + '|' + Timestamp + '|' + Secret);
+    SignatureBytes := {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + MediaID + '|' + Timestamp + '|' + ResolverSecret);
     SignatureBytes := MD5(SignatureBytes);
     SignatureBytes := EncodeBase64(SignatureBytes);
     Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (SignatureBytes));
     InfoUrl := Format(NOVA_SERVICE_URL + '?c=%s&h=0&t=%s&s=%s&tm=nova&d=1', [AppID, Timestamp, Signature]);
     if DownloadXml(Http, InfoUrl, InfoXml) then
       try
-        //InfoXml.SaveToFile('nova.xml');
         if GetXmlVar(InfoXml, 'status', Status) then
           if Status = 'Ok' then
             if GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then

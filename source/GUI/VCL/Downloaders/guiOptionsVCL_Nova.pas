@@ -49,6 +49,8 @@ type
     CheckLowQuality: TCheckBox;
     LabelSecretPassword: TLabel;
     EditSecretPassword: TEdit;
+    LabelConfigPassword: TLabel;
+    EditConfigPassword: TEdit;
   private
   protected
   public
@@ -82,6 +84,7 @@ begin
   inherited;
   CheckLowQuality.Checked := Options.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
   EditSecretPassword.Text := Options.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT);
+  EditConfigPassword.Text := Options.ReadProviderOptionDef(Provider, OPTION_NOVA_CONFIG_PASSWORD, OPTION_NOVA_CONFIG_PASSWORD_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_Nova.SaveToOptions;
@@ -89,6 +92,7 @@ begin
   inherited;
   Options.WriteProviderOption(Provider, OPTION_NOVA_LOWQUALITY, CheckLowQuality.Checked);
   Options.WriteProviderOption(Provider, OPTION_NOVA_SECRET, EditSecretPassword.Text);
+  Options.WriteProviderOption(Provider, OPTION_NOVA_CONFIG_PASSWORD, EditConfigPassword.Text);
 end;
 
 end.

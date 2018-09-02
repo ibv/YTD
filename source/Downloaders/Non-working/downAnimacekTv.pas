@@ -34,21 +34,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSibnet;
+unit downAnimacekTv;
 {$INCLUDE 'ytd.inc'}
+
+// Mel by fungovat, ale nedari se mu to. Pritom parametry odpovidaji tomu, co
+// vidi RTMP proxy, kdyz to spustim v browseru. Mozna je problem v RTMPDUMPu
+// samotnem. Bude to chtit zkompilovat nejnovejsi zdrojaky, co to udela.
 
 interface
 
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_Sibnet = class(THttpDownloader)
+  TDownloader_AnimacekTv = class(TRtmpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,51 +68,71 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
-// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+// http://www.animacek.tv/porady/pokemon/103-epizoda-52
 const
-  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = 'animacek\.tv/porady/[^/]+/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '''file''\s*:\s*''(?P<URL>.+?)''';
+{ TDownloader_AnimacekTv }
 
-{ TDownloader_Sibnet }
-
-class function TDownloader_Sibnet.Provider: string;
+class function TDownloader_AnimacekTv.Provider: string;
 begin
-  Result := 'Video.Sibnet.ru';
+  Result := 'Animacek.tv';
 end;
 
-class function TDownloader_Sibnet.UrlRegExp: string;
+class function TDownloader_AnimacekTv.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sibnet.Create(const AMovieID: string);
+constructor TDownloader_AnimacekTv.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  UrlIsRelative := True;
+  InfoPageEncoding := peUtf8;
+  InfoPageIsXml := True;
 end;
 
-destructor TDownloader_Sibnet.Destroy;
+destructor TDownloader_AnimacekTv.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Sibnet.GetMovieInfoUrl: string;
+function TDownloader_AnimacekTv.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.sibnet.ru/video' + MovieID;
+  Result := 'http://www.animacek.tv/api/video/' + MovieID;
+end;
+
+function TDownloader_AnimacekTv.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Server, Stream, Title: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetXmlVar(PageXml, 'mediainfo/file', Stream) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else if not GetXmlVar(PageXml, 'mediainfo/host', Server) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+  else
+    begin
+    if GetXmlAttr(PageXml, 'mediainfo', 'name', Title) then
+      SetName(Title);
+    Server := 'rtmpe://' + Server;
+    MovieUrl := Server + '/' + Stream;
+    Self.RtmpUrl := Server;
+    Self.Playpath := Stream;
+    //Self.FlashVer := FLASH_DEFAULT_VERSION;
+    //Self.SwfUrl := 'http://www.animacek.tv/Content/flash/uniplayer.swf?itemid=' + MovieID;
+    //Self.TcUrl := Server;
+    //Self.PageUrl := GetMovieInfoUrl; //'http://www.animacek.tv/porady/pokemon/103-epizoda-52';
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sibnet);
+  RegisterDownloader(TDownloader_AnimacekTv);
 
 end.

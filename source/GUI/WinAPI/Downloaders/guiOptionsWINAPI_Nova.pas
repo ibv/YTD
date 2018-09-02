@@ -58,9 +58,11 @@ type
       function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
     protected
       EditSecretPassword: THandle;
+      EditConfigPassword: THandle;
       procedure CreateObjects; override;
       procedure DestroyObjects; override;
       procedure LabelSecretPasswordClick;
+      procedure LabelConfigPasswordClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -79,6 +81,8 @@ const
   IDC_CHECKBOX_LOWQUALITY = 1001;
   IDC_LABEL_SECRETPASSWORD = 1002;
   IDC_EDIT_SECRETPASSWORD = 1003;
+  IDC_LABEL_CONFIGPASSWORD = 1004;
+  IDC_EDIT_CONFIGPASSWORD = 1005;
 
 { TFrameDownloaderOptionsPage_Nova }
 
@@ -108,11 +112,13 @@ procedure TFrameDownloaderOptionsPageSpec_Nova.CreateObjects;
 begin
   inherited;
   EditSecretPassword := GetDlgItem(Self.Handle, IDC_EDIT_SECRETPASSWORD);
+  EditConfigPassword := GetDlgItem(Self.Handle, IDC_EDIT_CONFIGPASSWORD);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.DestroyObjects;
 begin
   EditSecretPassword := 0;
+  EditConfigPassword := 0;
   inherited;
 end;
 
@@ -121,6 +127,7 @@ begin
   Result := inherited DoInitDialog;
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_LOWQUALITY), [akLeft, akTop, akRight]);
   SetControlAnchors(EditSecretPassword, [akLeft, akTop, akRight]);
+  SetControlAnchors(EditConfigPassword, [akLeft, akTop, akRight]);
 end;
 
 function TFrameDownloaderOptionsPageSpec_Nova.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
@@ -132,6 +139,11 @@ begin
         IDC_LABEL_SECRETPASSWORD:
           begin
           LabelSecretPasswordClick;
+          Result := True;
+          end;
+        IDC_LABEL_CONFIGPASSWORD:
+          begin
+          LabelConfigPasswordClick;
           Result := True;
           end;
         end;
@@ -146,6 +158,7 @@ begin
   inherited;
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_LOWQUALITY, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT)]);
   SetWindowText(EditSecretPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT)));
+  SetWindowText(EditConfigPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_NOVA_CONFIG_PASSWORD, OPTION_NOVA_CONFIG_PASSWORD_DEFAULT)));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.SaveToOptions;
@@ -158,11 +171,17 @@ begin
       Options.WriteProviderOption(Provider, OPTION_NOVA_LOWQUALITY, False);
     end;
   Options.WriteProviderOption(Provider, OPTION_NOVA_SECRET, GetWindowTextAsString(EditSecretPassword));
+  Options.WriteProviderOption(Provider, OPTION_NOVA_CONFIG_PASSWORD, GetWindowTextAsString(EditConfigPassword));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.LabelSecretPasswordClick;
 begin
   SetFocus(EditSecretPassword);
+end;
+
+procedure TFrameDownloaderOptionsPageSpec_Nova.LabelConfigPasswordClick;
+begin
+  SetFocus(EditConfigPassword);
 end;
 
 end.

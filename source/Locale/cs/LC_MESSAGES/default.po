@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YTD 1.15\n"
-"POT-Creation-Date: 2013-01-20 16:46\n"
-"PO-Revision-Date: 2013-01-20 16:49+0100\n"
+"POT-Creation-Date: 2013-02-10 15:41\n"
+"PO-Revision-Date: 2013-02-10 15:43+0100\n"
 "Last-Translator: Pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -575,12 +575,17 @@ msgid "Subtitle &header text:"
 msgstr "Záhlaví textu titulků:"
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:10
-msgid "Secret &password:"
-msgstr "Tajné &heslo:"
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:27
+msgid "Resolver password:"
+msgstr "Heslo pro resolver:"
+
+#. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelConfigPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:35
+msgid "Config password:"
+msgstr "Heslo pro konfigurace:"
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..CheckLowQuality..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:19
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:44
 msgid "Download in &low quality"
 msgstr "Download ve &snížené kvalitě"
 
@@ -1220,6 +1225,11 @@ msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 msgid "Přepis, angličtina"
 msgstr "Přepis, angličtina"
 
+#. Programmer's name for it: ERR_MISSING_CONFIG_PASSWORD
+#: Downloaders/downNova.pas:148
+msgid "Invalid configuration: Config password not set."
+msgstr "Chybné nastavení: Heslo pro konfigurace není nastaveno."
+
 #. GUI: Download thread state: Preparing download (getting title, URL...)
 #. Programmer's name for it: THREADSTATE_PREPARING
 #: GUI/guiConsts.pas:47
@@ -1522,12 +1532,12 @@ msgid "checking..."
 msgstr "zjišťuji..."
 
 #. Programmer's name for it: re7zListStart
-#: Lib/Pepak/uSystem.pas:526
+#: Lib/Pepak/uSystem.pas:564
 msgid "^-{10}[- ]+$"
 msgstr "^-{10}[- ]+$"
 
 #. Programmer's name for it: re7zListItem
-#: Lib/Pepak/uSystem.pas:527
+#: Lib/Pepak/uSystem.pas:565
 msgid ""
 "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([.DSHRA]"
 "{5}) +([0-9]+) +([0-9]+ +)?(.+)$"

@@ -140,50 +140,11 @@ begin
 end;
 
 function TDownloader_PornHub.Decrypt(const Data, Password: AnsiString): AnsiString;
-
-  procedure DebugPrint(const Description: string; const Input: array of Byte);
-    var
-      i: integer;
-    begin
-      Write(Description);
-      for i := 0 to Pred(Length(Input)) do
-        Write(Format(' %02.2x', [Input[i]]));
-      Writeln;
-    end;
-
-const
-  KEY_LENGTH_BITS = 256;
-  KEY_LENGTH_BYTES = KEY_LENGTH_BITS shr 3;
-  BLOCK_LENGTH_BITS = 128;
-  BLOCK_LENGTH_BYTES = BLOCK_LENGTH_BITS shr 3;
-type
-  TKey = array[0..KEY_LENGTH_BYTES-1] of byte;
-  TBlock = array[0..BLOCK_LENGTH_BYTES-1] of byte;
-var
-  Key: TKey;
-  EncBlock: TBlock;
-  Decrypted: AnsiString;
-  i, pwLength: integer;
 begin
   // The URL is encrypted by AES256 in CTR mode, where the first block is the
   // initial CTR value.
   // For further details, search the Flash for _getDecryptedVideoUrl.
-  Result := '';
-  // 1. Get the actual encryption key from the password
-  pwLength := Length(Password);
-  for i := 0 to Pred(KEY_LENGTH_BYTES) do
-    if i >= pwLength then
-      Key[i] := 0
-    else
-      Key[i] := Ord(Password[Succ(i)]);
-  if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KEY_LENGTH_BITS) then
-    Exit;
-  for i := 0 to Pred(KEY_LENGTH_BYTES) do
-    Key[i] := EncBlock[i mod BLOCK_LENGTH_BYTES];
-  // 2. Decrypt URL in counter mode
-  if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KEY_LENGTH_BITS) then
-    Exit;
-  Result := Decrypted;
+  Result := AESCTR_Decrypt(Data, Password, 256);
 end;
 
 initialization

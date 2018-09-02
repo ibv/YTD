@@ -83,8 +83,8 @@ uses
 // http://rutube.ru/video/958d1a1eeb77c811a166e480dc98c6ec/
 // http://rutube.ru/video/95375a912bf7a48b74de49688627eef2/
 const
-  URLREGEXP_BEFORE_ID = 'rutube\.ru/(?:video/|trackinfo/)?';
-  URLREGEXP_ID =        '[0-9a-f]{32}';
+  URLREGEXP_BEFORE_ID = 'rutube\.ru/(?:video/|trackinfo/|player\.swf\?hash=)?';
+  URLREGEXP_ID =        '[0-9a-f]+';
   URLREGEXP_AFTER_ID =  '(?:[.?/]|$)';
 
 const

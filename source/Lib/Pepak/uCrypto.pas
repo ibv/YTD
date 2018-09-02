@@ -48,6 +48,7 @@ uses
 function AES_Encrypt_ECB(Input, Output, Key: PAnsiChar; Bits: integer): boolean;
 function AES_Decrypt_ECB(Input, Output, Key: PAnsiChar; Bits: integer): boolean;
 function AES_Decrypt_CTR(const Counter, Input: AnsiString; out Output: AnsiString; Key: PAnsiChar; Bits: integer): boolean;
+function AESCTR_Decrypt(const Data, Password: AnsiString; KeyBits: integer): AnsiString;
 
 implementation
 
@@ -190,6 +191,38 @@ begin
       end;
     Result := True;
     end
+end;
+
+function AESCTR_Decrypt(const Data, Password: AnsiString; KeyBits: integer): AnsiString;
+const
+  BLOCK_LENGTH_BITS = 128;
+  BLOCK_LENGTH_BYTES = BLOCK_LENGTH_BITS shr 3;
+type
+  TBlock = array[0..BLOCK_LENGTH_BYTES-1] of byte;
+var
+  Key: array of Byte;
+  EncBlock: TBlock;
+  Decrypted: AnsiString;
+  i, pwLength, KeyBytes: integer;
+begin
+  Result := '';
+  // 1. Get the actual encryption key from the password
+  KeyBytes := KeyBits shr 3;
+  SetLength(Key, KeyBytes);
+  pwLength := Length(Password);
+  for i := 0 to Pred(KeyBytes) do
+    if i >= pwLength then
+      Key[i] := 0
+    else
+      Key[i] := Ord(Password[Succ(i)]);
+  if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KeyBits) then
+    Exit;
+  for i := 0 to Pred(KeyBytes) do
+    Key[i] := EncBlock[i mod BLOCK_LENGTH_BYTES];
+  // 2. Decrypt URL in counter mode
+  if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KeyBits) then
+    Exit;
+  Result := Decrypted;
 end;
 
 initialization

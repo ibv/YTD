@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSibnet;
+unit downMULitvinov;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,10 +45,12 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Sibnet = class(THttpDownloader)
+  TDownloader_MULitvinov = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,51 +65,61 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
-// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+// http://www.mulitvinov.cz/rozsveceni-vanocniho-stromu/g-12876/id_obrazky=19223&typ_sady=2&p1=63583
 const
-  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
+  URLREGEXP_BEFORE_ID = 'mulitvinov\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '''file''\s*:\s*''(?P<URL>.+?)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =    REGEXP_URL_EMBED_SRC;
 
-{ TDownloader_Sibnet }
+{ TDownloader_MULitvinov }
 
-class function TDownloader_Sibnet.Provider: string;
+class function TDownloader_MULitvinov.Provider: string;
 begin
-  Result := 'Video.Sibnet.ru';
+  Result := 'MULitvinov.cz';
 end;
 
-class function TDownloader_Sibnet.UrlRegExp: string;
+class function TDownloader_MULitvinov.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sibnet.Create(const AMovieID: string);
+constructor TDownloader_MULitvinov.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  UrlIsRelative := True;
 end;
 
-destructor TDownloader_Sibnet.Destroy;
+destructor TDownloader_MULitvinov.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Sibnet.GetMovieInfoUrl: string;
+function TDownloader_MULitvinov.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.sibnet.ru/video' + MovieID;
+  Result := 'http://www.mulitvinov.cz/' + MovieID;
+end;
+
+function TDownloader_MULitvinov.GetFileNameExt: string;
+begin
+  Result := '.asf';
+end;
+
+function TDownloader_MULitvinov.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  MovieUrl := HtmlDecode(MovieUrl);
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sibnet);
+  RegisterDownloader(TDownloader_MULitvinov);
 
 end.

@@ -39,6 +39,7 @@ unit uSystem;
 
 {.$DEFINE USYSTEM_7Z}
 {$DEFINE USYSTEM_CONSOLE}
+  {.$DEFINE USYSTEM_CONSOLE_KILLSUBPROCESSES}
 {$DEFINE USYSTEM_SHELL}
 {$DEFINE USYSTEM_FILES}
   {$DEFINE USYSTEM_FILES_CLEANUPTEMP}
@@ -67,13 +68,13 @@ uses
 type
   TConsoleOutputEvent = procedure(Handle: THandle; var Data; DataLength: integer) of object;
 
-function GetConsoleOutput(const Command: string; Input, Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
-function GetConsoleOutput(const Command: string; Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
-function GetConsoleOutput(const Command: string; Output, Errors: TStream; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
-function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
-function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
-function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
-function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input, Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
+function GetConsoleOutput(const Command: string; Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
+function GetConsoleOutput(const Command: string; Output, Errors: TStream; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; NotValidAfter: TDateTime = 0): Boolean; overload;
 {$ENDIF}
 
 {$IFDEF USYSTEM_7Z}
@@ -117,12 +118,12 @@ function RunFile(FileName, Params: string): Integer; overload;
 function RunFile(FileName, Params, WorkDir: string): Integer; overload;
 function RunFile(FileName, Params: string; Command: Word): Integer; overload;
 function RunFile(FileName, Params, WorkDir: string; Command: Word): Integer; overload;
-function WaitForEnd(FileName: string): Boolean; overload;
-function WaitForEnd(FileName: string; out ResultCode: DWORD): Boolean; overload;
-function WaitForEnd(FileName: string; Command: Word): Boolean; overload;
-function WaitForEnd(FileName: string; Command: Word; out ResultCode: DWORD): Boolean; overload;
-function WaitForEnd(FileName: string; Params: string; Command: Word): Boolean; overload;
-function WaitForEnd(FileName: string; Params: string; Command: Word; out ResultCode: DWORD): Boolean; overload;
+function WaitForEnd(const FileName: string): Boolean; overload;
+function WaitForEnd(const FileName: string; out ResultCode: DWORD): Boolean; overload;
+function WaitForEnd(const FileName: string; Command: Word): Boolean; overload;
+function WaitForEnd(const FileName: string; Command: Word; out ResultCode: DWORD): Boolean; overload;
+function WaitForEnd(const FileName, Params: string; Command: Word): Boolean; overload;
+function WaitForEnd(const FileName, Params: string; Command: Word; out ResultCode: DWORD; NotValidAfter: TDateTime = 0): Boolean; overload;
 {$IFDEF USYSTEM_APPLICATION}
 function WaitForExclusiveAccess(FN: string): Boolean;
 {$ENDIF}
@@ -192,16 +193,21 @@ function GetWindowsVersion: TWindowsVersion;
 implementation
 
 uses
-  {$IFDEF USYSTEM_7Z} 
-  RegExpr, 
+  {$IFDEF USYSTEM_7Z}
+  RegExpr,
   {$ENDIF}
   {$IFDEF USYSTEM_APPLICATION}
   Forms,
   {$ENDIF}
+  {$IFDEF USYSTEM_CONSOLE_KILLSUBPROCESSES}
+  TlHelp32,
+  {$ENDIF}
   uCompatibility;
 
 {$IFDEF USYSTEM_CONSOLE}
-function GetConsoleOutput(const Command: string; Input, Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; 
+function GetConsoleOutput(const Command: string; Input, Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean;
+const
+  BufferSize = 1048576;
 var
   CommandBuffer: array of Char;
   StartupInfo: TStartupInfo;
@@ -269,6 +275,29 @@ var
     CloseHandle(PipeErrorsRead);
     CloseHandle(PipeErrorsWrite);
   end;
+
+  {$IFDEF USYSTEM_CONSOLE_KILLSUBPROCESSES}
+  procedure KillSubprocesses(ProcessID: DWORD);
+  var
+    Snapshot, Process: THandle;
+    ProcessEntry32: TProcessEntry32;
+  begin
+    Process := OpenProcess(PROCESS_TERMINATE, True, ProcessID);
+    if Process <> 0 then
+      TerminateProcess(Process, STATUS_TIMEOUT);
+    Snapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    try
+      ProcessEntry32.dwSize := Sizeof(ProcessEntry32);
+      if Process32First(Snapshot, ProcessEntry32) then
+        repeat
+          if ProcessEntry32.th32ParentProcessID = ProcessID then
+            KillSubprocesses(ProcessEntry32.th32ProcessID);
+        until not Process32Next(Snapshot, ProcessEntry32);
+    finally
+      CloseHandle(Snapshot);
+      end;
+  end;
+  {$ENDIF}
 
 begin
   GetMem(Buffer, BufferSize);
@@ -344,9 +373,18 @@ begin
             while ReadFromPipe(PipeErrorsRead, Errors, OnErrOutput) do
               ;
           Sleep(200);
-        until ResultCode <> STILL_ACTIVE;
-        WaitForSingleObject(ProcessInfo.hProcess, INFINITE);  // asi zbytecne
-        GetExitCodeProcess(ProcessInfo.hProcess, ResultCode); // asi zbytecne
+        until (ResultCode <> STILL_ACTIVE) or ((NotValidAfter > 0) and (Now > NotValidAfter));
+        GetExitCodeProcess(ProcessInfo.hProcess, ResultCode);
+        if ResultCode = STILL_ACTIVE then
+          begin
+          {$IFDEF USYSTEM_CONSOLE_KILLSUBPROCESSES}
+          KillSubprocesses(ProcessInfo.dwProcessId);
+          {$ELSE}
+          TerminateProcess(ProcessInfo.hProcess, STATUS_TIMEOUT);
+          {$ENDIF}
+          ResultCode := STATUS_TIMEOUT;
+          end;
+        WaitForSingleObject(ProcessInfo.hProcess, 3000); // radsi jen omezenou dobu, ne INFINITE
         CloseHandle(ProcessInfo.hProcess);
         end
       else
@@ -362,18 +400,18 @@ begin
     end;
 end;
 
-function GetConsoleOutput(const Command: string; Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
+function GetConsoleOutput(const Command: string; Output, Errors: TStream; out ResultCode: Dword; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean; overload;
 begin
-  Result := GetConsoleOutput(Command, nil, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, BufferSize);
+  Result := GetConsoleOutput(Command, nil, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, NotValidAfter);
 end;
 
-function GetConsoleOutput(const Command: string; Output, Errors: TStream; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
+function GetConsoleOutput(const Command: string; Output, Errors: TStream; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean; overload;
 var ResultCode: Dword;
 begin
-  Result := GetConsoleOutput(Command, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, BufferSize);
+  Result := GetConsoleOutput(Command, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, NotValidAfter);
 end;
 
-function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean; overload;
 var OutStr, ErrStr : TMemoryStream;
 begin
   if Output <> nil then
@@ -384,7 +422,7 @@ begin
   try
     ErrStr := TMemoryStream.Create;
     try
-      Result := GetConsoleOutput(Command, Input, OutStr, ErrStr, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, BufferSize);
+      Result := GetConsoleOutput(Command, Input, OutStr, ErrStr, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, NotValidAfter);
       if Result then
         begin
         OutStr.Position := 0;
@@ -402,13 +440,13 @@ begin
     end;
 end;
 
-function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean; overload;
+function GetConsoleOutput(const Command: string; Input: TStream; var Output, Errors: TStringList; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean; overload;
 var ResultCode: Dword;
 begin
-  Result := GetConsoleOutput(Command, Input, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, BufferSize);
+  Result := GetConsoleOutput(Command, Input, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, NotValidAfter);
 end;
 
-function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean;
+function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; out ResultCode: Dword; Visibility: Integer; Priority: integer; OnStdOutput, OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean;
 var InStr: TMemoryStream;
 begin
   InStr := TMemoryStream.Create;
@@ -416,16 +454,16 @@ begin
     if Input <> nil then
       Input.SaveToStream(InStr);
     InStr.Position := 0;
-    Result := GetConsoleOutput(Command, InStr, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, BufferSize);
+    Result := GetConsoleOutput(Command, InStr, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, NotValidAfter);
   finally
     InStr.Free;
     end;
 end;
 
-function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; Visibility: Integer = SW_SHOW; Priority: integer = NORMAL_PRIORITY_CLASS; OnStdOutput: TConsoleOutputEvent = nil; OnErrOutput: TConsoleOutputEvent = nil; BufferSize: integer = 1048576): Boolean;
+function GetConsoleOutput(const Command: string; Input, Output, Errors: TStringList; Visibility: Integer; Priority: integer; OnStdOutput: TConsoleOutputEvent; OnErrOutput: TConsoleOutputEvent; NotValidAfter: TDateTime): Boolean;
 var ResultCode: Dword;
 begin
-  Result := GetConsoleOutput(Command, Input, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, BufferSize);
+  Result := GetConsoleOutput(Command, Input, Output, Errors, ResultCode, Visibility, Priority, OnStdOutput, OnErrOutput, NotValidAfter);
 end;
 {$ENDIF}
 
@@ -690,45 +728,49 @@ begin
   Result := ShellExecute(hInstance, nil, PChar(FileName), PChar(Params), PChar(WorkDir), Command);
 end;
 
-function WaitForEnd(FileName: string; out ResultCode: DWORD): Boolean;
-begin
-  Result := WaitForEnd(FileName, SW_SHOW, ResultCode);
-end;
-
-function WaitForEnd(FileName: string): Boolean;
+function WaitForEnd(const FileName: string): Boolean;
 begin
   Result := WaitForEnd(FileName, SW_SHOW);
 end;
 
-function WaitForEnd(FileName: string; Command: Word; out ResultCode: DWORD): Boolean;
+function WaitForEnd(const FileName: string; out ResultCode: DWORD): Boolean;
 begin
-  Result := WaitForEnd(FileName, '', Command, ResultCode);
+  Result := WaitForEnd(FileName, SW_SHOW, ResultCode);
 end;
 
-function WaitForEnd(FileName: string; Command: Word): Boolean;
+function WaitForEnd(const FileName: string; Command: Word): Boolean;
 begin
   Result := WaitForEnd(FileName, '', Command);
 end;
 
-function WaitForEnd(FileName: string; Params: string; Command: Word; out ResultCode: DWORD): Boolean;
+function WaitForEnd(const FileName: string; Command: Word; out ResultCode: DWORD): Boolean;
+begin
+  Result := WaitForEnd(FileName, '', Command, ResultCode);
+end;
+
+function WaitForEnd(const FileName, Params: string; Command: Word): Boolean;
+var ResultCode: DWORD;
+begin
+  Result := WaitForEnd(FileName, Params, Command, ResultCode);
+end;
+
+function WaitForEnd(const FileName, Params: string; Command: Word; out ResultCode: DWORD; NotValidAfter: TDateTime): Boolean;
 var
-  Dir: string;
+  FN, Dir: string;
+  OutputEvent: TConsoleOutputEvent;
 begin
   Dir := GetCurrentDir;
   try
     SetCurrentDir(ExtractFilePath(FileName));
     if Pos(' ', FileName) > 0 then
-      FileName := AnsiQuotedStr(FileName, '"');
-    Result := GetConsoleOutput(FileName + ' ' + Params, TStream(nil), TStream(nil), TStream(nil), ResultCode, Command);
+      FN := AnsiQuotedStr(FileName, '"')
+    else
+      FN := FileName;
+    OutputEvent := nil;
+    Result := GetConsoleOutput(FN + ' ' + Params, TStream(nil), TStream(nil), TStream(nil), ResultCode, Command, NORMAL_PRIORITY_CLASS, OutputEvent, OutputEvent, NotValidAfter);
   finally
     SetCurrentDir(Dir);
     end;
-end;
-
-function WaitForEnd(FileName: string; Params: string; Command: Word): Boolean;
-var ResultCode: DWORD;
-begin
-  Result := WaitForEnd(FileName, Params, Command, ResultCode);
 end;
 
 {$IFDEF USYSTEM_APPLICATION}

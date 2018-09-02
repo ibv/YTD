@@ -158,7 +158,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else if not GetXmlVar(PageXml, 'hostname', HostName) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
-  else if not GetXmlVar(PageXml, 'streamname', StreamName) then
+  else if (not GetXmlVar(PageXml, 'streamname', StreamName)) or (StreamName = '') then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
   else
     begin

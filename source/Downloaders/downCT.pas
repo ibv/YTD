@@ -37,7 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit downCT;
 {$INCLUDE 'ytd.inc'}
 {$DEFINE VER_OLD}
-{$DEFINE VER_20111217}
+{.$DEFINE VER_20111217}
 {$DEFINE CONVERTSUBTITLES}
   // Convert subtitles to .srt format
 
@@ -603,7 +603,7 @@ begin
   Self.RtmpApp := Copy(Path, 2, MaxInt) + '?' + Para;
   Self.Playpath := Stream;
   //Self.FlashVer := FLASH_DEFAULT_VERSION;
-  //Self.SwfUrl := 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23';
+  Self.SwfUrl := 'http://img9.ceskatelevize.cz/libraries/JWPlayer/player.swf';
   //Self.TcUrl := BaseUrl;
   //Self.PageUrl := MovieID;
 end;
@@ -649,6 +649,8 @@ end;
 {$ENDIF}
 
 {$ENDIF}
+
+{$IFDEF VER_20111217}
 
 { TDownloader_CT_20111217 }
 
@@ -724,6 +726,7 @@ begin
     Result := True;
     end;
 end;
+{$ENDIF}
 
 initialization
   RegisterDownloader(TDownloader_CT);

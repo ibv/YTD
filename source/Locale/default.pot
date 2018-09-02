@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-01-20 16:46\n"
-"PO-Revision-Date: 2013-01-20 16:46\n"
+"POT-Creation-Date: 2013-02-10 15:41\n"
+"PO-Revision-Date: 2013-02-10 15:41\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -613,12 +613,17 @@ msgid "Subtitle &header text:"
 msgstr ""
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:10
-msgid "Secret &password:"
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:27
+msgid "Resolver password:"
+msgstr ""
+
+#. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelConfigPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:35
+msgid "Config password:"
 msgstr ""
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..CheckLowQuality..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:19
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:44
 msgid "Download in &low quality"
 msgstr ""
 
@@ -1304,6 +1309,12 @@ msgstr ""
 msgid "Přepis, angličtina"
 msgstr ""
 
+#. Programmer's name for it: ERR_MISSING_CONFIG_PASSWORD
+#: Downloaders/downNova.pas:148
+msgid "Invalid configuration: Config password not "
+"set."
+msgstr ""
+
 #. GUI: Download thread state: Preparing download (getting title, URL...)
 #. Programmer's name for it: THREADSTATE_PREPARING
 #: GUI/guiConsts.pas:47
@@ -1548,12 +1559,12 @@ msgid "checking..."
 msgstr ""
 
 #. Programmer's name for it: re7zListStart
-#: Lib/Pepak/uSystem.pas:526
+#: Lib/Pepak/uSystem.pas:564
 msgid "^-{10}[- ]+$"
 msgstr ""
 
 #. Programmer's name for it: re7zListItem
-#: Lib/Pepak/uSystem.pas:527
+#: Lib/Pepak/uSystem.pas:565
 msgid "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) "
 "([.DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
 msgstr ""

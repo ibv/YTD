@@ -42,10 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_IDnes_Embed = class(TRtmpDownloader)
+  TDownloader_IDnes_Embed = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -107,7 +107,7 @@ begin
 end;
 
 function TDownloader_IDnes_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ItemType, Server, Path, VideoFile, Title, Stream: string;
+var ItemType, Server, Path, VideoFile, Title: string;
     Items: TXmlNode;
     i: integer;
 begin
@@ -122,11 +122,9 @@ begin
         if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
           if ItemType = 'video' then
             begin
-            {$IFNDEF DIRTYHACKS}
             if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
               SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['server']))
             else
-            {$ENDIF}
             if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
               SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['path']))
             else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
@@ -136,17 +134,7 @@ begin
             else
               begin
               SetName(Title);
-              Stream := 'mp4:' + Path + VideoFile;
-              {$IFDEF DIRTYHACKS}
-              Server := 'stream7.idnes.cz/vod/'; // For some reason the "real" server does not work!
-              {$ENDIF}
-              MovieUrl := 'rtmpt://' + Server + Stream;
-              Self.RtmpUrl := 'rtmpt://' + Server;
-              Self.Playpath := Stream;
-              Self.FlashVer := FLASH_DEFAULT_VERSION;
-              Self.SwfUrl := 'http://g.idnes.cz/swf/flv/player.swf?v=20101103';
-              Self.TcUrl := 'rtmpt://' + Server;
-              Self.PageUrl := 'http://video.idnes.cz/?' + MovieID;
+              MovieUrl := Server + Path + VideoFile;
               SetPrepared(True);
               Result := True;
               end;

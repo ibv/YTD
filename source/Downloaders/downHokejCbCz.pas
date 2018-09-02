@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSibnet;
+unit downHokejCbCz;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,7 +45,7 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Sibnet = class(THttpDownloader)
+  TDownloader_HokejCbCz = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -63,51 +63,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
-// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+// http://www.hokejcb.cz/clanek.asp?id=VIDEO-Podivejte-se-na-sestrih-utkani-s-Kometou-Brno-5679
 const
-  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
+  URLREGEXP_BEFORE_ID = 'hokejcb\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '''file''\s*:\s*''(?P<URL>.+?)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URL =    REGEXP_URL_FILE_COLON_VALUE;
 
-{ TDownloader_Sibnet }
+{ TDownloader_HokejCbCz }
 
-class function TDownloader_Sibnet.Provider: string;
+class function TDownloader_HokejCbCz.Provider: string;
 begin
-  Result := 'Video.Sibnet.ru';
+  Result := 'HokejCb.cz';
 end;
 
-class function TDownloader_Sibnet.UrlRegExp: string;
+class function TDownloader_HokejCbCz.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sibnet.Create(const AMovieID: string);
+constructor TDownloader_HokejCbCz.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
+  InfoPageEncoding := peAnsi;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  UrlIsRelative := True;
 end;
 
-destructor TDownloader_Sibnet.Destroy;
+destructor TDownloader_HokejCbCz.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Sibnet.GetMovieInfoUrl: string;
+function TDownloader_HokejCbCz.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.sibnet.ru/video' + MovieID;
+  Result := 'http://www.hokejcb.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sibnet);
+  RegisterDownloader(TDownloader_HokejCbCz);
 
 end.

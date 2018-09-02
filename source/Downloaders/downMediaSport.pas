@@ -48,6 +48,8 @@ type
   TDownloader_MediaSport = class(THttpDownloader)
     private
     protected
+      QualitiesRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -66,13 +68,14 @@ uses
 
 // http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mediasport\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'mediasport\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
   REGEXP_EXTRACT_URL = REGEXP_URL_ADDVARIABLE_FILE_RELATIVE;
+  REGEXP_QUALITIES = '(?:^|;)(?P<URL>/.+?);@@;(?P<QUALITY>\d+)p;#@#';
 
 { TDownloader_MediaSport }
 
@@ -83,7 +86,7 @@ end;
 
 class function TDownloader_MediaSport.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_MediaSport.Create(const AMovieID: string);
@@ -92,12 +95,14 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
+  QualitiesRegExp := RegExCreate(REGEXP_QUALITIES);
 end;
 
 destructor TDownloader_MediaSport.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(QualitiesRegExp);
   inherited;
 end;
 
@@ -107,11 +112,29 @@ begin
 end;
 
 function TDownloader_MediaSport.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Url, BestUrl, sQuality: string;
+  Quality, BestQuality: integer;
 begin
   Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
   if Result then
     begin
-    MovieUrl := 'http://www.mediasport.cz' + MovieUrl;
+    BestUrl := MovieUrl;
+    BestQuality := -1;
+    if QualitiesRegExp.Match(Page) then
+      repeat
+        if QualitiesRegExp.SubexpressionByName('URL', Url) then
+          if QualitiesRegExp.SubexpressionByName('QUALITY', sQuality) then
+            begin
+            Quality := StrToIntDef(sQuality, 0);
+            if Quality > BestQuality then
+              begin
+              BestUrl := Url;
+              BestQuality := Quality;
+              end;
+            end;
+      until not QualitiesRegExp.MatchAgain;
+    MovieUrl := 'http://www.mediasport.cz' + BestUrl;
     end;
 end;
 

@@ -1,11 +1,46 @@
 ﻿______________________________________________________________________________
 
-YTD v1.20                                                    (c) 2009-13 Pepak
+YTD v1.21                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.21:
+
+    * Noví poskytovatelé:
+      - BritishPathe.com
+      - HokejCb.cz
+      - MentalZero.com (porn)
+      - MULitvinov.cz
+      - Play.fm
+
+    * Aktualizovaní poskytovatelé:
+      - iDnes.cz
+      - MediaSport.cz
+      - RuTube.ru
+      - Sibnet.ru
+      - Smotri.com
+
+    * CeskaTelevize.cz: Vyřadil jsem verzi z konce roku 2011, která vyžaduje
+      token a vypadá, že už není relevantní (případně napište). Tím se mimo
+      jiné zprovoznily poslední díly Vyprávěj.
+
+    * Nova.cz: 
+      - Zprovozněna spousta videí na podstránkách Novy, např. poklicka.nova.cz,
+        hlascz.nova.cz, poker.nova.cz a není důvod, proč by neměly fungovat
+        i ostatní podstránky. Nutnou podmínkou pro to, aby to chodilo, je 
+        znalost hesla pro dešifrování konfiguračního souboru. Toto heslo
+        zadejte do konfigurace Novy do položky "Heslo pro konfigurace". Viz 
+        také dokumentace, položka <config_password>.
+      - Pozn.: Tajné heslo a heslo konfigurace jsou různé věci! Tajné heslo 
+        používá resolver pro sestavení URL videa. Heslo konfigurace používají
+        podstránky Novy (viz výše) k získání údajů pro resolver. Heslo pro
+        konfigurace není potřebné pro stahování běžných Voyo videí.
+      - Pozn.: Voyo+ stále není podporované.
+
+
 
   v1.20:
 

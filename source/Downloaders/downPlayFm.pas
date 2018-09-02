@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSibnet;
+unit downPlayFm;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,10 +45,13 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Sibnet = class(THttpDownloader)
+  TDownloader_PlayFm = class(THttpDownloader)
     private
     protected
+      MovieIDRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,51 +66,76 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
-// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+// http://www.play.fm/recording/bbcradio1essentialremixbymarkronson2007010772264
 const
-  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
+  URLREGEXP_BEFORE_ID = 'play\.fm/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '''file''\s*:\s*''(?P<URL>.+?)''';
+  REGEXP_MOVIE_ID =     '<a\s+[^>]*\bhref="#play_(?P<ID>\d+)"';
 
-{ TDownloader_Sibnet }
+{ TDownloader_PlayFm }
 
-class function TDownloader_Sibnet.Provider: string;
+class function TDownloader_PlayFm.Provider: string;
 begin
-  Result := 'Video.Sibnet.ru';
+  Result := 'PlayFm.com';
 end;
 
-class function TDownloader_Sibnet.UrlRegExp: string;
+class function TDownloader_PlayFm.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sibnet.Create(const AMovieID: string);
+constructor TDownloader_PlayFm.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  UrlIsRelative := True;
+  InfoPageEncoding := peUtf8;
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
-destructor TDownloader_Sibnet.Destroy;
+destructor TDownloader_PlayFm.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
   inherited;
 end;
 
-function TDownloader_Sibnet.GetMovieInfoUrl: string;
+function TDownloader_PlayFm.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.sibnet.ru/video' + MovieID;
+  Result := 'http://www.play.fm/' + MovieID;
+end;
+
+function TDownloader_PlayFm.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  ID, Server, Stream, Title: string;
+  InfoXml: TXmlDoc;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not DownloadXml(Http, 'http://www.play.fm/flexRead/recording', 'rec_id=' +  {$IFDEF UNICODE} AnsiString {$ENDIF} (ID), HTTP_FORM_URLENCODING, InfoXml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else
+    try
+      if not GetXmlVar(InfoXml, 'recording/url', Server) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+      else if not GetXmlVar(InfoXml, 'recording/waveform', Stream) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+      else
+        begin
+        if GetXmlVar(InfoXml, 'recording/title', Title) then
+          SetName(Title);
+        MovieUrl := Format('http://%s/waveform/%s', [Server, Stream]);
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      FreeAndNil(InfoXml);
+      end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sibnet);
+  RegisterDownloader(TDownloader_PlayFm);
 
 end.

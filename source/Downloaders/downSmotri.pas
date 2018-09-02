@@ -49,6 +49,8 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,14 +66,15 @@ uses
   uMessages;
 
 // http://smotri.com/video/view/?id=v203531694dc#as
+// http://pics.smotri.com/player.swf?file=v2332211794c
 const
-  URLREGEXP_BEFORE_ID = 'smotri\.com/video/view/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = 'smotri\.com/.*?[?&](?:id|file)=';
+  URLREGEXP_ID =        REGEXP_PARAM_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    REGEXP_URL_VIDEO_SRC;
+  REGEXP_MOVIE_TITLE =  '"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_URL =    '"_vidURL_mp4"\s*:\s*"(?P<URL>https?:.+?)"';
 
 { TDownloader_Smotri }
 
@@ -102,7 +105,34 @@ end;
 
 function TDownloader_Smotri.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.smotri.com/video/view/' + MovieID;
+  Result := 'http://smotri.com/video/view/url/bot/';
+end;
+
+function TDownloader_Smotri.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+var
+  UrlInfo, TitleInfo: string;
+begin
+  Result := False;
+  Page := '';
+  Xml := nil;
+  if DownloadPage(Http, Url,  {$IFDEF UNICODE} AnsiString {$ENDIF} (Format('ticket=%s&video_url=1&devid=LoadupFlashPlayer', [UrlEncode(MovieID)])), HTTP_FORM_URLENCODING, UrlInfo) then
+    begin
+    Page := UrlInfo;
+    Result := True;
+    if DownloadPage(Http, Url,  {$IFDEF UNICODE} AnsiString {$ENDIF} (Format('ticket=%s&getvideoinfo=1&devid=LoadupFlashPlayer', [UrlEncode(MovieID)])), HTTP_FORM_URLENCODING, TitleInfo) then
+      Page := Page + TitleInfo;
+    end;
+end;
+
+function TDownloader_Smotri.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    begin
+    MovieUrl := JSDecode(MovieURL);
+    SetName(JSDecode(Name));
+    end;
 end;
 
 initialization

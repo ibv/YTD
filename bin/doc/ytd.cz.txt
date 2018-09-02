@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.20                                                    (c) 2009-13 Pepak
+YTD v1.21                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -478,6 +478,13 @@ a "0" (ne).
         přehravače. Bez tohoto hesla nelze videa přehrávat ani stahovat. 
         K získání hesla se nebudu z právních důvodů vyjadřovat, použijte 
         Google nebo jiný vyhledávací nástroj.
+      - Možná je jakákoliv hodnota.
+      - Výchozí hodnotou je prázdný řetězec (který ovšem nebude fungovat).
+
+    <config_password>
+      - Potomek <Nova_cz>; umožňuje dešifrovat konfigurační soubory používané
+        na podwebech Novy, např. poklicka.nova.cz nebo poker.nova.cz. Pro
+        přehrávání Voyo pořadů není potřeba.
       - Možná je jakákoliv hodnota.
       - Výchozí hodnotou je prázdný řetězec (který ovšem nebude fungovat).
 

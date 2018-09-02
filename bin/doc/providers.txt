@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.20                                                    (c) 2009-13 Pepak
+YTD v1.21                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -46,6 +46,7 @@ Bomba.cz            | HTTP     |       | http://www.bomba.cz/video/simpsnovi-vs-
 Break.com           | HTTP     |       | http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
                     |          |       | http://media1.break.com/static/app/v1/global/swf/player10.swf?sVidLoc=http%3a%2f%2fvideo1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.flv&sThumbLoc=http%3a%2f%2fmedia1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.jpg&contentURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html&sShareURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html%23TellAFriendhttp%3a%2f%2fstats.break.com%2finvoke.txt&iContentID=359418&autoplay=0&embed=2&contentidencoded=359418&categoryid=4&userid=1620903&mode=embed&linktitle=Funny+Videos&sVidTitle=EMBED-Dude+Blows+Off+Firecracker+In+Teeth&icon=1B608EE7AFCE3765E176F3C6FBB98002B3D18C64572F2307D76FAB7CA970F3B1D7D7
                     |          |       | http://embed.break.com/MzU5NDE4
+BritishPathe.com    | RTMP     |       | http://www.britishpathe.com/video/british-aircraft-carrier-corsairs/
 B-TV.cz             | HTTP     |       | http://www.b-tv.cz/mydlo-hi-fi-tv.html?ep=2163
 Cas.sk              | HTTP     |       | http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
                     |          |       | http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
@@ -122,6 +123,7 @@ Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galeri
                     | MS       |       | http://www.hasici150.tv/cz/Media-galerie/Video/Plzenska-stovka-2012---serial-CPVK_____210/Plzenska-stovka-2012_____776/
 HejbejSe.tv         | HTTP     |       | http://www.hejbejse.tv/video/klip/Petra-4-
 Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
+HokejCb.cz          | HTTP     |       | http://www.hokejcb.cz/clanek.asp?id=VIDEO-Podivejte-se-na-sestrih-utkani-s-Kometou-Brno-5679
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
 HudebniVideoKlipy.cz| HTTP     |       | http://www.hudebnivideoklipy.cz/chinaski-kerka-119555.html
 i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
@@ -177,6 +179,7 @@ MojeVideo.sk        | HTTP     | 8     | http://www.mojevideo.sk/video/6227/kras
 Mpora.com           | HTTP     |       | http://video.mpora.com/watch/xfnGGmZDC/
 MTV.com             | RTMP     |       | http://www.mtv.com/videos/movie-trailers/602324/mega-shark-vs-crocosaurus.jhtml
                     |          |       | http://media.mtvnservices.com/mgid:uma:video:mtv.com:602324
+MULitvinov.cz       | HTTP     |       | http://www.mulitvinov.cz/videa-aktualne/gs-14455/p1=63583
 Multimedia.vse.cz   | MS       |       | http://multimedia.vse.cz/media/Viewer/?peid=e847bd00891e47389492f06651a0a7761d
 MustWatch.cz        | HTTP     |       | http://www.mustwatch.cz/film/reel-bad-arabs
 Muvi.cz             | HTTP     |       | http://www.muvi.cz/klip/344-jak-otevrit-vino-bez-vyvrtky-vasi-botou-22-bota-misto-vyvrtky
@@ -213,6 +216,7 @@ Own3D.tv            | HTTP     |       | http://www.own3d.tv/stream/927952
 PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
 PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
 PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
+Play.fm             | HTTP     |       | http://www.play.fm/recording/bbcradio1essentialremixbymarkronson2007010772264
 PlayWire.com        | RTMP     |       | http://cdn.playwire.com/343/embed/28047.html
 PlayZone.cz         | RTMP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
 Polar.cz            | HTTP     |       | http://www.polar.cz/archiv/video/regionalni-zpravy-polar-18-01-2013-09-00
@@ -246,6 +250,7 @@ RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d3
                     |          |       | http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
                     |          |       | http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
                     | HDS      |       | http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
+                    |          |       | http://rutube.ru/player.swf?hash=5936573
 SchoolOfCare.ru     | HTTP     |       | http://schoolofcare.ru/masha/339/
 Sefka.cz            | HTTP     |       | http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
 Sefka.sk            | HTTP     |       | http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
@@ -361,6 +366,7 @@ KeezMovies.com      | HTTP     | F     |
                     | HTTP     | F,9   | http://www.keezmovies.com/embed_player.php?vid=...
 MachoVideo.com      | HTTP     | F     |
 MegaPorn.com        | HTTP     | F     |
+MentalZero.com      | HTTP     | F     |
 MojePorno.sk        | HTTP     | F     |
 Motherless.com      | HTTP     | F,9   |
 PornHost.com        | HTTP     | F     |

@@ -162,6 +162,7 @@ uses
   downBreak in 'Downloaders\downBreak.pas',
   downBreakEmbed in 'Downloaders\downBreakEmbed.pas',
   downBreakEmbedV2 in 'Downloaders\downBreakEmbedV2.pas',
+  downBritishPathe in 'Downloaders\downBritishPathe.pas',
   downBTVCz in 'Downloaders\downBTVCz.pas',
   downCasSk in 'Downloaders\downCasSk.pas',
   downCekniTo in 'Downloaders\downCekniTo.pas',
@@ -220,6 +221,7 @@ uses
   downHasici150 in 'Downloaders\downHasici150.pas',
   downHejbejSe in 'Downloaders\downHejbejSe.pas',
   downHellTV in 'Downloaders\downHellTV.pas',
+  downHokejCbCz in 'Downloaders\downHokejCbCz.pas',
   downHokejCz in 'Downloaders\downHokejCz.pas',
   downHrej in 'Downloaders\downHrej.pas',
   downHudebniVideoKlipy in 'Downloaders\downHudebniVideoKlipy.pas',
@@ -269,6 +271,7 @@ uses
   downMpora in 'Downloaders\downMpora.pas',
   downMTV in 'Downloaders\downMTV.pas',
   downMTVEmbed in 'Downloaders\downMTVEmbed.pas',
+  downMULitvinov in 'Downloaders\downMULitvinov.pas',
   downMultimediaVseCz in 'Downloaders\downMultimediaVseCz.pas',
   downMusicStreamCz in 'Downloaders\downMusicStreamCz.pas',
   downMustWatch in 'Downloaders\downMustWatch.pas',
@@ -300,6 +303,7 @@ uses
   downPBS in 'Downloaders\downPBS.pas',
   downPCPlanets in 'Downloaders\downPCPlanets.pas',
   downPicSpoon in 'Downloaders\downPicSpoon.pas',
+  downPlayFm in 'Downloaders\downPlayFm.pas',
   downPlaywire in 'Downloaders\downPlaywire.pas',
   downPlayZone in 'Downloaders\downPlayZone.pas',
   downPolarCz in 'Downloaders\downPolarCz.pas',
@@ -422,6 +426,7 @@ uses
     xxxKeezMovies_Embed in 'Downloaders\XXX\xxxKeezMovies_Embed.pas',
     xxxMachoVideo in 'Downloaders\XXX\xxxMachoVideo.pas',
     xxxMegaPorn in 'Downloaders\XXX\xxxMegaPorn.pas',
+    xxxMentalZero in 'Downloaders\XXX\xxxMentalZero.pas',
     xxxMojePornoSK in 'Downloaders\XXX\xxxMojePornoSK.pas',
     xxxMotherless in 'Downloaders\XXX\xxxMotherless.pas',
     xxxPornHost in 'Downloaders\XXX\xxxPornHost.pas',
@@ -455,6 +460,8 @@ uses
     xxxZvraceny in 'Downloaders\XXX\xxxZvraceny.pas',
   {$ENDIF}
   {$IFDEF NONWORKING}
+    downAnimacekTv in 'Downloaders\downAnimacekTv.pas',
+      // Skoro to vypada na problem v te verzi RTMPDUMPu, kterou pouzivam
     downArchivioLuce in 'Downloaders\Non-working\downArchivioLuce.pas',
       // No idea why it doesn't work
     downAutoSalonTV in 'Downloaders\Non-working\downAutoSalonTV.pas',

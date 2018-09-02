@@ -52,6 +52,7 @@ type
       fInfoPageIsXml: boolean;
       fUserName: string;
       fPassword: string;
+      fUrlIsRelative: boolean;
     protected
       function GetMovieInfoUrl: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
     protected
@@ -61,6 +62,7 @@ type
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure SetMovieUrl(const Value: string); virtual;
       property MovieUrl: string read fMovieUrl write SetMovieUrl;
+      property UrlIsRelative: boolean read fUrlIsRelative write fUrlIsRelative;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
       property UserName: string read fUserName;
@@ -309,7 +311,10 @@ begin
             else
               if MovieUrlRegExp <> nil then
                 if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
-                  MovieURL := s;
+                  if UrlIsRelative then
+                    MovieURL := GetRelativeUrl(URL, s)
+                  else
+                    MovieURL := s;
             // If URL was set, Prepare was successful.
             if MovieUrl <> '' then
               SetPrepared(True);

@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSibnet;
+unit xxxMentalZero;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,7 +45,7 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Sibnet = class(THttpDownloader)
+  TDownloader_MentalZero = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -63,51 +63,50 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
-// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
 const
-  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
+  URLREGEXP_BEFORE_ID = 'mentalzero\.com/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '''file''\s*:\s*''(?P<URL>.+?)''';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL = '<param\s+name="movie"\s+value="(?:[^"]*?&(?:amp;|#038;)?)*?file=(?P<URL>https?://.+?)(?:"|&amp;|&)';
 
-{ TDownloader_Sibnet }
+{ TDownloader_MentalZero }
 
-class function TDownloader_Sibnet.Provider: string;
+class function TDownloader_MentalZero.Provider: string;
 begin
-  Result := 'Video.Sibnet.ru';
+  Result := 'MentalZero.com';
 end;
 
-class function TDownloader_Sibnet.UrlRegExp: string;
+class function TDownloader_MentalZero.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sibnet.Create(const AMovieID: string);
+constructor TDownloader_MentalZero.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
+  inherited;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  UrlIsRelative := True;
 end;
 
-destructor TDownloader_Sibnet.Destroy;
+destructor TDownloader_MentalZero.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Sibnet.GetMovieInfoUrl: string;
+function TDownloader_MentalZero.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.sibnet.ru/video' + MovieID;
+  Result := 'http://www.mentalzero.com/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sibnet);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_MentalZero);
+  {$ENDIF}
 
 end.

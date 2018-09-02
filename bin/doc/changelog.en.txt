@@ -1,11 +1,45 @@
 ﻿______________________________________________________________________________
 
-YTD v1.20                                                    (c) 2009-13 Pepak
+YTD v1.21                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.21:
+
+    * New providers:
+      - BritishPathe.com
+      - HokejCb.cz
+      - MentalZero.com (porn)
+      - MULitvinov.cz
+      - Play.fm
+
+    * Updated providers:
+      - iDnes.cz
+      - MediaSport.cz
+      - RuTube.ru
+      - Sibnet.ru
+      - Smotri.com
+
+    * CeskaTelevize.cz: Removed the code from late 2011, which required a token
+      and seems not to be relevant anymore. This made some current videos work.
+
+    * Nova.cz: 
+      - Many movies from Nova's subpages, such as poklicka.nova.cz, 
+        hlascz.nova.cz or poker.nova.cz, are working now. You need to provide
+        an config password to YTD's configuration (see the GUI or the config
+        file's <config_password>) so that YTD can decrypt the video's config
+        files.
+      - Note that the secret password and the config password are two very
+        different things! The secret password is used by the resolver to build
+        a video's URL. The config password is used by Nova's subpages to 
+        decrypt the input parameters for the resolver. The config password is
+        not needed for regular Voyo videos.
+      - Note: Voyo+ still isn't supported.
+
+
 
   v1.20:
 

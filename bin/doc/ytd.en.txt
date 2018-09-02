@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.20                                                    (c) 2009-13 Pepak
+YTD v1.21                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -491,6 +491,13 @@ except in file/directory names. Logical values (true-false) are stored as
         to identify valid clients. In order to request movies from the server, 
         you need this password. I will not disclose how to get it, for legal 
         reasons; try Google or other search engines.
+      - Any value is possible here.
+      - Default value is an empty string (which won't work).
+
+    <config_password>
+      - Child of <Nova_cz>; allows YTD to decrypt the configuration files used
+        by some subpages of Nova, such as poklicka.nova.cz or poker.nova.cz.
+        It is not needed for Voyo movies.
       - Any value is possible here.
       - Default value is an empty string (which won't work).
 
