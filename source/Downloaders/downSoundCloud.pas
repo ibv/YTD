@@ -48,6 +48,11 @@ type
   TDownloader_SoundCloud = class(THttpDownloader)
     private
     protected
+      ClientUrlRegExp: TRegExp;
+      ClientIdRegExp: TRegExp;
+      ClientID: string;
+    protected
+      function BeforeGetMovieInfoUrl(Http: THttpSend): boolean; override;
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -72,8 +77,10 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<h1[^>]*>(?:\s*<em>)?\s*(?P<TITLE>.*?)(?:\s*</em>)?\s*</h1>';
-  REGEXP_MOVIE_URL =    '"streamUrl"\s*:\s*"(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE =  '"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_URL =    '"stream_url"\s*:\s*"(?P<URL>https?://.+?)"';
+  REGEXP_CLIENT_URL =   '<script\s+src="(?P<URL>//[^"]+)">';
+  REGEXP_CLIENT_ID =    '\bclientId\s*=\s*"(?P<ID>.+?)"';
 
 { TDownloader_SoundCloud }
 
@@ -93,18 +100,39 @@ begin
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  ClientUrlRegExp := RegExCreate(REGEXP_CLIENT_URL);
+  ClientIdRegExp := RegExCreate(REGEXP_CLIENT_ID);
 end;
 
 destructor TDownloader_SoundCloud.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(ClientUrlRegExp);
+  RegExFreeAndNil(ClientIdRegExp);
   inherited;
+end;
+
+function TDownloader_SoundCloud.BeforeGetMovieInfoUrl(Http: THttpSend): boolean;
+var
+  Page, Url, ID: string;
+begin
+  inherited BeforeGetMovieInfoUrl(Http);
+  Result := False;
+  ClientID := '';
+  if DownloadPage(Http, 'http://m.soundcloud.com/' + MovieID, Page) then
+    if GetRegExpVar(ClientUrlRegExp, Page, 'URL', Url) then
+      if DownloadPage(Http, 'http:' + Url, Page) then
+        if GetRegExpVar(ClientIdRegExp, Page, 'ID', ID) then
+          begin
+          ClientID := ID;
+          Result := True;
+          end;
 end;
 
 function TDownloader_SoundCloud.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.soundcloud.com/' + MovieID;
+  Result := Format('http://m.soundcloud.com/_api/resolve?url=http://soundcloud.com/%s&client_id=%s&format=json', [UrlEncode(MovieID), ClientID]);
 end;
 
 function TDownloader_SoundCloud.GetFileNameExt: string;
@@ -115,7 +143,7 @@ end;
 function TDownloader_SoundCloud.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieUrl := HtmlDecode(JSDecode(MovieUrl));
+  MovieUrl := Format('%s&client_id=%s', [HtmlDecode(JSDecode(MovieUrl)), ClientID]);
   Result := Prepared;
 end;
 

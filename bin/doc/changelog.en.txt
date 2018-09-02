@@ -1,11 +1,35 @@
 ﻿______________________________________________________________________________
 
-YTD v1.19                                                    (c) 2009-13 Pepak
+YTD v1.20                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.20:
+
+    * New providers:
+      - Gordon.ura.cz
+      - JenProZeny.cz
+      - Koukni.cz
+      - VCTV.cz
+
+    * Updated providers:
+      - GameAnyone.com
+      - SoundCloud.com
+      - TVcom.cz
+      - Zakulisi.cz
+
+    * CeskaTelevize.cz: Now downloads both subtitled and un-subtitles videos.
+
+    * Joj.sk: Now downloads movies which were recently moved from their own
+      domain to a Joj.sk subdomain (FarmarHladaZenu, MamaOzenMa etc.) as well
+      as movies which always used Joj.sk subdomains (e.g. Panelak).
+
+    * RockstarGames.com: Support for GTA IV.
+
+
 
   v1.19:
 
@@ -15,6 +39,14 @@ CHANGELOG
       - Own3D.tv
       - Polar.cz
       - SchoolOfCare.ru
+
+    * Updated providers:
+      - B-TV.cz
+      - Facebook.com
+      - Hrej.cz
+      - PornHub.com
+      - Tube8.com
+      - Tyzden.sk
 
     * CeskaTelevize.cz: Added support for subtitles. It may happen that some
       videos won't download at all - in that case, disable subtitle download

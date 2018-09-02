@@ -70,7 +70,7 @@ uses
 // http://www.csmatalent.sk/novinky-divadla/clanok/sila-lasky-z-armenska.html
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*csmatalent\.';
-  URLREGEXP_ID =        '(cz|sk)/.+';
+  URLREGEXP_ID =        '(cz|joj\.sk)/.+';
   URLREGEXP_AFTER_ID =  '';
 
 { TDownloader_CSmaTalent }

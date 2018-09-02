@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downGameAnyone;
+unit downKoukni;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,10 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_GameAnyone = class(TNestedDownloader)
+  TDownloader_Koukni = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -53,6 +53,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -65,88 +66,78 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.gameanyone.com/video/88319
+// http://koukni.cz/95074707
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*gameanyone\.com/video/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'koukni\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\s+style="font-weight:bold;padding-left:25px;width:910px;text-align:left;font-size:15px;padding-bottom:3px;float:left;">\s*(?P<TITLE>.*?)\s*</div>';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    '\bclip\s*:\s*\{.*?\burl\s*:\s*''(?P<URL>.+?)''';
+  {$IFDEF SUBTITLES}
+  REGEXP_SUBTITLES_URL = '\bcaptionUrl\s*:\s*''(?P<SUBTITLES>.+?)''';
+  {$ENDIF}
 
-{ TDownloader_GameAnyone }
+{ TDownloader_Koukni }
 
-class function TDownloader_GameAnyone.Provider: string;
+class function TDownloader_Koukni.Provider: string;
 begin
-  Result := 'GameAnyone.com';
+  Result := 'Koukni.cz';
 end;
 
-class function TDownloader_GameAnyone.UrlRegExp: string;
+class function TDownloader_Koukni.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_GameAnyone.Create(const AMovieID: string);
+class function TDownloader_Koukni.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features
+    {$IFDEF SUBTITLES}
+    + [dfSubtitles]
+    {$ENDIF}
+    ;
+end;
+
+constructor TDownloader_Koukni.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  InfoPageEncoding := peAnsi;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  {$IFDEF SUBTITLES}
+  SetLength(fSubtitleUrlRegExps, 1);
+  fSubtitleUrlRegExps[0] := RegExCreate(REGEXP_SUBTITLES_URL);
+  {$ENDIF}
 end;
 
-destructor TDownloader_GameAnyone.Destroy;
+destructor TDownloader_Koukni.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
+  {$IFDEF SUBTITLES}
+  RegExFreeAndNil(fSubtitleUrlRegExps[0]);
+  SetLength(fSubtitleUrlRegExps, 0);
+  {$ENDIF}
   inherited;
 end;
 
-function TDownloader_GameAnyone.GetMovieInfoUrl: string;
+function TDownloader_Koukni.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.gameanyone.com/video/' + MovieID;
+  Result := 'http://koukni.cz/' + MovieID;
 end;
 
-function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Tracklist: TXmlNode;
-    ID, Url: string;
-    i: integer;
+function TDownloader_Koukni.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := False;
-  if not DownloadXml(Http, 'http://www.gameanyone.com/pl.php?id=' + MovieID + '&l=1' + MovieID, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
-      if XmlNodeByPath(Xml, 'tracklist', Tracklist) then
-        for i := 0 to Pred(Tracklist.NodeCount) do
-          if Tracklist.Nodes[i].Name = 'track' then
-            if GetXmlVar(Tracklist.Nodes[i], 'jwplayer:mediaid', ID) then
-              if ID = MovieID then
-                begin
-                if GetXmlVar(Tracklist.Nodes[i], 'location', Url) then
-                  if CreateNestedDownloaderFromURL(Url) then
-                    begin
-                    SetPrepared(True);
-                    Result := True;
-                    end;
-                Break;
-                end;
-      if not Result then
-        if GetXmlVar(Xml, 'trackList/track/location', Url) then
-          begin
-          if not IsHttpProtocol(Url) then
-            Url := 'http://www.youtube.com/watch?v=' + Url;
-          if CreateNestedDownloaderFromUrl(Url) then
-            begin
-            SetPrepared(True);
-            Result := True;
-            end;
-          end;
-    finally
-      Xml.Free;
-      end;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  if Prepared then
+    if not IsHttpProtocol(MovieUrl) then
+      MovieUrl := GetRelativeUrl(GetMovieInfoUrl, MovieUrl);
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_GameAnyone);
+  RegisterDownloader(TDownloader_Koukni);
 
 end.

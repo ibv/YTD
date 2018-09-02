@@ -1,11 +1,35 @@
 ﻿______________________________________________________________________________
 
-YTD v1.19                                                    (c) 2009-13 Pepak
+YTD v1.20                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.20:
+
+    * Noví poskytovatelé:
+      - Gordon.ura.cz
+      - JenProZeny.cz
+      - Koukni.cz
+      - VCTV.cz
+
+    * Aktualizovaní poskytovatelé:
+      - GameAnyone.com
+      - SoundCloud.com
+      - TVcom.cz
+      - Zakulisi.cz
+
+    * CeskaTelevize.cz: Jde stahovat jak videa s titulky, tak ta bez nich.
+
+    * Joj.sk: Fungují jak pořady, které původně měly vlastní doménu a nyní
+      jsou subdoménou Joj.sk (FarmarHladaZenu, MamaOzenMa atd.), tak videa,
+      které byly subdoménou od začátku (např. Panelak).
+
+    * RockstarGames.com: Podpora pro GTA IV.
+
+
 
   v1.19:
 
@@ -15,6 +39,14 @@ CHANGELOG
       - Own3D.tv
       - Polar.cz
       - SchoolOfCare.ru
+
+    * Aktualizovaní poskytovatelé:
+      - B-TV.cz
+      - Facebook.com
+      - Hrej.cz
+      - PornHub.com
+      - Tube8.com
+      - Tyzden.sk
 
     * CeskaTelevize.cz: Doplněna podpora pro stahování titulků. Pokud by kvůli
       tomu náhodou některé video nešlo vůbec stáhnout, vypněte stahování
@@ -35,14 +67,6 @@ CHANGELOG
       videa. Lví podíl na této funkci má Balutbj, který k tomu dodal strašnou
       spoustu informací včetně funkčního PHP skriptu, vůči kterému jsem mohl
       ověřovat.
-
-    * Další aktualizovaní poskytovatelé:
-      - B-TV.cz
-      - Facebook.com
-      - Hrej.cz
-      - PornHub.com
-      - Tube8.com
-      - Tyzden.sk
 
 
 

@@ -118,6 +118,7 @@ type
       JavascriptPlayerRegExp: TRegExp;
       VideoPlayerUrlRegExp: TRegExp;
       {$IFDEF SUBTITLES}
+      HasSubtitles: boolean;
       {$IFDEF CONVERTSUBTITLES}
       SubtitleItemRegExp: TRegExp;
       {$ENDIF}
@@ -127,7 +128,10 @@ type
     protected
       procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
       function GetFileNameExt: string; override;
+      function BeforeGetMovieInfoUrl(Http: THttpSend): boolean; override;
       function GetMovieInfoUrl: string; override;
+      function GetBaseMovieInfoUrl: string;
+      function UrlWithSubtitles: string;
       function GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
       function ConvertMovieObject(var Data: string): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -175,7 +179,7 @@ uses
 
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        '^https?://(?:[a-z0-9-]+\.)*(?:ceskatelevize|ct24)\.cz/.+';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -354,14 +358,40 @@ begin
   Result := Extension;
 end;
 
-function TDownloader_CT_old.GetMovieInfoUrl: string;
+function TDownloader_CT_old.BeforeGetMovieInfoUrl(Http: THttpSend): boolean;
+{$IFDEF SUBTITLES}
+var
+  Page, MovieObject: string;
+{$ENDIF}
+begin
+  Result := inherited BeforeGetMovieInfoUrl(Http);
+  {$IFDEF SUBTITLES}
+  HasSubtitles := False;
+  if SubtitlesEnabled then
+    if DownloadPage(Http, UrlWithSubtitles, Page) then
+      if GetMovieObject(Http, Page, MovieObject) then
+        HasSubtitles := True;
+  {$ENDIF}
+end;
+
+function TDownloader_CT_old.GetBaseMovieInfoUrl: string;
 begin
   Result := MovieID;
+end;
+
+function TDownloader_CT_old.GetMovieInfoUrl: string;
+begin
+  Result := GetBaseMovieInfoUrl;
   {$IFDEF SUBTITLES}
-  if SubtitlesEnabled then
-    if Result <> '' then
-      Result := Result + 'titulky/';
+  if Result <> '' then
+    if SubtitlesEnabled and HasSubtitles then
+      Result := UrlWithSubtitles;
   {$ENDIF}
+end;
+
+function TDownloader_CT_old.UrlWithSubtitles: string;
+begin
+  Result := GetBaseMovieInfoUrl + 'titulky/';
 end;
 
 function TDownloader_CT_old.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;

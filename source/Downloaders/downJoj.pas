@@ -72,7 +72,12 @@ uses
 // http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        '^https?://(?:www\.)?joj\.sk/' + REGEXP_SOMETHING;
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX
+                        + '(?<!csmatalent\.)'
+                        + '(?<!farmarhladazenu\.)'
+                        + '(?<!mamaozenma\.)'
+                        + '(?<!sefka\.)'
+                        + 'joj\.sk/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const

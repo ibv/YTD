@@ -742,14 +742,15 @@ type
     DecodeOnly: boolean;
     end;
 const
-  HtmlDecodeItems: array[0..5] of THtmlDecodeItem
+  HtmlDecodeItems: array[0..6] of THtmlDecodeItem
     = (
         (Html: '&mdash;'; Txt: '--'; DecodeOnly: true),
         (Html: '&lt;'   ; Txt: '<' ; DecodeOnly: false),
         (Html: '&gt;'   ; Txt: '>' ; DecodeOnly: false),
         (Html: '&quot;' ; Txt: '"' ; DecodeOnly: false),
         (Html: '&apos;' ; Txt: ''''; DecodeOnly: false),
-        (Html: '&amp;'  ; Txt: '&' ; DecodeOnly: false)
+        (Html: '&amp;'  ; Txt: '&' ; DecodeOnly: false),
+        (Html: '&nbsp;' ; Txt: ' ' ; DecodeOnly: false)
       );
 
 function TDownloader.HtmlDecode(const Text: string; Unicode: boolean): string;

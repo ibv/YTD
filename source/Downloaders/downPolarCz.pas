@@ -74,7 +74,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H2;
-  REGEXP_MOVIE_URLS =   '\burl\s*:\s*"(?P<URL>https?://[^"]+)"\s*,\s*bitrate\s*:\s*(?P<BITRATE>\d+)';
+  REGEXP_MOVIE_URLS =   '\burl\s*:\s*"(?P<URL>https?://[^"]+)"\s*,[^}]*?\s*bitrate\s*:\s*(?P<BITRATE>\d+)';
 
 { TDownloader_PolarCz }
 

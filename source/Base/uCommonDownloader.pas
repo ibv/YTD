@@ -70,6 +70,7 @@ type
       function GetFileNameExt: string; override;
       function GetContentUrl: string; override;
       function BuildMovieUrl(out Url: string): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function BeforeGetMovieInfoUrl(Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure SetOptions(const Value: TYTDOptions); override;
@@ -113,7 +114,7 @@ const
 implementation
 
 uses
-  uCompatibility, uMessages, uStrings;
+  uCompatibility, uMessages, uStrings, uFunctions;
 
 { TCommonDownloader }
 
@@ -207,6 +208,9 @@ begin
     begin
     for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
       if GetRegExpVar(fSubtitleUrlRegExps[i], Page, 'SUBTITLES', Url) then
+        begin
+        if not IsHttpProtocol(Url) then
+          Url := GetRelativeUrl(GetMovieInfoUrl, Url);
         if DownloadBinary(Http, Url, s) then
           begin
           fSubtitles := s;
@@ -214,6 +218,7 @@ begin
           Result := True;
           Break;
           end;
+        end;
     if not Result then
       for i := 0 to Pred(Length(fSubtitleRegExps)) do
         if GetRegExpVar(fSubtitleRegExps[i], Page, 'SUBTITLES', Subs) then
@@ -269,55 +274,60 @@ begin
     end;
   Info := CreateHttp;
   try
-    // Download the media info page.
-    URL := GetMovieInfoUrl;
-    if URL = '' then
+    if not BeforeGetMovieInfoUrl(Info) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-    else if not GetMovieInfoContent(Info, URL, Page, PageXml) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
-      try
-        if InfoPageIsXml and (PageXml = nil) then
-          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-        else if not BeforePrepareFromPage(Page, PageXml, Info) then
-          SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-        else
-          begin
-          SetName('');
-          MovieURL := '';
-          {$IFDEF SUBTITLES}
-          fSubtitles := '';
-          fSubtitlesExt := '';
-          {$ENDIF}
-          // If regular expression for TITLE is set, use it to get title.
-          if MovieTitleRegExp <> nil then
-            if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
-              SetName(HtmlDecode(s));
-          // If a function for building URL is provided, use it.
-          if BuildMovieURL(s) then
-            MovieURL := s
-          // Otherwise if regular expression for URL is set, use it.
+      begin
+      // Download the media info page.
+      URL := GetMovieInfoUrl;
+      if URL = '' then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+      else if not GetMovieInfoContent(Info, URL, Page, PageXml) then
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+      else
+        try
+          if InfoPageIsXml and (PageXml = nil) then
+            SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+          else if not BeforePrepareFromPage(Page, PageXml, Info) then
+            SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
           else
-            if MovieUrlRegExp <> nil then
-              if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
-                MovieURL := s;
-          // If URL was set, Prepare was successful.
-          if MovieUrl <> '' then
-            SetPrepared(True);
-          // Try additional processing of page data
-          if not AfterPrepareFromPage(Page, PageXml, Info) then
-            SetPrepared(False);
-          if (not Prepared) and (LastErrorMsg = '') then
-            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
-          {$IFDEF SUBTITLES}
-          if Prepared then
-            ReadSubtitles(Page, PageXml, Info);
-          {$ENDIF}
-          Result := Prepared;
+            begin
+            SetName('');
+            MovieURL := '';
+            {$IFDEF SUBTITLES}
+            fSubtitles := '';
+            fSubtitlesExt := '';
+            {$ENDIF}
+            // If regular expression for TITLE is set, use it to get title.
+            if MovieTitleRegExp <> nil then
+              if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
+                SetName(HtmlDecode(s));
+            // If a function for building URL is provided, use it.
+            if BuildMovieURL(s) then
+              MovieURL := s
+            // Otherwise if regular expression for URL is set, use it.
+            else
+              if MovieUrlRegExp <> nil then
+                if GetRegExpVar(MovieURLRegExp, Page, 'URL', s) then
+                  MovieURL := s;
+            // If URL was set, Prepare was successful.
+            if MovieUrl <> '' then
+              SetPrepared(True);
+            // Try additional processing of page data
+            if not AfterPrepareFromPage(Page, PageXml, Info) then
+              SetPrepared(False);
+            if (not Prepared) and (LastErrorMsg = '') then
+              SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);
+            {$IFDEF SUBTITLES}
+            if Prepared then
+              ReadSubtitles(Page, PageXml, Info);
+            {$ENDIF}
+            Result := Prepared;
+            end;
+        finally
+          FreeAndNil(PageXml);
           end;
-      finally
-        FreeAndNil(PageXml);
-        end;
+      end;
   finally
     FreeAndNil(Info);
     end;
@@ -334,6 +344,11 @@ end;
 function TCommonDownloader.BuildMovieUrl(out Url: string): boolean;
 begin
   Result := False;
+end;
+
+function TCommonDownloader.BeforeGetMovieInfoUrl(Http: THttpSend): boolean;
+begin
+  Result := True;
 end;
 
 function TCommonDownloader.BeforePrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

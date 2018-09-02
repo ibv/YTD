@@ -51,7 +51,6 @@ type
       function GetMovieInfoUrl: string; override;{*}
       function TheServer: string; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;{*}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -66,16 +65,11 @@ uses
 
 // http://www.farmarhladazenu.sk/epizody/detail/farmar-hlada-zenu-2-novi-farmari.html
 const
-  URLREGEXP_BEFORE_ID = 'farmarhladazenu\.sk/';
+  URLREGEXP_BEFORE_ID = 'farmarhladazenu\.joj\.sk/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 { TDownloader_FarmarHladaZenu }
-
-class function TDownloader_FarmarHladaZenu.Provider: string;
-begin
-  Result := 'FarmarHladaZenu.sk';
-end;
 
 class function TDownloader_FarmarHladaZenu.UrlRegExp: string;
 begin
@@ -94,7 +88,7 @@ end;
 
 function TDownloader_FarmarHladaZenu.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.farmarhladazenu.sk/' + MovieID;
+  Result := 'http://farmarhladazenu.joj.sk/' + MovieID;
 end;
 
 function TDownloader_FarmarHladaZenu.TheServer: string;

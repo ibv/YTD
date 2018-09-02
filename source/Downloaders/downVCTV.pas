@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSefka;
+unit downVCTV;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,18 +42,15 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
+  uDownloader, uCommonDownloader, downPolarCz;
 
 type
-  TDownloader_Sefka = class(TDownloader_Joj_Porady)
+  TDownloader_VCTV = class(TDownloader_PolarCz)
     private
     protected
-      function GetMovieInfoUrl: string; override;{*}
-      function TheServer: string; override;
+      function GetMovieInfoUrl: string; override;
     public
-      class function UrlRegExp: string; override;{*}
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
+      class function UrlRegExp: string; override;
     end;
 
 implementation
@@ -63,41 +60,25 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
-// http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
+// http://www.vctv.cz/archiv/video/vychodoceske-zpravy-18-01-2013-18-00
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*sefka\.';
-  URLREGEXP_ID =        '(cz|joj\.sk)/.+?\.html';
+  URLREGEXP_BEFORE_ID = 'vctv\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_Sefka }
+{ TDownloader_VCTV }
 
-class function TDownloader_Sefka.UrlRegExp: string;
+class function TDownloader_VCTV.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Sefka.Create(const AMovieID: string);
+function TDownloader_VCTV.GetMovieInfoUrl: string;
 begin
-  inherited;
-end;
-
-destructor TDownloader_Sefka.Destroy;
-begin
-  inherited;
-end;
-
-function TDownloader_Sefka.GetMovieInfoUrl: string;
-begin
-  Result := 'http://www.sefka.' + MovieID;
-end;
-
-function TDownloader_Sefka.TheServer: string;
-begin
-  Result := 'n11.joj.sk';
+  Result := 'http://www.vctv.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sefka);
+  RegisterDownloader(TDownloader_VCTV);
 
 end.

@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downGameAnyone;
+unit downJenProZeny;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,10 +42,10 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_GameAnyone = class(TNestedDownloader)
+  TDownloader_JenProZeny = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -65,88 +65,57 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.gameanyone.com/video/88319
+// http://www.jenprozeny.cz/video/32771-paradni-viral-medvedem
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*gameanyone\.com/video/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'jenprozeny\.cz/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<div\s+style="font-weight:bold;padding-left:25px;width:910px;text-align:left;font-size:15px;padding-bottom:3px;float:left;">\s*(?P<TITLE>.*?)\s*</div>';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    '"streams"\s*:\s*\[\s*\{\s*"file"\s*:\s*"(?P<URL>.+?)"';
 
-{ TDownloader_GameAnyone }
+{ TDownloader_JenProZeny }
 
-class function TDownloader_GameAnyone.Provider: string;
+class function TDownloader_JenProZeny.Provider: string;
 begin
-  Result := 'GameAnyone.com';
+  Result := 'JenProZeny.cz';
 end;
 
-class function TDownloader_GameAnyone.UrlRegExp: string;
+class function TDownloader_JenProZeny.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_GameAnyone.Create(const AMovieID: string);
+constructor TDownloader_JenProZeny.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peANSI;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_GameAnyone.Destroy;
+destructor TDownloader_JenProZeny.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_GameAnyone.GetMovieInfoUrl: string;
+function TDownloader_JenProZeny.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.gameanyone.com/video/' + MovieID;
+  Result := 'http://www.jenprozeny.cz/video/' + MovieID;
 end;
 
-function TDownloader_GameAnyone.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Tracklist: TXmlNode;
-    ID, Url: string;
-    i: integer;
+function TDownloader_JenProZeny.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := False;
-  if not DownloadXml(Http, 'http://www.gameanyone.com/pl.php?id=' + MovieID + '&l=1' + MovieID, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
-      if XmlNodeByPath(Xml, 'tracklist', Tracklist) then
-        for i := 0 to Pred(Tracklist.NodeCount) do
-          if Tracklist.Nodes[i].Name = 'track' then
-            if GetXmlVar(Tracklist.Nodes[i], 'jwplayer:mediaid', ID) then
-              if ID = MovieID then
-                begin
-                if GetXmlVar(Tracklist.Nodes[i], 'location', Url) then
-                  if CreateNestedDownloaderFromURL(Url) then
-                    begin
-                    SetPrepared(True);
-                    Result := True;
-                    end;
-                Break;
-                end;
-      if not Result then
-        if GetXmlVar(Xml, 'trackList/track/location', Url) then
-          begin
-          if not IsHttpProtocol(Url) then
-            Url := 'http://www.youtube.com/watch?v=' + Url;
-          if CreateNestedDownloaderFromUrl(Url) then
-            begin
-            SetPrepared(True);
-            Result := True;
-            end;
-          end;
-    finally
-      Xml.Free;
-      end;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  if not IsHttpProtocol(MovieUrl) then
+    MovieUrl := 'http://www.jenprozeny.cz' + MovieUrl;
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_GameAnyone);
+  RegisterDownloader(TDownloader_JenProZeny);
 
 end.

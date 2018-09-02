@@ -68,7 +68,7 @@ uses
 
 // https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*tv\.rockstargames\.com/videos/view/id/';
+  URLREGEXP_BEFORE_ID = 'tv\.rockstargames\.com/videos/view/id/';
   URLREGEXP_ID =        '[0-9A-F]+';
   URLREGEXP_AFTER_ID =  '';
 
@@ -84,7 +84,7 @@ end;
 
 class function TDownloader_RockstarGames.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_RockstarGames.Create(const AMovieID: string);

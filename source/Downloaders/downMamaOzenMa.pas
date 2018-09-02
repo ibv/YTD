@@ -51,7 +51,6 @@ type
       function GetMovieInfoUrl: string; override;{*}
       function TheServer: string; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;{*}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -71,11 +70,6 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 { TDownloader_MamaOzenMa }
-
-class function TDownloader_MamaOzenMa.Provider: string;
-begin
-  Result := 'Joj.sk';
-end;
 
 class function TDownloader_MamaOzenMa.UrlRegExp: string;
 begin

@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.19                                                    (c) 2009-13 Pepak
+YTD v1.20                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -115,6 +115,7 @@ GamePark.cz         | HTTP     |       | http://www.gamepark.cz/lineage_2_babylo
 GameZone.com        | RTMP     |       | http://www.gamezone.com/videos/guild-wars-2-cinematic-conversation-trailer
 Games.Tiscali.cz    | HTTP     |       | http://games.tiscali.cz/video/zhodnotte-alternativni-pruchod-far-cry-3-dema-z-e3-2011-56300
 GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
+Gordon.ura.cz       | Nested   |       | http://gordon.ura.cz/?p=1932
 GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
 Guba.com            | HTTP     |       | http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
 Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galerie/Video/Predavani-cen-RWE-_____312/Predavani-cen-RWE-_____1004/
@@ -134,6 +135,7 @@ iPrima.cz           | RTMP     |       | http://play.iprima.cz/iprima/233409
                     | RTMP     | 4,9   | http://www.iprima.cz/showjanakrause/videoarchiv-brezen-2011/
                     | RTMP     |       | http://www.iprima.cz/videoarchiv/164106
 iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/beastie-boys-make-some-noise-(official-music-video) 
+JenProZeny.cz       | HTTP     |       | http://www.jenprozeny.cz/video/32771-paradni-viral-medvedem
 Joj.sk              | HTTP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
                     |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
                     |          |       | http://anosefe.joj.sk/anosefe-epizody/2011-05-16-ano-sefe-.html
@@ -141,6 +143,7 @@ KanalTurk.com.tr    | HTTP     |       | http://www.kanalturk.com.tr/video/?vId=
 Kinobox.cz          | HTTP     |       | http://www.kinobox.cz/porady/video/6273-prednaska-henriho-monforta-21112011
 Kiwi.kz             | HTTP     |       | http://kiwi.kz/watch/jiaon54nfybz/
 Kontraband.com      | HTTP     |       | http://www.kontraband.com/videos/23388/Failed-Slam-Dunks/
+Koukni.cz           | HTTP     |       | http://koukni.cz/95074707
 Kukaj.sk            | HTTP     |       | http://www.kukaj.sk/videa/5860/
 Laola1.tv           | RTMP     |       | http://www.laola1.tv/en/int/volleyball/cev-mens-olympic-qualification/cev-oq-men-sofia-italy-germany/video/353-2021-84517.html
 LenkaFilipova.cz    | HTTP     |       | http://www.lenkafilipova.cz/lf/kytarova_skola18.html
@@ -230,6 +233,7 @@ Reflex.cz           | HTTP     |       | http://www.playzone.cz/tv/tankodrom/tan
 Revver.com          | HTTP     |       | http://www.revver.com/video/2378230/super-mario-bros-2-on-the-nes-level-x/
 RingTV.com          | HTTP     |       | http://www.ringtv.com/video/frankie_gomez_training/
 RockstarGames.com   | HTTPS    |       | https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
+                    | HTTP     |       | http://www.rockstargames.com/IV/#?page=johnnyKlebitz&content=video0
 Rozhlas.cz          | HTTP     |       | http://prehravac.rozhlas.cz/audio/2483476
                     |          |       | http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
 RozzlobeniMuzi.com  | HTTP     | F     | http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm

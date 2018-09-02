@@ -49,7 +49,6 @@ type
     private
     protected
       MovieIdRegExp: TRegExp;
-      MovieUrlFromJsonRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,14 +67,13 @@ uses
   uMessages;
 
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*zakulisi\.cz/';
-  URLREGEXP_ID =        '.*?[?&]IdVideo=[0-9]+';
+  URLREGEXP_BEFORE_ID = 'zakulisi\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>.*?\((?P<TITLE>.*?)\)';
-  REGEXP_MOVIE_ID = '\bso\.addVariable\s*\(\s*"video_id"\s*,\s*"(?P<ID>.+?)"';
-  REGEXP_MOVIE_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_MOVIE_TITLE = '<title>\s*(?:Zakulisi\.cz\s*-\s*)?(?P<TITLE>.*?)(?:\s*-\s*[^-]*)?\s*</title>';
+  REGEXP_MOVIE_ID = '\bVideoPlayer\.create\s*\(\s*''(?P<ID>\d+)''\s*,\s*''(?P<KEY>.+?)''';
 
 { TDownloader_Zakulisi }
 
@@ -86,7 +84,7 @@ end;
 
 class function TDownloader_Zakulisi.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Zakulisi.Create(const AMovieID: string);
@@ -95,14 +93,12 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
-  MovieUrlFromJsonRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_Zakulisi.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieIdRegExp);
-  RegExFreeAndNil(MovieUrlFromJsonRegExp);
   inherited;
 end;
 
@@ -112,21 +108,18 @@ begin
 end;
 
 function TDownloader_Zakulisi.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, JSON, Url: string;
+var
+  ID, Key: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.zakulisi.cz/amfphp/services/gateway.php', AnsiString(UrlEncode('data={"params":["' + ID + '","2"],"action":"media.file"}')), 'application/x-www-form-urlencoded', JSON, peAnsi) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(MovieUrlFromJsonRegExp, JSON, 'URL', Url) then
+  if not GetRegExpVars(MovieIdRegExp, Page, ['ID', 'KEY'], [@ID, @Key]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    MovieURL := StripSlashes(Url);
-    Result := True;
+    MovieUrl := Format('http://i6.zakulisi.cz/user_movie_play/%s/%s/%s/%s/%s-%s.flv', [Copy(ID, 1, 1), Copy(ID, 2, 1), Copy(ID, 3, 1), Copy(ID, 4, 1), ID, Key]);
     SetPrepared(True);
+    Result := True;
     end;
 end;
 
