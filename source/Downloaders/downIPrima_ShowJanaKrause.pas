@@ -133,8 +133,9 @@ begin
 end;
 
 function TDownloader_ShowJanaKrause.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Player, RtmpUrl, ID: string;
+var Player, RtmpUrl, ID, HQ, LQ: string;
     PlayerHttp: THttpSend;
+    b: boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -149,25 +150,31 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else if not GetRegExpVar(RtmpUrlRegExp, Player, 'RTMP', RtmpUrl) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
-    else if MediaIDRegExp.Match(Page) then
-      repeat
-        ID := MediaIDRegExp.SubexpressionByName('HQ');
-        if ID = '' then
-          ID := MediaIDRegExp.SubexpressionByName('LQ');
-        if ID <> '' then
-          begin
-          MovieUrl := {RtmpUrl + ' ' +} ID;
-          Self.RtmpUrl := RtmpUrl;
-          Self.Playpath := ID;
-          SetPrepared(True);
-          Result := True;
-          {$IFDEF MULTIDOWNLOADS}
-          IDList.Add(ID);
-          {$ELSE}
-          Break;
-          {$ENDIF}
+    else
+      begin
+      b := GetRegExpVars(MediaIDRegExp, Page, ['HQ', 'LQ'], [@HQ, @LQ]);
+      while b do
+        begin
+        if HQ <> '' then
+          ID := HQ
+        else
+          ID := LQ;
+          if ID <> '' then
+            begin
+            MovieUrl := {RtmpUrl + ' ' +} ID;
+            Self.RtmpUrl := RtmpUrl;
+            Self.Playpath := ID;
+            SetPrepared(True);
+            Result := True;
+            {$IFDEF MULTIDOWNLOADS}
+            IDList.Add(ID);
+            {$ELSE}
+            Break;
+            {$ENDIF}
+            end;
+          b := GetRegExpVarsAgain(MediaIDRegExp, ['HQ', 'LQ'], [@HQ, @LQ]);
           end;
-      until not MediaIDRegExp.MatchAgain;
+      end;
   finally
     FreeAndNil(PlayerHttp);
     end;

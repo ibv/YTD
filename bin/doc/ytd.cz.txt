@@ -628,6 +628,8 @@ a "0" (ne).
 
   kde <param> je buï URL, nebo jedna z následujících možností:
 
+  Pro verzi pro pøíkazový øádek:
+
     -h, -? ........ Zobrazí nápovìdu.
     -i <soubor> ... Stáhne všechna URL z textového souboru <soubor>, kde
                     každý øádek reprezentuje jednu URL.
@@ -650,10 +652,20 @@ a "0" (ne).
                     novou verzí.
     -ah[-] ........ (Ne-) pokusit se použít HTML parser na neznámá URL.
 
+  Pro grafickou verzi:
+
+    --gui ......... Pokud se mají používat jakékoliv parametry pro grafickou
+                    verzi, musí být uveden i tento parametr. Jinak totiž je
+                    existence parametrù pokynem pro spuštìní verze pro pøíkazový
+                    øádek.
+    -new .......... Spustit další instanci YTD. Standardnì se spouští jenom
+                    jedna instance.
+
 
   Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
          ytd.exe -i c:\temp\seznam.txt
          ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+         ytd.exe --gui "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
 
@@ -865,6 +877,7 @@ Knihovny a jejich licence:
 - RTMPDUMP
   - autoøi: Andrej Stepanchuk, Howard Chu
   - zdroj: http://rtmpdump.mplayerhq.hu/
+           https://github.com/svnpenn/rtmpdump
   - licence: GNU GPL v2
   - popis: Nástroj pro stahování protokolu RTMP a jeho variant.
 

@@ -71,7 +71,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)(?:\s*-\s*RozzlobeniMuzi\.com.*?)?</title>';
   REGEXP_EXTRACT_URL = REGEXP_URL_FILE_COLON_VALUE;
 
 { TDownloader_RozzlobeniMuzi }

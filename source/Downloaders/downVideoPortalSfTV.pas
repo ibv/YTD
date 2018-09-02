@@ -109,28 +109,26 @@ begin
 end;
 
 function TDownloader_VideoPortalSfTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, BestUrl, sBitrate: string;
-    Bitrate, BestBitrate: integer;
+var
+  Url, BestUrl, sBitrate: string;
+  Bitrate, BestBitrate: integer;
+  b: boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   BestUrl := '';
   BestBitrate := -1;
-  if UrlListRegExp.Match(Page) then
-    repeat
-      if UrlListRegExp.SubexpressionByName('URL', Url) then
-        begin
-        if UrlListRegExp.SubexpressionByName('BITRATE', sBitrate) then
-          Bitrate := StrToIntDef(sBitrate, 0)
-        else
-          Bitrate := 0;
-        if Bitrate > BestBitrate then
-          begin
-          BestUrl := StripSlashes(Url);
-          BestBitrate := Bitrate;
-          end;
-        end;
-    until not UrlListRegExp.MatchAgain;
+  b := GetRegExpVars(UrlListRegExp, Page, ['URL', 'BITRATE'], [@Url, @sBitrate]);
+  while b do
+    begin
+    Bitrate := StrToIntDef(sBitrate, 0);
+    if Bitrate > BestBitrate then
+      begin
+      BestUrl := StripSlashes(Url);
+      BestBitrate := Bitrate;
+      end;
+    b := GetRegExpVarsAgain(UrlListRegExp, ['URL', 'BITRATE'], [@Url, @sBitrate]);
+    end;
   if BestUrl <> '' then
     begin
     MovieUrl := BestUrl;

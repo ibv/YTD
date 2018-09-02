@@ -1,11 +1,69 @@
 ______________________________________________________________________________
 
-YTD v1.11                                                    (c) 2009-12 Pepak
+YTD v1.12                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.12:
+
+    * Noví poskytovatelé:
+      - VideoPortal.sk
+      - Viki.com, VikiAssets.com
+
+    * Aktualizovaní poskytovatelé:
+      - CD.cz
+      - eHow.com
+      - EuroGamer.cz
+      - Metropol.cz
+      - Metoo.sk (podpora pro RTMP)
+      - RozzlobeniMuzi.com (názvy videí)
+      - Sport.cz
+      - Video.Google.com (embedded verze)
+      - VKontakte.ru (koneènì se stahuje v nejvyšší kvalitì)
+      - Overstream.net (prodloužen timeout; OverStream je strašnì pomalý)
+
+    * Grafická verze YTD se nyní standardnì spouští jen v jedné instanci;
+      pokud už YTD bìží z døívìjška, tak se jen aktivuje pùvodní verze a nová
+      skonèí.
+
+    * Podpora pro command-line parametry i v GUI verzi. Musí vždy být uveden
+      parametr --gui (protože normálnì je pøítomnost argumentù signálem pro
+      spuštìní textové verze) a navíc mohou být uvedeny argumenty:
+
+      -new .... Spustí novou instanci YTD.
+      <url> ... Zaøadí do stahování URL <url>. Mùže být uvedeno i víckrát.
+
+    * Ikonky vytváøené instalátorem nebo v konfiguraci nyní obsahují parametr
+      --gui, takže se pøi jejich použití YTD vždy spustí v grafickém režimu.
+
+    * Nový parametr -nd pro verzi pro pøíkazovou øádku zajistí, že YTD provede 
+      všechny své bìžné operace, ale pøeskoèí vlastní download. Hodí se to 
+      zejména pro ladící úèely nebo pro pøípad, že chcete použít vlastní 
+      downloadovací program s vlastními doplòujícími parametry.
+
+    * Opravena chyba, pøi které se po dokonèení downloadu neodstranila z názvu
+      souboru pøípona .part (pokud bylo v nastavení zapnuto používání této
+      pøípony).
+
+    * Opravena chyba, kvùli které se po dokonèeném downloadu video zase smazalo
+      s hlášením, že nebyla stažena žádná data, pokud bylo delší než 2 GB.
+      Pozn.: Stále se v prùbìhu stahování takových videí nezobrazuje prùbìh,
+      to je na složitìjší opravu v Synapsi.
+
+    * Opravena chyba pøi startu programu, pokud byl poškozený konfiguraèní
+      soubor - YTD sice nahlásil, že vytvoøí nový, ale ve skuteènosti to
+      neudìlal.
+
+    * Pøi výpisech do konzole se používá OEM kódová stránka (v èeských Windows
+      852), aby mìly texty správnou èeštinu.
+
+    * Upraven kompilaèní skript tak, aby byl víceménì spoleèný pro všechny
+      mé programy.
+
+
 
   v1.11:
 

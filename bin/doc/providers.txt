@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.11                                                    (c) 2009-12 Pepak
+YTD v1.12                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -156,6 +156,7 @@ MetaCafe.com        | HTTP     |       | http://www.metacafe.com/watch/4577253/k
 Metoo.cz            | MS       |       | http://www.metoo.cz/tvstream/play/532
 Metoo.sk            | MS       |       | http://pohoda.metoo.sk/pohoda2011-fibernet/?relacia=cluster
                     |          |       | http://www.metoo.sk/voicestv?relacia=vl26-sto-much-stratasoul-bene-sewologylab
+                    | RTMP     |       | http://www.metoo.sk/vychodna2012?relacia=vrchovska
 Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
                     |          |       | http://www.metropol.cz/zpravy/z-prahy/tradicni-plavecky-zavod-otuzilcu-startuje-v-1100/
 Mixer.cz            | HTTP     |       | http://www.mixer.cz/1/41102-video-games
@@ -275,7 +276,10 @@ VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A
 VideoBB.com         | HTTP     |       | http://www.videobb.com/video/oh53koNnCV5S
 VideoClipsDump.com  | HTTP     |       | http://www.videoclipsdump.com/media/1951/Karate_Fail/
 VideoPortal.sf.tv   | RTMP     |       | http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
+VideoPortal.sk      | HTTP     |       | http://www.videoportal.sk/cetelemania/martin-kittner.html
 Videu.de            | HTTP     |       | http://www.videu.de/video/4etN3FlaaY
+Viki.com            | HTTP     |       | http://a1.vikiassets.com/channels/1565-secret-garden/videos/32690
+                    |          |       | http://www.viki.com/channels/1565-secret-garden/videos/32690
 Vimeo.com           | HTTP     |       | http://www.vimeo.com/10777111
 VitalMtb.com        | HTTP     |       | http://www.vitalmtb.com/videos/member/Practice-at-the-bmx-track,2631/bubb120491,1836
 VKontakte.ru        | HTTP     |       | http://vkontakte.ru/video_ext.php?oid=98777833&id=159674868&hash=c4cd1179fb4e52d1&hd=1

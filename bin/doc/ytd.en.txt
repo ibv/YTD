@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.11                                                    (c) 2009-12 Pepak
+YTD v1.12                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -647,6 +647,8 @@ except in file/directory names. Logical values (true-false) are stored as
 
   where <param> is either an URL or one of the following:
 
+  For the command-line version:
+
     -h, -? ........ Show help.
     -i <file> ..... Downloads all URLs listed in the text file <file>, where
                     each line represents one URL.
@@ -669,10 +671,20 @@ except in file/directory names. Logical values (true-false) are stored as
                     .exe file may not be overwritten correctly.
     -ah[-] ........ [Don't] try to use HTML parser on unknown URLs.
 
+  For the graphical version:
+
+    --gui ......... This parameter must be present if any arguments are to be
+                    used with the GUI version: by default, a presence of 
+                    command-line arguments instructs YTD to run in command-line
+                    mode.
+    -new .......... Run a new instance of YTD, instead of the default behavior
+                    of switching to an existing one.
+
 
   Ex.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
        ytd.exe -i c:\temp\seznam.txt
        ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+       ytd.exe --gui "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
   If no arguments are provided, the graphical version of YTD is started.
 
@@ -871,6 +883,7 @@ Used libraries and their licenses:
 - RTMPDUMP
   - autoøi: Andrej Stepanchuk, Howard Chu
   - source: http://rtmpdump.mplayerhq.hu/
+            https://github.com/svnpenn/rtmpdump
   - license: GNU GPL v2
   - description: Tool for ddownloading RTMP and related protocols
 

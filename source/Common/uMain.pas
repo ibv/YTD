@@ -44,7 +44,7 @@ procedure Main;
 implementation
 
 uses
-  SysUtils, Classes, Windows, CommCtrl,
+  SysUtils, Classes, Windows, Messages, CommCtrl,
   {$IFDEF SETUP}
     ShlObj,
     FileCtrl,
@@ -63,6 +63,8 @@ uses
     uConsoleApp,
   {$ENDIF}
   {$IFDEF GUI}
+    guiConsts,
+    guiFunctions,
     {$IFDEF GUI_WINAPI}
       guiMainWINAPI,
     {$ELSE}
@@ -114,14 +116,14 @@ begin
       begin
       end
     {$IFDEF GUI}
-    else if Param = SETUP_PARAM_GUI then
+    else if AnsiCompareText(Param, SETUP_PARAM_GUI) = 0 then
       begin
       Result := stGUIexplicit;
       Break;
       end
     {$ENDIF}
     {$IFDEF SETUP_GUI}
-    else if Param = SETUP_PARAM_SETUP then
+    else if AnsiCompareText(Param, SETUP_PARAM_SETUP) = 0then
       begin
       {$IFNDEF DEBUG}
         {$IFNDEF FPC}
@@ -151,15 +153,15 @@ begin
       Break;
       end
     {$ENDIF}
-    else if (Param = SETUP_PARAM_UPGRADE) or (Param = SETUP_PARAM_UPGRADE_GUI) or (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI) then
+    else if (AnsiCompareText(Param, SETUP_PARAM_UPGRADE) = 0) or (AnsiCompareText(Param, SETUP_PARAM_UPGRADE_GUI) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL_GUI) = 0) then
       begin
       if i < ParamCount then
         begin
         Result := stInstall;
         InstallDir := ParamStr(Succ(i));
-        DesktopShortcut := (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI);
-        StartMenuShortcut := (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI);
-        RestartYTD := (Param = SETUP_PARAM_UPGRADE_GUI) or (Param = SETUP_PARAM_INSTALL_GUI);
+        DesktopShortcut := (AnsiCompareText(Param, SETUP_PARAM_INSTALL) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL_GUI) = 0);
+        StartMenuShortcut := (AnsiCompareText(Param, SETUP_PARAM_INSTALL) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL_GUI) = 0);
+        RestartYTD := (AnsiCompareText(Param, SETUP_PARAM_UPGRADE_GUI) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL_GUI) = 0);
         Sleep(500); // to give some time for the caller to quit
         Break;
         end;
@@ -183,7 +185,44 @@ end;
 
 {$IFDEF GUI}
 procedure RunGUI;
+{$IFDEF SINGLEINSTANCE}
+var
+  MainInstance: THandle;
+  CopyData: TCopyDataStruct;
+  Param: string;
+  ParamW: WideString;
+  i: integer;
+{$ENDIF}
 begin
+  {$IFDEF SINGLEINSTANCE}
+    if FindMainInstance(MainInstance) then
+      begin
+      for i := 1 to ParamCount do
+        if AnsiCompareText(ParamStr(i), '-new') = 0 then
+          begin
+          MainInstance := 0;
+          Break;
+          end;
+      if MainInstance <> 0 then
+        begin
+        for i := 1 to ParamCount do
+          begin
+          Param := ParamStr(i);
+          if Param <> '' then
+            if Param[1] <> '-' then
+              begin
+              ParamW := WideString(Param);
+              CopyData.dwData := COPYDATA_URL;
+              CopyData.cbData := Length(ParamW) * Sizeof(WideChar);
+              CopyData.lpData := @(ParamW[1]);
+              SendMessage(MainInstance, WM_COPYDATA, hInstance, LPARAM(@CopyData));
+              end;
+          end;
+        SetForegroundWindow(MainInstance);
+        Exit;
+        end;
+      end;
+  {$ENDIF}
   {$IFNDEF DEBUG}
     {$IFNDEF FPC}
       FreeConsole;
@@ -246,9 +285,9 @@ begin
     if OK then
       begin
       if DesktopShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe);
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe, StandardShortcutParams);
       if StartMenuShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe);
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe, StandardShortcutParams);
       end;
     end;
   if not OK then
@@ -292,6 +331,7 @@ begin
       {$ENDIF}
     {$ENDIF}
     // Determine the startup type and parameters
+    Randomize;
     {$IFDEF SETUP}
     InstallDir := '';
     DesktopShortcut := False;

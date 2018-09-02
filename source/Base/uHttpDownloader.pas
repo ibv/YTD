@@ -88,11 +88,9 @@ type
 implementation
 
 uses
-  {$IFDEF DIRTYHACKS}
-  uFiles,
-  {$ENDIF}
   uLanguages,
-  uMessages;
+  uMessages,
+  uSystem;
 
 {gnugettext: scan-all}
 const
@@ -173,7 +171,6 @@ end;
 
 function THttpDownloader.Download: boolean;
 var
-  Size: integer;
   FN, FinalFN: string;
 begin
   inherited Download;
@@ -210,10 +207,20 @@ begin
               SetLastErrorMsg(ERR_DOWNLOAD_FAILED)
             else if (VideoDownloader.ResultCode < 200) or (VideoDownloader.ResultCode >= 300) then
               SetLastErrorMsg(Format(ERR_HTTP_RESULT_CODE, [VideoDownloader.ResultCode]))
-            else if VideoDownloader.OutputStream.Size <= 0 then
-              SetLastErrorMsg(ERR_HTTP_NO_DATA_READ)
             else
               Result := True;
+          finally
+            VideoDownloader.Sock.OnStatus := nil;
+            VideoDownloader.OutputStream.Free;
+            VideoDownloader.OutputStream := nil;
+            if Result then
+              if (not FileExists(FN)) or (GetFileSize(FN) <= 1024) then
+                begin
+                if FileExists(FN) then
+                  DeleteFile(PChar(FN));
+                SetLastErrorMsg(ERR_HTTP_NO_DATA_READ);
+                Result := False;
+                end;
             if Result then
               if FN <> FinalFN then
                 begin
@@ -223,14 +230,6 @@ begin
                   if RenameFile(FN, FinalFN) then
                     FN := FinalFN;
                 end;
-          finally
-            Size := VideoDownloader.OutputStream.Size;
-            VideoDownloader.Sock.OnStatus := nil;
-            VideoDownloader.OutputStream.Free;
-            VideoDownloader.OutputStream := nil;
-            if not Result then
-              if FileExists(FN) and (Size <= 1024) then
-                DeleteFile(PChar(FN));
             end;
         except
           if FileExists(FN) then

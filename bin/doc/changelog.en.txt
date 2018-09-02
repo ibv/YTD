@@ -1,11 +1,67 @@
 ______________________________________________________________________________
 
-YTD v1.11                                                    (c) 2009-12 Pepak
+YTD v1.12                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.12:
+
+    * New providers:
+      - VideoPortal.sk
+      - Viki.com, VikiAssets.com
+
+    * Updated providers:
+      - CD.cz
+      - eHow.com
+      - EuroGamer.cz
+      - Metropol.cz
+      - Metoo.sk (support for RTMP)
+      - RozzlobeniMuzi.com (video titles)
+      - Sport.cz
+      - Video.Google.com (embedded version)
+      - VKontakte.ru (downloads in the highest quality)
+      - Overstream.net (prolonged timeout; OverStream is incredibly slow)
+
+    * The GUI version of YTD now runs in a single instance by default; if an
+      older instance is running already, it gets activated and the new one
+      quits.
+
+    * GUI version now supports command-line arguments. If you plan to use this
+      functionality, you have to provide --gui argument (because otherwise the
+      presence of CL arguments signals that you want to use the CLI version of
+      the program), and then one or more of these:
+
+      -new .... Runs a new instance of YTD, even if an old one is running.
+      <url> ... Add URL <url> to the download list. May be used more than once.
+
+    * Shortcuts created by the installer and/or the Config form now always
+      use the --gui parameter, forcing YTD to run in the GUI mode.
+
+    * New parameter -nd forces YTD to perform all usual processing, but skip
+      the actual download. It may be useful especially for debug or scripting
+      purposes, e.g. if you want to add your custom arguments to the RTMPDUMP
+      command-line.
+
+    * Fixed a bug which prevented the .part extension from being deleted after
+      the download finished (if you enabled using .part in the configuration).
+
+    * Fixed a bug which caused videos larger than 2 GB to be deleted after
+      a successful download, reporting that no data was downloaded.
+      Note: With larger than 2 GB files the progress still doesn't show the
+      total size of the video. That requires more significant fixes in the
+      Synapse library.
+
+    * Fixed a crash on startup if the configuration file was damaged - YTD did
+      report that it will create a new file, but failed to do so.
+
+    * All reports to the console window now use the OEM codepage.
+
+    * Updated the build script to be pretty much universal for all my tools.
+
+
 
   v1.11:
 

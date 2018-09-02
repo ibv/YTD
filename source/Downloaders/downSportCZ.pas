@@ -42,19 +42,15 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, downStream;
 
 type
-  TDownloader_SportCZ = class(THttpDownloader)
+  TDownloader_SportCZ = class(TDownloader_Stream)
     private
     protected
-      FlashVarsRegExp: TRegExp;
-      FlashVarsPartRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -73,16 +69,7 @@ const
   URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*sport\.cz(?:/.*)?';
   URLREGEXP_AFTER_ID =  '$';
 
-const
-  REGEXP_FLASHVARS = '<param\s+name="FlashVars"\s+value="(?P<FLASHVARS>.*?)"';
-  REGEXP_FLASHVARS_PART = '(?P<VARNAME>[^=]+)=(?P<VARVALUE>.*?)(?:$|&amp;)';
-
 { TDownloader_SportCZ }
-
-class function TDownloader_SportCZ.Provider: string;
-begin
-  Result := 'Sport.cz';
-end;
 
 class function TDownloader_SportCZ.UrlRegExp: string;
 begin
@@ -93,14 +80,10 @@ constructor TDownloader_SportCZ.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
-  FlashVarsPartRegExp := RegExCreate(REGEXP_FLASHVARS_PART);
 end;
 
 destructor TDownloader_SportCZ.Destroy;
 begin
-  RegExFreeAndNil(FlashVarsRegExp);
-  RegExFreeAndNil(FlashVarsPartRegExp);
   inherited;
 end;
 
@@ -109,22 +92,10 @@ begin
   Result := MovieID;
 end;
 
-function TDownloader_SportCZ.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var FlashVars, Title, Url: string;
+function TDownloader_SportCZ.GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
-  else if not GetRegExpVarPairs(FlashVarsPartRegExp, FlashVars, ['gemius_name', 'video_src'], [@Title, @Url]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else
-    begin
-    SetName(Title);
-    MovieUrl := Url;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := inherited GetFlashVarsIdStrings(ID, cdnLQ, cdnHQ, cdnHD, Title);
+  Title := 'gemius_name';
 end;
 
 initialization

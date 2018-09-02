@@ -83,10 +83,13 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1_CLASS;
-  REGEXP_MOVIE_ID = '\.addVariable\s*\(\s*"playlist_id"\s*,\s*"(?P<ID>[0-9]+)"';
-  REGEXP_MOVIE_URL = '(?:^|&)file(?:\[[^\]]*\])?=(?P<URL>https?[^&]+)';
-  REGEXP_SUBTITLES = '(?<=^|&)sub_[0-9]+\[[^\]]*\]=(?P<CAPTION>[^&]*)&sub_start_[0-9]+\[[^\]]*\]=(?P<START>[0-9.]+)&sub_end_[0-9]+\[[^\]]*\]=(?P<END>[0-9.]+)(?=&|$)';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_ID = '\bPlaylist\s*\[\s*"id"\s*\]\s*=\s*"(?P<ID>[0-9]+)"';
+  REGEXP_MOVIE_URL = '"file"\s*:\s*"(?P<URL>https?://.+?)"';
+  REGEXP_SUBTITLES = '"subtitles\.file"\s*:\s*"(?P<PATH>.+?)"';
+
+const
+  WWW_ROOT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.eurogamer.cz/';
 
 { TDownloader_EuroGamer }
 
@@ -111,7 +114,7 @@ constructor TDownloader_EuroGamer.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['title']));
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
   SubtitlesRegExp := RegExCreate(REGEXP_SUBTITLES);
   MovieUrlFromInfoRegExp := RegExCreate(REGEXP_MOVIE_URL);
@@ -128,7 +131,7 @@ end;
 
 function TDownloader_EuroGamer.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.eurogamer.cz/' + MovieID;
+  Result := WWW_ROOT + MovieID;
 end;
 
 function TDownloader_EuroGamer.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -139,13 +142,13 @@ begin
   MediaInfo := '';
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, Format('http://www.eurogamer.cz/get_pls.php?playlist_id=%s&profile_id=hd&r=957&player_mode=normal', [ID]), MediaInfo) then
+  else if not DownloadPage(Http, Format('%stv/playlist/%s', [WWW_ROOT, ID]), MediaInfo) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(MovieUrlFromInfoRegExp, MediaInfo, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    MovieUrl := UrlDecode(Url);
+    MovieUrl := Url;
     SetPrepared(True);
     Result := True;
     end;
@@ -153,30 +156,20 @@ end;
 
 {$IFDEF SUBTITLES}
 function TDownloader_EuroGamer.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  ONE_SECOND = 1/(24*60*60);
 var
-  n: integer;
-  Sub: string;
-  SubStart, SubEnd: TDateTime;
+  Path: string;
+  Sub: AnsiString;
 begin
   Result := False;
   fSubtitles := '';
   fSubtitlesExt := '';
-  n := 0;
   if MediaInfo <> '' then
-    if SubtitlesRegExp.Match(MediaInfo) then
-      try
-        repeat
-          Sub := HtmlDecode(UrlDecode(SubtitlesRegExp.SubexpressionByName('CAPTION')), True);
-          SubStart := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('START'), '.', {$IFDEF DELPHI2010_UP} FormatSettings. {$ENDIF} DecimalSeparator, []));
-          SubEnd := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('END'), '.', {$IFDEF DELPHI2010_UP} FormatSettings. {$ENDIF} DecimalSeparator, []));
-          fSubtitles := fSubtitles + {$IFDEF UNICODE} AnsiString {$ENDIF} (SubtitlesToSrt(n, SubStart*ONE_SECOND, SubEnd*ONE_SECOND, Sub));
-        until not SubtitlesRegExp.MatchAgain;
+    if GetRegExpVar(SubtitlesRegExp, MediaInfo, 'PATH', Path) then
+      if DownloadBinary(Http, Format('%s/%s', [WWW_ROOT, Path]), Sub) then
+        begin
+        fSubtitles := Sub;
         fSubtitlesExt := '.srt';
         Result := fSubtitles <> '';
-      except
-        Result := False;
         end;
 end;
 {$ENDIF}

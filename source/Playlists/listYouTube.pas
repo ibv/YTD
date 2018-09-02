@@ -140,25 +140,28 @@ begin
 end;
 
 function TPlaylist_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Again: boolean;
-    Url: string;
-    PageNumber, FoundPageNumber: integer;
+var
+  b, Again: boolean;
+  Url, sPageNumber: string;
+  PageNumber, FoundPageNumber: integer;
 begin
   PageNumber := 1;
   repeat
     Again := False;
     Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if NextPageRegExp.Match(Page) then
-      repeat
-        FoundPageNumber := StrToIntDef(NextPageRegExp.SubexpressionByName('PAGE'), 0);
-        if FoundPageNumber > PageNumber then
-          begin
-          PageNumber := FoundPageNumber;
-          Url := NextPageRegExp.SubexpressionByName('URL');
-          Again := DownloadPage(Http, Url, Page);
-          Break;
-          end;
-      until not NextPageRegExp.MatchAgain;
+    b := GetRegExpVars(NextPageRegExp, Page, ['PAGE', 'URL'], [@sPageNumber, @Url]);
+    while b do
+      begin
+      FoundPageNumber := StrToIntDef(sPageNumber, 0);
+      if FoundPageNumber > PageNumber then
+        begin
+        PageNumber := FoundPageNumber;
+        Url := NextPageRegExp.SubexpressionByName('URL');
+        Again := DownloadPage(Http, Url, Page);
+        Break;
+        end;
+      b := GetRegExpVarsAgain(NextPageRegExp, ['PAGE', 'URL'], [@sPageNumber, @Url]);
+      end;
   until not Again;
 end;
 

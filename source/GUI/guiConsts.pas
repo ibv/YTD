@@ -129,6 +129,10 @@ const
                  = (4, 6, 5, 1, 1);
 {$ENDIF}
 
+{$IFDEF SINGLEINSTANCE}
+const
+  COPYDATA_URL = 12345;
+{$ENDIF}
 
 implementation
 

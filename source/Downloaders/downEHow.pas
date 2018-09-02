@@ -48,7 +48,7 @@ type
   TDownloader_EHow = class(THttpDownloader)
     private
     protected
-      SwitchVideoRegExp: TRegExp;
+      StreamIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,13 +68,13 @@ uses
 
 // http://www.ehow.com/video_4871930_clean-computer-monitor-glass.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ehow\.com/video_';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'ehow\.com/video_';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
-  REGEXP_SWITCH_VIDEO_FUNCTION = '\sfunction\s+switchVideoTo(?P<VERSION>.*?)\s*\([^)]*\)\s\{.*?\sshowPlayer\s*\(\s*\{[^}]*\bid\s*:\s*''(?P<URL>https?://.*?)''';
+  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_META_OGTITLE;
+  REGEXP_STREAM_ID =    '\sdata-stream-id\s*=\s*"(?P<ID>.+?)"';
 
 { TDownloader_EHow }
 
@@ -85,7 +85,7 @@ end;
 
 class function TDownloader_EHow.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_EHow.Create(const AMovieID: string);
@@ -93,13 +93,13 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  SwitchVideoRegExp := RegExCreate(REGEXP_SWITCH_VIDEO_FUNCTION);
+  StreamIDRegExp := RegExCreate(REGEXP_STREAM_ID);
 end;
 
 destructor TDownloader_EHow.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(SwitchVideoRegExp);
+  RegExFreeAndNil(StreamIDRegExp);
   inherited;
 end;
 
@@ -109,31 +109,15 @@ begin
 end;
 
 function TDownloader_EHow.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url, s: string;
-    UrlQuality, Quality: integer;
+var ID: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Url := '';
-  UrlQuality := 0;
-  if SwitchVideoRegExp.Match(Page) then
-    repeat
-      s := SwitchVideoRegExp.SubexpressionByName('VERSION');
-      if AnsiCompareText(s, 'SD') = 0 then
-        Quality := 1
-      else if AnsiCompareText(s, 'HD') = 0 then
-        Quality := 2
-      else
-        Quality := 0;
-      if Quality > UrlQuality then
-        begin
-        UrlQuality := Quality;
-        Url := SwitchVideoRegExp.SubexpressionByName('URL');
-        end;
-    until not SwitchVideoRegExp.MatchAgain;
-  if Url <> '' then
+  if not GetRegExpVar(StreamIDRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
     begin
-    MovieUrl := Url;
+    MovieUrl := Format('http://ehow.rnmd.net/playVideo?siteId=ehow_web&userId=%d&content=DM-%s', [Random(MaxInt), ID]);
     SetPrepared(True);
     Result := True;
     end;

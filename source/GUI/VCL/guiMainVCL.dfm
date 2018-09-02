@@ -22,7 +22,7 @@ object FormYTD: TFormYTD
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 719
+    Width = 711
     Height = 29
     ButtonHeight = 23
     Images = ActionImages
@@ -158,8 +158,8 @@ object FormYTD: TFormYTD
   object Downloads: TListView
     Left = 0
     Top = 29
-    Width = 719
-    Height = 328
+    Width = 711
+    Height = 317
     Align = alClient
     Columns = <
       item
@@ -204,8 +204,8 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 357
-    Width = 719
+    Top = 346
+    Width = 711
     Height = 19
     AutoHint = True
     Panels = <>

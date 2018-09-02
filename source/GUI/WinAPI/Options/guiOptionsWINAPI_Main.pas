@@ -71,6 +71,11 @@ implementation
 
 {$RESOURCE *.res}
 
+{$IFDEF SETUP}
+uses
+  uSetup;
+{$ENDIF}
+
 // from resource.h
 const
   IDC_CHECKBOX_PORTABLEMODE = 1000;
@@ -205,12 +210,12 @@ end;
 
 procedure TFrameMainOptions.ButtonShortcutOnDesktopClick;
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), StandardShortcutParams);
 end;
 
 procedure TFrameMainOptions.ButtonShortcutInStartMenuClick;
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), StandardShortcutParams);
 end;
 
 initialization

@@ -44,7 +44,7 @@ uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
   SynaCode,
-  uLanguages, uFunctions, uMessages, uOptions, uStringUtils, uCompatibility,
+  uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
   guiOptions, guiFunctions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
@@ -92,7 +92,10 @@ type
       function ClipboardChanged: boolean;
       function ClipboardChainChange(Removing, NewNext: THandle): boolean;
       {$IFDEF SYSTRAY}
-      function NotifyIconClick(Buttons: DWORD): boolean;
+      function NotifyIconClick(Buttons: LPARAM): boolean;
+      {$ENDIF}
+      {$IFDEF SINGLEINSTANCE}
+      function CopyData(SenderHandle: THandle; Info: PCopyDataStruct): boolean; 
       {$ENDIF}
       function ActionAddNewUrl: boolean;
       function ActionDeleteUrl: boolean;
@@ -333,6 +336,10 @@ begin
         Result := ClipboardChanged;
       WM_CHANGECBCHAIN:
         Result := ClipboardChainChange(Msg.wParam, Msg.lParam);
+      {$IFDEF SINGLEINSTANCE}
+      WM_COPYDATA:
+        Result := CopyData(Msg.wParam, PCopyDataStruct(Msg.lParam));
+      {$ENDIF}
       end;
   {$ENDIF}
 end;
@@ -341,9 +348,15 @@ function TFormMain.DoInitDialog: boolean;
 const DownloadListStyle = LVS_EX_FULLROWSELECT or LVS_EX_GRIDLINES or LVS_EX_DOUBLEBUFFER or LVS_EX_LABELTIP;
 var Current: TRect;
     DesiredLeft, DesiredTop, DesiredWidth, DesiredHeight: integer;
+    {$IFDEF SINGLEINSTANCE}
+    Param: string;
+    {$ENDIF}
     i: integer;
 begin
   Result := inherited DoInitDialog;
+  {$IFDEF SINGLEINSTANCE}
+  RegisterMainInstance(Self.Handle);
+  {$ENDIF}
   CreateObjects;
   Self.Translate;
   // Application
@@ -402,6 +415,16 @@ begin
   // Resize downloadlist columns
   for i := 0 to 5 do
     ListViewSetColumnWidth(DownloadListHandle, i, Options.DownloadListColumnWidth[i]);
+  {$IFDEF SINGLEINSTANCE}
+  // Load URLs from command line
+  for i := 1 to ParamCount do
+    begin
+    Param := ParamStr(i);
+    if Param <> '' then
+      if Param[1] <> '-' then
+        AddTask(Param);
+    end;
+  {$ENDIF}
   // Redraw screen
   ActionRefresh;
 end;
@@ -410,6 +433,9 @@ function TFormMain.DoClose: boolean;
 var Current: TRect;
     i: integer;
 begin
+  {$IFDEF SINGLEINSTANCE}
+  UnregisterMainInstance(Self.Handle);
+  {$ENDIF}
   Result := inherited DoClose;
   if Result then
     begin
@@ -935,7 +961,7 @@ end;
 {$ENDIF}
 
 {$IFDEF SYSTRAY}
-function TFormMain.NotifyIconClick(Buttons: DWORD): boolean;
+function TFormMain.NotifyIconClick(Buttons: LPARAM): boolean;
 begin
   Result := False;
   case Buttons of
@@ -946,6 +972,23 @@ begin
       Result := True;
       end;
     end;
+end;
+{$ENDIF}
+
+{$IFDEF SINGLEINSTANCE}
+function TFormMain.CopyData(SenderHandle: THandle; Info: PCopyDataStruct): boolean;
+var
+  UrlW: WideString;
+begin
+  Result := False;
+  if Info <> nil then
+    if Info^.dwData = COPYDATA_URL then
+      if (Info^.cbData > 0) and (Info^.lpData <> nil) then
+        begin
+        SetLength(UrlW, Info^.cbData div Sizeof(WideChar));
+        Move(Info^.lpData^, UrlW[1], Info^.cbData);
+        Result := AddTask(UrlW);
+        end; 
 end;
 {$ENDIF}
 

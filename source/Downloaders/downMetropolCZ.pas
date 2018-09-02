@@ -71,7 +71,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H2;
-  REGEXP_MOVIE_URL =    '\bfile\s*:\s*"(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_URL =    '"file"*:\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_MetropolCZ }
 

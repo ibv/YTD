@@ -63,7 +63,7 @@ implementation
 
 uses
   uStringConsts,
-  uStringUtils,
+  uStrings,
   uDownloadClassifier,
   uMessages;
 

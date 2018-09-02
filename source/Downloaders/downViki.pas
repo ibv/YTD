@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downGoogleVideo_Embed;
+unit downViki;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,14 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_GoogleVideo_Embed = class(THttpDownloader)
+  TDownloader_Viki = class(THttpDownloader)
     private
     protected
-      Extension: string;
+      MovieIDRegExp: TRegExp;
+      StreamListRegExp: TRegExp;
+      StreamInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -67,82 +68,96 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
+//http://a1.vikiassets.com/channels/1565-secret-garden/videos/32690
+//http://www.viki.com/channels/1565-secret-garden/videos/32690
 const
-  URLREGEXP_BEFORE_ID = 'video\.google\.com/googleplayer\.swf\?';
+  URLREGEXP_BEFORE_ID = 'viki(?:assets)?\.com/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_GoogleVideo_Embed }
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_ID =     '<link\s+rel="media:video"\s+href="[^"]*?/(?P<ID>[0-9]+)/?"';
+  REGEXP_MOVIE_STREAMS = '"streams"\s*:\s*\[\s*(?P<LIST>.*?)\s*\]\s*,';
+  REGEXP_MOVIE_STREAM = '\{[^}]*"uri"\s*:\s*"(?P<URL>https?://[^"]+)"[^}]*"quality"\s*:\s*"(?P<QUALITY>[0-9]+)p"[^}]*\}';
 
-class function TDownloader_GoogleVideo_Embed.Provider: string;
+{ TDownloader_Viki }
+
+class function TDownloader_Viki.Provider: string;
 begin
-  Result := 'Google.com';
+  Result := 'Viki.com';
 end;
 
-class function TDownloader_GoogleVideo_Embed.UrlRegExp: string;
+class function TDownloader_Viki.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_GoogleVideo_Embed.Create(const AMovieID: string);
+constructor TDownloader_Viki.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  StreamListRegExp := RegExCreate(REGEXP_MOVIE_STREAMS);
+  StreamInfoRegExp := RegExCreate(REGEXP_MOVIE_STREAM);
+end;
+
+destructor TDownloader_Viki.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(StreamListRegExp);
+  RegExFreeAndNil(StreamInfoRegExp);
   inherited;
-  InfoPageEncoding := peUTF8;
-  InfoPageIsXml := True;
 end;
 
-destructor TDownloader_GoogleVideo_Embed.Destroy;
+function TDownloader_Viki.GetMovieInfoUrl: string;
 begin
-  inherited;
+  Result := 'http://www.viki.com/' + MovieID;
 end;
 
-function TDownloader_GoogleVideo_Embed.GetMovieInfoUrl: string;
-begin
-  Result := 'http://video.google.com/videofeed?fgvns=1&fai=1&' + MovieID;
-end;
-
-function TDownloader_GoogleVideo_Embed.GetFileNameExt: string;
-begin
-  Result := Extension;
-end;
-
-function TDownloader_GoogleVideo_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Viki.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Node: TXmlNode;
-  Title, Url, ContentType: string;
-  i: integer;
+  ID, Info, StreamList, BestUrl, Url, sQuality: string;
+  BestQuality, Quality: integer;
+  b: boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not XmlNodeByPath(PageXml, 'channel/item/media:group', Node) then
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not DownloadPage(Http, 'http://www.viki.com/player/medias/' + ID + '/info.json?rtmp=false', Info, peUtf8) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(StreamListRegExp, Info, 'LIST', StreamList) then
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
   else
     begin
-    if GetXmlVar(Node, 'media:title', Title) then
-      if Title <> '' then
-        SetName(Title);
-    for i := 0 to Pred(Node.NodeCount) do
-      if Node[i].Name = 'media:content' then
-        if GetXmlAttr(Node[i], '', 'url', Url) then
-          if GetXmlAttr(Node[i], '', 'type', ContentType) then
-            begin
-            Extension := ContentTypeToExtension(ContentType);
-            if Extension <> '.swf' then
-              begin
-              MovieUrl := Url;
-              if UnpreparedName = '' then
-                SetName('Google Video ' + MovieID);
-              SetPrepared(True);
-              Result := True;
-              Exit;
-              end;
-            end;
+    BestUrl := '';
+    BestQuality := -1;
+    b := GetRegExpVars(StreamInfoRegExp, StreamList, ['URL', 'QUALITY'], [@Url, @sQuality]);
+    while b do
+      begin
+      Quality := StrToIntDef(sQuality, 0);
+      if Quality > BestQuality then
+        begin
+        BestUrl := Url;
+        BestQuality := Quality;
+        end;
+      b := GetRegExpVarsAgain(StreamInfoRegExp, ['URL', 'QUALITY'], [@Url, @sQuality]);
+      end;
+    if BestUrl = '' then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieUrl := BestUrl;
+      SetPrepared(True);
+      Result := True;
+      end;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_GoogleVideo_Embed);
+  RegisterDownloader(TDownloader_Viki);
 
 end.
-

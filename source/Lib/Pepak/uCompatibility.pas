@@ -48,6 +48,9 @@ type
 
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
+
+const
+  MB_ERR_INVALID_CHARS = 8;
 {$ENDIF}
 
 {$IFNDEF DELPHI2009_UP}
@@ -56,6 +59,7 @@ type
 
 type
   Utf8String = AnsiString;
+  RawByteString = AnsiString;
 
 type
   TSeekOrigin = Word;
@@ -96,6 +100,19 @@ const
 {$IFNDEF DELPHI2010_UP}
 const
   CSIDL_PROGRAM_FILES = 38;
+{$ENDIF}
+
+{$IFNDEF DELPHIXE2_UP}
+{$IFNDEF FPC}
+type
+  NativeInt = {$IFDEF WIN64} int64 {$ELSE} Longint {$ENDIF} ;
+  NativeUInt = {$IFDEF WIN64} uint64 {$ELSE} Longword {$ENDIF} ;
+{$ENDIF}
+{$ENDIF}
+
+{$IFDEF FPC}
+const
+  INVALID_FILE_SIZE = $ffffffff;
 {$ENDIF}
 
 implementation

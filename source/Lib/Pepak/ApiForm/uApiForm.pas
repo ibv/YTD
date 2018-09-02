@@ -609,8 +609,8 @@ begin
   Result := False;
   if Assigned(ApiFormTranslateFunction) then
     begin
-    TranslateEnumFunc(Self.Handle, Integer(Self));
-    EnumChildWindows(Self.Handle, @TranslateEnumFunc, Integer(Self));
+    TranslateEnumFunc(Self.Handle, LPARAM(Self));
+    EnumChildWindows(Self.Handle, @TranslateEnumFunc, LPARAM(Self));
     if Menu <> 0 then
       TranslateMenu(Menu);
     if PopupMenu <> 0 then
@@ -627,8 +627,8 @@ end;
 function TApiForm.ShowModal: integer;
 begin
   SetModalResult(0);
-  //fHandle := CreateDialogParam(hInstance, PChar(DialogResourceName), 0, @ApiFormDialogProc, Integer(Self));
-  Result := DialogBoxParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, Integer(Self));
+  //fHandle := CreateDialogParam(hInstance, PChar(DialogResourceName), 0, @ApiFormDialogProc, LPARAM(Self));
+  Result := DialogBoxParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, LPARAM(Self));
   ShowApiError(Result = -1);
   SetModalResult(Result);
 end;
@@ -636,14 +636,14 @@ end;
 function TApiForm.Show: THandle;
 begin
   SetModalResult(0);
-  Result := CreateDialogParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, Integer(Self));
+  Result := CreateDialogParam(hInstance, PChar(DialogResourceName), Self.OwnerHandle, @ApiFormDialogProc, LPARAM(Self));
   ShowApiError(Result = 0);
 end;
 
 function TApiForm.ShowFrame(Parent: THandle): THandle;
 begin
   SetModalResult(0);
-  Result := CreateDialogParam(hInstance, PChar(DialogResourceName), Parent, @ApiFormDialogProc, Integer(Self));
+  Result := CreateDialogParam(hInstance, PChar(DialogResourceName), Parent, @ApiFormDialogProc, LPARAM(Self));
   ShowApiError(Result = 0);
 end;
 
@@ -660,16 +660,16 @@ end;
 
 procedure TApiForm.SubClassAWindow(AHandle: THandle; AWndProc: TApiFormSubclassFn);
 begin
-  // If the window is already subclasses, just replace the window procedure
+  // If the window is already subclassed, just replace the window procedure
   if (GetProp(AHandle, APIFORM_SUBCLASS_OLDWNDPROC) <> 0) or (GetProp(AHandle, APIFORM_SUBCLASS_APIFORM) <> 0) then
-    SetProp(AHandle, APIFORM_SUBCLASS_HANDLER, Integer(@AWndProc))
+    SetProp(AHandle, APIFORM_SUBCLASS_HANDLER, THandle(@AWndProc))
   // Otherwise register a new subclass
   else
     begin
-    SetProp(AHandle, APIFORM_SUBCLASS_APIFORM, Integer(Self));
+    SetProp(AHandle, APIFORM_SUBCLASS_APIFORM, THandle(Self));
     SetProp(AHandle, APIFORM_SUBCLASS_OLDWNDPROC, GetWindowLong(AHandle, GWL_WNDPROC));
-    SetProp(AHandle, APIFORM_SUBCLASS_HANDLER, Integer(@AWndProc));
-    SetWindowLong(AHandle, GWL_WNDPROC, Integer(@ApiFormSubclassWndProc));
+    SetProp(AHandle, APIFORM_SUBCLASS_HANDLER, THandle(@AWndProc));
+    SetWindowLong(AHandle, GWL_WNDPROC, THandle(@ApiFormSubclassWndProc));
     end;
 end;
 

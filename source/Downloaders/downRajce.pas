@@ -127,52 +127,52 @@ var
   Xml: TXmlDoc;
   Node: TXmlNode;
   i: integer;
+  b: boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
+  b := GetRegExpVars(PlayListRegExp, Page, ['ID', 'TITLE', 'FILENAME'], [@ID, @Title, @FileName]);
   {$IFDEF MULTIDOWNLOADS}
-  if PlayListRegExp.Match(Page) then
-    repeat
-      if PlayListRegExp.SubexpressionByName('ID', ID) then
-        if PlayListRegExp.SubexpressionByName('TITLE', Title) then
-          if PlayListRegExp.SubexpressionByName('FILENAME', FileName) then
+  while b do
   {$ELSE}
-  if GetRegExpVars(PlayListRegExp, Page, ['ID', 'TITLE', 'FILENAME'], [@ID, @Title, @FileName]) then
+  if b then
   {$ENDIF}
-            if DownloadXml(Http, 'http://www.rajce.idnes.cz/ajax/videoxml.php?id=' + ID, Xml) then
-              try
-                if XmlNodeByPath(Xml, 'items', Node) then
-                  for i := 0 to Pred(Node.NodeCount) do
-                    if Node[i].Name = 'item' then
-                      if GetXmlVar(Node[i], 'idvideo', FoundID) then
-                        if FoundID = ID then
-                          begin
-                          if GetXmlVar(Node[i], 'linkvideo/server', Server) then
-                            if GetXmlVar(Node[i], 'linkvideo/path', Path) then
-                              begin
-                              MovieUrl := Server + Path + ID;
-                              {$IFDEF MULTIDOWNLOADS}
-                              if Title = '' then
-                                Title := Format('%s (%d)', [UnpreparedName, Succ(UrlList.Count)]);
-                              UrlList.Add(MovieUrl);
-                              NameList.Add(Title);
-                              ExtList.Add(ExtractFileExt(FileName));
-                              {$ELSE}
-                              if Title <> '' then
-                                SetName(Title);
-                              Extension := ExtractFileExt(FileName);
-                              {$ENDIF}
-                              SetPrepared(True);
-                              Result := True;
-                              end;
-                          Break;
-                          end;
-              finally
-                FreeAndNil(Xml);
-                end;
-  {$IFDEF MULTIDOWNLOADS}
-    until not PlayListRegExp.MatchAgain;
-  {$ENDIF}
+    begin
+    if DownloadXml(Http, 'http://www.rajce.idnes.cz/ajax/videoxml.php?id=' + ID, Xml) then
+      try
+        if XmlNodeByPath(Xml, 'items', Node) then
+          for i := 0 to Pred(Node.NodeCount) do
+            if Node[i].Name = 'item' then
+              if GetXmlVar(Node[i], 'idvideo', FoundID) then
+                if FoundID = ID then
+                  begin
+                  if GetXmlVar(Node[i], 'linkvideo/server', Server) then
+                    if GetXmlVar(Node[i], 'linkvideo/path', Path) then
+                      begin
+                      MovieUrl := Server + Path + ID;
+                      {$IFDEF MULTIDOWNLOADS}
+                      if Title = '' then
+                        Title := Format('%s (%d)', [UnpreparedName, Succ(UrlList.Count)]);
+                      UrlList.Add(MovieUrl);
+                      NameList.Add(Title);
+                      ExtList.Add(ExtractFileExt(FileName));
+                      {$ELSE}
+                      if Title <> '' then
+                        SetName(Title);
+                      Extension := ExtractFileExt(FileName);
+                      {$ENDIF}
+                      SetPrepared(True);
+                      Result := True;
+                      end;
+                  Break;
+                  end;
+      finally
+        FreeAndNil(Xml);
+        end;
+    {$IFDEF MULTIDOWNLOADS}
+    b := GetRegExpVarsAgain(PlayListRegExp, ['ID', 'TITLE', 'FILENAME'], [@ID, @Title, @FileName]);
+    {$ENDIF}
+    end;
 end;
 
 function TDownloader_Rajce.GetFileNameExt: string;

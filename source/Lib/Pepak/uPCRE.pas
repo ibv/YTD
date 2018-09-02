@@ -38,11 +38,21 @@ unit uPCRE;
 
 interface
 
+{$UNDEF UPCRE_NATIVEIMPLEMENTATION}
+{$IFDEF WIN64}
+  {$DEFINE UPCRE_NATIVEIMPLEMENTATION}
+{$ENDIF}
+
 uses
-  PerlRegEx;
+  {$IFDEF UPCRE_NATIVEIMPLEMENTATION}
+  RegularExpressionsCore
+  {$ELSE}
+  PerlRegEx
+  {$ENDIF}
+  ;
 
 type
-  PCREString = PerlRegEx.PCREString;
+  PCREString = {$IFDEF UPCRE_NATIVEIMPLEMENTATION} UTF8String {$ELSE} PerlRegEx.PCREString {$ENDIF};
   
   TRegExp = class(TPerlRegEx)
     public
@@ -83,7 +93,7 @@ begin
   if rcoAnchored                in Options then PerlRegExpOptions := PerlRegExpOptions + [preAnchored];
   if rcoUngreedy                in Options then PerlRegExpOptions := PerlRegExpOptions + [preUnGreedy];
   if rcoNoAutoCapture           in Options then PerlRegExpOptions := PerlRegExpOptions + [preNoAutoCapture];
-  Result := TRegExp.Create(nil);
+  Result := TRegExp.Create {$IFNDEF UPCRE_NATIVEIMPLEMENTATION} (nil) {$ENDIF} ;
   try
     Result.Options := PerlRegExpOptions;
     Result.RegEx := Pattern;
@@ -140,10 +150,10 @@ end;
 function TRegExp.SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean;
 var ix: integer;
 begin
-  ix := Self.NamedSubExpression(Name);
+  ix := {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.NamedGroup {$ELSE} Self.NamedSubExpression {$ENDIF} (Name);
   Result := ix >= 0;
   if Result then
-    Value := Self.SubExpressions[ix]
+    Value := {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.Groups {$ELSE} Self.SubExpressions {$ENDIF} [ix]
   else
     Value := '';
 end;

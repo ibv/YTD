@@ -71,6 +71,7 @@ type
       fUserXmlFileName: string;
     protected
       function Load(IgnoreErrors: boolean = True): boolean; virtual;
+      function IgnoreInitErrors: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function TranslateNodeName(const Name: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetOption(const Path: string; const Default: string = ''): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetOption(const Path, Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -300,18 +301,30 @@ begin
   inherited;
 end;
 
+function TYTDOptions.IgnoreInitErrors: boolean;
+begin
+  Result := True;
+end;
+
 procedure TYTDOptions.Init;
 begin
   XmlFileName := fMainXmlFileName;
   Xml.Clear;
   Xml.Root.Name := XML_ROOTNAME;
-  if (not Load(False)) or (not PortableMode) then
-    if (fUserXmlFileName <> '') and FileExists(fUserXmlFileName) then
-      begin
-      XmlFileName := fUserXmlFileName;
-      Load(False);
-      PortableMode := False;
-      end;
+  try
+    if (not Load(IgnoreInitErrors)) or (not PortableMode) then
+      if (fUserXmlFileName <> '') and FileExists(fUserXmlFileName) then
+        begin
+        XmlFileName := fUserXmlFileName;
+        Load(IgnoreInitErrors);
+        PortableMode := False;
+        end;
+  finally
+    if Xml.Root = nil then
+      Xml.Clear;
+    if Xml.Root.Name = '' then
+      Xml.Root.Name := XML_ROOTNAME;
+    end;
 end;
 
 function TYTDOptions.Load(IgnoreErrors: boolean): boolean;

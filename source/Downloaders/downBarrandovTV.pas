@@ -37,6 +37,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit downBarrandovTV;
 {$INCLUDE 'ytd.inc'}
 
+{
+  Barrandov pouziva Secure Token. Da se zjistit dekompilaci
+  prehravaciho Flashe, kde je volani:
+      this._nc.call("secureTokenResponse", null, com.wowza.encryptionAS3.TEA.decrypt(arg1.info.secureToken, "...token..."));
+  viz http://stream-recorder.com/forum/barrandov-tv-cant-decode-rtmpe-stream-find-t9199.html
+}
+
 interface
 
 uses
@@ -82,7 +89,7 @@ implementation
 
 uses
   uStringConsts,
-  uStringUtils,
+  uStrings,
   uMessages,
   uDownloadClassifier;
 

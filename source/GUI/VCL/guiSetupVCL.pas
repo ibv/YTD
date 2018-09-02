@@ -77,6 +77,8 @@ begin
   inherited;
   TranslateProperties(self);
   EditDestinationDir.Text := GetSpecialFolder(CSIDL_PROGRAM_FILES) + '\' + APPLICATION_TITLE;
+end
+
 end;
 
 procedure TFormSetup.BtnDestinationDirClick(Sender: TObject);

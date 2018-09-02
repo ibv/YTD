@@ -37,6 +37,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit downNova;
 {$INCLUDE 'ytd.inc'}
 
+{
+  Udaje pro ziskani playlistu pro RTMP verzi se daji ziskat dekompilovanim
+  http://voyo.nova.cz/static/shared/app/flowplayer/13-flowplayer.nacevi-3.1.5-06-002.swf
+  ve skriptech org.flowplayer.nacevi.Config (konfiguracni udaje, napr. token)
+  a org.flowplayer.nacevi.Nacevi (sestaveni URL a ziskani a zpracovani playlistu -
+  zejmena jde o metody getHashString a onGetTimeStamp).
+}
+
+{$DEFINE DEBUG_SIGNATURE}
+  {
+    Mam tu zasadni problem, ze pro
+      Timestamp := '20120729145706';
+      Media_ID := 1202109;
+    mi to ma vratit MD5 hash (po Base64Encode)
+      'mo7+w5o3kj2aQ2+1kk0KEA=='
+    Jenze muj vypocitany hash je
+      'Uo22PwkGbvTIluswmr2s8w=='
+    a ja nemuzu prijit na to, proc.
+  }
+
 interface
 
 uses
@@ -129,6 +149,7 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
 // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 // http://voyo.nova.cz/home/plus-video/321-kriminalka-andel-podraz
 const
@@ -256,11 +277,13 @@ end;
 function TDownloader_Nova_RTMP.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const
   NOVA_SERVICE_URL = 'http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx';
+  NOVA_TIMESTAMP_URL = 'http://tn.nova.cz/lbin/time.php';
   NOVA_APP_ID = 'nova-vod';
 var
   InfoXml: TXmlDoc;
   Node: TXmlNode;
   Media_ID, Timestamp, ID, Signature, Url, Status, BaseUrl, Quality: string;
+  SignatureBytes: AnsiString;
   i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
@@ -271,12 +294,30 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['media_id']))
   else if Secret = '' then
     SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET)
+  {$IFNDEF DEBUG_SIGNATURE}
+  else if not DownloadPage(Http, NOVA_TIMESTAMP_URL, Timestamp) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
+  {$ENDIF}
   else
     begin
-    Timestamp := FormatDateTime('yyyymmddhhnnss', Now);
+    {$IFNDEF DEBUG_SIGNATURE}
+    Timestamp := Copy(Timestamp, 1, 14);
+    {$ELSE}
+    Timestamp := '20120729145706';
+    Media_ID := '1202109';
+    {$ENDIF}
     ID := UrlEncode(NOVA_APP_ID + '|' + Media_ID);
-    Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (EncodeBase64(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret)))));
-    Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&c=%s&h=0&tm=nova&s=%s&d=1', [Timestamp, ID, Signature]);
+    SignatureBytes := {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret);
+    SignatureBytes := MD5(SignatureBytes);
+    SignatureBytes := EncodeBase64(SignatureBytes);
+    {$IFDEF DEBUG_SIGNATURE}
+    Writeln(SignatureBytes);
+    Writeln('mo7+w5o3kj2aQ2+1kk0KEA==');
+    Readln(Quality);
+    {$ENDIF}
+    Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (SignatureBytes));
+    //Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&c=%s&h=0&tm=nova&s=%s&d=1', [Timestamp, ID, Signature]);
+    Url := Format(NOVA_SERVICE_URL + '?c=%s&h=0&t=%s&s=%s&tm=nova&d=1', [ID, Timestamp, Signature]);
     if not DownloadXml(Http, Url, InfoXml) then
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else

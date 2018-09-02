@@ -44,7 +44,7 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 543
     Height = 389
-    ActivePage = TabDownloaderOptions
+    ActivePage = TabMain
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet
@@ -185,7 +185,7 @@ object FormOptions: TFormOptions
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 8
         OnChange = ComboConverterChange
       end

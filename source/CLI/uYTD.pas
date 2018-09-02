@@ -52,6 +52,12 @@ uses
 
 type
   TYTD = class(TConsoleApp)
+    protected
+      function AppTitle: string; override;
+      function AppVersion: string; override;
+      function DoExecute: integer; override;
+      procedure ShowSyntax(const Error: string = ''); override;
+      procedure ParamInitialize; override;
     private
       fNextProgressUpdate: DWORD;
       fDownloadClassifier: TDownloadClassifier;
@@ -59,13 +65,7 @@ type
       fHtmlFilePlaylist: TPlaylist_HTMLfile;
       fUrlList: TStringList;
       fOptions: TYTDOptions;
-    protected
-      function AppTitle: string; override;
-      function AppVersion: string; override;
-      function DoExecute: integer; override;
-      procedure ShowSyntax(const Error: string = ''); override;
-      procedure ParamInitialize; override;
-      property UrlList: TStringList read fUrlList;
+      fPrepareOnly: boolean;
     protected
       function DoDownload(const Url: string; Downloader: TDownloader): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -76,6 +76,7 @@ type
       function DownloadURLsFromHTML(const Source: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowProviders; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ShowVersion(DoUpgrade: boolean): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      property UrlList: TStringList read fUrlList;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
       property HtmlPlaylist: TPlaylist_HTML read fHtmlPlaylist;
       property HtmlFilePlaylist: TPlaylist_HTMLfile read fHtmlFilePlaylist;
@@ -132,6 +133,7 @@ begin
   inherited;
   WriteColored(ccWhite, '<arg> [<arg>] ...'); Writeln; // Intentionally no _(...) - this should not be translated
   Writeln;
+  Writeln(_('Command-line version options:'));
   WriteColored(ccWhite, ' -h, -?'); Writeln(_(' ...... Show this help screen.')); // CLI: Help for -h/-? command line argument
   WriteColored(ccWhite, ' -i <file>'); Writeln(_(' ... Load URL list from <file> (one URL per line).')); // CLI: Help for -i command line argument
   WriteColored(ccWhite, ' -o <path>'); Writeln(_(' ... Store files to <path> (default is current directory).')); // CLI: Help for -o command line argument
@@ -147,7 +149,17 @@ begin
   WriteColored(ccWhite, ' -u'); Writeln(_(' .......... Test for a new version and upgrade if possible.')); // CLI: Help for -u command line argument
   {$ENDIF}
   WriteColored(ccWhite, ' -ah[-]'); Writeln(_(' ...... [Don''t] Automatically try HTML parser for unknown URLs.')); // CLI: Help for -ah command line argument
+  WriteColored(ccWhite, ' -nd'); Writeln(_(' ......... Don''t actually download, just show the parameters.')); // CLI: Help for -nd command line argument
   Writeln;
+  {$IFDEF SINGLEINSTANCE}
+  {$IFDEF GUI}
+  Writeln(_('Graphical version options:'));
+  WriteColored(ccWhite, ' --gui'); Writeln(_(' ....... Must be used if there are GUI arguments.'));
+  WriteColored(ccWhite, ' -new'); Writeln(_(' ........ Run a new instance of YTD.'));
+  Writeln;
+  {$ENDIF}
+  {$ENDIF}
+  Writeln(_('Common options:'));
   WriteColored(ccWhite, ' <url>'); Writeln(_(' ....... URL to download.')); // CLI: Help for <url> command line argument
   Writeln;
   Writeln;
@@ -220,6 +232,7 @@ begin
   inherited;
   if Options <> nil then
     Options.Init;
+  fPrepareOnly := False;
 end;
 
 function TYTD.DoExecute: integer;
@@ -271,6 +284,8 @@ begin
           Options.OverwriteMode := omRename
         else if (Param = '-k') then
           Options.OverwriteMode := omAsk
+        else if (Param = '-nd') then
+          fPrepareOnly := True
         else if (Param = '-e') then
           if ParamGetNext(Param) then
             begin
@@ -454,17 +469,22 @@ begin
         Write(_('  Media title: ')); WriteColored(ccWhite, Downloader.Name); Writeln; // CLI: Title shown before media title. Pad to the same length as "File name:'
         Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln; // CLI: Title shown before media file name. Pad to the same length as "Media title:'
         Write(_('  Content URL: ')); WriteColored(ccWhite, Downloader.ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
-        Result := Downloader.ValidateFileName and Downloader.Download;
-        if fNextProgressUpdate <> 0 then
-          Writeln;
-        if Result then
-          begin
-          WriteColored(ccWhite, _('  SUCCESS.')); // CLI: Media downloaded successfully
-          Writeln;
-          Writeln;
-          end
+        if fPrepareOnly then
+          Result := True
         else
-          ShowDownloadError(Url, Downloader.LastErrorMsg);
+          begin
+          Result := Downloader.ValidateFileName and Downloader.Download;
+          if fNextProgressUpdate <> 0 then
+            Writeln;
+          if Result then
+            begin
+            WriteColored(ccWhite, _('  SUCCESS.')); // CLI: Media downloaded successfully
+            Writeln;
+            Writeln;
+            end
+          else
+            ShowDownloadError(Url, Downloader.LastErrorMsg);
+          end;
         {$IFDEF MULTIDOWNLOADS}
         until (not Result) or (not Downloader.Next);
         {$ENDIF}

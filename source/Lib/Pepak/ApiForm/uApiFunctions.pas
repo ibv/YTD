@@ -202,7 +202,7 @@ begin
   Column.cx := Width;
   Column.pszText := PChar(Title);
   Column.cchTextMax := 0;
-  Result := SendMessage(ListView, LVM_INSERTCOLUMN, Index, integer(@Column));
+  Result := SendMessage(ListView, LVM_INSERTCOLUMN, Index, LPARAM(@Column));
 end;
 
 function ListViewGetItemCount(ListView: THandle): integer;

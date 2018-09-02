@@ -110,33 +110,32 @@ function TDownloader_CSFD.AfterPrepareFromPage(var Page: string; PageXml: TXmlDo
 var
   Url, Extra: string;
   n: integer;
+  b: boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   n := 0;
-  if MovieUrlRegExp.Match(Page) then
-    repeat
-      if MovieUrlRegExp.SubexpressionByName('URL', Url) then
-        begin
-        if MovieUrlRegExp.SubexpressionByName('EXTRA', Extra) then
-          if Pos('"advert"', Extra) > 0 then
-            Url := '';
-        if Url <> '' then
-          begin
-          Url := StripSlashes(Url);
-          MovieUrl := Url;
-          SetPrepared(True);
-          Result := True;
-          {$IFDEF MULTIDOWNLOADS}
-          UrlList.Add(Url);
-          Inc(n);
-          NameList.Add(Format('%s (%d)', [UnpreparedName, n]));
-          {$ELSE}
-          Break;
-          {$ENDIF}
-          end;
-        end;
-    until not MovieUrlRegExp.MatchAgain;
+  b := GetRegExpVars(MovieUrlRegExp, Page, ['URL', 'EXTRA'], [@Url, @Extra]);
+  while b do
+    begin
+    if Pos('"advert"', Extra) > 0 then
+      Url := '';
+    if Url <> '' then
+      begin
+      Url := StripSlashes(Url);
+      MovieUrl := Url;
+      SetPrepared(True);
+      Result := True;
+      {$IFDEF MULTIDOWNLOADS}
+      UrlList.Add(Url);
+      Inc(n);
+      NameList.Add(Format('%s (%d)', [UnpreparedName, n]));
+      {$ELSE}
+      Break;
+      {$ENDIF}
+      end;
+    b := GetRegExpVarsAgain(MovieUrlRegExp, ['URL', 'EXTRA'], [@Url, @Extra]);
+    end;
 end;
 
 initialization

@@ -113,29 +113,28 @@ end;
 
 function TDownloader_SteamPowered.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Urls, Url: string;
-  n: integer;
+  Urls: string;
+  UrlArr: TStringArray;
+  i, n: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   n := 0;
   if GetRegExpVar(UrlsRegExp, Page, 'URLS', Urls) then
-    if MovieUrlRegExp.Match(Urls) then
-      repeat
-        if MovieUrlRegExp.SubexpressionByName('URL', Url) then
-          begin
-          MovieUrl := Url;
-          SetPrepared(True);
-          Result := True;
-          {$IFDEF MULTIDOWNLOADS}
-          UrlList.Add(Url);
-          Inc(n);
-          NameList.Add(Format('%s (%d)', [UnpreparedName, n]));
-          {$ELSE}
-          Break;
-          {$ENDIF}
-          end;
-      until not MovieUrlRegExp.MatchAgain;
+    if GetRegExpAllVar(MovieUrlRegExp, Urls, 'URL', UrlArr) then
+      for i := 0 to Pred(Length(UrlArr)) do
+        begin
+        MovieUrl := UrlArr[i];
+        SetPrepared(True);
+        Result := True;
+        {$IFDEF MULTIDOWNLOADS}
+        UrlList.Add(UrlArr[i]);
+        Inc(n);
+        NameList.Add(Format('%s (%d)', [UnpreparedName, n]));
+        {$ELSE}
+        Break;
+        {$ENDIF}
+        end;
 end;
 
 initialization

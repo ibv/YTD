@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downGoogleVideo_Embed;
+unit downVideoPortalSK;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,20 +42,17 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
 
 type
-  TDownloader_GoogleVideo_Embed = class(THttpDownloader)
+  TDownloader_VideoPortalSK = class(TDownloader_Joj_Porady)
     private
     protected
-      Extension: string;
-    protected
-      function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetMovieInfoUrl: string; override;{*}
+      function TheServer: string; override;
     public
       class function Provider: string; override;
-      class function UrlRegExp: string; override;
+      class function UrlRegExp: string; override;{*}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -67,82 +64,45 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
+// http://www.videoportal.sk/cetelemania/martin-kittner.html
 const
-  URLREGEXP_BEFORE_ID = 'video\.google\.com/googleplayer\.swf\?';
+  URLREGEXP_BEFORE_ID = 'videoportal\.sk/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_GoogleVideo_Embed }
+{ TDownloader_VideoPortalSK }
 
-class function TDownloader_GoogleVideo_Embed.Provider: string;
+class function TDownloader_VideoPortalSK.Provider: string;
 begin
-  Result := 'Google.com';
+  Result := 'VideoPortal.sk';
 end;
 
-class function TDownloader_GoogleVideo_Embed.UrlRegExp: string;
+class function TDownloader_VideoPortalSK.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_GoogleVideo_Embed.Create(const AMovieID: string);
-begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  InfoPageIsXml := True;
-end;
-
-destructor TDownloader_GoogleVideo_Embed.Destroy;
+constructor TDownloader_VideoPortalSK.Create(const AMovieID: string);
 begin
   inherited;
 end;
 
-function TDownloader_GoogleVideo_Embed.GetMovieInfoUrl: string;
+destructor TDownloader_VideoPortalSK.Destroy;
 begin
-  Result := 'http://video.google.com/videofeed?fgvns=1&fai=1&' + MovieID;
+  inherited;
 end;
 
-function TDownloader_GoogleVideo_Embed.GetFileNameExt: string;
+function TDownloader_VideoPortalSK.GetMovieInfoUrl: string;
 begin
-  Result := Extension;
+  Result := 'http://www.videoportal.sk/' + MovieID;
 end;
 
-function TDownloader_GoogleVideo_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  Node: TXmlNode;
-  Title, Url, ContentType: string;
-  i: integer;
+function TDownloader_VideoPortalSK.TheServer: string;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not XmlNodeByPath(PageXml, 'channel/item/media:group', Node) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else
-    begin
-    if GetXmlVar(Node, 'media:title', Title) then
-      if Title <> '' then
-        SetName(Title);
-    for i := 0 to Pred(Node.NodeCount) do
-      if Node[i].Name = 'media:content' then
-        if GetXmlAttr(Node[i], '', 'url', Url) then
-          if GetXmlAttr(Node[i], '', 'type', ContentType) then
-            begin
-            Extension := ContentTypeToExtension(ContentType);
-            if Extension <> '.swf' then
-              begin
-              MovieUrl := Url;
-              if UnpreparedName = '' then
-                SetName('Google Video ' + MovieID);
-              SetPrepared(True);
-              Result := True;
-              Exit;
-              end;
-            end;
-    end;
+  Result := 'n06.joj.sk';
 end;
 
 initialization
-  RegisterDownloader(TDownloader_GoogleVideo_Embed);
+  RegisterDownloader(TDownloader_VideoPortalSK);
 
 end.
-

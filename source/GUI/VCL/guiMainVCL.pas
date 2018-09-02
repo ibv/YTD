@@ -44,7 +44,7 @@ uses
   StdCtrls, Buttons, ComCtrls, ClipBrd, FileCtrl, Menus, ImgList, ActnList,
   ToolWin, CommDlg, ShellApi, CommCtrl,
   SynaCode,
-  uLanguages, uFunctions, uMessages, uOptions, uStringUtils, uCompatibility,
+  uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
   guiOptions, guiFunctions, uDialogs,
   uDownloadList, uDownloadListItem, uDownloadThread;
 
@@ -171,6 +171,9 @@ type
     procedure StopClipboardMonitor;
     procedure WMDrawClipboard(var msg: TMessage); message WM_DRAWCLIPBOARD;
     procedure WMChangeCbChain(var msg: TMessage); message WM_CHANGECBCHAIN;
+    {$IFDEF SINGLEINSTANCE}
+    procedure WMCopyData(var msg: TMessage); message WM_COPYDATA;
+    {$ENDIF}
     {$IFDEF THREADEDVERSION}
     procedure NewVersionEvent(Sender: TObject; const Version, Url: string); virtual;
     {$ENDIF}
@@ -217,9 +220,15 @@ uses
 procedure TFormYTD.FormCreate(Sender: TObject);
 var
   i: integer;
+  {$IFDEF SINGLEINSTANCE}
+  Param: string;
+  {$ENDIF}
 begin
   fLoading := True;
   try
+    {$IFDEF SINGLEINSTANCE}
+    RegisterMainInstance(Self.Handle);
+    {$ENDIF}
     Caption := APPLICATION_CAPTION;
     Options := TYTDOptionsGUI.Create;
     UseLanguage(Options.Language);
@@ -269,6 +278,16 @@ begin
     for i := 0 to Pred(Downloads.Columns.Count) do
       if Options.DownloadListColumnWidth[i] > 0 then
       Downloads.Columns[i].Width := Options.DownloadListColumnWidth[i];
+    {$IFDEF SINGLEINSTANCE}
+    // Load URLs from command line
+    for i := 1 to ParamCount do
+      begin
+      Param := ParamStr(i);
+      if Param <> '' then
+        if Param[1] <> '-' then
+          AddTask(Param);
+      end;
+    {$ENDIF}
   finally
     fLoading := False;
     end;
@@ -280,6 +299,9 @@ end;
 
 procedure TFormYTD.FormDestroy(Sender: TObject);
 begin
+  {$IFDEF SINGLEINSTANCE}
+  UnregisterMainInstance(Self.Handle);
+  {$ENDIF}
   DownloadList.StopAll;
   StopClipboardMonitor;
   {$IFDEF SYSTRAY}
@@ -363,6 +385,25 @@ begin
     NextClipboardViewer := Msg.lParam;
   msg.Result := 0;
 end;
+
+{$IFDEF SINGLEINSTANCE}
+procedure TFormYTD.WMCopyData(var msg: TMessage);
+var
+  Info: PCopyDataStruct;
+  UrlW: WideString;
+begin
+  Info := PCopyDataStruct(msg.lParam);
+  if Info <> nil then
+    if Info^.dwData = COPYDATA_URL then
+      if (Info^.cbData > 0) and (Info^.lpData <> nil) then
+        begin
+        SetLength(UrlW, Info^.cbData div Sizeof(WideChar));
+        Move(Info^.lpData^, UrlW[1], Info^.cbData);
+        AddTask(UrlW);
+        end; 
+  Msg.Result := 0;
+end;
+{$ENDIF}
 
 {$IFDEF THREADEDVERSION}
 procedure TFormYTD.NewVersionEvent(Sender: TObject; const Version, Url: string);

@@ -40,7 +40,8 @@ unit uConsoleApp;
 interface
 
 uses
-  SysUtils, Classes, Windows;
+  SysUtils, Classes, Windows,
+  uStrings, uFiles;
 
 type
   TConsoleApp = class;
@@ -61,13 +62,19 @@ type
       fStdOut: THandle;
       fStdOutRedirected: boolean;
       fTextAttr: byte;
+      fLineSeparator: string;
       fOnConsoleCtrl: TConsoleCtrlEvent;
+      fConvertWritesToOEM: boolean;
       function GetTextAttr: Byte;
       procedure SetTextAttr(const Value: Byte); overload;
       function GetTextBackground: TConsoleColor;
       procedure SetTextBackground(const Value: TConsoleColor);
       function GetTextColor: TConsoleColor;
       procedure SetTextColor(const Value: TConsoleColor);
+      function GetCursorCol: integer;
+      function GetCursorRow: integer;
+      procedure SetCursorCol(const Value: integer);
+      procedure SetCursorRow(const Value: integer);
     protected // Application info
       function AppTitle: string; virtual; abstract;
       function AppVersion: string; virtual; abstract;
@@ -79,7 +86,10 @@ type
       procedure InitConsole; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure DoneConsole; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetTextAttribute(const Text, Background: TConsoleColor); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure Write(const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure Writeln(const Msg: string = ''); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure WriteColored(Color: TConsoleColor; const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure WritelnColored(Color: TConsoleColor; const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); virtual;
       property StdIn: THandle read fStdIn;
       property StdOut: THandle read fStdOut;
@@ -87,13 +97,17 @@ type
       property TextAttribute: Byte read GetTextAttr write SetTextAttr;
       property TextColor: TConsoleColor read GetTextColor write SetTextColor;
       property TextBackground: TConsoleColor read GetTextBackground write SetTextBackground;
+      property CursorRow: integer read GetCursorRow write SetCursorRow;
+      property CursorCol: integer read GetCursorCol write SetCursorCol;
+      property LineSeparator: string read fLineSeparator write fLineSeparator;
+      property ConvertWritesToOEM: boolean read fConvertWritesToOEM write fConvertWritesToOEM;
     protected // Output methods
       procedure ShowHeader; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowError(const Msg: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowError(const Msg: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowSyntax(const Error: string = ''); overload; virtual;
       procedure ShowSyntax(const Error: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure Log(const LogFileName: string; const Msg: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure Log(const LogFileName: string; const Msg: string); overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure Log(const LogFileName: string; const Msg: string; const Params: array of const); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected // Files
       function ProcessWildCardFile(const FileName: string; const SearchRec: TSearchRec): boolean; virtual; abstract;
@@ -181,6 +195,8 @@ begin
   inherited;
   if ConsoleApps <> nil then
     ConsoleApps.Add(Self);
+  fLineSeparator := #13#10;
+  fConvertWritesToOEM := True;
   // Console
   InitConsole;
   // Parameters
@@ -236,6 +252,24 @@ procedure TConsoleApp.DoneConsole;
 begin
 end;
 
+procedure TConsoleApp.Write(const Msg: string);
+begin
+  {$IFDEF UNICODE}
+  System.Write(Msg);
+  {$ELSE}
+  if StdOutRedirected or (not ConvertWritesToOEM) then
+    System.Write(Msg)
+  else
+    System.Write(AnsiToOEM(Msg));
+  {$ENDIF}
+end;
+
+procedure TConsoleApp.Writeln(const Msg: string);
+begin
+  Write(Msg);
+  Write(LineSeparator);
+end;
+
 procedure TConsoleApp.WriteColored(Color: TConsoleColor; const Msg: string);
 var Attr: Byte;
 begin
@@ -248,13 +282,19 @@ begin
     end;
 end;
 
+procedure TConsoleApp.WritelnColored(Color: TConsoleColor; const Msg: string);
+begin
+  WriteColored(Color, Msg);
+  Write(LineSeparator);
+end;
+
 procedure TConsoleApp.ShowHeader;
 var Attr: Byte;
 begin
   Attr := TextAttribute;
   try
     TextColor := ccWhite;
-    Write(Format('%-42.42s (c) 2011 Pepak, ', [AppTitle + ' v' + AppVersion]));
+    Write(Format('%-42.42s (c) 2012 Pepak, ', [AppTitle + ' v' + AppVersion]));
     WriteColored(ccLightCyan, 'http://www.pepak.net');
     Writeln;
     Writeln(StringOfChar('-', 79));
@@ -264,24 +304,12 @@ begin
 end;
 
 procedure TConsoleApp.Log(const LogFileName: string; const Msg: string);
-var T: TextFile;
 begin
   try
     if LogFileName = '' then
       Writeln(Msg)
     else
-      begin
-      AssignFile(T, LogFileName);
-      if FileExists(LogFileName) then
-        Append(T)
-      else
-        Rewrite(T);
-      try
-        Writeln(T, Msg);
-      finally
-        CloseFile(T);
-        end;
-      end;
+      TTextStream.AppendLine(LogFileName, Msg);
   except
     on Exception do
       ;
@@ -367,6 +395,44 @@ end;
 procedure TConsoleApp.SetTextColor(const Value: TConsoleColor);
 begin
   SetTextAttribute(Value, TextBackground);
+end;
+
+function TConsoleApp.GetCursorCol: integer;
+var
+  BufferInfo: TConsoleScreenBufferInfo;
+begin
+  if GetConsoleScreenBufferInfo(StdOut, BufferInfo) then
+    Result := BufferInfo.dwCursorPosition.X
+  else
+    Result := -1;
+end;
+
+procedure TConsoleApp.SetCursorCol(const Value: integer);
+var
+  Coord: TCoord;
+begin
+  Coord.X := Value;
+  Coord.Y := CursorRow;
+  SetConsoleCursorPosition(StdOut, Coord);
+end;
+
+function TConsoleApp.GetCursorRow: integer;
+var
+  BufferInfo: TConsoleScreenBufferInfo;
+begin
+  if GetConsoleScreenBufferInfo(StdOut, BufferInfo) then
+    Result := BufferInfo.dwCursorPosition.Y
+  else
+    Result := -1;
+end;
+
+procedure TConsoleApp.SetCursorRow(const Value: integer);
+var
+  Coord: TCoord;
+begin
+  Coord.X := CursorCol;
+  Coord.Y := Value;
+  SetConsoleCursorPosition(StdOut, Coord);
 end;
 
 function TConsoleApp.ProcessWildCard(const WildCard: string; Recursive: boolean): integer;

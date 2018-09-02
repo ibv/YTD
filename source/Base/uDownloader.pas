@@ -147,6 +147,7 @@ type
       function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRegExpVarsAgain(RegExp: TRegExp; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRegExpVarPairs(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean = True; const VarNameSubExprName: string = 'VARNAME'; const VarValueSubExprName: string = 'VARVALUE'): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetXmlVar(Xml: TXmlDoc; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetXmlVar(Xml: TXmlNode; const Path: string; out VarValue: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -204,7 +205,7 @@ implementation
 
 uses
   uStringConsts,
-  uStringUtils,
+  uStrings,
   uMessages;
 
 const
@@ -1027,13 +1028,19 @@ begin
 end;
 
 function TDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean): boolean;
+begin
+  RegExp.Subject := Text;
+  Result := GetRegExpVarsAgain(RegExp, VarNames, VarValues, InitValues);
+end;
+
+function TDownloader.GetRegExpVarsAgain(RegExp: TRegExp; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean): boolean;
 var i: integer;
     VarValue: string;
 begin
   if InitValues then
     for i := 0 to High(VarValues) do
       VarValues[i]^ := '';
-  Result := RegExp.Match(Text);
+  Result := RegExp.MatchAgain;
   if Result then
     for i := 0 to High(VarNames) do
       if not RegExp.SubExpressionByName(VarNames[i], VarValue) then

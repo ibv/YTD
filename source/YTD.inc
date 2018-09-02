@@ -80,9 +80,18 @@
   // use regular expressions: One, it is shorter, and two, it turns out LkJSON
   // has bugs which may prevent the parsing.
 
-{.DEFINE NONWORKING}
+{.$DEFINE NONWORKING}
   // Build the non-working providers in. By default they are only available
   // in the debug mode.
+
+{$DEFINE SINGLEINSTANCE}
+  // Support for running the GUI version as single instance. A new instance can
+  // be spawned by using the --newinstance argument.
+
+{.$DEFINE WINE_SUPPORT}
+  // Special support for WINE (Windows emulation layer for Linux). While Linux
+  // itself is not supported in YTD, the program runs fine under WINE.
+  // Not recommended - seems to be very much dependent on user's settings.
 
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
@@ -189,7 +198,7 @@
   {.$DEFINE FASTMM}
   {.$DEFINE NONWORKING}
 {$ELSE}
-  {$UNDEF NONWORKING}
+  {.$UNDEF NONWORKING}
 {$ENDIF}
 
 
@@ -204,3 +213,4 @@
     {$UNDEF DELPHITHREADS}
   {$ENDIF}
 {$ENDIF}
+

@@ -61,6 +61,7 @@ type
       procedure SetDownloadListColumnWidth(Index: integer; const Value: integer);
     protected
       function Load(IgnoreErrors: boolean = True): boolean; override;
+      function IgnoreInitErrors: boolean; override;
       procedure BuildDefaultConfig;
     public
       procedure Init; override;
@@ -262,6 +263,11 @@ end;
 procedure TYTDOptionsGUI.SetDownloadListColumnWidth(Index: integer; const Value: integer);
 begin
   SetOption(Format(XML_PATH_DOWNLOADLISTCOLUMNWIDTH, [Index]), IntToStr(Value));
+end;
+
+function TYTDOptionsGUI.IgnoreInitErrors: boolean;
+begin
+  Result := False;
 end;
 
 end.

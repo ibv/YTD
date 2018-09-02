@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-06-03 12:42\n"
-"PO-Revision-Date: 2012-06-03 12:42\n"
+"POT-Creation-Date: 2012-07-29 17:27\n"
+"PO-Revision-Date: 2012-07-29 17:27\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -90,7 +90,7 @@ msgstr ""
 #: GUI/VCL/guiMainVCL.dfm:170
 #. Create columns
 #: GUI/WinAPI/guiAboutWINAPI.pas:366
-#: GUI/WinAPI/guiMainWINAPI.pas:363
+#: GUI/WinAPI/guiMainWINAPI.pas:376
 msgid "Provider"
 msgstr ""
 
@@ -129,31 +129,31 @@ msgstr ""
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:166
 #. Download list
-#: GUI/WinAPI/guiMainWINAPI.pas:362
+#: GUI/WinAPI/guiMainWINAPI.pas:375
 msgid "URL"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:175
-#: GUI/WinAPI/guiMainWINAPI.pas:364
+#: GUI/WinAPI/guiMainWINAPI.pas:377
 msgid "Status"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:179
-#: GUI/WinAPI/guiMainWINAPI.pas:365
+#: GUI/WinAPI/guiMainWINAPI.pas:378
 msgid "Title"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:184
-#: GUI/WinAPI/guiMainWINAPI.pas:366
+#: GUI/WinAPI/guiMainWINAPI.pas:379
 msgid "Size"
 msgstr ""
 
 #. FormYTD..Downloads......Caption
 #: GUI/VCL/guiMainVCL.dfm:189
-#: GUI/WinAPI/guiMainWINAPI.pas:367
+#: GUI/WinAPI/guiMainWINAPI.pas:380
 msgid "Progress"
 msgstr ""
 
@@ -372,7 +372,7 @@ msgstr ""
 
 #. FormYTD..OpenHtmlFile..Filter
 #: GUI/VCL/guiMainVCL.dfm:1517
-#: GUI/WinAPI/guiMainWINAPI.pas:654
+#: GUI/WinAPI/guiMainWINAPI.pas:680
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr ""
 
@@ -380,7 +380,7 @@ msgstr ""
 #: GUI/VCL/guiMainVCL.dfm:1523
 #. FormYTD..SaveUrlList..Filter
 #: GUI/VCL/guiMainVCL.dfm:1530
-#: GUI/WinAPI/guiMainWINAPI.pas:631
+#: GUI/WinAPI/guiMainWINAPI.pas:657
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr ""
 
@@ -631,79 +631,79 @@ msgstr ""
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:101
+#: Base/uHttpDownloader.pas:97
 msgid "Resolving began"
 msgstr ""
 
 #. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:102
+#: Base/uHttpDownloader.pas:98
 msgid "Resolving ended"
 msgstr ""
 
 #. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:103
+#: Base/uHttpDownloader.pas:99
 msgid "Socket created"
 msgstr ""
 
 #. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:104
+#: Base/uHttpDownloader.pas:100
 msgid "Socket closed"
 msgstr ""
 
 #. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:105
+#: Base/uHttpDownloader.pas:101
 msgid "Bound to IP/port"
 msgstr ""
 
 #. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:106
+#: Base/uHttpDownloader.pas:102
 msgid "Connected"
 msgstr ""
 
 #. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:107
+#: Base/uHttpDownloader.pas:103
 msgid "Can read data"
 msgstr ""
 
 #. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:108
+#: Base/uHttpDownloader.pas:104
 msgid "Can write data"
 msgstr ""
 
 #. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:109
+#: Base/uHttpDownloader.pas:105
 msgid "Listening"
 msgstr ""
 
 #. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:110
+#: Base/uHttpDownloader.pas:106
 msgid "Accepted connection"
 msgstr ""
 
 #. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:111
+#: Base/uHttpDownloader.pas:107
 msgid "Read data"
 msgstr ""
 
 #. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:112
+#: Base/uHttpDownloader.pas:108
 msgid "Wrote data"
 msgstr ""
 
 #. HTTP socket status: data is waiting
 #. Programmer's name for it: SOCKSTATUS_WAITING
-#: Base/uHttpDownloader.pas:113
+#: Base/uHttpDownloader.pas:109
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
 #: GUI/guiConsts.pas:46
@@ -712,282 +712,310 @@ msgstr ""
 
 #. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:114
+#: Base/uHttpDownloader.pas:110
 msgid "Socket error"
 msgstr ""
 
+#. Intentionally no _(...) - this should not be translated
+#: CLI/uYTD.pas:136
+msgid "Command-line version options:"
+msgstr ""
+
 #. CLI: Help for -h/-? command line argument
-#: CLI/uYTD.pas:135
+#: CLI/uYTD.pas:137
 msgid " ...... Show this help screen."
 msgstr ""
 
 #. CLI: Help for -i command line argument
-#: CLI/uYTD.pas:136
+#: CLI/uYTD.pas:138
 msgid " ... Load URL list from <file> (one URL per "
 "line)."
 msgstr ""
 
 #. CLI: Help for -o command line argument
-#: CLI/uYTD.pas:137
+#: CLI/uYTD.pas:139
 msgid " ... Store files to <path> (default is current "
 "directory)."
 msgstr ""
 
 #. CLI: Help for -e command line argument
-#: CLI/uYTD.pas:138
+#: CLI/uYTD.pas:140
 msgid " ... Save failed URLs to <file>."
 msgstr ""
 
 #. CLI: Help for -s command line argument
-#: CLI/uYTD.pas:139
+#: CLI/uYTD.pas:141
 msgid " .... Load links from a HTML source. <src> can be a file or an "
 "URL."
 msgstr ""
 
 #. CLI: Help for -n command line argument
-#: CLI/uYTD.pas:140
+#: CLI/uYTD.pas:142
 msgid " .......... Never overwrite existing "
 "files."
 msgstr ""
 
 #. CLI: Help for -a command line argument
-#: CLI/uYTD.pas:141
+#: CLI/uYTD.pas:143
 msgid " .......... Always overwrite existing "
 "files."
 msgstr ""
 
 #. CLI: Help for -r command line argument
-#: CLI/uYTD.pas:142
+#: CLI/uYTD.pas:144
 msgid " .......... Rename files to a new name if they already "
 "exist."
 msgstr ""
 
 #. CLI: Help for -k command line argument
-#: CLI/uYTD.pas:143
+#: CLI/uYTD.pas:145
 msgid " .......... Ask what to do with existing files "
 "(default)."
 msgstr ""
 
 #. CLI: Help for -l command line argument
-#: CLI/uYTD.pas:144
+#: CLI/uYTD.pas:146
 msgid " .......... List all available providers."
 msgstr ""
 
 #. CLI: Help for -v command line argument
-#: CLI/uYTD.pas:145
+#: CLI/uYTD.pas:147
 msgid " .......... Test for updated version of "
 "YTD."
 msgstr ""
 
 #. CLI: Help for -u command line argument
-#: CLI/uYTD.pas:147
+#: CLI/uYTD.pas:149
 msgid " .......... Test for a new version and upgrade if "
 "possible."
 msgstr ""
 
 #. CLI: Help for -ah command line argument
-#: CLI/uYTD.pas:149
+#: CLI/uYTD.pas:151
 msgid " ...... [Don't] Automatically try HTML parser for unknown "
 "URLs."
 msgstr ""
 
+#. CLI: Help for -no-dl command line argument
+#: CLI/uYTD.pas:152
+msgid " ......... Don't actually download, just show the "
+"parameters."
+msgstr ""
+
+#: CLI/uYTD.pas:156
+msgid "Graphical version options:"
+msgstr ""
+
+#: CLI/uYTD.pas:157
+msgid " ....... Must be used if there are GUI "
+"arguments."
+msgstr ""
+
+#: CLI/uYTD.pas:158
+msgid " ........ Run a new instance of YTD."
+msgstr ""
+
+#: CLI/uYTD.pas:162
+msgid "Common options:"
+msgstr ""
+
 #. CLI: Help for <url> command line argument
-#: CLI/uYTD.pas:151
+#: CLI/uYTD.pas:163
 msgid " ....... URL to download."
 msgstr ""
 
 #. CLI: Title for the list of providers (-l command line argument)
-#: CLI/uYTD.pas:161
+#: CLI/uYTD.pas:173
 msgid "Available providers:"
 msgstr ""
 
 #. CLI: The "Total: " part of "Total: 123 providers." Note the ending space
-#: CLI/uYTD.pas:168
+#: CLI/uYTD.pas:180
 msgid "Total: "
 msgstr ""
 
 #. CLI: The " providers" part of "Total: 123 providers." Note the starting space
-#: CLI/uYTD.pas:170
+#: CLI/uYTD.pas:182
 msgid " providers."
 msgstr ""
 
 #. CLI: Note: pad with spaces to the same length as "Newest version:"
-#: CLI/uYTD.pas:180
+#: CLI/uYTD.pas:192
 msgid "Current version: "
 msgstr ""
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
-#: CLI/uYTD.pas:181
+#: CLI/uYTD.pas:193
 msgid "Newest version:  "
 msgstr ""
 
 #. CLI: Couldn't check for a newer version
-#: CLI/uYTD.pas:184
+#: CLI/uYTD.pas:196
 msgid "check failed"
 msgstr ""
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
-#: CLI/uYTD.pas:209
+#: CLI/uYTD.pas:221
 msgid "Download URL:    "
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:283
+#: CLI/uYTD.pas:298
 msgid "With -e a filename must be provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:297
+#: CLI/uYTD.pas:312
 msgid "HTML source \"%s\" doesn't contain any useful "
 "links."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:302
+#: CLI/uYTD.pas:317
 msgid "HTML source \"%s\" not found."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:312
+#: CLI/uYTD.pas:327
 msgid "With -s a filename or an URL must be "
 "provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:328
+#: CLI/uYTD.pas:343
 msgid "URL list-file \"%s\" not found."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:334
+#: CLI/uYTD.pas:349
 msgid "With -i a filename must be provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:344
+#: CLI/uYTD.pas:359
 msgid "Destination directory \"%s\" not found."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:350
+#: CLI/uYTD.pas:365
 msgid "With -o a directory name must be provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:356
+#: CLI/uYTD.pas:371
 msgid "Unknown parameter \"%s\"."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:370
+#: CLI/uYTD.pas:385
 msgid "No valid URLs found."
 msgstr ""
 
 #. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
-#: CLI/uYTD.pas:396
+#: CLI/uYTD.pas:411
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
 msgstr ""
 
 #. CLI progress bar. %: Downloaded size
-#: CLI/uYTD.pas:400
+#: CLI/uYTD.pas:415
 msgid "  Downloading: %s"
 msgstr ""
 
-#: CLI/uYTD.pas:410
+#: CLI/uYTD.pas:425
 msgid "  ERROR: "
 msgstr ""
 
 #. CLI: Error message to be written to the log file. %: URL, message
-#: CLI/uYTD.pas:412
+#: CLI/uYTD.pas:427
 msgid "FAILED \"%s\": %s"
 msgstr ""
 
 #. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
-#: CLI/uYTD.pas:430
+#: CLI/uYTD.pas:445
 msgid "  Playlist item: "
 msgstr ""
 
 #. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
-#: CLI/uYTD.pas:435
+#: CLI/uYTD.pas:450
 msgid "            URL: "
 msgstr ""
 
 #. CLI: Title shown before media title. Pad to the same length as "File name:'
-#: CLI/uYTD.pas:454
+#: CLI/uYTD.pas:469
 msgid "  Media title: "
 msgstr ""
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:455
+#: CLI/uYTD.pas:470
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:587
+#: CLI/uYTD.pas:607
 msgid "    File name: "
 msgstr ""
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:456
+#: CLI/uYTD.pas:471
 msgid "  Content URL: "
 msgstr ""
 
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:462
+#: CLI/uYTD.pas:481
 msgid "  SUCCESS."
 msgstr ""
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:478
+#: CLI/uYTD.pas:498
 msgid "  ABORTED BY USER"
 msgstr ""
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:483
+#: CLI/uYTD.pas:503
 msgid "ERROR %s: %s"
 msgstr ""
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:498
+#: CLI/uYTD.pas:518
 msgid "Unknown URL."
 msgstr ""
 
-#: CLI/uYTD.pas:516
+#: CLI/uYTD.pas:536
 msgid "Trying to parse as HTML page..."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:593
+#: CLI/uYTD.pas:613
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:595
+#: CLI/uYTD.pas:615
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:596
+#: CLI/uYTD.pas:616
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:597
+#: CLI/uYTD.pas:617
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:598
+#: CLI/uYTD.pas:618
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:599
+#: CLI/uYTD.pas:619
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:615
+#: CLI/uYTD.pas:635
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:626
+#: CLI/uYTD.pas:646
 msgid "Incorrect answer."
 msgstr ""
 
@@ -1415,9 +1443,9 @@ msgid "Automatically convert with"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:86
-#: GUI/guiOptions.pas:143
-#: GUI/guiOptions.pas:145
+#: GUI/guiOptions.pas:87
+#: GUI/guiOptions.pas:144
+#: GUI/guiOptions.pas:146
 msgid "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
 "To protect your privacy, the program will now ask you\n"
@@ -1426,7 +1454,7 @@ msgid "This is the first time you are running the GUI version\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:94
+#: GUI/guiOptions.pas:95
 msgid "Would you like to run YTD in portable mode?\n"
 "\nIn portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
@@ -1437,7 +1465,7 @@ msgid "Would you like to run YTD in portable mode?\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:106
+#: GUI/guiOptions.pas:107
 msgid "Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
 "\nIn order to perform the check, YTD's server must\n"
@@ -1453,25 +1481,25 @@ msgid "Would you like YTD to check for new versions\n"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:109
+#: GUI/guiOptions.pas:110
 msgid "Change container to .AVI"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:112
+#: GUI/guiOptions.pas:113
 msgid "Convert movie to AVI/XVID"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:115
+#: GUI/guiOptions.pas:116
 msgid "Convert movie to AVI/H264"
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:119
+#: GUI/guiOptions.pas:120
 #. {$ENDIF}
-#: GUI/guiOptions.pas:152
-#: GUI/guiOptions.pas:154
+#: GUI/guiOptions.pas:153
+#: GUI/guiOptions.pas:155
 msgid "Error loading configuration file. Error %s:\n"
 "%s\n"
 "Default config file will be created."
@@ -1489,6 +1517,17 @@ msgstr ""
 #. Label "Newest version:"
 #: GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
+msgstr ""
+
+#. Programmer's name for it: re7zListStart
+#: Lib/Pepak/uSystem.pas:481
+msgid "^-{10}[- ]+$"
+msgstr ""
+
+#. Programmer's name for it: re7zListItem
+#: Lib/Pepak/uSystem.pas:482
+msgid "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) "
+"([.DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
 msgstr ""
 
 #. error code, error code, error message

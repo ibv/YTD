@@ -34,78 +34,93 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downCeskeDrahy;
-{$INCLUDE 'ytd.inc'}
+unit uGUID;
+
+{$DEFINE DYNAMIC}
 
 interface
 
+{$IFDEF DYNAMIC}
 uses
-  SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  Windows;
+{$ENDIF}
 
 type
-  TDownloader_CeskeDrahy = class(THttpDownloader)
-    private
-    protected
-      function GetMovieInfoUrl: string; override;
-    public
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
-    end;
+  RPC_STATUS = integer;
+
+const
+  RPC_S_OK = 0;
+
+{$IFDEF DYNAMIC}
+
+  type
+    TUuidCreate = function (var Uuid: TGUID): RPC_STATUS; stdcall;
+    TUuidToString = function (Uuid: PGUID; out StringUuid: PChar): RPC_STATUS; stdcall;
+
+  var
+    UuidCreate: TUuidCreate;
+    UuidToString: TUuidToString;
+
+{$ELSE}
+
+  {$EXTERNALSYM UuidCreate}
+  function UuidCreate(var Uuid: TGUID): RPC_STATUS; stdcall;
+  {$EXTERNALSYM UuidToString}
+  function UuidToString(Uuid: PGUID; out StringUuid: PChar): RPC_STATUS; stdcall;
+
+{$ENDIF}
+
+function GenerateUuid: string;
 
 implementation
 
-uses
-  uStringConsts,
-  uDownloadClassifier,
-  uMessages;
-
-// http://www.cd.cz/tv/aktuality/727_stroj-casu-ano-je-to-vlak
 const
-  URLREGEXP_BEFORE_ID = 'cd\.cz/tv/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
-  URLREGEXP_AFTER_ID =  '';
+  LibraryFile = 'rpcrt4.dll';
+  UuidCreateName = 'UuidCreate';
+  UuidToStringName = {$IFDEF UNICODE} 'UuidToStringW' {$ELSE} 'UuidToStringA' {$ENDIF} ;
 
-const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
-  REGEXP_MOVIE_URL =    '\bmovieuid\s*=\s*''(?P<URL>https?://.+?)''';
+{$IFDEF DYNAMIC}
 
-{ TDownloader_CeskeDrahy }
+  var LibraryHandle: THandle;
 
-class function TDownloader_CeskeDrahy.Provider: string;
+{$ELSE}
+
+  function UuidCreate; external LibraryFile name UuidCreateName;
+  function UuidToString; external LibraryFile name UuidToStringName;
+
+{$ENDIF}
+
+function GenerateUuid: string;
+var GUID: TGUID;
+    P: PChar;
 begin
-  Result := 'CD.cz';
-end;
-
-class function TDownloader_CeskeDrahy.UrlRegExp: string;
-begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
-end;
-
-constructor TDownloader_CeskeDrahy.Create(const AMovieID: string);
-begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-end;
-
-destructor TDownloader_CeskeDrahy.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  inherited;
-end;
-
-function TDownloader_CeskeDrahy.GetMovieInfoUrl: string;
-begin
-  Result := 'http://www.cd.cz/tv/' + MovieID;
+  Result := '';
+  if UuidCreate(GUID) = RPC_S_OK then
+    if UuidToString(@GUID, P) = RPC_S_OK then
+      Result := P;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_CeskeDrahy);
+{$IFDEF DYNAMIC}
+  UuidCreate := nil;
+  UuidToString := nil;
+  LibraryHandle := LoadLibrary(LibraryFile);
+  if LibraryHandle <> 0 then
+    begin
+    @UuidCreate := GetProcAddress(LibraryHandle, UuidCreateName);
+    @UuidToString := GetProcAddress(LibraryHandle, UuidToStringName);
+    end;
+{$ENDIF}
+
+finalization
+{$IFDEF DYNAMIC}
+  @UuidCreate := nil;
+  @UuidToString := nil;
+  if LibraryHandle <> 0 then
+    begin
+    FreeLibrary(LibraryHandle);
+    LibraryHandle := 0;
+    end;
+{$ENDIF}
 
 end.

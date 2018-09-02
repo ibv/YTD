@@ -49,6 +49,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function CreateHttp: THttpSend; override;
       {$IFDEF SUBTITLES}
     public
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,7 +67,7 @@ implementation
 uses
   uStringConsts,
   {$IFDEF SUBTITLES}
-  uStringUtils,
+  uStrings,
   uAMF,
   {$ENDIF}
   uDownloadClassifier,
@@ -157,6 +158,12 @@ begin
     end;
 end;
 {$ENDIF}
+
+function TDownloader_OverStream.CreateHttp: THttpSend;
+begin
+  Result := inherited CreateHttp;
+  Result.Timeout := 900000; // Overstream is VERY SLOW
+end;
 
 initialization
   RegisterDownloader(TDownloader_OverStream);

@@ -48,12 +48,18 @@ uses
     {$ENDIF}
   {$ENDIF}
   SynaCode, SynaUtil,
-  uFunctions, uDownloadList, uMessages, uStringUtils, uOptions;
+  uFunctions, uDownloadList, uMessages, uStrings, uOptions;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 function IsHttpProtocol(const Url: string): boolean;
 procedure NewVersionFound(Options: TYTDOptions; const Url: string; OwnerHandle: THandle);
+
+{$IFDEF SINGLEINSTANCE}
+procedure RegisterMainInstance(const MainFormHandle: THandle);
+procedure UnregisterMainInstance(const MainFormHandle: THandle);
+function FindMainInstance(out MainFormHandle: THandle): boolean;
+{$ENDIF}
 
 implementation
 
@@ -128,5 +134,126 @@ begin
     {$ENDIF}
     Run(Url, OwnerHandle);
 end;
+
+{$IFDEF SINGLEINSTANCE}
+
+const
+  MAXIMUM_INSTANCE_COUNT = 256;
+
+type
+  TInstanceInfo = packed record
+    Count: integer;
+    MainFormHandles: array[0..MAXIMUM_INSTANCE_COUNT-1] of THandle;
+    end;
+  PInstanceInfo = ^TInstanceInfo;
+  
+var
+  InstanceMappingHandle: THandle = 0;
+  InstanceInfo: PInstanceInfo = nil;
+
+function GetInstanceMutex(out Mutex: THandle): boolean;
+var
+  MutexName: string;
+begin
+  Result := False;
+  MutexName := StringReplace(ParamStr(0), '\', '/', [rfReplaceAll]) + ('*mutex' + {$IFDEF WIN64} '*x64' {$ELSE} '*x32' {$ENDIF} );
+  Mutex := CreateMutex(nil, True, PChar(MutexName));
+  if Mutex <> 0 then
+    if WaitForSingleObject(Mutex, 1000) = WAIT_FAILED then
+      begin
+      ReleaseMutex(Mutex);
+      CloseHandle(Mutex);
+      end
+    else
+      Result := True;
+end;
+
+procedure RegisterMainInstance(const MainFormHandle: THandle);
+var
+  Dummy, Mutex: THandle;
+begin
+  if (MainFormHandle = INVALID_HANDLE_VALUE) or (MainFormHandle = 0) then
+    Exit;
+  FindMainInstance(Dummy);
+  if InstanceInfo <> nil then
+    if GetInstanceMutex(Mutex) then
+      try
+        if InstanceInfo^.Count < MAXIMUM_INSTANCE_COUNT then
+          begin
+          InstanceInfo^.MainFormHandles[InstanceInfo^.Count] := MainFormHandle;
+          InstanceInfo^.Count := Succ(InstanceInfo^.Count);
+          end;
+      finally
+        ReleaseMutex(Mutex);
+        CloseHandle(Mutex);
+        end;
+end;
+
+procedure UnregisterMainInstance(const MainFormHandle: THandle);
+var
+  Mutex: THandle;
+  i: integer;
+begin
+  if (MainFormHandle = INVALID_HANDLE_VALUE) or (MainFormHandle = 0) then
+    Exit;
+  if InstanceInfo <> nil then
+    if GetInstanceMutex(Mutex) then
+      try
+        for i := 0 to Pred(InstanceInfo^.Count) do
+          if InstanceInfo^.MainFormHandles[i] = MainFormHandle then
+            begin
+            InstanceInfo^.MainFormHandles[i] := 0;
+            Break;
+            end;
+      finally
+        ReleaseMutex(Mutex);
+        CloseHandle(Mutex);
+        end;
+end;
+
+function FindMainInstance(out MainFormHandle: THandle): boolean;
+var
+  MappingName: string;
+  Mutex: THandle;
+  i: integer;
+begin
+  Result := False;
+  if InstanceMappingHandle = 0 then
+    begin
+    InstanceInfo := nil;
+    MappingName := StringReplace(ParamStr(0), '\', '/', [rfReplaceAll]) + ('*mapping' + {$IFDEF WIN64} '*x64' {$ELSE} '*x32' {$ENDIF} );
+    InstanceMappingHandle := CreateFileMapping(INVALID_HANDLE_VALUE, nil, PAGE_READWRITE, 0, Sizeof(TInstanceInfo), PChar(MappingName));
+    if InstanceMappingHandle <> 0 then
+      InstanceInfo := MapViewOfFile(InstanceMappingHandle, FILE_MAP_ALL_ACCESS, 0, 0, Sizeof(TInstanceInfo));
+    end;
+  if InstanceInfo <> nil then
+    if GetInstanceMutex(Mutex) then
+      try
+        for i := 0 to Pred(InstanceInfo^.Count) do
+          if InstanceInfo^.MainFormHandles[i] <> 0 then
+            begin
+            MainFormHandle := InstanceInfo^.MainFormHandles[i];
+            Result := True;
+            Break;
+            end;
+      finally
+        ReleaseMutex(Mutex);
+        CloseHandle(Mutex);
+        end;
+end;
+
+{$ENDIF}
+
+initialization
+
+finalization
+  {$IFDEF SINGLEINSTANCE}
+    if InstanceInfo <> nil then
+      if UnmapViewOfFile(InstanceInfo) then
+        InstanceInfo := nil;
+    if InstanceMappingHandle <> INVALID_HANDLE_VALUE then
+      if CloseHandle(InstanceMappingHandle) then
+        InstanceMappingHandle := INVALID_HANDLE_VALUE;
+  {$ENDIF}
 
 end.

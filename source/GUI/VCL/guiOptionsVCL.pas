@@ -123,10 +123,14 @@ implementation
 
 {$R *.DFM}
 
-{$IFDEF CONVERTERS}
 uses
-  guiConverterVCL;
-{$ENDIF}
+  {$IFDEF CONVERTERS}
+    guiConverterVCL,
+  {$ENDIF}
+  {$IFDEF SETUP}
+    uSetup,
+  {$ENDIF}
+  guiConsts;
 
 procedure TFormOptions.FormCreate(Sender: TObject);
 begin
@@ -318,12 +322,12 @@ end;
 
 procedure TFormOptions.actDesktopShortcutExecute(Sender: TObject);
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), StandardShortcutParams);
 end;
 
 procedure TFormOptions.actStartMenuShortcutExecute(Sender: TObject);
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), StandardShortcutParams);
 end;
 
 procedure TFormOptions.ShowDownloaderOptionsPage(Index: integer);

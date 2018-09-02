@@ -37,6 +37,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit downMojeVideoSk;
 {$INCLUDE 'ytd.inc'}
 
+{
+  MojeVideo.sk pouziva heslo, ktere se najde ve funkci buildSecureURL.
+}
+
 interface
 
 uses

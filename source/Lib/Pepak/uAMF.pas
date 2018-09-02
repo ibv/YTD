@@ -47,7 +47,7 @@ interface
 uses
   SysUtils, Classes,
   {$IFDEF VARIANTS} {$IFDEF DELPHI6_UP} Variants, {$ENDIF} {$ENDIF}
-  uCompatibility, uStringUtils;
+  uCompatibility, uStrings;
 
 {$IFNDEF VARIANTS}
 const

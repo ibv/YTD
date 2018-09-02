@@ -63,7 +63,6 @@ uses
   {$IFDEF SETUP}
   uSetup in 'Common\uSetup.pas',
   {$ENDIF}
-  uXml in 'Common\uXml.pas',
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
   uCommonDownloader in 'Base\uCommonDownloader.pas',
@@ -346,8 +345,10 @@ uses
   downVideoClipsDump in 'Downloaders\downVideoClipsDump.pas',
   downVideoNurKz in 'Downloaders\downVideoNurKz.pas',
   downVideoPortalSfTV in 'Downloaders\downVideoPortalSfTV.pas',
+  downVideoPortalSK in 'Downloaders\downVideoPortalSK.pas',
   downVideoTiscaliCZ in 'Downloaders\downVideoTiscaliCZ.pas',
   downVideu in 'Downloaders\downVideu.pas',
+  downViki in 'Downloaders\downViki.pas',
   downVimeo in 'Downloaders\downVimeo.pas',
   downVimeo_Embed in 'Downloaders\downVimeo_Embed.pas',
   downVitalMtb in 'Downloaders\downVitalMtb.pas',
@@ -433,8 +434,13 @@ uses
       // Download only works for logged-in users
     downNova in 'Downloaders\Non-working\downNova.pas',
       // Free service no longer available
-      guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
-      guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
+      {$IFDEF GUI}
+        {$IFDEF GUI_WINAPI}
+          guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
+        {$ELSE}
+          guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
+        {$ENDIF}
+      {$ENDIF}
     downTipovani in 'Downloaders\Non-working\downTipovani.pas',
       // Some transformation of movie ID is needed
     downWat in 'Downloaders\Non-working\downWat.pas',

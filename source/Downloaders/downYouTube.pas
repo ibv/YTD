@@ -111,7 +111,7 @@ implementation
 
 uses
   uStringConsts,
-  uStringUtils,
+  uStrings,
   uDownloadClassifier,
   uHttpDirectDownloader, uRtmpDirectDownloader, rtmpdump_dll,
   {$IFDEF SUBTITLES}
@@ -408,46 +408,48 @@ begin
 end;
 
 function TDownloader_YouTube.GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
-var QualityIndex, MaxVideoQuality, MaxAudioQuality, Width, Height: integer;
-    VideoQuality, AudioQuality: integer;
-    VideoFormat, Ext: string;
+var
+  QualityIndex, MaxVideoQuality, MaxAudioQuality, Width, Height: integer;
+  VideoQuality, AudioQuality: integer;
+  sAudioQuality, sWidth, sHeight, VideoFormat, Ext: string;
+  b: boolean;
 begin
   Result := '';
   MaxVideoQuality := 0;
   MaxAudioQuality := 0;
-  if FormatListRegExp.Match(FormatList) then
-    repeat
-      //VideoQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('VIDEOQUALITY'), 0);
-      AudioQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('AUDIOQUALITY'), 0);
-      Width := StrToIntDef(FormatListRegExp.SubexpressionByName('WIDTH'), 0);
-      Height := StrToIntDef(FormatListRegExp.SubexpressionByName('HEIGHT'), 0);
-      VideoFormat := FormatListRegExp.SubexpressionByName('FORMAT');
-      // Now use these values to calculate quality
-      Ext := GetVideoFormatExt(VideoFormat);
-      if Ext = EXTENSION_MP4 then
-        QualityIndex := 100
-      else if Ext = EXTENSION_WEBM then
-        if AvoidWebM then
-          QualityIndex := 1
-        else
-          QualityIndex := 80
-      else if Ext = EXTENSION_FLV then
-        QualityIndex := 60
-      else if Ext = EXTENSION_3GP then
-        QualityIndex := 40
+  b := GetRegExpVars(FormatListRegExp, FormatList, ['AUDIOQUALITY', 'WIDTH', 'HEIGHT', 'FORMAT'], [@sAudioQuality, @sWidth, @sHeight, @VideoFormat]);
+  while b do
+    begin
+    AudioQuality := StrToIntDef(sAudioQuality, 0);
+    Width := StrToIntDef(sWidth, 0);
+    Height := StrToIntDef(sHeight, 0);
+    // Now use these values to calculate quality
+    Ext := GetVideoFormatExt(VideoFormat);
+    if Ext = EXTENSION_MP4 then
+      QualityIndex := 100
+    else if Ext = EXTENSION_WEBM then
+      if AvoidWebM then
+        QualityIndex := 1
       else
-        QualityIndex := 20;
-      VideoQuality := Width * Height * QualityIndex;
-      AudioQuality := AudioQuality * QualityIndex;
-      if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
-        if (Width <= MaxWidth) or (MaxWidth <= 0) then
-          if (Height <= MaxHeight) or (MaxHeight <= 0) then
-            begin
-            MaxVideoQuality := VideoQuality;
-            MaxAudioQuality := AudioQuality;
-            Result := VideoFormat;
-            end;
-    until not FormatListRegExp.MatchAgain;
+        QualityIndex := 80
+    else if Ext = EXTENSION_FLV then
+      QualityIndex := 60
+    else if Ext = EXTENSION_3GP then
+      QualityIndex := 40
+    else
+      QualityIndex := 20;
+    VideoQuality := Width * Height * QualityIndex;
+    AudioQuality := AudioQuality * QualityIndex;
+    if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
+      if (Width <= MaxWidth) or (MaxWidth <= 0) then
+        if (Height <= MaxHeight) or (MaxHeight <= 0) then
+          begin
+          MaxVideoQuality := VideoQuality;
+          MaxAudioQuality := AudioQuality;
+          Result := VideoFormat;
+          end;
+    b := GetRegExpVarsAgain(FormatListRegExp, ['AUDIOQUALITY', 'WIDTH', 'HEIGHT', 'FORMAT'], [@sAudioQuality, @sWidth, @sHeight, @VideoFormat]);
+    end;
 end;
 
 function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

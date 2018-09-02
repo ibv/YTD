@@ -132,6 +132,7 @@ begin
         MovieUrl := Url;
         SetPrepared(True);
         Result := True;
+        Break;
         end;
       end;
     end;

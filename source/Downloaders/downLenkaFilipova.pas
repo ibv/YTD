@@ -64,6 +64,7 @@ uses
   uMessages;
 
 // http://www.lenkafilipova.cz/lf/kytarova_skola18.html
+// Pozn.: Lekce 11, 14 a 15 nejdou a nepujdou, protoze jsou ve zdrojaku stranek zadane blbe. Prohlizec je zobrazi, ale ja ne.
 const
   URLREGEXP_BEFORE_ID = 'lenkafilipova\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;

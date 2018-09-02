@@ -112,27 +112,28 @@ begin
 end;
 
 function TDownloader_StudioPlus.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Title, Part: string;
+var
+  Title: string;
+  Part: TStringArray;
+  i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := Prepared;
   if Result then
-    if TitlePartsRegExp.Match(Name) then
+    if GetRegExpAllVar(TitlePartsRegExp, Name, 'PART', Part) then
       begin
       Title := '';
-      repeat
-        Part := Trim(TitlePartsRegExp.SubexpressionByName('PART'));
-        if Part <> '' then
+      for i := 0 to Pred(Length(Part)) do
+        if Part[i] <> '' then
           if Title = '' then
-            if Part = 'Hlavní stránka' then
+            if Part[i] = 'Hlavní stránka' then
               begin
               // Skip it
               end
             else
-              Title := Part
+              Title := Part[i]
           else
-            Title := Title + ' - ' + Part;
-      until not TitlePartsRegExp.MatchAgain;
+            Title := Title + ' - ' + Part[i];
       if Title <> '' then
         SetName(Title);
       end;
