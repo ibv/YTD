@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.95                                     (c) 2009-11 Pepak
+YouTube Downloader v0.96                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -16,6 +16,7 @@ Provider            | Protocol | Notes | URL(s)
 ------------------------------------------------------------------------------
 123Video.nl         | HTTP     |       | http://www.123video.nl/playvideos.asp?MovieID=949808
 1hd.ro              | RTMP     |       | http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
+4tv.cz              | HTTP     |       | http://4tv.cz/serialy/simpsonovi-1989/s01e01/8
 5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 Agresori.com        | HTTP     |       | http://www.agresori.com/13913-zkurvene-naledi.html
 Aktualne.cz         | HTTP     |       | http://aktualne.centrum.cz/video/?id=316586
@@ -236,6 +237,7 @@ Video.Google.com    | HTTP     |       | http://video.google.com/googleplayer.sw
                     |          |       | http://video.google.com/videoplay?docid=-9077214414651731007&ei=y-8dS-n9JZ6q2wK7o-CRCA
 Video.Tiscali.cz    | HTTP     |       | http://video.tiscali.cz/the-duty-calls-trailer-283 
 VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
+VideoBB.com         | HTTP     |       | http://www.videobb.com/video/oh53koNnCV5S
 VideoClipsDump.com  | HTTP     |       | http://www.videoclipsdump.com/media/1951/Karate_Fail/
 VideoPortal.sf.tv   | RTMP     |       | http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
 Videu.de            | HTTP     |       | http://www.videu.de/video/4etN3FlaaY

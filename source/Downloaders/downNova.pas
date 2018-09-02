@@ -268,6 +268,7 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
+        InfoXml.SaveToFile('1.xml');
         if (not GetXmlVar(InfoXml, 'status', Status)) or (Status <> 'Ok') then
           SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
         else if not GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then
@@ -279,7 +280,7 @@ begin
             if Node[i].Name = 'media' then
               if GetXmlVar(Node[i], 'url', Url) then
                 if GetXmlVar(Node[i], 'quality', Quality) then
-                  if (LowQuality and (Quality = 'flv')) or ((not LowQuality) and (Quality = 'mp4')) then
+                  if (LowQuality and (Quality = 'lq')) or ((not LowQuality) and (Quality = 'hq')) then
                     begin
                     MovieUrl := Url;
                     Self.RtmpUrl := BaseUrl;

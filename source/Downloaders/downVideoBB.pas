@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxXHamster;
+unit downVideoBB;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,13 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_XHamster = class(THttpDownloader)
+  TDownloader_VideoBB = class(THttpDownloader)
     private
     protected
-      MovieServerRegExp: TRegExp;
-      MovieFileNameRegExp: TRegExp;
+      MovieParamsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -64,73 +64,84 @@ implementation
 
 uses
   uStringConsts,
+  uJSON, uLkJSON,
   uDownloadClassifier,
   uMessages;
 
+// http://www.videobb.com/video/oh53koNnCV5S
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*xhamster\.com/movies/';
-  URLREGEXP_ID =        '[0-9]+/.*';
+  URLREGEXP_BEFORE_ID = 'videobb\.com/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
-  REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[^'']+)';
+  REGEXP_MOVIE_TITLE =  '<meta\s+content="(?:videobb\s*-\s*)?(?P<TITLE>[^"]*)"\s*name="title"';
+  REGEXP_MOVIE_PARAMS = '<param\s+value="setting=(?<PARAM>[^"]*)"\s+name="FlashVars"';
 
-{ TDownloader_XHamster }
+{ TDownloader_VideoBB }
 
-class function TDownloader_XHamster.Provider: string;
+class function TDownloader_VideoBB.Provider: string;
 begin
-  Result := 'XHamster.com';
+  Result := 'VideoBB.com';
 end;
 
-class function TDownloader_XHamster.UrlRegExp: string;
+class function TDownloader_VideoBB.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_XHamster.Create(const AMovieID: string);
+constructor TDownloader_VideoBB.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUnknown;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
-  MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME);
+  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
 end;
 
-destructor TDownloader_XHamster.Destroy;
+destructor TDownloader_VideoBB.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieServerRegExp);
-  RegExFreeAndNil(MovieFileNameRegExp);
+  RegExFreeAndNil(MovieParamsRegExp);
   inherited;
 end;
 
-function TDownloader_XHamster.GetMovieInfoUrl: string;
+function TDownloader_VideoBB.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.xhamster.com/movies/' + MovieID;
+  Result := 'http://www.videobb.com/video/' + MovieID;
 end;
 
-function TDownloader_XHamster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Server, FileName: string;
+function TDownloader_VideoBB.GetFileNameExt: string;
+begin
+  Result := '.flv';
+end;
+
+function TDownloader_VideoBB.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Param: string;
+  Settings: TJSON;
+  JsonUrl: TJSONNode;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['file']))
-  else if not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
+  if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAM', Param) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, Base64Decode(Param), Page) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     begin
-    MovieUrl := Server + '/key=' + FileName;
-    SetPrepared(True);
-    Result := True;
+    Settings := JSONCreate(Page);
+    if not JSONNodeByPath(Settings, 'settings/res/0/u', JsonUrl) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieUrl := Base64Decode(JsonUrl.Value);
+      SetPrepared(True);
+      Result := True;
+      end;
     end;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_XHamster);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_VideoBB);
 
 end.

@@ -72,7 +72,6 @@ type
       procedure SetSwfVfy(const Value: string);
       procedure SetTcUrl(const Value: string);
     protected
-      procedure SetOptions(const Value: TYTDOptions); override;
       procedure ClearRtmpDumpOptions; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function IndexOfRtmpDumpOption(ShortOption: char; out Index: integer): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRtmpDumpOption(ShortOption: char): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -328,6 +327,7 @@ end;
 function TRtmpDownloader.Prepare: boolean;
 begin
   ClearRtmpDumpOptions;
+  Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
   Result := inherited Prepare;
 end;
 
@@ -422,12 +422,6 @@ begin
       FreeAndNil(L);
       end;
     end;
-end;
-
-procedure TRtmpDownloader.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
 end;
 
 end.

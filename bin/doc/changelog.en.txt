@@ -1,11 +1,33 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.95                                     (c) 2009-11 Pepak
+YouTube Downloader v0.96                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.96:
+
+    * New providers:
+      - 4TV.cz
+      - VideoBB.com
+
+    * CeskaTelevize.cz: 
+      - The downloder didn't respect the "Live Stream" setting, which lead to
+        unnecessarily jerky playback.
+      - Cleaned up the detected video name.
+      - Support for CT24 pages with multiple videos. Unfortunately, right now
+        these get downloaded into the same-named file (so don't use the "skip"
+        or "always" overwrite modes).
+
+    * iPrima.cz: Updated to match current page code.
+
+    * Nova.cz: Updated to match current page code.
+
+    * XHamster.xom: Updated to match current page code.
+
+
 
   v0.95:
 

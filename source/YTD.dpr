@@ -144,6 +144,7 @@ uses
   // Downloaders
   down123VideoNL in 'Downloaders\down123VideoNL.pas',
   down1hdRo in 'Downloaders\down1hdRo.pas',
+  down4TV in 'Downloaders\down4TV.pas',
   down5min in 'Downloaders\down5min.pas',
   downAgresori in 'Downloaders\downAgresori.pas',
   downAktualne in 'Downloaders\downAktualne.pas',
@@ -327,6 +328,7 @@ uses
   downVeeHD in 'Downloaders\downVeeHD.pas',
   downVideaCesky in 'Downloaders\downVideaCesky.pas',
   downVideoAlbumyAzet in 'Downloaders\downVideoAlbumyAzet.pas',
+  downVideoBB in 'Downloaders\downVideoBB.pas',
   downVideoClipsDump in 'Downloaders\downVideoClipsDump.pas',
   downVideoPortalSfTV in 'Downloaders\downVideoPortalSfTV.pas',
   downVideoTiscaliCZ in 'Downloaders\downVideoTiscaliCZ.pas',
@@ -404,6 +406,7 @@ uses
   {$ENDIF}
   // Playlist handlers
   listBlipTV in 'Playlists\listBlipTV.pas',
+  listCT in 'Playlists\listCT.pas',
   listGameAnyone in 'Playlists\listGameAnyone.pas',
   listHTML in 'Playlists\listHTML.pas',
   listHTMLfile in 'Playlists\listHTMLfile.pas',

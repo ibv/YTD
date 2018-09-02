@@ -78,6 +78,7 @@ resourcestring
   ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE = 'Failed to prepare media info page.';
   ERR_INVALID_MEDIA_INFO_PAGE = 'Invalid media info page.';
   ERR_FAILED_TO_DOWNLOAD_SERVER_LIST = 'Failed to download server list.';
+  ERR_UNKNOWN_URL = 'Unknown URL: %s';
 
   ERR_FAILED_TO_LOCATE_MEDIA_INFO = 'Failed to locate media info.';
   ERR_FAILED_TO_LOCATE_MEDIA_TITLE = 'Failed to find media title.';

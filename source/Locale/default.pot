@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-10-18 18:11\n"
-"PO-Revision-Date: 2011-10-18 18:11\n"
+"POT-Creation-Date: 2011-11-14 19:46\n"
+"PO-Revision-Date: 2011-11-14 19:46\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -573,8 +573,8 @@ msgstr ""
 msgid "&Convert subtitles to .SRT format"
 msgstr ""
 
-#. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..CheckLiveStream..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:11
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
 msgid "&Live stream mode (much slower, but more "
 "stable)"
 msgstr ""
@@ -1131,96 +1131,103 @@ msgstr ""
 msgid "Failed to download server list."
 msgstr ""
 
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#: Common/uMessages.pas:81
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#: Common/uMessages.pas:81
+msgid "Unknown URL: %s"
+msgstr ""
+
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:83
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:83
 msgid "Failed to locate media info."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:84
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:84
 msgid "Failed to find media title."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:85
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:85
 msgid "Failed to find media URL."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:86
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:86
 msgid "Failed to find media server."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:86
+#: Common/uMessages.pas:87
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:86
+#: Common/uMessages.pas:87
 msgid "Failed to find media stream."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:89
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:89
 msgid "HTTP request failed with error code "
 "%d."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:90
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:90
 msgid "No data read from the connection."
 msgstr ""
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:92
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:92
 msgid "Variable \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:93
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:93
 msgid "Error message listed in file \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:93
+#: Common/uMessages.pas:94
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:93
+#: Common/uMessages.pas:94
 msgid "Media file was removed from the server."
 msgstr ""
 
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:94
+#: Common/uMessages.pas:95
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:94
+#: Common/uMessages.pas:95
 msgid "Server returned an error: %s"
 msgstr ""
 
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:95
+#: Common/uMessages.pas:96
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:95
+#: Common/uMessages.pas:96
 msgid "Invalid configuration: Secure token not "
 "set."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:98
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:98
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr ""
 

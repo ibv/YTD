@@ -53,6 +53,8 @@ type
       PlayListItemRegExp: TRegExp;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure FindPlaylistItems(var Page: string; PageXml: TXmlDoc; Http: THttpSend); virtual;
+      procedure FindPlaylistItemsByRegExp(RegExp: TRegExp; var Page: string; PageXml: TXmlDoc; Http: THttpSend); virtual;
       function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; virtual;
       function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; virtual;
       function GetItemCount: integer; virtual;
@@ -137,28 +139,39 @@ begin
   Result := Match.SubexpressionByName('URL');
 end;
 
-function TPlayListDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+procedure TPlaylistDownloader.FindPlaylistItems(var Page: string; PageXml: TXmlDoc; Http: THttpSend);
+begin
+  FindPlaylistItemsByRegExp(PlayListItemRegExp, Page, PageXml, Http);
+end;
+
+procedure TPlaylistDownloader.FindPlaylistItemsByRegExp(RegExp: TRegExp; var Page: string; PageXml: TXmlDoc; Http: THttpSend);
 var Url: string;
     i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if PlayListItemRegExp <> nil then
-    if not PlayListItemRegExp.Match(Page) then
+  if RegExp <> nil then
+    if not RegExp.Match(Page) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       i := 0;
       repeat
-        Url := GetPlayListItemURL(PlayListItemRegExp, i);
+        Url := GetPlayListItemURL(RegExp, i);
         if (Url <> '') and (UrlList.IndexOf(Url) < 0) then
           begin
           UrlList.Add(Url);
-          NameList.Add(GetPlayListItemName(PlayListItemRegExp, i));
+          NameList.Add(GetPlayListItemName(RegExp, i));
           end;
         Inc(i);
-      until not PlayListItemRegExp.MatchAgain;
+      until not RegExp.MatchAgain;
       end;
+end;
+
+function TPlayListDownloader.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  UrlList.Clear;
+  FindPlaylistItems(Page, PageXml, Http);
   if UrlList.Count <= 0 then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else

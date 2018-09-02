@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.62\n"
-"POT-Creation-Date: 2011-10-18 18:11\n"
-"PO-Revision-Date: 2011-10-18 18:13+0100\n"
+"POT-Creation-Date: 2011-11-14 19:46\n"
+"PO-Revision-Date: 2011-11-14 19:48+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -571,8 +571,8 @@ msgstr "Secure &Token:"
 msgid "&Convert subtitles to .SRT format"
 msgstr "&Konvertovat titulky do formátu .SRT"
 
-#. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..CheckLiveStream..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:11
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
 msgid "&Live stream mode (much slower, but more stable)"
 msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
 
@@ -1103,81 +1103,87 @@ msgstr "Chybná stránka informací o médiu."
 msgid "Failed to download server list."
 msgstr "Nepodařilo se stáhnout seznam serverů."
 
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#: Common/uMessages.pas:81
+msgid "Unknown URL: %s"
+msgstr "Neznámá URL: %s"
+
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:83
 msgid "Failed to locate media info."
 msgstr "Nepodařilo se najít informace o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:84
 msgid "Failed to find media title."
 msgstr "Nepodařilo se najít název média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:85
 msgid "Failed to find media URL."
 msgstr "Nepodařilo se najít adresu média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:86
 msgid "Failed to find media server."
 msgstr "Nepodařilo se najít server média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:86
+#: Common/uMessages.pas:87
 msgid "Failed to find media stream."
 msgstr "Nepodařilo se najít stream média."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:89
 msgid "HTTP request failed with error code %d."
 msgstr "HTTP požadavek selhal s chybou %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:90
 msgid "No data read from the connection."
 msgstr "Nepodařilo se přečíst žádná data."
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:92
 msgid "Variable \"%s\" not found."
 msgstr "Proměnná \"%s\" nebyla nalezena."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:93
 msgid "Error message listed in file \"%s\"."
 msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:93
+#: Common/uMessages.pas:94
 msgid "Media file was removed from the server."
 msgstr "Soubor byl ze serveru smazán."
 
 #. Programmer's name for it: ERR_SERVER_ERROR
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:94
+#: Common/uMessages.pas:95
 msgid "Server returned an error: %s"
 msgstr "Server hlásí chybu: %s"
 
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:95
+#: Common/uMessages.pas:96
 msgid "Invalid configuration: Secure token not set."
 msgstr "Chybné nastavení: SecureToken není nastaven."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:98
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 

@@ -64,9 +64,6 @@ type
       {$ENDIF}
     protected
       MovieObjectRegExp: TRegExp;
-      EmbeddedFrameRegExp: TRegExp;
-      JavascriptPlayerRegExp: TRegExp;
-      VideoPlayerUrlRegExp: TRegExp;
       Extension: string;
     protected
       procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
@@ -108,15 +105,12 @@ uses
 // http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/?online=1
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        '^https?://(?:[a-z0-9-]+\.)*(?:ceskatelevize|ct24)\.cz/.+';
+  URLREGEXP_ID =        '^https?://(?:[a-z0-9-]+\.)*(?:ceskatelevize|ct24)\.cz/(?!ct24/).+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*&mdash;\s*iVysílání)?(?:\s*&mdash;\s*Ceská televize)?\s*</title>';
+  REGEXP_MOVIE_TITLE = '<title>(?:\s*Video\s*&mdash;\s*)?(?P<TITLE>.*?)(?:\s*&mdash;\s*iVysílání)?(?:\s*&mdash;\s*(?:&#268;|È|C)esk(?:&aacute;|á) televize)?\s*</title>';
   REGEXP_MOVIE_OBJECT = '\bcallSOAP\s*\(\s*(?P<OBJECT>.*?)\s*\)\s*;';
-  REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
-  REGEXP_JS_PLAYER = '<a\s+href="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+id="videoPlayer_';
-  REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>https?:.+?)"';
 
 { TDownloader_CT }
 
@@ -143,9 +137,6 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT);
-  EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
-  JavascriptPlayerRegExp := RegExCreate(REGEXP_JS_PLAYER);
-  VideoPlayerUrlRegExp := RegExCreate(REGEXP_VIDEOPLAYERURL);
   {$IFDEF MULTIDOWNLOADS}
   fStreams := TStringList.Create;
   fBaseUrls := TStringList.Create;
@@ -156,9 +147,6 @@ destructor TDownloader_CT.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieObjectRegExp);
-  RegExFreeAndNil(EmbeddedFrameRegExp);
-  RegExFreeAndNil(JavascriptPlayerRegExp);
-  RegExFreeAndNil(VideoPlayerUrlRegExp);
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fStreams);
   FreeAndNil(fBaseUrls);
@@ -177,34 +165,8 @@ begin
 end;
 
 function TDownloader_CT.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
-var Host, Path, Url, NewPage, Param: string;
 begin
   Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJECT', MovieObject);
-  if not Result then
-    begin
-    Url := '';
-    if GetRegExpVars(EmbeddedFrameRegExp, Page, ['HOST', 'PATH'], [@Host, @Path]) then
-      begin
-      if Host = '' then
-        Host := ExtractUrlRoot(MovieID);
-      Path := HtmlDecode(Path);
-      Path := StringReplace(Path, '&autoStart=false', '', [rfReplaceAll]);
-      Path := StringReplace(Path, ' ', '%20', [rfReplaceAll]);
-      Url := Host + Path;
-        // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
-      end
-    else if GetRegExpVar(JavascriptPlayerRegExp, Page, 'PARAM', Param) then
-      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + UrlEncode(PARAM), HTTP_FORM_URLENCODING, NewPage) then
-        if GetRegExpVar(VideoPlayerUrlRegExp, NewPage, 'URL', Url) then
-          Url := StripSlashes(Url);
-    if Url <> '' then
-      if DownloadPage(Http, Url, NewPage, InfoPageEncoding) then
-        if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
-          begin
-          Page := NewPage;
-          Result := True;
-          end;
-    end;
 end;
 
 function TDownloader_CT.ConvertMovieObject(var Data: string): boolean;
