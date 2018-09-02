@@ -37,9 +37,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit downAnimacekTv;
 {$INCLUDE 'ytd.inc'}
 
-// Mel by fungovat, ale nedari se mu to. Pritom parametry odpovidaji tomu, co
-// vidi RTMP proxy, kdyz to spustim v browseru. Mozna je problem v RTMPDUMPu
-// samotnem. Bude to chtit zkompilovat nejnovejsi zdrojaky, co to udela.
+{
+  Pouziva token, stejny jako Barrandov
+}
 
 interface
 
@@ -57,6 +57,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -130,6 +131,11 @@ begin
     SetPrepared(True);
     Result := True;
     end;
+end;
+
+class function TDownloader_AnimacekTv.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRequireSecureToken];
 end;
 
 initialization

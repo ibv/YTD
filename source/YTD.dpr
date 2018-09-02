@@ -145,6 +145,7 @@ uses
   downAlternativaTV in 'Downloaders\downAlternativaTV.pas',
   downAncensored in 'Downloaders\downAncensored.pas',
   downAngryAlien in 'Downloaders\downAngryAlien.pas',
+  downAnimacekTv in 'Downloaders\downAnimacekTv.pas',
   downArchive in 'Downloaders\downArchive.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
   downAzetSk in 'Downloaders\downAzetSk.pas',
@@ -460,8 +461,6 @@ uses
     xxxZvraceny in 'Downloaders\XXX\xxxZvraceny.pas',
   {$ENDIF}
   {$IFDEF NONWORKING}
-    downAnimacekTv in 'Downloaders\downAnimacekTv.pas',
-      // Skoro to vypada na problem v te verzi RTMPDUMPu, kterou pouzivam
     downArchivioLuce in 'Downloaders\Non-working\downArchivioLuce.pas',
       // No idea why it doesn't work
     downAutoSalonTV in 'Downloaders\Non-working\downAutoSalonTV.pas',

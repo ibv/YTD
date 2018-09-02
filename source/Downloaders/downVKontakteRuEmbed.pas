@@ -125,8 +125,8 @@ begin
     begin
     for i := 0 to Pred(Length(Quality)) do
       begin
-      Url := Format('%su%s/video/%s.%d.mp4', [Host, UID, VTag, Quality[i]]);
-      if DownloadPage(Http, Url, hmHEAD) then
+      Url := Format('%su%s/videos/%s.%d.mp4', [Host, UID, VTag, Quality[i]]);
+      if DownloadPage(Http, Url, hmHEAD) and (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
         begin
         SetName(HtmlDecode(UrlDecode(Title)));
         MovieUrl := Url;

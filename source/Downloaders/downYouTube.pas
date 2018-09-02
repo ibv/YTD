@@ -56,13 +56,17 @@ uses
   uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
+  TTextDecoderFunction = function(const Text: string): string of object;
+
   TDownloader_YouTube = class(TNestedDownloader)
     private
     protected
       YouTubeConfigRegExp: TRegExp;
       YouTubeConfigJSRegExp: TRegExp;
+      YouTubeConfigJSONRegExp: TRegExp;
       FormatListRegExp: TRegExp;
       FlashVarsParserRegExp: TRegExp;
+      JSONParserRegExp: TRegExp;
       FormatUrlMapRegExp: TRegExp;
       FormatUrlMapVarsRegExp: TRegExp;
       Extension: string;
@@ -75,10 +79,12 @@ type
       function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
       function GetVideoFormatExt(const VideoFormat: string): string;
       function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; out Url: string; out Downloader: TDownloader): boolean;
+      function ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
+      function FlashVarsDecode(const Text: string): string;
+      function JSONVarsDecode(const Text: string): string;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
-      function ProcessFlashVars(Http: THttpSend; const FlashVars: string; out Title, Url: string): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
     public
@@ -132,8 +138,10 @@ const
 const
   REGEXP_EXTRACT_CONFIG = '<embed\b[^>]*\sflashvars="(?P<FLASHVARS>[^"]+)"';
   REGEXP_EXTRACT_CONFIG_JS = '\bflashvars\s*=(?P<QUOTE>\\?["''])(?P<FLASHVARS>.+?)(?P=QUOTE)';
+  REGEXP_EXTRACT_CONFIG_JSON = '\.playerConfig\s*=\s*\{(?P<JSON>.+?)\}\s*;';
   REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
+  REGEXP_JSON_PARSER = REGEXP_PARSER_FLASHVARS_JS;
   REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
   REGEXP_FORMAT_URL_MAP_ITEM = '(?:^|,)(?P<ITEM>.*?)(?:$|(?=,))';
   REGEXP_FORMAT_URL_MAP_VARS = '(?:^|&)(?P<VARNAME>[^=]+)=(?P<VARVALUE>[^&]*)';
@@ -184,8 +192,10 @@ begin
   InfoPageEncoding := peUTF8;
   YouTubeConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG);
   YouTubeConfigJSRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG_JS);
+  YouTubeConfigJSONRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG_JSON);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
+  JSONParserRegExp := RegExCreate(REGEXP_JSON_PARSER);
   FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST);
   FormatUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_ITEM);
   FormatUrlMapVarsRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_VARS);
@@ -200,8 +210,10 @@ destructor TDownloader_YouTube.Destroy;
 begin
   RegExFreeAndNil(YouTubeConfigRegExp);
   RegExFreeAndNil(YouTubeConfigJSRegExp);
+  RegExFreeAndNil(YouTubeConfigJSONRegExp);
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(FlashVarsParserRegExp);
+  RegExFreeAndNil(JSONParserRegExp);
   RegExFreeAndNil(FormatListRegExp);
   RegExFreeAndNil(FormatUrlMapRegExp);
   RegExFreeAndNil(FormatUrlMapVarsRegExp);
@@ -336,7 +348,17 @@ begin
     end;
 end;
 
-function TDownloader_YouTube.ProcessFlashVars(Http: THttpSend; const FlashVars: string; out Title, Url: string): boolean;
+function TDownloader_YouTube.FlashVarsDecode(const Text: string): string;
+begin
+  Result := {$IFDEF UNICODE} string {$ENDIF} (UrlDecode(Text));
+end;
+
+function TDownloader_YouTube.JSONVarsDecode(const Text: string): string;
+begin
+  Result := {$IFDEF UNICODE} string {$ENDIF} (JSDecode(Text));
+end;
+
+function TDownloader_YouTube.ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
 var
   Status, Reason, FmtList, FmtUrlMap, VideoFormat: string;
   D: TDownloader;
@@ -344,7 +366,7 @@ begin
   Result := False;
   Title := '';
   Url := '';
-  if GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap]) then
+  if GetRegExpVarPairs(Parser, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap]) then
     if Status = 'fail' then
       SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
     else if FmtList = '' then
@@ -353,8 +375,8 @@ begin
       SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format-URL Map']))
     else
       begin
-      FmtUrlMap := UrlDecode(FmtUrlMap);
-      VideoFormat := GetBestVideoFormat(UrlDecode(Trim(FmtList)), FmtUrlMap);
+      FmtUrlMap := TextDecoder(FmtUrlMap);
+      VideoFormat := GetBestVideoFormat(TextDecoder(Trim(FmtList)), FmtUrlMap);
       if VideoFormat = '' then
         VideoFormat := '22';
       Extension := GetVideoFormatExt(VideoFormat);
@@ -462,13 +484,16 @@ begin
   Result := False;
   InfoFound := False;
   if DownloadPage(Http, 'http://www.youtube.com/get_video_info?video_id=' + MovieID, FlashVars) then
-    InfoFound := ProcessFlashVars(Http, FlashVars, Title, Url);
+    InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, FlashVars, Title, Url);
   if not InfoFound then
     if GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
-      InfoFound := ProcessFlashVars(Http, FlashVars, Title, Url);
+      InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, FlashVars, Title, Url);
   if not InfoFound then
     if GetRegExpVar(YouTubeConfigJSRegExp, Page, 'FLASHVARS', FlashVars) then
-      InfoFound := ProcessFlashVars(Http, JSDecode(FlashVars), Title, Url);
+      InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, JSDecode(FlashVars), Title, Url);
+  if not InfoFound then
+    if GetRegExpVar(YouTubeConfigJSONRegExp, Page, 'JSON', FlashVars) then
+      InfoFound := ProcessFlashVars(Http, JSONParserRegExp, JSONVarsDecode, JSDecode(FlashVars), Title, Url);
   if not InfoFound then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else

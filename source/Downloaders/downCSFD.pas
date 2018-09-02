@@ -72,7 +72,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '\bplayer\.addClip\s*\(\s*"(?P<URL>https?:[^"]+)"(?P<EXTRA>.*?)\);';
+  REGEXP_MOVIE_URL =    '\bplayer\.addClip\s*\(.*?"sources"\s*:\s*\[.*?"src"\s*:\s*"(?P<URL>https?:[^"]+)"';
 
 { TDownloader_CSFD }
 
@@ -107,35 +107,11 @@ begin
 end;
 
 function TDownloader_CSFD.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  Url, Extra: string;
-  n: integer;
-  b: boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  n := 0;
-  b := GetRegExpVars(MovieUrlRegExp, Page, ['URL', 'EXTRA'], [@Url, @Extra]);
-  while b do
-    begin
-    if Pos('"advert"', Extra) > 0 then
-      Url := '';
-    if Url <> '' then
-      begin
-      Url := StripSlashes(Url);
-      MovieUrl := Url;
-      SetPrepared(True);
-      Result := True;
-      {$IFDEF MULTIDOWNLOADS}
-      UrlList.Add(Url);
-      Inc(n);
-      NameList.Add(Format('%s (%d)', [UnpreparedName, n]));
-      {$ELSE}
-      Break;
-      {$ENDIF}
-      end;
-    b := GetRegExpVarsAgain(MovieUrlRegExp, ['URL', 'EXTRA'], [@Url, @Extra]);
-    end;
+  Result := Prepared;
+  if Result then
+    MovieUrl := JSDecode(MovieUrl);
 end;
 
 initialization

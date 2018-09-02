@@ -1,11 +1,27 @@
 ﻿______________________________________________________________________________
 
-YTD v1.22                                                    (c) 2009-13 Pepak
+YTD v1.23                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.23:
+
+    * New providers:
+      - Animacek.tv (requires a token)
+
+    * Updated providers:
+      - CSFD.cz
+      - VKontakte.com (fixes Serialycz.cz and others)
+      - YouTube.com
+
+    * Changed the way configuration is written to disk: Now it will get stored
+      in a temporary file and that is then renamed over the old configuration.
+      This should decrease the probability of damaging the config file.
+
+
 
   v1.22:
 

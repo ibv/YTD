@@ -128,6 +128,7 @@ function WaitForEnd(const FileName, Params: string; Command: Word; out ResultCod
 function WaitForExclusiveAccess(FN: string): Boolean;
 {$ENDIF}
 function GetComputerName: string;
+function FindSpecialDirectory(const ID: integer; out Dir: string): boolean;
 function FindShortcutByTarget(Dir, Target: string; out FileName: string): boolean;
 function CreateShortcut(FileName, Target: string): boolean;
 {$ENDIF}
@@ -817,6 +818,32 @@ begin
     Result := string(Buffer)
   else
     Result := '';
+end;
+
+function FindSpecialDirectory(const ID: integer; out Dir: string): boolean;
+const
+  SHGFP_TYPE_CURRENT = 0;
+type
+  TSHGetFolderPathAFunction = function(hwndOwner: THandle; nFolder: integer; hToken: THandle; dwFlags: DWORD; pszPath: PAnsiChar): HRESULT; stdcall;
+var
+  Shell32: THandle;
+  SHGetFolderPathA: TSHGetFolderPathAFunction;
+  BufferA: array[0..MAX_PATH] of AnsiChar;
+begin
+  Result := False;
+  Shell32 := LoadLibrary('shell32.dll');
+  if Shell32 <> 0 then
+    try
+      SHGetFolderPathA := GetProcAddress(Shell32, 'SHGetFolderPathA');
+      if Assigned(SHGetFolderPathA) then
+        if SHGetFolderPathA(0, ID, 0, SHGFP_TYPE_CURRENT, @BufferA[0]) = S_OK then
+          begin
+          Dir := {$IFDEF UNICODE} string {$ENDIF} (AnsiString(BufferA));
+          Result := True;
+          end;
+    finally
+      FreeLibrary(Shell32);
+      end;
 end;
 
 function FindShortcutByTarget(Dir, Target: string; out FileName: string): boolean;

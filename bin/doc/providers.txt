@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.22                                                    (c) 2009-13 Pepak
+YTD v1.23                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -26,6 +26,7 @@ AlternativaTV.cz    | HTTP     |       | http://alternativatv.cz/video/play/1222
                     |          |       | http://alternativatv.cz/magazin/priloha/9319/12292
 Ancensored.com      | HTTP     |       | http://ancensored.com/clip/clip-victorias-secret-fashion-show-2009-herself-3
 AngryAlien.com      | HTTP     |       | http://www.angryalien.com/0605/freddyjasonbuns.asp
+Animacek.tv         | RTMP     | 8     | http://www.animacek.tv/porady/pokemon/103-epizoda-52
 Archive.org         | HTTP     | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16d1t01_vbr.mp3
                     |          | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16.sbd.vernon.9127.sbeok.shnf_vbr.m3u
 AutoTube.cz         | HTTP     |       | http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
@@ -201,7 +202,7 @@ NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/consol
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
 Nova.cz             | RTMP     | 8     | http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
                     |          |       | http://vikend.nova.cz/clanek/novinky/vikend-20-3-sedmimilove-boty.html
-                    | MS       |       | http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
+                    | MS       | 8     | http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1

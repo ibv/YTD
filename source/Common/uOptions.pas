@@ -273,6 +273,10 @@ const
   XML_DEFAULT_DOWNLOADTOTEMPFILES = False;
   XML_DEFAULT_DOWNLOADTOPROVIDERSUBDIRS = False;
 
+resourcestring
+  MSG_CANT_OVERWRITE_FILE = 'Cannot overwrite file "%s".';
+  MSG_CANT_CREATE_FILE = 'Cannot create file "%s".';
+
 { TYTDOptions }
 
 constructor TYTDOptions.Create;
@@ -343,14 +347,30 @@ begin
 end;
 
 procedure TYTDOptions.Save(IgnoreErrors: boolean);
-var Dir: string;
+var
+  Dir, TempFN: string;
 begin
   try
     Dir := ExcludeTrailingPathDelimiter(ExtractFilePath(XmlFileName));
     if Dir <> '' then
       ForceDirectories(ExpandFileName(Dir));
     Xml.SetIndentation(#9);
-    Xml.SaveToFile(XmlFileName);
+    TempFN := XmlFileName + '.new';
+    if FileExists(TempFN) then
+      SysUtils.DeleteFile(TempFN);
+    Xml.SaveToFile(TempFN);
+    if FileExists(TempFN) then
+      begin
+      if FileExists(XmlFileName) then
+        if not SysUtils.DeleteFile(XmlFileName) then
+          if not IgnoreErrors then
+            begin
+            SysUtils.DeleteFile(TempFN);
+            Raise EInOutError.CreateFmt(MSG_CANT_OVERWRITE_FILE, [XmlFileName]);
+            end;
+      if not RenameFile(TempFN, XmlFileName) then
+        Raise EInOutError.CreateFmt(MSG_CANT_CREATE_FILE, [XmlFileName]);
+      end;
   except
     if not IgnoreErrors then
       Raise;
