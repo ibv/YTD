@@ -132,7 +132,7 @@ const
   REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
-  REGEXP_FORMAT_URL_MAP = '(?P<FORMAT>[0-9]+)\|(?P<URL>https?://.+?)(?:,|$)';
+  REGEXP_FORMAT_URL_MAP = '(?:^|,)url=(?P<URL>https?(?::|%3A)(?:/|%2F){2}[^&,]+)[^,]*&itag=(?P<FORMAT>[0-9]+)';
 
 { TDownloader_YouTube }
 
@@ -309,7 +309,7 @@ begin
   Result := False;
   Title := '';
   Url := '';
-  if GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'fmt_url_map'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap]) then
+  if GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap]) then
     if Status = 'fail' then
       SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
     else if FmtList = '' then

@@ -1,11 +1,17 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.89                                     (c) 2009-11 Pepak
+YouTube Downloader v0.90                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.90:
+
+    * YouTube.com: Updated to the yesterday's new player.
+
+
 
   v0.89:
 
