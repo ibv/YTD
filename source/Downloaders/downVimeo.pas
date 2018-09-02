@@ -48,7 +48,8 @@ type
   TDownloader_Vimeo = class(THttpDownloader)
     private
     protected
-      MovieIdFromUrlRegExp: TRegExp;
+      ConfigRegExp: TRegExp;
+      ConfigVarsRegExp: TRegExp;
     protected
       function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
@@ -75,6 +76,11 @@ const
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
+const
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H1;
+  REGEXP_CONFIG = '\{\s*"request"\s*:\s*\{(?P<CONFIG>.*?)\}';
+  REGEXP_CONFIG_VARS = '"(?P<VARNAME>[^"]+)"\s*:\s*(?P<QUOTE>"?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*,';
+
 { TDownloader_Vimeo }
 
 class function TDownloader_Vimeo.Provider: string;
@@ -90,12 +96,17 @@ end;
 constructor TDownloader_Vimeo.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  ConfigRegExp := RegExCreate(REGEXP_CONFIG);
+  ConfigVarsRegExp := RegExCreate(REGEXP_CONFIG_VARS);
   InfoPageEncoding := peUTF8;
-  InfoPageIsXml := True;
 end;
 
 destructor TDownloader_Vimeo.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(ConfigRegExp);
+  RegExFreeAndNil(ConfigVarsRegExp);
   inherited;
 end;
 
@@ -106,7 +117,7 @@ end;
 
 function TDownloader_Vimeo.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.vimeo.com/moogaloop/load/clip:' + MovieID + '/';
+  Result := 'http://vimeo.com/' + MovieID;
 end;
 
 function TDownloader_Vimeo.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
@@ -116,23 +127,33 @@ begin
 end;
 
 function TDownloader_Vimeo.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Caption, Signature, Expires: string;
+const
+  QualityStr: array[0..1] of string = ('hd', 'sd');
+var
+  Config, Signature, Timestamp, Url: string;
+  i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetXmlVar(PageXml, 'video/caption', Caption) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-  else if not GetXmlVar(PageXml, 'request_signature', Signature) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['request_signature.']))
-  else if not GetXmlVar(PageXml, 'request_signature_expires', Expires) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['request_signature_expires.']))
+  if not GetRegExpVar(ConfigRegExp, Page, 'CONFIG', Config) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+  else if not GetRegExpVarPairs(ConfigVarsRegExp, Config, ['signature', 'timestamp'], [@Signature, @Timestamp]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+  else if Signature = '' then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['signature']))
+  else if Timestamp = '' then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
   else
     begin
-    SetName(HtmlDecode(Caption));
-    //MovieUrl := 'http://www.vimeo.com/moogaloop/play/clip:' + MovieID + '/' + Signature + '/' + Expires + '/';
-    MovieUrl := 'http://player.vimeo.com/play_redirect?clip_id=' + MovieID + '&sig=' + Signature + '&time=' + Expires + '&quality=hd&codecs=H264,VP8,VP6&type=moogaloop_local&embed_location=&seek=0&initial_play=1';
-    Result := True;
-    SetPrepared(True);
+    Url := 'http://player.vimeo.com/play_redirect?clip_id=' + MovieID + '&sig=' + Signature + '&time=' + Timestamp + '&quality=%s&codecs=H264,VP8,VP6&type=moogaloop_local&embed_location=';
+    MovieUrl := Format(Url, [QualityStr[0]]);
+    for i := 0 to Pred(Length(QualityStr)) do
+      if DownloadPage(Http, Format(Url, [QualityStr[i]]), hmHEAD) then
+        begin
+        MovieUrl := Format(Url, [QualityStr[i]]);
+        Result := True;
+        SetPrepared(True);
+        end;
     end;
 end;
 

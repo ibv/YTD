@@ -1,3 +1,5 @@
+{$INCLUDE 'jedi.inc'}
+
 {$DEFINE FORCECONSOLE}
   // Create a new console if it doesn't exist.
 

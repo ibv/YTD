@@ -55,6 +55,10 @@ type
   TFrameDownloaderOptionsPageSpec_Barrandov = class(TFrameDownloaderOptionsPage)
     protected
       function DoInitDialog: boolean; override;
+    protected
+      CheckAvoidHD: THandle;
+      procedure CreateObjects; override;
+      procedure DestroyObjects; override;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -69,6 +73,9 @@ implementation
 uses
   downBarrandovTV;
 
+const
+  IDC_CHECK_AVOIDHD = 1000;
+  
 { TFrameDownloaderOptionsPage_Barrandov }
 
 constructor TFrameDownloaderOptionsPage_Barrandov.Create(AOwner: TApiForm);
@@ -93,19 +100,40 @@ begin
   inherited;
 end;
 
+procedure TFrameDownloaderOptionsPageSpec_Barrandov.CreateObjects;
+begin
+  inherited;
+  CheckAvoidHD := GetDlgItem(Self.Handle, IDC_CHECK_AVOIDHD);
+end;
+
+procedure TFrameDownloaderOptionsPageSpec_Barrandov.DestroyObjects;
+begin
+  CheckAvoidHD := 0;
+  inherited;
+end;
+
 function TFrameDownloaderOptionsPageSpec_Barrandov.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
+  SetControlAnchors(CheckAvoidHD, [akLeft, akTop, akRight]);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Barrandov.LoadFromOptions;
+const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   inherited;
+  CheckDlgButton(Self.Handle, IDC_CHECK_AVOIDHD, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_AVOIDHD, OPTION_BARRANDOV_AVOIDHD_DEFAULT)]);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Barrandov.SaveToOptions;
 begin
   inherited;
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECK_AVOIDHD) of
+    BST_CHECKED:
+      Options.WriteProviderOption(Provider, OPTION_BARRANDOV_AVOIDHD, True);
+    BST_UNCHECKED:
+      Options.WriteProviderOption(Provider, OPTION_BARRANDOV_AVOIDHD, False);
+    end;
 end;
 
 end.

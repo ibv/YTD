@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.07                                                    (c) 2009-12 Pepak
+YTD v1.08                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -240,7 +240,7 @@ StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
 STV.sk              | RTMP     | 9     | http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
-Super.cz            | HTTP     |       | http://video.super.cz/supervidea/supervidea-doporucujeme/?videoId=3950&page=1
+Super.cz            | HTTP     |       | http://www.super.cz/11797-facky-nadavky-rev-i-plac-tohle-jsou-ty-nejsilenejsi-situace-ktere-vymena-manzelek-predstavila.html
 Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
 TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
 Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html

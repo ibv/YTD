@@ -157,7 +157,10 @@ begin
               end;
         if BestPath <> '' then
           begin
-          MovieUrl := 'http://n14.joj.sk/' + BestPath;
+          {$IFDEF DELPHI6_UP}
+            {$MESSAGE WARN 'Joj.sk: nevim, jak zjistit jmeno serveru'}
+          {$ENDIF}
+          MovieUrl := 'http://n06.joj.sk/' + BestPath;
           SetPrepared(True);
           Result := True;
           end;

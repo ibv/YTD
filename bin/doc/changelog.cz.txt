@@ -1,11 +1,45 @@
 ______________________________________________________________________________
 
-YTD v1.07                                                    (c) 2009-12 Pepak
+YTD v1.08                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.08:
+
+    * Jsem zpìt a v plné síle! Dìkuji Balutbj, že mì v mezidobí zastoupil s
+      Èeskou televizí a obecnì za chvályhodnou snahu o dešifrování rùzných
+      serverù (které budu postupnì implementovat).
+
+    * Aktualizovaní poskytovatelé:
+      - B-TV.cz
+      - Blip.tv
+      - Èeská televize
+      - iPrima.cz
+      - Joj.sk
+      - Muvi.cz
+      - RozzlobeniMuzi.com
+      - Super.cz
+      - Vimeo.com
+
+    * Barrandov.tv: Pokud je dostupná, stahuje se HD kvalita. Je to ale dost
+      ošklivý hack, takže to nemusí fungovat; v nastavení Barrandova je na to
+      checkbox.
+
+    * CeskaTelevize.cz:
+      1. ÈT opìt funguje.
+      2. V konfiguraci je nové nastavení pro maximální bitrate, který YTD bude
+         stahovat (pokud bude mít na výbìr - pokud existuje jen vyšší bitrate,
+         použije se ten). ÈT momentálnì používá bitrate 2000, 1000, 500.
+
+    * Opravena nežádoucí interakce mezi sledováním schránky (clipboardu)
+      a funkcí pro zkopírování vybraných URL do schránky.
+
+    * YTD lze nyní zkompilovat i pomocí Delphi 7.
+
+
 
   v1.07:
 

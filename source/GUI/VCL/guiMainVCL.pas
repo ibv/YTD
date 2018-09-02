@@ -620,7 +620,15 @@ begin
         else
           s := s + EOLN + DownloadList.Urls[i];
     end;
-  Clipboard.AsText := s;
+  if s <> '' then
+    begin
+    StopClipboardMonitor;
+    try
+      Clipboard.AsText := s;
+    finally
+      StartClipboardMonitor;
+      end;
+    end;
 end;
 
 procedure TFormYTD.actCopyUrlsToClipboard2Execute(Sender: TObject);

@@ -157,7 +157,7 @@ type
       {$ENDIF}
       procedure NotPreparedError; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
-      function Smil_FindBestVideo(Container: TXmlNode; out Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Smil_FindBestVideo(Container: TXmlNode; out Url: string; const MaxBitrate: integer = 0): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       class function Provider: string; virtual; abstract;
       class function Features: TDownloaderFeatures; virtual;
@@ -1132,7 +1132,7 @@ begin
       end;
 end;
 
-function TDownloader.Smil_FindBestVideo(Container: TXmlNode; out Url: string): boolean;
+function TDownloader.Smil_FindBestVideo(Container: TXmlNode; out Url: string; const MaxBitrate: integer): boolean;
 var
   sUrl, sBitrate: string;
   i, Bitrate, BestBitrate: integer;
@@ -1148,13 +1148,17 @@ begin
           Bitrate := StrToIntDef(sBitrate, 0)
         else
           Bitrate := 0;
-        if Bitrate > BestBitrate then
-          begin
-          BestBitrate := Bitrate;
-          Url := sUrl;
-          Result := True;
-          end;
+        if (MaxBitrate <= 0) or (Bitrate <= MaxBitrate) then
+          if Bitrate > BestBitrate then
+            begin
+            BestBitrate := Bitrate;
+            Url := sUrl;
+            Result := True;
+            end;
         end;
+  if not Result then
+    if (MaxBitrate > 0) then
+      Result := Smil_FindBestVideo(Container, Url, 0);
 end;
 
 end.

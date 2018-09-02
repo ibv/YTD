@@ -282,12 +282,12 @@ begin
     // Test for IDE
     StartedFromIDE := False;
     {$IFNDEF FPC}
-      {$IFDEF DELPHI2009_UP}
+      {$IFDEF DELPHI7_UP}
         {$WARN SYMBOL_PLATFORM OFF}
       {$ENDIF}
       if DebugHook <> 0 then
         StartedFromIDE := True;
-      {$IFDEF DELPHI2009_UP}
+      {$IFDEF DELPHI7_UP}
         {$WARN SYMBOL_PLATFORM ON}
       {$ENDIF}
     {$ENDIF}

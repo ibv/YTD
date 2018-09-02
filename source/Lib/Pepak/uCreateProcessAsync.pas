@@ -58,7 +58,7 @@ unit uCreateProcessAsync;
        called process to finish.
 }
 
-{$INCLUDE 'jedi.inc'}
+{$INCLUDE 'pepak.inc'}
 {$DEFINE REGISTERWAITFORSINGLEOBJECT}
   // Use RegisterWaitForSingleObject rather than a dedicated thread. It is more
   // efficient and seems to be more stable, too, but is only available with
@@ -82,13 +82,13 @@ function CreateProcessAsync(lpApplicationName: PChar; lpCommandLine: PChar;
   OnProcessFinished: TProcessFinishedEvent
   ): BOOL;
 
-{$IFNDEF DELPHI6_UP}
+{$IFNDEF DELPHI8_UP}
 function UnregisterWait(WaitHandle: THandle): BOOL; stdcall;
 {$ENDIF}
 
 implementation
 
-{$IFNDEF DELPHI6_UP}
+{$IFNDEF DELPHI8_UP}
 const
   WT_EXECUTEONLYONCE = $8;
 
@@ -218,7 +218,7 @@ begin
   if Result then
     begin
     {$IFDEF REGISTERWAITFORSINGLEOBJECT}
-    {$IFNDEF DELPHI6_UP}
+    {$IFNDEF DELPHI8_UP}
     if Assigned(RegisterWaitForSingleObject) then
     {$ENDIF}
       begin
@@ -245,7 +245,7 @@ begin
 end;
 
 initialization
-  {$IFNDEF DELPHI6_UP}
+  {$IFNDEF DELPHI8_UP}
   KernelDll := LoadLibrary('kernel32.dll');
   if KernelDll <> 0 then
     begin
@@ -260,7 +260,7 @@ initialization
   {$ENDIF}
 
 finalization
-  {$IFNDEF DELPHI6_UP}
+  {$IFNDEF DELPHI8_UP}
   if KernelDll <> 0 then
     begin
     FreeLibrary(KernelDll);

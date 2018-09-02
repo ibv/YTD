@@ -111,6 +111,7 @@ type
       JavascriptPlayerRegExp: TRegExp;
       VideoPlayerUrlRegExp: TRegExp;
       Extension: string;
+      MaxBitrate: integer;
     protected
       procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
       function GetFileNameExt: string; override;
@@ -124,6 +125,7 @@ type
       property DownloadIndex: integer read fDownloadIndex write fDownloadIndex;
       property BaseName: string read fBaseName write fBaseName;
       {$ENDIF}
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -136,6 +138,10 @@ type
       {$ENDIF}
     end;
   {$ENDIF}
+
+const
+  OPTION_CT_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
+  OPTION_CT_MAXBITRATE_DEFAULT = 0;
 
 implementation
 
@@ -165,7 +171,10 @@ const
   REGEXP_MOVIE_OBJECT = '\bcallSOAP\s*\(\s*(?P<OBJECT>\{.*?\})\s*\)\s*;';
   REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
   REGEXP_JS_PLAYER = '<a\s+(?:\w+="[^"]*"\s+)*\bhref="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+(?:id|target)="videoPlayer_';
-  REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>(?:https?:|\\?/).+?)"';
+  CUSTOM_HEADERS: array[0..0] of string = (
+    'X-addr: 127.0.0.1'
+    );
   {$ENDIF}
 
 class function TDownloader_CT.Provider: string;
@@ -320,16 +329,20 @@ begin
         // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
       end
     else if GetRegExpVar(JavascriptPlayerRegExp, Page, 'PARAM', Param) then
-      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + {$IFDEF UNICODE} AnsiString {$ENDIF} (UrlEncode(PARAM)), HTTP_FORM_URLENCODING, ['X-client: 127.0.0.1'], NewPage) then
+      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + {$IFDEF UNICODE} AnsiString {$ENDIF} (UrlEncode(PARAM)), HTTP_FORM_URLENCODING, CUSTOM_HEADERS, NewPage) then
         if GetRegExpVar(VideoPlayerUrlRegExp, NewPage, 'URL', Url) then
           Url := StripSlashes(Url);
     if Url <> '' then
+      begin
+      if Url[1] = '/' then
+        Url := 'http://www.ceskatelevize.cz' + Url;
       if DownloadPage(Http, Url, NewPage, InfoPageEncoding) then
         if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
           begin
           Page := NewPage;
           Result := True;
           end;
+      end;
     end;
 end;
 
@@ -414,7 +427,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/playlistURL.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, Url) then
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/playlistURL.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Copy(Url, 1, 4) <> 'http' then
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
@@ -431,7 +444,7 @@ begin
               if Pos(REKLAMA, ID) <= 0 then
                 if GetXmlAttr(Node, '', 'base', BaseUrl) then
                   begin
-                  if not Smil_FindBestVideo(Node, Stream) then
+                  if not Smil_FindBestVideo(Node, Stream, MaxBitrate) then
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else
                     begin
@@ -451,6 +464,12 @@ begin
     finally
       Xml.Free;
       end;
+end;
+
+procedure TDownloader_CT_old.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  MaxBitrate := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT);
 end;
 
 {$IFDEF MULTIDOWNLOADS}

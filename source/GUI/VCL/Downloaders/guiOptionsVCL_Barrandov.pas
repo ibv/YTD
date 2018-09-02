@@ -46,6 +46,7 @@ uses
 
 type
   TFrameDownloaderOptionsPage_Barrandov = class(TFrameDownloaderOptionsPageCommon)
+    CheckAvoidHD: TCheckBox;
   private
   protected
   public
@@ -77,11 +78,13 @@ end;
 procedure TFrameDownloaderOptionsPage_Barrandov.LoadFromOptions;
 begin
   inherited;
+  CheckAvoidHD.Checked := Options.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_AVOIDHD, OPTION_BARRANDOV_AVOIDHD_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_Barrandov.SaveToOptions;
 begin
   inherited;
+  Options.WriteProviderOption(Provider, OPTION_BARRANDOV_AVOIDHD, CheckAvoidHD.Checked);
 end;
 
 end.

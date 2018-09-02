@@ -55,6 +55,12 @@ type
   TFrameDownloaderOptionsPageSpec_CT = class(TFrameDownloaderOptionsPage)
     protected
       function DoInitDialog: boolean; override;
+      function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
+    protected
+      EditMaxBitrate: THandle;
+      procedure CreateObjects; override;
+      procedure DestroyObjects; override;
+      procedure LabelMaxBitrateClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -68,6 +74,10 @@ implementation
 
 uses
   downCT;
+
+const
+  IDC_LABEL_MAXBITRATE = 1001;
+  IDC_EDIT_MAXBITRATE = 1002;
 
 { TFrameDownloaderOptionsPage_CT }
 
@@ -93,19 +103,55 @@ begin
   inherited;
 end;
 
+procedure TFrameDownloaderOptionsPageSpec_CT.CreateObjects;
+begin
+  inherited;
+  EditMaxBitrate := GetDlgItem(Self.Handle, IDC_EDIT_MAXBITRATE);
+end;
+
+procedure TFrameDownloaderOptionsPageSpec_CT.DestroyObjects;
+begin
+  EditMaxBitrate := 0;
+  inherited;
+end;
+
 function TFrameDownloaderOptionsPageSpec_CT.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
 end;
 
+function TFrameDownloaderOptionsPageSpec_CT.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
+begin
+  Result := False;
+  case NotificationCode of
+    STN_CLICKED {, BN_CLICKED, CBN_SELCHANGE} : // Click on a label, button etc.
+      case Identifier of
+        IDC_LABEL_MAXBITRATE:
+          begin
+          LabelMaxBitrateClick;
+          Result := True;
+          end;
+        end;
+    end;
+  if not Result then
+    Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
+end;
+
 procedure TFrameDownloaderOptionsPageSpec_CT.LoadFromOptions;
 begin
   inherited;
+  SetWindowText(EditMaxBitrate, PChar(IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT))));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_CT.SaveToOptions;
 begin
   inherited;
+  Options.WriteProviderOption(Provider, OPTION_CT_MAXBITRATE, StrToIntDef(GetWindowTextAsString(EditMaxBitrate), 0));
+end;
+
+procedure TFrameDownloaderOptionsPageSpec_CT.LabelMaxBitrateClick;
+begin
+  SetFocus(EditMaxBitrate);
 end;
 
 end.

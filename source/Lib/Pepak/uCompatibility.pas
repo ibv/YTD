@@ -35,19 +35,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uCompatibility;
-{$INCLUDE 'jedi.inc'}
+{$INCLUDE 'pepak.inc'}
 
 interface
 
 uses
   SysUtils, Classes, Windows;
 
+{$IFNDEF DELPHI7_UP}
+type
+  EOSError = EWin32Error;
+
+function IncludeTrailingPathDelimiter(const Path: string): string;
+function ExcludeTrailingPathDelimiter(const Path: string): string;
+{$ENDIF}
+
 {$IFNDEF DELPHI2009_UP}
 type
   TSysCharSet = set of Char;
-
-type
-  EOSError = EWin32Error;
 
 type
   Utf8String = AnsiString;
@@ -77,8 +82,6 @@ const
 
 function CharInSet(C: Char; S: TSysCharSet): boolean;
 
-function IncludeTrailingPathDelimiter(const Path: string): string;
-function ExcludeTrailingPathDelimiter(const Path: string): string;
 function StartsText(const SubStr, Str: string): boolean; 
 {$ENDIF}
 
@@ -97,12 +100,7 @@ const
 
 implementation
 
-{$IFNDEF DELPHI2009_UP}
-function CharInSet(C: Char; S: TSysCharSet): boolean;
-begin
-  Result := C in S;
-end;
-
+{$IFNDEF DELPHI7_UP}
 function IncludeTrailingPathDelimiter(const Path: string): string;
 begin
   Result := IncludeTrailingBackslash(Path);
@@ -111,6 +109,13 @@ end;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
 begin
   Result := ExcludeTrailingBackslash(Path);
+end;
+{$ENDIF}
+
+{$IFNDEF DELPHI2009_UP}
+function CharInSet(C: Char; S: TSysCharSet): boolean;
+begin
+  Result := C in S;
 end;
 
 function StartsText(const SubStr, Str: string): boolean;

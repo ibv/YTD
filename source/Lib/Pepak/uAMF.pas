@@ -40,7 +40,7 @@ unit uAMF;
 {$DEFINE MINIMIZESIZE}
 {.DEFINE VARIANTS}
 
-{$INCLUDE 'jedi.inc'}
+{$INCLUDE 'pepak.inc'}
 
 interface
 

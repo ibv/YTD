@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-04-06 07:16\n"
-"PO-Revision-Date: 2012-04-06 07:16\n"
+"POT-Creation-Date: 2012-06-03 12:42\n"
+"PO-Revision-Date: 2012-06-03 12:42\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -563,6 +563,11 @@ msgstr ""
 msgid "&Run from current location without installing"
 msgstr ""
 
+#. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..CheckAvoidHD..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:9
+msgid "&Avoid HD content"
+msgstr ""
+
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:15
 msgid "Secure &Token:"
@@ -587,6 +592,11 @@ msgstr ""
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:57
 msgid "&Live stream mode (much slower, but more "
 "stable)"
+msgstr ""
+
+#. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..LabelMaximumVideoBitrate..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:8
+msgid "Maximum video &bitrate:"
 msgstr ""
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption

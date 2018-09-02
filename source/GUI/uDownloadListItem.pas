@@ -45,7 +45,7 @@ uses
   {$IFDEF CONVERTERS}
   uCreateProcessAsync,
   {$ENDIF}
-  uOptions, uFunctions;
+  uOptions, uFunctions, uCompatibility;
 
 type
   TDownloadListItem = class
@@ -371,7 +371,7 @@ procedure TDownloadListItem.ExploreMedia;
 var FN: string;
 begin
   if (State in [dtsDownloading, dtsFinished, dtsFailed, dtsAborted]) and FileExists(Downloader.FileName) then
-    FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(Downloader.FileName)))
+    FN := ExcludeTrailingPathDelimiter(ExtractFilePath(ExpandFileName(Downloader.FileName)))
   else
     begin
     FN := Options.DestinationPath;

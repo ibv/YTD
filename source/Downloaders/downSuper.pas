@@ -42,14 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader, downStream;
 
 type
-  TDownloader_Super = class(THttpDownloader)
-    private
+  TDownloader_Super = class(TDownloader_Stream)
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,15 +63,11 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://video.super.cz/supervidea/supervidea-doporucujeme/?videoId=3950&page=1
+// http://www.super.cz/11797-facky-nadavky-rev-i-plac-tohle-jsou-ty-nejsilenejsi-situace-ktere-vymena-manzelek-predstavila.html
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*video\.super\.cz/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*super\.cz/';
   URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
-
-const
-  REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_URL = '<param\s+name="FlashVars"\s+value="(?:[^"]*?&amp;)*video_src=(?P<URL>https?://[^"&]+)';
 
 { TDownloader_Super }
 
@@ -90,27 +85,26 @@ constructor TDownloader_Super.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
 end;
 
 destructor TDownloader_Super.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
 function TDownloader_Super.GetMovieInfoUrl: string;
 begin
-  Result := 'http://video.super.cz/' + MovieID;
+  Result := 'http://www.super.cz/' + MovieID;
 end;
 
-function TDownloader_Super.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Super.GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieUrl := UrlDecode(MovieUrl);
-  Result := Prepared;
+  ID := '';
+  cdnLQ := 'cdnLQ';
+  cdnHQ := 'cdnHQ';
+  cdnHD := 'cdnHD';
+  Title := 'gemius_name';
+  Result := True;
 end;
 
 initialization

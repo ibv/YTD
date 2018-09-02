@@ -46,6 +46,8 @@ uses
 
 type
   TFrameDownloaderOptionsPage_CT = class(TFrameDownloaderOptionsPageCommon)
+    LabelMaximumVideoBitrate: TLabel;
+    EditMaximumVideoBitrate: TEdit;
   private
   protected
   public
@@ -77,11 +79,13 @@ end;
 procedure TFrameDownloaderOptionsPage_CT.LoadFromOptions;
 begin
   inherited;
+  EditMaximumVideoBitrate.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT));
 end;
 
 procedure TFrameDownloaderOptionsPage_CT.SaveToOptions;
 begin
   inherited;
+  Options.WriteProviderOption(Provider, OPTION_CT_MAXBITRATE, StrToIntDef(EditMaximumVideoBitrate.Text, 0));
 end;
 
 end.

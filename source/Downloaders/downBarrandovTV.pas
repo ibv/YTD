@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uOptions,
+  uOptions, uCompatibility,
   {$IFDEF GUI}
     guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
@@ -57,9 +57,12 @@ type
   TDownloader_BarrandovTV = class(TRtmpDownloader)
     private
     protected
+      AvoidHD: boolean;
+    protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -70,6 +73,10 @@ type
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
+
+const
+  OPTION_BARRANDOV_AVOIDHD {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'avoid_hd';
+  OPTION_BARRANDOV_AVOIDHD_DEFAULT = False;
 
 implementation
 
@@ -134,7 +141,9 @@ begin
 end;
 
 function TDownloader_BarrandovTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Title, HostName, StreamName: string;
+var
+  Title, HostName, StreamName, HasHD: string;
+  i, j: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -146,6 +155,22 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
   else
     begin
+    {$IFDEF DIRTYHACKS}
+    if not AvoidHD then
+      if GetXmlVar(PageXml, 'hashdquality', HasHD) then
+        if AnsiCompareText(HasHD, 'true') = 0 then
+          for i := Length(StreamName) downto 1 do
+            if StreamName[i] = '.' then
+              begin
+              for j := Pred(i) downto 1 do
+                if not CharInSet(StreamName[j], ['0'..'9']) then
+                  begin
+                  StreamName := Copy(StreamName, 1, j) + 'HD' + Copy(StreamName, i, MaxInt);
+                  Break;
+                  end;
+              Break;
+              end;
+    {$ENDIF}
     SetName(Title);
     MovieUrl := 'rtmpe://' + HostName + '/' + StreamName;
     Self.RtmpUrl := 'rtmpe://' + HostName;
@@ -158,6 +183,12 @@ begin
     SetPrepared(True);
     Result := True;
     end;
+end;
+
+procedure TDownloader_BarrandovTV.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  AvoidHD := Value.ReadProviderOptionDef(Provider, OPTION_BARRANDOV_AVOIDHD, OPTION_BARRANDOV_AVOIDHD_DEFAULT);
 end;
 
 initialization

@@ -72,7 +72,7 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
-  REGEXP_EXTRACT_URL = '\bso\.addVariable\s*\(\s*"file"\s*,\s*"(?P<URL>https?://.+?)"';
+  REGEXP_EXTRACT_URL = REGEXP_URL_FILE_COLON_VALUE;
 
 { TDownloader_RozzlobeniMuzi }
 
@@ -110,6 +110,8 @@ function TDownloader_RozzlobeniMuzi.GetMovieInfoContent(Http: THttpSend; Url: st
 begin
   // I need to get the cookie before I get the real page
   Result := False;
+  Http.Cookies.Values['version'] := 'hardcore';
+  Http.Cookies.Values['rozzlobenimuziacknow'] := 'yes';
   if inherited GetMovieInfoContent(Http, Url, Page, Xml, Method) then
     begin
     FreeAndNil(Xml);

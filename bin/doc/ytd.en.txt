@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.07                                                    (c) 2009-12 Pepak
+YTD v1.08                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -432,6 +432,29 @@ except in file/directory names. Logical values (true-false) are stored as
 
 <modules>
   - Child of <ytd>. This section stores provider-specific options.
+
+  <Barrandov_tv>
+    - Child of <modules>; contains settings used by Barrandov.tv.
+
+    <avoid_hd>
+      - Child of <Barrandov_tv>; provides an option to avoid trying to locate
+        HD content (the HD-locating code is rather wacky).
+        najít HD verzi videa a stáhnout tu, kterou mu server sám pøedhodí.
+      - Possible values are "0" (try to locate HD content) a "1" (don't try).
+      - Default value is "0" (try to locate HD content).
+
+  <CeskaTelevize_cz>
+    - Potomek <modules>; contains settings used by CeskaTelevize.cz.
+
+    <max_bitrate>
+      - Child of <CeskaTelevize_cz>; sets the maximum video bitrate that YTD
+        will download. That is, if it has a choice - if there are only videos
+        in higher bitrate, they will still get downloaded.
+      - Possible value is any integer number. If that number is negative
+        or a zero, there will be no limit on video bitrate. 
+        At the moment (2012-06-03), CeskaTelevize.cz uses bitrates 2000, 1000
+        and 500.
+      - Default value is "0" (no limit on video bitrate).
 
   <Nova_cz>
     - Child of <modules>; contains settings used by Nova.cz.

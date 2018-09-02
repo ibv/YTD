@@ -738,7 +738,14 @@ begin
       FreeAndNil(L);
       end;
   if Urls <> '' then
-    SetClipboardAsText(Self.Handle, Urls);
+    begin
+    StopClipboardMonitor;
+    try
+      SetClipboardAsText(Self.Handle, Urls);
+    finally
+      StartClipboardMonitor;
+      end;
+    end;
 end;
 
 function TFormMain.ActionDeleteUrl: boolean;

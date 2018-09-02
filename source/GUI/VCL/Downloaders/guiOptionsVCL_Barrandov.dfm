@@ -1,6 +1,13 @@
 inherited FrameDownloaderOptionsPage_Barrandov: TFrameDownloaderOptionsPage_Barrandov
-  Height = 132
   inherited PanelSpecificOptions: TPanel
-    Height = 51
+    object CheckAvoidHD: TCheckBox
+      Left = 8
+      Top = 0
+      Width = 305
+      Height = 17
+      Anchors = [akLeft, akTop, akRight]
+      Caption = '&Avoid HD content'
+      TabOrder = 0
+    end
   end
 end

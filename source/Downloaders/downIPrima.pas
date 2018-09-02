@@ -91,6 +91,7 @@ type
     protected
       LiveBoxRegExp: TRegExp;
       LiveBoxAuthRegExp: TRegExp;
+      LiveBoxUrlPrefix: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -125,6 +126,7 @@ const
   //REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,)\s*width\s*,\s*height\s*,\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
   REGEXP_LIVEBOX = '''hq_id''\s*:\s*''(?P<HQ>[^'']*)''\s*,\s*''lq_id''\s*:\s*''(?P<LQ>[^'']*)''(?:.*?''zoneGEO''\s*:\s*(?P<ZONEGEO>[0-9]*))?';
   REGEXP_LIVEBOX_AUTH = '''(?P<AUTH>\?auth=.*?)''';
+  REGEXP_LIVEBOX_URLPREFIX = '\biph_full_url\s*=\s*''(?P<URL>https?://.+?)''';
   {$ENDIF}
 
 const
@@ -306,6 +308,7 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   LiveBoxRegExp := RegExCreate(REGEXP_LIVEBOX);
   LiveBoxAuthRegExp := RegExCreate(REGEXP_LIVEBOX_AUTH);
+  LiveBoxUrlPrefix := RegExCreate(REGEXP_LIVEBOX_URLPREFIX);
 end;
 
 destructor TDownloader_iPrima_LiveBox.Destroy;
@@ -313,6 +316,7 @@ begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(LiveBoxRegExp);
   RegExFreeAndNil(LiveBoxAuthRegExp);
+  RegExFreeAndNil(LiveBoxUrlPrefix);
   inherited;
 end;
 
@@ -324,7 +328,7 @@ end;
 function TDownloader_iPrima_LiveBox.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   PlayerHttp: THttpSend;
-  EmbedPlayer, Auth, HQStream, LQStream, ZoneGEO, Geo, Stream: string;
+  EmbedPlayer, Auth, HQStream, LQStream, ZoneGEO, Geo, Stream, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -339,6 +343,8 @@ begin
         SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
       else if not GetRegExpVar(LiveBoxAuthRegExp, EmbedPlayer, 'AUTH', Auth) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+      else if not GetRegExpVar(LiveBoxUrlPrefix, EmbedPlayer, 'URL', Url) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
       else
         begin
         if HQStream <> '' then
@@ -346,12 +352,15 @@ begin
         else
           Stream := LQStream;
         if StrToIntDef(ZoneGeo, 0) > 0 then
-          Geo := '_1'
+          Geo := '_' + ZoneGeo
         else
           Geo := '';
-        MovieUrl := 'rtmp://bcastlw.livebox.cz:80/iprima_token' + Geo + Auth; // '?auth=_any_|1331380805|e0bdc430140646104fb9509b5c76791c78da9ce7';
-        Self.RtmpUrl := MovieURL;
-        Self.PlayPath := 'mp4:' + Stream;
+        MovieUrl := Url {'rtmp://bcastlw.livebox.cz:80/iprima_token'} + Geo + Auth; // '?auth=_any_|1331380805|e0bdc430140646104fb9509b5c76791c78da9ce7';
+        Self.RtmpUrl := MovieURL; // Prima Play
+        if ExtractFileExt(Stream) = '.mp4' then
+          Self.PlayPath := 'mp4:' + Stream
+        else
+          Self.PlayPath := ChangeFileExt(Stream, '');
         Self.FlashVer := 'WIN 11,1,102,63';
         Self.SwfUrl := 'http://embed.livebox.cz/iprimaplay/flash/LiveboxPlayer.swf'; // + '?nocache=' + UnixTime;
         Self.TcUrl := MovieUrl;

@@ -117,6 +117,8 @@ begin
 end;
 
 function TDownloader_BlipTv_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const
+  URL_PREFIX = 'message=';
 var
   Node: TXmlNode;
   Title, Url, BestUrl, sSize: string;
@@ -148,10 +150,14 @@ begin
           end;
     if BestUrl = '' then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else if not DownloadPage(Http, Format('%s?showplayer=%s&mask=23&skin=flashvars&view=url', [BestUrl, FormatDateTime('yyyymmddhhnnss', Now)]), Url) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else if Copy(Url, 1, Length(URL_PREFIX)) <> URL_PREFIX then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
       SetName(Title);
-      MovieURL := BestUrl;
+      MovieURL := UrlDecode(Trim(Copy(Url, Succ(Length(URL_PREFIX)), MaxInt)));
       SetPrepared(True);
       Result := True;
       end;

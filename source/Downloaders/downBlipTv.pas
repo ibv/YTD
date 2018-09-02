@@ -64,7 +64,7 @@ uses
 
 // http://blip.tv/weird-america/weird-america-mark-mothersbaugh-111976
 const
-  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!file/)';
+  URLREGEXP_BEFORE_ID = 'blip\.tv/(?!file/|play/)';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 

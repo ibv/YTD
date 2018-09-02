@@ -1,7 +1,7 @@
 inherited FrameDownloaderOptionsPage_YouTube: TFrameDownloaderOptionsPage_YouTube
-  Height = 156
+  Height = 237
   inherited PanelSpecificOptions: TPanel
-    Height = 99
+    Height = 100
     object LabelPreferredLanguages: TLabel
       Left = 8
       Top = 0

@@ -242,9 +242,9 @@ type
     private
       fOnDebugLine:TOnDebugLine;
       {$IFDEF PEPAK}
+      fLoadResStringLock: TRtlCriticalSection;
       {$ELSE}
       CreatorThread:Cardinal;  /// Only this thread can use LoadResString
-      fLoadResStringLock: TRtlCriticalSection;
       {$ENDIF}
     public
       Enabled:Boolean;      /// Set this to false to disable translations

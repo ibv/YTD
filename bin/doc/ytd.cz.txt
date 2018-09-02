@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.07                                                    (c) 2009-12 Pepak
+YTD v1.08                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -421,6 +421,27 @@ a "0" (ne).
 <modules>
   - Potomek <ytd>. V této sekci se nacházejí specifická nastavení pro 
     jednotlivé poskytovatele.
+
+  <Barrandov_tv>
+    - Potomek <modules>; obsahuje nastavení pro TV Barrandov.
+
+    <avoid_hd>
+      - Potomek <Barrandov_tv>; urèuje, že se program vùbec nemá pokoušet
+        najít HD verzi videa a stáhnout tu, kterou mu server sám pøedhodí.
+      - Možné hodnoty jsou "0" (zkoušet vysokou kvalitu) a "1" (nezkoušet).
+      - Výchozí hodnotou je "0" (zkoušet vysokou kvalitu).
+
+  <CeskaTelevize_cz>
+    - Potomek <modules>; obsahuje nastavení pro Èeskou televizi.
+
+    <max_bitrate>
+      - Potomek <CeskaTelevize_cz>; øíká, jaký maximální bitrate videa má YTD
+        stahovat. Ovšem pouze, pokud má na výbìr - pokud je k dispozici jenom
+        kvalitnìjší verze, tak se stáhne kvalitnìjší.
+      - Možnou hodnotou je libovolné celé èíslo. Pokud je toto èíslo záporné
+        nebo nula, budou se stahovat videa s libovolným bitrate.
+        Èeská televize nyní (6.3.2012) používá bitraty 2000, 1000 a 500.
+      - Výchozí hodnotou je "0" (neomezovat bitrate).
 
   <Nova_cz>
     - Potomek <modules>; obsahuje nastavení pro TV Nova.

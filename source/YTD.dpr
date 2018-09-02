@@ -63,7 +63,7 @@ uses
   {$IFDEF SETUP}
   uSetup in 'Common\uSetup.pas',
   {$ENDIF}
-  uXML in 'Common\uXML.pas',
+  uXml in 'Common\uXml.pas',
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
   uCommonDownloader in 'Base\uCommonDownloader.pas',

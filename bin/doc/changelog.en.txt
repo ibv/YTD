@@ -1,11 +1,43 @@
 ______________________________________________________________________________
 
-YTD v1.07                                                    (c) 2009-12 Pepak
+YTD v1.08                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.08:
+
+    * I am back! Thanks to Balutbj for covering for me while I was indisposed.
+
+    * Updated providers:
+      - B-TV.cz
+      - Blip.tv
+      - CeskaTelevize.cz
+      - iPrima.cz
+      - Joj.sk
+      - Muvi.cz
+      - RozzlobeniMuzi.com
+      - Super.cz
+      - Vimeo.com
+
+    * Barrandov.tv: If HD version is available, it is downloaded. It's done
+      through a rather nasty hack which may not work all the time; you can
+      turn it off in the downloader settings.
+
+    * CeskaTelevize.cz:
+      1. CT works again.
+      2. There's a new configuration option to limit maximum bitrate of the
+         downloaded movies. The limit only applies if there are lower-quality
+         streams. At the moment CT uses bitrates of 2000, 1000 and 500.
+
+    * Fixed an unwanted interaction between the clipboard monitor code and the
+      "copy selected URLs to clipboard" code.
+
+    * YTD can now be compiled by Delphi 7, too.
+
+
 
   v1.07:
 
