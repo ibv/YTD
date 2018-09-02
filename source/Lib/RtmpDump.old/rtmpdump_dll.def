@@ -1,0 +1,3 @@
+LIBRARY rtmpdump_dll.dll
+EXPORTS
+	RtmpDumpMain

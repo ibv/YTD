@@ -56,7 +56,7 @@ const
   REGEXP_TITLE_DIV_CLASS = '<div\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</div>';
   REGEXP_TITLE_SPAN_CLASS = '<span\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</span>';
   REGEXP_TITLE_META_TITLE = '<meta\s+name="title"\s+content="\s*(?P<TITLE>.*?)\s*"';
-  //REGEXP_TITLE_META_OGTITLE = '<meta\s+name="og:title"\s+content="\s*(?P<TITLE>.*?)\s*"';
+  REGEXP_TITLE_META_OGTITLE = '<meta\s+property="og:title"\s+content="\s*(?P<TITLE>.*?)\s*"';
   REGEXP_TITLE_META_DESCRIPTION = '<meta\s+name="description"\s+content="\s*(?P<TITLE>.*?)\s*"';
   REGEXP_TITLE_H1 = '<h1[^>]*>\s*(?P<TITLE>.*?)\s*</h1>';
   REGEXP_TITLE_H1_CLASS = '<h1\s+class="%s">\s*(?P<TITLE>.*?)\s*</h1>';

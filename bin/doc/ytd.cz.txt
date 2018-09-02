@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.93                                     (c) 2009-11 Pepak
+YouTube Downloader v0.94                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -432,6 +432,14 @@ a "0" (ne).
         k dispozici a YTD nemá šanci toto spolehlivì zjistit.
       - Možné hodnoty jsou "0" (vysoká kvalitu) a "1" (nízká kvalita).
       - Výchozí hodnotou je "0" (vysoká kvalita).
+
+    <secret>
+      - Potomek <Nova_cz>; definuje tajné heslo používané pro autentizaci
+        pøehravaèe. Bez tohoto hesla nelze videa pøehrávat ani stahovat. 
+        K získání hesla se nebudu z právních dùvodù vyjadøovat, použijte 
+        Google nebo jiný vyhledávací nástroj.
+      - Možná je jakákoliv hodnota.
+      - Výchozí hodnotou je prázdný øetìzec (který ovšem nebude fungovat).
 
   <VideaCesky_cz>
     - Potomek <modules>; obsahuje nastavení pro YouTube.

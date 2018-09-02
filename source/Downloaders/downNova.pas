@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, SynaCode,
   uOptions,
   {$IFDEF GUI}
     guiDownloaderOptions,
@@ -79,9 +79,8 @@ type
     protected
       MovieVariablesRegExp: TRegExp;
       LowQuality: boolean;
-      FlvStream: string;
+      Secret: string;
     protected
-      function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
@@ -91,7 +90,6 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Download: boolean; override;
     end;
 
   TDownloader_Nova_MS = class(TMSDownloader)
@@ -115,6 +113,8 @@ type
 const
   OPTION_NOVA_LOWQUALITY {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'low_quality';
   OPTION_NOVA_LOWQUALITY_DEFAULT = False;
+  OPTION_NOVA_SECRET {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'secret';
+  OPTION_NOVA_SECRET_DEFAULT = '';
 
 implementation
 
@@ -134,7 +134,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H2_CLASS; // 'video_title'
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
   REGEXP_MS_INFO {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '<object\s[^>]*\btype="application/x-silverlight-2"(?:(?!</object\b).)*?<param\s+name=''initparams''\s+value=''(?P<INFO>identifier=.+?)''';
   REGEXP_MS_INFO_NAME {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'INFO';
   REGEXP_RTMP_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
@@ -217,22 +217,17 @@ constructor TDownloader_Nova_RTMP.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieVariablesRegExp := RegExCreate(REGEXP_RTMP_VARIABLES);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
+  Secret := OPTION_NOVA_SECRET_DEFAULT;
 end;
 
 destructor TDownloader_Nova_RTMP.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieVariablesRegExp);
   inherited;
-end;
-
-function TDownloader_Nova_RTMP.GetFileNameExt: string;
-begin
-  if LowQuality then
-    Result := '.flv'
-  else
-    Result := '.mp4';
 end;
 
 function TDownloader_Nova_RTMP.GetMovieInfoUrl: string;
@@ -241,128 +236,64 @@ begin
 end;
 
 function TDownloader_Nova_RTMP.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
-    Name, Value: string;
-    MediaID, SiteID, SectionID, SessionID, UserAdID: string;
-    ServersUrl, VideosUrl: string;
-    FlvServer, FlvName: string;
-    Servers, Videos: TXmlDoc;
+const
+  NOVA_SERVICE_URL = 'http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx';
+  NOVA_APP_ID = 'nova-vod';
+var
+  InfoXml: TXmlDoc;
+  Node: TXmlNode;
+  Media_ID, Timestamp, ID, Signature, Url, Status, BaseUrl, Quality: string;
+  i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  FlvStream := '';
-  SessionID := '';
-  UserAdID := '';
-  GetRegExpVarPairs(MovieVariablesRegExp, Page, ['media_id', 'site_id', 'section_id'], [@MediaID, @SiteID, @SectionID]);
-  for i := 0 to Pred(Http.Cookies.Count) do
-    begin
-    Name := Http.Cookies.Names[i];
-    Value := Http.Cookies.Values[Name];
-    if AnsiCompareText(Name, 'bit') = 0 then
-      UserAdID := Value
-    else if AnsiCompareText(Name, 'c4d') = 0 then
-      SessionID := Value;
-    end;
-  Http.Cookies.Values['bit'] := UserAdID;
-  if SiteID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SiteID']))
-  else if SectionID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SectionID']))
-  else if MediaID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['MediaID']))
-  else if SessionID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['SessionID']))
-  //else if UserAdID = '' then
-  //  SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['UserAdID']))
+  GetRegExpVarPairs(MovieVariablesRegExp, Page, ['media_id'], [@Media_ID]);
+  if Media_ID = '' then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['media_id']))
+  else if Secret = '' then
+    SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET)
   else
     begin
-    ServersUrl := 'http://tn.nova.cz/bin/player/config.php?site_id=' + SiteID + '&';
-    VideosUrl := 'http://tn.nova.cz/bin/player/serve.php' +
-                 '?site_id=' + SiteID +
-                 '&media_id=' + MediaID +
-                 '&userad_id=' + UserAdID +
-                 '&section_id=' + SectionID +
-                 '&noad_count=0' +
-                 '&fv=WIN 10,0,45,2' +
-                 '&session_id=' + SessionID +
-                 '&ad_file=noad';
-    if not DownloadXml(Http, ServersUrl, Servers) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
+    Timestamp := FormatDateTime('yyyymmddhhnnss', Now);
+    ID := UrlEncode(NOVA_APP_ID + '|' + Media_ID);
+    Signature := UrlEncode(Base64Encode(MD5(NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret)));
+    Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&h=0&c=%s&s=%s', [Timestamp, ID, Signature]);
+    if not DownloadXml(Http, Url, InfoXml) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
-        if not DownloadXml(Http, VideosUrl, Videos) then
-          SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+        if (not GetXmlVar(InfoXml, 'status', Status)) or (Status <> 'Ok') then
+          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+        else if not GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+        else if not XmlNodeByPath(InfoXml, 'mediaList', Node) then
+          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
         else
-          try
-            if Videos.Root.Name = 'error' then
-              SetLastErrorMsg(ERR_MEDIA_REMOVED)
-            else
-              begin
-              GetXmlAttr(Servers, 'flvserver', 'url', FlvServer);
-              GetXmlAttr(Videos, 'item', 'src', FlvStream);
-              GetXmlAttr(Videos, 'item', 'txt', FlvName);
-              if FlvName = '' then
-                FlvName := MediaID;
-              if FlvServer = '' then
-                SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
-              else if FlvStream = '' then
-                SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
-              else
-                begin
-                SetName(FlvName);
-                if LowQuality then
-                  Self.PlayPath := 'flv:' + FlvStream
-                else
-                  Self.PlayPath := 'mp4:' + FlvStream;
-                MovieUrl := FlvServer + '/' + PlayPath;
-                Self.RtmpUrl := FlvServer;
-                //AddRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
-                //AddRtmpDumpOption('W', 'http://voyo.nova.cz/static/shared/app/flowplayer/13-flowplayer.commercial-3.1.5-17-002.swf');
-                //AddRtmpDumpOption('t', FlvServer);
-                Result := True;
-                SetPrepared(True);
-                end;
-              end;
-          finally
-            Videos.Free;
-            end;
+          for i := 0 to Pred(Node.NodeCount) do
+            if Node[i].Name = 'media' then
+              if GetXmlVar(Node[i], 'url', Url) then
+                if GetXmlVar(Node[i], 'quality', Quality) then
+                  if (LowQuality and (Quality = 'flv')) or ((not LowQuality) and (Quality = 'mp4')) then
+                    begin
+                    MovieUrl := Url;
+                    Self.RtmpUrl := BaseUrl;
+                    Self.Playpath := Url;
+                    Self.Live := True;
+                    SetPrepared(True);
+                    Result := True;
+                    Break;
+                    end;
       finally
-        Servers.Free;
+        FreeAndNil(InfoXml);
         end;
     end;
-end;
-
-function TDownloader_Nova_RTMP.Download: boolean;
-{$IFDEF DIRTYHACKS}
-var
-  TryLowQuality: boolean;
-{$ENDIF}
-begin
-  Result := inherited Download;
-  {$IFDEF DIRTYHACKS}
-  TryLowQuality := False;
-  if not LowQuality then
-    begin
-    if Result then
-      if FileExists(FileName) then
-        if FileGetSize(Filename) = 0 then
-          TryLowQuality := True;
-    if not Result then
-      TryLowQuality := True;
-    end;
-  if TryLowQuality then
-    begin
-    SysUtils.DeleteFile(FileName);
-    Self.Playpath := 'flv:' + FlvStream;
-    Result := inherited Download;
-    end;
-  {$ENDIF}
 end;
 
 procedure TDownloader_Nova_RTMP.SetOptions(const Value: TYTDOptions);
 begin
   inherited;
   LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
+  Secret := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT);
 end;
 
 { TDownloader_Nova_MS }
@@ -381,7 +312,7 @@ constructor TDownloader_Nova_MS.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['video_title']));
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   SilverlightParamsRegExp := RegExCreate(REGEXP_MS_INFO);
   SilverlightVarsRegExp := RegExCreate(REGEXP_MS_VARIABLES);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;

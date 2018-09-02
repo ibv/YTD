@@ -126,6 +126,7 @@ type
       function UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Base64Encode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ContentTypeToExtension(const ContentType: string): string;
@@ -736,6 +737,11 @@ end;
 function TDownloader.Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
 begin
   Result := string(DecodeBase64(AnsiString(Text)));
+end;
+
+function TDownloader.Base64Encode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+begin
+  Result := string(EncodeBase64(AnsiString(Text)));
 end;
 
 function TDownloader.JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;

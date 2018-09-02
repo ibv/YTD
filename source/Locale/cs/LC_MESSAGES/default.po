@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.62\n"
-"POT-Creation-Date: 2011-09-20 18:02\n"
-"PO-Revision-Date: 2011-09-20 18:04+0100\n"
+"POT-Creation-Date: 2011-10-18 18:11\n"
+"PO-Revision-Date: 2011-10-18 18:13+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -576,8 +576,13 @@ msgstr "&Konvertovat titulky do formátu .SRT"
 msgid "&Live stream mode (much slower, but more stable)"
 msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
 
+#. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:10
+msgid "Secret &password:"
+msgstr "Tajné &heslo:"
+
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..CheckLowQuality..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:11
+#: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:19
 msgid "Download in &low quality"
 msgstr "Download ve &snížené kvalitě"
 
@@ -1164,9 +1169,15 @@ msgstr "Soubor byl ze serveru smazán."
 msgid "Server returned an error: %s"
 msgstr "Server hlásí chybu: %s"
 
+#. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
+#. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
+#: Common/uMessages.pas:95
+msgid "Invalid configuration: Secure token not set."
+msgstr "Chybné nastavení: SecureToken není nastaven."
+
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:96
+#: Common/uMessages.pas:97
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 

@@ -55,6 +55,12 @@ type
   TFrameDownloaderOptionsPageSpec_Nova = class(TFrameDownloaderOptionsPage)
     protected
       function DoInitDialog: boolean; override;
+      function DoCommand(NotificationCode: word; Identifier: word; WindowHandle: THandle): boolean; override;
+    protected
+      EditSecretPassword: THandle;
+      procedure CreateObjects; override;
+      procedure DestroyObjects; override;
+      procedure LabelSecretPasswordClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
@@ -71,6 +77,8 @@ uses
 
 const
   IDC_CHECKBOX_LOWQUALITY = 1001;
+  IDC_LABEL_SECRETPASSWORD = 1002;
+  IDC_EDIT_SECRETPASSWORD = 1003;
 
 { TFrameDownloaderOptionsPage_Nova }
 
@@ -96,10 +104,40 @@ begin
   inherited;
 end;
 
+procedure TFrameDownloaderOptionsPageSpec_Nova.CreateObjects;
+begin
+  inherited;
+  EditSecretPassword := GetDlgItem(Self.Handle, IDC_EDIT_SECRETPASSWORD);
+end;
+
+procedure TFrameDownloaderOptionsPageSpec_Nova.DestroyObjects;
+begin
+  EditSecretPassword := 0;
+  inherited;
+end;
+
 function TFrameDownloaderOptionsPageSpec_Nova.DoInitDialog: boolean;
 begin
   Result := inherited DoInitDialog;
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_LOWQUALITY), [akLeft, akTop, akRight]);
+  SetControlAnchors(EditSecretPassword, [akLeft, akTop, akRight]);
+end;
+
+function TFrameDownloaderOptionsPageSpec_Nova.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
+begin
+  Result := False;
+  case NotificationCode of
+    STN_CLICKED {, BN_CLICKED, CBN_SELCHANGE} : // Click on a label, button etc.
+      case Identifier of
+        IDC_LABEL_SECRETPASSWORD:
+          begin
+          LabelSecretPasswordClick;
+          Result := True;
+          end;
+        end;
+    end;
+  if not Result then
+    Result := inherited DoCommand(NotificationCode, Identifier, WindowHandle);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.LoadFromOptions;
@@ -107,6 +145,7 @@ const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   inherited;
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_LOWQUALITY, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT)]);
+  SetWindowText(EditSecretPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_NOVA_SECRET, OPTION_NOVA_SECRET_DEFAULT)));
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_Nova.SaveToOptions;
@@ -118,6 +157,12 @@ begin
     BST_UNCHECKED:
       Options.WriteProviderOption(Provider, OPTION_NOVA_LOWQUALITY, False);
     end;
+  Options.WriteProviderOption(Provider, OPTION_NOVA_SECRET, GetWindowTextAsString(EditSecretPassword));
+end;
+
+procedure TFrameDownloaderOptionsPageSpec_Nova.LabelSecretPasswordClick;
+begin
+  SetFocus(EditSecretPassword);
 end;
 
 end.

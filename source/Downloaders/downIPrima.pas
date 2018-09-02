@@ -294,6 +294,7 @@ begin
       Stream := LQStream;
     MovieUrl := 'rtmp://iprima.livebox.cz/iprima/' + Stream;
     Self.RtmpUrl := MovieURL;
+    Self.Live := True;
     Result := True;
     SetPrepared(True);
     end;

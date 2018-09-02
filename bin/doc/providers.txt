@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.93                                     (c) 2009-11 Pepak
+YouTube Downloader v0.94                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -155,7 +155,7 @@ NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=57
 NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
 News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
-Nova.cz             | RTMP/MS  | 2     | http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+Nova.cz             | RTMP/MS  | 2,8   | http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
                     | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97

@@ -52,7 +52,7 @@ EXT_darwin=
 EXT_mingw=.exe
 EXT=$(EXT_$(SYS))
 
-PROGS=rtmpdump rtmpgw rtmpsrv rtmpsuck
+PROGS=rtmpdump_dll rtmpdump rtmpgw rtmpsrv rtmpsuck
 
 all:	$(LIBRTMP) $(PROGS)
 
@@ -67,13 +67,16 @@ install:	$(PROGS)
 	@cd librtmp; $(MAKE) install
 
 clean:
-	rm -f *.o rtmpdump$(EXT) rtmpgw$(EXT) rtmpsrv$(EXT) rtmpsuck$(EXT)
+	rm -f *.o rtmpdump$(EXT) rtmpgw$(EXT) rtmpsrv$(EXT) rtmpsuck$(EXT) rtmpdump_dll.dll
 	@cd librtmp; $(MAKE) clean
 
 FORCE:
 
 $(LIBRTMP): FORCE
 	@cd librtmp; $(MAKE) all
+
+rtmpdump_dll: rtmpdump_dll.o rtmpdump_dll.def
+	$(CC) $(LDFLAGS) -s -shared $@.o $@.def -o $@.dll $(LIBS)
 
 rtmpdump: rtmpdump.o
 	$(CC) $(LDFLAGS) -o $@$(EXT) $@.o $(LIBS)
@@ -89,6 +92,7 @@ rtmpgw: rtmpgw.o thread.o
 
 rtmpgw.o: rtmpgw.c $(INCRTMP) Makefile
 rtmpdump.o: rtmpdump.c $(INCRTMP) Makefile
+rtmpdump_dll.o: rtmpdump_dll.c $(INCRTMP) Makefile
 rtmpsrv.o: rtmpsrv.c $(INCRTMP) Makefile
 rtmpsuck.o: rtmpsuck.c $(INCRTMP) Makefile
 thread.o: thread.c thread.h

@@ -1,12 +1,33 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.93                                     (c) 2009-11 Pepak
+YouTube Downloader v0.94                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v0.94:
+
+    * Nova.cz: Updated the RTMP-based version to current format. You will need
+      to provide a secret password used by the server to authentize approved
+      players. For legal reasons I cannot reveal the password or comment on
+      how to find it. But if you find it on your own, you can enter it into
+      Nova.cz's downloader settings (F9 in main form) or manually into XML 
+      configuration (see the documentation for details).
+    
+    * Experimentally changed downloading mode to "live stream" for Nova.cz, 
+      iPrima.cz and iPrima.cz/showjanakrause. This will slow down the downloads
+      to approximatelly real-time, but it *may* remove the skipping that's been
+      plagueing YTD for some time now. Please let me know if the setting helped
+      - if it did, I will provide a user-selectable "live stream" option for
+      all RTMP-based providers. Thank you.
+
+    * Updated RTMPDUMP_DLL library to version 30.9.2011 (GIT hash
+      60218d0af0f4bd683ecdebe49986f188820cf8ce).
+
+  
+  
   v0.93:
 
    * New providers:

@@ -1,11 +1,33 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.93                                     (c) 2009-11 Pepak
+YouTube Downloader v0.94                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.94:
+
+    * Nova.cz: Aktualizována RTMP verze na aktuální tvar. Nutnou podmínkou
+      pro fungování je znalost tajného hesla, které server používá pro
+      autentizaci. Obdobnì jako u Barrandova se nemohu vyjadøovat k tomu,
+      jak toto heslo získat. Pokud se vám ho podaøí najít, nezapomeòte ho
+      vložit do konfigurace Novy (v grafickém prostøedí je na to kolonka,
+      umístìní v XML souboru je uvedeno v dokumentaci).
+
+    * Experimentálnì bylo pro Novu, Primu a Show Jana Kraise zapnuto stahování
+      v režimu "Live". Stahování sice pobìží mnohem pomaleji (zhruba rychlostí
+      pøehrávání), ale s trochou štìstí by to mohlo odstranit "pøeskakování"
+      videa, které se v posledních týdnech projevuje. Prosím, vyzkoušejte to
+      a dejte mi vìdìt, jak to dopadlo - pokud stahování zaène fungovat podle
+      oèekávání, udìlám pro všechny servery bìžící na RTMP uživatelsky dostupný
+      parametr, kterým se bude dát živý stream zapnout nebo vypnout. Díky.
+
+    * Aktualizována knihovna RTMPDUMP_DLL na verzi z 30.9.2011 (GIT hash
+      60218d0af0f4bd683ecdebe49986f188820cf8ce).
+
+
 
   v0.93:
 

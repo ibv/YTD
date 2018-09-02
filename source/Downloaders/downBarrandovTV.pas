@@ -144,6 +144,8 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['hostname']))
   else if not GetXmlVar(PageXml, 'streamname', StreamName) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['streamname']))
+  else if fToken = '' then
+    SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET)
   else
     begin
     SetName(Title);

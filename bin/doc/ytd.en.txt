@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.93                                     (c) 2009-11 Pepak
+YouTube Downloader v0.94                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -443,6 +443,14 @@ except in file/directory names. Logical values (true-false) are stored as
         fact.
       - Possible values are "0" (high quality) a "1" (low quality).
       - Default value is "0" (high quality).
+
+    <secret>
+      - Child of <Nova_cz>; defines the secret password used by Nova servers
+        to identify valid clients. In order to request movies from the server, 
+        you need this password. I will not disclose how to get it, for legal 
+        reasons; try Google or other search engines.
+      - Any value is possible here.
+      - Default value is an empty string (which won't work).
 
   <VideaCesky_cz>
     - Child of <modules>; contains settings specific to YouTube.
