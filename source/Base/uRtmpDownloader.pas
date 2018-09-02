@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, StrUtils, {$ENDIF}
-  uFunctions, uOptions,
+  uFunctions, uOptions, uSystem,
   uDownloader, uCommonDownloader, uExternalDownloader,
   RtmpDump_DLL;
 
@@ -389,6 +389,8 @@ begin
 end;
 
 function TRtmpDownloader.Download: boolean;
+const
+  MINIMUM_SIZE_TO_KEEP = 10240;
 var LogFileName, ErrorMsg: string;
     RetCode: integer;
     FN, FinalFN, TempFN: string;
@@ -427,6 +429,9 @@ begin
     if not Result then
       if ParseErrorLog(LogFileName, ErrorMsg) then
         SetLastErrorMsg(Format(ERR_RTMPDUMP_ERROR, [ErrorMsg]));
+    if not Result then
+      if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+        DeleteFile(PChar(FN));
     if Result then
       if FN <> FinalFN then
         begin

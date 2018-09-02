@@ -1,11 +1,44 @@
 ﻿______________________________________________________________________________
 
-YTD v1.17                                                    (c) 2009-12 Pepak
+YTD v1.18                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.18:
+
+    * New providers:
+      - PlayZone.cz
+      - Reflex.cz
+
+    * Updated providers:
+      - iPrima.cz
+      - Rutube.ru
+      - SoundCloud.com
+
+    * Nova.cz: The last update made Silverlight videos work, but stopped Flash
+      videos. Now I changed it back to working Flash videos and nonworking
+      Silverlight videos, mainly because I don't have a working Silverlight
+      example video - all I could find required user account, which I don't
+      have. If someone can provide example working videos of all types, I can
+      update the downloader to download them all.
+
+    * Zkouknito.cz: Updated.
+      Note that the download may not work every time, because the server tends
+      to respond from time to time that due to heavy load, video won't be 
+      available. This is a server issue, not related to YTD in any way. YTD
+      will download that video once the server starts serving it again.
+
+    * RTMP and RTSP handlers will now delete empty video files. Those used to
+      be left behind if the handshake between YTD and the server failed. This
+      change makes RTMP and RTSP behave like HTTP, which has had a zero-file
+      deleting code for a long time.
+
+    * Fixed national character output to the console in the Unicode version.
+
+
 
   v1.17:
 

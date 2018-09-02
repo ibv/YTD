@@ -42,17 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader, downZkoukniToEmbed;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_ZkoukniTo = class(TNestedDownloader)
+  TDownloader_ZkoukniTo = class(THttpDownloader)
     private
-    protected
-      MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
-      function CreateNestedDownloaderFromID(const MovieID: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -69,13 +66,13 @@ uses
 
 // http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*zkouknito\.cz/';
-  URLREGEXP_ID =        'video_[0-9]+.*';
+  URLREGEXP_BEFORE_ID = 'zkouknito\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_EXTRACT_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>[^"]+)"';
-  REGEXP_EXTRACT_ID = '<param\s+name="movie"\s+value="[^"]*[?&]vid=(?P<ID>[0-9]+)"';
+  REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>[^"]+)"';
+  REGEXP_MOVIE_URL = REGEXP_URL_FILE_COLON_VALUE;
 
 { TDownloader_ZkoukniTo }
 
@@ -86,21 +83,21 @@ end;
 
 class function TDownloader_ZkoukniTo.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_ZkoukniTo.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  NestedIDRegExp := RegExCreate(REGEXP_EXTRACT_ID);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_ZkoukniTo.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(NestedIDRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
@@ -115,11 +112,6 @@ begin
   Http.Cookies.Add('confirmed=1');
   {$ENDIF}
   Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
-end;
-
-function TDownloader_ZkoukniTo.CreateNestedDownloaderFromID(const MovieID: string): boolean;
-begin
-  Result := CreateNestedDownloaderFromDownloader(TDownloader_ZkoukniToEmbed.Create(MovieID));
 end;
 
 initialization

@@ -1,11 +1,47 @@
 ﻿______________________________________________________________________________
 
-YTD v1.17                                                    (c) 2009-12 Pepak
+YTD v1.18                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.18:
+
+    * Noví poskytovatelé:
+      - PlayZone.cz
+      - Reflex.cz
+
+    * Aktualizovaní poskytovatelé:
+      - iPrima.cz
+      - Rutube.ru
+      - SoundCloud.com
+
+    * Nova.cz: Minulá aktualizace sice zprovoznila Silverlight videa, ale zase
+      znefunkčnila Flash videa. Teď jsem udělal další zásah, kterým jsem 
+      znefunkčnil Silverlight a zprovoznil Flash. Problém je v tom, že nemám na 
+      čem to vyzkoušet - vždycky mám k dispozici buď funkční Silverlight video 
+      nebo funkční Flash video, ale skoro nikdy ne obojí současně. Teď třeba 
+      mám funkční Flash video, ale video, na kterém jsem chtěl testovat 
+      Silverlight, nelze použít protože je jen pro předplatitele. Bylo by 
+      hezké, kdyby mi někdo mohl sehnat obě videa, pak bych je rozběhal, aby 
+      fungovala obě najednou. V mezičase doporučuji v případě neúspěchu u Novy 
+      zkusit o kousek starší verzi YTD, jestli to v ní funguje...
+
+    * Zkouknito.cz: Aktualizováno.
+      Pozor, stahování nemusí fungovat úplně stoprocentně - server má
+      tendenci čas od času vyhodit hlášku, že "z důvodu překročení kapacity
+      je video dočasně nedostupné". Ale to je problém v serveru, ne v YTD.
+
+    * RTMP a RTSP protokoly byly doplněny o smazání prázdného souboru, který
+      se mohl vytvořit v rámci nezdařeného downloadu. Toto chování bylo už
+      dříve implementováno pro HTTP a slouží k tomu, aby po sobě program 
+      nenechával soubory o nulové délce.
+
+    * Opravena čeština v konzolové verzi zkompilované v Unicode.
+
+
 
   v1.17:
 

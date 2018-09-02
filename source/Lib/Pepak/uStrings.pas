@@ -100,7 +100,7 @@ begin
   if Length > 0 then
     begin
     SetLength(Result, Length);
-    if not CharToOemBuff(Value, @(Result[1]), Length) then
+    if not CharToOemBuffA(Value, @(Result[1]), Length) then
       Raise EStringError.Create('Conversion failed.');
     end
   else

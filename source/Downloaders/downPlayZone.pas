@@ -34,22 +34,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSoundCloud;
+unit downPlayZone;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_SoundCloud = class(THttpDownloader)
+  TDownloader_PlayZone = class(TRtmpDownloader)
     private
     protected
+      PlayPathRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -65,61 +66,66 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://soundcloud.com/ubi_irina/1-campaign-menu
+// http://www.playzone.cz/tv/tankodrom/tankodrom-16
 const
-  URLREGEXP_BEFORE_ID = 'soundcloud\.com/';
+  URLREGEXP_BEFORE_ID = 'playzone\.cz/tv/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<h1[^>]*>(?:\s*<em>)?\s*(?P<TITLE>.*?)(?:\s*</em>)?\s*</h1>';
-  REGEXP_MOVIE_URL =    '"streamUrl"\s*:\s*"(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_TITLE;
+  REGEXP_PLAYPATH = '"video_file"\s*:\s*"(?P<PATH>.+?)"';
 
-{ TDownloader_SoundCloud }
+{ TDownloader_PlayZone }
 
-class function TDownloader_SoundCloud.Provider: string;
+class function TDownloader_PlayZone.Provider: string;
 begin
-  Result := 'SoundCloud.com';
+  Result := 'PlayZone.cz';
 end;
 
-class function TDownloader_SoundCloud.UrlRegExp: string;
+class function TDownloader_PlayZone.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_SoundCloud.Create(const AMovieID: string);
+constructor TDownloader_PlayZone.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
+  inherited;
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  PlayPathRegExp := RegExCreate(REGEXP_PLAYPATH);
 end;
 
-destructor TDownloader_SoundCloud.Destroy;
+destructor TDownloader_PlayZone.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(PlayPathRegExp);
   inherited;
 end;
 
-function TDownloader_SoundCloud.GetMovieInfoUrl: string;
+function TDownloader_PlayZone.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.soundcloud.com/' + MovieID;
+  Result := 'http://www.playzone.cz/tv/' + MovieID;
 end;
 
-function TDownloader_SoundCloud.GetFileNameExt: string;
-begin
-  Result := '.mp3';
-end;
-
-function TDownloader_SoundCloud.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_PlayZone.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Path: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieUrl := HtmlDecode(JSDecode(MovieUrl));
-  Result := Prepared;
+  Result := False;
+  if not GetRegExpVar(PlayPathRegExp, Page, 'PATH', Path) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else
+    begin
+    Self.RtmpUrl := 'rtmp://stream.playzone.cz/vod/archive';
+    Self.Playpath := Path;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_SoundCloud);
+  RegisterDownloader(TDownloader_PlayZone);
 
 end.

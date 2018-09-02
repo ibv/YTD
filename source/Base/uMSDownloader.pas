@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
-  uFunctions,
+  uFunctions, uSystem,
   uDownloader, uCommonDownloader, uExternalDownloader,
   Msdl_Dll;
 
@@ -159,6 +159,8 @@ begin
 end;
 
 function TMSDownloader.Download: boolean;
+const
+  MINIMUM_SIZE_TO_KEEP = 10240;
 var LogFileName: string;
     RetCode: integer;
     FN, FinalFN, TempFN: string;
@@ -190,6 +192,9 @@ begin
     RetCode := Msdl_Download(Integer(Self), MsdlDownloadProgressCallback, MsdlOptions);
     if (RetCode >= 0) and (FileExists(FN)) and (FileGetSize(FN) > 65536) then
       Result := True;
+    if not Result then
+      if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+        DeleteFile(PChar(FN));
     if Result then
       if FN <> FinalFN then
         begin

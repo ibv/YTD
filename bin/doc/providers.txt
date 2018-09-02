@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.17                                                    (c) 2009-12 Pepak
+YTD v1.18                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -207,6 +207,7 @@ PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/ja
 PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
 PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
 PlayWire.com        | RTMP     |       | http://cdn.playwire.com/343/embed/28047.html
+PlayZone.cz         | RTMP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
 PracticalMethod.com | HTTP     |       | http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
 PrahovaHD.ro        | RTMP     |       | http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
 PrazdninyVTelci.cz  | MS       |       | http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
@@ -220,6 +221,7 @@ Qip.ru              | HTTP     |       | http://file.qip.ru/embed/141785477/1722
 R1ZAK.cz            | HTTP     |       | http://www.r1zak.cz/archiv-vysilani/
 Raajje.tv           | HTTP     |       | http://www.raajje.tv/video/991/president-anni-diving
 Rajce.iDnes.cz      | HTTP     |       | http://pso.rajce.idnes.cz/Koncert_28._10._2011_v_Semilech/
+Reflex.cz           | HTTP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
 Revver.com          | HTTP     |       | http://www.revver.com/video/2378230/super-mario-bros-2-on-the-nes-level-x/
 RingTV.com          | HTTP     |       | http://www.ringtv.com/video/frankie_gomez_training/
 RockstarGames.com   | HTTPS    |       | https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520

@@ -43,6 +43,12 @@ unit downNova;
   ve skriptech org.flowplayer.nacevi.Config (konfiguracni udaje, napr. token)
   a org.flowplayer.nacevi.Nacevi (sestaveni URL a ziskani a zpracovani playlistu -
   zejmena jde o metody getHashString a onGetTimeStamp).
+
+  Nedari se mi sehnat funkcni RTMP i MS video soucasne. Zpravy by obecne mely
+  byt na RTMP, ale o RTSP nevim.
+  http://voyo.nova.cz/product/zpravy/31987-televizni-noviny-3-11-2012
+  -> RTMP
+
 }
 
 interface
@@ -67,7 +73,7 @@ type
     private
     protected
       LowQuality: boolean;
-      IsSilverlightRegExp: TRegExp;
+      MediaDataRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
@@ -150,16 +156,16 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MEDIADATA = '\bmainVideo\s*=\s*new\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)\s*,\s*(?P<FLAG>true|false)';
 
   REGEXP_RTMP_MOVIE_TITLE = REGEXP_TITLE_H1_CLASS;
   REGEXP_RTMP_MEDIAID = '(?:\bvar\s|\b)media_id\s*=\s*(?P<QUOTE>["'']?)(?P<ID>[0-9]+)(?P=QUOTE)';
-  REGEXP_RTMP_MEDIADATA = '\bmediadata\s*\(\s*[0-9]+\s*,\s*[0-9]+\s*,\s*(?P<ID>[0-9]+)';
+  //REGEXP_RTMP_MEDIADATA = '\bmediadata\s*\(\s*[0-9]+\s*,\s*[0-9]+\s*,\s*(?P<ID>[0-9]+)';
 
   REGEXP_MS_TITLE = REGEXP_MOVIE_TITLE;
-  REGEXP_MS_IDENTIFIER = '(?P<ID>Silverlight)';
   REGEXP_MS_PLAYERPARAMS = 'voyoPlayer\.params\s*=\s*\{(?P<PARAMS>.*?)\}\s*;';
   REGEXP_MS_PLAYERPARAMS_ITEM = '\b(?P<VARNAME>[a-z0-9_]+)\s*:\s*(?P<QUOTE>["'']?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*(?:,|$)';
-  REGEXP_MS_MEDIADATA = '\bnew\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)';
+  //REGEXP_MS_MEDIADATA = '\bnew\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)';
   REGEXP_MS_STREAMID = '<param\s+value=\\"(?:[^,]*,)*identifier=(?P<ID>(?P<YEAR>\d{4})-(?P<MONTH>\d{2})-[^",]+)';
 
 const
@@ -194,13 +200,13 @@ constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  IsSilverlightRegexp := RegExCreate(REGEXP_MS_IDENTIFIER);
+  MediaDataRegExp := RegExCreate(REGEXP_MEDIADATA);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
 end;
 
 destructor TDownloader_Nova.Destroy;
 begin
-  RegExFreeAndNil(IsSilverlightRegexp);
+  RegExFreeAndNil(MediaDataRegExp);
   inherited;
 end;
 
@@ -210,13 +216,13 @@ begin
 end;
 
 function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
-var
-  Silverlight: string;
+//var
+//  Flag: string;
 begin
   inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
-  if GetRegExpVar(IsSilverlightRegexp, Page, 'ID', Silverlight) then
-    Downloader := TDownloader_Nova_MS.Create(MovieID)
-  else
+//  if GetRegExpVar(MediaDataRegExp, Page, 'FLAG', Flag) and (Flag = 'true') then
+//    Downloader := TDownloader_Nova_MS.Create(MovieID)
+//  else
     Downloader := TDownloader_Nova_RTMP.Create(MovieID);
   Result := True;
 end;
@@ -250,7 +256,7 @@ begin
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(Format(REGEXP_RTMP_MOVIE_TITLE, ['original_title']));
   MediaIdRegExp := RegExCreate(REGEXP_RTMP_MEDIAID);
-  MediaDataRegExp := RegExCreate(REGEXP_RTMP_MEDIADATA);
+  MediaDataRegExp := RegExCreate(REGEXP_MEDIADATA);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
   Secret := OPTION_NOVA_SECRET_DEFAULT;
 end;
@@ -283,7 +289,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MediaIdRegExp, Page, 'ID', Media_ID) then
-    GetRegExpVar(MediaDataRegExp, Page, 'ID', Media_ID);
+    GetRegExpVar(MediaDataRegExp, Page, 'MEDIA_ID', Media_ID);
   if Media_ID = '' then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['media_id']))
   else if Secret = '' then
@@ -355,7 +361,7 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MS_TITLE);
   PlayerParamsRegExp := RegExCreate(REGEXP_MS_PLAYERPARAMS);
   PlayerParamsItemRegExp := RegExCreate(REGEXP_MS_PLAYERPARAMS_ITEM);
-  MediaDataRegExp := RegExCreate(REGEXP_MS_MEDIADATA);
+  MediaDataRegExp := RegExCreate(REGEXP_MEDIADATA);
   MovieIDRegExp := RegExCreate(REGEXP_MS_STREAMID);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
 end;

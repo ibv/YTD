@@ -254,15 +254,23 @@ begin
 end;
 
 procedure TConsoleApp.Write(const Msg: string);
-begin
+var
+  MsgOEM: AnsiString;
   {$IFDEF UNICODE}
-  System.Write(Msg);
-  {$ELSE}
+  BytesWritten: DWORD;
+  {$ENDIF}
+begin
   if StdOutRedirected or (not ConvertWritesToOEM) then
     System.Write(Msg)
   else
-    System.Write(AnsiToOEM(Msg));
-  {$ENDIF}
+    begin
+    MsgOEM := AnsiToOEM ({$IFDEF UNICODE} AnsiString {$ENDIF} (Msg));
+    {$IFDEF UNICODE}
+    WriteFile(StdOut, MsgOEM[1], Length(MsgOEM), BytesWritten, nil);
+    {$ELSE}
+    System.Write(MsgOEM);
+    {$ENDIF}
+    end;
 end;
 
 procedure TConsoleApp.Writeln(const Msg: string);

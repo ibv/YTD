@@ -224,6 +224,7 @@
 			<DCCReference Include="Downloaders\downPCPlanets.pas"/>
 			<DCCReference Include="Downloaders\downPicSpoon.pas"/>
 			<DCCReference Include="Downloaders\downPlaywire.pas"/>
+			<DCCReference Include="Downloaders\downPlayZone.pas"/>
 			<DCCReference Include="Downloaders\downPracticalMethod.pas"/>
 			<DCCReference Include="Downloaders\downPrahovaHD.pas"/>
 			<DCCReference Include="Downloaders\downPrazdninyVTelci.pas"/>
@@ -235,6 +236,7 @@
 			<DCCReference Include="Downloaders\downR1ZAK.pas"/>
 			<DCCReference Include="Downloaders\downRaajje.pas"/>
 			<DCCReference Include="Downloaders\downRajce.pas"/>
+			<DCCReference Include="Downloaders\downReflex.pas"/>
 			<DCCReference Include="Downloaders\downRevver.pas"/>
 			<DCCReference Include="Downloaders\downRingTV.pas"/>
 			<DCCReference Include="Downloaders\downRockstarGames.pas"/>
@@ -297,6 +299,7 @@
 			<DCCReference Include="Downloaders\downVideoPortalSK.pas"/>
 			<DCCReference Include="Downloaders\downVideoTiscaliCZ.pas"/>
 			<DCCReference Include="Downloaders\downVideu.pas"/>
+			<DCCReference Include="Downloaders\downViiSk.pas"/>
 			<DCCReference Include="Downloaders\downViki.pas"/>
 			<DCCReference Include="Downloaders\downVimeo.pas"/>
 			<DCCReference Include="Downloaders\downVimeo_Embed.pas"/>
@@ -409,15 +412,15 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="RunParams">http://www.ceskatelevize.cz/ivysilani/212411058230038-z-metropole/</Parameters>
+						<Parameters Name="RunParams">-?</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
-						<VersionInfo Name="MinorVer">16</VersionInfo>
+						<VersionInfo Name="MinorVer">18</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">913</VersionInfo>
+						<VersionInfo Name="Build">933</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -429,13 +432,13 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName">Pepak</VersionInfoKeys>
 						<VersionInfoKeys Name="FileDescription">YTD</VersionInfoKeys>
-						<VersionInfoKeys Name="FileVersion">1.16.0.913</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.18.0.933</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName">YTD</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalCopyright">(c) 2009-11 Pepak</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalTrademarks"/>
 						<VersionInfoKeys Name="OriginalFilename">ytd.exe</VersionInfoKeys>
 						<VersionInfoKeys Name="ProductName">YTD</VersionInfoKeys>
-						<VersionInfoKeys Name="ProductVersion">1.16.0.910</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductVersion">1.18.0.931</VersionInfoKeys>
 						<VersionInfoKeys Name="Comments">http://www.pepak.net/ytd</VersionInfoKeys>
 					</VersionInfoKeys>
 				</Delphi.Personality>

@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSoundCloud;
+unit downReflex;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,12 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_SoundCloud = class(THttpDownloader)
+  TDownloader_Reflex = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,29 +63,29 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://soundcloud.com/ubi_irina/1-campaign-menu
+// http://www.reflex.cz/clanek/zpravy/48321/prozradim-vam-sladke-tajemstvi-o-klausovi-rekl-milos-zeman-pri-navsteve-reflexu-a-prozradil.html
 const
-  URLREGEXP_BEFORE_ID = 'soundcloud\.com/';
+  URLREGEXP_BEFORE_ID = 'reflex\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<h1[^>]*>(?:\s*<em>)?\s*(?P<TITLE>.*?)(?:\s*</em>)?\s*</h1>';
-  REGEXP_MOVIE_URL =    '"streamUrl"\s*:\s*"(?P<URL>https?://.+?)"';
+  REGEXP_MOVIE_TITLE =  '<div\s+class="video.*?<span>(?P<TITLE>.*?)</span>';
+  REGEXP_MOVIE_URL =    REGEXP_URL_PARAM_FLASHVARS_FILE;
 
-{ TDownloader_SoundCloud }
+{ TDownloader_Reflex }
 
-class function TDownloader_SoundCloud.Provider: string;
+class function TDownloader_Reflex.Provider: string;
 begin
-  Result := 'SoundCloud.com';
+  Result := 'Reflex.cz';
 end;
 
-class function TDownloader_SoundCloud.UrlRegExp: string;
+class function TDownloader_Reflex.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_SoundCloud.Create(const AMovieID: string);
+constructor TDownloader_Reflex.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
@@ -95,31 +93,19 @@ begin
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_SoundCloud.Destroy;
+destructor TDownloader_Reflex.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_SoundCloud.GetMovieInfoUrl: string;
+function TDownloader_Reflex.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.soundcloud.com/' + MovieID;
-end;
-
-function TDownloader_SoundCloud.GetFileNameExt: string;
-begin
-  Result := '.mp3';
-end;
-
-function TDownloader_SoundCloud.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieUrl := HtmlDecode(JSDecode(MovieUrl));
-  Result := Prepared;
+  Result := 'http://www.reflex.cz/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_SoundCloud);
+  RegisterDownloader(TDownloader_Reflex);
 
 end.

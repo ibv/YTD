@@ -49,7 +49,7 @@ type
   TDownloader_RuTube = class(TNestedDownloader)
     private
     protected
-      MovieInfoRegExp: TRegExp;
+      MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -89,7 +89,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_INFO =   '<param\s+name=\\"movie\\"\s+value=\\"(?P<URL>https?://.+?)\\"';
+  REGEXP_MOVIE_ID = '<iframe[^>]*\ssrc=\\"[^"]+/embed/(?P<ID>\d+)';
 
 type
   TDownloader_RuTube_HDS = class(THDSDirectDownloader);
@@ -126,13 +126,13 @@ begin
   inherited;
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
 end;
 
 destructor TDownloader_RuTube.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieInfoRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
   inherited;
 end;
 
@@ -143,7 +143,7 @@ end;
 
 function TDownloader_RuTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Info, Url, InfoUrl, Response, ResponseStr, Server: string;
+  Info, ID, Url, InfoUrl, Response, ResponseStr, Server: string;
   Prot, User, Pass, Host, Port, Path, Para: string;
   BestStream, Stream, Bitrate: string;
   i, BestQuality, Quality: integer;
@@ -154,12 +154,14 @@ begin
   Result := False;
   if not DownloadPage(Http, 'http://rutube.ru/api/video/' + MovieID, Info) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(MovieInfoRegExp, Info, 'URL', Url) then
+  else if not GetRegExpVar(MovieIDRegExp, Info, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
+  else if not DownloadXmlVar(Http, 'http://rutube.ru/trackinfo/' + ID + '.xml?referer=' + UrlEncode(GetMovieInfoUrl), 'video_balancer/default', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
   else
     begin
     Xml := nil;
-    Url := Url + '.f4m?referer=' + UrlEncode(GetMovieInfoUrl);
+    Url := Url + '?referer=' + UrlEncode(GetMovieInfoUrl);
     InfoUrl := StringReplace(Url, 'http://video.', 'http://bl.', []);
     if not DownloadXml(Http, InfoUrl, Xml) then
       if DownloadXml(Http, Url, Xml) then

@@ -125,7 +125,7 @@ const
   {$IFDEF PRIMA_LIVEBOX}
   //REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,)\s*width\s*,\s*height\s*,\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
   REGEXP_LIVEBOX = '''hq_id''\s*:\s*''(?P<HQ>[^'']*)''\s*,\s*''lq_id''\s*:\s*''(?P<LQ>[^'']*)''(?:.*?''zoneGEO''\s*:\s*(?P<ZONEGEO>[0-9]*))?';
-  REGEXP_LIVEBOX_AUTH = '''(?P<AUTH>\?auth=.*?)''';
+  REGEXP_LIVEBOX_AUTH = '''\?auth=(?:''\s*\+\s*'')?(?P<AUTH>.*?)''';
   REGEXP_LIVEBOX_URLPREFIX = '\biph_full_url\s*=\s*''(?P<URL>https?://.+?)''';
   {$ENDIF}
 
@@ -361,7 +361,7 @@ begin
           Geo := '_' + ZoneGeo
         else
           Geo := '';
-        MovieUrl := Url {'rtmp://bcastlw.livebox.cz:80/iprima_token'} + Geo + Auth; // '?auth=_any_|1331380805|e0bdc430140646104fb9509b5c76791c78da9ce7';
+        MovieUrl := Url {'rtmp://bcastlw.livebox.cz:80/iprima_token'} + Geo + '?auth=' + Auth; // '?auth=_any_|1331380805|e0bdc430140646104fb9509b5c76791c78da9ce7';
         Self.RtmpUrl := MovieURL; // Prima Play
         if ExtractFileExt(Stream) = '.mp4' then
           Self.PlayPath := 'mp4:' + Stream
