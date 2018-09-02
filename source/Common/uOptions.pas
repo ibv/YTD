@@ -107,6 +107,8 @@ type
       procedure SetAutoTryHtmlParser(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetDownloadRetryCount: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetDownloadRetryCount(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetIgnoreMissingOpenSSL: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetIgnoreMissingOpenSSL(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetScriptFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -163,6 +165,7 @@ type
       property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
       property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
       property DownloadRetryCount: integer read GetDownloadRetryCount write SetDownloadRetryCount;
+      property IgnoreMissingOpenSSL: boolean read GetIgnoreMissingOpenSSL write SetIgnoreMissingOpenSSL;
       property ScriptFileName: string read GetScriptFileName;
       {$IFDEF CONVERTERS}
         property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
@@ -240,6 +243,7 @@ const
   {$ENDIF}
   XML_PATH_DOWNLOADTOTEMPFILES = 'config/download_to_temp_files';
   XML_PATH_DOWNLOADTOPROVIDERSUBDIRS = 'config/download_to_provider_subdirectories';
+  XML_PATH_IGNOREMISSINGOPENSSL = 'config/ignore_missing_openssl';
 
 const
   XML_DEFAULT_PORTABLEMODE = False;
@@ -257,7 +261,7 @@ const
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
   XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
   XML_DEFAULT_MONITORCLIPBOARD = False;
-  XML_DEFAULT_SCRIPTFILENAME = 'ytd-defs.xml'; 
+  XML_DEFAULT_SCRIPTFILENAME = 'ytd-defs.xml';
   XML_DEFAULT_SELECTEDCONVERTER = '';
   {$IFDEF CONVERTERSMUSTBEACTIVATED}
   XML_DEFAULT_CONVERTERSACTIVATED = False;
@@ -271,6 +275,7 @@ const
   {$ENDIF}
   XML_DEFAULT_DOWNLOADTOTEMPFILES = False;
   XML_DEFAULT_DOWNLOADTOPROVIDERSUBDIRS = False;
+  XML_DEFAULT_IGNOREMISSINGOPENSSL = False;
 
 resourcestring
   MSG_CANT_OVERWRITE_FILE = 'Cannot overwrite file "%s".';
@@ -856,6 +861,16 @@ begin
     FreeAndNil(Result);
     Raise;
     end;
+end;
+
+function TYTDOptions.GetIgnoreMissingOpenSSL: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_IGNOREMISSINGOPENSSL), XML_DEFAULT_IGNOREMISSINGOPENSSL);
+end;
+
+procedure TYTDOptions.SetIgnoreMissingOpenSSL(const Value: boolean);
+begin
+  SetOption(XML_PATH_IGNOREMISSINGOPENSSL, BooleanToXml(Value));
 end;
 
 end.

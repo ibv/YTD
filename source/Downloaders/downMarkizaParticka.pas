@@ -106,7 +106,10 @@ function TDownloader_Markiza_Particka.AfterPrepareFromPage(var Page: string; Pag
 var
   Title, Url: string;
   ChannelNode: TXmlNode;
-  i, n: integer;
+  i: integer;
+  {$IFDEF MULTIDOWNLOADS}
+  n: integer;
+  {$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -116,7 +119,9 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
+    {$IFDEF MULTIDOWNLOADS}
     n := 1;
+    {$ENDIF}
     for i := 0 to Pred(ChannelNode.NodeCount) do
       if ChannelNode[i].Name = 'item' then
         if GetXmlAttr(ChannelNode[i], 'media:content', 'url', Url) then

@@ -223,7 +223,9 @@ begin
   fDownloaderList.Clear;
   DebugFileName := '';
   RelativeUrl := '';
+  {$IFDEF MULTIDOWNLOADS}
   First;
+  {$ENDIF}
 end;
 
 function TScriptedDownloader.GetDownloaderCount: integer;
@@ -246,7 +248,9 @@ end;
 
 function TScriptedDownloader.Prepare: boolean;
 var
+  {$IFDEF MULTIDOWNLOADS}
   i: integer;
+  {$ENDIF}
   Vars: TScriptVariables;
 begin
   Result := False;
@@ -801,6 +805,7 @@ begin
     RelativeUrl := Url;
   Http := CreateHttp;
   try
+    Http.Cookies.Text := Vars[SCRIPTVAR_LAST_COOKIES];
     if WantXml then
       if Method = hmPOST then
         if XmlAttr = '' then

@@ -58,6 +58,7 @@ procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 function IsHttpProtocol(const Url: string): boolean;
 procedure UpgradeYTD(Upgrade: TYTDUpgrade; OwnerHandle: THandle);
 function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle): boolean;
+procedure CheckForOpenSSL(OwnerHandle: THandle; Options: TYTDOptions);
 
 {$IFDEF SINGLEINSTANCE}
 procedure RegisterMainInstance(const MainFormHandle: THandle);
@@ -271,6 +272,14 @@ begin
 end;
 
 {$ENDIF}
+
+procedure CheckForOpenSSL(OwnerHandle: THandle; Options: TYTDOptions);
+begin
+  if not IsSSLAvailable then
+    if not Options.IgnoreMissingOpenSSL then
+      if MessageBox(OwnerHandle, PChar(MSG_OPENSSL_NOT_FOUND + #10#10 + MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+        Run(OPENSSL_URL);
+end;
 
 initialization
 

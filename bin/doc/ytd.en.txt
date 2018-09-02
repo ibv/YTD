@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.44+                                                   (c) 2009-15 Pepak
+YTD v1.57+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -444,6 +444,12 @@ except in file/directory names. Logical values (true-false) are stored as
       - Child of <proxy_server>; specifies a password to the proxy server.
       - Any string is possible here.
       - Default value is an empty string (no password).
+
+  <ignore_missing_openssl>
+    - Child of <config>; lets you disable the warning about missing OpenSSL
+      libraries.
+    - Possible values are "1" (disable the warning) and "0" (enable).
+    - Default value is "1" (enable the warning).
 
 <gui>
   - Child of <ytd>; stores settings specific to the graphical version of YTD.

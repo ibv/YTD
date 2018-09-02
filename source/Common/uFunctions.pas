@@ -42,7 +42,7 @@ interface
 
 uses
   SysUtils, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
-  HttpSend, SynaUtil,
+  HttpSend, SynaUtil, Blcksock,
   {$IFDEF SETUP}
   uSetup,
   {$ENDIF}
@@ -65,6 +65,7 @@ function CheckProtocol(const Url: string; const Protocols: array of string): int
 function IsHttpProtocol(const Url: string): boolean;
 function IncludeTrailingSlash(const Path: string): string;
 function FindHttpHeader(Http: THttpSend; Header: string; out Value: string): boolean;
+function IsSSLAvailable: boolean;
 
 implementation
 
@@ -310,6 +311,11 @@ begin
       Result := True;
       Break;
       end;
+end;
+
+function IsSSLAvailable: boolean;
+begin
+  Result := blcksock.SSLImplementation <> TSSLNone;
 end;
 
 end.

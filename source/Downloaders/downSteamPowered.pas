@@ -115,11 +115,16 @@ function TDownloader_SteamPowered.AfterPrepareFromPage(var Page: string; PageXml
 var
   Urls: string;
   UrlArr: TStringArray;
-  i, n: integer;
+  i: integer;
+  {$IFDEF MULTIDOWNLOADS}
+  n: integer;
+  {$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
+  {$IFDEF MULTIDOWNLOADS}
   n := 0;
+  {$ENDIF}
   if GetRegExpVar(UrlsRegExp, Page, 'URLS', Urls) then
     if GetRegExpAllVar(MovieUrlRegExp, Urls, 'URL', UrlArr) then
       for i := 0 to Pred(Length(UrlArr)) do

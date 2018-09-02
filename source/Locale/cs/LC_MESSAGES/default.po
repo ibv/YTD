@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YTD 1.43\n"
-"POT-Creation-Date: 2014-10-28 16:51\n"
-"PO-Revision-Date: 2014-10-28 16:51+0100\n"
+"POT-Creation-Date: 2015-03-29 17:24\n"
+"PO-Revision-Date: 2015-03-29 17:25+0100\n"
 "Last-Translator: Pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -111,19 +111,19 @@ msgstr "Vyberte si konvertor"
 
 #. FormSelectConverter..LabelConverter..Caption
 #. FormOptions..PageOptions..TabDownloadOptions..LabelConverter..Caption
-#: GUI/VCL/guiConverterVCL.dfm:24 GUI/VCL/guiOptionsVCL.dfm:137
+#: GUI/VCL/guiConverterVCL.dfm:24 GUI/VCL/guiOptionsVCL.dfm:146
 msgid "&Converter:"
 msgstr "&Konvertor:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:347
+#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:356
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:352
+#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:361
 msgid "&Cancel"
 msgstr "&Storno"
 
@@ -365,14 +365,14 @@ msgid "-"
 msgstr "-"
 
 #. FormYTD..OpenHtmlFile..Filter
-#: GUI/VCL/guiMainVCL.dfm:1398 GUI/WinAPI/guiMainWINAPI.pas:698
+#: GUI/VCL/guiMainVCL.dfm:1398 GUI/WinAPI/guiMainWINAPI.pas:700
 msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
 
 #. FormYTD..OpenUrlList..Filter
 #. FormYTD..SaveUrlList..Filter
 #: GUI/VCL/guiMainVCL.dfm:1404 GUI/VCL/guiMainVCL.dfm:1411
-#: GUI/WinAPI/guiMainWINAPI.pas:675
+#: GUI/WinAPI/guiMainWINAPI.pas:677
 msgid "List files (*.lst)|*.lst|All files|*.*"
 msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
 
@@ -406,128 +406,133 @@ msgstr "&Zjišťovat při startu nové verze"
 msgid "&Monitor clipboard for downloadable URLs"
 msgstr "Sledovat s&chránku na podporovaná URL"
 
+#. FormOptions..PageOptions..TabMain..CheckIgnoreOpenSSLWarning..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:118
+msgid "&Disable OpenSSL warning"
+msgstr "Zakázat varování před chybějícím OpenSS&L"
+
 #. FormOptions..PageOptions..TabDownloadOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:114 GUI/WinAPI/guiOptionsWINAPI.pas:129
+#: GUI/VCL/guiOptionsVCL.dfm:123 GUI/WinAPI/guiOptionsWINAPI.pas:129
 msgid "Download settings"
 msgstr "Stahování"
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelOverwriteMode..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:121
+#: GUI/VCL/guiOptionsVCL.dfm:130
 msgid "&Existing files:"
 msgstr "&Existující soubory:"
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:129
+#: GUI/VCL/guiOptionsVCL.dfm:138
 msgid "&Download directory:"
 msgstr "Adresář pro &downloady"
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelRetryCount..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:145
+#: GUI/VCL/guiOptionsVCL.dfm:154
 msgid "&Retry count:"
 msgstr "Počet opakování:"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:154
+#: GUI/VCL/guiOptionsVCL.dfm:163
 msgid "&Automatically start downloads"
 msgstr "&Automaticky spouštět downloady"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #. Overwrite mode
-#: GUI/VCL/guiOptionsVCL.dfm:167
+#: GUI/VCL/guiOptionsVCL.dfm:176
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:240
 msgid "Ask user"
 msgstr "Zeptat se uživatele"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:168
+#: GUI/VCL/guiOptionsVCL.dfm:177
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:241
 msgid "Overwrite"
 msgstr "Přepisovat"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:169
+#: GUI/VCL/guiOptionsVCL.dfm:178
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:242
 msgid "Skip"
 msgstr "Přeskočit"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:170
+#: GUI/VCL/guiOptionsVCL.dfm:179
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:243
 msgid "Rename automatically"
 msgstr "Automaticky přejmenovat"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:206
+#: GUI/VCL/guiOptionsVCL.dfm:215
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
 msgid "Download &subtitles if available"
 msgstr "Pokud jsou k dispozici, stahovat &titulky"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoTryHtmlParser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:215
+#: GUI/VCL/guiOptionsVCL.dfm:224
 msgid "Automatically try &HTML parser"
 msgstr "Automaticky používat &HTML parser"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToTempFiles..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:224
+#: GUI/VCL/guiOptionsVCL.dfm:233
 msgid "Append a .part e&xtension while downloading"
 msgstr "V průběhu stahování přidat k názvu &příponu .part"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:233
+#: GUI/VCL/guiOptionsVCL.dfm:242
 msgid "Store media into su&bdirectories according to their providers"
 msgstr "Ukládat &média do podadresářů podle názvu poskytovatele"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:246 GUI/WinAPI/guiOptionsWINAPI.pas:130
+#: GUI/VCL/guiOptionsVCL.dfm:255 GUI/WinAPI/guiOptionsWINAPI.pas:130
 msgid "Network settings"
 msgstr "Síť"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:253
+#: GUI/VCL/guiOptionsVCL.dfm:262
 msgid "Proxy &host:"
 msgstr "Proxy &server:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:261
+#: GUI/VCL/guiOptionsVCL.dfm:270
 msgid "Proxy &port:"
 msgstr "Proxy &port:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:269
+#: GUI/VCL/guiOptionsVCL.dfm:278
 msgid "Proxy &username:"
 msgstr "Proxy &uživatel:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:277
+#: GUI/VCL/guiOptionsVCL.dfm:286
 msgid "Proxy pass&word:"
 msgstr "Proxy &heslo:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:286
+#: GUI/VCL/guiOptionsVCL.dfm:295
 msgid "U&se proxy server"
 msgstr "Použít prox&y server"
 
 #. FormOptions..PageOptions..TabDownloaderOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:319 GUI/WinAPI/guiOptionsWINAPI.pas:131
+#: GUI/VCL/guiOptionsVCL.dfm:328 GUI/WinAPI/guiOptionsWINAPI.pas:131
 msgid "Downloader settings"
 msgstr "Nastavení stahovačů"
 
 #. FormOptions..ActionList..actDownloadDir..Caption
 #. FormSetup..BtnDestinationDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:356 GUI/VCL/guiSetupVCL.dfm:38
+#: GUI/VCL/guiOptionsVCL.dfm:365 GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr "..."
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
 #. FormSetup..CheckDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:361 GUI/VCL/guiSetupVCL.dfm:48
+#: GUI/VCL/guiOptionsVCL.dfm:370 GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
 msgstr "Vytvořit odkaz na &Ploše"
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
 #. FormSetup..CheckStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:365 GUI/VCL/guiSetupVCL.dfm:59
+#: GUI/VCL/guiOptionsVCL.dfm:374 GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
 msgstr "Vytvořit odkaz ve &Start menu"
 
@@ -786,163 +791,163 @@ msgid ", upgraded to "
 msgstr ", aktualizovany na "
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:340
+#: CLI/uYTD.pas:346
 msgid "With -e a filename must be provided."
 msgstr "K parametru -e musi byt uvedeno jmeno souboru."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:354
+#: CLI/uYTD.pas:360
 msgid "HTML source \"%s\" doesn't contain any useful links."
 msgstr "HTML zdroj \"%s\" neobsahuje zadne pouzitelne odkazy."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:359
+#: CLI/uYTD.pas:365
 msgid "HTML source \"%s\" not found."
 msgstr "HTML zdroj \"%s\" nebyl nalezen."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:369
+#: CLI/uYTD.pas:375
 msgid "With -s a filename or an URL must be provided."
 msgstr "K parametru -s musi byt uvedena URL nebo jmeno souboru."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:385
+#: CLI/uYTD.pas:391
 msgid "URL list-file \"%s\" not found."
 msgstr "Soubor \"%s\" se seznamem URL nenalezen."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:391
+#: CLI/uYTD.pas:397
 msgid "With -i a filename must be provided."
 msgstr "K parametru -i musi byt uvedeno jmeno souboru."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:401
+#: CLI/uYTD.pas:407
 msgid "Destination directory \"%s\" not found."
 msgstr "Cilovy adresar \"%s\" nenalezen."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:407
+#: CLI/uYTD.pas:413
 msgid "With -o a directory name must be provided."
 msgstr "K parametru -o musi byt uvedeno jmeno adresare."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:413
+#: CLI/uYTD.pas:419
 msgid "Unknown parameter \"%s\"."
 msgstr "Neznamy parametr \"%s\"."
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:427
+#: CLI/uYTD.pas:433
 msgid "No valid URLs found."
 msgstr "Nenalezeny zadne zname URL."
 
 #. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
-#: CLI/uYTD.pas:457
+#: CLI/uYTD.pas:463
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
 msgstr "  Stahuje se: <%s> %d.%d%% (%s/%s)"
 
 #. CLI progress bar. %: Downloaded size
-#: CLI/uYTD.pas:462
+#: CLI/uYTD.pas:468
 msgid "  Downloading: %s"
 msgstr "Stahuje se: %s"
 
-#: CLI/uYTD.pas:473
+#: CLI/uYTD.pas:479
 msgid "  ERROR: "
 msgstr "  CHYBA: "
 
 #. CLI: Error message to be written to the log file. %: URL, message
-#: CLI/uYTD.pas:475
+#: CLI/uYTD.pas:481
 msgid "FAILED \"%s\": %s"
 msgstr "CHYBA \"%s\": %s"
 
 #. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
-#: CLI/uYTD.pas:493
+#: CLI/uYTD.pas:499
 msgid "  Playlist item: "
 msgstr "  Polozka seznamu:"
 
 #. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
-#: CLI/uYTD.pas:498
+#: CLI/uYTD.pas:504
 msgid "            URL: "
 msgstr "            URL: "
 
 #. CLI: Title shown before media title. Pad to the same length as "File name:'
-#: CLI/uYTD.pas:517
+#: CLI/uYTD.pas:523
 msgid "  Media title: "
 msgstr "  Nazev média: "
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:518 CLI/uYTD.pas:674
+#: CLI/uYTD.pas:524 CLI/uYTD.pas:680
 msgid "    File name: "
 msgstr "Nazev souboru: "
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:519
+#: CLI/uYTD.pas:525
 msgid "  Content URL: "
 msgstr "   URL obsahu: "
 
-#: CLI/uYTD.pas:525
+#: CLI/uYTD.pas:531
 msgid "Download skipped."
 msgstr "Download byl přeskočen."
 
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:534
+#: CLI/uYTD.pas:540
 msgid "  SUCCESS."
 msgstr "  V PORADKU."
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:551
+#: CLI/uYTD.pas:557
 msgid "  ABORTED BY USER"
 msgstr "  PRERUSENO UZIVATELEM"
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:556
+#: CLI/uYTD.pas:562
 msgid "ERROR %s: %s"
 msgstr "CHYBA %s: %s"
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:571
+#: CLI/uYTD.pas:577
 msgid "Unknown URL."
 msgstr "Neznama URL."
 
-#: CLI/uYTD.pas:589
+#: CLI/uYTD.pas:595
 msgid "Trying to parse as HTML page..."
 msgstr "Zpracovavam URL jako HTML stranku..."
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:680
+#: CLI/uYTD.pas:686
 msgid "  File "
 msgstr "  Soubor "
 
-#: CLI/uYTD.pas:682
+#: CLI/uYTD.pas:688
 msgid " already exists."
 msgstr " uz existuje."
 
-#: CLI/uYTD.pas:683
+#: CLI/uYTD.pas:689
 msgid "  Do you want to: "
 msgstr "Chcete ho:"
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:684
+#: CLI/uYTD.pas:690
 msgid "kip it, "
 msgstr " preskocit, "
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:685
+#: CLI/uYTD.pas:691
 msgid "verwrite it, or "
 msgstr " prepsat, nebo "
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:686
+#: CLI/uYTD.pas:692
 msgid "ename it? "
 msgstr " prejmenovat?"
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:703
+#: CLI/uYTD.pas:709
 msgid "  New filename: "
 msgstr "  Novy nazev: "
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:714
+#: CLI/uYTD.pas:720
 msgid "Incorrect answer."
 msgstr "Nespravna odpoved."
 
@@ -1035,7 +1040,7 @@ msgstr "Chyba socketu"
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
-#: Common/uMessages.pas:57
+#: Common/uMessages.pas:58
 msgid ""
 "Exception %s with message:\n"
 "%s"
@@ -1046,28 +1051,28 @@ msgstr ""
 #. Shown when installation failed
 #. Programmer's name for it: ERR_INSTALL_FAILED
 #. Programmer's name for it: ERR_INSTALL_FAILED
-#: Common/uMessages.pas:58
+#: Common/uMessages.pas:59
 msgid "Installation failed."
 msgstr "Instalace selhala"
 
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:59
+#: Common/uMessages.pas:60
 msgid "Press any key to quit."
 msgstr "Stiskněte klávesu pro ukončení programu."
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:60
+#: Common/uMessages.pas:61
 msgid "Playlist item %d"
 msgstr "%d. položka seznamu"
 
 #. What to do with the newest version
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
-#: Common/uMessages.pas:61
+#: Common/uMessages.pas:62
 msgid ""
 "Do you want to upgrade (YES)\n"
 "or just download the newest version (NO)?\n"
@@ -1082,160 +1087,180 @@ msgstr ""
 #. Downloading the upgrade data
 #. Programmer's name for it: MSG_UPGRADING
 #. Programmer's name for it: MSG_UPGRADING
-#: Common/uMessages.pas:62
+#: Common/uMessages.pas:63
 msgid "Upgrading..."
 msgstr "Probíhá aktualizace..."
 
 #. Failed to execute the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
-#: Common/uMessages.pas:63
+#: Common/uMessages.pas:64
 msgid "Failed to execute the upgrade file."
 msgstr "Nepodařilo se spustit aktualizační soubor."
 
 #. Failed to download the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
-#: Common/uMessages.pas:64
+#: Common/uMessages.pas:65
 msgid "Failed to download upgrade data: "
 msgstr "Nepodařilo se stáhnout aktualizaci."
 
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE_DEFINITIONS
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE_DEFINITIONS
-#: Common/uMessages.pas:65
+#: Common/uMessages.pas:66
 msgid "Failed to upgrade the script definitions."
 msgstr "Nepodařilo se aktualizovat definice skriptů."
 
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_DEFINITIONS
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_DEFINITIONS
-#: Common/uMessages.pas:66
+#: Common/uMessages.pas:67
 msgid "Failed to download the script definitions."
 msgstr "Nepodařilo se stáhnout definice skriptů."
+
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
+#: Common/uMessages.pas:68
+msgid ""
+"You don't seem to have the OpenSSL library installed.\n"
+"YTD uses OpenSSL to enable the SSL protocol.\n"
+"Without SSL, you won't be able to download\n"
+"from YouTube any many other sites."
+msgstr ""
+"Zdá se, že nemáte nainstalovanou knihovnu OpenSSL.\n"
+"YTD používá OpenSSL ke zprovoznění SSL protokolu.\n"
+"Bez SSL nebudete moci stahovat z YouTube a mnoha\n"
+"dalších webů."
+
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
+#. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
+#: Common/uMessages.pas:69
+msgid "Would you like to download and install OpenSSL?"
+msgstr "Přejete si stáhnout a nainstalovat OpenSSL?"
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:69
+#: Common/uMessages.pas:72
 msgid "Downloader is not prepared!"
 msgstr "Downloader není připraven!"
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:70
+#: Common/uMessages.pas:73
 msgid "Download of this content is not implemented."
 msgstr "Stahování tohoto obsahu není podporováno."
 
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:74
 msgid "Download URL was not set."
 msgstr "Nebyla nastavena URL."
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:75
 msgid "Failed to initialize the download structures."
 msgstr "Nepodařilo se inicializovat download."
 
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:76
 msgid "Download failed."
 msgstr "Download selhal."
 
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:77
 msgid "RTMPDUMP error: %s"
 msgstr "Chyba RTMPDUMPu: %s"
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:78
 msgid "Download to file \"%s\" was not allowed."
 msgstr "Stahování do souboru \"%s\" nebylo povoleno."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:77
+#: Common/uMessages.pas:80
 msgid "Failed to locate embedded object."
 msgstr "Nepodařilo se nalézt vložený objekt."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:81
 msgid "Failed to locate media info page."
 msgstr "Nepodařilo se najít stránku informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:82
 msgid "Failed to download media info page."
 msgstr "Nepodařilo se stáhnout stránku informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:83
 msgid "Failed to prepare media info page."
 msgstr "Nepodařilo se připravit stránku informací o médiu."
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:84
 msgid "Invalid media info page."
 msgstr "Chybná stránka informací o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:85
 msgid "Failed to download server list."
 msgstr "Nepodařilo se stáhnout seznam serverů."
 
 #. Programmer's name for it: ERR_UNKNOWN_URL
 #. Programmer's name for it: ERR_UNKNOWN_URL
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:86
 msgid "Unknown URL: %s"
 msgstr "Neznámá URL: %s"
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:88
 msgid "Failed to locate media info."
 msgstr "Nepodařilo se najít informace o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:86
+#: Common/uMessages.pas:89
 msgid "Failed to find media title."
 msgstr "Nepodařilo se najít název média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:87
+#: Common/uMessages.pas:90
 msgid "Failed to find media URL."
 msgstr "Nepodařilo se najít adresu média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:91
 msgid "Failed to find media server."
 msgstr "Nepodařilo se najít server média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:92
 msgid "Failed to find media stream."
 msgstr "Nepodařilo se najít stream média."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:94
 msgid "HTTP request failed with error code %d."
 msgstr "HTTP požadavek selhal s chybou %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:95
 msgid "No data read from the connection."
 msgstr "Nepodařilo se přečíst žádná data."
 
@@ -1243,167 +1268,167 @@ msgstr "Nepodařilo se přečíst žádná data."
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NOT_FOUND
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:94 Common/uMessages.pas:115
+#: Common/uMessages.pas:97 Common/uMessages.pas:118
 msgid "Variable \"%s\" not found."
 msgstr "Proměnná \"%s\" nebyla nalezena."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:95
+#: Common/uMessages.pas:98
 msgid "Error message listed in file \"%s\"."
 msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:96
+#: Common/uMessages.pas:99
 msgid "Media file was removed from the server."
 msgstr "Soubor byl ze serveru smazán."
 
 #. Programmer's name for it: ERR_SERVER_ERROR
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:100
 msgid "Server returned an error: %s"
 msgstr "Server hlásí chybu: %s"
 
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:98
+#: Common/uMessages.pas:101
 msgid "Invalid configuration: Secure token not set."
 msgstr "Chybné nastavení: SecureToken není nastaven."
 
 #. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
 #. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
-#: Common/uMessages.pas:99
+#: Common/uMessages.pas:102
 msgid "Encryption not yet supported."
 msgstr "Nepodporované šifrovací schéma."
 
 #. Programmer's name for it: ERR_LOGIN_FAILED
 #. Programmer's name for it: ERR_LOGIN_FAILED
-#: Common/uMessages.pas:100
+#: Common/uMessages.pas:103
 msgid "Login failed."
 msgstr "Přihlášení se nezdařilo."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:102
+#: Common/uMessages.pas:105
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 
 #. Programmer's name for it: ERR_SCRIPTS_ERROR
 #. Programmer's name for it: ERR_SCRIPTS_ERROR
-#: Common/uMessages.pas:104
+#: Common/uMessages.pas:107
 msgid "Script error: "
 msgstr "Chyba skriptu:"
 
 #. Programmer's name for it: ERR_SCRIPTS_URL_NOT_FOUND
 #. Programmer's name for it: ERR_SCRIPTS_URL_NOT_FOUND
-#: Common/uMessages.pas:105
+#: Common/uMessages.pas:108
 msgid "URL not found."
 msgstr "URL nenalezena."
 
 #. Programmer's name for it: ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED
 #. Programmer's name for it: ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED
-#: Common/uMessages.pas:106
+#: Common/uMessages.pas:109
 msgid "Url pattern is empty."
 msgstr "Vzor pro URL je prázdný."
 
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_NOT_FOUND
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_NOT_FOUND
-#: Common/uMessages.pas:107
+#: Common/uMessages.pas:110
 msgid "Requested script \"%s\" not found."
 msgstr "Požadovaný skript \"%s\" nebyl nalezen."
 
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:108
+#: Common/uMessages.pas:111
 msgid "Script may not be empty."
 msgstr "Skript nesmí být prázdný."
 
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:109
+#: Common/uMessages.pas:112
 msgid "Search pattern may not be empty."
 msgstr "Vzor pro hledání nesmí být prázdný."
 
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:110
+#: Common/uMessages.pas:113
 msgid "Pattern ID may not be empty."
 msgstr "ID vzoru nesmí být prázdné."
 
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_NOT_FOUND
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_NOT_FOUND
-#: Common/uMessages.pas:111
+#: Common/uMessages.pas:114
 msgid "Requested regexp \"%s\" not found."
 msgstr "Požadovaný regulární výraz \"%s\" nebyl nalezen."
 
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:112
+#: Common/uMessages.pas:115
 msgid "Subexpression name may not be empty."
 msgstr "Jméno podvýrazu nesmí být prázdné."
 
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND
-#: Common/uMessages.pas:113
+#: Common/uMessages.pas:116
 msgid "Subexpression \"%s\" not found."
 msgstr "Podvýraz \"%s\" nebyl nalezen."
 
 #. Programmer's name for it: ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP
 #. Programmer's name for it: ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP
-#: Common/uMessages.pas:114
+#: Common/uMessages.pas:117
 msgid "Failed to match regular expression."
 msgstr "Regulární výraz nebyl splněn."
 
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:116
+#: Common/uMessages.pas:119
 msgid "Variable name may not be empty."
 msgstr "Jméno proměnné nesmí být prázdné."
 
 #. Programmer's name for it: ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY
 #. Programmer's name for it: ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:117
+#: Common/uMessages.pas:120
 msgid "Attribute \"%s\" may not be empty."
 msgstr "Atribut \"%s\" nesmí být prázdný."
 
 #. Programmer's name for it: ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE
 #. Programmer's name for it: ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE
-#: Common/uMessages.pas:118
+#: Common/uMessages.pas:121
 msgid "Attribute \"%s\" has invalid value \"%s\"."
 msgstr "Atribut \"%s\" má neplatnou hodnotu \"%s\"."
 
 #. Programmer's name for it: MSG_SCRIPTS_UNKNOWN_COMMAND
 #. Programmer's name for it: MSG_SCRIPTS_UNKNOWN_COMMAND
-#: Common/uMessages.pas:119
+#: Common/uMessages.pas:122
 msgid "Unknown command."
 msgstr "Neznámý příkaz."
 
 #. Programmer's name for it: MSG_SCRIPTS_DOWNLOAD_FAILED
 #. Programmer's name for it: MSG_SCRIPTS_DOWNLOAD_FAILED
-#: Common/uMessages.pas:120
+#: Common/uMessages.pas:123
 msgid "Download failed: %s"
 msgstr "Download selhal: %s"
 
 #. Programmer's name for it: MSG_SCRIPTS_UNEXPECTED_NODE_TYPE
 #. Programmer's name for it: MSG_SCRIPTS_UNEXPECTED_NODE_TYPE
-#: Common/uMessages.pas:121
+#: Common/uMessages.pas:124
 msgid "Unexpected node type."
 msgstr "Neočekávaný typ uzlu."
 
 #. Programmer's name for it: ERR_XML_ELEMENT_NOT_FOUND
 #. Programmer's name for it: ERR_XML_ELEMENT_NOT_FOUND
-#: Common/uMessages.pas:122
+#: Common/uMessages.pas:125
 msgid "XML element not found."
 msgstr "Neurčený kořenový element XML."
 
 #. Programmer's name for it: MSG_CANT_OVERWRITE_FILE
-#: Common/uOptions.pas:276
+#: Common/uOptions.pas:281
 msgid "Cannot overwrite file \"%s\"."
 msgstr "Nepodařilo se přepsat soubor \"%s\"."
 
 #. Programmer's name for it: MSG_CANT_CREATE_FILE
-#: Common/uOptions.pas:277
+#: Common/uOptions.pas:282
 msgid "Cannot create file \"%s\"."
 msgstr "Nepodařilo se vytvořit soubor \"%s\"."
 
@@ -1620,12 +1645,23 @@ msgstr ""
 "Program to nemůže ovlivnit."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:118
+#: GUI/guiConsts.pas:120
+msgid ""
+"Bugreport is not available for your computer\n"
+"because you don't have OpenSSL installed.\n"
+"Please install OpenSSL and try again."
+msgstr ""
+"Hlášení chyb není pro váš počítač povoleno,\n"
+"protože nemáte nainstalovanou knihovnu OpenSSL.\n"
+"Nainstalujte prosím OpenSSL a zkuste to znovu."
+
+#. Programmer's name for it: CONVERTERS_NOCONVERTER
+#: GUI/guiConsts.pas:122
 msgid "Convert selected files with"
 msgstr "Zkonvertovat zvolené soubory pomocí"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:120
+#: GUI/guiConsts.pas:124
 msgid "Automatically convert with"
 msgstr "Automaticky konvertovat pomocí"
 

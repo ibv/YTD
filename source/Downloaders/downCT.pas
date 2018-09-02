@@ -60,6 +60,11 @@ uses
 type
   TDownloader_CT = class(THLSDownloader)
     private
+      {$IFDEF MULTIDOWNLOADS}
+      fNameList: TStringList;
+      fUrlList: TStringList;
+      fDownloadIndex: integer;
+      {$ENDIF}
     protected
       PlaylistInfoRegExp: TRegExp;
       PlaylistUrlRegExp: TRegExp;
@@ -67,6 +72,11 @@ type
       StreamTitleRegExp: TRegExp;
       StreamTitle2RegExp: TRegExp;
       IFrameUrlRegExp: TRegExp;
+      {$IFDEF MULTIDOWNLOADS}
+      property NameList: TStringList read fNameList;
+      property UrlList: TStringList read fUrlList;
+      property DownloadIndex: integer read fDownloadIndex write fDownloadIndex;
+      {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
@@ -78,6 +88,12 @@ type
       class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      {$IFDEF MULTIDOWNLOADS}
+      function Prepare: boolean; override;
+      function ValidatePrepare: boolean; override;
+      function First: boolean; override;
+      function Next: boolean; override;
+      {$ENDIF}
     end;
 
 implementation
@@ -119,6 +135,10 @@ end;
 constructor TDownloader_CT.Create(const AMovieID: string);
 begin
   inherited;
+  {$IFDEF MULTIDOWNLOADS}
+  fNameList := TStringList.Create;
+  fUrlList := TStringList.Create;
+  {$ENDIF}
   InfoPageEncoding := peUTF8;
   PlaylistInfoRegExp := RegExCreate(REGEXP_PLAYLIST_INFO);
   PlaylistUrlRegExp := RegExCreate(REGEXP_PLAYLIST_URL);
@@ -137,6 +157,10 @@ begin
   RegExFreeAndNil(StreamTitleRegExp);
   RegExFreeAndNil(StreamTitle2RegExp);
   RegExFreeAndNil(IFrameUrlRegExp);
+  {$IFDEF MULTIDOWNLOADS}
+  FreeAndNil(fNameList);
+  FreeAndNil(fUrlList);
+  {$ENDIF}
   inherited;
 end;
 
@@ -148,7 +172,13 @@ end;
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   Prot, User, Pass, Host, Port, Part, Para: string;
-  PlaylistType, PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Url, Title: string;
+  PlaylistType, PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Title: string;
+  {$IFDEF MULTIDOWNLOADS}
+  Urls: TStringArray;
+  i: integer;
+  {$ELSE}
+  Url: string;
+  {$ENDIF}
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -172,16 +202,33 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http, JSDecode(PlaylistUrl), Playlist) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  {$IFDEF MULTIDOWNLOADS}
+  else if not GetRegExpAllVar(StreamUrlRegExp, Playlist, 'URL', Urls) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  {$ELSE}
   else if not GetRegExpVar(StreamUrlRegExp, Playlist, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  {$ENDIF}
   else if not GetRegExpVar(StreamTitleRegExp, Playlist, 'TITLE', Title) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
-    SetName(AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title))));
+    Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title)));
+    {$IFDEF MULTIDOWNLOADS}
+    for i := 0 to Pred(Length(Urls)) do
+      begin
+      UrlList.Add(JSDecode(Urls[i]));
+      if Length(Urls) > 1 then
+        NameList.Add(Format('%s [%d]', [Title, Succ(i)]))
+      else
+        NameList.Add(Title);
+      end;
+    SetName(NameList[0]);
+    {$ENDIF}
+    SetName(Title);
     if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title) then
       SetName(Title);
-    MovieURL := JSDecode(Url);
+    MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
     SetPrepared(True);
     Result := True;
     end;
@@ -202,6 +249,60 @@ begin
       if DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), Page2, peUtf8) then
         Result := GetRegExpVars(PlaylistInfoRegExp, Page2, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
 end;
+
+{$IFDEF MULTIDOWNLOADS}
+
+function TDownloader_CT.Prepare: boolean;
+begin
+  NameList.Clear;
+  UrlList.Clear;
+  DownloadIndex := 0;
+  Result := inherited Prepare;
+end;
+
+function TDownloader_CT.ValidatePrepare: boolean;
+var
+  DownIndex: integer;
+begin
+  DownIndex := DownloadIndex;
+  try
+    Result := inherited ValidatePrepare;
+  finally
+    DownloadIndex := DownIndex;
+    end;
+end;
+
+function TDownloader_CT.First: boolean;
+begin
+  if ValidatePrepare then
+    if UrlList.Count <= 0 then
+      Result := MovieURL <> ''
+    else
+      begin
+      DownloadIndex := -1;
+      Result := Next;
+      end
+  else
+    Result := False;
+end;
+
+function TDownloader_CT.Next: boolean;
+begin
+  Result := False;
+  if ValidatePrepare then
+    begin
+    DownloadIndex := Succ(DownloadIndex);
+    if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then
+      begin
+      SetName(NameList[DownloadIndex]);
+      SetFileName('');
+      MovieURL := UrlList[DownloadIndex];
+      Result := True;
+      end;
+    end;
+end;
+
+{$ENDIF}
 
 initialization
   RegisterDownloader(TDownloader_CT);

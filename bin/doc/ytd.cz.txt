@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.44+                                                   (c) 2009-15 Pepak
+YTD v1.57+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -431,6 +431,12 @@ a "0" (ne).
       - Potomek <proxy_server>; určuje heslo pro přihlášení k proxy serveru.
       - Možnou hodnotou je jakýkoliv řetězec.
       - Výchozí hodnotou je prázdný řetězec (bez hesla).
+
+  <ignore_missing_openssl>
+    - Potomek <config>; umožňuje vypnout varování před chybějící knihovnou
+      OpenSSL.
+    - Možné hodnoty jsou "1" (vypnout varování) nebo "0" (zapnout).
+    - Výchozí hodnota je "0" (zapnout varování).
 
 <gui>
   - Potomek <ytd>; obsahuje nastavení specifická pro grafickou verzi programu.

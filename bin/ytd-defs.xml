@@ -1,5 +1,5 @@
 ﻿<ytd-defs>
-	<version>1.46.20150315.0</version>
+	<version>1.47.20150329.0</version>
 	<scripts>
 
 		<script id="1tv.ru" provider="1tv.ru">
@@ -393,7 +393,11 @@
 			<regexps>
 				<regexp id="url" match="URL"><![CDATA[\bso\.addVariable\s*\(\s*"file"\s*,\s*"(?P<URL>https?://.+?)"]]></regexp>
 			</regexps>
-			<set_var id="page"><download_page encoding="utf8" method="post" post_data="ACTION=check_adult&amp;check=18plus" mime_type="application/x-www-form-urlencoded"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="page"><download_page encoding="utf8" method="post" post_data="ACTION=check_adult&amp;check=18plus" mime_type="application/x-www-form-urlencoded">
+				<url><get_var id="_movie_id"/></url>
+				<referer><get_var id="_movie_id"/></referer>
+			</download_page></set_var>
 			<http_download>
 				<title><regexp id="meta_ogtitle" content="page"/></title>
 				<url><regexp id="url" content="page"/></url>
@@ -488,7 +492,7 @@
 		<url script="123video.nl" subexpression="ID"><![CDATA[123video\.nl/playvideos\.asp\?([^&]*&)*?MovieID=(?P<ID>\d+)]]></url>
 		<url script="bravotube.net"><![CDATA[bravotube\.net/videos/.+$]]></url>
 		<url script="jenpromuze.cz"><![CDATA[jenpromuze\.cz/video/.+$]]></url>
-		<url script="navratdoreality.cz"><![CDATA[navratdoreality\.cz/video/.+$]]></url>
+		<url script="navratdoreality.cz"><![CDATA[navratdoreality\.cz/.+$]]></url>
 		<url script="redtube.com"><![CDATA[redtube\.com/.+$]]></url>
 		<url script="sextubespot.com"><![CDATA[sextubespot\.com/videos/.+$]]></url>
 		<url script="xhamster.com"><![CDATA[xhamster\.com/.+$]]></url>

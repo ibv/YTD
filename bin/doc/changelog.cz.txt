@@ -1,11 +1,31 @@
 ﻿______________________________________________________________________________
 
-YTD v1.46                                                    (c) 2009-15 Pepak
+YTD v1.47                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.47:
+
+    * CeskaTelevize.cz: Podpora pro pořady tvořené z více částí.
+
+    * YouTube.com: Odhalena příčina, proč stahování z YouTube posledního půl
+      roku tak mnoha lidem nefunguje. YouTube totiž přechází na šifrované
+      přenosy přes SSL protokol, a aby YTD uměl SSL použít, potřebuje knihovnu
+      OpenSSL. Evidentně mnoho lidí OpenSSL nainstalovanou nemá, takže se
+      obvykle ani nepodařilo stáhnout hlavní stránku. YouTube ovšem SSL
+      nezapnul naplno, ale jen v náhodných intervalech, proto se většinou
+      nakonec podařilo video stáhnout.
+      YTD nyní bude přítomnost OpenSSL kontrolovat a stahování knihovny 
+      nabízet. Pokud se vám to nelíbí, můžete si OpenSSL stáhnout ručně
+      (http://slproweb.com/products/Win32OpenSSL.html) nebo v konfiguraci
+      varování před chybějícím OpenSSL zakázat.
+
+    * Zdokumentován skriptovací jazyk (viz doc/scripting.en.txt).
+
+
 
   v1.46:
 

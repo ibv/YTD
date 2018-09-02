@@ -85,6 +85,7 @@ const
   IDC_BUTTON_SHORTCUTONDESKTOP = 1004;
   IDC_BUTTON_SHORTCUTINSTARTMENU = 1005;
   IDC_CHECKBOX_MONITORCLIPBOARD = 1006;
+  IDC_CHECKBOX_DISABLEOPENSSLWARNING = 1007;
 
 { TFrameMainOptions }
 
@@ -121,6 +122,7 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_LANGUAGE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTONDESKTOP), [akBottom, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTINSTARTMENU), [akBottom, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DISABLEOPENSSLWARNING), [akTop, akLeft, akRight]);
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'OPTIONS_MAIN_ACTIONS');
 end;
@@ -172,6 +174,8 @@ begin
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION, CheckboxConsts[Options.CheckForNewVersionOnStartup]);
   // Monitor clipboard
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD, CheckboxConsts[Options.MonitorClipboard]);
+  // OpenSSL warnings
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLEOPENSSLWARNING, CheckboxConsts[Options.IgnoreMissingOpenSSL]);
   // Language
   SetWindowText(EditLanguage, PChar(Options.Language));
 end;
@@ -198,6 +202,13 @@ begin
       Options.MonitorClipboard := True;
     BST_UNCHECKED:
       Options.MonitorClipboard := False;
+    end;
+  // OpenSSL warning
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_DISABLEOPENSSLWARNING) of
+    BST_CHECKED:
+      Options.IgnoreMissingOpenSSL := True;
+    BST_UNCHECKED:
+      Options.IgnoreMissingOpenSSL := False;
     end;
   // Language
   Options.Language := GetWindowTextAsString(EditLanguage);

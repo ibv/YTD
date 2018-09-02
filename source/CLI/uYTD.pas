@@ -281,6 +281,12 @@ function TYTD.DoExecute: integer;
 var Param: string;
     n: integer;
 begin
+  if not IsSSLAvailable then
+    begin
+    Writeln;
+    WritelnColored(ccLightRed, MSG_OPENSSL_NOT_FOUND);
+    Writeln;
+    end;
   if ParamCount = 0 then
     begin
     ShowSyntax;

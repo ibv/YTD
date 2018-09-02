@@ -1,11 +1,31 @@
 ﻿______________________________________________________________________________
 
-YTD v1.46                                                    (c) 2009-15 Pepak
+YTD v1.47                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.47:
+
+    * CeskaTelevize.cz: Support for multi-part videos.
+
+    * YouTube.com: Discovered the reason why many people couldn't download
+      from YouTube correctly. Turns out YouTube has been switching to 
+      encrypted transfers over the SSL protocol. YTD supports SSL only if
+      OpenSSL library is installed. Apparently many people do not have 
+      OpenSSL, so they couldn't download the main page only rarely when
+      YouTube decided not to request SSL. That's why it was generally
+      possible to download the video after a number of attempts.
+      YTD now checks for the presence of OpenSSL and offers that you download
+      and install it. If you don't like that, you can download OpenSSL
+      manually (http://slproweb.com/products/Win32OpenSSL.html) or disable
+      the warning in the configuration.
+
+    * The scripting language has been documented (see doc/scripting.en.txt).
+
+
 
   v1.46:
 

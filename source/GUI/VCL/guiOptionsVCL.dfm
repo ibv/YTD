@@ -44,14 +44,14 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 543
     Height = 389
-    ActivePage = TabDownloadOptions
+    ActivePage = TabMain
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet
       Caption = 'Main settings'
       object LabelLanguage: TLabel
         Left = 8
-        Top = 92
+        Top = 124
         Width = 51
         Height = 13
         Caption = '&Language:'
@@ -77,10 +77,10 @@ object FormOptions: TFormOptions
       end
       object EditLanguage: TEdit
         Left = 112
-        Top = 88
+        Top = 120
         Width = 177
         Height = 21
-        TabOrder = 3
+        TabOrder = 4
       end
       object BtnDesktopShortcut: TButton
         Left = 8
@@ -89,7 +89,7 @@ object FormOptions: TFormOptions
         Height = 25
         Action = actDesktopShortcut
         Anchors = [akLeft, akRight, akBottom]
-        TabOrder = 4
+        TabOrder = 5
       end
       object BtnStartMenuShortcut: TButton
         Left = 8
@@ -98,7 +98,7 @@ object FormOptions: TFormOptions
         Height = 25
         Action = actStartMenuShortcut
         Anchors = [akLeft, akRight, akBottom]
-        TabOrder = 5
+        TabOrder = 6
       end
       object CheckMonitorClipboard: TCheckBox
         Left = 7
@@ -108,6 +108,15 @@ object FormOptions: TFormOptions
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Monitor clipboard for downloadable URLs'
         TabOrder = 2
+      end
+      object CheckIgnoreOpenSSLWarning: TCheckBox
+        Left = 7
+        Top = 80
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = '&Disable OpenSSL warning'
+        TabOrder = 3
       end
     end
     object TabDownloadOptions: TTabSheet

@@ -50,6 +50,7 @@ const
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
   BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&defs=%s&url=%s&error=%s';
+  OPENSSL_URL = 'http://slproweb.com/products/Win32OpenSSL.html';
 
 
 {gnugettext: scan-all}
@@ -64,6 +65,8 @@ resourcestring
   MSG_FAILED_TO_DOWNLOAD_UPGRADE = 'Failed to download upgrade data: '; // Failed to download the upgrade file
   MSG_FAILED_TO_UPGRADE_DEFINITIONS = 'Failed to upgrade the script definitions.';
   MSG_FAILED_TO_DOWNLOAD_DEFINITIONS = 'Failed to download the script definitions.';
+  MSG_OPENSSL_NOT_FOUND = 'You don''t seem to have the OpenSSL library installed.'#10'YTD uses OpenSSL to enable the SSL protocol.'#10'Without SSL, you won''t be able to download'#10'from YouTube any many other sites.';
+  MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX = 'Would you like to download and install OpenSSL?';
 
   // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!'; // Attempted to access data which depends Prepare without running Prepare

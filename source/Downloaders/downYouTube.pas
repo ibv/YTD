@@ -236,7 +236,7 @@ end;
 
 function TDownloader_YouTube.GetMovieInfoUrl: string;
 begin
-  Result := 'https://www.youtube.com/watch?v=' + MovieID;
+  Result := 'http://www.youtube.com/watch?v=' + MovieID;
 end;
 
 {$IFDEF SUBTITLES}

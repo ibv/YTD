@@ -96,6 +96,7 @@ type
     CheckDownloadToProviderSubdirs: TCheckBox;
     LabelRetryCount: TLabel;
     EditRetryCount: TEdit;
+    CheckIgnoreOpenSSLWarning: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
@@ -160,6 +161,7 @@ begin
     CheckPortableMode.Checked := Options.PortableMode;
     CheckCheckNewVersions.Checked := Options.CheckForNewVersionOnStartup;
     CheckMonitorClipboard.Checked := Options.MonitorClipboard;
+    CheckIgnoreOpenSSLWarning.Checked := Options.IgnoreMissingOpenSSL;
     EditLanguage.Text := Options.Language;
     // Download options
     CheckAutoDownload.Checked := Options.AutoStartDownloads;
@@ -278,6 +280,7 @@ begin
   Options.CheckForNewVersionOnStartup := CheckCheckNewVersions.Checked;
   Options.Language := EditLanguage.Text;
   Options.MonitorClipboard := CheckMonitorClipboard.Checked;
+  Options.IgnoreMissingOpenSSL := CheckIgnoreOpenSSLWarning.Checked;
   // Download options
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
   Options.AutoTryHtmlParser := CheckAutoTryHtmlParser.Checked;
@@ -286,7 +289,7 @@ begin
   Options.DownloadToProviderSubdirs := CheckDownloadToProviderSubdirs.Checked;
   Options.DestinationPath := EditDownloadDir.Text;
   Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];
-  Options.DownloadRetryCount := IntToStrDef(EditRetryCount.Text, Options.DownloadRetryCount);
+  Options.DownloadRetryCount := StrToIntDef(EditRetryCount.Text, Options.DownloadRetryCount);
   {$IFDEF CONVERTERS}
   if Options.ConvertersActivated then
     if DecodeConverterComboBox(ComboConverter, Options, NewID) then

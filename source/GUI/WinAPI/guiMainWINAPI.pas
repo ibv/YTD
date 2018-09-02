@@ -443,6 +443,8 @@ begin
   {$ENDIF}
   // Redraw screen
   ActionRefresh;
+  // Check for OpenSSL
+  CheckForOpenSSL(0, Options);
 end;
 
 function TFormMain.DoClose: boolean;
@@ -724,7 +726,9 @@ begin
   Result := True;
   Index := ListViewGetSelectedItem(DownloadListHandle);
   if Index >= 0 then
-    if DownloadList[Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
+    if not IsSSLAvailable then
+      MessageBox(0, PChar(_(MAINFORM_BUGREPORTDISABLEDIFOPENSSLMISSING)), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL)
+    else if DownloadList[Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
       MessageBox(0, PChar(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED)), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL)
     else if MessageBox(0, PChar(_(MAINFORM_REPORT_BUG)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
       ReportBug(DownloadList, Index);

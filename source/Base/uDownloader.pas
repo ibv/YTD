@@ -266,7 +266,9 @@ begin
   inherited Create;
   SetLastErrorMsg('');
   SetPrepared(False);
+  {$IFDEF MULTIDOWNLOADS}
   PrepareLifetime := 60; // 60 seconds
+  {$ENDIF}
   fHttp := THttpSend.Create;
   fHttp.UserAgent := DEFAULT_USER_AGENT;
   MovieID := AMovieID;
@@ -287,7 +289,9 @@ end;
 procedure TDownloader.SetPrepared(Value: boolean);
 begin
   fPrepared := Value;
+  {$IFDEF MULTIDOWNLOADS}
   fLastPrepareTime := Now;
+  {$ENDIF}
 end;
 
 function TDownloader.GetLastErrorMsg: string;

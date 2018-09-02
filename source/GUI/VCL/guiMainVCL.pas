@@ -308,6 +308,7 @@ begin
           AddTask(Param);
       end;
     {$ENDIF}
+    CheckForOpenSSL(0, Options);
   finally
     fLoading := False;
     end;
@@ -660,7 +661,9 @@ procedure TFormYTD.actReportBugExecute(Sender: TObject);
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if DownloadList[Downloads.Selected.Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
+  if not IsSSLAvailable then
+    MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
+  else if DownloadList[Downloads.Selected.Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
     MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
   else if MessageDlg(_(MAINFORM_REPORT_BUG), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;

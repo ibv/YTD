@@ -114,6 +114,10 @@ resourcestring
     'its completion is dependent on the goowill'#10 +
     'of the server and the quality of your network'#10 +
     'connection. The program can''t influence it.';
+  MAINFORM_BUGREPORTDISABLEDIFOPENSSLMISSING =
+    'Bugreport is not available for your computer'#10 +
+    'because you don''t have OpenSSL installed.'#10 +
+    'Please install OpenSSL and try again.';
   MAINFORM_CONVERT_WITH =
     'Convert selected files with';
   MAINFORM_AUTOCONVERT_WITH =
