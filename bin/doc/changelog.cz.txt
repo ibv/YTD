@@ -1,11 +1,29 @@
 ﻿______________________________________________________________________________
 
-YTD v1.23                                                    (c) 2009-13 Pepak
+YTD v1.24                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.24:
+
+    * Noví poskytovatelé:
+      - DansMovies.com (porno)
+
+    * Aktualizovaní poskytovatelé:
+      - Facebook.com
+      - RozzlobeniMuzi.com
+      - SoundCloud.com
+      - YouPorn.com
+      - YouTube.com
+
+    * Stv.sk: YTD nyní najde potřebné údaje, ale ve skutečnosti se nestáhne
+      požadované video, ale jen zpráva, že došlo k přerušení přenosu. Nevím,
+      co s tím teď dělat.
+
+
 
   v1.23:
 

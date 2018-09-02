@@ -57,7 +57,7 @@ interface
 uses
   SysUtils, Classes, Windows,
   {$IFDEF USYSTEM_SHELL}
-  ShellApi, ShlObj, ActiveX, 
+  ShellApi, ShlObj, ActiveX,
   {$ENDIF}
   {$IFDEF USYSTEM_NET}
   WinSock,
@@ -113,11 +113,11 @@ function GetLastError7z: string;
 {$ENDIF}
 
 {$IFDEF USYSTEM_SHELL}
-function RunFile(FileName: string): Integer; overload;
-function RunFile(FileName, Params: string): Integer; overload;
-function RunFile(FileName, Params, WorkDir: string): Integer; overload;
-function RunFile(FileName, Params: string; Command: Word): Integer; overload;
-function RunFile(FileName, Params, WorkDir: string; Command: Word): Integer; overload;
+function RunFile(const FileName: string): Integer; overload;
+function RunFile(const FileName, Params: string): Integer; overload;
+function RunFile(const FileName, Params, WorkDir: string): Integer; overload;
+function RunFile(const FileName, Params: string; Command: Word): Integer; overload;
+function RunFile(const FileName, Params, WorkDir: string; Command: Word): Integer; overload;
 function WaitForEnd(const FileName: string): Boolean; overload;
 function WaitForEnd(const FileName: string; out ResultCode: DWORD): Boolean; overload;
 function WaitForEnd(const FileName: string; Command: Word): Boolean; overload;
@@ -311,9 +311,6 @@ begin
     ThisProcess := GetCurrentProcess;
     FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
     StartupInfo.cb := SizeOf(StartupInfo);
-    StartupInfo.hStdInput := PipeInputRead;
-    StartupInfo.hStdOutput := PipeOutputWrite;
-    StartupInfo.hStdError := PipeErrorsWrite;
     StartupInfo.wShowWindow := Visibility;
     StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
     HavePipes := (Input <> nil) or (Output <> nil) or (Errors <> nil);
@@ -344,6 +341,9 @@ begin
       PipeErrorsRead := 0;
       PipeErrorsWrite := 0;
       end;
+    StartupInfo.hStdInput := PipeInputRead;
+    StartupInfo.hStdOutput := PipeOutputWrite;
+    StartupInfo.hStdError := PipeErrorsWrite;
     // Pro funkcnost v Unicode je treba zajistit, ze Command je zapisovatelny.
     SetLength(CommandBuffer, Succ(Length(Command)));
     StrPCopy(@CommandBuffer[0], Command);
@@ -387,6 +387,7 @@ begin
           end;
         WaitForSingleObject(ProcessInfo.hProcess, 3000); // radsi jen omezenou dobu, ne INFINITE
         CloseHandle(ProcessInfo.hProcess);
+        CloseHandle(ProcessInfo.hThread);
         end
       else
         begin
@@ -704,29 +705,60 @@ end;
 {$ENDIF}
 
 {$IFDEF USYSTEM_SHELL}
-function RunFile(FileName: string): Integer;
+function RunFile(const FileName: string): Integer;
 begin
-  Result := ShellExecute(hInstance, nil, PChar(FileName), nil, PChar(ExtractFilePath(FileName)), SW_SHOW);
+  Result := RunFile(FileName, '');
 end;
 
-function RunFile(FileName, Params: string): Integer;
+function RunFile(const FileName, Params: string): Integer;
 begin
-  Result := ShellExecute(hInstance, nil, PChar(FileName), PChar(Params), PChar(ExtractFilePath(FileName)), SW_SHOW);
+  Result := RunFile(FileName, Params, ExtractFilePath(FileName));
 end;
 
-function RunFile(FileName, Params, WorkDir: string): Integer;
+function RunFile(const FileName, Params, WorkDir: string): Integer;
 begin
-  Result := ShellExecute(hInstance, nil, PChar(FileName), PChar(Params), PChar(WorkDir), SW_SHOW);
+  Result := RunFile(FileName, Params, WorkDir, SW_SHOWNORMAL);
 end;
 
-function RunFile(FileName, Params: string; Command: Word): Integer;
+function RunFile(const FileName, Params: string; Command: Word): Integer;
 begin
-  Result := ShellExecute(hInstance, nil, PChar(FileName), PChar(Params), PChar(ExtractFilePath(FileName)), Command);
+  Result := RunFile(FileName, Params, ExtractFilePath(FileName), Command);
 end;
 
-function RunFile(FileName, Params, WorkDir: string; Command: Word): Integer; overload;
+function RunFile(const FileName, Params, WorkDir: string; Command: Word): Integer; overload;
+{$DEFINE __RUNFILE_NOZONECHECK}
+{$IFDEF __RUNFILE_NOZONECHECK}
+var
+  ExecInfo: TShellExecuteInfo;
+{$ENDIF}
 begin
-  Result := ShellExecute(hInstance, nil, PChar(FileName), PChar(Params), PChar(WorkDir), Command);
+  {$IFDEF __RUNFILE_NOZONECHECK}
+  FillChar(ExecInfo, Sizeof(ExecInfo), 0);
+  ExecInfo.cbSize := Sizeof(ExecInfo);
+  ExecInfo.fMask := SEE_MASK_CONNECTNETDRV {$IFDEF UNICODE} or SEE_MASK_UNICODE {$ENDIF} or SEE_MASK_NOZONECHECKS;
+  ExecInfo.lpFile := PChar(FileName);
+  if Params <> '' then
+    ExecInfo.lpParameters := PChar(Params);
+  if WorkDir <> '' then
+    ExecInfo.lpDirectory := PChar(WorkDir);
+  ExecInfo.nShow := Command;
+  CoInitializeEx(nil, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE);
+  try
+    if ShellExecuteEx(@ExecInfo) then
+      Result := ExecInfo.hInstApp
+    else
+      begin
+      Result := GetLastError;
+      if Result >= 32 then
+        Result := ERROR_ACCESS_DENIED;
+      end;
+  finally
+    CoUninitialize;
+    end;
+  {$ELSE}
+  Result := ShellExecute(hInstance, 'open', PChar(FileName), PChar(Params), PChar(WorkDir), Command);
+  {$ENDIF}
+{$UNDEF __RUNFILE_NOZONECHECK}
 end;
 
 function WaitForEnd(const FileName: string): Boolean;

@@ -78,7 +78,7 @@ type
     protected
       function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
       function GetVideoFormatExt(const VideoFormat: string): string;
-      function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; out Url: string; out Downloader: TDownloader): boolean;
+      function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live: boolean; out Url: string; out Downloader: TDownloader): boolean;
       function ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
       function FlashVarsDecode(const Text: string): string;
       function JSONVarsDecode(const Text: string): string;
@@ -138,7 +138,7 @@ const
 const
   REGEXP_EXTRACT_CONFIG = '<embed\b[^>]*\sflashvars="(?P<FLASHVARS>[^"]+)"';
   REGEXP_EXTRACT_CONFIG_JS = '\bflashvars\s*=(?P<QUOTE>\\?["''])(?P<FLASHVARS>.+?)(?P=QUOTE)';
-  REGEXP_EXTRACT_CONFIG_JSON = '\.playerConfig\s*=\s*\{(?P<JSON>.+?)\}\s*;';
+  REGEXP_EXTRACT_CONFIG_JSON = '(?:\.playerConfig|\bytplayer\.config)\s*=\s*\{(?P<JSON>.+?)\}\s*;';
   REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   REGEXP_JSON_PARSER = REGEXP_PARSER_FLASHVARS_JS;
@@ -360,13 +360,13 @@ end;
 
 function TDownloader_YouTube.ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
 var
-  Status, Reason, FmtList, FmtUrlMap, VideoFormat: string;
+  Status, Reason, FmtList, FmtUrlMap, VideoFormat, PS: string;
   D: TDownloader;
 begin
   Result := False;
   Title := '';
   Url := '';
-  if GetRegExpVarPairs(Parser, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap]) then
+  if GetRegExpVarPairs(Parser, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map', 'ps'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap, @PS]) then
     if Status = 'fail' then
       SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
     else if FmtList = '' then
@@ -380,7 +380,7 @@ begin
       if VideoFormat = '' then
         VideoFormat := '22';
       Extension := GetVideoFormatExt(VideoFormat);
-      if not GetDownloader(Http, VideoFormat, FmtUrlMap, Url, D) then
+      if not GetDownloader(Http, VideoFormat, FmtUrlMap, PS = 'live', Url, D) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else if CreateNestedDownloaderFromDownloader(D) then
         begin
@@ -390,7 +390,7 @@ begin
       end;
 end;
 
-function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; out Url: string; out Downloader: TDownloader): boolean;
+function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live: boolean; out Url: string; out Downloader: TDownloader): boolean;
 var
   FoundFormat, Server, Stream, Signature: string;
   Formats: TStringArray;
@@ -424,6 +424,7 @@ begin
             RTMPDownloader.Playpath := Stream;
             RTMPDownloader.SwfVfy := 'http://s.ytimg.com/yt/swfbin/watch_as3-vflk8NbNX.swf';
             RTMPDownloader.PageUrl := GetMovieInfoUrl;
+            RTMPDownloader.Live := Live;
             Downloader := RTMPDownloader;
             Result := True;
             end;
@@ -494,9 +495,7 @@ begin
   if not InfoFound then
     if GetRegExpVar(YouTubeConfigJSONRegExp, Page, 'JSON', FlashVars) then
       InfoFound := ProcessFlashVars(Http, JSONParserRegExp, JSONVarsDecode, JSDecode(FlashVars), Title, Url);
-  if not InfoFound then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else
+  if InfoFound then
     begin
     if Title <> '' then
       SetName(Title);
@@ -520,15 +519,21 @@ end;
 { TDownloader_YouTube_RTMP }
 
 function TDownloader_YouTube_RTMP.Prepare: boolean;
-var fPlaypath, fSwfVfy, fPageUrl: string;
+var
+  fPlaypath, fSwfVfy, fPageUrl: string;
+  fLive: boolean;
 begin
   fPlaypath := Playpath;
   fSwfVfy := SwfVfy;
   fPageUrl := PageUrl;
+  fLive := Live;
   Result := inherited Prepare;
-  Playpath := fPlaypath;
-  SwfVfy := fSwfVfy;
+  if fPlayPath <> '' then
+    Playpath := fPlaypath;
+  if fSwfVfy <> '' then
+    SwfVfy := fSwfVfy;
   PageUrl := fPageUrl;
+  Live := fLive;
 end;
 
 initialization

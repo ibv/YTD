@@ -48,11 +48,8 @@ type
   TDownloader_YouPorn = class(THttpDownloader)
     private
     protected
-      MovieInfoUrlRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,13 +65,13 @@ uses
   uMessages;
 
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youporn\.com/watch/';
+  URLREGEXP_BEFORE_ID = 'youporn\.com/watch/';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE = '<h1>\s*(?:<img[^>]*>)?\s*(?P<TITLE>.*?)\s*</h1>';
-  REGEXP_MOVIE_INFOURL = '\.addVariable\s*\(\s*\''file''\s*,[^;'']*''(?P<URL>https?://[^'']+)''';
+  REGEXP_MOVIE_URL = '\$video\.src\s*=\s*''(?P<URL>https?://.+?)''';
 
 { TDownloader_YouPorn }
 
@@ -91,46 +88,21 @@ end;
 constructor TDownloader_YouPorn.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUnknown;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieInfoUrlRegExp := RegExCreate(REGEXP_MOVIE_INFOURL);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_YouPorn.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieInfoUrlRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
 function TDownloader_YouPorn.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.youporn.com/watch/' + MovieID + '/';
-end;
-
-function TDownloader_YouPorn.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Url: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, Url, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      if not GetXmlVar(Xml, 'trackList/track/location', Url) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else
-        begin
-        MovieUrl := HtmlDecode(Url);
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
 end;
 
 function TDownloader_YouPorn.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;

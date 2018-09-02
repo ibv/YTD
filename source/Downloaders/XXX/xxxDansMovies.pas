@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downFacebook;
+unit xxxDansMovies;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,12 +45,12 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Facebook = class(THttpDownloader)
+  TDownloader_DansMovies = class(THttpDownloader)
     private
     protected
-      MovieListRegExp: TRegExp;
-      MovieHDUrlRegExp: TRegExp;
-      MovieSDUrlRegExp: TRegExp;
+      FlashVarsRegExp: TRegExp;
+      FlashVarsParserRegExp: TRegExp;
+      FlashVarsMovieUrl: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,79 +68,78 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.facebook.com/video/video.php?v=1131482863478
-// http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
-// http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
 const
-  URLREGEXP_BEFORE_ID = 'facebook\.com/.*?[?&]v=';
-  //URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*facebook\.com/video/.*?[?&]v=';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_BEFORE_ID = 'dansmovies\.com/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3\s+class="video_title\s+datawrap">(?P<TITLE>.*?)</h3>';
-  REGEXP_MOVIE_LIST = '\[\s*\[\s*"params"\s*,\s*"(?P<INFO>.+?)"';
-  REGEXP_SD_MOVIE_URL = '"sd_src"\s*:\s*"(?P<URL>.+?)"';
-  REGEXP_HD_MOVIE_URL = '"hd_src"\s*:\s*"(?P<URL>.+?)"';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H2;
+  REGEXP_FLASHVARS = '\.addParam\s*\(\s*"flashvars"\s*,\s*"(?P<FLASHVARS>.*?)"';
+  REGEXP_FLASHVARS_PARSER = '(?:^|&)(?P<VARNAME>[^=]+?)(?:=(?P<VARVALUE>.*?))?(?=$|&)';
+  REGEXP_MOVIE_URL = '\bflvMask\s*:\s*(?P<URL>https?://[^\s;}]+)';
 
-{ TDownloader_Facebook }
+{ TDownloader_DansMovies }
 
-class function TDownloader_Facebook.Provider: string;
+class function TDownloader_DansMovies.Provider: string;
 begin
-  Result := 'Facebook.com';
+  Result := 'DansMovies.com';
 end;
 
-class function TDownloader_Facebook.UrlRegExp: string;
+class function TDownloader_DansMovies.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Facebook.Create(const AMovieID: string);
+constructor TDownloader_DansMovies.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUTF8;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
-  MovieHDUrlRegExp := RegExCreate(REGEXP_HD_MOVIE_URL);
-  MovieSDUrlRegExp := RegExCreate(REGEXP_SD_MOVIE_URL);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
+  FlashVarsMovieUrl := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_Facebook.Destroy;
+destructor TDownloader_DansMovies.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieListRegExp);
-  RegExFreeAndNil(MovieHDUrlRegExp);
-  RegExFreeAndNil(MovieSDUrlRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarsParserRegExp);
+  RegExFreeAndNil(FlashVarsMovieUrl);
   inherited;
 end;
 
-function TDownloader_Facebook.GetMovieInfoUrl: string;
+function TDownloader_DansMovies.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.facebook.com/video/video.php?v=' + MovieID;
+  Result := 'http://www.dansmovies.com/' + MovieID;
 end;
 
-function TDownloader_Facebook.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Info, Url: string;
+function TDownloader_DansMovies.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  FlashVars, SettingsUrl, Settings, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieListRegExp, Page, 'INFO', Info) then
+  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if (not GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['settings'], [@SettingsUrl])) or (SettingsUrl = '') then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, SettingsUrl, Settings, peAnsi) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(FlashVarsMovieUrl, Settings, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    Info := UrlDecode(JSDecode(Info));
-    if not (GetRegExpVar(MovieHDUrlRegExp, Info, 'URL', Url) or GetRegExpVar(MovieSDUrlRegExp, Info, 'URL', Url)) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieURL := JSDecode(Url);
-      SetPrepared(True);
-      Result := True;
-      end;
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Facebook);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_DansMovies);
+  {$ENDIF}
 
 end.

@@ -66,13 +66,13 @@ uses
 
 // http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozzlobenimuzi\.com/.*?[?&]linkid=';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'rozzlobenimuzi\.com/.*?[?&]linkid=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>.*?)(?:\s*-\s*RozzlobeniMuzi\.com.*?)?</title>';
-  REGEXP_EXTRACT_URL = REGEXP_URL_FILE_COLON_VALUE;
+  REGEXP_EXTRACT_URL = '\bfile\s*:\s*"(?P<URL>((?!/reklama/).)+?)"';
 
 { TDownloader_RozzlobeniMuzi }
 
@@ -83,7 +83,7 @@ end;
 
 class function TDownloader_RozzlobeniMuzi.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_RozzlobeniMuzi.Create(const AMovieID: string);
@@ -103,7 +103,7 @@ end;
 
 function TDownloader_RozzlobeniMuzi.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.rozzlobenimuzi.com/?linkid=' + MovieID;
+  Result := 'http://www.rozzlobenimuzi.com/?linkid=' + MovieID; // + '&version=' + {$IFDEF XXX} 'hardcore' {$ELSE} 'pinkcore' {$ENDIF} ;
 end;
 
 function TDownloader_RozzlobeniMuzi.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;

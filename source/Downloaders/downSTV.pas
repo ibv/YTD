@@ -49,7 +49,8 @@ type
   TDownloader_STV = class(TRtmpDownloader)
     private
     protected
-      PlayListRegExp: TRegExp;
+      StreamIdRegExp: TRegExp;
+      StreamInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -67,15 +68,16 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
+// http://www.stv.sk/online/archiv/nebicko-v-papulke?date=2013-03-09&id=52605&playerType=
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*stv\.sk/online/archiv/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'stv\.sk/online/archiv/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
   MOVIE_TITLE_REGEXP = '<h2>(?P<TITLE>.*?)<';
-  PLAYLIST_REGEXP = '\.addParam\s*\(\s*''flashvars''\s*,\s*''(?:[^''&]*&)*playlistfile=(?P<PLAYLIST>https?://[^''&]+)';
+  MOVIE_ID_REGEXP = '\bstream_id\s*:\s*"(?P<ID>.+?)"';
+  MOVIE_INFO_REGEXP = '\breturn\s+''(?P<SERVER>rtmpt?e?://[^'']+)''.+?\?auth=(?P<AUTH>[^'']+)''';
 
 { TDownloader_STV }
 
@@ -86,7 +88,7 @@ end;
 
 class function TDownloader_STV.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_STV.Create(const AMovieID: string);
@@ -94,13 +96,15 @@ begin
   inherited;
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(MOVIE_TITLE_REGEXP);
-  PlayListRegExp := RegExCreate(PLAYLIST_REGEXP);
+  StreamIdRegExp := RegExCreate(MOVIE_ID_REGEXP);
+  StreamInfoRegExp := RegExCreate(MOVIE_INFO_REGEXP);
 end;
 
 destructor TDownloader_STV.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(PlayListRegExp);
+  RegExFreeAndNil(StreamIdRegExp);
+  RegExFreeAndNil(StreamInfoRegExp);
   inherited;
 end;
 
@@ -110,40 +114,34 @@ begin
 end;
 
 function TDownloader_STV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Playlist, Streamer, Location: string;
-    Xml: TXmlDoc;
-    Node: TXmlNode;
+var
+  ID, AuthPage, Auth, Server: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(PlayListRegExp, Page, 'PLAYLIST', Playlist) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, UrlDecode(Playlist), Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  Referer := GetMovieInfoUrl;
+  if not GetRegExpVar(StreamIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else if not DownloadPage(Http, 'http://embed.stv.livebox.sk/v1/tv-arch.js', AuthPage) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetRegExpVars(StreamInfoRegExp, AuthPage, ['SERVER', 'AUTH'], [@Server, @Auth]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if Server = '' then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['server']))
+  else if Auth = '' then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['auth']))
   else
-    try
-      if not Xml.NodeByPath('tracklist/track', Node) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else if not GetXmlVar(Node, 'location', Location) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else if not XmlNodeByPathAndAttr(Node, 'meta', 'rel', 'streamer', Node) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else if not GetXmlVar(Node, '', Streamer) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else
-        begin
-        MovieUrl := Streamer + '/mp4:' + Location;
-        Self.RtmpUrl := Streamer;
-        Self.Playpath := 'mp4:' + Location;
-        Self.FlashVer := FLASH_DEFAULT_VERSION;
-        Self.SwfVfy := 'http://www.streamhosting.cz/flash/recent/player-licensed.swf';
-        Self.PageUrl := GetMovieInfoUrl;
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      Xml.Free;
-      end;
+    begin
+    MovieUrl := Server + '?auth=' + Auth;
+    Self.RtmpUrl := MovieUrl;
+    Self.Playpath := 'mp4:' + ID + '?auth=' + Auth;
+    Self.FlashVer := 'WIN 11,3,300,268'; //FLASH_DEFAULT_VERSION;
+    Self.TcUrl := MovieUrl;
+    Self.SwfVfy := 'http://embed.stv.livebox.sk/v1/LiveboxPlayer.swf';
+    Self.PageUrl := GetMovieInfoUrl;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

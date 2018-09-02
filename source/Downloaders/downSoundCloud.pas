@@ -141,9 +141,16 @@ begin
 end;
 
 function TDownloader_SoundCloud.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Separator: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieUrl := Format('%s&client_id=%s', [HtmlDecode(JSDecode(MovieUrl)), ClientID]);
+  MovieUrl := HtmlDecode(JSDecode(MovieUrl));
+  if Pos('?', MovieUrl) > 0 then
+    Separator := '&'
+  else
+    Separator := '?';
+  MovieUrl := Format('%s%sclient_id=%s', [MovieUrl, Separator, ClientID]);
   Result := Prepared;
 end;
 

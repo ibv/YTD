@@ -49,15 +49,19 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://vk.com/video_ext.php?oid=164635720&id=162314244&hash=025ae55be44811d6&hd=1
+RunParams=http://sport.ihned.cz/ostatni-sporty/c1-59362710-video-stolni-tenista-vytahl-uder-po-kterem-zustal-souper-stat-s-otevrenou-pusou
 HostApplication=
+[Language]
+ActiveLang=
+ProjectLang=$00000405
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
-MinorVer=17
+MinorVer=23
 Release=0
-Build=970
+Build=979
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +72,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.17.0.970
+FileVersion=1.23.0.979
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YTD
-ProductVersion=1.17.0.926
+ProductVersion=1.23.0.977
 Comments=http://www.pepak.net/ytd
 [HistoryLists\hlConditionals]
 Count=3
@@ -94,7 +98,7 @@ Item0=Units
 Count=1
 Item0=..\Bin
 [Exception Log]
-EurekaLog Version=6020
+EurekaLog Version=6104
 Activate=0
 Activate Handle=1
 Save Log File=1
@@ -254,6 +258,7 @@ loFreeAllLeaks=1
 loCatchLeaksExceptions=1
 cfoReduceFileSize=1
 cfoCheckFileCorruption=0
+cfoUseEL7=0
 Count mtInformationMsgCaption=1
 mtInformationMsgCaption0="Information."
 Count mtQuestionMsgCaption=1

@@ -1,11 +1,29 @@
 ﻿______________________________________________________________________________
 
-YTD v1.23                                                    (c) 2009-13 Pepak
+YTD v1.24                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.24:
+
+    * New providers:
+      - DansMovies.com (porn)
+
+    * Updated providers:
+      - Facebook.com
+      - RozzlobeniMuzi.com
+      - SoundCloud.com
+      - YouPorn.com
+      - YouTube.com
+
+    * Stv.sk: YTD will now find the required parameters, but the download 
+      itself doesn't work: instead of the requested video you will get a short
+      stream about the trasnfer being aborted. I don't know why.
+
+
 
   v1.23:
 
