@@ -824,7 +824,10 @@ begin
     else
       Item.Pause
   else
+    begin
+    Item.RetryCount := Options.DownloadRetryCount;
     Item.Start;
+    end;
 end;
 
 procedure TFormYTD.StopTask(Index: integer);

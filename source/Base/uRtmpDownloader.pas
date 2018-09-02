@@ -172,7 +172,7 @@ end;
 function TRtmpDownloader.GetFileNameExt: string;
 begin
   Result := '';
-  if Playpath <> '' then
+  if (Playpath <> '') and (not IsFileNameExtOverride) then
     Result := ExtractUrlExt(Playpath);
   if Result = '' then
     Result := inherited GetFileNameExt;

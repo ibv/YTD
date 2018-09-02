@@ -94,13 +94,16 @@ type
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessCopy(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessReplace(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeHtml(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessEncodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessStripTags(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessTrim(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessRelativeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
     public
       class function MainScriptEngine: TScriptEngine;
@@ -680,10 +683,14 @@ begin
             Result := Result + ProcessRegExp(ChildNode, Vars)
           else if ChildNode.Name = 'copy' then
             Result := Result + ProcessCopy(ChildNode, Vars)
+          else if ChildNode.Name = 'replace' then
+            Result := Result + ProcessReplace(ChildNode, Vars)
           else if ChildNode.Name = 'decode_html' then
             Result := Result + ProcessDecodeHtml(ChildNode, Vars)
           else if ChildNode.Name = 'decode_url' then
             Result := Result + ProcessDecodeUrl(ChildNode, Vars)
+          else if ChildNode.Name = 'encode_url' then
+            Result := Result + ProcessEncodeUrl(ChildNode, Vars)
           else if ChildNode.Name = 'decode_js' then
             Result := Result + ProcessDecodeJS(ChildNode, Vars)
           else if ChildNode.Name = 'decode_base64' then
@@ -694,6 +701,8 @@ begin
             Result := Result + ProcessTrim(ChildNode, Vars)
           else if ChildNode.Name = 'timestamp' then
             Result := Result + ProcessTimestamp(ChildNode, Vars)
+          else if ChildNode.Name = 'relative_url' then
+            Result := Result + ProcessRelativeUrl(ChildNode, Vars)
           else
             ScriptError(MSG_SCRIPTS_UNKNOWN_COMMAND, ChildNode)
         else
@@ -709,7 +718,7 @@ function TScriptedDownloader.ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVa
 var
   Http: THttpSend;
   HeadersNode: TXmlNode;
-  Url, PostData, MimeType, MethodStr, EncodingStr, XmlPath, XmlAttr: string;
+  Url, PostData, MimeType, MethodStr, EncodingStr, XmlPath, XmlAttr, Referer: string;
   OK, WantXml: Boolean;
   ExtraHeaders: array of string;
   Method: THttpMethod;
@@ -775,6 +784,9 @@ begin
     end
   else
     XmlAttr := '';
+  // Referer
+  if GetNodeContent(Node, 'referer', Vars, Referer) then
+    Self.Referer := Referer;
   // Extra headers
   if XmlNodeByPath(Node, 'headers', HeadersNode) then
     for i := 0 to Pred(HeadersNode.NodeCount) do
@@ -782,7 +794,7 @@ begin
         begin
         n := Length(ExtraHeaders);
         SetLength(ExtraHeaders, Succ(n));
-        ExtraHeaders[n] := ProcessNodeContent(HeadersNode, Vars);
+        ExtraHeaders[n] := ProcessNodeContent(HeadersNode.Nodes[i], Vars);
         end;
   // Actual download
   if RelativeUrl = '' then
@@ -1036,6 +1048,11 @@ begin
   Result := UrlDecode(ProcessNodeContent(Node, Vars));
 end;
 
+function TScriptedDownloader.ProcessEncodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := UrlEncode(ProcessNodeContent(Node, Vars));
+end;
+
 function TScriptedDownloader.ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
 begin
   Result := JSDecode(ProcessNodeContent(Node, Vars));
@@ -1065,6 +1082,83 @@ begin
     Result := IntToStr(Trunc((Now - 25569) * 24*60*60))
   else
     ScriptError(Format(ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE, ['type', TimestampType]), Node);
+end;
+
+function TScriptedDownloader.ProcessReplace(Node: TXmlNode; Vars: TScriptVariables): string;
+var
+  Search, Replacement, Source, SourceForSearching: string;
+  ReplacePosStr, ReplaceCountStr, CaseSensitiveStr: string;
+  ReplacePos, ReplaceCount, SearchLen, MatchPos: integer;
+  CaseSensitive: boolean;
+begin
+  Result := '';
+  if not XmlAttribute(Node, 'search', Search) then
+    ScriptError(Format(ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY, ['search']), Node)
+  else
+    begin
+    Source := ProcessNodeContent(Node, Vars);
+    Replacement := XmlAttribute(Node, 'replacement');
+    ReplacePosStr := XmlAttribute(Node, 'start');
+    ReplacePos := StrToIntDef(ReplacePosStr, 0);
+    ReplaceCountStr := XmlAttribute(Node, 'count');
+    ReplaceCount := StrToIntDef(ReplaceCountStr, MaxInt);
+    CaseSensitiveStr := XmlAttribute(Node, 'case_sensitive');
+    CaseSensitive := StrToIntDef(CaseSensitiveStr, 0) <> 0;
+    if ReplaceCount <= 0 then
+      Result := Source
+    else
+      begin
+      if CaseSensitive then
+        SourceForSearching := Source
+      else
+        begin
+        SourceForSearching := UpperCase(Source);
+        Search := UpperCase(Search);
+        end;
+      SearchLen := Length(Search);
+      while Source <> '' do
+        begin
+        MatchPos := Pos(Search, SourceForSearching);
+        if MatchPos > 0 then
+          begin
+          if ReplacePos > 0 then
+            begin
+            Result := Result + Copy(Source, 1, MatchPos + SearchLen - 1);
+            Dec(ReplacePos);
+            end
+          else
+            begin
+            Result := Result + Copy(Source, 1, Pred(MatchPos)) + Replacement;
+            Dec(ReplaceCount);
+            end;
+          Delete(Source, 1, MatchPos + SearchLen - 1);
+          Delete(SourceForSearching, 1, MatchPos + SearchLen - 1);
+          if ReplaceCount <= 0 then
+            Break;
+          end
+        else
+          Break;
+        end;
+      Result := Result + Source;
+      end;
+    end;
+end;
+
+function TScriptedDownloader.ProcessRelativeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
+var
+  Base: string;
+begin
+  if not GetNodeContent(Node, 'url', Vars, Result) then
+    ScriptError(ERR_SCRIPTS_URL_NOT_FOUND, Node)
+  else if Result = '' then
+    ScriptError(ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED, Node)
+  else
+    begin
+    if not GetNodeContent(Node, 'base', Vars, Base) then
+      Base := Self.LastUrl;
+    if Base <> '' then
+      Result := GetRelativeUrl(Base, Result);
+    end;
 end;
 
 initialization

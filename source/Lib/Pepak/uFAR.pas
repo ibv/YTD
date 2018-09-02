@@ -27,6 +27,9 @@ type
 {$ENDIF}
 
 type
+  TFarCharArray = array of TFarChar;
+
+type
   TFarPanelItem = class;
   TFarPanelInfo = class;
 
@@ -83,7 +86,7 @@ type
 
   TFarPanelInfo = class
   private
-    fActivePanel: boolean;
+    fHandle: THandle;
     {$IFDEF FAR3}
     fPluginHandle: THandle;
     fOwnerGUID: TGUID;
@@ -110,9 +113,10 @@ type
     function GetHasSelectedItems: boolean;
     function GetIsPluginPanel: boolean;
   protected
-    procedure Load(AActivePanel: boolean);
+    procedure Load(APanelHandle: THandle; ALoadItems: boolean = True);
   public
-    constructor Create(AActivePanel: boolean);
+    constructor Create(APanelHandle: THandle; ALoadItems: boolean = True); overload;
+    constructor Create(AActivePanel: boolean; ALoadItems: boolean = True); overload;
     destructor Destroy; override;
     procedure ApplySelection;
     procedure Refresh;
@@ -139,7 +143,7 @@ type
     property DirectoryFile: string read fDirectoryFile;
     {$ENDIF}
     //
-    property Active: boolean read fActivePanel;
+    property Handle: THandle read fHandle;
     property Left: boolean index PFLAGS_PANELLEFT read GetFlag;
     property HasSelectedItems: boolean read GetHasSelectedItems;
     property IsPluginPanel: boolean read GetIsPluginPanel;
@@ -171,6 +175,10 @@ type
     function WriteString(const Name, Value: string): boolean;
     function WriteInteger(const Name: string; const Value: int64): boolean;
     function WriteBoolean(const Name: string; const Value: boolean): boolean;
+    function DeleteValue(const Name: string): boolean;
+    function DeleteKey(const Name: string): boolean;
+    function ReadValueNames(List: TStrings): boolean;
+    function ReadKeyNames(List: TStrings): boolean;
     property CurrentPath: string read fCurrentPath;
   public
     constructor Create( {$IFDEF FAR3} APluginGUID: TGUID {$ELSE} const APath: string {$ENDIF} ; ADoOpen: boolean);
@@ -190,6 +198,8 @@ type
     fCapacity: integer;
     fCount: integer;
     fDialogHandle: THandle;
+    fLastX: integer;
+    fLastY: integer;
     function GetItem(Index: integer): PFarDialogItem;
     function AllocItem: PFarDialogItem;
     function AddItem(ItemType: DWORD; X1, Y1, X2, Y2: integer; Param, Data, UserData: Pointer; History, Mask: PFarChar; Flags: TFarDialogItemFlags; MaxLength: size_t): integer;
@@ -206,7 +216,8 @@ type
     function AddLabel(X1, Y1, X2: integer; Caption: PFarChar; Flags:  TFarDialogItemFlags): integer; overload;
     function AddCheckbox(X1, Y1: integer; Caption: PFarChar; Checked: boolean; Flags: TFarDialogItemFlags): integer;
     function AddRadio(X1, Y1: integer; Caption: PFarChar; Checked: boolean; Flags: TFarDialogItemFlags): integer;
-    function AddEdit(X1, Y1, Width: integer; ValueBuffer, Mask, History: PFarChar; MaxLength: integer; Flags: TFarDialogItemFlags): integer;
+    function AddEdit(X1, Y1, Width: integer; ValueBuffer, Mask, History: PFarChar; MaxLength: integer; Flags: TFarDialogItemFlags): integer; overload;
+    function AddEdit(X1, Y1, Width: integer; const Value: string; var ValueBuffer: TFarCharArray; Mask, History: PFarChar; MaxLength: integer; Flags: TFarDialogItemFlags): integer; overload;
       // Pokud je X1 zaporne, vypocita se automaticky podle delky prvku, ktery je vuci tomuto Editu na indexu X1
     function AddButton(X1, Y1: integer; Caption: PFarChar; Flags:  TFarDialogItemFlags): integer;
     function Build(X1, Y1, X2, Y2: integer; Flags: TFarDialogFlags; HelpTopic: PFarChar): boolean;
@@ -220,6 +231,8 @@ type
     property ItemChecked[Index: integer]: boolean read GetItemChecked write SetItemChecked;
     property ItemEnabled[Index: integer]: boolean read GetItemEnabled write SetItemEnabled;
     property ItemText[Index: integer]: string read GetItemText write SetItemText;
+    property LastX: integer read fLastX;
+    property LastY: integer read fLastY;
   public
     class function GetDialogInstance(const Handle: THandle): TFarDialog;
     constructor Create( {$IFDEF FAR3} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
@@ -305,14 +318,21 @@ type
 type
   TFarUtils = class
   public
-    class function CopyString(const s: PFarChar): string;
+    class function CopyString(const s: PFarChar): string; overload;
+    class function CopyString(const s: TFarCharArray): string; overload;
     class function CopyLString(const s: PFarChar; Length: integer): string;
     class function TruncateString(const s: string; Width: integer; FillerChar: Char): string;
     class function ShowMessage(const Msg: array of PFarChar; Flags: TFarMessageFlags; ButtonCount: integer): integer; overload;
     class function ShowMessage(const Msg: array of string; Flags: TFarMessageFlags; ButtonCount: integer): integer; overload;
     class function FullFileName(const s: string; const NTSchematics: boolean): string;
+    class function GetConsoleRect: TSmallRect;
+    class function GetConsoleWidth: integer;
+    class function GetConsoleHeight: integer;
     class function GetMsg(MsgId: integer): PFarChar;
     class function TempFileName: string;
+    class function Menu(const MenuID: TGUID; Title, HelpTopic: PFarChar; Items: TStrings; out ItemIndex: integer): boolean;
+    class function SetProgressState(State: DWORD; Progress, Total: Int64): boolean; overload;
+    class function SetProgressState(State: DWORD): boolean; overload;
   end;
 
 {$IFDEF FAR3}
@@ -357,6 +377,165 @@ begin
     Result := CopyLString(s, StrLen(s));
 end;
 
+class function TFarUtils.CopyString(const s: TFarCharArray): string;
+var
+  n: integer;
+begin
+  n := Length(s);
+  if n <= 0 then
+    Result := ''
+  else
+    Result := CopyString(@s[0]);
+end;
+
+class function TFarUtils.FullFileName(const s: string; const NTSchematics: boolean): string;
+const
+  ConvertPathFlags: array[boolean] of DWORD = (CPM_REAL, CPM_NATIVE);
+var
+  n: DWORD;
+begin
+  Result := '';
+  if s <> '' then begin
+    n := FarApi.FSF^.ConvertPath(CPM_NATIVE, PFarChar(s), nil, 0);
+    if n > 0 then begin
+      SetLength(Result, n);
+      n := FarApi.FSF^.ConvertPath(CPM_NATIVE, PFarChar(s), @Result[1], n);
+      if n > 0 then
+        SetLength(Result, n-1) // remove trailing #0
+      else
+        Result := '';
+    end;
+  end;
+end;
+
+class function TFarUtils.GetConsoleHeight: integer;
+var
+  Rect: TSmallRect;
+begin
+  Rect := GetConsoleRect;
+  Result := Rect.Bottom - Rect.Top + 1;
+end;
+
+class function TFarUtils.GetConsoleRect: TSmallRect;
+begin
+  if FarApi.AdvControl( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_GETFARRECT, {$IFDEF FAR3} 0, {$ENDIF} @Result) = 0 then begin
+    Result.Left := 0;
+    Result.Top := 0;
+    Result.Right := 79;
+    Result.Bottom := 24;
+  end;
+end;
+
+class function TFarUtils.GetConsoleWidth: integer;
+var
+  Rect: TSmallRect;
+begin
+  Rect := GetConsoleRect;
+  Result := Rect.Right - Rect.Left + 1;
+end;
+
+class function TFarUtils.GetMsg(MsgId: integer): PFarChar;
+const
+  NO_MESSAGE = '';
+begin
+  if MsgId < 0 then
+    Result := NO_MESSAGE
+  else
+    Result := FarApi.GetMsg( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , MsgId);
+end;
+
+class function TFarUtils.Menu(const MenuID: TGUID; Title, HelpTopic: PFarChar; Items: TStrings; out ItemIndex: integer): boolean;
+var
+  Res: TIntPtr;
+  MenuTexts: array of string;
+  MenuItems: packed array of TFarMenuItem;
+  i, Count: Integer;
+begin
+  Result := False;
+  Count := Items.Count;
+  if Count > 0 then begin
+    SetLength(MenuItems, Count);
+    FillChar(MenuItems[0], Count * Sizeof(MenuItems[0]), 0);
+    SetLength(MenuTexts, Count);
+    for i := 0 to Pred(Count) do begin
+      MenuTexts[i] := Items[i];
+      {$IFDEF FAR3}
+      MenuItems[i].Flags := MIF_NONE;
+      {$ENDIF}
+      MenuItems[i].TextPtr := PFarChar(MenuTexts[i]);
+    end;
+    Res := FarApi.Menu(
+             {$IFDEF FAR3}
+             PluginID,
+             MenuID,
+             {$ELSE}
+             FarApi.ModuleNumber,
+             {$ENDIF}
+             -1, -1,
+             0,
+             FMENU_AUTOHIGHLIGHT or FMENU_WRAPMODE,
+             Title,
+             nil,
+             HelpTopic,
+             nil,
+             nil,
+             @MenuItems[0],
+             Count
+           );
+    if Res >= 0 then begin
+      ItemIndex := Res;
+      Result := True;
+    end;
+  end;
+end;
+
+class function TFarUtils.SetProgressState(State: DWORD; Progress, Total: Int64): boolean;
+var
+  Value: TProgressValue;
+begin
+  Result := FarApi.AdvControl( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSSTATE, {$IFDEF FAR3} State, nil {$ELSE} Pointer(State) {$ENDIF} ) <> 0;
+  if (State <> {$IFDEF FAR3} TBPS_NOPROGRESS {$ELSE} PS_NOPROGRESS {$ENDIF} ) then
+    if (Progress >= 0) and (Total > 0) then begin
+      FillChar(Value, Sizeof(Value), 0);
+      {$IFDEF FAR3}
+      Value.StructSize := Sizeof(Value);
+      {$ENDIF}
+      Value.Completed := Progress;
+      Value.Total := Total;
+      if FarApi.AdvControl( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSVALUE, {$IFDEF FAR3} 0, {$ENDIF} @Value) = 0 then
+        Result := False;
+    end;
+end;
+
+class function TFarUtils.SetProgressState(State: DWORD): boolean;
+begin
+  Result := SetProgressState(State, -1, -1);
+end;
+
+class function TFarUtils.ShowMessage(const Msg: array of string; Flags: TFarMessageFlags; ButtonCount: integer): integer;
+var
+  i, n: integer;
+  Msg2: array of PFarChar;
+begin
+  n := Length(Msg);
+  SetLength(Msg2, n);
+  for i := 0 to Pred(n) do
+    Msg2[i] := PFarChar(Msg[i]);
+  Result := ShowMessage(Msg2, Flags, ButtonCount);
+end;
+
+class function TFarUtils.ShowMessage(const Msg: array of PFarChar; Flags: TFarMessageFlags; ButtonCount: integer): integer;
+var
+  MsgArray: PPCharArray;
+  i, n: integer;
+begin
+  n := Length(Msg);
+  GetMem(MsgArray, n * Sizeof(PFarChar));
+  for i := 0 to Pred(n) do
+    MsgArray^[i] := Msg[i];
+  Result := FarApi.Message( {$IFDEF FAR3} PluginID, GUID_NULL {$ELSE} FarApi.ModuleNumber {$ENDIF} , Flags, nil, MsgArray, n, ButtonCount);
+end;
+
 class function TFarUtils.TempFileName: string;
 var
   n: integer;
@@ -385,60 +564,6 @@ begin
     Result := Result + StringOfChar(FillerChar, Width-n);
 end;
 
-class function TFarUtils.FullFileName(const s: string; const NTSchematics: boolean): string;
-const
-  ConvertPathFlags: array[boolean] of DWORD = (CPM_REAL, CPM_NATIVE);
-var
-  n: DWORD;
-begin
-  Result := '';
-  if s <> '' then begin
-    n := FarApi.FSF^.ConvertPath(CPM_NATIVE, PFarChar(s), nil, 0);
-    if n > 0 then begin
-      SetLength(Result, n);
-      n := FarApi.FSF^.ConvertPath(CPM_NATIVE, PFarChar(s), @Result[1], n);
-      if n > 0 then
-        SetLength(Result, n-1) // remove trailing #0
-      else
-        Result := '';
-    end;
-  end;
-end;
-
-class function TFarUtils.GetMsg(MsgId: integer): PFarChar;
-const
-  NO_MESSAGE = '';
-begin
-  if MsgId < 0 then
-    Result := NO_MESSAGE
-  else
-    Result := FarApi.GetMsg( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , MsgId);
-end;
-
-class function TFarUtils.ShowMessage(const Msg: array of string; Flags: TFarMessageFlags; ButtonCount: integer): integer;
-var
-  i, n: integer;
-  Msg2: array of PFarChar;
-begin
-  n := Length(Msg);
-  SetLength(Msg2, n);
-  for i := 0 to Pred(n) do
-    Msg2[i] := PFarChar(Msg[i]);
-  Result := ShowMessage(Msg2, Flags, ButtonCount);
-end;
-
-class function TFarUtils.ShowMessage(const Msg: array of PFarChar; Flags: TFarMessageFlags; ButtonCount: integer): integer;
-var
-  MsgArray: PPCharArray;
-  i, n: integer;
-begin
-  n := Length(Msg);
-  GetMem(MsgArray, n * Sizeof(PFarChar));
-  for i := 0 to Pred(n) do
-    MsgArray^[i] := Msg[i];
-  Result := FarApi.Message( {$IFDEF FAR3} PluginID, GUID_NULL {$ELSE} FarApi.ModuleNumber {$ENDIF} , Flags, nil, MsgArray, n, ButtonCount);
-end;
-
 { TFarPanelInfo }
 
 procedure TFarPanelInfo.ApplySelection;
@@ -448,23 +573,30 @@ var
   i: integer;
 begin
   //Log('TFarPanelInfo.ApplySelection pro panel %d (%d polozek)', [Integer(Active), Items.Count]);
-  FarApi.Control(hPanel[Active], FCTL_BEGINSELECTION, 0, nil);
+  FarApi.Control(Handle, FCTL_BEGINSELECTION, 0, nil);
   try
     for i := 0 to Pred(Items.Count) do begin
       //Log(' - polozka %d "%s", index v panelu %d, selected %d', [i, Items[i].FileName, Items[i].ItemIndex, Integer(Items[i].Selected)]);
-      FarApi.Control(hPanel[Active], FCTL_SETSELECTION, Items[i].ItemIndex, Pointer(SelectedFlag[Items[i].Selected]));
+      FarApi.Control(Handle, FCTL_SETSELECTION, Items[i].ItemIndex, Pointer(SelectedFlag[Items[i].Selected]));
     end;
   finally
-    FarApi.Control(hPanel[Active], FCTL_ENDSELECTION, 0, nil);
-    FarApi.Control(hPanel[Active], FCTL_REDRAWPANEL, 0, nil);
+    FarApi.Control(Handle, FCTL_ENDSELECTION, 0, nil);
+    FarApi.Control(Handle, FCTL_REDRAWPANEL, 0, nil);
   end;
 end;
 
-constructor TFarPanelInfo.Create(AActivePanel: boolean);
+constructor TFarPanelInfo.Create(AActivePanel, ALoadItems: boolean);
 begin
   inherited Create;
   fItems := TFarPanelItems.Create(True);
-  Load(AActivePanel);
+  Load(hPanel[AActivePanel], ALoadItems);
+end;
+
+constructor TFarPanelInfo.Create(APanelHandle: THandle; ALoadItems: boolean);
+begin
+  inherited Create;
+  fItems := TFarPanelItems.Create(True);
+  Load(APanelHandle, ALoadItems);
 end;
 
 destructor TFarPanelInfo.Destroy;
@@ -495,7 +627,7 @@ begin
   Result := (PluginHandle <> 0) {and (PluginHandle <> INVALID_HANDLE_VALUE)};
 end;
 
-procedure TFarPanelInfo.Load(AActivePanel: boolean);
+procedure TFarPanelInfo.Load(APanelHandle: THandle; ALoadItems: boolean);
 var
   Info: TPanelInfo;
   i: Integer;
@@ -511,8 +643,8 @@ begin
   {$IFDEF FAR3}
   Info.StructSize := Sizeof(Info);
   {$ENDIF}
-  if FarApi.Control(hPanel[AActivePanel], FCTL_GETPANELINFO, 0, @Info) <> 0 then begin
-    fActivePanel := AActivePanel;
+  if FarApi.Control(APanelHandle, FCTL_GETPANELINFO, 0, @Info) <> 0 then begin
+    fHandle := APanelHandle;
     // Read panel info
     {$IFDEF FAR3}
     fPluginHandle := Info.PluginHandle;
@@ -531,8 +663,9 @@ begin
     fPanelType := Info.PanelType;
     // Read panel items
     fItems.Clear;
-    for i := 0 to Pred(Info.ItemsNumber) do
-      fItems.Add(TFarPanelItem.Create(Self, i));
+    if ALoadItems then
+      for i := 0 to Pred(Info.ItemsNumber) do
+        fItems.Add(TFarPanelItem.Create(Self, i));
     // Read directory info
     fDirectory := '';
     {$IFDEF FAR3}
@@ -540,20 +673,20 @@ begin
     fDirectoryPlugin := GUID_NULL;
     fDirectoryFile := '';
     {$ENDIF}
-    nSize := FarApi.Control(hPanel[AActivePanel], {$IFDEF FAR3} FCTL_GETPANELDIRECTORY {$ELSE} FCTL_GETPANELDIR {$ENDIF} , 0, nil);
+    nSize := FarApi.Control(APanelHandle, {$IFDEF FAR3} FCTL_GETPANELDIRECTORY {$ELSE} FCTL_GETPANELDIR {$ENDIF} , 0, nil);
     if nSize > 0 then begin
       SetLength(Buffer, nSize);
       FillChar(Buffer[0], nSize, 0);
       {$IFDEF FAR3}
       pDir := @Buffer[0];
       pDir^.StructSize := Sizeof(pDir^);
-      FarApi.Control(hPanel[AActivePanel], FCTL_GETPANELDIRECTORY, nSize, pDir);
+      FarApi.Control(APanelHandle, FCTL_GETPANELDIRECTORY, nSize, pDir);
       fDirectory := {TFarUtils.FullFileName}(TFarUtils.CopyString(pDir^.Name));
       fDirectoryParam := TFarUtils.CopyString(pDir^.Param);
       fDirectoryPlugin := pDir^.PluginId;
       fDirectoryFile := TFarUtils.CopyString(pDir^.fFile);
       {$ELSE}
-      FarApi.Control(hPanel[AActivePanel], FCTL_GETPANELDIR, nSize, Buffer);
+      FarApi.Control(APanelHandle, FCTL_GETPANELDIR, nSize, Buffer);
       fDirectory := TFarUtils.CopyString(@Buffer[0]);
       {$ENDIF}
     end;
@@ -562,7 +695,7 @@ end;
 
 procedure TFarPanelInfo.Refresh;
 begin
-  FarApi.Control(hPanel[fActivePanel], FCTL_UPDATEPANEL, 1, nil);
+  FarApi.Control(Handle, FCTL_UPDATEPANEL, 1, nil);
 end;
 
 { TFarPanelItem }
@@ -594,7 +727,7 @@ var
   {$ENDIF}
 begin
   fItemIndex := AIndex;
-  nSize := FarApi.Control(hPanel[Panel.Active], FCTL_GETPANELITEM, AIndex, nil);
+  nSize := FarApi.Control(Panel.Handle, FCTL_GETPANELITEM, AIndex, nil);
   if nSize > 0 then begin
     SetLength(Buffer, nSize);
     FillChar(Buffer[0], nSize, 0);
@@ -604,7 +737,7 @@ begin
     Rec.Size := nSize;
     Rec.Item := PPI;
     {$ENDIF}
-    FarApi.Control(hPanel[Panel.Active], FCTL_GETPANELITEM, AIndex, {$IFDEF FAr3} @Rec {$ELSE} PPI {$ENDIF} );
+    FarApi.Control(Panel.Handle, FCTL_GETPANELITEM, AIndex, {$IFDEF FAr3} @Rec {$ELSE} PPI {$ENDIF} );
     fCreationTime := {$IFDEF FAR3} PPI^.CreationTime {$ELSE} PPI^.FindData.ftCreationTime {$ENDIF} ;
     fLastAccessTime := {$IFDEF FAR3} PPI^.LastAccessTime {$ELSE} PPI^.FindData.ftLastAccessTime {$ENDIF} ;
     fLastWriteTime := {$IFDEF FAR3} PPI^.LastWriteTime {$ELSE} PPI^.FindData.ftLastWriteTime {$ENDIF} ;
@@ -662,6 +795,18 @@ begin
   Result := AddItem(DI_DOUBLEBOX, X1, Y1, X2, Y2, nil, Caption, nil, nil, nil, Flags, 0);
 end;
 
+function TFarDialog.AddEdit(X1, Y1, Width: integer; const Value: string; var ValueBuffer: TFarCharArray; Mask, History: PFarChar; MaxLength: integer; Flags: TFarDialogItemFlags): integer;
+var
+  n: integer;
+begin
+  n := Length(Value);
+  if n < MaxLength then
+    n := MaxLength;
+  SetLength(ValueBuffer, Succ(n));
+  StrPCopy(@ValueBuffer[0], Value);
+  Result := AddEdit(X1, Y1, Width, @ValueBuffer[0], Mask, History, n, Flags);
+end;
+
 function TFarDialog.AddEdit(X1, Y1, Width: integer; ValueBuffer, Mask, History: PFarChar; MaxLength: integer; Flags: TFarDialogItemFlags): integer;
 const
   EditType: array[boolean] of DWORD = (DI_EDIT, DI_FIXEDIT);
@@ -713,6 +858,8 @@ begin
   {$IFDEF FAR3}
   Item^.UserData := TIntPtr(UserData);
   {$ENDIF}
+  fLastX := X1;
+  fLastY := Y1;
 end;
 
 function TFarDialog.AddLabel(X1, Y1, X2: integer; Caption: PFarChar; Flags: TFarDialogItemFlags): integer;
@@ -933,6 +1080,8 @@ end;
 
 procedure TFarConfig.Close;
 begin
+  //if fSettingsHandle <> 0 then
+  //  Log('Close');
   {$IFDEF FAR3}
   fCurrentKey := 0;
   if fSettingsHandle <> 0 then begin
@@ -962,6 +1111,54 @@ begin
     Open;
 end;
 
+function TFarConfig.DeleteKey(const Name: string): boolean;
+var
+  OldPath: string;
+  {$IFDEF FAR3}
+  Rec: TFarSettingsValue;
+  {$ENDIF}
+begin
+  Result := False;
+  if not IsOpen then
+    Exit;
+  OldPath := CurrentPath;
+  try
+    if Open(OldPath + '\' + Name) then begin
+      {$IFDEF FAR3}
+      FillChar(Rec, SizeOf(Rec), 0);
+      Rec.StructSize := SizeOf(Rec);
+      Rec.Root := fCurrentKey;
+      Rec.Value := nil;
+      Result := FarApi.SettingsControl(fSettingsHandle, SCTL_DELETE, 0, @Rec) <> 0;
+      {$ELSE}
+      Result := RegDeleteKey(fCurrentKey, PChar(Name)) = ERROR_SUCCESS;
+      {$ENDIF}
+    end;
+  finally
+    Open(OldPath);
+  end;
+end;
+
+function TFarConfig.DeleteValue(const Name: string): boolean;
+{$IFDEF FAR3}
+var
+  Rec: TFarSettingsValue;
+{$ENDIF}
+begin
+  Result := False;
+  if not IsOpen then
+    Exit;
+  {$IFDEF FAR3}
+  FillChar(Rec, SizeOf(Rec), 0);
+  Rec.StructSize := SizeOf(Rec);
+  Rec.Root := fCurrentKey;
+  Rec.Value := PFarChar(Name);
+  Result := FarApi.SettingsControl(fSettingsHandle, SCTL_DELETE, 0, @Rec) <> 0;
+  {$ELSE}
+  Result := RegDeleteValue(fCurrentKey, PChar(Name)) = ERROR_SUCCESS;
+  {$ENDIF}
+end;
+
 destructor TFarConfig.Destroy;
 begin
   Close;
@@ -987,6 +1184,9 @@ var
   ix: integer;
 {$ENDIF}
 begin
+  //Log('Open "%s"', [Path]);
+  while (Path <> '') and (Path[1] = '\') do
+    Delete(Path, 1, 1);
   if IsOpen(Path) then
     Result := True
   else begin
@@ -1000,6 +1200,7 @@ begin
       Result := True;
       fSettingsHandle := Rec.Handle;
       fCurrentKey := 0;
+      fCurrentPath := '';
       while Path <> '' do begin
         ix := Pos('\', Path);
         if ix <= 0 then begin
@@ -1015,7 +1216,13 @@ begin
           RecVal.Root := fCurrentKey;
           RecVal.Value := PFarChar(Dir);
           fCurrentKey := THandle(FARAPI.SettingsControl(fSettingsHandle, SCTL_CREATESUBKEY, 0, @RecVal));
-          if fCurrentKey = 0 then begin
+          if fCurrentKey <> 0 then begin
+            if fCurrentPath = ''  then
+              fCurrentPath := Dir
+            else
+              fCurrentPath := fCurrentPath + '\' + Dir;
+          end
+          else begin
             Result := False;
             Close;
           end;
@@ -1090,6 +1297,50 @@ begin
   {$ENDIF}
 end;
 
+function TFarConfig.ReadKeyNames(List: TStrings): boolean;
+var
+  {$IFDEF FAR3}
+  Rec: TFarSettingsEnum;
+  Item: PFarSettingsName;
+  i: Integer;
+  {$ELSE}
+  Buffer: array[0..16382] of Char;
+  i, BufferSize: DWORD;
+  s: string;
+  {$ENDIF}
+begin
+  Result := False;
+  List.Clear;
+  if not IsOpen then
+    Exit;
+  //Log('TFarConfig.ReadKeyNames');
+  {$IFDEF FAR3}
+  FillChar(Rec, SizeOf(Rec), 0);
+  Rec.StructSize := SizeOf(Rec);
+  Rec.Root := fCurrentKey;
+  if FarApi.SettingsControl(fSettingsHandle, SCTL_ENUM, 0, @Rec) <> 0 then begin
+    Item := Rec.Value.Items;
+    for i := 0 to Pred(Rec.Count) do begin
+      if Item^.FType = FST_SUBKEY then begin
+        //Log('  %s', [TFarUtils.CopyString(Item^.Name)]);
+        List.Add(TFarUtils.CopyString(Item^.Name));
+      end;
+      Inc(Item);
+    end;
+  end;
+  {$ELSE}
+  i := 0;
+  BufferSize := Length(Buffer) * Sizeof(Buffer[1]);
+  while RegEnumKeyEx(fCurrentKey, i, Buffer, BufferSize, nil, nil, nil, nil) = ERROR_SUCCESS do begin
+    SetString(s, Buffer, BufferSize);
+    //Log(' %s', [s]);
+    List.Add(s);
+    BufferSize := Length(Buffer) * Sizeof(Buffer[1]);
+    Inc(i);
+  end;
+  {$ENDIF}
+end;
+
 function TFarConfig.ReadString(const Name, Default: string): string;
 begin
   if not ReadStringEx(Name, Result) then
@@ -1130,6 +1381,50 @@ begin
           end;
         end;
       end;
+  {$ENDIF}
+end;
+
+function TFarConfig.ReadValueNames(List: TStrings): boolean;
+var
+  {$IFDEF FAR3}
+  Rec: TFarSettingsEnum;
+  Item: PFarSettingsName;
+  i: Integer;
+  {$ELSE}
+  Buffer: array[0..16382] of Char;
+  i, BufferSize: DWORD;
+  s: string;
+  {$ENDIF}
+begin
+  Result := False;
+  List.Clear;
+  if not IsOpen then
+    Exit;
+  //Log('TFarConfig.ReadValueNames');
+  {$IFDEF FAR3}
+  FillChar(Rec, SizeOf(Rec), 0);
+  Rec.StructSize := SizeOf(Rec);
+  Rec.Root := fCurrentKey;
+  if FarApi.SettingsControl(fSettingsHandle, SCTL_ENUM, 0, @Rec) <> 0 then begin
+    Item := Rec.Value.Items;
+    for i := 0 to Pred(Rec.Count) do begin
+      if Item^.FType <> FST_SUBKEY then begin
+        //Log('  %s', [TFarUtils.CopyString(Item^.Name)]);
+        List.Add(TFarUtils.CopyString(Item^.Name));
+      end;
+      Inc(Item);
+    end;
+  end;
+  {$ELSE}
+  i := 0;
+  BufferSize := Length(Buffer) * Sizeof(Buffer[1]);
+  while RegEnumValue(fCurrentKey, i, Buffer, BufferSize, nil, nil, nil, nil) = ERROR_SUCCESS do begin
+    SetString(s, Buffer, BufferSize);
+    //Log(' %s', [s]);
+    List.Add(s);
+    BufferSize := Length(Buffer) * Sizeof(Buffer[1]);
+    Inc(i);
+  end;
   {$ENDIF}
 end;
 
@@ -1241,12 +1536,7 @@ begin
   fStdInput := 0;
   fGranularityMSec := 500;
   fCheckForEscape := False;
-  if FarApi.AdvControl( {$IFDEF FAR3} fPluginGUID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_GETFARRECT, {$IFDEF FAR3} 0, {$ENDIF} @fConsoleRect) = 0 then begin
-    fConsoleRect.Left := 0;
-    fConsoleRect.Top := 0;
-    fConsoleRect.Right := 79;
-    fConsoleRect.Bottom := 24;
-  end;
+  fConsoleRect := TFarUtils.GetConsoleRect;
   fWidth := (fConsoleRect.Right - fConsoleRect.Left - 14);
 end;
 

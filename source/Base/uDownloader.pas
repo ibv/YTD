@@ -1043,12 +1043,20 @@ begin
 end;
 
 function TDownloader.ExtractUrlExt(const Url: string): string;
+var
+  Path: string;
 begin
   Result := ExtractFileExt(ExtractUrlFileName(Url));
+  if Result = '' then
+    begin
+    Path := ExtractUrlPath(Url);
+    Result := ExtractFileExt(ExtractUrlFileName(Copy(Path, 1, Pred(Length(Path)))));
+    end;
 end;
 
 function TDownloader.ExtractUrlRoot(const Url: string): string;
-var Protocol, User, Password, Host, Port, Path, Paragraph: string;
+var
+  Protocol, User, Password, Host, Port, Path, Paragraph, DefaultPort: string;
 begin
   ParseUrl(Url, Protocol, User, Password, Host, Port, Path, Paragraph);
   Result := Protocol + '://';
@@ -1057,7 +1065,10 @@ begin
       Result := Result + User + '@'
     else
       Result := Result + User + ':' + Password + '@';
-  Result := Result + Host + ':' + Port;
+  Result := Result + Host;
+  ParseUrl(Result, Protocol, User, Password, Host, DefaultPort, Path, Paragraph);
+  if Port <> DefaultPort then
+    Result := Result + ':' + Port;
 end;
 
 function TDownloader.ExtractUrlFileName(const Url: string): string;

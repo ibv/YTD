@@ -54,6 +54,7 @@ type
       ComboOverwriteMode: THandle;
       EditDownloadDir: THandle;
       ComboConverter: THandle;
+      EditRetryCount: THandle;
       procedure CreateObjects;
       procedure DestroyObjects;
     protected
@@ -63,6 +64,7 @@ type
     protected
       procedure LabelOverwriteModeClick;
       procedure LabelDownloadDirClick;
+      procedure LabelRetryCountClick;
       {$IFDEF CONVERTERS}
       procedure LabelConverterClick;
       procedure ComboConverterChange;
@@ -98,6 +100,8 @@ const
   IDC_CHECKBOX_AUTOTRYHTMLPARSER = 1010;
   IDC_CHECKBOX_DOWNLOADTOTEMPFILES = 1011;
   IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS = 1012;
+  IDC_LABEL_RETRYCOUNT = 1013;
+  IDC_EDIT_RETRYCOUNT = 1014;
 
 const
   ACTION_DOWNLOADDIR = 40001;
@@ -119,6 +123,7 @@ begin
   ComboOverwriteMode := GetDlgItem(Self.Handle, IDC_COMBO_OVERWRITEMODE);
   EditDownloadDir := GetDlgItem(Self.Handle, IDC_EDIT_DOWNLOADDIR);
   ComboConverter := GetDlgItem(Self.Handle, IDC_COMBO_CONVERTER);
+  EditRetryCount := GetDlgItem(Self.Handle, IDC_EDIT_RETRYCOUNT);
 end;
 
 procedure TFrameDownloadOptions.DestroyObjects;
@@ -126,6 +131,7 @@ begin
   ComboOverwriteMode := 0;
   EditDownloadDir := 0;
   ComboConverter := 0;
+  EditRetryCount := 0;
 end;
 
 function TFrameDownloadOptions.DoInitDialog: boolean;
@@ -144,6 +150,7 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_COMBO_OVERWRITEMODE), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_DOWNLOADDIR), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_DOWNLOADDIR), [akTop, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_RETRYCOUNT), [akTop, akLeft]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_COMBO_CONVERTER), [akTop, akLeft, akRight]);
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'OPTIONS_DOWNLOADS_ACTIONS');
@@ -191,6 +198,11 @@ begin
           LabelDownloadDirClick;
           Result := True;
           end;
+        IDC_LABEL_RETRYCOUNT:
+          begin
+          LabelRetryCountClick;
+          Result := True;
+          end;
         {$IFDEF CONVERTERS}
         IDC_LABEL_CONVERTER:
           begin
@@ -232,6 +244,8 @@ begin
   SendMessage(ComboOverwriteMode, CB_SETCURSEL, OverwriteMode[Options.OverwriteMode], 0);
   // Download Directory
   SetWindowText(EditDownloadDir, PChar(Options.DestinationPath));
+  // Retry count
+  SetWindowText(EditRetryCount, PChar(IntToStr(Options.DownloadRetryCount)));
   // Converter
   {$IFDEF CONVERTERS}
   PrepareConverterComboBox(ComboConverter, Options, Options.SelectedConverterID);
@@ -288,6 +302,8 @@ begin
     Options.OverwriteMode := OverwriteMode[idx];
   // Destination path
   Options.DestinationPath := GetWindowTextAsString(EditDownloadDir);
+  // Retry count
+  Options.DownloadRetryCount := StrToIntDef(GetWindowTextAsString(EditRetryCount), Options.DownloadRetryCount);
   {$IFDEF CONVERTERS}
   // Converter
   if DecodeConverterComboBox(ComboConverter, Options, SelectedID) then
@@ -303,6 +319,11 @@ end;
 procedure TFrameDownloadOptions.LabelDownloadDirClick;
 begin
   SetFocus(EditDownloadDir);
+end;
+
+procedure TFrameDownloadOptions.LabelRetryCountClick;
+begin
+  SetFocus(EditRetryCount);
 end;
 
 {$IFDEF CONVERTERS}

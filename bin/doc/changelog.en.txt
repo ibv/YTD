@@ -1,11 +1,33 @@
 ﻿______________________________________________________________________________
 
-YTD v1.43                                                    (c) 2009-14 Pepak
+YTD v1.44                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.44:
+
+    * New providers:
+      - BravoTube.net (porn)
+      - SexTubeSpot.com (porn)
+
+    * Updated providers:
+      - CeskaTelevize.cz
+      - Joj.sk
+      - Rtvs.sk (also stv.sk)
+      - TV7.cz
+      - YouTube.com
+
+    * New configuration option "Retry count" determines the number of attempts
+      to redownload a failed download. More information can be found in the
+      documentation (search for "download_retry_count").
+      Warning: This is a highly experimental setting!
+
+    * Several new function and settings for the YTD scripting language.
+
+
 
   v1.43:
 

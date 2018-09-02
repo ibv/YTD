@@ -59,7 +59,6 @@ type
     protected
       Server: string;
       MovieIdRegExp: TRegExp;
-      PageIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -94,8 +93,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_ID = '&amp;videoId=(?P<ID>\d+)';
-  REGEXP_PAGE_ID = '&amp;pageId=(?P<ID>\d+)';
+  REGEXP_MOVIE_ID = '<div\b[^>]*\sdata-pageid="(?P<PAGEID>\d+)"[^>]*data-id="(?P<ID>\d+)"';
 
 { TDownloader_Joj }
 
@@ -123,14 +121,12 @@ begin
   Server := OPTION_JOJ_SERVER_DEFAULT;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
-  PageIdRegExp := RegExCreate(REGEXP_PAGE_ID);
 end;
 
 destructor TDownloader_Joj.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieIdRegExp);
-  RegExFreeAndNil(PageIdRegExp);
   inherited;
 end;
 
@@ -147,9 +143,11 @@ var Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieIdRegExp, Page, 'ID', VideoID) then
+  if not GetRegExpVars(MovieIdRegExp, Page, ['ID', 'PAGEID'], [@VideoID, @PageID]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if VideoID = '' then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['videoId']))
-  else if not GetRegExpVar(PageIdRegExp, Page, 'ID', PageID) then
+  else if PageID = '' then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['pageId']))
   else if not DownloadXml(Http, 'http://www.joj.sk/services/Video.php?clip=' + VideoID + '&pageId=' + PageID, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)

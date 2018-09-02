@@ -1,5 +1,9 @@
 @echo off
 setlocal
+set project=YTD
+set project_title=YTD
+set project_url=http://www.pepak.net/ytd
+
 if "%~1"=="" goto syntax
 if /i "%2"=="zip" goto zip
 if /i "%2"=="7z" goto 7z
@@ -30,32 +34,36 @@ goto build
 :build
 set version=%1
 
-updver.exe -v %version% "%srcdir%YTD.res"
+if exist "%srcdir%%project%.res" updver.exe -v %version% "%srcdir%%project%.res"
 if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
 if exist ..\ytd-%version%.zip del ..\ytd-%version%.zip
 if exist ..\ytd-%version%-lite.%packext% del ..\ytd-%version%-lite.%packext%
 if exist ..\ytd-%version%-lite.zip del ..\ytd-%version%-lite.zip
 if exist ..\ytd-%version%-source.zip del ..\ytd-%version%-source.zip
+if exist ytd.map del ytd.map
+if exist ytd-lite.map del ytd-lite.map
 rd /s /q ..\bin\locale
 md ..\bin\locale
 xcopy locale\*.mo ..\bin\locale /s /i
 del /q ..\bin\ytd.xml >nul 2>&1
 call clean.bat
-call build.bat release noxxx %build% %2 %3 %4 %5 %6 %7 %8 %9
-call sign "YTD v%version% Lite" http://www.pepak.net/ytd ..\bin\ytd.exe
+call build.bat release noxxx map %build% %2 %3 %4 %5 %6 %7 %8 %9
+call sign "%project_title% v%version% Lite" "%project_url%" ..\bin\ytd.exe
+if exist ..\bin\ytd.map move ..\bin\ytd.map ytd-lite.map
 call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%-lite.%packext% 
-if "%packext%"=="exe" call sign "YTD v%version% Lite - Installer" http://www.pepak.net/ytd ..\ytd-%version%-lite.%packext% 
+if "%packext%"=="exe" call sign "%project_title% v%version% Lite - Installer" "%project_url%" ..\ytd-%version%-lite.%packext% 
 if not "%packext%"=="zip" call :pack-zip ..\ytd-%version%-lite.zip
 popd
 call clean.bat
-call build.bat release %build% %2 %3 %4 %5 %6 %7 %8 %9
-call sign "YTD v%version%" http://www.pepak.net/ytd ..\bin\ytd.exe
+call build.bat release map %build% %2 %3 %4 %5 %6 %7 %8 %9
+call sign "%project_title% v%version%" "%project_url%" ..\bin\ytd.exe
+if exist ..\bin\ytd.map move ..\bin\ytd.map ytd.map
 call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%.%packext%
-if "%packext%"=="exe" call sign "YTD v%version% - Installer" http://www.pepak.net/ytd ..\ytd-%version%.%packext%
+if "%packext%"=="exe" call sign "%project_title% v%version% - Installer" "%project_url%" ..\ytd-%version%.%packext%
 if not "%packext%"=="zip" call :pack-zip ..\ytd-%version%.zip
 popd
 pushd ..

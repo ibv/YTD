@@ -53,7 +53,7 @@ goto :params
 
 :paramend
 
-rem --- Decide executable name ------------------------------------------------
+rem --- Decide compiler executable --------------------------------------------
 set compexe=dcc32
 if "%compiler%"=="delphi" (
   if "%target%"=="x86" (
@@ -352,7 +352,7 @@ if "%debug%"=="1" (
 )
 if "%fastmm%"=="1" set defs=%defs% -dFASTMM
 if "%map%"=="1" if "%compiler%"=="delphi" set params=%params% -GD
-if "%has_namespaces%"=="1" set params=%params% -NSSystem;WinApi;Vcl;Xml
+if "%has_namespaces%"=="1" set params=%params% -NSSystem;System.Win;WinApi;Vcl;Xml
 if not "%cli%"=="1" set defs=%defs% -dNO_CLI
 if not "%gui%"=="1" set defs=%defs% -dNO_GUI
 if not "%setup%"=="1" set defs=%defs% -dNO_SETUP
@@ -444,6 +444,11 @@ if exist "%srcdir%lib\Synapse\source\lib\." (
   set lib=%lib%;%srcdir%lib\Synapse\source\lib
 )
 
+rem SynEdit
+if exist "%srcdir%lib\SynEdit\Source\." (
+  set lib=%lib%;%srcdir%lib\SynEdit\Source
+)
+
 rem --- Build program-specific libraries --------------------------------------
 call :%compiler% "%srcdir%lib\RtmpDump\rtmpdump_dll.pas"
 call :%compiler% "%srcdir%lib\msdl\src\msdl_dll.pas"
@@ -457,7 +462,7 @@ if exist "%project%.dof" (
   ren "%srcdir%%project%.dof" "%project%.dof._"
 )
 
-updver.exe -b "%srcdir%%project%.res"
+if exist "%srcdir%%project%.res" updver.exe -b "%srcdir%%project%.res"
 call :%compiler% "%srcdir%%project%.dpr"
 
 if exist "%project%.cfg._" (
@@ -475,6 +480,7 @@ if "%upx%"=="1" (
   upx --best --lzma --brute --compress-icons=1 "%exedir%%project%%ext%"
   set upx=1
 )
+
 goto :eof
 
 rem --- Compile with Delphi ---------------------------------------------------
@@ -484,11 +490,11 @@ for %%i in (%~1) do (
   echo.
   echo Compiling: %%i
   if "%is_delphixe4_up%"=="1" (
-    echo %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
-    call %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
+    echo %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units;%lib% -I%lib% %defs% %params% -Q "%%i"
+    call %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units;%lib% -I%lib% %defs% %params% -Q "%%i"
   ) else (
-    echo %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
-    call %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
+    echo %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units;%lib% -I%lib% %defs% %params% -Q "%%i"
+    call %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units;%lib% -I%lib% %defs% %params% -Q "%%i"
   )
   if errorlevel 1 goto halt
 )
@@ -510,9 +516,6 @@ rem --- Stop compile process prematurely --------------------------------------
 :halt
 if exist "%srcdir%%project%.cfg._" ren "%srcdir%%project%.cfg._" "%project%.cfg"
 if exist "%srcdir%%project%.dof._" ren "%srcdir%%project%.dof._" "%project%.dof"
-if exist "%srcdir%lib\Pepak\uJSON.pas._" ren "%srcdir%lib\Pepak\uJSON.pas._" "uJSON.pas"
-if exist "%srcdir%lib\Pepak\uPCRE.pas._" ren "%srcdir%lib\Pepak\uPCRE.pas._" "uPCRE.pas"
-if exist "%srcdir%lib\Pepak\uXML.pas._"  ren "%srcdir%lib\Pepak\uXML.pas._" "uXML.pas"
 exit
 
 rem --- Syntax ----------------------------------------------------------------

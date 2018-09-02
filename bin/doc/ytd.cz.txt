@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.43                                                    (c) 2009-14 Pepak
+YTD v1.44                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -371,6 +371,12 @@ a "0" (ne).
       nebo "0" (zakázat).
     - Výchozí hodnota je "1" (povolit automatické použití HTML parseru).
     - Odpovídá parametrům -ah (povolit), -ah- (zakázat) na příkazové řádce.
+
+  <download_retry_count>
+    - Potomek <config>; určuje počet automatických pokusů o nové stažení videa
+      po chybě stahování, pokud je větší než nula.
+    - Možné hodnoty jsou libovolná čísla.
+    - Výchozí hodnota je "0" (neopakovat pokus o stahování).
 
   <subtitles_enabled>
     - Potomek <config>; umožňuje vypnout podporu titulků v celé aplikaci.

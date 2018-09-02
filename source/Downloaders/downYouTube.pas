@@ -307,7 +307,7 @@ begin
             end;
       //if BestLanguagePos < MaxInt then
         begin
-        Url := 'http://video.google.com/timedtext?type=track';
+        Url := 'http://www.youtube.com/api/timedtext?type=track';
         //if BestLanguageName <> '' then
         //  Url := Url + '&name=' + string(EncodeUrl(AnsiString(StringToUtf8(BestLanguageName))));
         if BestLanguage <> '' then

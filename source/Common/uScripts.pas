@@ -166,7 +166,7 @@ begin
   if Tag = '' then
     Raise EScriptedDownloaderScriptError.Create(ERR_SCRIPTS_ERROR + Msg)
   else
-    Raise EScriptedDownloaderScriptError.Create(ERR_SCRIPTS_ERROR + Msg + EOLN + UTF8ToString(Tag));
+    Raise EScriptedDownloaderScriptError.Create(ERR_SCRIPTS_ERROR + Msg + EOLN + AnsiEncodedUTF8ToString(Tag));
 end;
 
 { TScriptVariable }
@@ -191,7 +191,7 @@ begin
     begin
     fXml := TXmlDoc.Create;
     try
-      fXml.ReadFromString(Value);
+      fXml.ReadFromString(StringToUtf8(Value, False));
     except
       FreeAndNil(fXml);
       Raise;

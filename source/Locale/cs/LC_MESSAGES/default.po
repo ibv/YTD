@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YTD 1.43\n"
-"POT-Creation-Date: 2014-08-14 19:01\n"
-"PO-Revision-Date: 2014-08-14 19:02+0100\n"
+"POT-Creation-Date: 2014-10-28 16:51\n"
+"PO-Revision-Date: 2014-10-28 16:51+0100\n"
 "Last-Translator: Pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -117,13 +117,13 @@ msgstr "&Konvertor:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:331
+#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:347
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:336
+#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:352
 msgid "&Cancel"
 msgstr "&Storno"
 
@@ -421,108 +421,113 @@ msgstr "&Existující soubory:"
 msgid "&Download directory:"
 msgstr "Adresář pro &downloady"
 
+#. FormOptions..PageOptions..TabDownloadOptions..LabelRetryCount..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:145
+msgid "&Retry count:"
+msgstr "Počet opakování:"
+
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:146
+#: GUI/VCL/guiOptionsVCL.dfm:154
 msgid "&Automatically start downloads"
 msgstr "&Automaticky spouštět downloady"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #. Overwrite mode
-#: GUI/VCL/guiOptionsVCL.dfm:159
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:228
+#: GUI/VCL/guiOptionsVCL.dfm:167
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:240
 msgid "Ask user"
 msgstr "Zeptat se uživatele"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:160
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:229
+#: GUI/VCL/guiOptionsVCL.dfm:168
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:241
 msgid "Overwrite"
 msgstr "Přepisovat"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:161
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:230
+#: GUI/VCL/guiOptionsVCL.dfm:169
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:242
 msgid "Skip"
 msgstr "Přeskočit"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:162
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:231
+#: GUI/VCL/guiOptionsVCL.dfm:170
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:243
 msgid "Rename automatically"
 msgstr "Automaticky přejmenovat"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:198
+#: GUI/VCL/guiOptionsVCL.dfm:206
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
 msgid "Download &subtitles if available"
 msgstr "Pokud jsou k dispozici, stahovat &titulky"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoTryHtmlParser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:207
+#: GUI/VCL/guiOptionsVCL.dfm:215
 msgid "Automatically try &HTML parser"
 msgstr "Automaticky používat &HTML parser"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToTempFiles..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:216
+#: GUI/VCL/guiOptionsVCL.dfm:224
 msgid "Append a .part e&xtension while downloading"
 msgstr "V průběhu stahování přidat k názvu &příponu .part"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:225
+#: GUI/VCL/guiOptionsVCL.dfm:233
 msgid "Store media into su&bdirectories according to their providers"
 msgstr "Ukládat &média do podadresářů podle názvu poskytovatele"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:230 GUI/WinAPI/guiOptionsWINAPI.pas:130
+#: GUI/VCL/guiOptionsVCL.dfm:246 GUI/WinAPI/guiOptionsWINAPI.pas:130
 msgid "Network settings"
 msgstr "Síť"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:237
+#: GUI/VCL/guiOptionsVCL.dfm:253
 msgid "Proxy &host:"
 msgstr "Proxy &server:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:245
+#: GUI/VCL/guiOptionsVCL.dfm:261
 msgid "Proxy &port:"
 msgstr "Proxy &port:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:253
+#: GUI/VCL/guiOptionsVCL.dfm:269
 msgid "Proxy &username:"
 msgstr "Proxy &uživatel:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:261
+#: GUI/VCL/guiOptionsVCL.dfm:277
 msgid "Proxy pass&word:"
 msgstr "Proxy &heslo:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:270
+#: GUI/VCL/guiOptionsVCL.dfm:286
 msgid "U&se proxy server"
 msgstr "Použít prox&y server"
 
 #. FormOptions..PageOptions..TabDownloaderOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:303 GUI/WinAPI/guiOptionsWINAPI.pas:131
+#: GUI/VCL/guiOptionsVCL.dfm:319 GUI/WinAPI/guiOptionsWINAPI.pas:131
 msgid "Downloader settings"
 msgstr "Nastavení stahovačů"
 
 #. FormOptions..ActionList..actDownloadDir..Caption
 #. FormSetup..BtnDestinationDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:340 GUI/VCL/guiSetupVCL.dfm:38
+#: GUI/VCL/guiOptionsVCL.dfm:356 GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr "..."
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
 #. FormSetup..CheckDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:345 GUI/VCL/guiSetupVCL.dfm:48
+#: GUI/VCL/guiOptionsVCL.dfm:361 GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
 msgstr "Vytvořit odkaz na &Ploše"
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
 #. FormSetup..CheckStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:349 GUI/VCL/guiSetupVCL.dfm:59
+#: GUI/VCL/guiOptionsVCL.dfm:365 GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
 msgstr "Vytvořit odkaz ve &Start menu"
 
@@ -626,16 +631,16 @@ msgstr "Maximální &výška videa:"
 msgid "&Avoid .webm format"
 msgstr "Nestahovat formát .&webm"
 
-#: Base/uScriptedDownloader.pas:169
+#: Base/uScriptedDownloader.pas:172
 msgid "TScriptedDownloader.UrlRegExp may not be called."
 msgstr "TScriptedDownloader.UrlRegExp nesmí být volána."
 
-#: Base/uScriptedDownloader.pas:203
+#: Base/uScriptedDownloader.pas:206
 msgid "Invalid MovieID - must define script and ID"
 msgstr "Chybné MovieID - musíte definovat script a ID"
 
 #. Downloader: TMSDirectDownloader;
-#: Base/uScriptedDownloader.pas:497
+#: Base/uScriptedDownloader.pas:500
 msgid ""
 "SmoothStream is not supported, because I don't know how to programmatically "
 "mux MP4 streams. Can you help?"
@@ -1393,12 +1398,12 @@ msgid "XML element not found."
 msgstr "Neurčený kořenový element XML."
 
 #. Programmer's name for it: MSG_CANT_OVERWRITE_FILE
-#: Common/uOptions.pas:271
+#: Common/uOptions.pas:276
 msgid "Cannot overwrite file \"%s\"."
 msgstr "Nepodařilo se přepsat soubor \"%s\"."
 
 #. Programmer's name for it: MSG_CANT_CREATE_FILE
-#: Common/uOptions.pas:272
+#: Common/uOptions.pas:277
 msgid "Cannot create file \"%s\"."
 msgstr "Nepodařilo se vytvořit soubor \"%s\"."
 
@@ -1723,7 +1728,7 @@ msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:294 GUI/uDownloadList.pas:302
+#: GUI/uDownloadList.pas:295 GUI/uDownloadList.pas:303
 msgid "File already exists."
 msgstr "Soubor už existuje."
 

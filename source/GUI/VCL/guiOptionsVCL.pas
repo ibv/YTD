@@ -94,6 +94,8 @@ type
     PanelDownloaderOptions: TPanel;
     CheckDownloadToTempFiles: TCheckBox;
     CheckDownloadToProviderSubdirs: TCheckBox;
+    LabelRetryCount: TLabel;
+    EditRetryCount: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
@@ -167,6 +169,7 @@ begin
     CheckDownloadToProviderSubdirs.Checked := Options.DownloadToProviderSubdirs;
     EditDownloadDir.Text := Options.DestinationPath;
     ComboOverwriteMode.ItemIndex := OverwriteMode[Options.OverwriteMode];
+    EditRetryCount.Text := IntToStr(Options.DownloadRetryCount);
     {$IFDEF CONVERTERS}
     PrepareConverterComboBox(ComboConverter, Options, Options.SelectedConverterID);
     fConverterIndex := ComboConverter.ItemIndex;
@@ -283,6 +286,7 @@ begin
   Options.DownloadToProviderSubdirs := CheckDownloadToProviderSubdirs.Checked;
   Options.DestinationPath := EditDownloadDir.Text;
   Options.OverwriteMode := OverwriteMode[ComboOverwriteMode.ItemIndex];
+  Options.DownloadRetryCount := IntToStrDef(EditRetryCount.Text, Options.DownloadRetryCount);
   {$IFDEF CONVERTERS}
   if Options.ConvertersActivated then
     if DecodeConverterComboBox(ComboConverter, Options, NewID) then

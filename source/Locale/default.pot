@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-08-14 19:01\n"
-"PO-Revision-Date: 2014-08-14 19:01\n"
+"POT-Creation-Date: 2014-10-28 16:51\n"
+"PO-Revision-Date: 2014-10-28 16:51\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -131,14 +131,14 @@ msgstr ""
 #. FormSelectConverter..ActionList..actOK..Caption
 #: GUI/VCL/guiConverterVCL.dfm:60
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:331
+#: GUI/VCL/guiOptionsVCL.dfm:347
 msgid "&OK"
 msgstr ""
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #: GUI/VCL/guiConverterVCL.dfm:64
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:336
+#: GUI/VCL/guiOptionsVCL.dfm:352
 msgid "&Cancel"
 msgstr ""
 
@@ -455,112 +455,117 @@ msgstr ""
 msgid "&Download directory:"
 msgstr ""
 
+#. FormOptions..PageOptions..TabDownloadOptions..LabelRetryCount..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:145
+msgid "&Retry count:"
+msgstr ""
+
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:146
+#: GUI/VCL/guiOptionsVCL.dfm:154
 msgid "&Automatically start downloads"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:159
+#: GUI/VCL/guiOptionsVCL.dfm:167
 #. Overwrite mode
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:228
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:240
 msgid "Ask user"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:160
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:229
+#: GUI/VCL/guiOptionsVCL.dfm:168
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:241
 msgid "Overwrite"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:161
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:230
+#: GUI/VCL/guiOptionsVCL.dfm:169
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:242
 msgid "Skip"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:162
-#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:231
+#: GUI/VCL/guiOptionsVCL.dfm:170
+#: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:243
 msgid "Rename automatically"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:198
+#: GUI/VCL/guiOptionsVCL.dfm:206
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
 msgid "Download &subtitles if available"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoTryHtmlParser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:207
+#: GUI/VCL/guiOptionsVCL.dfm:215
 msgid "Automatically try &HTML parser"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToTempFiles..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:216
+#: GUI/VCL/guiOptionsVCL.dfm:224
 msgid "Append a .part e&xtension while downloading"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:225
+#: GUI/VCL/guiOptionsVCL.dfm:233
 msgid "Store media into su&bdirectories according to their "
 "providers"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:230
+#: GUI/VCL/guiOptionsVCL.dfm:246
 #: GUI/WinAPI/guiOptionsWINAPI.pas:130
 msgid "Network settings"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:237
+#: GUI/VCL/guiOptionsVCL.dfm:253
 msgid "Proxy &host:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:245
+#: GUI/VCL/guiOptionsVCL.dfm:261
 msgid "Proxy &port:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:253
+#: GUI/VCL/guiOptionsVCL.dfm:269
 msgid "Proxy &username:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:261
+#: GUI/VCL/guiOptionsVCL.dfm:277
 msgid "Proxy pass&word:"
 msgstr ""
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:270
+#: GUI/VCL/guiOptionsVCL.dfm:286
 msgid "U&se proxy server"
 msgstr ""
 
 #. FormOptions..PageOptions..TabDownloaderOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:303
+#: GUI/VCL/guiOptionsVCL.dfm:319
 #: GUI/WinAPI/guiOptionsWINAPI.pas:131
 msgid "Downloader settings"
 msgstr ""
 
 #. FormOptions..ActionList..actDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:340
+#: GUI/VCL/guiOptionsVCL.dfm:356
 #. FormSetup..BtnDestinationDir..Caption
 #: GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr ""
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:345
+#: GUI/VCL/guiOptionsVCL.dfm:361
 #. FormSetup..CheckDesktopShortcut..Caption
 #: GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
 msgstr ""
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:349
+#: GUI/VCL/guiOptionsVCL.dfm:365
 #. FormSetup..CheckStartMenuShortcut..Caption
 #: GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
@@ -668,18 +673,18 @@ msgstr ""
 msgid "&Avoid .webm format"
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:169
+#: Base/uScriptedDownloader.pas:172
 msgid "TScriptedDownloader.UrlRegExp may not be "
 "called."
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:203
+#: Base/uScriptedDownloader.pas:206
 msgid "Invalid MovieID - must define script and "
 "ID"
 msgstr ""
 
 #. Downloader: TMSDirectDownloader;
-#: Base/uScriptedDownloader.pas:497
+#: Base/uScriptedDownloader.pas:500
 msgid "SmoothStream is not supported, because I don't know how to "
 "programmatically mux MP4 streams. Can you "
 "help?"
@@ -1505,12 +1510,12 @@ msgid "XML element not found."
 msgstr ""
 
 #. Programmer's name for it: MSG_CANT_OVERWRITE_FILE
-#: Common/uOptions.pas:271
+#: Common/uOptions.pas:276
 msgid "Cannot overwrite file \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: MSG_CANT_CREATE_FILE
-#: Common/uOptions.pas:272
+#: Common/uOptions.pas:277
 msgid "Cannot create file \"%s\"."
 msgstr ""
 
@@ -1771,9 +1776,9 @@ msgid "Error loading configuration file. Error %s:\n"
 msgstr ""
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:294
+#: GUI/uDownloadList.pas:295
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:302
+#: GUI/uDownloadList.pas:303
 msgid "File already exists."
 msgstr ""
 

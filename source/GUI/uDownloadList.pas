@@ -194,6 +194,7 @@ function TDownloadList.AddNewItem(const Source: string; Downloader: TDownloader)
 var Item: TDownloadListItem;
 begin
   Item := TDownloadListItem.Create(Downloader, True);
+  Item.RetryCount := Options.DownloadRetryCount;
   Item.Options := Options;
   Item.OnStateChange := DownloadItemStateChange;
   Item.OnDownloadProgress := DownloadItemDownloadProgress;
@@ -391,30 +392,34 @@ begin
 end;
 
 procedure TDownloadList.StartAll;
-var Item: TDownloadListItem;
-    i, j: integer;
-    CanStart: boolean;
+
+  function StartIfPermitted(Item: TDownloadListItem): boolean;
+    var
+      i: integer;
+    begin
+      Result := True;
+      for i := 0 to Pred(DownloadingCount) do
+        if Item.Downloader.Provider = DownloadingItems[i].Downloader.Provider then
+          begin
+          Result := False;
+          Break;
+          end;
+      if Result then
+        Start(Item);
+    end;
+
+var i: integer;
 begin
   for i := 0 to Pred(DownloadingCount) do
     if DownloadingItems[i].Paused then
       DownloadingItems[i].Start;
   for i := 0 to Pred(Count) do
-    begin
-    Item := Items[i];
-    CanStart := False;
-    if Item.Waiting then
-      begin
-      CanStart := True;
-      for j := 0 to Pred(DownloadingCount) do
-        if Item.Downloader.Provider = DownloadingItems[j].Downloader.Provider then
-          begin
-          CanStart := False;
-          Break;
-          end;
-      end;
-    if CanStart then
-      Start(Item);
-    end;
+    if Items[i].Waiting then
+      StartIfPermitted(Items[i]);
+  for i := 0 to Pred(Count) do
+    if Items[i].Failed and (Items[i].RetryCount > 0) then
+      if StartIfPermitted(Items[i]) then
+        Items[i].RetryCount := Pred(Items[i].RetryCount);
   {$IFDEF CONVERTERS}
   ConvertAll;
   {$ENDIF}

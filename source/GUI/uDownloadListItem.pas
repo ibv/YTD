@@ -64,6 +64,7 @@ type
       fOnThreadFinished: TNotifyEvent;
       fTag: integer;
       fOptions: TYTDOptions;
+      fRetryCount: integer;
       {$IFDEF CONVERTERS}
       fConvertState: TConvertThreadState;
       fConvertThread: TThread;
@@ -80,6 +81,7 @@ type
       function GetDownloading: boolean; virtual;
       function GetFinished: boolean; virtual;
       function GetPaused: boolean; virtual;
+      function GetFailed: boolean; virtual;
       procedure CreateThread; virtual;
       procedure ClearThread; virtual;
       procedure InitStatus; virtual;
@@ -114,12 +116,14 @@ type
       property Downloading: boolean read GetDownloading;
       property Finished: boolean read GetFinished;
       property Paused: boolean read GetPaused;
+      property Failed: boolean read GetFailed;
       {$IFDEF CONVERTERS}
       function Convert(Force: boolean = False; const ForceConverter: string = ''): boolean; virtual;
       property ConvertState: TConvertThreadState read fConvertState;
       {$ENDIF}
     public
       property Tag: integer read fTag write fTag;
+      property RetryCount: integer read fRetryCount write fRetryCount;
       property Options: TYTDOptions read fOptions write fOptions;
       property DownloaderOwned: boolean read fDownloaderOwned write fDownloaderOwned;
       property OnStateChange: TNotifyEvent read fOnStateChange write fOnStateChange;
@@ -292,6 +296,11 @@ end;
 function TDownloadListItem.GetDownloading: boolean;
 begin
   Result := State in [dtsPreparing, dtsDownloading];
+end;
+
+function TDownloadListItem.GetFailed: boolean;
+begin
+  Result := State in [dtsFailed];
 end;
 
 function TDownloadListItem.GetFinished: boolean;

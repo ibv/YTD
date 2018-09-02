@@ -65,6 +65,8 @@ function Utf8ToWide(const Value: Utf8String): WideString; overload;
 
 function Utf8ToString(const Value: Utf8String): string;
 function StringToUtf8(const Value: string; BOM: boolean = False): Utf8String;
+function AnsiEncodedUtf8ToString(const Value: AnsiString): string;
+function StringToAnsiEncodedUtf8(const Value: string; BOM: boolean = False): AnsiString;
 
 function StrTr(const Kde, Co, Cim: string): string;
 function DeletePrefix(const Kde, Prefix: string): string;
@@ -214,6 +216,18 @@ begin
   {$ENDIF}
   if BOM then
     Result := {$IFDEF UNICODE} Char($feff) {$ELSE} #$ef#$bb#$bf {$ENDIF} + Result;
+end;
+
+function AnsiEncodedUtf8ToString(const Value: AnsiString): string;
+begin
+  Result := AnythingToWide(CP_UTF8, @Value[1], Length(Value));
+end;
+
+function StringToAnsiEncodedUtf8(const Value: string; BOM: boolean = False): AnsiString;
+begin
+  Result := WideToAnything(CP_UTF8, @Value[1], Length(Value));
+  if BOM then
+    Result := #$ef#$bb#$bf + Result;
 end;
 
 function StrTr(const Kde, Co, Cim: string): string;

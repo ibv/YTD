@@ -61,6 +61,7 @@ type
       MovieUrlRegExp: TRegExp;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; overload; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function IsFileNameExtOverride: boolean;
       procedure SetMovieUrl(const Value: string); virtual;
       property MovieUrl: string read fMovieUrl write SetMovieUrl;
       property UrlIsRelative: boolean read fUrlIsRelative write fUrlIsRelative;
@@ -410,6 +411,11 @@ end;
 procedure TCommonDownloader.SetFileNameExt(const Value: string);
 begin
   fFileNameExt := Value;
+end;
+
+function TCommonDownloader.IsFileNameExtOverride: boolean;
+begin
+  Result := fFileNameExt <> '';
 end;
 
 end.

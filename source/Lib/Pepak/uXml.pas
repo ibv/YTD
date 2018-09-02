@@ -66,14 +66,18 @@ type
 function XmlValueIncludingCData(Node: TXmlNode): string;
 function XmlAttribute(Node: TXmlNode; const Attribute: string; out Value: string): boolean; overload;
 function XmlAttribute(Node: TXmlNode; const Attribute: string): string; overload;
+function XmlNodeByID(Node: TXmlNode; const ID: string; out FoundNode: TXmlNode): boolean; overload;
+function XmlNodeByID(Node: TXmlDoc; const ID: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPath(Node: TXmlNode; const Path: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPath(Node: TXmlDoc; const Path: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPathAndAttr(Node: TXmlNode; const Path, AttributeName, AttributeValue: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPathAndAttr(Node: TXmlDoc; const Path, AttributeName, AttributeValue: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPathCreate(Node: TXmlNode; const Path: string): TXmlNode; overload;
 function XmlNodeByPathCreate(Node: TXmlDoc; const Path: string): TXmlNode; overload;
-function XmlValueByPath(Node: TXmlNode; const Path: string; const Default: string = ''): string; overload;
-function XmlValueByPath(Node: TXmlDoc; const Path: string; const Default: string = ''): string; overload;
+function XmlValueByPath(Node: TXmlNode; const Path: string; out Value: string): boolean; overload;
+function XmlValueByPath(Node: TXmlNode; const Path: string): string; overload;
+function XmlValueByPath(Node: TXmlDoc; const Path: string; out Value: string): boolean; overload;
+function XmlValueByPath(Node: TXmlDoc; const Path: string): string; overload;
 function XmlGetNamespace(Node: TXmlNode): string; overload;
 function XmlGetNamespace(Node: TXmlDoc): string; overload;
 
@@ -116,6 +120,35 @@ function XmlAttribute(Node: TXmlNode; const Attribute: string): string;
 begin
   if not XmlAttribute(Node, Attribute, Result) then
     Result := '';
+end;
+
+function XmlNodeByID(Node: TXmlNode; const ID: string; out FoundNode: TXmlNode): boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+  FoundNode := nil;
+  if Node <> nil then
+    begin
+    if Node.HasAttribute('id') then
+      if Node.AttributeByNameWide['id'] = ID then
+        begin
+        FoundNode := Node;
+        Result := True;
+        end;
+    if not Result then
+      for i := 0 to Pred(Node.NodeCount) do
+        if XmlNodeByID(Node.Nodes[i], ID, FoundNode) then
+          begin
+          Result := True;
+          Break;
+          end;
+    end;
+end;
+
+function XmlNodeByID(Node: TXmlDoc; const ID: string; out FoundNode: TXmlNode): boolean;
+begin
+  Result := XmlNodeByID(Node.Root, ID, FoundNode);
 end;
 
 function XmlNodeByPathAndAttr(Node: TXmlNode; const Path, AttributeName, AttributeValue: string; out FoundNode: TXmlNode): boolean;
@@ -226,18 +259,29 @@ begin
   Result := XmlNodeByPathCreate(Node.Root, Path);
 end;
 
-function XmlValueByPath(Node: TXmlNode; const Path: string; const Default: string): string;
-var ValueNode: TXmlNode;
+function XmlValueByPath(Node: TXmlNode; const Path: string; out Value: string): boolean;
+var
+  ValueNode: TXmlNode;
 begin
-  if XmlNodeByPath(Node, Path, ValueNode) then
-    Result := XmlValueIncludingCData(ValueNode)
-  else
-    Result := Default;
+  Result := XmlNodeByPath(Node, Path, ValueNode);
+  if Result then
+    Value := XmlValueIncludingCData(ValueNode);
 end;
 
-function XmlValueByPath(Node: TXmlDoc; const Path: string; const Default: string): string;
+function XmlValueByPath(Node: TXmlDoc; const Path: string; out Value: string): boolean;
 begin
-  Result := XmlValueByPath(Node.Root, Path, Default);
+  Result := XmlValueByPath(Node.Root, Path, Value);
+end;
+
+function XmlValueByPath(Node: TXmlNode; const Path: string): string;
+begin
+  if not XmlValueByPath(Node, Path, Result) then
+    Result := '';
+end;
+
+function XmlValueByPath(Node: TXmlDoc; const Path: string): string;
+begin
+  Result := XmlValueByPath(Node.Root, Path);
 end;
 
 function XmlGetNamespace(Node: TXmlNode): string;
@@ -303,7 +347,8 @@ end;
 
 function TXmlDoc.ValueByPath(const Path, Default: string): string;
 begin
-  Result := XmlValueByPath(Self, Path, Default);
+  if not XmlValueByPath(Self, Path, Result) then
+    Result := Default;
 end;
 
 procedure TXmlDoc.SetIndentation(const Value: string);

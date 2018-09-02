@@ -183,7 +183,7 @@ uses
 
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/.+';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -204,7 +204,7 @@ const
   REGEXP_GETPLAYLISTURL = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYPE>[^"]*)"\s*,\s*"id"\s*:\s*"(?P<ID>[^"]+)"';
   REGEXP_GETPLAYLISTURLFROMJSON = '"url"\s*:\s*"(?P<URL>https?:\\?/\\?/.+?)"';
   {$IFDEF SUBTITLES}
-  REGEXP_SUBTITLES = '<ul\s+id="subtitle[^>]+>(?P<SUBTITLES>.*?)</ul>';
+  REGEXP_SUBTITLES = '<(?:ul|div)\s+id="subtitle[^>]+>(?P<SUBTITLES>.*?)</ul>';
   {$IFDEF CONVERTSUBTITLES}
   REGEXP_SUBTITLE_ITEM = '<li>\s*<a\b[^>]*>(?P<HOUR>\d+):(?P<MINUTE>\d{2}):(?P<SECOND>\d{2})</a>\s*(?P<TEXT>.*?)</li>';
   {$ENDIF}
@@ -377,7 +377,7 @@ end;
 function TDownloader_CT_old.BeforeGetMovieInfoUrl(Http: THttpSend): boolean;
 {$IFDEF SUBTITLES}
 var
-  Page, MovieObject: string;
+  Page{, MovieObject}: string;
 {$ENDIF}
 begin
   Result := inherited BeforeGetMovieInfoUrl(Http);
@@ -385,7 +385,7 @@ begin
   HasSubtitles := False;
   if SubtitlesEnabled then
     if DownloadPage(Http, UrlWithSubtitles, Page) then
-      if GetMovieObject(Http, Page, MovieObject) then
+      //if GetMovieObject(Http, Page, MovieObject) then
         HasSubtitles := True;
   {$ENDIF}
 end;

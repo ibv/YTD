@@ -240,7 +240,8 @@ end;
 procedure TDirectoryMonitor.SetActive(const Value: boolean);
 begin
   FreeAndNil(FWorkerThread);
-  FWorkerThread := TDirectoryMonitorWorkerThread.Create(Self);
+  if Value then
+    FWorkerThread := TDirectoryMonitorWorkerThread.Create(Self);
 end;
 
 procedure TDirectoryMonitor.SetDirectory(const Value: string);

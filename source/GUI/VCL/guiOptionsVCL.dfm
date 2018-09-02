@@ -44,7 +44,7 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 543
     Height = 389
-    ActivePage = TabMain
+    ActivePage = TabDownloadOptions
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet
@@ -131,11 +131,19 @@ object FormOptions: TFormOptions
       end
       object LabelConverter: TLabel
         Left = 8
-        Top = 196
+        Top = 220
         Width = 49
         Height = 13
         Caption = '&Converter:'
         FocusControl = ComboConverter
+      end
+      object LabelRetryCount: TLabel
+        Left = 8
+        Top = 188
+        Width = 58
+        Height = 13
+        Caption = '&Retry count:'
+        FocusControl = EditRetryCount
       end
       object CheckAutoDownload: TCheckBox
         Left = 8
@@ -180,13 +188,13 @@ object FormOptions: TFormOptions
       end
       object ComboConverter: TComboBox
         Left = 112
-        Top = 192
+        Top = 216
         Width = 416
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
-        TabOrder = 8
+        ItemHeight = 13
+        TabOrder = 9
         OnChange = ComboConverterChange
       end
       object CheckSubtitlesEnabled: TCheckBox
@@ -224,6 +232,14 @@ object FormOptions: TFormOptions
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Store media into su&bdirectories according to their providers'
         TabOrder = 4
+      end
+      object EditRetryCount: TEdit
+        Left = 112
+        Top = 184
+        Width = 49
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 8
       end
     end
     object TabNetworkOptions: TTabSheet

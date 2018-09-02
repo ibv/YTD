@@ -105,6 +105,8 @@ type
       procedure SetMonitorClipboard(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetAutoTryHtmlParser: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetAutoTryHtmlParser(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetDownloadRetryCount: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetDownloadRetryCount(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetScriptFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -160,6 +162,7 @@ type
       property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
       property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
       property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
+      property DownloadRetryCount: integer read GetDownloadRetryCount write SetDownloadRetryCount;
       property ScriptFileName: string read GetScriptFileName;
       {$IFDEF CONVERTERS}
         property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
@@ -220,6 +223,7 @@ const
   XML_PATH_DESTINATIONPATH = 'config/destination_path';
   XML_PATH_ERRORLOG = 'config/error_log';
   XML_PATH_AUTOTRYHTMLPARSER = 'config/auto_try_html_parser';
+  XML_PATH_DOWNLOADRETRYCOUNT = 'config/download_retry_count';
   XML_PATH_SCRIPTFILENAME = 'config/script_filename';
   XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
   XML_PATH_CHECKFORNEWVERSIONONSTARTUP = 'gui/check_for_new_version';
@@ -249,6 +253,7 @@ const
   XML_DEFAULT_DESTINATIONPATH = '';
   XML_DEFAULT_ERRORLOG = '';
   XML_DEFAULT_AUTOTRYHTMLPARSER = True;
+  XML_DEFAULT_DOWNLOADRETRYCOUNT = 0;
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
   XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
   XML_DEFAULT_MONITORCLIPBOARD = False;
@@ -636,6 +641,16 @@ end;
 procedure TYTDOptions.SetAutoTryHtmlParser(const Value: boolean);
 begin
   SetOption(XML_PATH_AUTOTRYHTMLPARSER, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetDownloadRetryCount: integer;
+begin
+  Result := StrToIntDef(GetOption(XML_PATH_DOWNLOADRETRYCOUNT), XML_DEFAULT_DOWNLOADRETRYCOUNT);
+end;
+
+procedure TYTDOptions.SetDownloadRetryCount(const Value: integer);
+begin
+  SetOption(XML_PATH_DOWNLOADRETRYCOUNT, IntToStr(Value));
 end;
 
 function TYTDOptions.GetScriptFileName: string;

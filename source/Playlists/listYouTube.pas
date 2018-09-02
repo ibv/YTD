@@ -79,7 +79,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_PLAYLIST_ITEM = '(?P<ITEM><li\b.*?</?li>)';
+  REGEXP_PLAYLIST_ITEM = '(?P<ITEM><tr\s+class="pl-video\b.*?</tr>)';
   REGEXP_ITEM_ID = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL|SP)?%s(?:"|&amp;)';
   REGEXP_ITEM_TITLE = '<span\s+class="(?:video-)?title\b[^>]*>(?P<TITLE>.*?)</span>';
   //REGEXP_PLAYLIST_ITEM = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL)?%s(?:"|&amp;)[^>]*>(?P<NAME>[^<]+)</a>';
