@@ -94,12 +94,16 @@ const
 
 implementation
 
+uses
+  uScriptedDownloader;
+
 { TYTD }
 
 constructor TYTD.Create;
 begin
   inherited;
   fOptions := TYTDOptions.Create;
+  TScriptedDownloader.InitOptions(fOptions);
   UseLanguage(Options.Language);
   fDownloadClassifier := TDownloadClassifier.Create;
   fHtmlPlaylist := TPlaylist_HTML.Create('');

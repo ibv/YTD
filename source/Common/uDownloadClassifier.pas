@@ -47,7 +47,6 @@ uses
 type
   TDownloadClassifier = class
     private
-      fUrlClassifier: TRegExp;
       fUrl: string;
       fDownloader: TDownloader;
       fOwnsDownloader: boolean;
@@ -57,8 +56,8 @@ type
       function GetNameCount: integer; virtual;
       function GetNames(Index: integer): string; virtual;
       function GetNameClasses(Index: integer): string; virtual;
+      function FindDownloader(const AUrl: string; out DownloaderClass: TDownloaderClass; out MovieID: string): boolean;
       procedure SetUrl(const Value: string); virtual;
-      property UrlClassifier: TRegExp read fUrlClassifier write fUrlClassifier;
     public
       constructor Create; virtual;
       destructor Destroy; override;
@@ -98,31 +97,14 @@ end;
 { TDownloadClassifier }
 
 constructor TDownloadClassifier.Create;
-var RE, s: string;
-    i: integer;
 begin
   inherited Create;
-  RE := '';
-  for i := 0 to Pred(RegisteredDownloaders.Count) do
-    begin
-    s := TDownloaderClass(RegisteredDownloaders[i]).UrlRegExp;
-    if s <> '' then
-      begin
-      s := '(?:' + s + ')';
-      if RE = '' then
-        RE := s
-      else
-        RE := RE + '|' + s;
-      end;
-    end;
-  fUrlClassifier := RegExCreate(RE, [rcoIgnoreCase]);
   Clear;
 end;
 
 destructor TDownloadClassifier.Destroy;
 begin
   Clear;
-  RegExFreeAndNil(fUrlClassifier);
   inherited;
 end;
 
@@ -133,6 +115,20 @@ begin
     FreeAndNil(fDownloader)
   else
     fDownloader := nil;
+end;
+
+function TDownloadClassifier.FindDownloader(const AUrl: string; out DownloaderClass: TDownloaderClass; out MovieID: string): boolean;
+var
+  i: integer;
+begin
+  Result := False;
+  for i := 0 to Pred(ProviderCount) do
+    if Providers[i].IsSupportedUrl(AUrl, MovieID) then
+      begin
+      DownloaderClass := Providers[i];
+      Result := True;
+      Break;
+      end;
 end;
 
 procedure TDownloadClassifier.SetUrl(const Value: string);
@@ -147,22 +143,14 @@ begin
     fUrl := Value
   else
     fUrl := Copy(Value, 1, Pred(i));
-  b := UrlClassifier.Match(fUrl);
-  if not b then
+  b := FindDownloader(fUrl, DC, ID);
+  if (not b) and (fUrl <> Value) then
     begin
     fUrl := Value;
-    b := UrlClassifier.Match(fUrl);
+    b := FindDownloader(fUrl, DC, ID);
     end;
   if b then
-    for i := 0 to Pred(ProviderCount) do
-      begin
-      DC := Providers[i];
-      if UrlClassifier.SubexpressionByName(DC.ClassName, ID) and (ID <> '') then
-        begin
-        fDownloader := DC.Create(ID);
-        Break;
-        end;
-      end;
+    fDownloader := DC.Create(ID);
 end;
 
 function TDownloadClassifier.GetProviderCount: integer;

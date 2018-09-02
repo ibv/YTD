@@ -99,6 +99,25 @@ resourcestring
 
   ERR_FAILED_TO_LOAD_DLL = 'Failed to load library "%s" or its prerequisites.';
 
+  ERR_SCRIPTS_ERROR = 'Script error: ';
+  ERR_SCRIPTS_URL_NOT_FOUND = 'URL not found.';
+  ERR_SCRIPTS_BASEURL_NOT_FOUND = 'Base URL not found.';
+  ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED = 'Url pattern is empty.';
+  ERR_SCRIPTS_SCRIPT_NOT_FOUND = 'Requested script "%s" not found.';
+  ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY = 'Script may not be empty.';
+  ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY = 'Search pattern may not be empty.';
+  ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY = 'Pattern ID may not be empty.';
+  ERR_SCRIPTS_PATTERN_NOT_FOUND = 'Requested regexp "%s" not found.';
+  ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY = 'Subexpression name may not be empty.';
+  ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND = 'Subexpression "%s" not found.';
+  ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP = 'Failed to match regular expression.';
+  ERR_SCRIPTS_VARIABLE_NOT_FOUND = 'Variable "%s" not found.';
+  ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY = 'Variable name may not be empty.';
+  ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY = 'Attribute "%s" may not be empty.';
+  MSG_SCRIPTS_UNKNOWN_COMMAND = 'Unknown command.';
+  MSG_SCRIPTS_DOWNLOAD_FAILED = 'Download failed: %s';
+  MSG_SCRIPTS_UNEXPECTED_NODE_TYPE = 'Unexpected node type.';
+
 {gnugettext: reset}
 
 implementation

@@ -3,6 +3,7 @@ setlocal enabledelayedexpansion
 
 rem --- Default settings ------------------------------------------------------
 set project=ytd
+set ext=.exe
 set cli=1
 set gui=1
 set setup=1
@@ -17,7 +18,7 @@ set upx=0
 set map=0
 
 set exedir=..\Bin\
-set srcdir=
+set srcdir=.\
 
 rem --- Read command-line parameters ------------------------------------------
 :params
@@ -292,17 +293,23 @@ rem --- Delete compiled units -------------------------------------------------
 del /q "%srcdir%Units\*.*"
 
 rem --- Build the library units -----------------------------------------------
+set lib=.
 
-rem Pepak - compatibility
-if exist "%srcdir%lib\Pepak\uCompatibility.pas" (
-  call :%compiler% "%srcdir%lib\Pepak\uCompatibility.pas"
+rem Pepak
+if exist "%srcdir%lib\Pepak\." (
+  set lib=%lib%;%srcdir%lib\Pepak;%srcdir%lib\Pepak\ApiForm
+)
+if exist "%srcdir%lib\Pepak\." (
+  if "%is_delphi5%"=="1" (
+    set lib=%lib%;%srcdir%lib\Pepak\delphi5
+  )
 )
 
 rem FastMM4
-if exist "%srcdir%lib\FastMM\FastMM4" (
-  if exist "%exedir%FastMM_FullDebugMode.dll" del "%exedir%FastMM_FullDebugMode.dll"
+if exist "%exedir%FastMM_FullDebugMode.dll" del "%exedir%FastMM_FullDebugMode.dll"
+if exist "%srcdir%lib\FastMM\." (
   if "%fastmm%"=="1" if not "%is_fpc%"=="1" (
-    call :%compiler% "%srcdir%lib\FastMM\FastMM4.pas"
+    set lib=%lib%;%srcdir%lib\FastMM
     if "%debug%"=="1" (
       if not exist "%exedir%FastMM_FullDebugMode.dll" copy "%srcdir%lib\fastmm\FastMM_FullDebugMode.dll" "%exedir%FastMM_FullDebugMode.dll"
     )
@@ -310,31 +317,33 @@ if exist "%srcdir%lib\FastMM\FastMM4" (
 )
 
 rem DxGetText
-if exist "%srcdir%lib\DxGetText\gnugettext.pas" (
+if exist "%srcdir%lib\DxGetText\." (
   if "%is_fpc%"=="1" (
-    call :%compiler% "%srcdir%lib\DxGetText\fpc\gnugettext.pas"
+    set lib=%lib%;%srcdir%lib\DxGetText\fpc
   ) else if "%is_delphi5%"=="1" (
-    call :%compiler% "%srcdir%lib\DxGetText\delphi5\gnugettextD5.pas"
+    set lib=%lib%;%srcdir%lib\DxGetText\delphi5
   ) else if "%has_unicode%"=="1" (
-    call :%compiler% "%srcdir%lib\DxGetText\delphi2009\gnugettext.pas"
+    set lib=%lib%;%srcdir%lib\DxGetText\delphi2009
   ) else (
-    call :%compiler% "%srcdir%lib\DxGetText\gnugettext.pas"
+    set lib=%lib%;%srcdir%lib\DxGetText
   )
 )
 
 rem DCPCrypt
-if exist "%srcdir%lib\DCPCrypt\DCPCrypt2.pas" (
-  call :%compiler% "%srcdir%lib\DCPCrypt\DCPCrypt2.pas"
-  call :%compiler% "%srcdir%lib\DCPCrypt\DCPblockciphers.pas"
-  call :%compiler% "%srcdir%lib\DCPCrypt\ciphers\*.pas"
-  call :%compiler% "%srcdir%lib\DCPCrypt\hashes\*.pas"
+if exist "%srcdir%lib\DCPCrypt\." (
+  set lib=%lib%;%srcdir%lib\DCPCrypt;%srcdir%lib\DCPCrypt\ciphers;%srcdir%lib\DCPCrypt\hashes
+)
+
+rem FAR
+if exist "%srcdir%lib\FAR\." (
+  set lib=%lib%;%srcdir%lib\FAR
 )
 
 rem PerlRegEx
-if exist "%srcdir%lib\PerlRegEx\PerlRegEx.pas" (
-  if exist "%exedir%pcrelib.dll" del "%exedir%pcrelib.dll"
+if exist "%exedir%pcrelib.dll" del "%exedir%pcrelib.dll"
+if exist "%srcdir%lib\PerlRegEx\." (
   if not "%target%"=="x64" (
-    call :%compiler% "%srcdir%lib\PerlRegEx\PerlRegEx.pas"
+    set lib=%lib%;%srcdir%lib\PerlRegEx
     if "%is_fpc%"=="1" (
       if not exist "%exedir%pcrelib.dll" copy "%srcdir%lib\perlregex\pcrelib.dll" "%exedir%pcrelib.dll"
     )
@@ -342,43 +351,28 @@ if exist "%srcdir%lib\PerlRegEx\PerlRegEx.pas" (
 )
 
 rem LkJSON
-if exist "%srcdir%lib\lkJSON\uLkJSON.pas" (
-  call :%compiler% "%srcdir%lib\lkJSON\uLkJSON.pas"
+if exist "%srcdir%lib\lkJSON\." (
+  set lib=%lib%;%srcdir%lib\lkJSON
 )
 
 rem NativeXml
-if exist "%srcdir%lib\NativeXml\NativeXml.pas" (
-  call :%compiler% "%srcdir%lib\NativeXml\NativeXml.pas"
+if exist "%srcdir%lib\NativeXml\." (
+  set lib=%lib%;%srcdir%lib\NativeXml
 )
 
 rem SciZipFile
-if exist "%srcdir%lib\SciZipFile\SciZipFile.pas" (
-  call :%compiler% "%srcdir%lib\SciZipFile\SciZipFile.pas"
+if exist "%srcdir%lib\SciZipFile\." (
+  set lib=%lib%;%srcdir%lib\SciZipFile
 )
 
 rem SqliteWrapper
-if exist "%srcdir%lib\SqliteWrapper\SQLiteTable3.pas" (
-  call :%compiler% "%srcdir%lib\SqliteWrapper\SQLiteTable3.pas"
+if exist "%srcdir%lib\SqliteWrapper\." (
+  set lib=%lib%;%srcdir%lib\SqliteWrapper
 )
 
 rem Synapse
-if exist "%srcdir%lib\Synapse\source\lib\httpsend.pas" (
-  call :%compiler% "%srcdir%lib\Synapse\source\lib\SSL_OpenSSL.pas"
-  call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"
-)
-
-rem PepakLib
-if exist "%srcdir%lib\Pepak\uCompatibility.pas" (
-  if exist "%srcdir%lib\Pepak\uJSON.pas" if not exist "%srcdir%lib\lkJSON\uLkJSON.pas" ren "%srcdir%lib\Pepak\uJSON.pas" "uJSON.pas._"
-  if exist "%srcdir%lib\Pepak\uPCRE.pas" if not exist "%srcdir%lib\PerlRegEx\PerlRegEx.pas" ren "%srcdir%lib\Pepak\uPCRE.pas" "uPCRE.pas._"
-  if exist "%srcdir%lib\Pepak\uXML.pas" if not exist "%srcdir%lib\NativeXml\NativeXml.pas" ren "%srcdir%lib\Pepak\uXML.pas" "uXML.pas._"
-  call :%compiler% "%srcdir%lib\Pepak\*.pas"
-  call :%compiler% "%srcdir%lib\Pepak\ApiForm\*.pas"
-  if "%is_delphi5%"=="1" call :%compiler% "%srcdir%lib\Pepak\delphi5\*.pas"
-  copy "%srcdir%lib\Pepak\ApiForm\*.res" "%srcdir%Units" >nul
-  if exist "%srcdir%lib\Pepak\uJSON.pas._" ren "%srcdir%lib\Pepak\uJSON.pas._" "uJSON.pas"
-  if exist "%srcdir%lib\Pepak\uPCRE.pas._" ren "%srcdir%lib\Pepak\uPCRE.pas._" "uPCRE.pas"
-  if exist "%srcdir%lib\Pepak\uXML.pas._"  ren "%srcdir%lib\Pepak\uXML.pas._" "uXML.pas"
+if exist "%srcdir%lib\Synapse\source\lib\." (
+  set lib=%lib%;%srcdir%lib\Synapse\source\lib
 )
 
 rem --- Build program-specific libraries --------------------------------------
@@ -387,24 +381,32 @@ call :%compiler% "%srcdir%lib\msdl\src\msdl_dll.pas"
 rem call :%compiler% "%srcdir%Tools\AMFview\AmfView.dpr"
 
 rem --- Build the program -----------------------------------------------------
-ren "%srcdir%%project%.cfg" "%project%.cfg._"
-ren "%srcdir%%project%.dof" "%project%.dof._"
+if exist "%project%.cfg" (
+  ren "%srcdir%%project%.cfg" "%project%.cfg._"
+)
+if exist "%project%.dof" (
+  ren "%srcdir%%project%.dof" "%project%.dof._"
+)
 
 updver.exe -b "%srcdir%%project%.res"
 call :%compiler% "%srcdir%%project%.dpr"
 
-ren "%srcdir%%project%.cfg._" "%project%.cfg"
-ren "%srcdir%%project%.dof._" "%project%.dof"
+if exist "%project%.cfg._" (
+  ren "%srcdir%%project%.cfg._" "%project%.cfg"
+)
+if exist "%project%.dof._" (
+  ren "%srcdir%%project%.dof._" "%project%.dof"
+)
 
 rem --- Finalize the exe file -------------------------------------------------
-ren "%exedir%%project%.exe" "%project%.exe"
+ren "%exedir%%project%%ext%" "%project%%ext%"
 
 if "%upx%"=="1" (
   set upx=
-  upx --best --lzma --brute --compress-icons=1 "%exedir%%project%.exe"
+  upx --best --lzma --brute --compress-icons=1 "%exedir%%project%%ext%"
   set upx=1
 )
-goto konec
+goto :eof
 
 rem --- Compile with Delphi ---------------------------------------------------
 :delphi
@@ -413,27 +415,27 @@ for %%i in (%~1) do (
   echo.
   echo Compiling: %%i
   if "%is_delphixe4_up%"=="1" (
-    echo %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
-    call %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+    echo %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
+    call %compexe% -B -E%exedir% -NU%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
   ) else (
-    echo %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
-    call %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units %defs% %params% -Q "%%i"
+    echo %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
+    call %compexe% -B -E%exedir% -N%srcdir%Units -U%srcdir%Units;%lib% %defs% %params% -Q "%%i"
   )
   if errorlevel 1 goto halt
 )
-goto konec
+goto :eof
 
 rem --- Compile with FreePascal -----------------------------------------------
 :fpc
 if "%~1"=="" goto konec
 for %%i in (%~1) do (
   echo.
-  echo %compexe% -B -Mdelphi -FE%exedir% -Fu%srcdir%Units -FU%srcdir%Units %defs% %params% "%%i"
-  call %compexe% -B -Mdelphi -FE%exedir% -Fu%srcdir%Units -FU%srcdir%Units %defs% %params% "%%i"
+  echo %compexe% -B -Mdelphi -FE%exedir% -Fu%srcdir%Units;%lib% -FU%srcdir%Units %defs% %params% "%%i"
+  call %compexe% -B -Mdelphi -FE%exedir% -Fu%srcdir%Units;%lib% -FU%srcdir%Units %defs% %params% "%%i"
   if errorlevel 1 goto halt
 )
 shift
-goto fpc
+goto :eof
 
 rem --- Stop compile process prematurely --------------------------------------
 :halt
@@ -453,6 +455,5 @@ echo    debug/nodebug ... Include/exclude debug code.
 echo    cli/nocli ....... Include/exclude CLI support.
 echo    gui/nogui ....... Include/exclude GUI support.
 echo    xxx/noxxx ....... Include/exclude XXX providers
-goto konec
+goto :eof
 
-:konec

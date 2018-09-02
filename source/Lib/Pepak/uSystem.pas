@@ -172,7 +172,8 @@ function SystemTempFile(const Dir, Prefix, Extension: string): string; overload;
 function AddLastSlash(const Path: string): string;
 procedure ForceDeleteDirectory(APath: string);
 function GetFileSize(const FileName: string): int64;
-function GetFileDateTime(const FileName: string; out CreationTime, ModificationTime, AccessTime: TDateTime): boolean;
+function GetFileDateTime(const FileName: string; out CreationTime, ModificationTime, AccessTime: TDateTime): boolean; overload;
+function GetFileDateTime(const FileName: string): TDateTime; overload;
 function GetFileContent(const FileName: string): string;
 function GetFileVersion(const FileName: string; out VersionHigh, VersionLow, BuildNumber: LongWord): boolean;
 function GetDrives(out Drives: TDriveInfoArray; OnlyOfType: integer = -1): boolean;
@@ -1352,6 +1353,14 @@ begin
     finally
       CloseHandle(Handle);
       end;
+end;
+
+function GetFileDateTime(const FileName: string): TDateTime;
+var
+  CreationTime, AccessTime: TDateTime;
+begin
+  if not GetFileDateTime(FileName, CreationTime, Result, AccessTime) then
+    Result := 0;
 end;
 
 function GetFileContent(const FileName: string): string;

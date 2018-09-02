@@ -119,9 +119,15 @@ type
 {$ENDIF}
 {$ENDIF}
 
+{$IFNDEF DELPHIXE3_UP}
+const
+  REG_QWORD = 11;
+{$ENDIF}
+
 {$IFNDEF DELPHIXE5_UP}
 const
   INVALID_SET_FILE_POINTER = $ffffffff;
+  INVALID_FILE_ATTRIBUTES = $ffffffff;
 {$ENDIF}
 
 {$IFDEF FPC}

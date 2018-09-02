@@ -80,6 +80,8 @@ uses
   uPlaylistDownloader in 'Base\uPlaylistDownloader.pas',
   uHDSDownloader in 'Base\uHDSDownloader.pas',
   uHDSDirectDownloader in 'Base\uHDSDirectDownloader.pas',
+  uScriptedDownloader in 'Base\uScriptedDownloader.pas',
+  uScriptedDownloaderTools in 'Base\uScriptedDownloaderTools.pas',
   // Command Line Version
   {$IFDEF CLI}
     uYTD in 'CLI\uYTD.pas',
@@ -134,14 +136,12 @@ uses
     uDownloadThread in 'GUI\uDownloadThread.pas',
   {$ENDIF}
   // Downloaders
-  down123VideoNL in 'Downloaders\down123VideoNL.pas',
   down1hdRo in 'Downloaders\down1hdRo.pas',
   down3NewsCoNz in 'Downloaders\down3NewsCoNz.pas',
   down4TV in 'Downloaders\down4TV.pas',
   down5min in 'Downloaders\down5min.pas',
   downAcademicEarth in 'Downloaders\downAcademicEarth.pas',
   downAgresori in 'Downloaders\downAgresori.pas',
-  downAktualne in 'Downloaders\downAktualne.pas',
   downAlternativaTV in 'Downloaders\downAlternativaTV.pas',
   downAncensored in 'Downloaders\downAncensored.pas',
   downAngryAlien in 'Downloaders\downAngryAlien.pas',

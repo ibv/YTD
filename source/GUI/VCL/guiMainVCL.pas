@@ -222,7 +222,9 @@ implementation
 {$R *.DFM}
 
 uses
-  guiConsts, guiAboutVCL, {$IFDEF CONVERTERS} guiConverterVCL, {$ENDIF} guiOptionsVCL;
+  guiConsts, guiAboutVCL, {$IFDEF CONVERTERS} guiConverterVCL, {$ENDIF} guiOptionsVCL,
+  uScriptedDownloader;
+
 
 { TFormYTD }
 
@@ -240,6 +242,7 @@ begin
     {$ENDIF}
     Caption := APPLICATION_CAPTION {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ;
     Options := TYTDOptionsGUI.Create;
+    TScriptedDownloader.InitOptions(Options);
     UseLanguage(Options.Language);
     {$IFDEF GETTEXT}
     TranslateProperties(self);

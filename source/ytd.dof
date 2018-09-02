@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.youtube.com/watch?v=p1JPKLa-Ofc
+RunParams=http://www.mc2.sk/archiv/benzinaci/20/
 HostApplication=
 [Language]
 ActiveLang=
@@ -59,9 +59,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
-MinorVer=25
+MinorVer=37
 Release=0
-Build=1011
+Build=1032
 Debug=0
 PreRelease=0
 Special=0
@@ -72,13 +72,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.25.0.1011
+FileVersion=1.37.0.1032
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YTD
-ProductVersion=1.25.0.990
+ProductVersion=1.37.0.1021
 Comments=http://www.pepak.net/ytd
 [HistoryLists\hlConditionals]
 Count=3

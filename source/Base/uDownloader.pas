@@ -181,6 +181,7 @@ type
       class function Provider: string; virtual; abstract;
       class function Features: TDownloaderFeatures; virtual;
       class function UrlRegExp: string; virtual; abstract;
+      class function IsSupportedUrl(const Url: string; out MovieID: string): boolean; virtual;
       class function MovieIDParamName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; virtual;
@@ -227,6 +228,9 @@ uses
 const
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
 
+var
+  UrlRegExps: TRegExpCache = nil;
+
 { TDownloader }
 
 class function TDownloader.MovieIDParamName: string;
@@ -237,6 +241,17 @@ end;
 class function TDownloader.Features: TDownloaderFeatures;
 begin
   Result := [];
+end;
+
+class function TDownloader.IsSupportedUrl(const Url: string; out MovieID: string): boolean;
+var
+  RE: TRegExp;
+begin
+  Result := False;
+  RE := UrlRegExps.GetRegExp(UrlRegExp);
+  if RE.Match(Url) then
+    if RE.SubexpressionByName(MovieIDParamName, MovieID) then
+      Result := MovieID <> '';
 end;
 
 {$IFDEF GUI}
@@ -1214,9 +1229,8 @@ end;
 function TDownloader.GetXmlAttr(Xml: TXmlNode; const Path, Attribute: string; out VarValue: string): boolean;
 var Node: TXmlNode;
 begin
-  if XmlNodeByPath(Xml, Path, Node) and Node.HasAttribute(Utf8String(Attribute)) then
+  if XmlNodeByPath(Xml, Path, Node) and XmlAttribute(Node, Attribute, VarValue) then
     begin
-    VarValue := Node.AttributeByNameWide[Utf8String(Attribute)];
     Result := True;
     end
   else
@@ -1234,9 +1248,8 @@ end;
 function TDownloader.GetXmlAttr(Xml: TXmlNode; const Path, AttributeName, AttributeValue, Attribute: string; out VarValue: string): boolean;
 var Node: TXmlNode;
 begin
-  if XmlNodeByPathAndAttr(Xml, Path, AttributeName, AttributeValue, Node) and Node.HasAttribute(Utf8String(Attribute)) then
+  if XmlNodeByPathAndAttr(Xml, Path, AttributeName, AttributeValue, Node) and XmlAttribute(Node, Attribute, VarValue) then
     begin
-    VarValue := Node.AttributeByNameWide[Utf8String(Attribute)];
     Result := True;
     end
   else
@@ -1374,4 +1387,10 @@ begin
   Result := Trunc((DT - 25569) * 24*60*60);
 end;
 
+initialization
+  UrlRegExps := TRegExpCache.Create;
+
+finalization
+  FreeAndNil(UrlRegExps);
+  
 end.

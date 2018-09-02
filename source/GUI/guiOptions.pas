@@ -107,7 +107,7 @@ const
       'most users, it might be significant for you.'#10 +
       'If you turn the automatic check off, you can still'#10 +
       'check for new versions manually by either visiting'#10 +
-      'the program''s websiteor by entering the About window.'#10#10 +
+      'the program''s website or by entering the About window.'#10#10 +
       'Should YTD automatically check for new versions?'
       ;
   DEFAULT_CONVERTER_TO_AVI = 

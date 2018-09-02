@@ -109,6 +109,7 @@ type
       procedure SetMonitorClipboard(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetAutoTryHtmlParser: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetAutoTryHtmlParser(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetScriptFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
         procedure SetSelectedConverterID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -170,6 +171,7 @@ type
       property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
       property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
       property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
+      property ScriptFileName: string read GetScriptFileName;
       {$IFDEF CONVERTERS}
         property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
         property MaxConversionThreads: integer read GetMaxConversionThreads write SetMaxConversionThreads;
@@ -190,7 +192,8 @@ uses
   {$IFDEF SETUP}
   uFunctions,
   {$ENDIF}
-  uCompatibility;
+  uCompatibility,
+  uSystem;
 
 const
   OverwriteModeStrings: array[TOverwriteMode] of string
@@ -228,6 +231,7 @@ const
   XML_PATH_DESTINATIONPATH = 'config/destination_path';
   XML_PATH_ERRORLOG = 'config/error_log';
   XML_PATH_AUTOTRYHTMLPARSER = 'config/auto_try_html_parser';
+  XML_PATH_SCRIPTFILENAME = 'config/script_filename';
   XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
   XML_PATH_CHECKFORNEWVERSIONONSTARTUP = 'gui/check_for_new_version';
   XML_PATH_MONITORCLIPBOARD = 'gui/monitor_clipboard';
@@ -259,6 +263,7 @@ const
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
   XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
   XML_DEFAULT_MONITORCLIPBOARD = False;
+  XML_DEFAULT_SCRIPTFILENAME = 'ytd-defs.xml'; 
   XML_DEFAULT_SELECTEDCONVERTER = '';
   {$IFDEF CONVERTERSMUSTBEACTIVATED}
   XML_DEFAULT_CONVERTERSACTIVATED = False;
@@ -642,6 +647,27 @@ end;
 procedure TYTDOptions.SetAutoTryHtmlParser(const Value: boolean);
 begin
   SetOption(XML_PATH_AUTOTRYHTMLPARSER, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetScriptFileName: string;
+const
+  DEFS_FILENAME = 'ytd-defs.xml';
+var
+  MainFileName: string;
+begin
+  Result := GetOption(XML_PATH_SCRIPTFILENAME, '');
+  if Result = '' then
+    begin
+    MainFileName := ExtractFilePath(ParamStr(0)) + DEFS_FILENAME;
+    if PortableMode then
+      Result := MainFileName
+    else
+      begin
+      Result := ExtractFilePath(XmlFileName) + DEFS_FILENAME;
+      if (not FileExists(Result)) or (GetFileDateTime(Result) < GetFileDateTime(MainFileName)) then
+        CopyFile(PChar(MainFileName), PChar(Result), False);
+      end;
+    end;
 end;
 
 {$IFDEF SUBTITLES}

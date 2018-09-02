@@ -303,7 +303,7 @@ begin
   Attr := TextAttribute;
   try
     TextColor := ccWhite;
-    Write(Format('%-42.42s (c) 2013 Pepak, ', [AppTitle + ' v' + AppVersion  {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ]));
+    Write(Format('%-42.42s (c) 2014 Pepak, ', [AppTitle + ' v' + AppVersion  {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ]));
     WriteColored(ccLightCyan, 'http://www.pepak.net');
     Writeln;
     Writeln(StringOfChar('-', 79));

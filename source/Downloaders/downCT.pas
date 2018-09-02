@@ -119,6 +119,8 @@ type
       VideoPlayerUrlRegExp: TRegExp;
       GetAjaxPlaylistRegExp: TRegExp;
       GetVideoUrlRegExp: TRegExp;
+      GetPlaylistUrlRegExp: TRegExp;
+      GetPlaylistUrlFromJSONRegExp: TRegExp;
       {$IFDEF SUBTITLES}
       HasSubtitles: boolean;
       {$IFDEF CONVERTSUBTITLES}
@@ -199,6 +201,8 @@ const
   REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>(?:https?:|\\?/).+?)"';
   REGEXP_AJAXPLAYLIST = '<script\b[^>]*\ssrc="(?P<URL>https?://[^/]*\.ceskatelevize\.cz/libraries/player/ajaxPlaylist[^"]*)"';
   REGEXP_VIDEOURL = '\burl\s*:\s*"(?P<URL>.+?)"';
+  REGEXP_GETPLAYLISTURL = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYPE>[^"]*)"\s*,\s*"id"\s*:\s*"(?P<ID>[^"]+)"';
+  REGEXP_GETPLAYLISTURLFROMJSON = '"url"\s*:\s*"(?P<URL>https?:\\?/\\?/.+?)"';
   {$IFDEF SUBTITLES}
   REGEXP_SUBTITLES = '<ul\s+id="subtitle[^>]+>(?P<SUBTITLES>.*?)</ul>';
   {$IFDEF CONVERTSUBTITLES}
@@ -325,6 +329,8 @@ begin
   VideoPlayerUrlRegExp := RegExCreate(REGEXP_VIDEOPLAYERURL);
   GetAjaxPlaylistRegExp := RegExCreate(REGEXP_AJAXPLAYLIST);
   GetVideoUrlRegExp := RegExCreate(REGEXP_VIDEOURL);
+  GetPlaylistUrlRegExp := RegExCreate(REGEXP_GETPLAYLISTURL);
+  GetPlaylistUrlFromJSONRegExp := RegExCreate(REGEXP_GETPLAYLISTURLFROMJSON);
   {$IFDEF SUBTITLES}
   {$IFDEF CONVERTSUBTITLES}
   SubtitleItemRegExp := RegExCreate(REGEXP_SUBTITLE_ITEM);
@@ -347,6 +353,8 @@ begin
   RegExFreeAndNil(VideoPlayerUrlRegExp);
   RegExFreeAndNil(GetAjaxPlaylistRegExp);
   RegExFreeAndNil(GetVideoUrlRegExp);
+  RegExFreeAndNil(GetPlaylistUrlRegExp);
+  RegExFreeAndNil(GetPlaylistUrlFromJSONRegExp);
   {$IFDEF SUBTITLES}
   {$IFDEF CONVERTSUBTITLES}
   RegExFreeAndNil(SubtitleItemRegExp);
@@ -505,12 +513,16 @@ begin
 end;
 
 function TDownloader_CT_old.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const REKLAMA = '-AD-';
-      REKLAMA_LENGTH = Length(REKLAMA);
-var MovieObject, AjaxPlaylist, Url, InfoUrl, ID, BaseUrl, Stream: string;
-    Xml: TXmlDoc;
-    Body, Node: TXmlNode;
-    i, RealMaxBitrate: integer;
+const
+  REKLAMA = '-AD-';
+  REKLAMA_LENGTH = Length(REKLAMA);
+var
+  {MovieObject, AjaxPlaylist,} Url, {InfoUrl,} ID, BaseUrl, Stream: string;
+  MediaType, MediaID, PlaylistData: string;
+  Prot, User, Pass, Host, Port, Part, Para: string;
+  Xml: TXmlDoc;
+  Body, Node: TXmlNode;
+  i, RealMaxBitrate: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -522,6 +534,7 @@ begin
     RealMaxBitrate := 4999 // mene kvalitni videa se stopou pro neslysici jsou oznacena bitrate 5000
   else
     RealMaxBitrate := MaxBitrate;
+  {
   if not GetMovieObject(Http, Page, MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
@@ -538,38 +551,53 @@ begin
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
   else if not DownloadXml(Http, StringReplace(UrlDecode(Url), 'ClientLinks?', 'ClientLink?', [rfReplaceAll]), Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+}
+  Referer := GetMovieInfoUrl;
+  ParseUrl(Referer, Prot, User, Pass, Host, Port, Part, Para);
+  if not GetRegExpVars(GetPlaylistUrlRegExp, Page, ['TYPE', 'ID'], [@MediaType, @MediaID]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ivysilani/ajax/get-playlist-url', 'playlist%5B0%5D%5Btype%5D=' + MediaType + '&playlist%5B0%5D%5Bid%5D=' + MediaID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani', HTTP_FORM_URLENCODING_UTF8, ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'], PlaylistData) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(GetPlaylistUrlFromJSONRegExp, PlaylistData, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else
-    try
-      if Xml.NodeByPath('smilRoot/body', Body) then
-        for i := 0 to Pred(Body.NodeCount) do
-          if Body.Nodes[i].Name = 'switchItem' then
-            begin
-            Node := Body.Nodes[i];
-            if GetXmlAttr(Node, '', 'id', ID) then
-              if Pos(REKLAMA, ID) <= 0 then
-                if GetXmlAttr(Node, '', 'base', BaseUrl) then
-                  begin
-                  // Pro stahovani jen casti reportaze - atributy duration="139" clipBegin="2675"
-                  if not Smil_FindBestVideo(Node, Stream, RealMaxBitrate) then
-                    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-                  else
+    begin
+    Referer := 'http://imgct.ceskatelevize.cz/global/swf/player/player.swf?version=1.45.15a';
+    if not DownloadXml(Http, UrlDecode(JSDecode(Url)), Xml) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    else
+      try
+        if Xml.NodeByPath('smilRoot/body', Body) then
+          for i := 0 to Pred(Body.NodeCount) do
+            if Body.Nodes[i].Name = 'switchItem' then
+              begin
+              Node := Body.Nodes[i];
+              if GetXmlAttr(Node, '', 'id', ID) then
+                if Pos(REKLAMA, ID) <= 0 then
+                  if GetXmlAttr(Node, '', 'base', BaseUrl) then
                     begin
-                    SetRtmpOptions(BaseUrl, Stream);
-                    {$IFDEF MULTIDOWNLOADS}
-                    BaseUrls.Add(BaseUrl);
-                    Streams.Add(Stream);
+                    // Pro stahovani jen casti reportaze - atributy duration="139" clipBegin="2675"
+                    if not Smil_FindBestVideo(Node, Stream, RealMaxBitrate) then
+                      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+                    else
+                      begin
+                      SetRtmpOptions(BaseUrl, Stream);
+                      {$IFDEF MULTIDOWNLOADS}
+                      BaseUrls.Add(BaseUrl);
+                      Streams.Add(Stream);
+                      {$ENDIF}
+                      SetPrepared(True);
+                      Result := True;
+                      end;
+                    {$IFNDEF MULTIDOWNLOADS}
+                    Break;
                     {$ENDIF}
-                    SetPrepared(True);
-                    Result := True;
                     end;
-                  {$IFNDEF MULTIDOWNLOADS}
-                  Break;
-                  {$ENDIF}
-                  end;
-            end;
-    finally
-      Xml.Free;
-      end;
+              end;
+      finally
+        Xml.Free;
+        end;
+    end;
 end;
 
 procedure TDownloader_CT_old.SetOptions(const Value: TYTDOptions);

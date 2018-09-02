@@ -151,7 +151,9 @@ implementation
 {$RESOURCE *.res}
 
 uses
-  guiConsts, guiAboutWINAPI, {$IFDEF CONVERTERS} guiConverterWINAPI, {$ENDIF} guiOptionsWINAPI;
+  guiConsts, guiAboutWINAPI, {$IFDEF CONVERTERS} guiConverterWINAPI, {$ENDIF} guiOptionsWINAPI,
+  uScriptedDownloader;
+
 
 // from resource.h
 const
@@ -217,6 +219,7 @@ begin
   fLoading := True;
   try
     Options := TYTDOptionsGUI.Create;
+    TScriptedDownloader.InitOptions(Options);
     UseLanguage(Options.Language);
     DownloadList := TDownloadList.Create;
     DownloadList.OnListChange := DownloadListChange;

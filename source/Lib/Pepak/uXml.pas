@@ -46,10 +46,11 @@ uses
 
 type
   TXmlString = UTF8String;
-  
+
   TXmlNode = NativeXml.TXmlNode;
 
   TXmlDoc = class(TNativeXml)
+  private
     protected
       procedure LoadFromBinaryData(Data: Pointer; Length: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
@@ -63,6 +64,8 @@ type
     end;
 
 function XmlValueIncludingCData(Node: TXmlNode): string;
+function XmlAttribute(Node: TXmlNode; const Attribute: string; out Value: string): boolean; overload;
+function XmlAttribute(Node: TXmlNode; const Attribute: string): string; overload;
 function XmlNodeByPath(Node: TXmlNode; const Path: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPath(Node: TXmlDoc; const Path: string; out FoundNode: TXmlNode): boolean; overload;
 function XmlNodeByPathAndAttr(Node: TXmlNode; const Path, AttributeName, AttributeValue: string; out FoundNode: TXmlNode): boolean; overload;
@@ -75,6 +78,9 @@ function XmlGetNamespace(Node: TXmlNode): string; overload;
 function XmlGetNamespace(Node: TXmlDoc): string; overload;
 
 implementation
+
+type
+  THackXmlNode = class(TXmlNode);
 
 function XmlValueIncludingCData(Node: TXmlNode): string;
 
@@ -99,18 +105,32 @@ begin
     end;
 end;
 
+function XmlAttribute(Node: TXmlNode; const Attribute: string; out Value: string): boolean;
+begin
+  Result := Node.HasAttribute( {$IFDEF UNICODE} TXmlString {$ENDIF} (Attribute));
+  if Result then
+    Value := Node.AttributeByNameWide[ {$IFDEF UNICODE} TXmlString {$ENDIF} (Attribute)];
+end;
+
+function XmlAttribute(Node: TXmlNode; const Attribute: string): string;
+begin
+  if not XmlAttribute(Node, Attribute, Result) then
+    Result := '';
+end;
+
 function XmlNodeByPathAndAttr(Node: TXmlNode; const Path, AttributeName, AttributeValue: string; out FoundNode: TXmlNode): boolean;
 
   function TestNodeForAttr(Node: TXmlNode; const AttributeName, AttributeValue: string): boolean;
+    var
+      AttrValue: string;
     begin
       Result := False;
       if Node <> nil then
         if AttributeName = '' then
           Result := True
         else
-          if Node.HasAttribute(TXmlString(AttributeName)) then
-            if Node.AttributeByNameWide[TXmlString(AttributeName)] = AttributeValue then
-              Result := True;
+          if XmlAttribute(Node, AttributeName, AttrValue) then
+            Result := (AttrValue = AttributeValue);
     end;
 
 var NodePath, NodeName: string;

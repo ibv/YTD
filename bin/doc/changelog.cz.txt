@@ -1,11 +1,33 @@
 ﻿______________________________________________________________________________
 
-YTD v1.37                                                    (c) 2009-14 Pepak
+YTD v1.38                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.38:
+
+    * Podpora pro definici serverů pomocí skriptů. Skripty jsou zatím úplně
+      na začátku, ale už teď s nimi lze zadefinovat servery s jednoduchým
+      streamováním přes HTTP. Výhledově budou rozšířeny tak, aby uměly co
+      největší část funkcionality YTD. Tím bude vyřešen také problém Primy,
+      protože seznam definic půjde snadno upravovat i mimo verzi, mimo jiné
+      i přímo ze strany uživatelů. Skripty zatím nejsou zdokumentovány, ale
+      můžete se podívat na ukázky v ytd-defs.xml a na zdrojový kód v
+      Source/Base/uScriptedDownloader.pas.
+
+    * Noví poskytovatelé:
+      - MC2.sk
+
+    * Aktualizovaní poskytovatelé:
+      - 123video.nl
+      - Aktualne.cz
+
+    * Aktualizován sestavovací skript.
+
+
 
   v1.37:
 

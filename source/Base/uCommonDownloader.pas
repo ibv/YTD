@@ -53,6 +53,7 @@ type
       fUserName: string;
       fPassword: string;
       fUrlIsRelative: boolean;
+      fFileNameExt: string;
     protected
       function GetMovieInfoUrl: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
     protected
@@ -100,6 +101,7 @@ type
       destructor Destroy; override;
       function Prepare: boolean; override;
       function Download: boolean; override;
+      procedure SetFileNameExt(const Value: string);
     end;
 
 const
@@ -157,7 +159,10 @@ end;
 
 function TCommonDownloader.GetFileNameExt: string;
 begin
-  Result := ExtractUrlExt(MovieURL);
+  if fFileNameExt <> '' then
+    Result := fFileNameExt
+  else
+    Result := ExtractUrlExt(MovieURL);
 end;
 
 function TCommonDownloader.GetContentUrl: string;
@@ -400,6 +405,11 @@ begin
     Result := Token <> ''
   else
     Result := True;
+end;
+
+procedure TCommonDownloader.SetFileNameExt(const Value: string);
+begin
+  fFileNameExt := Value;
 end;
 
 end.

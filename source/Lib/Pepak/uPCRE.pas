@@ -45,6 +45,7 @@ interface
 {$ENDIF}
 
 uses
+  SysUtils, Classes, Windows,
   {$IFDEF UPCRE_NATIVEIMPLEMENTATION}
   RegularExpressionsCore
   {$ELSE}
@@ -54,7 +55,7 @@ uses
 
 type
   PCREString = {$IFDEF UPCRE_NATIVEIMPLEMENTATION} UTF8String {$ELSE} PerlRegEx.PCREString {$ENDIF};
-  
+
   TRegExp = class(TPerlRegEx)
     public
       function Match(const Subject: PCREString): boolean; overload;
@@ -63,13 +64,31 @@ type
       {$IFDEF UNICODE}
       function Match(const Subject: string): boolean; overload;
       function SubexpressionByName(const Name: string): string; overload;
-      function SubexpressionByName(const Name: string; out Value: string): boolean; overload; 
+      function SubexpressionByName(const Name: string; out Value: string): boolean; overload;
       {$ENDIF}
     end;
 
   TRegExpMatch = TRegExp;
 
-  TRegExpOptions = set of (rcoIgnoreCase, rcoMultiLine, rcoSingleLine, rcoIgnorePatternWhitespace, rcoAnchored, rcoUngreedy, rcoNoAutoCapture);
+  TRegExpOption = (rcoIgnoreCase, rcoMultiLine, rcoSingleLine, rcoIgnorePatternWhitespace, rcoAnchored, rcoUngreedy, rcoNoAutoCapture);
+  TRegExpOptions = set of TRegExpOption;
+  TRegExpNativeOptions = TPerlRegExOptions;
+
+  TRegExpCache = class(TObject)
+    private
+      List: TList;
+      function GetCount: integer;
+      function GetItem(Index: integer): TRegExp;
+    protected
+      property Items[Index: integer]: TRegExp read GetItem; default;
+      property Count: integer read GetCount;
+      function Find(const Pattern: string; Options: TRegExpOptions; out Index: integer): boolean;
+    public
+      constructor Create;
+      destructor Destroy; override;
+      function GetRegExp(const Pattern: string; Options: TRegExpOptions): TRegExp; overload;
+      function GetRegExp(const Pattern: string): TRegExp; overload;
+    end;
 
 function RegExCreate(const Pattern: PCREString; Options: TRegExpOptions): TRegExp; overload;
 function RegExCreate(const Pattern: PCREString): TRegExp; overload;
@@ -80,23 +99,29 @@ function RegExCreate(const Pattern: string): TRegExp; overload;
 procedure RegExFree(RegExp: TRegExp);
 procedure RegExFreeAndNil(var RegExp: TRegExp);
 
+const
+  REGEXP_DEFAULT_OPTIONS = [rcoIgnoreCase, rcoSingleLine];
+
 implementation
+
+function OptionsToNativeOptions(Options: TRegExpOptions): TRegExpNativeOptions;
+begin
+  Result := [];
+  if rcoIgnoreCase              in Options then Result := Result + [preCaseLess];
+  if rcoMultiLine               in Options then Result := Result + [preMultiLine];
+  if rcoSingleLine              in Options then Result := Result + [preSingleLine];
+  if rcoIgnorePatternWhitespace in Options then Result := Result + [preExtended];
+  if rcoAnchored                in Options then Result := Result + [preAnchored];
+  if rcoUngreedy                in Options then Result := Result + [preUnGreedy];
+  if rcoNoAutoCapture           in Options then Result := Result + [preNoAutoCapture];
+end;
 
 {$HINTS OFF}
 function RegExCreate(const Pattern: PCREString; Options: TRegExpOptions): TRegExp;
-var PerlRegExpOptions: TPerlRegExOptions;
 begin
-  PerlRegExpOptions := [];
-  if rcoIgnoreCase              in Options then PerlRegExpOptions := PerlRegExpOptions + [preCaseLess];
-  if rcoMultiLine               in Options then PerlRegExpOptions := PerlRegExpOptions + [preMultiLine];
-  if rcoSingleLine              in Options then PerlRegExpOptions := PerlRegExpOptions + [preSingleLine];
-  if rcoIgnorePatternWhitespace in Options then PerlRegExpOptions := PerlRegExpOptions + [preExtended];
-  if rcoAnchored                in Options then PerlRegExpOptions := PerlRegExpOptions + [preAnchored];
-  if rcoUngreedy                in Options then PerlRegExpOptions := PerlRegExpOptions + [preUnGreedy];
-  if rcoNoAutoCapture           in Options then PerlRegExpOptions := PerlRegExpOptions + [preNoAutoCapture];
   Result := TRegExp.Create {$IFNDEF UPCRE_NATIVEIMPLEMENTATION} (nil) {$ENDIF} ;
   try
-    Result.Options := PerlRegExpOptions;
+    Result.Options := OptionsToNativeOptions(Options);
     Result.RegEx := Pattern;
   except
     Result.Free;
@@ -108,7 +133,7 @@ end;
 
 function RegExCreate(const Pattern: PCREString): TRegExp;
 begin
-  Result := RegExCreate(Pattern, [rcoIgnoreCase, rcoSingleLine]);
+  Result := RegExCreate(Pattern, REGEXP_DEFAULT_OPTIONS);
 end;
 
 {$IFDEF UNICODE}
@@ -177,5 +202,103 @@ begin
   Value := string(s);
 end;
 {$ENDIF}
+
+{ TRegExpCache }
+
+constructor TRegExpCache.Create;
+begin
+  inherited Create;
+  List := TList.Create;
+end;
+
+destructor TRegExpCache.Destroy;
+var
+  i: integer;
+begin
+  for i := 0 to Pred(Count) do
+    Items[i].Free;
+  List.Clear;
+  FreeAndNil(List);
+  inherited;
+end;
+
+function TRegExpCache.Find(const Pattern: string; Options: TRegExpOptions; out Index: integer): boolean;
+
+  function CompareMemory(P1, P2: Pointer; Length: integer): integer;
+    type
+      PByte = ^Byte;
+    begin
+      Result := 0;
+      while (Result = 0) and (Length > 0) do
+        begin
+        if PByte(P1)^ < PByte(P2)^ then
+          Result := -1
+        else if PByte(P1)^ > PByte(P2)^ then
+          Result := 1;
+        Dec(Length);
+        end;
+    end;
+
+var
+  Item: TRegExp;
+  NativeOptions, ItemNativeOptions: TRegExpNativeOptions;
+  L, H, I, C: Integer;
+begin
+  Result := False;
+  NativeOptions := OptionsToNativeOptions(Options);
+  L := 0;
+  H := Pred(Count);
+  while L <= H do
+    begin
+    I := (L + H) shr 1;
+    Item := Items[I];
+    C := AnsiCompareStr( {$IFDEF UNICODE} string {$ENDIF} (Item.RegEx), Pattern);
+    if C = 0 then
+      begin
+      ItemNativeOptions := Item.Options;
+      C := CompareMemory(@ItemNativeOptions, @NativeOptions, Sizeof(TRegExpNativeOptions));
+      end;
+    if C < 0
+      then L := Succ(I)
+    else
+      begin
+      H := Pred(I);
+      if C = 0 then
+        begin
+        Result := True;
+        L := I;
+        end;
+      end;
+    end;
+  Index := L;
+end;
+
+function TRegExpCache.GetCount: integer;
+begin
+  Result := List.Count;
+end;
+
+function TRegExpCache.GetItem(Index: integer): TRegExp;
+begin
+  Result := TRegExp(List[Index]);
+end;
+
+function TRegExpCache.GetRegExp(const Pattern: string): TRegExp;
+begin
+  Result := GetRegExp(Pattern, REGEXP_DEFAULT_OPTIONS);
+end;
+
+function TRegExpCache.GetRegExp(const Pattern: string; Options: TRegExpOptions): TRegExp;
+var
+  Index: integer;
+begin
+  if Find(Pattern, Options, Index) then
+    Result := Items[Index]
+  else
+    begin
+    Result := RegExCreate(Pattern, Options);
+    List.Insert(Index, Result);
+    end;
+end;
 
 end.

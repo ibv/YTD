@@ -1,0 +1,76 @@
+﻿<ytd-defs>
+	<version>1</version>
+	<scripts>
+
+		<script id="aktualne.cz" provider="Aktualne.cz">
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="title"><regexp id="meta-ogtitle" content="page"/></set_var>
+			<!--
+			<set_var id="url"><regexp id="json-file-colon" content="page"/></set_var>
+			-->
+			<multi_regexp id="json-file-colon" content="page" var-prefix="urls_" match="CONTENT" skip="2" count="3">
+				<set_var id="url"><get_var id="urls_CONTENT"/></set_var>
+			</multi_regexp>
+			<http_download>
+				<title><get_var id="title"/></title>
+				<url><get_var id="url"/></url>
+				<extension>.mp4</extension>
+			</http_download>
+		</script>
+
+		<script id="mc2.sk" provider="MC2.sk">
+			<regexps>
+				<regexp id="server" match="URL"><![CDATA[\.addVariable\s*\(\s*"node"\s*,\s*"(?P<URL>rtmpt?e?://[^"/]+)]]></regexp>
+				<regexp id="playpath" match="URL"><![CDATA[\$\s*\(\s*"hd"\s*\)\s*\.\s*setProperty\s*\(\s*"rel"\s*,\s*"(?P<URL>[^"]+)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="title"><regexp id="meta-ogtitle" content="page"/></set_var>
+			<set_var id="server"><regexp id="server" content="page"/>:80/</set_var>
+			<set_var id="playpath"><regexp id="playpath" content="page"/></set_var>
+			<!--<debug>Server = <get_var id="server"/></debug>-->
+			<!--<debug>Playpath = <get_var id="playpath"/></debug>-->
+			<rtmp_download>
+				<title><get_var id="title"/></title>
+				<url><get_var id="server"/></url>
+				<playpath><get_var id="playpath"/></playpath>
+				<!-- lze pouzivat take rtmp_app, swf_url, tc_url, page_url, swf_vfy, flashver, live, realtime -->
+			</rtmp_download>
+		</script>
+
+		<!-- Adult -->
+		
+		<script id="123video.nl" provider="123video.nl">
+			<regexps>
+				<regexp id="title" match="TITLE"><![CDATA[<div\s+class="box">\s*<div\s+class="top"[^>]*>\s*<div\s+class="top"[^>]*>\s*(?P<TITLE>.*?)\s*</div>]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url>http://www.123video.nl/playvideos.asp?MovieID=<get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="title"><regexp id="title" content="page"/></set_var>
+			<set_var id="server"><download_page encoding="xml">
+				<url>http://www.123video.nl/initialize_player_v3.asp</url>
+				<post_data><![CDATA[<movie><id>]]><get_var id="_movie_id"/><![CDATA[</id><memberid>0</memberid><cnt>1</cnt><nocache>32</nocache></movie>]]></post_data>
+				<xml_path></xml_path>
+				<xml_attr>MediaIP</xml_attr>
+			</download_page></set_var>
+			<set_var id="url">http://<get_var id="server"/>/<copy start="0" length="-3"><get_var id="_movie_id"/></copy>/<get_var id="_movie_id"/>.flv</set_var>
+			<!--<debug>URL = <get_var id="url"/></debug>-->
+			<http_download>
+				<title><get_var id="title"/></title>
+				<url><get_var id="url"/></url>
+			</http_download>
+		</script>
+	</scripts>
+	<regexps>
+		<regexp id="title" match="NAME"><![CDATA[<title>\s*(?P<NAME>.*?)\s*</title>]]></regexp>
+		<regexp id="meta-ogtitle" match="NAME"><![CDATA[<meta\s+(name|property)="og:title"\s+(content|value)="(?P<NAME>[^"]*)"]]></regexp>
+		<regexp id="json-file-colon" match="CONTENT"><![CDATA[\bfile\s*:\s*(?P<QUOTE>['"])(?P<CONTENT>.*?)(?P=QUOTE)]]></regexp>
+	</regexps>
+	<url_bases>
+		<url_base id="common-http" before="^https?://(?:[a-z0-9-]+\.)*" after="" />
+	</url_bases>
+	<urls>
+		<url script="aktualne.cz" base="common-http"><![CDATA[aktualne(?:\.centrum)?\.cz/.+$]]></url>
+		<url script="mc2.sk" base="common-http"><![CDATA[mc2\.sk/.+$]]></url>
+		<!-- Adult -->
+		<url script="123video.nl" base="common-http" subexpression="ID"><![CDATA[123video\.nl/playvideos\.asp\?([^&]*&)*?MovieID=(?P<ID>\d+)]]></url>
+	</urls>
+</ytd-defs>
