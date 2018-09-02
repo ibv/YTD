@@ -93,7 +93,7 @@ begin
         RealOptions[i].Argument := PAnsiChar(Options[i].Argument);
       end;
     end;
-  Result := RtmpDumpMain(Tag, Callback, Length(Options), RealOptionsPtr, LogFileName);
+  Result := RtmpDumpMain(Tag, Callback, Length(RealOptions), RealOptionsPtr, LogFileName);
 end;
 
 initialization

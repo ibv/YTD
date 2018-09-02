@@ -1,11 +1,17 @@
 ______________________________________________________________________________
 
-YTD v1.09                                                    (c) 2009-12 Pepak
+YTD v1.10                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.10:
+
+    * Fixed as bug which caused almost all RTMP streams to stop working.
+
+
 
   v1.09:
 

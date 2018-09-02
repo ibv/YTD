@@ -362,7 +362,8 @@ begin
   ClearRtmpDumpOptions;
   Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
   Result := inherited Prepare;
-  Self.SecureToken := Self.Token;
+  if dfRequireSecureToken in Features then
+    Self.SecureToken := Self.Token;
 end;
 
 function TRtmpDownloader.Download: boolean;
