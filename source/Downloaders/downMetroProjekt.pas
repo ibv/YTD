@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downFunnyOrDie;
+unit downMetroProjekt;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,10 +45,8 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_FunnyOrDie = class(THttpDownloader)
+  TDownloader_MetroProjekt = class(THttpDownloader)
     private
-    protected
-      UrlListRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,75 +64,60 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
+// http://www.metroprojekt.cz/cz/aktualne/metro-d/metro-d-animace.html
 const
-  URLREGEXP_BEFORE_ID = 'funnyordie\.com/videos/';
+  URLREGEXP_BEFORE_ID = 'metroprojekt\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_LIST =   '\bvideo_tag\.attr\s*\(\s*''src''\s*,\s*''(?P<URL>https?://[^'']+?(?P<BITRATE>\d+)\.mp4)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =    '<embed[^>]*\sflashvars=[^>]*?["&]file=(?P<URL>[^"&]+)';
 
-{ TDownloader_FunnyOrDie }
+const
+  WEB_ROOT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.metroprojekt.cz/';
+  
+{ TDownloader_MetroProjekt }
 
-class function TDownloader_FunnyOrDie.Provider: string;
+class function TDownloader_MetroProjekt.Provider: string;
 begin
-  Result := 'FunnyOrDie.com';
+  Result := 'MetroProjekt.cz';
 end;
 
-class function TDownloader_FunnyOrDie.UrlRegExp: string;
+class function TDownloader_MetroProjekt.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_FunnyOrDie.Create(const AMovieID: string);
+constructor TDownloader_MetroProjekt.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  UrlListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_FunnyOrDie.Destroy;
+destructor TDownloader_MetroProjekt.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(UrlListRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_FunnyOrDie.GetMovieInfoUrl: string;
+function TDownloader_MetroProjekt.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.funnyordie.com/videos/' + MovieID;
+  Result := WEB_ROOT + MovieID;
 end;
 
-function TDownloader_FunnyOrDie.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  Url, BestUrl, sBitrate: string;
-  Bitrate, BestBitrate: integer;
+function TDownloader_MetroProjekt.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  BestUrl := '';
-  BestBitrate := -1;
-  if GetRegExpVars(UrlListRegExp, Page, ['URL', 'BITRATE'], [@Url, @sBitrate]) then
-    repeat
-      Bitrate := StrToIntDef(sBitrate, 0);
-      if Bitrate > BestBitrate then
-        begin
-        BestBitrate := Bitrate;
-        BestUrl := Url;
-        end;
-    until not GetRegExpVarsAgain(UrlListRegExp, ['URL', 'BITRATE'], [@Url, @sBitrate]);
-  if BestUrl <> '' then
-    begin
-    MovieUrl := BestUrl;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := Prepared;
+  if Result then
+    MovieUrl := WEB_ROOT + MovieUrl;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_FunnyOrDie);
+  RegisterDownloader(TDownloader_MetroProjekt);
 
 end.

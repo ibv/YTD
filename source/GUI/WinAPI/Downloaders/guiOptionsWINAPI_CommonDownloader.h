@@ -12,3 +12,4 @@
 #define IDC_EDIT_USERNAME                       1008
 #define IDC_LABEL_PASSWORD                      1009
 #define IDC_EDIT_PASSWORD                       1010
+#define IDC_CHECKBOX_REALTIME                   1011

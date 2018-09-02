@@ -44,6 +44,7 @@ unit uSystem;
 {.$DEFINE USYSTEM_NET}
 {.$DEFINE USYSTEM_APPLICATION}
 {$DEFINE USYSTEM_WOW64}
+{$DEFINE USYSTEM_INFO}
 
 {$IFDEF WIN64}
   {$UNDEF USYSTEM_WOW64}
@@ -178,6 +179,13 @@ function Is64BitWindows: boolean;
 function IsWow64Process(hProcess: THandle; var Wow64Process: BOOL): BOOL;
 function Wow64DisableWow64FsRedirection(var OldValueDONOTCHANGE: Pointer): BOOL;
 function Wow64RevertWow64FsRedirection(OldValueDONOTCHANGE: Pointer): BOOL;
+{$ENDIF}
+
+{$IFDEF USYSTEM_INFO}
+type
+  TWindowsVersion = (wvUnknown, wvWin95, wvWin98, wvWinME, wvWinNT, wvWin2000, wvWinXP, wvWinServer2003, wvWinVista, wvWin7, wvWin8);
+
+function GetWindowsVersion: TWindowsVersion;
 {$ENDIF}
 
 implementation
@@ -1314,6 +1322,51 @@ begin
     Result := B
   else
     Result := False;
+end;
+{$ENDIF}
+
+{$IFDEF USYSTEM_INFO}
+function GetWindowsVersion: TWindowsVersion;
+var
+  Ver: TOsVersionInfo;
+begin
+  {Popis platformy win}
+  Result := wvUnknown;
+  Ver.dwOSVersionInfoSize := SizeOf(Ver);
+  if GetVersionEx(Ver) then
+    case Ver.dwPlatformId of
+      VER_PLATFORM_WIN32_NT:
+        begin
+        if Ver.dwMajorVersion <= 4 then
+          Result := wvWinNT
+        else if Ver.dwMajorVersion = 5 then
+          if Ver.dwMinorVersion = 0 then
+            Result := wvWin2000
+          else if Ver.dwMinorVersion = 1 then
+            Result := wvWinXP
+          else
+            Result := wvWinServer2003
+        else if Ver.dwMajorVersion = 6 then
+          if Ver.dwMinorVersion = 0 then
+            Result := wvWinVista
+          else if Ver.dwMinorVersion = 1 then
+            Result := wvWin7
+          else
+            Result := wvWin8
+          ;
+        end;
+      VER_PLATFORM_WIN32_WINDOWS:
+        begin
+          if Ver.dwMajorVersion = 4 then
+            if Ver.dwMinorVersion < 10 then
+              Result := wvWin95
+            else if Ver.dwMinorVersion < 90 then
+              Result := wvWin98
+            else
+              Result := wvWinME
+            ;
+        end;
+      end;
 end;
 {$ENDIF}
 

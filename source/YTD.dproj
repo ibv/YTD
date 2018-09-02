@@ -2,7 +2,7 @@
 		<PropertyGroup>
 			<ProjectGuid>{4CE0417E-A3A8-4D70-A505-A8F3EBB1045B}</ProjectGuid>
 			<MainSource>YTD.dpr</MainSource>
-			<Config Condition="'$(Config)'==''">Release</Config>
+			<Config Condition="'$(Config)'==''">Debug</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 			<ProjectVersion>12.0</ProjectVersion>
 		</PropertyGroup>
@@ -405,15 +405,15 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="RunParams">http://www.youtube.com/watch?v=L-9Y2rEtwoc</Parameters>
+						<Parameters Name="RunParams">http://www.ceskatelevize.cz/porady/10266819072-vypravej/212522161400001-shledani/</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
-						<VersionInfo Name="MinorVer">13</VersionInfo>
+						<VersionInfo Name="MinorVer">15</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">884</VersionInfo>
+						<VersionInfo Name="Build">891</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -425,13 +425,13 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName">Pepak</VersionInfoKeys>
 						<VersionInfoKeys Name="FileDescription">YTD</VersionInfoKeys>
-						<VersionInfoKeys Name="FileVersion">1.13.0.884</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.15.0.891</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName">YTD</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalCopyright">(c) 2009-11 Pepak</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalTrademarks"/>
 						<VersionInfoKeys Name="OriginalFilename">ytd.exe</VersionInfoKeys>
 						<VersionInfoKeys Name="ProductName">YTD</VersionInfoKeys>
-						<VersionInfoKeys Name="ProductVersion">1.13.0.881</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductVersion">1.15.0.888</VersionInfoKeys>
 						<VersionInfoKeys Name="Comments">http://www.pepak.net/ytd</VersionInfoKeys>
 					</VersionInfoKeys>
 				</Delphi.Personality>

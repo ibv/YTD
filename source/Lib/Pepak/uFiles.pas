@@ -601,9 +601,14 @@ begin
       else
         begin
         FillBuffer;
-        Move(Buffer^, Dest^, Count);
-        Inc(Result, Count);
-        Position := Position + Count;
+        if Count > BufferFill then
+          Count := BufferFill;
+        if Count > 0 then
+          begin
+          Move(Buffer^, Dest^, Count);
+          Inc(Result, Count);
+          Position := Position + Count;
+          end;
         end;
       end;
     end;

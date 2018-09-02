@@ -1,40 +1,84 @@
-______________________________________________________________________________
+ï»¿______________________________________________________________________________
 
-YTD v1.15                                                    (c) 2009-12 Pepak
+YTD v1.16                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v1.16:
+
+    * NovÃ­ poskytovatelÃ©:
+      - Azet.sk
+      - EuroSeptik.cz
+        - PodporovÃ¡no je i stahovÃ¡nÃ­ titulkÅ¯. Ve vÃ½chozÃ­m stavu se stahujÃ­
+          anglickÃ© titulky, v ÄeskÃ© verzi ÄeskÃ© titulky. V konfiguraci 
+          stahovaÄÅ¯ lze nastavit i jinÃ© titulky, napÅ™Ã­klad "PÅ™epis, angliÄtina"
+          nebo "PÅ™epis, ÄeÅ¡tina" (nÃ¡zev vychÃ¡zÃ­ z oznaÄenÃ­ titulkÅ¯ na strÃ¡nce
+          poskytovatele; staÄÃ­ i ÄÃ¡st textu, nemusÃ­ bÃ½t celÃ½, tzn. funguje
+          i "ÄeÅ¡tina").
+      - Matrix-2001.cz
+      - MetroProjekt.cz
+      - T-Music.cz (dÃ­ky Balutbj)
+      - Vikend.Nova.cz (a zÅ™ejmÄ› i ostatnÃ­ podobnÃ© podweby Novy)
+
+    * AktualizovanÃ­ poskytovatelÃ©:
+      - FunnyOrDie.com
+      - YouTube.com
+
+    * ZruÅ¡ena podpora pro server Huste.tv (takÃ© Huste.sk), protoÅ¾e vyÅ¾aduje
+      pÅ™ihlÃ¡Å¡enÃ­ a jÃ¡ nemÃ¡m testovacÃ­ ÃºÄet, se kterÃ½m bych mohl experimentovat.
+      Kdybych ho mÄ›l, zprovoznÄ›nÃ­ by pravdÄ›podobnÄ› bylo dost rychlÃ©.
+
+    * Upraveno mazÃ¡nÃ­ prÃ¡zdnÃ½ch souborÅ¯, pokud download skonÄil chybou -
+      teÄ se mazaly, jen pokud download skonÄil "ÃºspÄ›Å¡nÄ›" (v uvozovkÃ¡ch,
+      protoÅ¾e prÃ¡zdnÃ½ soubor za ÃºspÄ›ch nepovaÅ¾uji).
+
+    * Upraveno generovÃ¡nÃ­ nÃ¡zvu souboru pro RTMP a MS downloadery v unicode 
+      verzi YTD. To Å™eÅ¡Ã­ neschopnost unicode verze stahovat nÄ›kterÃ¡ videa
+      z ÄŒeskÃ© televize, kterÃ¡ ale Å¡la v poÅ™Ã¡dku stÃ¡hnout ansi verzÃ­.
+
+    * ZaktualizovÃ¡n RTMPDUMP na verzi z 22.9.2012. HlavnÃ­ novinkou novÃ©ho
+      RTMPDUMPu je tzv. realtime reÅ¾im, ve kterÃ©m se stahovaÄ nesnaÅ¾Ã­ urychlit
+      download pomocÃ­ ÄastÃ© pauzy a novÃ©ho startu - nÄ›kterÃ© servery totiÅ¾ na
+      pauzu reagujÃ­ tak, Å¾e skoÄÃ­ ve videu o kousek zpÃ¡tky a staÅ¾enÃ© video je
+      pak tÃ©mÄ›Å™ nepouÅ¾itelnÃ©. ReÅ¾im Realtime je v YTD standardnÄ› zapnut u
+      vÅ¡ech serverÅ¯ zaloÅ¾enÃ½ch na RTMP, mÅ¯Å¾ete ho vypnout pro kaÅ¾dÃ½ server
+      zvlÃ¡Å¡Å¥ v konfiguraci.
+
+    * Dokumentace zkonvertovÃ¡na do kÃ³dovÃ¡nÃ­ Unicode.
+
+
+
   v1.15:
 
-    * Vıchozí verze je nyní Unicode. Vıhodou je, e podporuje všechny svìtové
-      jazyky, tzn. není problém stahovat z ruskıch nebo japonskıch serverù
-      s pùvodními názvy souborù. Nevıhodou je, e Unicode verze nefunguje s
-      Windows 98 (ani ne tak kvùli Unicode jako takovému, jako kvùli tomu, e
-      Delphi 2009 prostì u podporu pro Windows øady 9x nemají) a je o nìco
-      delší. Pokud chcete stále pouívat ANSI verzi, mùete si ji stáhnout z
-      mıch stránek a ta se nadále bude aktualizovat opìt na ANSI verze. Ale
-      pokud nepouíváte Windows 98, tak podle mì není dùvod se k ANSI verzi
+    * VÃ½chozÃ­ verze je nynÃ­ Unicode. VÃ½hodou je, Å¾e podporuje vÅ¡echny svÄ›tovÃ©
+      jazyky, tzn. nenÃ­ problÃ©m stahovat z ruskÃ½ch nebo japonskÃ½ch serverÅ¯
+      s pÅ¯vodnÃ­mi nÃ¡zvy souborÅ¯. NevÃ½hodou je, Å¾e Unicode verze nefunguje s
+      Windows 98 (ani ne tak kvÅ¯li Unicode jako takovÃ©mu, jako kvÅ¯li tomu, Å¾e
+      Delphi 2009 prostÄ› uÅ¾ podporu pro Windows Å™ady 9x nemajÃ­) a je o nÄ›co
+      delÅ¡Ã­. Pokud chcete stÃ¡le pouÅ¾Ã­vat ANSI verzi, mÅ¯Å¾ete si ji stÃ¡hnout z
+      mÃ½ch strÃ¡nek a ta se nadÃ¡le bude aktualizovat opÄ›t na ANSI verze. Ale
+      pokud nepouÅ¾Ã­vÃ¡te Windows 98, tak podle mÄ› nenÃ­ dÅ¯vod se k ANSI verzi
       vracet.
 
-    * Novı streamovací protokol: Adobe HDS. Pouívá ho napøíklad RuTube.ru
-      a vyzvaèuje se tím, e se stream skládá ze spousty samostatnì 
-      stahovanıch souborù, které je následnì tøeba zkombinovat. Zatím je 
-      implementována jen znaènì zjednodušená verze. Pokud se osvìdèí, mùe
-      bıt pøípadnì doplnìna o zatím neøešené funkce (podpora packetù mimo
-      poøadí, nìkdy moná i navazování spadlého spojení nebo download víc
-      fragmentù souèasnì).
+    * NovÃ½ streamovacÃ­ protokol: Adobe HDS. PouÅ¾Ã­vÃ¡ ho napÅ™Ã­klad RuTube.ru
+      a vyzvaÄuje se tÃ­m, Å¾e se stream sklÃ¡dÃ¡ ze spousty samostatnÄ› 
+      stahovanÃ½ch souborÅ¯, kterÃ© je nÃ¡slednÄ› tÅ™eba zkombinovat. ZatÃ­m je 
+      implementovÃ¡na jen znaÄnÄ› zjednoduÅ¡enÃ¡ verze. Pokud se osvÄ›dÄÃ­, mÅ¯Å¾e
+      bÃ½t pÅ™Ã­padnÄ› doplnÄ›na o zatÃ­m neÅ™eÅ¡enÃ© funkce (podpora packetÅ¯ mimo
+      poÅ™adÃ­, nÄ›kdy moÅ¾nÃ¡ i navazovÃ¡nÃ­ spadlÃ©ho spojenÃ­ nebo download vÃ­c
+      fragmentÅ¯ souÄasnÄ›).
 
-      Tímto bych chtìl podìkovat uivateli Litew za jeho neocenitelnou pomoc
-      pøi betatestování protokolu.
+      TÃ­mto bych chtÄ›l podÄ›kovat uÅ¾ivateli Litew za jeho neocenitelnou pomoc
+      pÅ™i betatestovÃ¡nÃ­ protokolu.
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - eKucharka.net
       - TopRecepty.cz
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - Hasici150.tv
       - Rutube.ru (podpora pro HDS streamy)
 
@@ -42,189 +86,189 @@ CHANGELOG
 
   v1.14:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - Ocko.tv
       - TeenMpegs.com (porno)
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - DailyMotion.com
-      - RuTube.ru (víc podporovanıch videí, ale zatím ne HDS)
-      - YouTube.com (unicode verze YTD špatnì dekódovala jméno videa)
+      - RuTube.ru (vÃ­c podporovanÃ½ch videÃ­, ale zatÃ­m ne HDS)
+      - YouTube.com (unicode verze YTD Å¡patnÄ› dekÃ³dovala jmÃ©no videa)
 
-    * Opravena chyba, kvùli které se napøíklad z Èeské televize stahoval jeden
-      soubor stále dokola.
+    * Opravena chyba, kvÅ¯li kterÃ© se napÅ™Ã­klad z ÄŒeskÃ© televize stahoval jeden
+      soubor stÃ¡le dokola.
 
 
 
   v1.13:
 
-    * Novì je ke staení experimentální verze s podporou Unicode. Bude se 
-      hodit zejména u webù v exotickıch jazycích, napøíklad v ruštinì nebo 
-      japonštinì. Uvítal bych, kdybyste si ji mohli stáhnout a dát mi vìdìt, 
-      jestli s ní jsou nìjaké problémy, protoe bych ji rád èasem nechal jako 
-      hlavní. Zatím nechávám jako vıchozí ANSI verzi, protoe ta funguje i s 
-      Windows 98, Unicode bude chtít aspoò Windows 2000.
+    * NovÄ› je ke staÅ¾enÃ­ experimentÃ¡lnÃ­ verze s podporou Unicode. Bude se 
+      hodit zejmÃ©na u webÅ¯ v exotickÃ½ch jazycÃ­ch, napÅ™Ã­klad v ruÅ¡tinÄ› nebo 
+      japonÅ¡tinÄ›. UvÃ­tal bych, kdybyste si ji mohli stÃ¡hnout a dÃ¡t mi vÄ›dÄ›t, 
+      jestli s nÃ­ jsou nÄ›jakÃ© problÃ©my, protoÅ¾e bych ji rÃ¡d Äasem nechal jako 
+      hlavnÃ­. ZatÃ­m nechÃ¡vÃ¡m jako vÃ½chozÃ­ ANSI verzi, protoÅ¾e ta funguje i s 
+      Windows 98, Unicode bude chtÃ­t aspoÅˆ Windows 2000.
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - Kiwi.kz
       - Myvi.ru
-      - Nova.cz (pouze free videa; vyadována je znalost tokenu)
+      - Nova.cz (pouze free videa; vyÅ¾adovÃ¡na je znalost tokenu)
       - ProstoPleer.com
       - RuTube.ru
       - Sibnet.ru
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - CestyKSobe.cz
       - XHamster.com
 
-    * Doplnìn ruskı pøeklad z projektu rStread 
+    * DoplnÄ›n ruskÃ½ pÅ™eklad z projektu rStread 
       (https://bitbucket.org/litew/rstread).
 
-    * Doplnìno èasové omezení na videa v jednom playlistu, po jeho uplynutí
-      se vynutí nové stáhnutí a zpracování informaèní stránky. V dùsledku toho
-      u by vícedílná videa napø. na stránkách Èeské televize (http://www.ceskatelevize.cz/porady/10120914283-buly-hokej-zive/211471290130045-hc-vitkovice-steel-hc-eaton-pardubice/
-      a podobné) mìla jít stáhnout kompletní, ne jen první díl nebo dva, podle
-      toho, jak rychle se podaøilo stáhnout pøedchozí díly. Pevnì doufám, e
-      to nerozhodilo dosud fungující vícedílná videa.
+    * DoplnÄ›no ÄasovÃ© omezenÃ­ na videa v jednom playlistu, po jehoÅ¾ uplynutÃ­
+      se vynutÃ­ novÃ© stÃ¡hnutÃ­ a zpracovÃ¡nÃ­ informaÄnÃ­ strÃ¡nky. V dÅ¯sledku toho
+      uÅ¾ by vÃ­cedÃ­lnÃ¡ videa napÅ™. na strÃ¡nkÃ¡ch ÄŒeskÃ© televize (http://www.ceskatelevize.cz/porady/10120914283-buly-hokej-zive/211471290130045-hc-vitkovice-steel-hc-eaton-pardubice/
+      a podobnÃ©) mÄ›la jÃ­t stÃ¡hnout kompletnÃ­, ne jen prvnÃ­ dÃ­l nebo dva, podle
+      toho, jak rychle se podaÅ™ilo stÃ¡hnout pÅ™edchozÃ­ dÃ­ly. PevnÄ› doufÃ¡m, Å¾e
+      to nerozhodilo dosud fungujÃ­cÃ­ vÃ­cedÃ­lnÃ¡ videa.
 
-    * Ve VCL verzi chybìly v menu funkce "pøehrát" a "otevøít sloku", i kdy
-      naprogramované byly. (Toto se ovšem tıká jen toho, kdo si YTD kompiloval
-      ze zdrojovıch kódù, ve kterıch si vynutil pouití VCL).
+    * Ve VCL verzi chybÄ›ly v menu funkce "pÅ™ehrÃ¡t" a "otevÅ™Ã­t sloÅ¾ku", i kdyÅ¾
+      naprogramovanÃ© byly. (Toto se ovÅ¡em tÃ½kÃ¡ jen toho, kdo si YTD kompiloval
+      ze zdrojovÃ½ch kÃ³dÅ¯, ve kterÃ½ch si vynutil pouÅ¾itÃ­ VCL).
 
-    * V Unicode verzi byl zaveden speciální reim pro stahování videí pøes
-      RTMP a RTSP, pøi kterém se v pøípadì nutnosti pouije doèasné jméno
-      souboru a to se následnì pøejmenuje na finální. Typické pouití je
-      u RuTube.ru, kde se název v azbuce pøeloí na samé otazníky a to není
-      platné jméno souboru. Obdobné to bude v budoucnu s èínskımi, japonskımi
+    * V Unicode verzi byl zaveden speciÃ¡lnÃ­ reÅ¾im pro stahovÃ¡nÃ­ videÃ­ pÅ™es
+      RTMP a RTSP, pÅ™i kterÃ©m se v pÅ™Ã­padÄ› nutnosti pouÅ¾ije doÄasnÃ© jmÃ©no
+      souboru a to se nÃ¡slednÄ› pÅ™ejmenuje na finÃ¡lnÃ­. TypickÃ© pouÅ¾itÃ­ je
+      u RuTube.ru, kde se nÃ¡zev v azbuce pÅ™eloÅ¾Ã­ na samÃ© otaznÃ­ky a to nenÃ­
+      platnÃ© jmÃ©no souboru. ObdobnÃ© to bude v budoucnu s ÄÃ­nskÃ½mi, japonskÃ½mi
       apod. servery.
 
-    * Pøi stahování souborù delších ne 2 GB se správnì zobrazuje prùbìh
+    * PÅ™i stahovÃ¡nÃ­ souborÅ¯ delÅ¡Ã­ch neÅ¾ 2 GB se sprÃ¡vnÄ› zobrazuje prÅ¯bÄ›h
       downloadu.
 
-    * Funkce pro nahlášení chyby funguje pouze pro videa, u kterıch se 
-      nepodaøilo zahájit stahování. Jakmile je toti stahování jednou zahájeno,
-      tak u YTD jeho prùbìh nemùe ovlivnit - úspìšné dokonèení je èistì vìcí
-      vašeho internetového pøipojení a stability serveru.
+    * Funkce pro nahlÃ¡Å¡enÃ­ chyby funguje pouze pro videa, u kterÃ½ch se 
+      nepodaÅ™ilo zahÃ¡jit stahovÃ¡nÃ­. Jakmile je totiÅ¾ stahovÃ¡nÃ­ jednou zahÃ¡jeno,
+      tak uÅ¾ YTD jeho prÅ¯bÄ›h nemÅ¯Å¾e ovlivnit - ÃºspÄ›Å¡nÃ© dokonÄenÃ­ je ÄistÄ› vÄ›cÃ­
+      vaÅ¡eho internetovÃ©ho pÅ™ipojenÃ­ a stability serveru.
 
-    * Ještì jednou pøepracován kompilaèní skript, aby se dal snadno pouít
-      na libovolnou verzi Delphi, vèetnì pøípadnıch budoucích. Ovìøena monost
+    * JeÅ¡tÄ› jednou pÅ™epracovÃ¡n kompilaÄnÃ­ skript, aby se dal snadno pouÅ¾Ã­t
+      na libovolnou verzi Delphi, vÄetnÄ› pÅ™Ã­padnÃ½ch budoucÃ­ch. OvÄ›Å™ena moÅ¾nost
       zkompilovat YTD na Delphi 5, 7, 2007, 2009, XE2 a na FreePascalu 2.6.0.
-      64bitová verze jde zkompilovat pomocí Delphi XE2, ale pak nejde spustit
-      kvùli nìkterım chybìjícím exportùm v DLL, ke kterım nemohu dohledat, kde
+      64bitovÃ¡ verze jde zkompilovat pomocÃ­ Delphi XE2, ale pak nejde spustit
+      kvÅ¯li nÄ›kterÃ½m chybÄ›jÃ­cÃ­m exportÅ¯m v DLL, ke kterÃ½m nemohu dohledat, kde
       se v YTD berou.
 
 
 
   v1.12:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - VideoPortal.sk
       - Viki.com, VikiAssets.com
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - CD.cz
       - eHow.com
       - EuroGamer.cz
       - Metropol.cz
       - Metoo.sk (podpora pro RTMP)
-      - RozzlobeniMuzi.com (názvy videí)
+      - RozzlobeniMuzi.com (nÃ¡zvy videÃ­)
       - Sport.cz
       - Video.Google.com (embedded verze)
-      - VKontakte.ru (koneènì se stahuje v nejvyšší kvalitì)
-      - Overstream.net (prodlouen timeout; OverStream je strašnì pomalı)
+      - VKontakte.ru (koneÄnÄ› se stahuje v nejvyÅ¡Å¡Ã­ kvalitÄ›)
+      - Overstream.net (prodlouÅ¾en timeout; OverStream je straÅ¡nÄ› pomalÃ½)
 
-    * Grafická verze YTD se nyní standardnì spouští jen v jedné instanci;
-      pokud u YTD bìí z døívìjška, tak se jen aktivuje pùvodní verze a nová
-      skonèí.
+    * GrafickÃ¡ verze YTD se nynÃ­ standardnÄ› spouÅ¡tÃ­ jen v jednÃ© instanci;
+      pokud uÅ¾ YTD bÄ›Å¾Ã­ z dÅ™Ã­vÄ›jÅ¡ka, tak se jen aktivuje pÅ¯vodnÃ­ verze a novÃ¡
+      skonÄÃ­.
 
-    * Podpora pro command-line parametry i v GUI verzi. Musí vdy bıt uveden
-      parametr --gui (protoe normálnì je pøítomnost argumentù signálem pro
-      spuštìní textové verze) a navíc mohou bıt uvedeny argumenty:
+    * Podpora pro command-line parametry i v GUI verzi. MusÃ­ vÅ¾dy bÃ½t uveden
+      parametr --gui (protoÅ¾e normÃ¡lnÄ› je pÅ™Ã­tomnost argumentÅ¯ signÃ¡lem pro
+      spuÅ¡tÄ›nÃ­ textovÃ© verze) a navÃ­c mohou bÃ½t uvedeny argumenty:
 
-      -new .... Spustí novou instanci YTD.
-      <url> ... Zaøadí do stahování URL <url>. Mùe bıt uvedeno i víckrát.
+      -new .... SpustÃ­ novou instanci YTD.
+      <url> ... ZaÅ™adÃ­ do stahovÃ¡nÃ­ URL <url>. MÅ¯Å¾e bÃ½t uvedeno i vÃ­ckrÃ¡t.
 
-    * Ikonky vytváøené instalátorem nebo v konfiguraci nyní obsahují parametr
-      --gui, take se pøi jejich pouití YTD vdy spustí v grafickém reimu.
+    * Ikonky vytvÃ¡Å™enÃ© instalÃ¡torem nebo v konfiguraci nynÃ­ obsahujÃ­ parametr
+      --gui, takÅ¾e se pÅ™i jejich pouÅ¾itÃ­ YTD vÅ¾dy spustÃ­ v grafickÃ©m reÅ¾imu.
 
-    * Novı parametr -nd pro verzi pro pøíkazovou øádku zajistí, e YTD provede 
-      všechny své bìné operace, ale pøeskoèí vlastní download. Hodí se to 
-      zejména pro ladící úèely nebo pro pøípad, e chcete pouít vlastní 
-      downloadovací program s vlastními doplòujícími parametry.
+    * NovÃ½ parametr -nd pro verzi pro pÅ™Ã­kazovou Å™Ã¡dku zajistÃ­, Å¾e YTD provede 
+      vÅ¡echny svÃ© bÄ›Å¾nÃ© operace, ale pÅ™eskoÄÃ­ vlastnÃ­ download. HodÃ­ se to 
+      zejmÃ©na pro ladÃ­cÃ­ ÃºÄely nebo pro pÅ™Ã­pad, Å¾e chcete pouÅ¾Ã­t vlastnÃ­ 
+      downloadovacÃ­ program s vlastnÃ­mi doplÅˆujÃ­cÃ­mi parametry.
 
-    * Opravena chyba, pøi které se po dokonèení downloadu neodstranila z názvu
-      souboru pøípona .part (pokud bylo v nastavení zapnuto pouívání této
-      pøípony).
+    * Opravena chyba, pÅ™i kterÃ© se po dokonÄenÃ­ downloadu neodstranila z nÃ¡zvu
+      souboru pÅ™Ã­pona .part (pokud bylo v nastavenÃ­ zapnuto pouÅ¾Ã­vÃ¡nÃ­ tÃ©to
+      pÅ™Ã­pony).
 
-    * Opravena chyba, kvùli které se po dokonèeném downloadu video zase smazalo
-      s hlášením, e nebyla staena ádná data, pokud bylo delší ne 2 GB.
-      Pozn.: Stále se v prùbìhu stahování takovıch videí nezobrazuje prùbìh,
-      to je na sloitìjší opravu v Synapsi.
+    * Opravena chyba, kvÅ¯li kterÃ© se po dokonÄenÃ©m downloadu video zase smazalo
+      s hlÃ¡Å¡enÃ­m, Å¾e nebyla staÅ¾ena Å¾Ã¡dnÃ¡ data, pokud bylo delÅ¡Ã­ neÅ¾ 2 GB.
+      Pozn.: StÃ¡le se v prÅ¯bÄ›hu stahovÃ¡nÃ­ takovÃ½ch videÃ­ nezobrazuje prÅ¯bÄ›h,
+      to je na sloÅ¾itÄ›jÅ¡Ã­ opravu v Synapsi.
 
-    * Opravena chyba pøi startu programu, pokud byl poškozenı konfiguraèní
-      soubor - YTD sice nahlásil, e vytvoøí novı, ale ve skuteènosti to
-      neudìlal.
+    * Opravena chyba pÅ™i startu programu, pokud byl poÅ¡kozenÃ½ konfiguraÄnÃ­
+      soubor - YTD sice nahlÃ¡sil, Å¾e vytvoÅ™Ã­ novÃ½, ale ve skuteÄnosti to
+      neudÄ›lal.
 
-    * Pøi vıpisech do konzole se pouívá OEM kódová stránka (v èeskıch Windows
-      852), aby mìly texty správnou èeštinu.
+    * PÅ™i vÃ½pisech do konzole se pouÅ¾Ã­vÃ¡ OEM kÃ³dovÃ¡ strÃ¡nka (v ÄeskÃ½ch Windows
+      852), aby mÄ›ly texty sprÃ¡vnou ÄeÅ¡tinu.
 
-    * Upraven kompilaèní skript tak, aby byl víceménì spoleènı pro všechny
-      mé programy.
+    * Upraven kompilaÄnÃ­ skript tak, aby byl vÃ­cemÃ©nÄ› spoleÄnÃ½ pro vÅ¡echny
+      mÃ© programy.
 
 
 
   v1.11:
 
-    * Novı poskytovatel: Mixer.cz.
+    * NovÃ½ poskytovatel: Mixer.cz.
 
-    * Opravena chyba z 1.09, kvùli které byl pro ÈT vyadován token i tam, kde
-      ve skuteènosti není potøeba.
+    * Opravena chyba z 1.09, kvÅ¯li kterÃ© byl pro ÄŒT vyÅ¾adovÃ¡n token i tam, kde
+      ve skuteÄnosti nenÃ­ potÅ™eba.
 
 
 
   v1.10:
 
-    * Opravena chyba, kvùli které pøestaly fungovat skoro všechny RTMP streamy.
+    * Opravena chyba, kvÅ¯li kterÃ© pÅ™estaly fungovat skoro vÅ¡echny RTMP streamy.
 
 
 
   v1.09:
 
-    * Noví poskytovatelé: 
-      - Laola1.tv (asi jen nìkterá videa)
+    * NovÃ­ poskytovatelÃ©: 
+      - Laola1.tv (asi jen nÄ›kterÃ¡ videa)
       - NebickoVPapulke.sk
-      - Ulo.to (pouze Ulo.to LIVE)
-      - Zvrácenı.cz (porno)
+      - UloÅ¾.to (pouze UloÅ¾.to LIVE)
+      - ZvrÃ¡cenÃ½.cz (porno)
 
-    * Aktualizovaní poskytovatelé:
-      - Rajèe.iDnes.cz
-      - MojeVideo.sk (novì vyaduje token!)
+    * AktualizovanÃ­ poskytovatelÃ©:
+      - RajÄe.iDnes.cz
+      - MojeVideo.sk (novÄ› vyÅ¾aduje token!)
 
-    * YouTube.com: Zmìnil jsem logiku dekódování objektu FmtUrlMap, take by
-      nyní mìla fungovat i videa s neobvyklım poøadím parametrù. Teoreticky
-      to mohlo i nìco rozhodit, take kdy narazíte na video, které ve verzi
-      1.08 funguje a ve verzi 1.09 u ne, dejte vìdìt.
+    * YouTube.com: ZmÄ›nil jsem logiku dekÃ³dovÃ¡nÃ­ objektu FmtUrlMap, takÅ¾e by
+      nynÃ­ mÄ›la fungovat i videa s neobvyklÃ½m poÅ™adÃ­m parametrÅ¯. Teoreticky
+      to mohlo i nÄ›co rozhodit, takÅ¾e kdyÅ¾ narazÃ­te na video, kterÃ© ve verzi
+      1.08 funguje a ve verzi 1.09 uÅ¾ ne, dejte vÄ›dÄ›t.
 
-    * Knihovna Synapse aktualizována na verzi 40. Pokud narazíte na pøíklad
-      nìèeho, co ve verzi 1.09 nefunguje a ve verzi 1.08 ano, dejte mi prosím
-      vìdìt. Díky.
+    * Knihovna Synapse aktualizovÃ¡na na verzi 40. Pokud narazÃ­te na pÅ™Ã­klad
+      nÄ›Äeho, co ve verzi 1.09 nefunguje a ve verzi 1.08 ano, dejte mi prosÃ­m
+      vÄ›dÄ›t. DÃ­ky.
 
-    * YTD lze nyní zkompilovat pomocí Delphi XE2 (32bitovı reim). Ovìøena
-      funkènost kompilaèních skriptù pro Delphi 5, 7, 2007, 2009, XE2 a pro
+    * YTD lze nynÃ­ zkompilovat pomocÃ­ Delphi XE2 (32bitovÃ½ reÅ¾im). OvÄ›Å™ena
+      funkÄnost kompilaÄnÃ­ch skriptÅ¯ pro Delphi 5, 7, 2007, 2009, XE2 a pro
       FreePascal.
 
 
 
   v1.08:
 
-    * Jsem zpìt a v plné síle! Dìkuji Balutbj, e mì v mezidobí zastoupil s
-      Èeskou televizí a obecnì za chvályhodnou snahu o dešifrování rùznıch
-      serverù (které budu postupnì implementovat).
+    * Jsem zpÄ›t a v plnÃ© sÃ­le! DÄ›kuji Balutbj, Å¾e mÄ› v mezidobÃ­ zastoupil s
+      ÄŒeskou televizÃ­ a obecnÄ› za chvÃ¡lyhodnou snahu o deÅ¡ifrovÃ¡nÃ­ rÅ¯znÃ½ch
+      serverÅ¯ (kterÃ© budu postupnÄ› implementovat).
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - B-TV.cz
       - Blip.tv
-      - Èeská televize
+      - ÄŒeskÃ¡ televize
       - iPrima.cz
       - Joj.sk
       - Muvi.cz
@@ -232,34 +276,34 @@ CHANGELOG
       - Super.cz
       - Vimeo.com
 
-    * Barrandov.tv: Pokud je dostupná, stahuje se HD kvalita. Je to ale dost
-      ošklivı hack, take to nemusí fungovat; v nastavení Barrandova je na to
+    * Barrandov.tv: Pokud je dostupnÃ¡, stahuje se HD kvalita. Je to ale dost
+      oÅ¡klivÃ½ hack, takÅ¾e to nemusÃ­ fungovat; v nastavenÃ­ Barrandova je na to
       checkbox.
 
     * CeskaTelevize.cz:
-      1. ÈT opìt funguje.
-      2. V konfiguraci je nové nastavení pro maximální bitrate, kterı YTD bude
-         stahovat (pokud bude mít na vıbìr - pokud existuje jen vyšší bitrate,
-         pouije se ten). ÈT momentálnì pouívá bitrate 2000, 1000, 500.
+      1. ÄŒT opÄ›t funguje.
+      2. V konfiguraci je novÃ© nastavenÃ­ pro maximÃ¡lnÃ­ bitrate, kterÃ½ YTD bude
+         stahovat (pokud bude mÃ­t na vÃ½bÄ›r - pokud existuje jen vyÅ¡Å¡Ã­ bitrate,
+         pouÅ¾ije se ten). ÄŒT momentÃ¡lnÄ› pouÅ¾Ã­vÃ¡ bitrate 2000, 1000, 500.
 
-    * Opravena neádoucí interakce mezi sledováním schránky (clipboardu)
-      a funkcí pro zkopírování vybranıch URL do schránky.
+    * Opravena neÅ¾Ã¡doucÃ­ interakce mezi sledovÃ¡nÃ­m schrÃ¡nky (clipboardu)
+      a funkcÃ­ pro zkopÃ­rovÃ¡nÃ­ vybranÃ½ch URL do schrÃ¡nky.
 
-    * YTD lze nyní zkompilovat i pomocí Delphi 7.
+    * YTD lze nynÃ­ zkompilovat i pomocÃ­ Delphi 7.
 
 
 
   v1.07:
 
-    * Vlastnì jsem chtìl verzi dìlat, a do ní budu mít víc novinek (a zejména
-      a budu mít èas podívat se na novou Novu, ale èlánek publikovanı na
-      iDnes mì donutil...).
+    * VlastnÄ› jsem chtÄ›l verzi dÄ›lat, aÅ¾ do nÃ­ budu mÃ­t vÃ­c novinek (a zejmÃ©na
+      aÅ¾ budu mÃ­t Äas podÃ­vat se na novou Novu, ale ÄlÃ¡nek publikovanÃ½ na
+      iDnes mÄ› donutil...).
 
-    * iPrima.cz: Uvolnìn formát URL (Prima fungovala i v minulé verzi, ale
-      musela se ruènì upravit adresa).
+    * iPrima.cz: UvolnÄ›n formÃ¡t URL (Prima fungovala i v minulÃ© verzi, ale
+      musela se ruÄnÄ› upravit adresa).
 
-    * Nova.cz: Vyøazena z programu. Pravdìpodobnì navdy, protoe free obsah
-      byl zrušen a k placenému nemám pøístup.
+    * Nova.cz: VyÅ™azena z programu. PravdÄ›podobnÄ› navÅ¾dy, protoÅ¾e free obsah
+      byl zruÅ¡en a k placenÃ©mu nemÃ¡m pÅ™Ã­stup.
 
 
 
@@ -267,88 +311,88 @@ CHANGELOG
 
     * iPrima.cz: Podpora pro Prima Play.
 
-    * VKontakte.ru: Podpora pro videa, která nemají kvalitu 720. Lepší práce
-      s názvy souborù.
+    * VKontakte.ru: Podpora pro videa, kterÃ¡ nemajÃ­ kvalitu 720. LepÅ¡Ã­ prÃ¡ce
+      s nÃ¡zvy souborÅ¯.
 
     * YouTube.com: Podpora pro playlisty ve tvaru "playlist?list=...".
 
-    * Nìkolik drobnıch úprav v získávání názvù souborù.
+    * NÄ›kolik drobnÃ½ch Ãºprav v zÃ­skÃ¡vÃ¡nÃ­ nÃ¡zvÅ¯ souborÅ¯.
 
 
 
   v1.05:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - CriticalPast.com
       - Smotri.com
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - EmpFlix.com
       - iPrima.cz
-      - MojeVideo.sk (stará videa moná nebudou chodit)
+      - MojeVideo.sk (starÃ¡ videa moÅ¾nÃ¡ nebudou chodit)
       - TN.Nova.cz
       - UStream.tv
       - Vimeo.com (podpora pro HD)
       - YouTube.com (playlisty)
 
     * AutosalonTV.cz
-      Zrušena podpora, protoe se nyní pouívá streamování pomocí ISM, kde
-      je video rozdìleno na mnoho malıch èástí a je posíláno po kouskách,
-      video zvláš a zvuk taky zvláš. Šlo by to stáhnout, ale nebylo by to
-      k nièemu.
+      ZruÅ¡ena podpora, protoÅ¾e se nynÃ­ pouÅ¾Ã­vÃ¡ streamovÃ¡nÃ­ pomocÃ­ ISM, kde
+      je video rozdÄ›leno na mnoho malÃ½ch ÄÃ¡stÃ­ a je posÃ­lÃ¡no po kouskÃ¡ch,
+      video zvlÃ¡Å¡Å¥ a zvuk taky zvlÃ¡Å¡Å¥. Å lo by to stÃ¡hnout, ale nebylo by to
+      k niÄemu.
 
-    * Nova.cz: Pokud je špatné heslo, tak na to program v chybové hlášce 
-      upozorní.
+    * Nova.cz: Pokud je Å¡patnÃ© heslo, tak na to program v chybovÃ© hlÃ¡Å¡ce 
+      upozornÃ­.
 
     * VKontakte.ru: Podpora pro vk.com/video_ext.php?...
 
-    * Opravena logika pro získávání názvu z vnoøenıch dowloaderù (pozitivnì
-      to ovlivòuje napø. iDnes, ostatním to snad nevadí nebo je to také
-      zlepšuje).
+    * Opravena logika pro zÃ­skÃ¡vÃ¡nÃ­ nÃ¡zvu z vnoÅ™enÃ½ch dowloaderÅ¯ (pozitivnÄ›
+      to ovlivÅˆuje napÅ™. iDnes, ostatnÃ­m to snad nevadÃ­ nebo je to takÃ©
+      zlepÅ¡uje).
 
-    * GUI: Funkce pro otevøení sloky nyní funguje i na videa, jejich 
-      stahování dosud nezaèalo nebo je program ani nezná. V takovém pøípadì
-      se otevøe vıchozí adresáø pro stahovaná videa.
+    * GUI: Funkce pro otevÅ™enÃ­ sloÅ¾ky nynÃ­ funguje i na videa, jejichÅ¾ 
+      stahovÃ¡nÃ­ dosud nezaÄalo nebo je program ani neznÃ¡. V takovÃ©m pÅ™Ã­padÄ›
+      se otevÅ™e vÃ½chozÃ­ adresÃ¡Å™ pro stahovanÃ¡ videa.
 
 
 
   v1.04:
 
-    * Aktualizovaní poskytovatelé:
+    * AktualizovanÃ­ poskytovatelÃ©:
       - iPrima.cz
 
-    * Aktualizován zdrojovı kód, aby se zkompiloval pod Delphi 2009.
+    * AktualizovÃ¡n zdrojovÃ½ kÃ³d, aby se zkompiloval pod Delphi 2009.
 
 
 
   v1.03:
 
-    * Nova.cz: Podpora pro další typy vkládanıch videí (napø. poker.nova.cz).
+    * Nova.cz: Podpora pro dalÅ¡Ã­ typy vklÃ¡danÃ½ch videÃ­ (napÅ™. poker.nova.cz).
 
-    * YouTube.com: Podpora pro videa nìkterıch tøetích stran, která pouívají
-      speciální zápis pøehrávaèe.
+    * YouTube.com: Podpora pro videa nÄ›kterÃ½ch tÅ™etÃ­ch stran, kterÃ¡ pouÅ¾Ã­vajÃ­
+      speciÃ¡lnÃ­ zÃ¡pis pÅ™ehrÃ¡vaÄe.
 
-    * Aktualizován jazykovı soubor.
+    * AktualizovÃ¡n jazykovÃ½ soubor.
 
 
 
   v1.02:
 
-    * Chyba v Markiza.sk zpùsobovala vıjimku na neznámıch URL.
+    * Chyba v Markiza.sk zpÅ¯sobovala vÃ½jimku na neznÃ¡mÃ½ch URL.
 
 
 
   v1.01:
 
-    * Novı poskytovatel: LevelTV.Hrej.cz.
-      Poskytovatel teoreticky vyaduje znalost hesla, které mùete v grafickém
-      rozhraní zadat do konfigurace. Prakticky zatím heslo není potøeba, server
+    * NovÃ½ poskytovatel: LevelTV.Hrej.cz.
+      Poskytovatel teoreticky vyÅ¾aduje znalost hesla, kterÃ© mÅ¯Å¾ete v grafickÃ©m
+      rozhranÃ­ zadat do konfigurace. Prakticky zatÃ­m heslo nenÃ­ potÅ™eba, server
       ho nijak nekontroluje.
 
-    * Novı poskytovatel: NHL.com.
-      Nejsem si tak docela jistı, co vlastnì bylo vyádáno a co stahuji.
+    * NovÃ½ poskytovatel: NHL.com.
+      Nejsem si tak docela jistÃ½, co vlastnÄ› bylo vyÅ¾Ã¡dÃ¡no a co stahuji.
 
-    * Další noví poskytovatelé:
+    * DalÅ¡Ã­ novÃ­ poskytovatelÃ©:
       - 3news.co.nz
       - Ancensored.com
       - Archive.org
@@ -359,73 +403,73 @@ CHANGELOG
       - Zapiks.fr
       - ZlutySnih.cz (porno)
 
-    * DailyMotion.com: V plné verzi stahuje i videa oznaèená jako pro dospìlé.
+    * DailyMotion.com: V plnÃ© verzi stahuje i videa oznaÄenÃ¡ jako pro dospÄ›lÃ©.
 
     * KeezMovies.com: Podpora pro embedded verzi.
 
-    * MetaCafe.com: Aktualizována podpora streamù pøes HTTP. Ještì existují
-      streamy bìící na RTMP, ty zatím podporovány nejsou.
+    * MetaCafe.com: AktualizovÃ¡na podpora streamÅ¯ pÅ™es HTTP. JeÅ¡tÄ› existujÃ­
+      streamy bÄ›Å¾Ã­cÃ­ na RTMP, ty zatÃ­m podporovÃ¡ny nejsou.
 
-    * Další aktualizovaní poskytovatelé:
+    * DalÅ¡Ã­ aktualizovanÃ­ poskytovatelÃ©:
       - FreeCaster.tv
       - JenProMuze.cz
       - Metropol.cz
 
-    * Do vıchozího konfiguraèního souboru byla pøidána nastavení pro konverzi
-      videí pomocí programu FFmpeg (http://ffmpeg.org/) (díky ffmpegmann).
-      Do konfigurace je dostanete nejlépe tak, e starou konfiguraci smaete
-      a necháte YTD, a si vytvoøí novou.
+    * Do vÃ½chozÃ­ho konfiguraÄnÃ­ho souboru byla pÅ™idÃ¡na nastavenÃ­ pro konverzi
+      videÃ­ pomocÃ­ programu FFmpeg (http://ffmpeg.org/) (dÃ­ky ffmpegmann).
+      Do konfigurace je dostanete nejlÃ©pe tak, Å¾e starou konfiguraci smaÅ¾ete
+      a nechÃ¡te YTD, aÅ¥ si vytvoÅ™Ã­ novou.
 
-    * Odstranìna zdvojená pøípona souboru u nìkterıch poskytovatelù.
+    * OdstranÄ›na zdvojenÃ¡ pÅ™Ã­pona souboru u nÄ›kterÃ½ch poskytovatelÅ¯.
 
-    * GUI: V konfiguraci nešlo vypnout konvertování titulkù do .srt formátu.
+    * GUI: V konfiguraci neÅ¡lo vypnout konvertovÃ¡nÃ­ titulkÅ¯ do .srt formÃ¡tu.
 
 
 
   v1.00:
 
-    * Zmìna názvu programu: Pùvodní "YouTube Downloader"  se nyní jmenuje
+    * ZmÄ›na nÃ¡zvu programu: PÅ¯vodnÃ­ "YouTube Downloader"  se nynÃ­ jmenuje
       "YTD".
 
-    * Spousta zmìn ve zdrojovıch kódech kvùli zmìnì názvu a zmìnì roku, ale
-      nic z toho není zmìna v provádìném kódu.
+    * Spousta zmÄ›n ve zdrojovÃ½ch kÃ³dech kvÅ¯li zmÄ›nÄ› nÃ¡zvu a zmÄ›nÄ› roku, ale
+      nic z toho nenÃ­ zmÄ›na v provÃ¡dÄ›nÃ©m kÃ³du.
 
 
 
 
   v0.99:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - AcademicEarth.org
       - TV-Vysocina.cz
 
-    * CeskaTelevize.cz: Nové stránky pouívají secure token, kterı si nìkde 
-      musíte získat sami, já ho rozšiøovat nemohu.
+    * CeskaTelevize.cz: NovÃ© strÃ¡nky pouÅ¾Ã­vajÃ­ secure token, kterÃ½ si nÄ›kde 
+      musÃ­te zÃ­skat sami, jÃ¡ ho rozÅ¡iÅ™ovat nemohu.
 
-    * Nova.cz: Opìt funkèní.
+    * Nova.cz: OpÄ›t funkÄnÃ­.
 
-    * Prima-Cool.cz: Opìt funkèní.
+    * Prima-Cool.cz: OpÄ›t funkÄnÃ­.
 
-    * Video.Nur.kz: Opravena pøípona u souborù.
+    * Video.Nur.kz: Opravena pÅ™Ã­pona u souborÅ¯.
 
-    * Obecnı parser HTML stránek doplnìn o podporu <param name="movie">. Tím
-      je zajištìna podpora øady dalších webù, které pøebírají obsah napø.
-      z YouTube apod., napøíklad Topky.sk, Pluska.sk.
+    * ObecnÃ½ parser HTML strÃ¡nek doplnÄ›n o podporu <param name="movie">. TÃ­m
+      je zajiÅ¡tÄ›na podpora Å™ady dalÅ¡Ã­ch webÅ¯, kterÃ© pÅ™ebÃ­rajÃ­ obsah napÅ™.
+      z YouTube apod., napÅ™Ã­klad Topky.sk, Pluska.sk.
 
-    * Do stahovaèe protokolù MMS/RTSP byl pøidán test, jestli je staenı
-      soubor dlouhı aspoò 64 KB. To by mìlo vyvolat chybové hlášení v 
-      pøípadech, kdy server sám chybu nenahlásí, jen nic nestáhne.
+    * Do stahovaÄe protokolÅ¯ MMS/RTSP byl pÅ™idÃ¡n test, jestli je staÅ¾enÃ½
+      soubor dlouhÃ½ aspoÅˆ 64 KB. To by mÄ›lo vyvolat chybovÃ© hlÃ¡Å¡enÃ­ v 
+      pÅ™Ã­padech, kdy server sÃ¡m chybu nenahlÃ¡sÃ­, jen nic nestÃ¡hne.
 
-    * RTMPDUMP aktualizován na nejnovìjší verzi (GIT tag 60218d0af0f4bd683ecdebe49986f188820cf8ce).
+    * RTMPDUMP aktualizovÃ¡n na nejnovÄ›jÅ¡Ã­ verzi (GIT tag 60218d0af0f4bd683ecdebe49986f188820cf8ce).
 
-    * GUI: V nastavení stahovaèù u se pro kadého poskytovatele zobrazuje
-      maximálnì jedna stránka.
+    * GUI: V nastavenÃ­ stahovaÄÅ¯ uÅ¾ se pro kaÅ¾dÃ©ho poskytovatele zobrazuje
+      maximÃ¡lnÄ› jedna strÃ¡nka.
 
 
 
   v0.98:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - BMovies.com
       - B-TV.cz
       - CSFD.cz
@@ -446,136 +490,136 @@ CHANGELOG
       - World-Club.net
       - Youtu.be
       - YouTube-nocookie.com
-      Tím se dostáváme na 250 podporovanıch poskytovatelù.
+      TÃ­m se dostÃ¡vÃ¡me na 250 podporovanÃ½ch poskytovatelÅ¯.
 
-    * CeskaTelevize.cz: ÈT24 opìt bìí.
+    * CeskaTelevize.cz: ÄŒT24 opÄ›t bÄ›Å¾Ã­.
 
-    * MegaVideo.com: Podpora pro embedované pøehrávaèe.
+    * MegaVideo.com: Podpora pro embedovanÃ© pÅ™ehrÃ¡vaÄe.
 
-    * Rozhlas.cz: Opìt bìí.
+    * Rozhlas.cz: OpÄ›t bÄ›Å¾Ã­.
 
-    * YouTube.com: Aktualizován seznam formátù, které YouTube pouívá, take
-      by u se nemìlo stávat, e se video stáhne do souboru se špatnou 
-      pøíponou.
+    * YouTube.com: AktualizovÃ¡n seznam formÃ¡tÅ¯, kterÃ© YouTube pouÅ¾Ã­vÃ¡, takÅ¾e
+      by uÅ¾ se nemÄ›lo stÃ¡vat, Å¾e se video stÃ¡hne do souboru se Å¡patnou 
+      pÅ™Ã­ponou.
 
-    * Lite verze: Do Lite verze se u pøed mnoha verzemi dostalo nìkolik porno
-      poskytovatelù. Nyní byli odstranìni a provìøil jsem, e u tam ádní
+    * Lite verze: Do Lite verze se uÅ¾ pÅ™ed mnoha verzemi dostalo nÄ›kolik porno
+      poskytovatelÅ¯. NynÃ­ byli odstranÄ›ni a provÄ›Å™il jsem, Å¾e uÅ¾ tam Å¾Ã¡dnÃ­
       nezbyli.
 
-    * RTMP: Vıchozí nastavení pro ivé vysílání je "vypnuto" pro všechny
-      servery kromì Èeské televize, Novy, Primy a Barrandova, protoe jsem
-      zjistil, e u mnoha "normálních" serverù toto nastavení pøekáí ve
-      stahování videa. Doporuèuji smazat konfiguraèní soubor a nechat YTD
-      vytvoøit novı, aby tuto zmìnu pøevzal (jinak si ponechá nastavení
-      pùvodní).
+    * RTMP: VÃ½chozÃ­ nastavenÃ­ pro Å¾ivÃ© vysÃ­lÃ¡nÃ­ je "vypnuto" pro vÅ¡echny
+      servery kromÄ› ÄŒeskÃ© televize, Novy, Primy a Barrandova, protoÅ¾e jsem
+      zjistil, Å¾e u mnoha "normÃ¡lnÃ­ch" serverÅ¯ toto nastavenÃ­ pÅ™ekÃ¡Å¾Ã­ ve
+      stahovÃ¡nÃ­ videa. DoporuÄuji smazat konfiguraÄnÃ­ soubor a nechat YTD
+      vytvoÅ™it novÃ½, aby tuto zmÄ›nu pÅ™evzal (jinak si ponechÃ¡ nastavenÃ­
+      pÅ¯vodnÃ­).
 
 
 
   v0.97:
 
     * CeskaTelevize.cz: 
-      - Vrací se kód z verze 0.94 - tzn. funguje jen první video na stránce, 
-        ale funguje spolehlivì.
-      - Nìkterá videa nešla stáhnout, pokud mìla v popisku neèekané kombinace
-        znakù.
+      - VracÃ­ se kÃ³d z verze 0.94 - tzn. funguje jen prvnÃ­ video na strÃ¡nce, 
+        ale funguje spolehlivÄ›.
+      - NÄ›kterÃ¡ videa neÅ¡la stÃ¡hnout, pokud mÄ›la v popisku neÄekanÃ© kombinace
+        znakÅ¯.
 
-    * Free.Zoznam.sk: Podpora pro videa ve formátu MP4.
+    * Free.Zoznam.sk: Podpora pro videa ve formÃ¡tu MP4.
 
-    * iPrima.cz: Uvolnìn formát adres, take je rozpoznáváno víc videí.
+    * iPrima.cz: UvolnÄ›n formÃ¡t adres, takÅ¾e je rozpoznÃ¡vÃ¡no vÃ­c videÃ­.
 
-    * KeezMovies.com: Opìt funkèní.
+    * KeezMovies.com: OpÄ›t funkÄnÃ­.
 
     * RedTube.com: Podpora pro HQ i LQ videa.
 
-    * TV7.cz: Opìt funkèní.
+    * TV7.cz: OpÄ›t funkÄnÃ­.
 
-    * TVcom.cz: Uvolnìn formát adres, take je rozpoznáváno víc videí.
+    * TVcom.cz: UvolnÄ›n formÃ¡t adres, takÅ¾e je rozpoznÃ¡vÃ¡no vÃ­c videÃ­.
 
-    * XHamster.com: Podpora pro HQ i LQ videa (pøed 0.96 šly jenom LQ, v 0.96
-      jenom HQ, teï jde oboje; moná jsou i nìkteré další reimy, pokud ano,
+    * XHamster.com: Podpora pro HQ i LQ videa (pÅ™ed 0.96 Å¡ly jenom LQ, v 0.96
+      jenom HQ, teÄ jde oboje; moÅ¾nÃ¡ jsou i nÄ›kterÃ© dalÅ¡Ã­ reÅ¾imy, pokud ano,
       tak nejdou).
 
-    * CLI: Místo toho, aby se zobrazovalo skuteèné URL videa jako dosud, se
-      zobrazuje pøímo pøíkaz (WGET, RTMPDUMP, MSDL), kterı dokáe video
-      stáhnout. Hodí se to hlavnì pro ladìní RTMP stahování.
+    * CLI: MÃ­sto toho, aby se zobrazovalo skuteÄnÃ© URL videa jako dosud, se
+      zobrazuje pÅ™Ã­mo pÅ™Ã­kaz (WGET, RTMPDUMP, MSDL), kterÃ½ dokÃ¡Å¾e video
+      stÃ¡hnout. HodÃ­ se to hlavnÄ› pro ladÄ›nÃ­ RTMP stahovÃ¡nÃ­.
 
 
 
   v0.96:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - 4TV.cz
       - VideoBB.com
 
     * CeskaTelevize.cz: 
-      - Komponenta nerespektovala nastavení Live Stream, v dùsledku toho bylo 
-        stahované video trhanìjší, ne je nezbytné.
-      - Vyèištìn název videa.
-      - Podpora pro stahování víc videí z jedné stránky na ÈT24, bohuel zatím
-        všechny pod stejnım názvem videa (take nepouívejte pøepisovací reimy
-        "pøepisovat" nebo "pøeskakovat").
+      - Komponenta nerespektovala nastavenÃ­ Live Stream, v dÅ¯sledku toho bylo 
+        stahovanÃ© video trhanÄ›jÅ¡Ã­, neÅ¾ je nezbytnÃ©.
+      - VyÄiÅ¡tÄ›n nÃ¡zev videa.
+      - Podpora pro stahovÃ¡nÃ­ vÃ­c videÃ­ z jednÃ© strÃ¡nky na ÄŒT24, bohuÅ¾el zatÃ­m
+        vÅ¡echny pod stejnÃ½m nÃ¡zvem videa (takÅ¾e nepouÅ¾Ã­vejte pÅ™episovacÃ­ reÅ¾imy
+        "pÅ™episovat" nebo "pÅ™eskakovat").
 
-    * iPrima.cz: Aktualizováno na souèasnou podobu stránek.
+    * iPrima.cz: AktualizovÃ¡no na souÄasnou podobu strÃ¡nek.
 
-    * Nova.cz: Aktualizováno na souèasnou podobu stránek.
+    * Nova.cz: AktualizovÃ¡no na souÄasnou podobu strÃ¡nek.
 
-    * XHamster.xom: Aktualizováno na souèasnou podobu stránek.
+    * XHamster.xom: AktualizovÃ¡no na souÄasnou podobu strÃ¡nek.
 
 
 
   v0.95:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - FarmarHladaZenu.sk
       - HejbejSe.tv
       - Metropol.cz
       - Osobnosti.cz
 
-    * Blip.tv: Opìt funkèní.
+    * Blip.tv: OpÄ›t funkÄnÃ­.
 
-    * CeskaTelevize.cz: ÈT24 opìt funkèní.
+    * CeskaTelevize.cz: ÄŒT24 opÄ›t funkÄnÃ­.
 
-    * iPrima.cz: Pokud k poøadu existuje stránka http://prima.stream.cz/<id>,
-      bude se stahovat v ještì vyšší kvalitì ne dosud.
+    * iPrima.cz: Pokud k poÅ™adu existuje strÃ¡nka http://prima.stream.cz/<id>,
+      bude se stahovat v jeÅ¡tÄ› vyÅ¡Å¡Ã­ kvalitÄ› neÅ¾ dosud.
 
-    * Stream.cz: Podpora videí v profilech uivatelù:
+    * Stream.cz: Podpora videÃ­ v profilech uÅ¾ivatelÅ¯:
       http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
 
-    * Všechny downloadery zaloené na RTMP protokolu mají nyní nastavení,
-      jestli se mají stahovat v reimu ivého streamu. ivı stream je vıraznì
-      pomalejší (zhruba v reálném èase), na druhou stranu je vıraznì ménì
-      náchylnı na sladìní serveru a klienta a z vìtší èásti zabraòuje rozpadání
-      obrazu èi zvuku èi pøeskakování tam a zpìt. Ve vıchozím stavu je pro
-      všechny downloadery zapnutı, vypnout ho mùete v grafické konfiguraci
+    * VÅ¡echny downloadery zaloÅ¾enÃ© na RTMP protokolu majÃ­ nynÃ­ nastavenÃ­,
+      jestli se majÃ­ stahovat v reÅ¾imu Å¾ivÃ©ho streamu. Å½ivÃ½ stream je vÃ½raznÄ›
+      pomalejÅ¡Ã­ (zhruba v reÃ¡lnÃ©m Äase), na druhou stranu je vÃ½raznÄ› mÃ©nÄ›
+      nÃ¡chylnÃ½ na sladÄ›nÃ­ serveru a klienta a z vÄ›tÅ¡Ã­ ÄÃ¡sti zabraÅˆuje rozpadÃ¡nÃ­
+      obrazu Äi zvuku Äi pÅ™eskakovÃ¡nÃ­ tam a zpÄ›t. Ve vÃ½chozÃ­m stavu je pro
+      vÅ¡echny downloadery zapnutÃ½, vypnout ho mÅ¯Å¾ete v grafickÃ© konfiguraci
       nebo v XML (viz <live_stream> v dokumentaci).
 
 
 
   v0.94:
 
-    * Nova.cz: Aktualizována RTMP verze na aktuální tvar. Nutnou podmínkou
-      pro fungování je znalost tajného hesla, které server pouívá pro
-      autentizaci. Obdobnì jako u Barrandova se nemohu vyjadøovat k tomu,
-      jak toto heslo získat. Pokud se vám ho podaøí najít, nezapomeòte ho
-      vloit do konfigurace Novy (v grafickém prostøedí je na to kolonka,
-      umístìní v XML souboru je uvedeno v dokumentaci).
+    * Nova.cz: AktualizovÃ¡na RTMP verze na aktuÃ¡lnÃ­ tvar. Nutnou podmÃ­nkou
+      pro fungovÃ¡nÃ­ je znalost tajnÃ©ho hesla, kterÃ© server pouÅ¾Ã­vÃ¡ pro
+      autentizaci. ObdobnÄ› jako u Barrandova se nemohu vyjadÅ™ovat k tomu,
+      jak toto heslo zÃ­skat. Pokud se vÃ¡m ho podaÅ™Ã­ najÃ­t, nezapomeÅˆte ho
+      vloÅ¾it do konfigurace Novy (v grafickÃ©m prostÅ™edÃ­ je na to kolonka,
+      umÃ­stÄ›nÃ­ v XML souboru je uvedeno v dokumentaci).
 
-    * Experimentálnì bylo pro Novu, Primu a Show Jana Kraise zapnuto stahování
-      v reimu "Live". Stahování sice pobìí mnohem pomaleji (zhruba rychlostí
-      pøehrávání), ale s trochou štìstí by to mohlo odstranit "pøeskakování"
-      videa, které se v posledních tıdnech projevuje. Prosím, vyzkoušejte to
-      a dejte mi vìdìt, jak to dopadlo - pokud stahování zaène fungovat podle
-      oèekávání, udìlám pro všechny servery bìící na RTMP uivatelsky dostupnı
-      parametr, kterım se bude dát ivı stream zapnout nebo vypnout. Díky.
+    * ExperimentÃ¡lnÄ› bylo pro Novu, Primu a Show Jana Kraise zapnuto stahovÃ¡nÃ­
+      v reÅ¾imu "Live". StahovÃ¡nÃ­ sice pobÄ›Å¾Ã­ mnohem pomaleji (zhruba rychlostÃ­
+      pÅ™ehrÃ¡vÃ¡nÃ­), ale s trochou Å¡tÄ›stÃ­ by to mohlo odstranit "pÅ™eskakovÃ¡nÃ­"
+      videa, kterÃ© se v poslednÃ­ch tÃ½dnech projevuje. ProsÃ­m, vyzkouÅ¡ejte to
+      a dejte mi vÄ›dÄ›t, jak to dopadlo - pokud stahovÃ¡nÃ­ zaÄne fungovat podle
+      oÄekÃ¡vÃ¡nÃ­, udÄ›lÃ¡m pro vÅ¡echny servery bÄ›Å¾Ã­cÃ­ na RTMP uÅ¾ivatelsky dostupnÃ½
+      parametr, kterÃ½m se bude dÃ¡t Å¾ivÃ½ stream zapnout nebo vypnout. DÃ­ky.
 
-    * Aktualizována knihovna RTMPDUMP_DLL na verzi z 30.9.2011 (GIT hash
+    * AktualizovÃ¡na knihovna RTMPDUMP_DLL na verzi z 30.9.2011 (GIT hash
       60218d0af0f4bd683ecdebe49986f188820cf8ce).
 
 
 
   v0.93:
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - 8teenXXX.com (porno)
       - Huste.sk
       - MamaOzenMa.sk
@@ -586,48 +630,48 @@ CHANGELOG
       - Video.Google.com
 
     * EuroGamer.cz:
-      - Podpora pro stahování titulkù a konverzi do .srt.
+      - Podpora pro stahovÃ¡nÃ­ titulkÅ¯ a konverzi do .srt.
 
     * iDnes.cz:
-      - Nestahovalo se napø. http://zpravy.idnes.cz/drabova-radiace-v-podoli-je-zvysena-tisickrat-zdroj-tam-muze-byt-roky-12b-/domaci.aspx?c=A110929_111532_domaci_jj
+      - Nestahovalo se napÅ™. http://zpravy.idnes.cz/drabova-radiace-v-podoli-je-zvysena-tisickrat-zdroj-tam-muze-byt-roky-12b-/domaci.aspx?c=A110929_111532_domaci_jj
     
     * iPrima.cz:
-      - U videí hostovanıch na Stream.cz, která ale nemají na Stream.cz
-        vlastní stránku, se stahovala vıchozí verze videa, i kdy byla k
-        dispozici kvalitnìjší.
-      - Podpora pro *archívy* Show Jana Krause (zaloené na RTMP protokolu).
-        Nelze vybrat konkrétní díl, stahují se postupnì všechny.
-      - Pro videa hostovaná na Livebox.cz (vèetnì Show Jana Krause) ètìte
-        stránku podpory.
+      - U videÃ­ hostovanÃ½ch na Stream.cz, kterÃ¡ ale nemajÃ­ na Stream.cz
+        vlastnÃ­ strÃ¡nku, se stahovala vÃ½chozÃ­ verze videa, i kdyÅ¾ byla k
+        dispozici kvalitnÄ›jÅ¡Ã­.
+      - Podpora pro *archÃ­vy* Show Jana Krause (zaloÅ¾enÃ© na RTMP protokolu).
+        Nelze vybrat konkrÃ©tnÃ­ dÃ­l, stahujÃ­ se postupnÄ› vÅ¡echny.
+      - Pro videa hostovanÃ¡ na Livebox.cz (vÄetnÄ› Show Jana Krause) ÄtÄ›te
+        strÃ¡nku podpory.
 
     * Markiza.sk:
-      - Vylepšeno pojmenovávání videí (napø. http://video.markiza.sk/archiv-tv-markiza/bez-servitky/68688).
-        Svım zpùsobem jde o zavedení nové chyby, ne o opravu - pùvodní názvy
-        byly správné, jak je zná systém Markízy, jenom byly nevhodné pro lidi.
+      - VylepÅ¡eno pojmenovÃ¡vÃ¡nÃ­ videÃ­ (napÅ™. http://video.markiza.sk/archiv-tv-markiza/bez-servitky/68688).
+        SvÃ½m zpÅ¯sobem jde o zavedenÃ­ novÃ© chyby, ne o opravu - pÅ¯vodnÃ­ nÃ¡zvy
+        byly sprÃ¡vnÃ©, jak je znÃ¡ systÃ©m MarkÃ­zy, jenom byly nevhodnÃ© pro lidi.
 
-    * GUI: Experimentální oprava na problém, e chyby vzniklé ve stahovacích
-      vláknech nebyly pøeloeny a zobrazovaly se anglicky.
+    * GUI: ExperimentÃ¡lnÃ­ oprava na problÃ©m, Å¾e chyby vzniklÃ© ve stahovacÃ­ch
+      vlÃ¡knech nebyly pÅ™eloÅ¾eny a zobrazovaly se anglicky.
 
-    * GUI: Opravena chyba EListError pøi pokusu o otevøení adresáøe videa,
-      pokud nebylo ádné video vybráno.
+    * GUI: Opravena chyba EListError pÅ™i pokusu o otevÅ™enÃ­ adresÃ¡Å™e videa,
+      pokud nebylo Å¾Ã¡dnÃ© video vybrÃ¡no.
 
-    * GUI: Opraveno nefunkèní pøehrávání videa, otevøení adresáøe a nìkteré
-      další funkce, pokud bylo zvoleno stahování do nìjakého konkrétního 
-      adresáøe (ve vıchozím nastavení "stahovat do aktuálního pracovního
-      adresáøe" to fungovalo i døíve).
+    * GUI: Opraveno nefunkÄnÃ­ pÅ™ehrÃ¡vÃ¡nÃ­ videa, otevÅ™enÃ­ adresÃ¡Å™e a nÄ›kterÃ©
+      dalÅ¡Ã­ funkce, pokud bylo zvoleno stahovÃ¡nÃ­ do nÄ›jakÃ©ho konkrÃ©tnÃ­ho 
+      adresÃ¡Å™e (ve vÃ½chozÃ­m nastavenÃ­ "stahovat do aktuÃ¡lnÃ­ho pracovnÃ­ho
+      adresÃ¡Å™e" to fungovalo i dÅ™Ã­ve).
 
 
   
   v0.92:
   
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
       - EuroGamer.cz
       - ILikeBike.cz
       - R1ZAK.cz
-        - Pozor, nelze vybrat poøad, stahují se vdy všechny, které na zvolené
-          stránce jsou.
+        - Pozor, nelze vybrat poÅ™ad, stahujÃ­ se vÅ¾dy vÅ¡echny, kterÃ© na zvolenÃ©
+          strÃ¡nce jsou.
 
-    * Poskytovatelé aktualizovaní na souèasnı tvar stránek:
+    * PoskytovatelÃ© aktualizovanÃ­ na souÄasnÃ½ tvar strÃ¡nek:
       - CSmaTalent.cz, CSmaTalent.sk
       - Facebook.com
       - iDnes.cz
@@ -635,50 +679,50 @@ CHANGELOG
       - Music.Stream.cz
       - TN.Nova.cz
 
-    * Hasici150.tv: Momentálnì jsou nefunkèní, protoe nejsem schopen najít
-      jediné video, které by šlo pøehrát (i normálním zpùsobem v prohlíeèi,
+    * Hasici150.tv: MomentÃ¡lnÄ› jsou nefunkÄnÃ­, protoÅ¾e nejsem schopen najÃ­t
+      jedinÃ© video, kterÃ© by Å¡lo pÅ™ehrÃ¡t (i normÃ¡lnÃ­m zpÅ¯sobem v prohlÃ­Å¾eÄi,
       ne jen v YTD).
 
-    * iPrima.cz: Podpora pro nová videa. Stará videa na Streamu fungovala 
-      i døíve a fungují i teï.
+    * iPrima.cz: Podpora pro novÃ¡ videa. StarÃ¡ videa na Streamu fungovala 
+      i dÅ™Ã­ve a fungujÃ­ i teÄ.
 
-      Zajímavá informace: Show Jana Krause zjevnì nìkdy v uplynulıch mìsících
-      pøešla na nového provozovatele, take lze nyní v YTD stahovat. Buï 
-      všechny díly najednou, pokud do YTD vloíte adresu http://www.iprima.cz/showjanakrause
-      (buï pomocí funkce "Vloit URL z HTML stránky", nebo pøi zapnuté volbì
-      "Automaticky pouívat HTML parser" i bìnım zpùsobem.
+      ZajÃ­mavÃ¡ informace: Show Jana Krause zjevnÄ› nÄ›kdy v uplynulÃ½ch mÄ›sÃ­cÃ­ch
+      pÅ™eÅ¡la na novÃ©ho provozovatele, takÅ¾e lze nynÃ­ v YTD stahovat. BuÄ 
+      vÅ¡echny dÃ­ly najednou, pokud do YTD vloÅ¾Ã­te adresu http://www.iprima.cz/showjanakrause
+      (buÄ pomocÃ­ funkce "VloÅ¾it URL z HTML strÃ¡nky", nebo pÅ™i zapnutÃ© volbÄ›
+      "Automaticky pouÅ¾Ã­vat HTML parser" i bÄ›Å¾nÃ½m zpÅ¯sobem.
 
-    * Particka.Markiza.sk: Podpora pro videa tvoøená nìkolika èástmi.
+    * Particka.Markiza.sk: Podpora pro videa tvoÅ™enÃ¡ nÄ›kolika ÄÃ¡stmi.
 
     * VideaCesky.cz: Podpora pro titulky u http://www.videacesky.cz/reklamy-reklamni-spot-video/super-heineken
-      Zlepšena podpora pro videa pøímo hostovaná na serveru videacesky.cz.
-      Zlepšena podpora pro stránky, na kterıch je flashová reklama.
+      ZlepÅ¡ena podpora pro videa pÅ™Ã­mo hostovanÃ¡ na serveru videacesky.cz.
+      ZlepÅ¡ena podpora pro strÃ¡nky, na kterÃ½ch je flashovÃ¡ reklama.
 
-    * U vnoøenıch objektù (napø. VideaCesky.cz) se zobrazuje URL skuteèného
-      obsahu, ne URL vnoøeného objektu.
+    * U vnoÅ™enÃ½ch objektÅ¯ (napÅ™. VideaCesky.cz) se zobrazuje URL skuteÄnÃ©ho
+      obsahu, ne URL vnoÅ™enÃ©ho objektu.
 
-    * Zmìnìno vıchozí nastavení pro stahování titulkù na "ano", aby bylo v
-      souladu s dokumentací i poadovanım chováním.
+    * ZmÄ›nÄ›no vÃ½chozÃ­ nastavenÃ­ pro stahovÃ¡nÃ­ titulkÅ¯ na "ano", aby bylo v
+      souladu s dokumentacÃ­ i poÅ¾adovanÃ½m chovÃ¡nÃ­m.
 
-    * Ke právì stahovanım souborùm se volitelnì pøidává pøípona .part. Po
-      skonèení stahování se soubor pøejmenuje na svùj definitivní název (bez
-      .part). Standardnì je funkce vypnutá, protoe má vìtší nároky na práva
-      ne standardní chování, mùete ji ale zapnout v Nastavení na stránce 
-      Stahování.
+    * Ke prÃ¡vÄ› stahovanÃ½m souborÅ¯m se volitelnÄ› pÅ™idÃ¡vÃ¡ pÅ™Ã­pona .part. Po
+      skonÄenÃ­ stahovÃ¡nÃ­ se soubor pÅ™ejmenuje na svÅ¯j definitivnÃ­ nÃ¡zev (bez
+      .part). StandardnÄ› je funkce vypnutÃ¡, protoÅ¾e mÃ¡ vÄ›tÅ¡Ã­ nÃ¡roky na prÃ¡va
+      neÅ¾ standardnÃ­ chovÃ¡nÃ­, mÅ¯Å¾ete ji ale zapnout v NastavenÃ­ na strÃ¡nce 
+      StahovÃ¡nÃ­.
 
-    * V Nastavení na stránce Stahování lze dále zapnout monost, aby se média
-      ukládala do podadresáøù podle názvu poskytovatele (média z Novy do
-      podadresáøe Nova.cz, média z Primy do iPrima.cz atd.).
+    * V NastavenÃ­ na strÃ¡nce StahovÃ¡nÃ­ lze dÃ¡le zapnout moÅ¾nost, aby se mÃ©dia
+      uklÃ¡dala do podadresÃ¡Å™Å¯ podle nÃ¡zvu poskytovatele (mÃ©dia z Novy do
+      podadresÃ¡Å™e Nova.cz, mÃ©dia z Primy do iPrima.cz atd.).
 
-    * Rùzné úpravy v kódu za úèelem lepší udrovatelnosti.
+    * RÅ¯znÃ© Ãºpravy v kÃ³du za ÃºÄelem lepÅ¡Ã­ udrÅ¾ovatelnosti.
 
 
 
   v0.91:
 
-    * Novı poskytovatel: HudebniVideoKlipy.cz.
+    * NovÃ½ poskytovatel: HudebniVideoKlipy.cz.
 
-    * Poskytovatelé aktualizovaní na souèasnı tvar stránek:
+    * PoskytovatelÃ© aktualizovanÃ­ na souÄasnÃ½ tvar strÃ¡nek:
       - CestyKSobe.cz
       - LiveLeak.com
       - Muvi.cz
@@ -687,864 +731,864 @@ CHANGELOG
       - Tube8.com
       - Tyzden.sk
 
-    * Markiza.sk: Podpora pro projekt Partièka.Markíza.sk.
+    * Markiza.sk: Podpora pro projekt PartiÄka.MarkÃ­za.sk.
 
-    * Stream.cz: Aktualizováno na souèasnı stav. Podpora pro stahování pøímo
+    * Stream.cz: AktualizovÃ¡no na souÄasnÃ½ stav. Podpora pro stahovÃ¡nÃ­ pÅ™Ã­mo
       z CDN cache.
 
-    * TVNoe.tbsystem.cz: Pøidána podpora pro chybnì zakódovaná XML.
+    * TVNoe.tbsystem.cz: PÅ™idÃ¡na podpora pro chybnÄ› zakÃ³dovanÃ¡ XML.
 
-    * Vimeo.com: Natvrdo vyadováno HD video.
+    * Vimeo.com: Natvrdo vyÅ¾adovÃ¡no HD video.
 
-    * YouTube.com: Podpora pro stahování videí uloenıch jako RTMP streamy.
+    * YouTube.com: Podpora pro stahovÃ¡nÃ­ videÃ­ uloÅ¾enÃ½ch jako RTMP streamy.
 
-      Pøepracován zpùsob hledání nejlepšího video formátu tak, e se video
-      ve formátu .webm stáhne i v pøípadì, e je tento formát zakázanı, pokud
-      není ádnı jinı formát k dispozici.
+      PÅ™epracovÃ¡n zpÅ¯sob hledÃ¡nÃ­ nejlepÅ¡Ã­ho video formÃ¡tu tak, Å¾e se video
+      ve formÃ¡tu .webm stÃ¡hne i v pÅ™Ã­padÄ›, Å¾e je tento formÃ¡t zakÃ¡zanÃ½, pokud
+      nenÃ­ Å¾Ã¡dnÃ½ jinÃ½ formÃ¡t k dispozici.
 
-      Opravena podpora pro uivatelské stránky (napø. http://www.youtube.com/user/bemylovepenguin).
-      Momentálnì si nejsem jistı, jestli se stahují všechna videa nebo jen
-      posledních 25 - potøeboval bych vzorovou stránku, která má videí øeknìme
-      padesát.
+      Opravena podpora pro uÅ¾ivatelskÃ© strÃ¡nky (napÅ™. http://www.youtube.com/user/bemylovepenguin).
+      MomentÃ¡lnÄ› si nejsem jistÃ½, jestli se stahujÃ­ vÅ¡echna videa nebo jen
+      poslednÃ­ch 25 - potÅ™eboval bych vzorovou strÃ¡nku, kterÃ¡ mÃ¡ videÃ­ Å™eknÄ›me
+      padesÃ¡t.
 
-    * Odstranìna zavádìjící chybová zpráva "Stahování tohoto obsahu není
-      podporováno." v situacích, kdy stahování podporováno je, ale z nìjakého
-      dùvodu se ho nepodaøilo spustit.
+    * OdstranÄ›na zavÃ¡dÄ›jÃ­cÃ­ chybovÃ¡ zprÃ¡va "StahovÃ¡nÃ­ tohoto obsahu nenÃ­
+      podporovÃ¡no." v situacÃ­ch, kdy stahovÃ¡nÃ­ podporovÃ¡no je, ale z nÄ›jakÃ©ho
+      dÅ¯vodu se ho nepodaÅ™ilo spustit.
 
-    * Chyby pøi downloadech RTMP streamù dostaly podrobnìjší chybová hlášení
-      (vypreparovaná z logu RTMPDUMPu).
+    * Chyby pÅ™i downloadech RTMP streamÅ¯ dostaly podrobnÄ›jÅ¡Ã­ chybovÃ¡ hlÃ¡Å¡enÃ­
+      (vypreparovanÃ¡ z logu RTMPDUMPu).
 
-    * GUI: Pozmìnìno spouštìní grafické verze YTD ve standardním reimu (bez
-      parametru --gui): chování z verze 0.87, kdy se spustí nová kopie YTD
-      a stará se ukonèí*) se nyní provádí jen pøi spouštìní programu z konzole,
-      pøi spuštìní z grafickıch aplikací zùstává spuštìná jen pùvodní instance.
-      (Viditelnì by to nemìlo nic udìlat, ale mohlo by to pomoci paranoidním
-      bezpeènostním programùm).
+    * GUI: PozmÄ›nÄ›no spouÅ¡tÄ›nÃ­ grafickÃ© verze YTD ve standardnÃ­m reÅ¾imu (bez
+      parametru --gui): chovÃ¡nÃ­ z verze 0.87, kdy se spustÃ­ novÃ¡ kopie YTD
+      a starÃ¡ se ukonÄÃ­*) se nynÃ­ provÃ¡dÃ­ jen pÅ™i spouÅ¡tÄ›nÃ­ programu z konzole,
+      pÅ™i spuÅ¡tÄ›nÃ­ z grafickÃ½ch aplikacÃ­ zÅ¯stÃ¡vÃ¡ spuÅ¡tÄ›nÃ¡ jen pÅ¯vodnÃ­ instance.
+      (ViditelnÄ› by to nemÄ›lo nic udÄ›lat, ale mohlo by to pomoci paranoidnÃ­m
+      bezpeÄnostnÃ­m programÅ¯m).
 
-      *) Tato operace se provádí proto, aby se grafická verze YTD chovala 
-         podobnì jako normální GUI aplikace a ne jako aplikace konzolová,
-         která si konzoli drí a do svého ukonèení.
+      *) Tato operace se provÃ¡dÃ­ proto, aby se grafickÃ¡ verze YTD chovala 
+         podobnÄ› jako normÃ¡lnÃ­ GUI aplikace a ne jako aplikace konzolovÃ¡,
+         kterÃ¡ si konzoli drÅ¾Ã­ aÅ¾ do svÃ©ho ukonÄenÃ­.
 
-    * GUI: Opraveny nefunkèní horké klávesy v podøízenıch formuláøích (napø.
-      CTRL+V ve formuláøi nastavení nenaèetlo obsah clipboardu do vybraného
-      editaèního pole, ale spustilo stahování obsahu clipboardu v hlavním
-      formuláøi).
+    * GUI: Opraveny nefunkÄnÃ­ horkÃ© klÃ¡vesy v podÅ™Ã­zenÃ½ch formulÃ¡Å™Ã­ch (napÅ™.
+      CTRL+V ve formulÃ¡Å™i nastavenÃ­ nenaÄetlo obsah clipboardu do vybranÃ©ho
+      editaÄnÃ­ho pole, ale spustilo stahovÃ¡nÃ­ obsahu clipboardu v hlavnÃ­m
+      formulÃ¡Å™i).
 
 
 
   v0.90:
 
-    * YouTube.com: YouTube zmìnilo pøehrávaè.
+    * YouTube.com: YouTube zmÄ›nilo pÅ™ehrÃ¡vaÄ.
 
 
 
   v0.89:
 
-    * Odstranìno zapomenuté podrobné logování RTMP streamù. Promate si prosím
-      adresáø pro doèasné soubory.
+    * OdstranÄ›no zapomenutÃ© podrobnÃ© logovÃ¡nÃ­ RTMP streamÅ¯. PromaÅ¾te si prosÃ­m
+      adresÃ¡Å™ pro doÄasnÃ© soubory.
 
 
 
   v0.88:
 
-    * Nova.cz: Podpora pro novı experimentální pøehrávaè na bázi Silverlight.
-      Podpora pro pùvodní pøehrávaè zùstala (snad) zachována, protoe rùzná
-      videa pouívají rùzné pøehrávaèe.
+    * Nova.cz: Podpora pro novÃ½ experimentÃ¡lnÃ­ pÅ™ehrÃ¡vaÄ na bÃ¡zi Silverlight.
+      Podpora pro pÅ¯vodnÃ­ pÅ™ehrÃ¡vaÄ zÅ¯stala (snad) zachovÃ¡na, protoÅ¾e rÅ¯znÃ¡
+      videa pouÅ¾Ã­vajÃ­ rÅ¯znÃ© pÅ™ehrÃ¡vaÄe.
 
-    * YouTube.com: V nastavení stahovaèe lze zakázat formát (kontejner) .webm
-      (novı vıchozí kontejner pro YouTube videa).
+    * YouTube.com: V nastavenÃ­ stahovaÄe lze zakÃ¡zat formÃ¡t (kontejner) .webm
+      (novÃ½ vÃ½chozÃ­ kontejner pro YouTube videa).
 
 
 
   v0.87:
 
-    * Barrandov.tv: Podpora pro novı pøehrávací program. Aby to fungovalo,
-      musíte si nìkde zjistit tzv. Secure Token, kterı Barrandov vyaduje,
+    * Barrandov.tv: Podpora pro novÃ½ pÅ™ehrÃ¡vacÃ­ program. Aby to fungovalo,
+      musÃ­te si nÄ›kde zjistit tzv. Secure Token, kterÃ½ Barrandov vyÅ¾aduje,
       a zadat ho do konfigurace programu (viz popis konfigurace v dokumentaci
-      nebo nové grafické rozhraní ke konfiguraci níe). Neptejte se mì, kde
-      a jak Secure Token získat, z právních dùvodù nebudu na tyto dotazy
-      odpovídat (podle mì by to sice autorskému zákonu neodporovalo, ale nemám
-      chu riskovat pøípadnı soudní spor).
+      nebo novÃ© grafickÃ© rozhranÃ­ ke konfiguraci nÃ­Å¾e). Neptejte se mÄ›, kde
+      a jak Secure Token zÃ­skat, z prÃ¡vnÃ­ch dÅ¯vodÅ¯ nebudu na tyto dotazy
+      odpovÃ­dat (podle mÄ› by to sice autorskÃ©mu zÃ¡konu neodporovalo, ale nemÃ¡m
+      chuÅ¥ riskovat pÅ™Ã­padnÃ½ soudnÃ­ spor).
 
-      Dìkuji Killermanovi za zjištìní potøebnıch poarametrù.
+      DÄ›kuji Killermanovi za zjiÅ¡tÄ›nÃ­ potÅ™ebnÃ½ch poarametrÅ¯.
 
-    * Cas.sk: Zprovoznìno nìkolik dalších typù vkládaného videa.
+    * Cas.sk: ZprovoznÄ›no nÄ›kolik dalÅ¡Ã­ch typÅ¯ vklÃ¡danÃ©ho videa.
 
-    * CeskaTelevize.cz: K názvu souboru je pøipojena správná pøípona.
+    * CeskaTelevize.cz: K nÃ¡zvu souboru je pÅ™ipojena sprÃ¡vnÃ¡ pÅ™Ã­pona.
 
-    * DrsnySvet.cz: Podpora pro videa hostovaná pøímo na serveru.
+    * DrsnySvet.cz: Podpora pro videa hostovanÃ¡ pÅ™Ã­mo na serveru.
 
-    * iPrima.cz: Opìt bìí. Nejsem si jistı tím, jestli se stahuje 
-      nejkvalitnìjší dostupná verze - pokud zjistíte, e ne, napište mi prosím,
-      jak ji v prohlíeèi vyvolat.
+    * iPrima.cz: OpÄ›t bÄ›Å¾Ã­. Nejsem si jistÃ½ tÃ­m, jestli se stahuje 
+      nejkvalitnÄ›jÅ¡Ã­ dostupnÃ¡ verze - pokud zjistÃ­te, Å¾e ne, napiÅ¡te mi prosÃ­m,
+      jak ji v prohlÃ­Å¾eÄi vyvolat.
 
-    * SportStream.cz: Pøedìláno na podporu SportStream.Tiscali.cz.
+    * SportStream.cz: PÅ™edÄ›lÃ¡no na podporu SportStream.Tiscali.cz.
 
-    * Novı distribuèní archív: Dosud byl YouTube Downloader instalován v ZIP
-      archívu s tím, e si ho uivatel rozbalí sám podle potøeby. To se bohuel
-      ukázalo jako neudritelné vzhledem k mnoství lidí, kteøí rozbalili jen
-      samotnı spouštìcí soubor (bez podpùrnıch knihoven) a pak se divili, proè
-      jim nefunguje stahování z Èeské televize. Proto pøecházím na novı systém,
-      kdy se stahuje soubor .exe, kterı uivateli nabídne instalaci.
+    * NovÃ½ distribuÄnÃ­ archÃ­v: Dosud byl YouTube Downloader instalovÃ¡n v ZIP
+      archÃ­vu s tÃ­m, Å¾e si ho uÅ¾ivatel rozbalÃ­ sÃ¡m podle potÅ™eby. To se bohuÅ¾el
+      ukÃ¡zalo jako neudrÅ¾itelnÃ© vzhledem k mnoÅ¾stvÃ­ lidÃ­, kteÅ™Ã­ rozbalili jen
+      samotnÃ½ spouÅ¡tÄ›cÃ­ soubor (bez podpÅ¯rnÃ½ch knihoven) a pak se divili, proÄ
+      jim nefunguje stahovÃ¡nÃ­ z ÄŒeskÃ© televize. Proto pÅ™echÃ¡zÃ­m na novÃ½ systÃ©m,
+      kdy se stahuje soubor .exe, kterÃ½ uÅ¾ivateli nabÃ­dne instalaci.
 
-      Pro uivatele, kteøí neradi aktualizují: Distribuèní soubor je obyèejnı
-      samorozbalovací archív ve formátu 7-zip, kterı mùete 7-zipem normálnì
-      rozbalit. Pøípadnì mùete spustit instalaci, stejnì jenom zkopíruje
-      soubory do zvoleného adresáøe, volitelnì zaloí zástupce, a spustí YTD.
-      Rozhodnì neprovádí ádné zápisy mimo zvolenı adresáø (kromì volitelnıch
-      zástupcù na Ploše a ve Start menu, pochopitelnì) ani v registrech.
+      Pro uÅ¾ivatele, kteÅ™Ã­ neradi aktualizujÃ­: DistribuÄnÃ­ soubor je obyÄejnÃ½
+      samorozbalovacÃ­ archÃ­v ve formÃ¡tu 7-zip, kterÃ½ mÅ¯Å¾ete 7-zipem normÃ¡lnÄ›
+      rozbalit. PÅ™Ã­padnÄ› mÅ¯Å¾ete spustit instalaci, stejnÄ› jenom zkopÃ­ruje
+      soubory do zvolenÃ©ho adresÃ¡Å™e, volitelnÄ› zaloÅ¾Ã­ zÃ¡stupce, a spustÃ­ YTD.
+      RozhodnÄ› neprovÃ¡dÃ­ Å¾Ã¡dnÃ© zÃ¡pisy mimo zvolenÃ½ adresÃ¡Å™ (kromÄ› volitelnÃ½ch
+      zÃ¡stupcÅ¯ na PloÅ¡e a ve Start menu, pochopitelnÄ›) ani v registrech.
 
-      Distribuèní archív umoòuje spustit YTD i bez instalace. Buï stisknutím
-      pøíslušného tlaèítka, nebo pøímo spuštìním distribuèního archívu s
-      parametrem --gui, nebo pomocí bìnıch parametrù (pak se spustí command-
-      line verze a provede obvyklé operace).
+      DistribuÄnÃ­ archÃ­v umoÅ¾Åˆuje spustit YTD i bez instalace. BuÄ stisknutÃ­m
+      pÅ™Ã­sluÅ¡nÃ©ho tlaÄÃ­tka, nebo pÅ™Ã­mo spuÅ¡tÄ›nÃ­m distribuÄnÃ­ho archÃ­vu s
+      parametrem --gui, nebo pomocÃ­ bÄ›Å¾nÃ½ch parametrÅ¯ (pak se spustÃ­ command-
+      line verze a provede obvyklÃ© operace).
 
-      Podrobnìji viz heslo "Distribuèní archív" v dokumentaci.
+      PodrobnÄ›ji viz heslo "DistribuÄnÃ­ archÃ­v" v dokumentaci.
 
-    * Novı distribuèní model také dovoluje automatickou aktualizaci programu.
-      V grafickém prostøedí byly všechny nabídky na stáhnutí aktuální verze 
-      doplnìny tak, aby mìl uivatel na vıbìr stáhnutí (jako dosud) i pøímou
-      aktualizaci. Upozoròuji však, e pro provedení aktualizace se musí YTD
-      restartovat a tím se pochopitelnì zastaví všechny bìící pøenosy.
+    * NovÃ½ distribuÄnÃ­ model takÃ© dovoluje automatickou aktualizaci programu.
+      V grafickÃ©m prostÅ™edÃ­ byly vÅ¡echny nabÃ­dky na stÃ¡hnutÃ­ aktuÃ¡lnÃ­ verze 
+      doplnÄ›ny tak, aby mÄ›l uÅ¾ivatel na vÃ½bÄ›r stÃ¡hnutÃ­ (jako dosud) i pÅ™Ã­mou
+      aktualizaci. UpozorÅˆuji vÅ¡ak, Å¾e pro provedenÃ­ aktualizace se musÃ­ YTD
+      restartovat a tÃ­m se pochopitelnÄ› zastavÃ­ vÅ¡echny bÄ›Å¾Ã­cÃ­ pÅ™enosy.
 
-      Pøibyla monost zaktualizovat program z pøíkazové øádky (bez zásahu
-      uivatele) pomocí parametru -u. Vısledek se vrátí jako errorlevel (viz
-      dokumentace). Pozor, vzhledem k mechanismu, kterım to probíhá, by v 
-      aktualizaèní dávce mìla po volání "ytd -u" následovat tak pùlsekundová
+      PÅ™ibyla moÅ¾nost zaktualizovat program z pÅ™Ã­kazovÃ© Å™Ã¡dky (bez zÃ¡sahu
+      uÅ¾ivatele) pomocÃ­ parametru -u. VÃ½sledek se vrÃ¡tÃ­ jako errorlevel (viz
+      dokumentace). Pozor, vzhledem k mechanismu, kterÃ½m to probÃ­hÃ¡, by v 
+      aktualizaÄnÃ­ dÃ¡vce mÄ›la po volÃ¡nÃ­ "ytd -u" nÃ¡sledovat tak pÅ¯lsekundovÃ¡
       pauza.
 
-    * GUI: Doplnìna podpora pro grafické nastavení jednotlivıch stahovaèù:
-      V nastaveních (F9) je nová záloka "Nastavení stahovaèù", ve kterıch
-      je pro kadı stahovaè, na kterém se dá nìco konfigurovat, samostatnı 
-      panel s nastaveními. Všechna nastavení šla u døíve zapisovat ruènì
-      v XML souboru konfigurace, takhle je to ale pro nìkoho pohodlnìjší.
+    * GUI: DoplnÄ›na podpora pro grafickÃ© nastavenÃ­ jednotlivÃ½ch stahovaÄÅ¯:
+      V nastavenÃ­ch (F9) je novÃ¡ zÃ¡loÅ¾ka "NastavenÃ­ stahovaÄÅ¯", ve kterÃ½ch
+      je pro kaÅ¾dÃ½ stahovaÄ, na kterÃ©m se dÃ¡ nÄ›co konfigurovat, samostatnÃ½ 
+      panel s nastavenÃ­mi. VÅ¡echna nastavenÃ­ Å¡la uÅ¾ dÅ™Ã­ve zapisovat ruÄnÄ›
+      v XML souboru konfigurace, takhle je to ale pro nÄ›koho pohodlnÄ›jÅ¡Ã­.
 
-      Pøi startu programu bez command-line parametrù se nespustí pøímo YTD,
-      ale nová kopie YTD a stará se ukonèí. To sice mírnì zpomalí start, ale
-      zato to uvolní konzoli v pøípadì, e bylo YTD spuštìno z konzolové
-      aplikace (CMD, FAR Manager apod.). Pøedchozí chování (pøímé spuštìní
-      YTD) je zachováno pro CLI verzi programu, spuštìní programu z Delphi
-      IDE a spuštìní programu s parametrem --gui.
+      PÅ™i startu programu bez command-line parametrÅ¯ se nespustÃ­ pÅ™Ã­mo YTD,
+      ale novÃ¡ kopie YTD a starÃ¡ se ukonÄÃ­. To sice mÃ­rnÄ› zpomalÃ­ start, ale
+      zato to uvolnÃ­ konzoli v pÅ™Ã­padÄ›, Å¾e bylo YTD spuÅ¡tÄ›no z konzolovÃ©
+      aplikace (CMD, FAR Manager apod.). PÅ™edchozÃ­ chovÃ¡nÃ­ (pÅ™Ã­mÃ© spuÅ¡tÄ›nÃ­
+      YTD) je zachovÃ¡no pro CLI verzi programu, spuÅ¡tÄ›nÃ­ programu z Delphi
+      IDE a spuÅ¡tÄ›nÃ­ programu s parametrem --gui.
 
-      Opravena chyba, kvùli které nešlo vytváøet zástupce na ploše ani ve
+      Opravena chyba, kvÅ¯li kterÃ© neÅ¡lo vytvÃ¡Å™et zÃ¡stupce na ploÅ¡e ani ve
       Start menu.
 
-    * Knihovna RTMPDUMP_DLL aktualizována na verzi 2.4 (sestavení ze dne 
-      20.7.2011). V této verzi by mìl bıt podporován handshake z Flashe 10,
-      tzn. mìly by zmizet chyby "HandShake: Type mismatch: client sent 6, 
+    * Knihovna RTMPDUMP_DLL aktualizovÃ¡na na verzi 2.4 (sestavenÃ­ ze dne 
+      20.7.2011). V tÃ©to verzi by mÄ›l bÃ½t podporovÃ¡n handshake z Flashe 10,
+      tzn. mÄ›ly by zmizet chyby "HandShake: Type mismatch: client sent 6, 
       server answered 9".
 
-    * Opraveno nìkolik nekompatibilit s Delphi 2009 a FreePascalem.
+    * Opraveno nÄ›kolik nekompatibilit s Delphi 2009 a FreePascalem.
 
-    * Aktualizován slovenskı pøeklad (V. Kubala).
+    * AktualizovÃ¡n slovenskÃ½ pÅ™eklad (V. Kubala).
 
 
 
   v0.86:
 
-    * CeskaTelevize.cz: Z pøedchozí verze jsem zapomnìl odstranit podrobnı 
-      log soubor (kterı snadno narùstal do velikosti nìkolikanásobnì vìtší
-      ne je velikost celého videa). Také nefungovala víceèásová videa.
+    * CeskaTelevize.cz: Z pÅ™edchozÃ­ verze jsem zapomnÄ›l odstranit podrobnÃ½ 
+      log soubor (kterÃ½ snadno narÅ¯stal do velikosti nÄ›kolikanÃ¡sobnÄ› vÄ›tÅ¡Ã­
+      neÅ¾ je velikost celÃ©ho videa). TakÃ© nefungovala vÃ­ceÄÃ¡sÅ¥ovÃ¡ videa.
 
 
 
   v0.85:
 
-    * CeskaTelevize.cz: Opìt funkèní.
+    * CeskaTelevize.cz: OpÄ›t funkÄnÃ­.
 
-    * Grafická verze programu si pamatuje svou velikost a umístìní a také
-      šíøku sloupcù.
+    * GrafickÃ¡ verze programu si pamatuje svou velikost a umÃ­stÄ›nÃ­ a takÃ©
+      Å¡Ã­Å™ku sloupcÅ¯.
 
 
 
   v0.84:
 
-    * Novı poskytovatel: Agresori.com.
+    * NovÃ½ poskytovatel: Agresori.com.
 
-    * Novı poskytovatel: FreeVideo.cz (porno).
+    * NovÃ½ poskytovatel: FreeVideo.cz (porno).
 
-    * Novı poskytovatel: G4TV.com.
+    * NovÃ½ poskytovatel: G4TV.com.
 
-    * Novı poskytovatel: iViewTube.com.
+    * NovÃ½ poskytovatel: iViewTube.com.
 
-    * Novı poskytovatel: SoundCloud.com.
+    * NovÃ½ poskytovatel: SoundCloud.com.
 
-    * Novı poskytovatel: Ted.com.
+    * NovÃ½ poskytovatel: Ted.com.
 
-    * Bomba.cz: Zprovoznìna videa s URL zakódovanou entitami.
+    * Bomba.cz: ZprovoznÄ›na videa s URL zakÃ³dovanou entitami.
 
-    * Music.Stream.cz: Opìt funkèní.
+    * Music.Stream.cz: OpÄ›t funkÄnÃ­.
 
-    * Shufuni.com: Opìt funkèní.
+    * Shufuni.com: OpÄ›t funkÄnÃ­.
 
-    * XTube.com: Opìt funkèní.
+    * XTube.com: OpÄ›t funkÄnÃ­.
 
 
 
   v0.83:
 
-    * CeskaTelevize.cz: Opravena chyba, na kterou jsem upozoròoval v minulé
+    * CeskaTelevize.cz: Opravena chyba, na kterou jsem upozorÅˆoval v minulÃ©
       verzi.
 
 
 
   v0.82:
 
-    * Novı poskytovatel: Hell.tv.
+    * NovÃ½ poskytovatel: Hell.tv.
 
-    * Novı poskytovatel: JenProMuze.cz (èásteènì porno).
+    * NovÃ½ poskytovatel: JenProMuze.cz (ÄÃ¡steÄnÄ› porno).
 
-    * Novı poskytovatel: MachoVideo.com (èásteènì porno).
+    * NovÃ½ poskytovatel: MachoVideo.com (ÄÃ¡steÄnÄ› porno).
 
-    * Novı poskytovatel: Metoo.cz.
+    * NovÃ½ poskytovatel: Metoo.cz.
 
-    * Novı poskytovatel: Muvi.cz.
+    * NovÃ½ poskytovatel: Muvi.cz.
 
-    * Novı poskytovatel: NovaMov.com.
+    * NovÃ½ poskytovatel: NovaMov.com.
 
-    * Novı poskytovatel: PornoZdarma.cz (porno).
+    * NovÃ½ poskytovatel: PornoZdarma.cz (porno).
 
-    * Novı poskytovatel: TheYNC.com (není porno, ale urèitì jen pro dospìlé).
+    * NovÃ½ poskytovatel: TheYNC.com (nenÃ­ porno, ale urÄitÄ› jen pro dospÄ›lÃ©).
 
     * CT24.cz: Podpora pro http://www.ct24.cz/regionalni/125040-v-kralupech-zrusili-jesle-rodice-s-tim-nesouhlasi/.
-      Je pravdìpodobné, e tím naopak pøestanou fungovat nìkterá dosud funkèní 
-      videa; kdy na nìjaké narazíte, tak mì prosím upozornìte a stáhnìte je
-      zatím verzí 0.81. Bohuel to nemohu vyøešit pøímo.
+      Je pravdÄ›podobnÃ©, Å¾e tÃ­m naopak pÅ™estanou fungovat nÄ›kterÃ¡ dosud funkÄnÃ­ 
+      videa; kdyÅ¾ na nÄ›jakÃ© narazÃ­te, tak mÄ› prosÃ­m upozornÄ›te a stÃ¡hnÄ›te je
+      zatÃ­m verzÃ­ 0.81. BohuÅ¾el to nemohu vyÅ™eÅ¡it pÅ™Ã­mo.
 
-    * iDnes.cz: Podpora pro videa pøímo ve stránkách, nejen na video.idnes.cz.
-      Pozor na správné escapování URL pøi stahování z pøíkazového øádku!
+    * iDnes.cz: Podpora pro videa pÅ™Ã­mo ve strÃ¡nkÃ¡ch, nejen na video.idnes.cz.
+      Pozor na sprÃ¡vnÃ© escapovÃ¡nÃ­ URL pÅ™i stahovÃ¡nÃ­ z pÅ™Ã­kazovÃ©ho Å™Ã¡dku!
 
-    * Joj.sk: Podpora pro poøady s vlastní subdoménou ("Ano, šéfe", "Nové
-      bıvanie" apod.).
+    * Joj.sk: Podpora pro poÅ™ady s vlastnÃ­ subdomÃ©nou ("Ano, Å¡Ã©fe", "NovÃ©
+      bÃ½vanie" apod.).
 
-    * PornHub.com: Aktualizováno na souèasnou podobu stránek.
+    * PornHub.com: AktualizovÃ¡no na souÄasnou podobu strÃ¡nek.
 
-    * SerialyCZ.cz: Podpora dalšího zápisu vloenıch videí.
+    * SerialyCZ.cz: Podpora dalÅ¡Ã­ho zÃ¡pisu vloÅ¾enÃ½ch videÃ­.
 
 
 
   v0.81:
 
-    * Novı poskytovatel: Bahnorama.com.
+    * NovÃ½ poskytovatel: Bahnorama.com.
 
-    * Novı poskytovatel: Cesnet.cz.
+    * NovÃ½ poskytovatel: Cesnet.cz.
 
-    * Novı poskytovatel: Clevver.com.
+    * NovÃ½ poskytovatel: Clevver.com.
 
-    * Novı poskytovatel: Dokumentarni.tv.
+    * NovÃ½ poskytovatel: Dokumentarni.tv.
 
-    * Novı poskytovatel: FreePornoZdarma.cz (porno).
+    * NovÃ½ poskytovatel: FreePornoZdarma.cz (porno).
 
-    * Novı poskytovatel: News.BBC.co.uk.
+    * NovÃ½ poskytovatel: News.BBC.co.uk.
 
-    * Novı poskytovatel: Serial-Online.cz.
+    * NovÃ½ poskytovatel: Serial-Online.cz.
 
-    * Novı poskytovatel: TVLux.sk.
+    * NovÃ½ poskytovatel: TVLux.sk.
 
-    * CeskaTelevize.cz: Podpora pro Hyde Park a další podobné stránky.
+    * CeskaTelevize.cz: Podpora pro Hyde Park a dalÅ¡Ã­ podobnÃ© strÃ¡nky.
 
-    * CestyKSobe.cz: Opravena chyba "Downloader není pøipraven".
+    * CestyKSobe.cz: Opravena chyba "Downloader nenÃ­ pÅ™ipraven".
 
-    * iPrima.cz: Stahuje se nejkvalitnìjší verze videa i v pøípadì, e server
-      preferuje ménì kvalitní verzi.
+    * iPrima.cz: Stahuje se nejkvalitnÄ›jÅ¡Ã­ verze videa i v pÅ™Ã­padÄ›, Å¾e server
+      preferuje mÃ©nÄ› kvalitnÃ­ verzi.
       
-    * Joj.sk: Po zmìnì webu opìt funguje. Otázka je, jak moc dobøe - pouívám
-      pevnì stanovenı streamovací server, kterı na pokusnıch videích fungoval,
-      ale nemusí fungovat na všech.
+    * Joj.sk: Po zmÄ›nÄ› webu opÄ›t funguje. OtÃ¡zka je, jak moc dobÅ™e - pouÅ¾Ã­vÃ¡m
+      pevnÄ› stanovenÃ½ streamovacÃ­ server, kterÃ½ na pokusnÃ½ch videÃ­ch fungoval,
+      ale nemusÃ­ fungovat na vÅ¡ech.
 
-    * Nova.cz: Pøepracováno na aktální verzi stránek.
+    * Nova.cz: PÅ™epracovÃ¡no na aktÃ¡lnÃ­ verzi strÃ¡nek.
 
-    * Music.Stream.cz: Momentálnì nefunkèní.
+    * Music.Stream.cz: MomentÃ¡lnÄ› nefunkÄnÃ­.
 
-    * VideaCesky.cz: Aktualizováno na další tvar vloeného downloaderu.
+    * VideaCesky.cz: AktualizovÃ¡no na dalÅ¡Ã­ tvar vloÅ¾enÃ©ho downloaderu.
 
     * YouTube.com: Podpora pro URL ve tvaru http://www.youtube.com/watch_popup?v=b5AWQ5aBjgE.
 
-    * Zakulisi.cz: Opraven zapomenutı testovací kód, kvùli kterému se stahovalo 
-      stále stejné video.
+    * Zakulisi.cz: Opraven zapomenutÃ½ testovacÃ­ kÃ³d, kvÅ¯li kterÃ©mu se stahovalo 
+      stÃ¡le stejnÃ© video.
 
-    * Pøeorganizována dokumentace. Seznam podporovanıch serverù byl pøesunut
-      do samostatného souboru providers.txt.
+    * PÅ™eorganizovÃ¡na dokumentace. Seznam podporovanÃ½ch serverÅ¯ byl pÅ™esunut
+      do samostatnÃ©ho souboru providers.txt.
 
-    * Opravena command-line verze, aby u videí bez známé délky zobrazovala
-      aspoò dosud pøenesená data (dosud nezobrazovala nic).
+    * Opravena command-line verze, aby u videÃ­ bez znÃ¡mÃ© dÃ©lky zobrazovala
+      aspoÅˆ dosud pÅ™enesenÃ¡ data (dosud nezobrazovala nic).
 
-    * Klávesou ENTER a/nebo dvojklikem na stáhnutı film se tento film pøehraje
-      ve vıchozím pøehrávaèi médií. (Dvojklik u fungoval døíve, ale jen ve VCL
+    * KlÃ¡vesou ENTER a/nebo dvojklikem na stÃ¡hnutÃ½ film se tento film pÅ™ehraje
+      ve vÃ½chozÃ­m pÅ™ehrÃ¡vaÄi mÃ©diÃ­. (Dvojklik uÅ¾ fungoval dÅ™Ã­ve, ale jen ve VCL
       verzi programu.)
 
-    * Klávesou CTRL+E se otevøe adresáø, do kterého se aktuálnì vybrané stáhlo.
+    * KlÃ¡vesou CTRL+E se otevÅ™e adresÃ¡Å™, do kterÃ©ho se aktuÃ¡lnÄ› vybranÃ© stÃ¡hlo.
 
-    * Pokud dojde pøi startu k chybì naèítání konfiguraèního souboru, program
-      na to upozorní a vytvoøí novı soubor.
+    * Pokud dojde pÅ™i startu k chybÄ› naÄÃ­tÃ¡nÃ­ konfiguraÄnÃ­ho souboru, program
+      na to upozornÃ­ a vytvoÅ™Ã­ novÃ½ soubor.
 
 
 
   v0.80:
 
-    * Novı poskytovatel: HardSexTube.com (porno).
+    * NovÃ½ poskytovatel: HardSexTube.com (porno).
 
-    * Novı poskytovatel: Zmozek.cz.
+    * NovÃ½ poskytovatel: Zmozek.cz.
 
-    * CeskaTelevize.cz, CT24.cz: Pøedìláno na aktuální tvar stránek. Mìla by
-      fungovat všechna videa i na všech podstránkách, snad.
+    * CeskaTelevize.cz, CT24.cz: PÅ™edÄ›lÃ¡no na aktuÃ¡lnÃ­ tvar strÃ¡nek. MÄ›la by
+      fungovat vÅ¡echna videa i na vÅ¡ech podstrÃ¡nkÃ¡ch, snad.
 
-    * XHamsher: Aktualizován na souèasnı pøehrávaè.
+    * XHamsher: AktualizovÃ¡n na souÄasnÃ½ pÅ™ehrÃ¡vaÄ.
 
-    * Opraveny chyby pøi pøekladu v Delphi 2009.
+    * Opraveny chyby pÅ™i pÅ™ekladu v Delphi 2009.
 
 
 
   v0.79:
 
-    * Novı poskytovatel: CKKlic.cz.
+    * NovÃ½ poskytovatel: CKKlic.cz.
 
-    * Novı poskytovatel: Multimedia.vse.cz.
+    * NovÃ½ poskytovatel: Multimedia.vse.cz.
 
-    * Novı poskytovatel: VKontakte.ru.
+    * NovÃ½ poskytovatel: VKontakte.ru.
 
-    * Novı poskytovatel: ZDF.de.
+    * NovÃ½ poskytovatel: ZDF.de.
 
-    * CeskaTelevize.cz: Podpora pro videa tvoøená více èástmi (napø. Sama
-      doma 29.3.2011). Nyní u by mìla bıt stahována nejkvalitnìjší verze
-      videa (nakonec nebyla chyba na serveru ale u mì - open-source model
-      zjevnì nefunguje, protoe i pøes dostupnost zdrojákù na chybu nikdo 
-      nepøišel...).
+    * CeskaTelevize.cz: Podpora pro videa tvoÅ™enÃ¡ vÃ­ce ÄÃ¡stmi (napÅ™. Sama
+      doma 29.3.2011). NynÃ­ uÅ¾ by mÄ›la bÃ½t stahovÃ¡na nejkvalitnÄ›jÅ¡Ã­ verze
+      videa (nakonec nebyla chyba na serveru ale u mÄ› - open-source model
+      zjevnÄ› nefunguje, protoÅ¾e i pÅ™es dostupnost zdrojÃ¡kÅ¯ na chybu nikdo 
+      nepÅ™iÅ¡el...).
 
     * Markiza.sk: Podpora pro doma.markiza.sk.
 
-    * SerialyCZ.cz: Podpora pro další typ vloenıch videí.
+    * SerialyCZ.cz: Podpora pro dalÅ¡Ã­ typ vloÅ¾enÃ½ch videÃ­.
 
-    * VideaCesky.cz: Podpora pro videa pøehrávaná pøes pøímé odkazy. Podpora
-      pro videa chybnì zadaná s mezerou na zaèátku. Podpora pro konverzi
-      titulkù do formátu SRT (standardnì zapnutá, lze ji vypnout nastavením
+    * VideaCesky.cz: Podpora pro videa pÅ™ehrÃ¡vanÃ¡ pÅ™es pÅ™Ã­mÃ© odkazy. Podpora
+      pro videa chybnÄ› zadanÃ¡ s mezerou na zaÄÃ¡tku. Podpora pro konverzi
+      titulkÅ¯ do formÃ¡tu SRT (standardnÄ› zapnutÃ¡, lze ji vypnout nastavenÃ­m
       convert_subtitles, viz dokumentace).
 
-    * ZkoukniTo.cz: Pøidána podpora pro embedded adresy.
+    * ZkoukniTo.cz: PÅ™idÃ¡na podpora pro embedded adresy.
 
-    * Pøepracována práce s titulky u serverù odkazujících na cizí obsah (napø.
-      VideaCesky.cz): Preferují se titulky z odkazujícího serveru, teprve
-      v pøípadì, e neexistují, se vyuije titulkù odkazovaného serveru. Dosud
+    * PÅ™epracovÃ¡na prÃ¡ce s titulky u serverÅ¯ odkazujÃ­cÃ­ch na cizÃ­ obsah (napÅ™.
+      VideaCesky.cz): PreferujÃ­ se titulky z odkazujÃ­cÃ­ho serveru, teprve
+      v pÅ™Ã­padÄ›, Å¾e neexistujÃ­, se vyuÅ¾ije titulkÅ¯ odkazovanÃ©ho serveru. Dosud
       to bylo naopak.
 
-    * Zmìna práce s podporou pro automatické pouití HTML parseru (viz verze
-      0.77) v pøípadì, e je monitorován clipboard (verze 0.71): Dosud to
-      vedlo k neoèekávanému zakládání konfiguraèního parametru, teï u ne.
+    * ZmÄ›na prÃ¡ce s podporou pro automatickÃ© pouÅ¾itÃ­ HTML parseru (viz verze
+      0.77) v pÅ™Ã­padÄ›, Å¾e je monitorovÃ¡n clipboard (verze 0.71): Dosud to
+      vedlo k neoÄekÃ¡vanÃ©mu zaklÃ¡dÃ¡nÃ­ konfiguraÄnÃ­ho parametru, teÄ uÅ¾ ne.
 
-    * Zahájeno èištìní kódu na nejnovìjší standardy.
+    * ZahÃ¡jeno ÄiÅ¡tÄ›nÃ­ kÃ³du na nejnovÄ›jÅ¡Ã­ standardy.
 
 
 
   v0.78:
 
-    * Novı poskytovatel: CNBC.com.
+    * NovÃ½ poskytovatel: CNBC.com.
 
-    * Novı poskytovatel: i-Concerts.com.
+    * NovÃ½ poskytovatel: i-Concerts.com.
 
-      - Zatím jen free verze bez playlistù a podobnì.
+      - ZatÃ­m jen free verze bez playlistÅ¯ a podobnÄ›.
 
-    * Novı poskytovatel: PracticalMethod.com.
+    * NovÃ½ poskytovatel: PracticalMethod.com.
 
-    * Novı poskytovatel: Proglas.cz.
+    * NovÃ½ poskytovatel: Proglas.cz.
 
-    * Novı poskytovatel: VideoPortal.sf.tv.
+    * NovÃ½ poskytovatel: VideoPortal.sf.tv.
 
-    * Byly aktivovány "generické" downloadery pro protokoly RTMP (RTMPE,
-      RTMPT, RTMPTE) a MMS (MMSH, RTSP). To znamená, e do YTD lze nyní vloit
-      i URL tìchto protokolù (napø. "mms://netshow.play.cz/proglas/audio_15681.wma"
+    * Byly aktivovÃ¡ny "generickÃ©" downloadery pro protokoly RTMP (RTMPE,
+      RTMPT, RTMPTE) a MMS (MMSH, RTSP). To znamenÃ¡, Å¾e do YTD lze nynÃ­ vloÅ¾it
+      i URL tÄ›chto protokolÅ¯ (napÅ™. "mms://netshow.play.cz/proglas/audio_15681.wma"
       nebo "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4")
-      a program je moná stáhne (pokud to server dovolí) - YTD se tak vlastnì
-      chová jako velmi zjednodušenı RTMPDUMP resp. MSDL (podle pouitého 
-      protokolu). Základní nevıhody tohoto pøístupu jsou dvì:
-        1) Není k dispozici "hezké" jméno videa, soubory se ukládají pod 
-           vnitøním ID poskytovatele.
-        2) Ze serverù, které vyadují další parametry kromì URL, se tímto 
-           zpùsobem stahovat nedá. Pouijte na nì pøímo RTMPDUMP nebo MSDL,
-           ty dovolují specifikovat i všechny potøebné parametry.
-      Základní vıhodou je, e je takto moné stahovat i z mnoha serverù,
-      které v YTD pøímo podporovány nejsou (napø. Proglas.cz).
+      a program je moÅ¾nÃ¡ stÃ¡hne (pokud to server dovolÃ­) - YTD se tak vlastnÄ›
+      chovÃ¡ jako velmi zjednoduÅ¡enÃ½ RTMPDUMP resp. MSDL (podle pouÅ¾itÃ©ho 
+      protokolu). ZÃ¡kladnÃ­ nevÃ½hody tohoto pÅ™Ã­stupu jsou dvÄ›:
+        1) NenÃ­ k dispozici "hezkÃ©" jmÃ©no videa, soubory se uklÃ¡dajÃ­ pod 
+           vnitÅ™nÃ­m ID poskytovatele.
+        2) Ze serverÅ¯, kterÃ© vyÅ¾adujÃ­ dalÅ¡Ã­ parametry kromÄ› URL, se tÃ­mto 
+           zpÅ¯sobem stahovat nedÃ¡. PouÅ¾ijte na nÄ› pÅ™Ã­mo RTMPDUMP nebo MSDL,
+           ty dovolujÃ­ specifikovat i vÅ¡echny potÅ™ebnÃ© parametry.
+      ZÃ¡kladnÃ­ vÃ½hodou je, Å¾e je takto moÅ¾nÃ© stahovat i z mnoha serverÅ¯,
+      kterÃ© v YTD pÅ™Ã­mo podporovÃ¡ny nejsou (napÅ™. Proglas.cz).
 
-    * Barrandov.tv: Stahování je momentálnì nefunkèní, protoe poskytovatel
-      pøešel na novı pøehrávaè a šifrované pøenosy, take neumím zjistit, co
-      ode mì vlastnì oèekává. Pokud by nìkdo umìl zprovoznit RTMPSUCK (jde
-      o souèást projektu RTMPDUMP) tak, abych se dostal k datùm, mohlo by 
-      stahování opìt fungovat.
+    * Barrandov.tv: StahovÃ¡nÃ­ je momentÃ¡lnÄ› nefunkÄnÃ­, protoÅ¾e poskytovatel
+      pÅ™eÅ¡el na novÃ½ pÅ™ehrÃ¡vaÄ a Å¡ifrovanÃ© pÅ™enosy, takÅ¾e neumÃ­m zjistit, co
+      ode mÄ› vlastnÄ› oÄekÃ¡vÃ¡. Pokud by nÄ›kdo umÄ›l zprovoznit RTMPSUCK (jde
+      o souÄÃ¡st projektu RTMPDUMP) tak, abych se dostal k datÅ¯m, mohlo by 
+      stahovÃ¡nÃ­ opÄ›t fungovat.
 
-    * CeskaTelevize.cz: Opìt zprovoznìny poøady (www.ceskatelevize.cz/porady).
+    * CeskaTelevize.cz: OpÄ›t zprovoznÄ›ny poÅ™ady (www.ceskatelevize.cz/porady).
 
-    * Zakulisi.cz: Snad opravena náhodná chyba "Access Violation". Vypadá to
-      na nìjakou chybku pøímo v Delphi 5, kvùli které se v urèitıch typech
-      øetìzcovıch operací pøepíše pamì. Moje oprava snad chodí, ale protoe
-      se i chyba vyskytovala náhodnì, nemohu to spolehlivì ovìøit.
+    * Zakulisi.cz: Snad opravena nÃ¡hodnÃ¡ chyba "Access Violation". VypadÃ¡ to
+      na nÄ›jakou chybku pÅ™Ã­mo v Delphi 5, kvÅ¯li kterÃ© se v urÄitÃ½ch typech
+      Å™etÄ›zcovÃ½ch operacÃ­ pÅ™epÃ­Å¡e pamÄ›Å¥. Moje oprava snad chodÃ­, ale protoÅ¾e
+      se i chyba vyskytovala nÃ¡hodnÄ›, nemohu to spolehlivÄ› ovÄ›Å™it.
 
-    * Aktualizován slovenskı pøeklad (opìt V. Kubala, díky).
+    * AktualizovÃ¡n slovenskÃ½ pÅ™eklad (opÄ›t V. Kubala, dÃ­ky).
 
 
 
   v0.77:
 
-    * Novı poskytovatel: DancingBear.com (porno).
+    * NovÃ½ poskytovatel: DancingBear.com (porno).
 
-    * Novı poskytovatel: Denik.cz.
+    * NovÃ½ poskytovatel: Denik.cz.
 
-      - Podporovány jsou i všechny regionální varianty, audio i video.
+      - PodporovÃ¡ny jsou i vÅ¡echny regionÃ¡lnÃ­ varianty, audio i video.
 
-    * Novı poskytovatel: FunnyOrDie.com.
+    * NovÃ½ poskytovatel: FunnyOrDie.com.
 
-    * Novı poskytovatel: iDnes.cz.
+    * NovÃ½ poskytovatel: iDnes.cz.
 
-      - Implementace je øešena pomìrnì brutálním zpùsobem: natvrdo se pouívá
-        konkrétní streamovací server místo serveru, o kterı si øekne samotnı
-        iDnes. Bohuel je to nezbytné, protoe ten správnı oficiální server
+      - Implementace je Å™eÅ¡ena pomÄ›rnÄ› brutÃ¡lnÃ­m zpÅ¯sobem: natvrdo se pouÅ¾Ã­vÃ¡
+        konkrÃ©tnÃ­ streamovacÃ­ server mÃ­sto serveru, o kterÃ½ si Å™ekne samotnÃ½
+        iDnes. BohuÅ¾el je to nezbytnÃ©, protoÅ¾e ten sprÃ¡vnÃ½ oficiÃ¡lnÃ­ server
         nefunguje...
 
-    * Novı poskytovatel: PBS.org.
+    * NovÃ½ poskytovatel: PBS.org.
 
-    * Novı poskytovatel: Sefka.cz, Sefka.sk.
+    * NovÃ½ poskytovatel: Sefka.cz, Sefka.sk.
 
-      - Pøidání budoucích Prima-Joj projektù bude triviální záleitost.
+      - PÅ™idÃ¡nÃ­ budoucÃ­ch Prima-Joj projektÅ¯ bude triviÃ¡lnÃ­ zÃ¡leÅ¾itost.
 
-    * Novı poskytovatel: Sme.sk.
+    * NovÃ½ poskytovatel: Sme.sk.
 
-    * Novı poskytovatel: Zakulisi.cz (porno).
+    * NovÃ½ poskytovatel: Zakulisi.cz (porno).
 
-    * FreeCaster.tv: K existující podpoøe pro HTTP streamy byla pøidána ještì
-      podpora pro RTMP streamy, které jsou také u nìkterıch videí vyuívány.
+    * FreeCaster.tv: K existujÃ­cÃ­ podpoÅ™e pro HTTP streamy byla pÅ™idÃ¡na jeÅ¡tÄ›
+      podpora pro RTMP streamy, kterÃ© jsou takÃ© u nÄ›kterÃ½ch videÃ­ vyuÅ¾Ã­vÃ¡ny.
 
-    * N-Joy.cz: Rozšíøeno o podporu pro stahování audia, podporu pro Right 
-      Now (audio i video) a podporu pro streamy na bázi protokolù MMS/RTSP
-      (ale tohle není vyzkoušené, protoe jediné takové video, které jsem
-      našel, nefunguje ani pøímo ve Flashi).
+    * N-Joy.cz: RozÅ¡Ã­Å™eno o podporu pro stahovÃ¡nÃ­ audia, podporu pro Right 
+      Now (audio i video) a podporu pro streamy na bÃ¡zi protokolÅ¯ MMS/RTSP
+      (ale tohle nenÃ­ vyzkouÅ¡enÃ©, protoÅ¾e jedinÃ© takovÃ© video, kterÃ© jsem
+      naÅ¡el, nefunguje ani pÅ™Ã­mo ve Flashi).
 
-    * Nova.cz: Bylo zprovoznìno video "Ordinace v rùové zahradì 2, 250. díl"
-      (a moná i nìkterá jiná). Problém s videem je, e na serveru není k
-      dispozici ve vysoké kvalitì, ve které se program snaí stahovat, a
-      server pøesto nesprávnì informuje o úspìšném staení. Problém byl
-      vyøešen dvìma zpùsoby:
+    * Nova.cz: Bylo zprovoznÄ›no video "Ordinace v rÅ¯Å¾ovÃ© zahradÄ› 2, 250. dÃ­l"
+      (a moÅ¾nÃ¡ i nÄ›kterÃ¡ jinÃ¡). ProblÃ©m s videem je, Å¾e na serveru nenÃ­ k
+      dispozici ve vysokÃ© kvalitÄ›, ve kterÃ© se program snaÅ¾Ã­ stahovat, a
+      server pÅ™esto nesprÃ¡vnÄ› informuje o ÃºspÄ›Å¡nÃ©m staÅ¾enÃ­. ProblÃ©m byl
+      vyÅ™eÅ¡en dvÄ›ma zpÅ¯soby:
 
-      1. V konfiguraèním souboru lze nastavit, e se z Novy má stahovat v 
-         nízké kvalitì místo ve vysoké. Viz dokumentace, hledejte <nova_cz>.
+      1. V konfiguraÄnÃ­m souboru lze nastavit, Å¾e se z Novy mÃ¡ stahovat v 
+         nÃ­zkÃ© kvalitÄ› mÃ­sto ve vysokÃ©. Viz dokumentace, hledejte <nova_cz>.
 
-      2. Pokud jsou zapnuty "špinavé hacky" (co ve standardní konfiguraci
-         jsou), YTD se pokusí tuto situaci detekovat a rovnou automaticky
-         stáhnout nízkokvalitní verzi. Podotıkám, e skuteènì *jde* o "špinavı
-         hack", take si nestìujte, e se to chová divnì (napøíklad se nemìní
-         pøípona souboru, stále zùstává .mp4).
+      2. Pokud jsou zapnuty "Å¡pinavÃ© hacky" (coÅ¾ ve standardnÃ­ konfiguraci
+         jsou), YTD se pokusÃ­ tuto situaci detekovat a rovnou automaticky
+         stÃ¡hnout nÃ­zkokvalitnÃ­ verzi. PodotÃ½kÃ¡m, Å¾e skuteÄnÄ› *jde* o "Å¡pinavÃ½
+         hack", takÅ¾e si nestÄ›Å¾ujte, Å¾e se to chovÃ¡ divnÄ› (napÅ™Ã­klad se nemÄ›nÃ­
+         pÅ™Ã­pona souboru, stÃ¡le zÅ¯stÃ¡vÃ¡ .mp4).
 
-    * Servery opravené na aktuální stav:
+    * Servery opravenÃ© na aktuÃ¡lnÃ­ stav:
       - Hasici150.tv.
-      - MTV.com (stejnì nefunguje, viz "handshake" poznámka níe).
+      - MTV.com (stejnÄ› nefunguje, viz "handshake" poznÃ¡mka nÃ­Å¾e).
       - RedTube.com (porno).
       - TotallyCrap.com.
       - UStream.tv.
       - WordPress.tv.
 
-    * Doèasnì nefunkèní servery:
-      - CrunchyRoll.com: vyaduje autentizaci Flash pøehrávaèe.
+    * DoÄasnÄ› nefunkÄnÃ­ servery:
+      - CrunchyRoll.com: vyÅ¾aduje autentizaci Flash pÅ™ehrÃ¡vaÄe.
 
-    * Mnoho serverù pouívajících protokol RTMP nyní nejde stahovat - pøi
-      pokusu o download zapíší do logu varování "HandShake: Type mismatch: 
-      client sent 6, server answered 9" a následnì chybu, "handshake failed".
-      Je to zpùsobené tím, e tyto servery u vyadují Flash verze 10 a ten
-      zatím není RTMPDUMPem podporovanı (viz http://stream-recorder.com/forum/rtmpdump-does-not-start-error-handshake-type-t8603.html).
-      A to RTMPDUMP zaène podporovat, bude to zakomponováno i do YTD. Zatím
-      se s tìmito servery nedá nic dìlat.
+    * Mnoho serverÅ¯ pouÅ¾Ã­vajÃ­cÃ­ch protokol RTMP nynÃ­ nejde stahovat - pÅ™i
+      pokusu o download zapÃ­Å¡Ã­ do logu varovÃ¡nÃ­ "HandShake: Type mismatch: 
+      client sent 6, server answered 9" a nÃ¡slednÄ› chybu, "handshake failed".
+      Je to zpÅ¯sobenÃ© tÃ­m, Å¾e tyto servery uÅ¾ vyÅ¾adujÃ­ Flash verze 10 a ten
+      zatÃ­m nenÃ­ RTMPDUMPem podporovanÃ½ (viz http://stream-recorder.com/forum/rtmpdump-does-not-start-error-handshake-type-t8603.html).
+      AÅ¾ to RTMPDUMP zaÄne podporovat, bude to zakomponovÃ¡no i do YTD. ZatÃ­m
+      se s tÄ›mito servery nedÃ¡ nic dÄ›lat.
 
-    * Podpora pro automatické pouití HTML parseru na neznámá URL: pokud do
-      YTD zadáte neznámou adresu, program se pokusí vyhledat v ní známé adresy
-      stejnì, jako kdyby ta adresa byla zadána parametrem -s (resp. tlaèítkem
-      "Pøidat URL z HTML stránky"). Tím je zajištìna jednoduchá podpora pro
-      servery jako Zive.cz, Vlaky.net a mnohé další, které se odkazují napø. na
-      YouTube. Staré chování (YTD ovìøí, jestli jde o známou adresu, a kdy ne,
-      tak hned skonèí s chybou) mùete nastavit parametrem -ah-, nastavením 
-      <auto_try_html_parser> v konfiguraèním souboru nebo v grafické verzi v 
-      nastaveních.
+    * Podpora pro automatickÃ© pouÅ¾itÃ­ HTML parseru na neznÃ¡mÃ¡ URL: pokud do
+      YTD zadÃ¡te neznÃ¡mou adresu, program se pokusÃ­ vyhledat v nÃ­ znÃ¡mÃ© adresy
+      stejnÄ›, jako kdyby ta adresa byla zadÃ¡na parametrem -s (resp. tlaÄÃ­tkem
+      "PÅ™idat URL z HTML strÃ¡nky"). TÃ­m je zajiÅ¡tÄ›na jednoduchÃ¡ podpora pro
+      servery jako Zive.cz, Vlaky.net a mnohÃ© dalÅ¡Ã­, kterÃ© se odkazujÃ­ napÅ™. na
+      YouTube. StarÃ© chovÃ¡nÃ­ (YTD ovÄ›Å™Ã­, jestli jde o znÃ¡mou adresu, a kdyÅ¾ ne,
+      tak hned skonÄÃ­ s chybou) mÅ¯Å¾ete nastavit parametrem -ah-, nastavenÃ­m 
+      <auto_try_html_parser> v konfiguraÄnÃ­m souboru nebo v grafickÃ© verzi v 
+      nastavenÃ­ch.
 
-    * Odstranìna zdvojená pøípona souborù u vnoøenıch downloaderù.
+    * OdstranÄ›na zdvojenÃ¡ pÅ™Ã­pona souborÅ¯ u vnoÅ™enÃ½ch downloaderÅ¯.
 
-    * Pøi pøepínání aplikací pomocí ALT+TAB se zobrazuje správná ikonka.
+    * PÅ™i pÅ™epÃ­nÃ¡nÃ­ aplikacÃ­ pomocÃ­ ALT+TAB se zobrazuje sprÃ¡vnÃ¡ ikonka.
 
-    * Podpora pro verze YTD vyšší ne 0.99.
+    * Podpora pro verze YTD vyÅ¡Å¡Ã­ neÅ¾ 0.99.
 
-    * Pøekompilována knihovna RTMPDUMP_DLL tak, aby pouívala více osekanou
-      (a menší) verzi PolarSSL. Tím jsem získal nìjakıch 27 KB na velikosti
-      archívu, ani by to mìlo viditelnì ovlivnit funkènost (vyøazeny jsou
-      rùzné ladící tisky a nìkolik málo šifrovacích algoritmù, které se stejnì
-      v RTMPDUMPu nepouívají). Kdybyste pøesto narazili na problém (jinı ne
-      "handshake problém" vıše), mùete pouít RTMPDUMP_DLL z pøedchozích
-      verzí YTD. Ale neoèekávám to, vyzkoušel jsem snad všechny servery
-      pouívající RTMP a všechny chodí.
+    * PÅ™ekompilovÃ¡na knihovna RTMPDUMP_DLL tak, aby pouÅ¾Ã­vala vÃ­ce osekanou
+      (a menÅ¡Ã­) verzi PolarSSL. TÃ­m jsem zÃ­skal nÄ›jakÃ½ch 27 KB na velikosti
+      archÃ­vu, aniÅ¾ by to mÄ›lo viditelnÄ› ovlivnit funkÄnost (vyÅ™azeny jsou
+      rÅ¯znÃ© ladÃ­cÃ­ tisky a nÄ›kolik mÃ¡lo Å¡ifrovacÃ­ch algoritmÅ¯, kterÃ© se stejnÄ›
+      v RTMPDUMPu nepouÅ¾Ã­vajÃ­). Kdybyste pÅ™esto narazili na problÃ©m (jinÃ½ neÅ¾
+      "handshake problÃ©m" vÃ½Å¡e), mÅ¯Å¾ete pouÅ¾Ã­t RTMPDUMP_DLL z pÅ™edchozÃ­ch
+      verzÃ­ YTD. Ale neoÄekÃ¡vÃ¡m to, vyzkouÅ¡el jsem snad vÅ¡echny servery
+      pouÅ¾Ã­vajÃ­cÃ­ RTMP a vÅ¡echny chodÃ­.
 
-    * Hlavní (portable) konfiguraèní soubor YTD.XML se nyní hledá napøed v 
-      aktuálním pracovním adresáøi a teprve pokud tam nebyl nalezen, tak v
-      adresáøi s YTD.EXE. To umoòuje mít nìkolik rùznıch konfigurací, ani by
-      bylo tøeba mít nìkolik kopií YouTube Downloaderu. Na vedlejším 
-      (ne-portable) konfiguraèním souboru se nic nemìní, je stále v adresáøi 
+    * HlavnÃ­ (portable) konfiguraÄnÃ­ soubor YTD.XML se nynÃ­ hledÃ¡ napÅ™ed v 
+      aktuÃ¡lnÃ­m pracovnÃ­m adresÃ¡Å™i a teprve pokud tam nebyl nalezen, tak v
+      adresÃ¡Å™i s YTD.EXE. To umoÅ¾Åˆuje mÃ­t nÄ›kolik rÅ¯znÃ½ch konfiguracÃ­, aniÅ¾ by
+      bylo tÅ™eba mÃ­t nÄ›kolik kopiÃ­ YouTube Downloaderu. Na vedlejÅ¡Ã­m 
+      (ne-portable) konfiguraÄnÃ­m souboru se nic nemÄ›nÃ­, je stÃ¡le v adresÃ¡Å™i 
       profilu.
 
 
 
   v0.76:
 
-    * CeskaTelevize.cz: Pøedchozí úprava znefunkènila staré iVysílání a další
-      alternativní pøehrávací mechanismy.
+    * CeskaTelevize.cz: PÅ™edchozÃ­ Ãºprava znefunkÄnila starÃ© iVysÃ­lÃ¡nÃ­ a dalÅ¡Ã­
+      alternativnÃ­ pÅ™ehrÃ¡vacÃ­ mechanismy.
 
 
 
   v0.75:
 
-    * CeskaTelevize.cz: Pøidána podpora pro poøady, které bìí v IFRAME (napø.
-      Diagnóza).
+    * CeskaTelevize.cz: PÅ™idÃ¡na podpora pro poÅ™ady, kterÃ© bÄ›Å¾Ã­ v IFRAME (napÅ™.
+      DiagnÃ³za).
 
-    * YouTube.com: Pøidána podpora pro videa, u kterıch majitel autorskıch
-      práv vyhradil pøehrávání jen pro urèité servery (mnoho hudebních klipù
-      je vydanıch právì v tomto formátu).
+    * YouTube.com: PÅ™idÃ¡na podpora pro videa, u kterÃ½ch majitel autorskÃ½ch
+      prÃ¡v vyhradil pÅ™ehrÃ¡vÃ¡nÃ­ jen pro urÄitÃ© servery (mnoho hudebnÃ­ch klipÅ¯
+      je vydanÃ½ch prÃ¡vÄ› v tomto formÃ¡tu).
 
-      Podpora playlistù upravena na aktuální tvar stránek.
+      Podpora playlistÅ¯ upravena na aktuÃ¡lnÃ­ tvar strÃ¡nek.
 
-    * Opraveno nefunkèní CTRL+C (zkopírovat URL do schránky) v grafickém 
-      rozhraní.
+    * Opraveno nefunkÄnÃ­ CTRL+C (zkopÃ­rovat URL do schrÃ¡nky) v grafickÃ©m 
+      rozhranÃ­.
 
 
 
   v0.74:
 
-    * Novı poskytovatel: 123Video.nl.
+    * NovÃ½ poskytovatel: 123Video.nl.
 
-    * Novı poskytovatel: Hrej.cz.
+    * NovÃ½ poskytovatel: Hrej.cz.
 
-      - Nìkterá videa jsou hostovaná na jinıch serverech, napø. na YouTube, 
-        a nelze je stahovat pøímo. Mùete ale pouít funkci "Pøidat URL z 
-        HTML stránky".
+      - NÄ›kterÃ¡ videa jsou hostovanÃ¡ na jinÃ½ch serverech, napÅ™. na YouTube, 
+        a nelze je stahovat pÅ™Ã­mo. MÅ¯Å¾ete ale pouÅ¾Ã­t funkci "PÅ™idat URL z 
+        HTML strÃ¡nky".
 
-    * Novı poskytovatel: MojeTelevize.cz.
+    * NovÃ½ poskytovatel: MojeTelevize.cz.
 
-      - Fungovat by mìly všechny projekty hostované na serveru, vèetnì napø.
-        Adra.MojeTelevize.cz a dalších.
+      - Fungovat by mÄ›ly vÅ¡echny projekty hostovanÃ© na serveru, vÄetnÄ› napÅ™.
+        Adra.MojeTelevize.cz a dalÅ¡Ã­ch.
 
-    * Novı poskytovatel: Sport.cz.
+    * NovÃ½ poskytovatel: Sport.cz.
 
-    * Novı poskytovatel: TV4Play.se.
+    * NovÃ½ poskytovatel: TV4Play.se.
 
-      - Podporován je pouze zdarma dostupnı obsah.
+      - PodporovÃ¡n je pouze zdarma dostupnÃ½ obsah.
 
-    * Novı poskytovatel: Video.Tiscali.cz.
+    * NovÃ½ poskytovatel: Video.Tiscali.cz.
 
-    * Èeská televize: Stahování nyní ve vıchozím stavu probíhá v reimu 
-      "ivé video", kdy se sice stahuje mnohem pomaleji, ale stáhnutı soubor
-      se zdá bıt v poøádku. V konfiguraèním souboru lze pøepnout zpátky na
-      stahování "jako soubor", které bìí podstatnì rychleji, ale dokud bude
-      serverová èást ÈT napsaná tak, jak je teï, tak povede k porušenım
-      souborùm. Popis je uveden v dokumentaci (hledejte <live_stream>).
+    * ÄŒeskÃ¡ televize: StahovÃ¡nÃ­ nynÃ­ ve vÃ½chozÃ­m stavu probÃ­hÃ¡ v reÅ¾imu 
+      "Å¾ivÃ© video", kdy se sice stahuje mnohem pomaleji, ale stÃ¡hnutÃ½ soubor
+      se zdÃ¡ bÃ½t v poÅ™Ã¡dku. V konfiguraÄnÃ­m souboru lze pÅ™epnout zpÃ¡tky na
+      stahovÃ¡nÃ­ "jako soubor", kterÃ© bÄ›Å¾Ã­ podstatnÄ› rychleji, ale dokud bude
+      serverovÃ¡ ÄÃ¡st ÄŒT napsanÃ¡ tak, jak je teÄ, tak povede k poruÅ¡enÃ½m
+      souborÅ¯m. Popis je uveden v dokumentaci (hledejte <live_stream>).
 
-    * Joj.sk: Upraveno na aktuální tvar pøehrávaèe.
+    * Joj.sk: Upraveno na aktuÃ¡lnÃ­ tvar pÅ™ehrÃ¡vaÄe.
 
-    * Markiza.sk: Podpora pro videa tvoøená více èástmi (napø.
+    * Markiza.sk: Podpora pro videa tvoÅ™enÃ¡ vÃ­ce ÄÃ¡stmi (napÅ™.
       http://video.markiza.sk/archiv-tv-markiza/parti269-ka/54516).
 
-    * StreetFire.net: Doèasnì nefunkèní.
+    * StreetFire.net: DoÄasnÄ› nefunkÄnÃ­.
 
-    * YouTube.com: Upraven formát titulkù - formát èasu vyaduje, aby 
-      oddìlovaèem desetinnıch míst u sekund byla èárka a ne teèka, kterou
-      jsem tam mìl pùvodnì.
+    * YouTube.com: Upraven formÃ¡t titulkÅ¯ - formÃ¡t Äasu vyÅ¾aduje, aby 
+      oddÄ›lovaÄem desetinnÃ½ch mÃ­st u sekund byla ÄÃ¡rka a ne teÄka, kterou
+      jsem tam mÄ›l pÅ¯vodnÄ›.
 
 
 
   v0.73
 
-    * Èeská televize:
+    * ÄŒeskÃ¡ televize:
 
-      1) Špatná zpráva: Novı web Èeské televize je sice od minulé verze
-         podporovanı, ale na stáhnuté poøady se nedá dívat, protoe bylo
-         streamování ze strany ÈT implementováno naprosto šílenì. Vısledkem
-         je, e sice mohu poádat o libovolnı stream a server mi sdìlí, e
-         mi ho rád pošle, ale ve skuteènosti mi pošle úplnì jinı stream a
-         tomu bude bìhem pøehrávání mìnit parametry. Názory na to, nakolik
-         jde o chybu nebo vlastnost, se rùzní, ale vısledek je jeden: dokud
-         si to ÈT neopraví, tak YTD její streamy nebude umìt poøádnì stáhnout.
-         Je zbyteèné mì na to upozoròovat nebo ádat o opravu, já s tím nic
-         udìlat nemùu. (Vlastnì je ještì jedna monost: kdy to implementuje
-         nìkdo jinı, kdo fungování serverù ÈT rozumí lépe ne já. Pak to rád
-         do programu zaøadím.)
+      1) Å patnÃ¡ zprÃ¡va: NovÃ½ web ÄŒeskÃ© televize je sice od minulÃ© verze
+         podporovanÃ½, ale na stÃ¡hnutÃ© poÅ™ady se nedÃ¡ dÃ­vat, protoÅ¾e bylo
+         streamovÃ¡nÃ­ ze strany ÄŒT implementovÃ¡no naprosto Å¡Ã­lenÄ›. VÃ½sledkem
+         je, Å¾e sice mohu poÅ¾Ã¡dat o libovolnÃ½ stream a server mi sdÄ›lÃ­, Å¾e
+         mi ho rÃ¡d poÅ¡le, ale ve skuteÄnosti mi poÅ¡le ÃºplnÄ› jinÃ½ stream a
+         tomu bude bÄ›hem pÅ™ehrÃ¡vÃ¡nÃ­ mÄ›nit parametry. NÃ¡zory na to, nakolik
+         jde o chybu nebo vlastnost, se rÅ¯znÃ­, ale vÃ½sledek je jeden: dokud
+         si to ÄŒT neopravÃ­, tak YTD jejÃ­ streamy nebude umÄ›t poÅ™Ã¡dnÄ› stÃ¡hnout.
+         Je zbyteÄnÃ© mÄ› na to upozorÅˆovat nebo Å¾Ã¡dat o opravu, jÃ¡ s tÃ­m nic
+         udÄ›lat nemÅ¯Å¾u. (VlastnÄ› je jeÅ¡tÄ› jedna moÅ¾nost: kdyÅ¾ to implementuje
+         nÄ›kdo jinÃ½, kdo fungovÃ¡nÃ­ serverÅ¯ ÄŒT rozumÃ­ lÃ©pe neÅ¾ jÃ¡. Pak to rÃ¡d
+         do programu zaÅ™adÃ­m.)
 
-      2) Dobrá zpráva: Naštìstí ještì funguje staré iVysílání na adrese
-         http://www.ceskatelevize.cz/ivysilani-jako-driv/ (díky Pepovi a
-         Pájovi, kteøí mì na tento fakt upozornili). Tato verze tedy zavádí
-         podporu pro staré iVysílání na této nové URL.
+      2) DobrÃ¡ zprÃ¡va: NaÅ¡tÄ›stÃ­ jeÅ¡tÄ› funguje starÃ© iVysÃ­lÃ¡nÃ­ na adrese
+         http://www.ceskatelevize.cz/ivysilani-jako-driv/ (dÃ­ky Pepovi a
+         PÃ¡jovi, kteÅ™Ã­ mÄ› na tento fakt upozornili). Tato verze tedy zavÃ¡dÃ­
+         podporu pro starÃ© iVysÃ­lÃ¡nÃ­ na tÃ©to novÃ© URL.
 
-      3) Druhá dobrá zpráva: ÈT èást svıch poøadù provozuje i pøes server
-         Stream.cz, kterı funguje na starém dobrém HTTP protokolu, kterı YTD
-         zvládá bez nejmenších potíí. Mùete tedy videa stahovat i odtamtud.
+      3) DruhÃ¡ dobrÃ¡ zprÃ¡va: ÄŒT ÄÃ¡st svÃ½ch poÅ™adÅ¯ provozuje i pÅ™es server
+         Stream.cz, kterÃ½ funguje na starÃ©m dobrÃ©m HTTP protokolu, kterÃ½ YTD
+         zvlÃ¡dÃ¡ bez nejmenÅ¡Ã­ch potÃ­Å¾Ã­. MÅ¯Å¾ete tedy videa stahovat i odtamtud.
 
 
 
   v0.72
 
-    * Novı poskytovatel: 1hd.ro.
+    * NovÃ½ poskytovatel: 1hd.ro.
 
-    * Novı poskytovatel: DotSub.com.
+    * NovÃ½ poskytovatel: DotSub.com.
 
-    * Novı poskytovatel: Music.Stream.cz.
+    * NovÃ½ poskytovatel: Music.Stream.cz.
 
-    * Novı poskytovatel: RockstarGames.com.
-      Pozor, poskytovatel vyaduje pouití protokolu HTTPS, tudí musíte mít
-      v cestì (path) OpenSSL knihovny LIBEAY32.DLL and SSLEAY32.DLL.
+    * NovÃ½ poskytovatel: RockstarGames.com.
+      Pozor, poskytovatel vyÅ¾aduje pouÅ¾itÃ­ protokolu HTTPS, tudÃ­Å¾ musÃ­te mÃ­t
+      v cestÄ› (path) OpenSSL knihovny LIBEAY32.DLL and SSLEAY32.DLL.
 
-    * Novı poskytovatel: SerialyCZ.cz.
+    * NovÃ½ poskytovatel: SerialyCZ.cz.
 
-    * Novı poskytovatel: SportStream.cz.
+    * NovÃ½ poskytovatel: SportStream.cz.
 
-    * Novı poskytovatel: Tyzden.sk.
+    * NovÃ½ poskytovatel: Tyzden.sk.
 
-    * CeskaTelevize.cz: Aktualizováno na novou podobu iVysílání.
+    * CeskaTelevize.cz: AktualizovÃ¡no na novou podobu iVysÃ­lÃ¡nÃ­.
 
-    * CestyKSobe.cz: Podpora pro alternativní zpùsob vkládání video pøehrávaèe,
-      viz napø. http://cestyksobe.cz/novinky/novinky/544.html.
+    * CestyKSobe.cz: Podpora pro alternativnÃ­ zpÅ¯sob vklÃ¡dÃ¡nÃ­ video pÅ™ehrÃ¡vaÄe,
+      viz napÅ™. http://cestyksobe.cz/novinky/novinky/544.html.
 
-    * iPrima.cz: Podpora pro poøady, které jsou na Stream.cz hostovány, ale
-      nemají tam samostatnì pøístupnou stránku (napø. 
+    * iPrima.cz: Podpora pro poÅ™ady, kterÃ© jsou na Stream.cz hostovÃ¡ny, ale
+      nemajÃ­ tam samostatnÄ› pÅ™Ã­stupnou strÃ¡nku (napÅ™. 
       http://www.iprima.cz/videoarchiv/42037).
 
 
 
   v0.71
 
-    * Novı poskytovatel: AdultLoop.com (porno).
+    * NovÃ½ poskytovatel: AdultLoop.com (porno).
 
-    * Novı poskytovatel: BandZone.cz.
+    * NovÃ½ poskytovatel: BandZone.cz.
 
-    * Novı poskytovatel: DUB.cz.
+    * NovÃ½ poskytovatel: DUB.cz.
 
-    * Novı poskytovatel: PrahovaHD.ro (pouze on-demand videa).
+    * NovÃ½ poskytovatel: PrahovaHD.ro (pouze on-demand videa).
 
-    * Novı poskytovatel: Rtl.nl.
+    * NovÃ½ poskytovatel: Rtl.nl.
 
-    * Novı poskytovatel: StastneVdovy.cz.
+    * NovÃ½ poskytovatel: StastneVdovy.cz.
 
-    * Novı poskytovatel: Super.cz.
+    * NovÃ½ poskytovatel: Super.cz.
 
-    * Novı poskytovatel: TVS.pl.
+    * NovÃ½ poskytovatel: TVS.pl.
 
-    * Novı poskytovatel: WeGame.com.
+    * NovÃ½ poskytovatel: WeGame.com.
 
-    * iPrima.cz: Opraven název videa.
+    * iPrima.cz: Opraven nÃ¡zev videa.
 
-    * Nova.cz: Aktualizováno na novou podobu archívu.
+    * Nova.cz: AktualizovÃ¡no na novou podobu archÃ­vu.
 
-    * STV.sk: Pøepracováno na aktuální stav. Pozor, server je extrémnì
-      nestabilní a víc nefunguje ne funguje (i pro bìné online sledování,
-      není to jen problém downloadu).
+    * STV.sk: PÅ™epracovÃ¡no na aktuÃ¡lnÃ­ stav. Pozor, server je extrÃ©mnÄ›
+      nestabilnÃ­ a vÃ­c nefunguje neÅ¾ funguje (i pro bÄ›Å¾nÃ© online sledovÃ¡nÃ­,
+      nenÃ­ to jen problÃ©m downloadu).
 
-    * Bylo pøidáno nové nastavení pro sledování obsahu schránky (clipboardu).
-      Ve standardním stavu je vypnuté, ale pokud ho zapnete, bude YouTube
-      Downloader monitorovat zmìny v clipboardu a automaticky zaøazovat známá
-      URL do seznamu ke staení.
+    * Bylo pÅ™idÃ¡no novÃ© nastavenÃ­ pro sledovÃ¡nÃ­ obsahu schrÃ¡nky (clipboardu).
+      Ve standardnÃ­m stavu je vypnutÃ©, ale pokud ho zapnete, bude YouTube
+      Downloader monitorovat zmÄ›ny v clipboardu a automaticky zaÅ™azovat znÃ¡mÃ¡
+      URL do seznamu ke staÅ¾enÃ­.
 
-    * Pokud nebyla ve Windows nastavena asociace na editování .xml souborù,
-      nefungovalo tlaèítko "Upravit konfiguraèní soubor". Nyní se v takovém
-      pøípadì otevøe konfiguraèní soubor v Notepadu.
+    * Pokud nebyla ve Windows nastavena asociace na editovÃ¡nÃ­ .xml souborÅ¯,
+      nefungovalo tlaÄÃ­tko "Upravit konfiguraÄnÃ­ soubor". NynÃ­ se v takovÃ©m
+      pÅ™Ã­padÄ› otevÅ™e konfiguraÄnÃ­ soubor v Notepadu.
 
-    * Program má novou ikonku od uivatele KRYSPIN z Hofylandu. Vıhodou je
-      mimo jiné i to, e vypadá dobøe ve všech velikostech.
+    * Program mÃ¡ novou ikonku od uÅ¾ivatele KRYSPIN z Hofylandu. VÃ½hodou je
+      mimo jinÃ© i to, Å¾e vypadÃ¡ dobÅ™e ve vÅ¡ech velikostech.
 
 
 
   v0.70
 
-    * Opravena chyba Access Violation pøi pøekreslování seznamu downloadù,
-      která se vloudila do minulé verze.
+    * Opravena chyba Access Violation pÅ™i pÅ™ekreslovÃ¡nÃ­ seznamu downloadÅ¯,
+      kterÃ¡ se vloudila do minulÃ© verze.
 
-    * Doplnìna èeština do dvou poloek menu, které ještì byly anglicky.
+    * DoplnÄ›na ÄeÅ¡tina do dvou poloÅ¾ek menu, kterÃ© jeÅ¡tÄ› byly anglicky.
 
 
 
   v0.69
 
-    * Novı posktyovatel: AutoSalonTV.cz.
+    * NovÃ½ posktyovatel: AutoSalonTV.cz.
 
     * Blip.tv: Podpora pro playlisty.
 
-      Pozn.: Naèítání obsahu playlistu probíhá bez jakéhokoliv vıstupu a mùe
-      u nìkterıch playlistù (napø. http://thespoonyone.blip.tv) trvat i dost
-      dlouho. Nenechte se znervóznit tím, e se zdánlivì nic nedìje.
+      Pozn.: NaÄÃ­tÃ¡nÃ­ obsahu playlistu probÃ­hÃ¡ bez jakÃ©hokoliv vÃ½stupu a mÅ¯Å¾e
+      u nÄ›kterÃ½ch playlistÅ¯ (napÅ™. http://thespoonyone.blip.tv) trvat i dost
+      dlouho. Nenechte se znervÃ³znit tÃ­m, Å¾e se zdÃ¡nlivÄ› nic nedÄ›je.
 
-    * Facebook.com: Pøidána podpora pro videa, u kterıch není uvedena kvalita.
+    * Facebook.com: PÅ™idÃ¡na podpora pro videa, u kterÃ½ch nenÃ­ uvedena kvalita.
 
-    * Markiza.sk: Aktualizováno na novı webovı pøehrávaè.
+    * Markiza.sk: AktualizovÃ¡no na novÃ½ webovÃ½ pÅ™ehrÃ¡vaÄ.
 
-    * Novinky.cz: Upravena podpora pro videa uvnitø èlánkù.
+    * Novinky.cz: Upravena podpora pro videa uvnitÅ™ ÄlÃ¡nkÅ¯.
 
-    * Formuláø "Nastavení" (F9) byl podstatnì rozšíøen. Nyní u obsahuje
-      skoro všechna nastavení, která jsou v konfiguraèním souboru k dispozici,
-      mimo jiné nastavení proxy serveru nebo monost dodateènì zapnout nebo
-      vypnout zjišování novıch verzí pøi startu programu. 
+    * FormulÃ¡Å™ "NastavenÃ­" (F9) byl podstatnÄ› rozÅ¡Ã­Å™en. NynÃ­ uÅ¾ obsahuje
+      skoro vÅ¡echna nastavenÃ­, kterÃ¡ jsou v konfiguraÄnÃ­m souboru k dispozici,
+      mimo jinÃ© nastavenÃ­ proxy serveru nebo moÅ¾nost dodateÄnÄ› zapnout nebo
+      vypnout zjiÅ¡Å¥ovÃ¡nÃ­ novÃ½ch verzÃ­ pÅ™i startu programu. 
       
-      Na formuláøi nastavení jsou také k dispozici tlaèítka pro vytvoøení
-      zástupce na ploše nebo ve Start menu.
+      Na formulÃ¡Å™i nastavenÃ­ jsou takÃ© k dispozici tlaÄÃ­tka pro vytvoÅ™enÃ­
+      zÃ¡stupce na ploÅ¡e nebo ve Start menu.
 
-    * Opraveny nekompatibility s Delphi 2009 (tıká se to jen tìch, kdo si 
-      YTD kompilují sami, protoe produkèní verze je kompilována Delphi 5):
+    * Opraveny nekompatibility s Delphi 2009 (tÃ½kÃ¡ se to jen tÄ›ch, kdo si 
+      YTD kompilujÃ­ sami, protoÅ¾e produkÄnÃ­ verze je kompilovÃ¡na Delphi 5):
 
       - Aplikace spadne s Access Violation nebo jinou chybou, pokud je zapnuta
-        WinAPI verze grafického prostøedí.
+        WinAPI verze grafickÃ©ho prostÅ™edÃ­.
 
-      - Nefunguje zjišování, jaká verze YTD je k dispozici na internetu.
+      - Nefunguje zjiÅ¡Å¥ovÃ¡nÃ­, jakÃ¡ verze YTD je k dispozici na internetu.
 
-    * Tlaèítko "Stop" v grafické verzi programu fungovalo ve skuteènosti jako
-      pauza, ne jako zastavení.
+    * TlaÄÃ­tko "Stop" v grafickÃ© verzi programu fungovalo ve skuteÄnosti jako
+      pauza, ne jako zastavenÃ­.
 
-    * Pøenosnı reim v øadì situací "pøebil" reim nepøenosnı. Nyní u by mìl
-      vdy bìet skuteènì ten reim, kterı si uivatel vybral.
+    * PÅ™enosnÃ½ reÅ¾im v Å™adÄ› situacÃ­ "pÅ™ebil" reÅ¾im nepÅ™enosnÃ½. NynÃ­ uÅ¾ by mÄ›l
+      vÅ¾dy bÄ›Å¾et skuteÄnÄ› ten reÅ¾im, kterÃ½ si uÅ¾ivatel vybral.
 
 
 
   v0.68
 
-    * FreeCaster.tv: Upraveno na novou podobu stránek.
+    * FreeCaster.tv: Upraveno na novou podobu strÃ¡nek.
 
-    * Novinky.cz: Podpora pro videa uvnitø èlánkù.
+    * Novinky.cz: Podpora pro videa uvnitÅ™ ÄlÃ¡nkÅ¯.
 
-    * Stream.cz: Upraveno na novou podobu stránek. To také opravuje všechny
-      servery, které Stream vyuívají, napø. iPrima.cz nebo N-Joy.cz.
+    * Stream.cz: Upraveno na novou podobu strÃ¡nek. To takÃ© opravuje vÅ¡echny
+      servery, kterÃ© Stream vyuÅ¾Ã­vajÃ­, napÅ™. iPrima.cz nebo N-Joy.cz.
 
-    * YouTube.com: Titulky opìt fungují.
-      Pøidána podpora pro embedded tvar URL.
+    * YouTube.com: Titulky opÄ›t fungujÃ­.
+      PÅ™idÃ¡na podpora pro embedded tvar URL.
 
-    * CLI: Èastejší informace o staenıch datech, zejména u dlouhıch videí.
+    * CLI: ÄŒastejÅ¡Ã­ informace o staÅ¾enÃ½ch datech, zejmÃ©na u dlouhÃ½ch videÃ­.
 
 
 
   v0.67
 
-    * Opraveno nepøekreslování seznamu downloadù pod Windows 7.
+    * Opraveno nepÅ™ekreslovÃ¡nÃ­ seznamu downloadÅ¯ pod Windows 7.
 
 
 
   v0.66
 
-    * Opravena chyba pøi spouštìní programu na Windows 7.
+    * Opravena chyba pÅ™i spouÅ¡tÄ›nÃ­ programu na Windows 7.
 
 
 
   v0.65
 
-    * Novı poskytovatel: CD.cz.
+    * NovÃ½ poskytovatel: CD.cz.
 
-    * Novı poskytovatel: ThatVideoSite.com.
+    * NovÃ½ poskytovatel: ThatVideoSite.com.
 
-    * Novı poskytovatel: WordPress.tv.
+    * NovÃ½ poskytovatel: WordPress.tv.
 
-    * Novı poskytovatel: Yikers.com.
+    * NovÃ½ poskytovatel: Yikers.com.
 
-    * UStream.tv: Aktualizován název videa.
+    * UStream.tv: AktualizovÃ¡n nÃ¡zev videa.
 
-    * Byla doplnìna alternativní verze grafického rozhraní, postavená na èistém
-      Windows API místo na Delphovském VCL. Chování obou je témìø stejné, s
-      vıjimkou pøípadnıch novıch chyb v novém rozhraní, ale API verze má 
-      nìkolik vıznamnıch vıhod:
+    * Byla doplnÄ›na alternativnÃ­ verze grafickÃ©ho rozhranÃ­, postavenÃ¡ na ÄistÃ©m
+      Windows API mÃ­sto na DelphovskÃ©m VCL. ChovÃ¡nÃ­ obou je tÃ©mÄ›Å™ stejnÃ©, s
+      vÃ½jimkou pÅ™Ã­padnÃ½ch novÃ½ch chyb v novÃ©m rozhranÃ­, ale API verze mÃ¡ 
+      nÄ›kolik vÃ½znamnÃ½ch vÃ½hod:
 
-      - Je o mnoho kratší: Instalátor se zkrátil asi o 125 KB, samotná aplikace
-        pøed kompresí UPX o témìø 400 KB. To byl pro mì hlavní dùvod, proè se
-        do pøepisu pouštìt.
+      - Je o mnoho kratÅ¡Ã­: InstalÃ¡tor se zkrÃ¡til asi o 125 KB, samotnÃ¡ aplikace
+        pÅ™ed kompresÃ­ UPX o tÃ©mÄ›Å™ 400 KB. To byl pro mÄ› hlavnÃ­ dÅ¯vod, proÄ se
+        do pÅ™episu pouÅ¡tÄ›t.
 
-      - Pokud máte knihovnu Common Controls ve verzi aspoò 6.0 (Windows XP ji
-        mají od vırobce, do starších systémù se dá doinstalovat), je odstranìno
-        blikání seznamu downloadù.
+      - Pokud mÃ¡te knihovnu Common Controls ve verzi aspoÅˆ 6.0 (Windows XP ji
+        majÃ­ od vÃ½robce, do starÅ¡Ã­ch systÃ©mÅ¯ se dÃ¡ doinstalovat), je odstranÄ›no
+        blikÃ¡nÃ­ seznamu downloadÅ¯.
 
       - Jde zkompilovat i FreePascalem, tzn. pokud si chcete program upravit 
-        a nemáte pøímo Delphi, nebudete ochuzeni o grafické prostøedí.
+        a nemÃ¡te pÅ™Ã­mo Delphi, nebudete ochuzeni o grafickÃ© prostÅ™edÃ­.
 
-      Naproti tomu má i dva nedostatky:
+      Naproti tomu mÃ¡ i dva nedostatky:
 
-      - Není zdaleka tak dobøe odladìné jako staré GUI. To je dané mnostvím
-        uivatelù a dobou pouívání a postupnì to bude opraveno.
+      - NenÃ­ zdaleka tak dobÅ™e odladÄ›nÃ© jako starÃ© GUI. To je danÃ© mnoÅ¾stvÃ­m
+        uÅ¾ivatelÅ¯ a dobou pouÅ¾Ã­vÃ¡nÃ­ a postupnÄ› to bude opraveno.
 
-      - Z neznámıch dùvodù zatím nefunguje pod Delphi 2009, protoe listview
-        zobrazující seznam downloadù velmi rychle zahltí celou pamì. Kdyby
-        nìkdo pøišel na pøíèinu, velice by mì zajímala.
+      - Z neznÃ¡mÃ½ch dÅ¯vodÅ¯ zatÃ­m nefunguje pod Delphi 2009, protoÅ¾e listview
+        zobrazujÃ­cÃ­ seznam downloadÅ¯ velmi rychle zahltÃ­ celou pamÄ›Å¥. Kdyby
+        nÄ›kdo pÅ™iÅ¡el na pÅ™Ã­Äinu, velice by mÄ› zajÃ­mala.
 
-      Pokud chcete nové GUI vypnout, staèí v souboru Source\YTD.inc smazat
-      "{$DEFINE GUI_WINAPI}" a program pøekompilovat.
+      Pokud chcete novÃ© GUI vypnout, staÄÃ­ v souboru Source\YTD.inc smazat
+      "{$DEFINE GUI_WINAPI}" a program pÅ™ekompilovat.
 
-    * Soubory videí stahovanıch HTTP protokolem jsou nyní otevøeny ve sdíleném
-      reimu. Díky tomu je moné u v prùbìhu downloadu spustit pøehrávání
+    * Soubory videÃ­ stahovanÃ½ch HTTP protokolem jsou nynÃ­ otevÅ™eny ve sdÃ­lenÃ©m
+      reÅ¾imu. DÃ­ky tomu je moÅ¾nÃ© uÅ¾ v prÅ¯bÄ›hu downloadu spustit pÅ™ehrÃ¡vÃ¡nÃ­
       videa.
 
-    * V souvislosti s pøepisem GUI byla provádìna øada optimalizací, na délku
-      kódu i na jeho èistotu.
+    * V souvislosti s pÅ™episem GUI byla provÃ¡dÄ›na Å™ada optimalizacÃ­, na dÃ©lku
+      kÃ³du i na jeho Äistotu.
 
 
 
   v0.64
 
-    * Novı poskytovatel: MTV.com.
+    * NovÃ½ poskytovatel: MTV.com.
 
-    * GameAnyone.com: Opraveno na aktuální stav webu.
+    * GameAnyone.com: Opraveno na aktuÃ¡lnÃ­ stav webu.
 
-    * KeezMovies.com: Opraveno na aktuální stav webu.
+    * KeezMovies.com: Opraveno na aktuÃ¡lnÃ­ stav webu.
 
-    * Nova.cz: Kapituloval jsem a povolil i URL se dvìma lomítky za Nova.cz.
+    * Nova.cz: Kapituloval jsem a povolil i URL se dvÄ›ma lomÃ­tky za Nova.cz.
 
-    * SpankWire.com: Opraveno na aktuální stav webu.
+    * SpankWire.com: Opraveno na aktuÃ¡lnÃ­ stav webu.
 
-    * Aktualizována slovenská jazyková verze na stav z verze 0.63.
+    * AktualizovÃ¡na slovenskÃ¡ jazykovÃ¡ verze na stav z verze 0.63.
 
-    * Opravena chyba, kdy se pøi vkládání nové adresy pomocí INS vdy pouila
-      pùvodní adresa z clipboardu, i kdy ji uivatel ve vkládacím formuláøi
-      zmìnil.
+    * Opravena chyba, kdy se pÅ™i vklÃ¡dÃ¡nÃ­ novÃ© adresy pomocÃ­ INS vÅ¾dy pouÅ¾ila
+      pÅ¯vodnÃ­ adresa z clipboardu, i kdyÅ¾ ji uÅ¾ivatel ve vklÃ¡dacÃ­m formulÃ¡Å™i
+      zmÄ›nil.
 
-    * Opravena chyba ve vıchozím konfiguraèním souboru (vytvoøí se v pøípadì, 
-      e neexistuje soubor ytd.xml): konverze do AVI/H264 byla nadefinována,
-      ale nebyla dostupná uivateli.
+    * Opravena chyba ve vÃ½chozÃ­m konfiguraÄnÃ­m souboru (vytvoÅ™Ã­ se v pÅ™Ã­padÄ›, 
+      Å¾e neexistuje soubor ytd.xml): konverze do AVI/H264 byla nadefinovÃ¡na,
+      ale nebyla dostupnÃ¡ uÅ¾ivateli.
 
-    * Pokud je jméno souboru (vèetne cesty) pøíliš dlouhé, bude oøíznuto tak,
-      aby mìlo maximálnì 255 znakù standardnì povolenıch ve Windows.
+    * Pokud je jmÃ©no souboru (vÄetne cesty) pÅ™Ã­liÅ¡ dlouhÃ©, bude oÅ™Ã­znuto tak,
+      aby mÄ›lo maximÃ¡lnÄ› 255 znakÅ¯ standardnÄ› povolenÃ½ch ve Windows.
 
 
 
   v0.63
 
-    * Novı poskytovatel: Beeg.com (porno).
+    * NovÃ½ poskytovatel: Beeg.com (porno).
 
-    * Novı poskytovatel: Brazzers.com (porno).
+    * NovÃ½ poskytovatel: Brazzers.com (porno).
 
-    * Novı poskytovatel: Fishki.ru.
+    * NovÃ½ poskytovatel: Fishki.ru.
 
-      Pozn.: Je sice moné detekovat název, jak je napsanı ve stránce, ale
-      vznikl by problém, jak z nìj udìlat funkèní název souboru - na to by
-      musel YTD bıt zkompilovanı pomocí Delphi 2009, co má øadu nevıhod
-      (velikost programu, nepodpora pro stará Windows atd.). Proto se zatím
-      pøebírá pùvodní název souboru a titulek videa se ignoruje. Pokud máte
-      nìjakı nápad, jak ruštinu jednoduše a spolehlivì pøevést do latinky,
-      rád ho implementuji.
+      Pozn.: Je sice moÅ¾nÃ© detekovat nÃ¡zev, jak je napsanÃ½ ve strÃ¡nce, ale
+      vznikl by problÃ©m, jak z nÄ›j udÄ›lat funkÄnÃ­ nÃ¡zev souboru - na to by
+      musel YTD bÃ½t zkompilovanÃ½ pomocÃ­ Delphi 2009, coÅ¾ mÃ¡ Å™adu nevÃ½hod
+      (velikost programu, nepodpora pro starÃ¡ Windows atd.). Proto se zatÃ­m
+      pÅ™ebÃ­rÃ¡ pÅ¯vodnÃ­ nÃ¡zev souboru a titulek videa se ignoruje. Pokud mÃ¡te
+      nÄ›jakÃ½ nÃ¡pad, jak ruÅ¡tinu jednoduÅ¡e a spolehlivÄ› pÅ™evÃ©st do latinky,
+      rÃ¡d ho implementuji.
 
-    * Novı poskytovatel: Hasici150.tv.
+    * NovÃ½ poskytovatel: Hasici150.tv.
 
-    * Novı poskytovatel: Loupak.cz.
+    * NovÃ½ poskytovatel: Loupak.cz.
 
-    * Novı poskytovatel: NaStojaka.cz.
+    * NovÃ½ poskytovatel: NaStojaka.cz.
 
-    * Novı poskytovatel: NBC.com.
+    * NovÃ½ poskytovatel: NBC.com.
 
-    * Novı poskytovatel: Prima-Cool.cz.
+    * NovÃ½ poskytovatel: Prima-Cool.cz.
 
-    * Novı poskytovatel: RozzlobeniMuzi.com (server obsahuje i porno materiál).
+    * NovÃ½ poskytovatel: RozzlobeniMuzi.com (server obsahuje i porno materiÃ¡l).
 
-    * Nova.cz: Pøidána detekce pøípadu, kdy bylo video ze serveru odstranìno
-      (napø. http://archiv.nova.cz/multimedia/pribehy-bez-scenare-zivot-na-vlasku-sedmy-dil.html).
+    * Nova.cz: PÅ™idÃ¡na detekce pÅ™Ã­padu, kdy bylo video ze serveru odstranÄ›no
+      (napÅ™. http://archiv.nova.cz/multimedia/pribehy-bez-scenare-zivot-na-vlasku-sedmy-dil.html).
 
-    * GUI: Odstranìny ikonky pro jednotlivá nastavení; místo nich je novı
-      samostatnı formuláø, na kterém jsou všechna grafická nastavení na 
-      jednom místì (existuje spousta dalších nastavení, která nejdou mìnit
+    * GUI: OdstranÄ›ny ikonky pro jednotlivÃ¡ nastavenÃ­; mÃ­sto nich je novÃ½
+      samostatnÃ½ formulÃ¡Å™, na kterÃ©m jsou vÅ¡echna grafickÃ¡ nastavenÃ­ na 
+      jednom mÃ­stÄ› (existuje spousta dalÅ¡Ã­ch nastavenÃ­, kterÃ¡ nejdou mÄ›nit
       graficky a jsou uvedena v dokumentaci). 
       
-      Vedlejším efektem je, e i v grafické verzi je nyní moné nastavit 
-      reim "automaticky pøejmenovávat" pro pøípad, e soubor se stejnım 
-      názvem u existuje.
+      VedlejÅ¡Ã­m efektem je, Å¾e i v grafickÃ© verzi je nynÃ­ moÅ¾nÃ© nastavit 
+      reÅ¾im "automaticky pÅ™ejmenovÃ¡vat" pro pÅ™Ã­pad, Å¾e soubor se stejnÃ½m 
+      nÃ¡zvem uÅ¾ existuje.
 
-    * Dokumentace doplnìna o instrukce ke kompilaci programu ze zdrojovıch
-      kódù. Kompilaèní skripty byly pøi té pøíleitosti vyèištìny (napø. u
-      není potøeba øíkat, jakou verzi Delphi chcete pouít).
+    * Dokumentace doplnÄ›na o instrukce ke kompilaci programu ze zdrojovÃ½ch
+      kÃ³dÅ¯. KompilaÄnÃ­ skripty byly pÅ™i tÃ© pÅ™Ã­leÅ¾itosti vyÄiÅ¡tÄ›ny (napÅ™. uÅ¾
+      nenÃ­ potÅ™eba Å™Ã­kat, jakou verzi Delphi chcete pouÅ¾Ã­t).
 
     * Opravena chyba v AMFString.
 
@@ -1552,319 +1596,319 @@ CHANGELOG
 
   v0.62
 
-    * Upravena komponenta pro práci s XML soubory, aby správnì (podle XML
-      specifikace) pracovala s kódováním souborù. To by mìlo øešit všechny
-      pøípady, kdy bylo video ukládáno se špatnou èeštinou (poslednì to mám
-      hlášeno u http://archiv.nova.cz/multimedia/foto/okresni-prebor-8-dil-schuze.html).
-      Je moné, e úprava nìco rozhodí; kdy na nìjakı takovı pøípad narazíte,
-      dejte mi vìdìt.
+    * Upravena komponenta pro prÃ¡ci s XML soubory, aby sprÃ¡vnÄ› (podle XML
+      specifikace) pracovala s kÃ³dovÃ¡nÃ­m souborÅ¯. To by mÄ›lo Å™eÅ¡it vÅ¡echny
+      pÅ™Ã­pady, kdy bylo video uklÃ¡dÃ¡no se Å¡patnou ÄeÅ¡tinou (poslednÄ› to mÃ¡m
+      hlÃ¡Å¡eno u http://archiv.nova.cz/multimedia/foto/okresni-prebor-8-dil-schuze.html).
+      Je moÅ¾nÃ©, Å¾e Ãºprava nÄ›co rozhodÃ­; kdyÅ¾ na nÄ›jakÃ½ takovÃ½ pÅ™Ã­pad narazÃ­te,
+      dejte mi vÄ›dÄ›t.
 
-    * Nalezena a opravena pøíèina, která za jistıch okolností (typicky pokud
-      byl urèen adresáø pro downloady a v nìm u existoval soubor se stejnım
-      názvem) vedla k chybì "Stahování do souboru XYZ nebylo povoleno". Hlášení
-      samo existuje i nadále, protoe signalizuje naprosto legitimní situaci,
-      ale teï u by se mìlo objevovat jedinì v pøípadì, e operaèní systém
-      skuteènì nedovolí zápis do souboru.
+    * Nalezena a opravena pÅ™Ã­Äina, kterÃ¡ za jistÃ½ch okolnostÃ­ (typicky pokud
+      byl urÄen adresÃ¡Å™ pro downloady a v nÄ›m uÅ¾ existoval soubor se stejnÃ½m
+      nÃ¡zvem) vedla k chybÄ› "StahovÃ¡nÃ­ do souboru XYZ nebylo povoleno". HlÃ¡Å¡enÃ­
+      samo existuje i nadÃ¡le, protoÅ¾e signalizuje naprosto legitimnÃ­ situaci,
+      ale teÄ uÅ¾ by se mÄ›lo objevovat jedinÄ› v pÅ™Ã­padÄ›, Å¾e operaÄnÃ­ systÃ©m
+      skuteÄnÄ› nedovolÃ­ zÃ¡pis do souboru.
 
 
 
   v0.61
 
-    * Novı poskytovatel: RTA.cz.
+    * NovÃ½ poskytovatel: RTA.cz.
 
-    * Novı poskytovatel: Sex-Doma.cz (porno).
+    * NovÃ½ poskytovatel: Sex-Doma.cz (porno).
 
-    * Novı poskytovatel: TN.Nova.cz.
+    * NovÃ½ poskytovatel: TN.Nova.cz.
 
-      Pozor: Nepodaøilo se mi plnì dekódovat zpùsob, jak se z URL èlánku dostat
-      k URL videa. Z tohoto dùvodu jsem pouil velmi prasáckı hack, kterı 
-      postupnì vyzkouší všechny servery, na kterıch by video mohlo bıt. To je 
-      za prvé pomalé, za druhé nespolehlivé a za tøetí se snadno mùe stát, e 
-      vás Nova za tento zpùsob útoku na jejich servery zabanuje.
+      Pozor: NepodaÅ™ilo se mi plnÄ› dekÃ³dovat zpÅ¯sob, jak se z URL ÄlÃ¡nku dostat
+      k URL videa. Z tohoto dÅ¯vodu jsem pouÅ¾il velmi prasÃ¡ckÃ½ hack, kterÃ½ 
+      postupnÄ› vyzkouÅ¡Ã­ vÅ¡echny servery, na kterÃ½ch by video mohlo bÃ½t. To je 
+      za prvÃ© pomalÃ©, za druhÃ© nespolehlivÃ© a za tÅ™etÃ­ se snadno mÅ¯Å¾e stÃ¡t, Å¾e 
+      vÃ¡s Nova za tento zpÅ¯sob Ãºtoku na jejich servery zabanuje.
 
-    * Novı poskytovatel: Z1TV.cz.
+    * NovÃ½ poskytovatel: Z1TV.cz.
 
-    * CT24.cz: Podpora pro URL ve formátu
+    * CT24.cz: Podpora pro URL ve formÃ¡tu
       http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
 
-    * MojeVideo.sk: Nároky na URL byly pøíliš vysoké, v dùsledku toho nìkterá
-      videa nešla stáhnout (napø. http://www.mojevideo.sk/video/654a/eduard_mila_tomasovi_gen.html).
+    * MojeVideo.sk: NÃ¡roky na URL byly pÅ™Ã­liÅ¡ vysokÃ©, v dÅ¯sledku toho nÄ›kterÃ¡
+      videa neÅ¡la stÃ¡hnout (napÅ™. http://www.mojevideo.sk/video/654a/eduard_mila_tomasovi_gen.html).
 
 
 
   v0.60
 
-    * Novı poskytovatel: DrsnySvet.cz (jen nìkteré zdroje).
+    * NovÃ½ poskytovatel: DrsnySvet.cz (jen nÄ›kterÃ© zdroje).
 
-    * Novı poskytovatel: MojeVideo.sk.
+    * NovÃ½ poskytovatel: MojeVideo.sk.
 
-    * Novı poskytovatel: Qip.ru (jen embedded videa).
+    * NovÃ½ poskytovatel: Qip.ru (jen embedded videa).
 
-    * Novı poskytovatel: Studio-Plus.tv.
+    * NovÃ½ poskytovatel: Studio-Plus.tv.
 
-    * GameAnyone.com: Podpora pro videa hostovaná pøímo na GameAnyone.com.
-      Tato podpora se také tıká všech ostatních poskytovatelù, kteøí fungují
-      primárnì pøes servery tøetích stran, napø. VideaCesky.cz nebo 
+    * GameAnyone.com: Podpora pro videa hostovanÃ¡ pÅ™Ã­mo na GameAnyone.com.
+      Tato podpora se takÃ© tÃ½kÃ¡ vÅ¡ech ostatnÃ­ch poskytovatelÅ¯, kteÅ™Ã­ fungujÃ­
+      primÃ¡rnÄ› pÅ™es servery tÅ™etÃ­ch stran, napÅ™. VideaCesky.cz nebo 
       OverStream.net.
 
-    * YouTube.com: Opravena chyba EStreamError z minulé verze, kdy nešlo 
-      stahovat videa, která titulky nemìla.
+    * YouTube.com: Opravena chyba EStreamError z minulÃ© verze, kdy neÅ¡lo 
+      stahovat videa, kterÃ¡ titulky nemÄ›la.
 
 
 
   v0.59
 
-    * CeskaTelevize.cz: Podpora pro videa na stránkách Poøadù (URL ve tvaru
+    * CeskaTelevize.cz: Podpora pro videa na strÃ¡nkÃ¡ch PoÅ™adÅ¯ (URL ve tvaru
       http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/)
-      - ovšem pozor, zdaleka ne kadá stránka poøadù video obsahuje.
+      - ovÅ¡em pozor, zdaleka ne kaÅ¾dÃ¡ strÃ¡nka poÅ™adÅ¯ video obsahuje.
 
-    * MustWatch.cz: Poskytovatel se pøesunul na vlastní doménu.
+    * MustWatch.cz: Poskytovatel se pÅ™esunul na vlastnÃ­ domÃ©nu.
 
-    * YouTube.com: Podpora pro stahování videa v jiném ne nejvyšším moném
-      rozlišení. Nastavení je øešeno polokami v konfiguraèním souboru, popis 
+    * YouTube.com: Podpora pro stahovÃ¡nÃ­ videa v jinÃ©m neÅ¾ nejvyÅ¡Å¡Ã­m moÅ¾nÃ©m
+      rozliÅ¡enÃ­. NastavenÃ­ je Å™eÅ¡eno poloÅ¾kami v konfiguraÄnÃ­m souboru, popis 
       je uveden v dokumentaci (<max_video_width>, <max_video_height>).
 
-      Opìt funkèní uivatelské stránky (http://www.youtube.com/user/titanicpiano14).
+      OpÄ›t funkÄnÃ­ uÅ¾ivatelskÃ© strÃ¡nky (http://www.youtube.com/user/titanicpiano14).
 
-      Opìt funkèní playlisty (http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E).
+      OpÄ›t funkÄnÃ­ playlisty (http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E).
 
-      Podpora pro stahování titulkù. Standardnì se stahují první nalezené
-      titulky, v konfiguraèním souboru ale mùete urèit preferované jazyky
-      a jejich poøadí. Titulky jsou standardnì konvertovány do formátu .srt,
-      protoe YouTube pouívá vlastní speciální formát, ale tuto konverzi
+      Podpora pro stahovÃ¡nÃ­ titulkÅ¯. StandardnÄ› se stahujÃ­ prvnÃ­ nalezenÃ©
+      titulky, v konfiguraÄnÃ­m souboru ale mÅ¯Å¾ete urÄit preferovanÃ© jazyky
+      a jejich poÅ™adÃ­. Titulky jsou standardnÄ› konvertovÃ¡ny do formÃ¡tu .srt,
+      protoÅ¾e YouTube pouÅ¾Ã­vÃ¡ vlastnÃ­ speciÃ¡lnÃ­ formÃ¡t, ale tuto konverzi
       lze vypnout. Popis je v dokumentaci (<preferred_languages>, 
       <convert_subtitles>).
 
-    * Zmìnìna práce s titulky: Titulky se nyní stahují pøed videem, ne a po
-      nìm. Kromì toho probìhla øada dalších interních zmìn zejména u 
-      poskytovatelù bez vlastní infrastruktury (VideaCesky.cz atd.), proto
-      prosím hlaštì pøípady, kdy se pøestaly stahovat titulky tam, kde døíve
+    * ZmÄ›nÄ›na prÃ¡ce s titulky: Titulky se nynÃ­ stahujÃ­ pÅ™ed videem, ne aÅ¾ po
+      nÄ›m. KromÄ› toho probÄ›hla Å™ada dalÅ¡Ã­ch internÃ­ch zmÄ›n zejmÃ©na u 
+      poskytovatelÅ¯ bez vlastnÃ­ infrastruktury (VideaCesky.cz atd.), proto
+      prosÃ­m hlaÅ¡tÄ› pÅ™Ã­pady, kdy se pÅ™estaly stahovat titulky tam, kde dÅ™Ã­ve
       fungovaly.
 
-      Titulky jde nyní zakázat nebo povolit, jak globálnì pro celou aplikaci,
-      tak pro jednotlivé poskytovatele. Detaily jsou v dokumentaci
+      Titulky jde nynÃ­ zakÃ¡zat nebo povolit, jak globÃ¡lnÄ› pro celou aplikaci,
+      tak pro jednotlivÃ© poskytovatele. Detaily jsou v dokumentaci
       (<subtitle_support>).
 
-    * Umístìní specifickıch nastavení poskytovatelù v konfiguraèním souboru
-      neodpovídalo dokumentaci ani vzorovım konfiguracím. Opraveno tak, aby 
-      realita odpovídala dokumentaci i pøíkladùm (<modules>).
+    * UmÃ­stÄ›nÃ­ specifickÃ½ch nastavenÃ­ poskytovatelÅ¯ v konfiguraÄnÃ­m souboru
+      neodpovÃ­dalo dokumentaci ani vzorovÃ½m konfiguracÃ­m. Opraveno tak, aby 
+      realita odpovÃ­dala dokumentaci i pÅ™Ã­kladÅ¯m (<modules>).
 
 
 
   v0.58
 
-    * Novı poskytovatel: PrazdninyVTelci.cz.
+    * NovÃ½ poskytovatel: PrazdninyVTelci.cz.
 
-    * Novı poskytovatel: TubeSSS.com (porno).
+    * NovÃ½ poskytovatel: TubeSSS.com (porno).
 
-    * OverStream.net: Pøidána podpora pro titulky.
+    * OverStream.net: PÅ™idÃ¡na podpora pro titulky.
 
-    * PublicTV.cz: Podpora pro poøady tvoøené nìkolika èástmi (napø.
+    * PublicTV.cz: Podpora pro poÅ™ady tvoÅ™enÃ© nÄ›kolika ÄÃ¡stmi (napÅ™.
       http://www.publictv.cz/cz/menu/3/videoarchiv/clanek-22184-jukebox-s-lenny/1935/)
 
-    * TVcom.cz: Nenaèítal se správnì název obsahu.
+    * TVcom.cz: NenaÄÃ­tal se sprÃ¡vnÄ› nÃ¡zev obsahu.
 
-    * VideaCesky.cz: Pøidána podpora pro další tvar videa.
+    * VideaCesky.cz: PÅ™idÃ¡na podpora pro dalÅ¡Ã­ tvar videa.
 
-    * YouTube.com: Pøidána podpora pro URL, ve kterıch není ID videa prvním
+    * YouTube.com: PÅ™idÃ¡na podpora pro URL, ve kterÃ½ch nenÃ­ ID videa prvnÃ­m
       parametrem.
 
-    * Pøepsána podpora titulkù tak, aby šla snadno implementovat pro libovolnı
+    * PÅ™epsÃ¡na podpora titulkÅ¯ tak, aby Å¡la snadno implementovat pro libovolnÃ½
       server.
 
-    * MSDL vráceno na verzi 1.2.7, protoe se mi nedaøí vzpomenout, jak se dá
+    * MSDL vrÃ¡ceno na verzi 1.2.7, protoÅ¾e se mi nedaÅ™Ã­ vzpomenout, jak se dÃ¡
       verze 1.2.7-r2 zkompilovat pod Windows.
 
 
 
   v0.57
 
-    * Zapomnìl jsem odstranit debugovací kód. Sice je neškodnı, ale otravnı.
+    * ZapomnÄ›l jsem odstranit debugovacÃ­ kÃ³d. Sice je neÅ¡kodnÃ½, ale otravnÃ½.
 
 
 
   v0.56
 
-    * Novı poskytovatel: NavratDoReality.cz
-        - Pozor, podporována jsou pouze videa hostovaná pøímo na serverech
-          NavratDoReality.cz, nikoliv videa pøehrávaná pøes cizí poskytovatele.
+    * NovÃ½ poskytovatel: NavratDoReality.cz
+        - Pozor, podporovÃ¡na jsou pouze videa hostovanÃ¡ pÅ™Ã­mo na serverech
+          NavratDoReality.cz, nikoliv videa pÅ™ehrÃ¡vanÃ¡ pÅ™es cizÃ­ poskytovatele.
 
-    * Novı poskytovatel: TV7.cz
+    * NovÃ½ poskytovatel: TV7.cz
 
-    * Další pokus o odstranìní záhadnıch chyb "Stahování do souboru XY nebylo
+    * DalÅ¡Ã­ pokus o odstranÄ›nÃ­ zÃ¡hadnÃ½ch chyb "StahovÃ¡nÃ­ do souboru XY nebylo
       povoleno."
 
-    * HTML soubor s odkazy (parametr -s) mùe nyní bıt i v kódování UTF-8
+    * HTML soubor s odkazy (parametr -s) mÅ¯Å¾e nynÃ­ bÃ½t i v kÃ³dovÃ¡nÃ­ UTF-8
       nebo UTF-16.
 
-    * YouTube Downloader je nyní kompatibilní s Delphi 2009.
+    * YouTube Downloader je nynÃ­ kompatibilnÃ­ s Delphi 2009.
 
-    * Knihovna NativeXml aktualizována na verzi 3.10. To s sebou nese opravy
-      èeštiny u nìkterıch poskytovatelù, napøíklad u TV Barrandov.
+    * Knihovna NativeXml aktualizovÃ¡na na verzi 3.10. To s sebou nese opravy
+      ÄeÅ¡tiny u nÄ›kterÃ½ch poskytovatelÅ¯, napÅ™Ã­klad u TV Barrandov.
 
-    * Opravena skrytá chyba kompilaèního skriptu (nefungovaly wildcards
-      ve jménech kompilovanıch souborù).
+    * Opravena skrytÃ¡ chyba kompilaÄnÃ­ho skriptu (nefungovaly wildcards
+      ve jmÃ©nech kompilovanÃ½ch souborÅ¯).
 
 
 
   v0.55
 
-    * Komponenta TNativeXml mìla nesprávnou vıchozí hodnotu pro kódování,
-      co vedlo k nesprávnım názvùm filmù na èeskıch webech, na kterıch
-      se informace ètou z XML.
+    * Komponenta TNativeXml mÄ›la nesprÃ¡vnou vÃ½chozÃ­ hodnotu pro kÃ³dovÃ¡nÃ­,
+      coÅ¾ vedlo k nesprÃ¡vnÃ½m nÃ¡zvÅ¯m filmÅ¯ na ÄeskÃ½ch webech, na kterÃ½ch
+      se informace Ätou z XML.
 
-    * Úpravy pro kompatibilitu s Delphi 2009 zpùsobily neoèekávanou chybu
-      pøi práci s pamìtí, která se projevila napø. pøi stahování z TV Nova. 
-      Nelze vylouèit, e jsou v programu ještì nìjaké další podobné chyby.
+    * Ãšpravy pro kompatibilitu s Delphi 2009 zpÅ¯sobily neoÄekÃ¡vanou chybu
+      pÅ™i prÃ¡ci s pamÄ›tÃ­, kterÃ¡ se projevila napÅ™. pÅ™i stahovÃ¡nÃ­ z TV Nova. 
+      Nelze vylouÄit, Å¾e jsou v programu jeÅ¡tÄ› nÄ›jakÃ© dalÅ¡Ã­ podobnÃ© chyby.
 
 
 
   v0.54
 
-    * iPrima.cz: Opìt funguje. Navíc je podporován další formát URL.
+    * iPrima.cz: OpÄ›t funguje. NavÃ­c je podporovÃ¡n dalÅ¡Ã­ formÃ¡t URL.
 
     * Markiza.sk: Podpora pro TalentManii.
 
-    * Další úpravy kódu pro dosaení kompatibility s Delphi 2009. Program jde
-      nyní zkompilovat, ale nebude fungovat, protoe nìkolik klíèovıch èástí
-      ještì není pøepsáno.
+    * DalÅ¡Ã­ Ãºpravy kÃ³du pro dosaÅ¾enÃ­ kompatibility s Delphi 2009. Program jde
+      nynÃ­ zkompilovat, ale nebude fungovat, protoÅ¾e nÄ›kolik klÃ­ÄovÃ½ch ÄÃ¡stÃ­
+      jeÅ¡tÄ› nenÃ­ pÅ™epsÃ¡no.
 
 
 
   v0.53
 
-    * Vladimír Kubala (kubalav@gmail.com) vytvoøil slovenskı pøeklad.
+    * VladimÃ­r Kubala (kubalav@gmail.com) vytvoÅ™il slovenskÃ½ pÅ™eklad.
 
-    * Novı poskytovatel: OverStream.net
+    * NovÃ½ poskytovatel: OverStream.net
 
-    * Novı poskytovatel: MustWatch.hztz.cz
+    * NovÃ½ poskytovatel: MustWatch.hztz.cz
 
-    * Novı poskytovatel: CSmaTalent.cz, CSmaTalent.sk
+    * NovÃ½ poskytovatel: CSmaTalent.cz, CSmaTalent.sk
 
-    * VideaCesky.cz: Podpora pro další dva zpùsoby odkazování na videa.
+    * VideaCesky.cz: Podpora pro dalÅ¡Ã­ dva zpÅ¯soby odkazovÃ¡nÃ­ na videa.
 
-      Nìkterá videa jsou bohuel obtínì dostupná, protoe server VideaCesky
-      se pøíliš nezatìuje úvahami, jestli dodruje nìjaké standardy, a s
-      klidem dává do URL znaky, které tam nemají co dìlat. Pøíkladem je
+      NÄ›kterÃ¡ videa jsou bohuÅ¾el obtÃ­Å¾nÄ› dostupnÃ¡, protoÅ¾e server VideaCesky
+      se pÅ™Ã­liÅ¡ nezatÄ›Å¾uje Ãºvahami, jestli dodrÅ¾uje nÄ›jakÃ© standardy, a s
+      klidem dÃ¡vÃ¡ do URL znaky, kterÃ© tam nemajÃ­ co dÄ›lat. PÅ™Ã­kladem je
       http://www.videacesky.cz/skece-zabavne-scenky/george-carlin-%E2%80%93-nabozenstvi-je-kravina
-      - takhle u je správnì, ale VideaCesky to naprosto v pohodì odkazují
-      s dlouhou pomlèkou místo aby ji správnì zakódoval do posloupnosti
-      %E2%80%93. No a nìkteré browsery, napøíklad Internet Explorer a Opera,
-      tuhle neplatnou adresu dál šíøí pøes clipboard. Pouijte Firefox, ten
-      vadné URL pøijme, ale do clipboardu u ho zapíše správnì zkonvertované.
+      - takhle uÅ¾ je sprÃ¡vnÄ›, ale VideaCesky to naprosto v pohodÄ› odkazujÃ­
+      s dlouhou pomlÄkou mÃ­sto aby ji sprÃ¡vnÄ› zakÃ³doval do posloupnosti
+      %E2%80%93. No a nÄ›kterÃ© browsery, napÅ™Ã­klad Internet Explorer a Opera,
+      tuhle neplatnou adresu dÃ¡l Å¡Ã­Å™Ã­ pÅ™es clipboard. PouÅ¾ijte Firefox, ten
+      vadnÃ© URL pÅ™ijme, ale do clipboardu uÅ¾ ho zapÃ­Å¡e sprÃ¡vnÄ› zkonvertovanÃ©.
       
-      Definitivní oprava nebude k dispozici døíve, ne program pøepíšu na
+      DefinitivnÃ­ oprava nebude k dispozici dÅ™Ã­ve, neÅ¾ program pÅ™epÃ­Å¡u na
       plnou kompatibilitu s Delphi 2009.
 
 
 
   v0.52
 
-    * Novı poskytovatel: AlternativaTV.cz
+    * NovÃ½ poskytovatel: AlternativaTV.cz
 
-    * Novı poskytovatel: PCPlanets.com
-        - Poskytovatel by mìl fungovat, ale vytrvale vrací HTTP chybu 403
-          (forbidden). Stejnì se ovšem chová i samotnı flashovı pøehrávaè,
-          zøejmì tedy nejde o chybu v YTD ale buï o chybné video nebo napø.
-          nepodporovanı stát uivatele.
+    * NovÃ½ poskytovatel: PCPlanets.com
+        - Poskytovatel by mÄ›l fungovat, ale vytrvale vracÃ­ HTTP chybu 403
+          (forbidden). StejnÄ› se ovÅ¡em chovÃ¡ i samotnÃ½ flashovÃ½ pÅ™ehrÃ¡vaÄ,
+          zÅ™ejmÄ› tedy nejde o chybu v YTD ale buÄ o chybnÃ© video nebo napÅ™.
+          nepodporovanÃ½ stÃ¡t uÅ¾ivatele.
 
-    * Upraven PerlRegEx tak, aby se Unicode kód pouíval pouze v Delphi 2009
-      a novìjších. Ve starších Delphi se tím ušetøí nìjakıch 80 KB na 
+    * Upraven PerlRegEx tak, aby se Unicode kÃ³d pouÅ¾Ã­val pouze v Delphi 2009
+      a novÄ›jÅ¡Ã­ch. Ve starÅ¡Ã­ch Delphi se tÃ­m uÅ¡etÅ™Ã­ nÄ›jakÃ½ch 80 KB na 
       velikosti .exe souboru.
 
-    * Probíhají postupné úpravy programu pro dosaení kompatibility s
+    * ProbÃ­hajÃ­ postupnÃ© Ãºpravy programu pro dosaÅ¾enÃ­ kompatibility s
       Delphi 2009.
 
 
 
   v0.51
 
-    * Zmìna licenèních podmínek: YouTube Downloader u není distribuován pod
-      licencí GNU GPL: podrobnım zkoumáním GPL a licencí pouitıch knihoven
-      se ukázalo, e nemám právo program pod GPL vydat. Pouita je nyní
-      tzv. "nová BSD licence" s tím, e komponenty tøetích stran v adresáøi
-      Source/Lib se øídí licencemi svıch autorù. Podrobnosti jsou uvedeny
+    * ZmÄ›na licenÄnÃ­ch podmÃ­nek: YouTube Downloader uÅ¾ nenÃ­ distribuovÃ¡n pod
+      licencÃ­ GNU GPL: podrobnÃ½m zkoumÃ¡nÃ­m GPL a licencÃ­ pouÅ¾itÃ½ch knihoven
+      se ukÃ¡zalo, Å¾e nemÃ¡m prÃ¡vo program pod GPL vydat. PouÅ¾ita je nynÃ­
+      tzv. "novÃ¡ BSD licence" s tÃ­m, Å¾e komponenty tÅ™etÃ­ch stran v adresÃ¡Å™i
+      Source/Lib se Å™Ã­dÃ­ licencemi svÃ½ch autorÅ¯. Podrobnosti jsou uvedeny
       v dokumentaci.
 
-    * GUI: Konvertory jsou nyní standardnì v neaktivovaném stavu a ne je budete
-      moci pouít, musíte je v konfiguraèním souboru aktivovat. Je to proto,
-      e mnoho uivatelù si nepøeèetlo dokumentaci a rovnou si zaèali stìovat,
-      e jim konvertory nefungují (co bylo a je oèekávané chování, protoe
-      se konvertory musí napøed nastavit). Postup aktivace je uveden v
+    * GUI: Konvertory jsou nynÃ­ standardnÄ› v neaktivovanÃ©m stavu a neÅ¾ je budete
+      moci pouÅ¾Ã­t, musÃ­te je v konfiguraÄnÃ­m souboru aktivovat. Je to proto,
+      Å¾e mnoho uÅ¾ivatelÅ¯ si nepÅ™eÄetlo dokumentaci a rovnou si zaÄali stÄ›Å¾ovat,
+      Å¾e jim konvertory nefungujÃ­ (coÅ¾ bylo a je oÄekÃ¡vanÃ© chovÃ¡nÃ­, protoÅ¾e
+      se konvertory musÃ­ napÅ™ed nastavit). Postup aktivace je uveden v
       dokumentaci.
 
-    * GUI: Je rozlišen chybovı stav "Nepodaøilo se spustit konvertor" a 
-      "Konvertorse spustil, ale nahlásil chybu".
+    * GUI: Je rozliÅ¡en chybovÃ½ stav "NepodaÅ™ilo se spustit konvertor" a 
+      "Konvertorse spustil, ale nahlÃ¡sil chybu".
 
-    * GUI: Pøi pokusu o pøidání nepodporovaného URL je zobrazena chybová 
-      zpráva.
+    * GUI: PÅ™i pokusu o pÅ™idÃ¡nÃ­ nepodporovanÃ©ho URL je zobrazena chybovÃ¡ 
+      zprÃ¡va.
 
-    * Èeská televize: 
-      - Podpora pro reklamy (pøesnìji, pro jejich pøeskakování).
+    * ÄŒeskÃ¡ televize: 
+      - Podpora pro reklamy (pÅ™esnÄ›ji, pro jejich pÅ™eskakovÃ¡nÃ­).
       - Podpora pro URL typu: http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
       - Podpora pro URL typu: http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
 
-    * VideaCesky.cz: Podpora pro videa, která jsou hostována pøímo na serveru,
+    * VideaCesky.cz: Podpora pro videa, kterÃ¡ jsou hostovÃ¡na pÅ™Ã­mo na serveru,
       ne na YouTube (napr. http://www.videacesky.cz/ostatni/ceska-republika-narod-pivaru).
 
-    * MSDL aktualizováno na verzi 1.2.7-r2.
+    * MSDL aktualizovÃ¡no na verzi 1.2.7-r2.
 
 
 
   v0.50
 
-    * Pøi prvním spuštìní grafické verze (tzn. v okamiku, kdy zjistí, e
-      neexistuje konfiguraèní XML soubor) se vás program zeptá na nìkolik
-      nastavení, která mohou ovlivòovat vaše soukromí. Vìnujte prosím tìmto
-      dotazùm svoji pozornost.
+    * PÅ™i prvnÃ­m spuÅ¡tÄ›nÃ­ grafickÃ© verze (tzn. v okamÅ¾iku, kdy zjistÃ­, Å¾e
+      neexistuje konfiguraÄnÃ­ XML soubor) se vÃ¡s program zeptÃ¡ na nÄ›kolik
+      nastavenÃ­, kterÃ¡ mohou ovlivÅˆovat vaÅ¡e soukromÃ­. VÄ›nujte prosÃ­m tÄ›mto
+      dotazÅ¯m svoji pozornost.
 
-    * Pøi startu grafické verze programu se automaticky testuje dostupnost
-      novìjší verze. Pokud vám to vadí, je na to nastavení v konfiguraci.
+    * PÅ™i startu grafickÃ© verze programu se automaticky testuje dostupnost
+      novÄ›jÅ¡Ã­ verze. Pokud vÃ¡m to vadÃ­, je na to nastavenÃ­ v konfiguraci.
       Popis je v dokumentaci k programu.
 
-    * Kompletnì pøepracován systém ukládání a naèítání konfiguraèních údajù.
-      Místo pùvodní ponìkud schizofrenní kombinace INI souboru a registru je
-      nyní pouit jeden XML soubor, uloenı buï v adresáøi programu nebo
-      v uivatelském profilu, podle toho, jestli YouTube Downloader puíváte
-      jako pøenositelnou (portable) aplikaci nebo normální. Podrobnosti jsou
+    * KompletnÄ› pÅ™epracovÃ¡n systÃ©m uklÃ¡dÃ¡nÃ­ a naÄÃ­tÃ¡nÃ­ konfiguraÄnÃ­ch ÃºdajÅ¯.
+      MÃ­sto pÅ¯vodnÃ­ ponÄ›kud schizofrennÃ­ kombinace INI souboru a registru je
+      nynÃ­ pouÅ¾it jeden XML soubor, uloÅ¾enÃ½ buÄ v adresÃ¡Å™i programu nebo
+      v uÅ¾ivatelskÃ©m profilu, podle toho, jestli YouTube Downloader puÅ¾Ã­vÃ¡te
+      jako pÅ™enositelnou (portable) aplikaci nebo normÃ¡lnÃ­. Podrobnosti jsou
       uvedeny v dokumentaci.
 
-      Staré konfiguraèní údaje v INI souboru a v registrech u nebudou
-      pouívány.
+      StarÃ© konfiguraÄnÃ­ Ãºdaje v INI souboru a v registrech uÅ¾ nebudou
+      pouÅ¾Ã­vÃ¡ny.
 
-    * Podpora pro konverzi videa nebo jakékoliv jiné akce po jeho úspìšném
-      stáhnutí. Detaily, jak funkci pouívat, jsou popsány v dokumentaci v 
-      sekci "Konverze stáhnutıch souborù", v sekci "Konfigurace" je v èásti
-      <converters> popsáno, jak definovat vlastní konvertovaèe nebo mìnit
-      parametry pøeddefinovanıch.
+    * Podpora pro konverzi videa nebo jakÃ©koliv jinÃ© akce po jeho ÃºspÄ›Å¡nÃ©m
+      stÃ¡hnutÃ­. Detaily, jak funkci pouÅ¾Ã­vat, jsou popsÃ¡ny v dokumentaci v 
+      sekci "Konverze stÃ¡hnutÃ½ch souborÅ¯", v sekci "Konfigurace" je v ÄÃ¡sti
+      <converters> popsÃ¡no, jak definovat vlastnÃ­ konvertovaÄe nebo mÄ›nit
+      parametry pÅ™eddefinovanÃ½ch.
 
-    * GUI verze má nyní speciální tlaèítko, pokud by snad nìkdo chtìl
-      pøispìt opravdovımi penìzi na další vıvoj programu. ádnı strach,
-      aplikace je a bude free i bez pøíspìvkù - pro mì jde spíš o zpùsob
-      sledování, kolika lidem program pøipadá uiteènı, ne o zdroj pøíjmù
-      (nehledì na to, e bych se nerad dostal do situace, kdy by pøíspìvky
-      pøerostly hranici a já je musel danit).
+    * GUI verze mÃ¡ nynÃ­ speciÃ¡lnÃ­ tlaÄÃ­tko, pokud by snad nÄ›kdo chtÄ›l
+      pÅ™ispÄ›t opravdovÃ½mi penÄ›zi na dalÅ¡Ã­ vÃ½voj programu. Å½Ã¡dnÃ½ strach,
+      aplikace je a bude free i bez pÅ™Ã­spÄ›vkÅ¯ - pro mÄ› jde spÃ­Å¡ o zpÅ¯sob
+      sledovÃ¡nÃ­, kolika lidem program pÅ™ipadÃ¡ uÅ¾iteÄnÃ½, neÅ¾ o zdroj pÅ™Ã­jmÅ¯
+      (nehledÄ› na to, Å¾e bych se nerad dostal do situace, kdy by pÅ™Ã­spÄ›vky
+      pÅ™erostly hranici a jÃ¡ je musel danit).
 
-    * GUI verze má dále tlaèítko pro nahlášení URL, které by stáhnout jít
-      mìlo, ale nejde. Podmínkou pro vyuití této funkce ale je, abyste
-      pouívali aktuální verzi programu. Pøed hlášením si prosím ovìøte, e
-      chyba opravdu je v programu - speciálnì, e vám funguje pøipojení k
-      internetu a e dotyèné video funguje, pokud si ho necháte zobrazit
-      normálnì v prohlíeèi. Dìkuji za pochopení.
+    * GUI verze mÃ¡ dÃ¡le tlaÄÃ­tko pro nahlÃ¡Å¡enÃ­ URL, kterÃ© by stÃ¡hnout jÃ­t
+      mÄ›lo, ale nejde. PodmÃ­nkou pro vyuÅ¾itÃ­ tÃ©to funkce ale je, abyste
+      pouÅ¾Ã­vali aktuÃ¡lnÃ­ verzi programu. PÅ™ed hlÃ¡Å¡enÃ­m si prosÃ­m ovÄ›Å™te, Å¾e
+      chyba opravdu je v programu - speciÃ¡lnÄ›, Å¾e vÃ¡m funguje pÅ™ipojenÃ­ k
+      internetu a Å¾e dotyÄnÃ© video funguje, pokud si ho nechÃ¡te zobrazit
+      normÃ¡lnÄ› v prohlÃ­Å¾eÄi. DÄ›kuji za pochopenÃ­.
 
-      Hlášení chyb probíhá pøes speciální webovı formuláø, kterı bude mít
-      u v okamiku otevøení pøedvyplnìné všechny nezbytné parametry.
-      Doporuèuji vám ale vyplnit i nepovinné pole "Popis", a - pro pøípad,
-      e budete chtít odpovìï, nebo já budu potøebovat další upøesnìní
+      HlÃ¡Å¡enÃ­ chyb probÃ­hÃ¡ pÅ™es speciÃ¡lnÃ­ webovÃ½ formulÃ¡Å™, kterÃ½ bude mÃ­t
+      uÅ¾ v okamÅ¾iku otevÅ™enÃ­ pÅ™edvyplnÄ›nÃ© vÅ¡echny nezbytnÃ© parametry.
+      DoporuÄuji vÃ¡m ale vyplnit i nepovinnÃ© pole "Popis", a - pro pÅ™Ã­pad,
+      Å¾e budete chtÃ­t odpovÄ›Ä, nebo jÃ¡ budu potÅ™ebovat dalÅ¡Ã­ upÅ™esnÄ›nÃ­
       - e-mail.
 
-    * Podrobnìjší chybová hlášení v GUI verzi.
+    * PodrobnÄ›jÅ¡Ã­ chybovÃ¡ hlÃ¡Å¡enÃ­ v GUI verzi.
 
-    * Opravena chyba, která náhodnì (tzn. já sám jsem na ni poprvé narazil
-      a v této verzi, pøestoe chyba je tu s námi u od verze 0.12) 
-      zpùsobovala pády programu po skonèení downloadu.
+    * Opravena chyba, kterÃ¡ nÃ¡hodnÄ› (tzn. jÃ¡ sÃ¡m jsem na ni poprvÃ© narazil
+      aÅ¾ v tÃ©to verzi, pÅ™estoÅ¾e chyba je tu s nÃ¡mi uÅ¾ od verze 0.12) 
+      zpÅ¯sobovala pÃ¡dy programu po skonÄenÃ­ downloadu.
 
-    * Noví poskytovatelé:
+    * NovÃ­ poskytovatelÃ©:
         - AngryAlien.com
         - Blennus.com
         - Bolt.com (BoltAgain.ning.com)
@@ -1882,170 +1926,170 @@ CHANGELOG
         - TotallyCrap.com
         - YouJizz.com (porno)
 
-    * Barrandov.tv: Pouívá se vhodnìjší pøípona .flv místo pùvodního .f4v.
+    * Barrandov.tv: PouÅ¾Ã­vÃ¡ se vhodnÄ›jÅ¡Ã­ pÅ™Ã­pona .flv mÃ­sto pÅ¯vodnÃ­ho .f4v.
 
-    * Break.com: Podpora pro dvì varianty odkazù na embedded verzi.
+    * Break.com: Podpora pro dvÄ› varianty odkazÅ¯ na embedded verzi.
 
-    * VideaCesky.cz: Pøidána druhá varianta pro zobrazení videa, tím by se
-      mìla zprovoznit vìtšina filmù, které dosud nefungovaly.
+    * VideaCesky.cz: PÅ™idÃ¡na druhÃ¡ varianta pro zobrazenÃ­ videa, tÃ­m by se
+      mÄ›la zprovoznit vÄ›tÅ¡ina filmÅ¯, kterÃ© dosud nefungovaly.
 
-    * PornHub.com: Podpora pro odkazy na embedded verzi. Opraveno stahování
-      u normální (HTML) verze.
+    * PornHub.com: Podpora pro odkazy na embedded verzi. Opraveno stahovÃ¡nÃ­
+      u normÃ¡lnÃ­ (HTML) verze.
 
-    * Další velká programátorská zmìna: místo pùvodního TjanXmlParser2 je
-      pouita komponenta TNativeXml, která se stále vyvíjí, podporuje i nové 
-      verze Delphi a podstatnì lépe vyhovuje standardùm XML. Stejnì jako v
-      pøípadì regulárních vırazù v minulé verzi to mùe vést k nìkterım 
-      nefunkèním poskytovatelùm, ale drtivou vìtšinu jsem jich zkoušel a
+    * DalÅ¡Ã­ velkÃ¡ programÃ¡torskÃ¡ zmÄ›na: mÃ­sto pÅ¯vodnÃ­ho TjanXmlParser2 je
+      pouÅ¾ita komponenta TNativeXml, kterÃ¡ se stÃ¡le vyvÃ­jÃ­, podporuje i novÃ© 
+      verze Delphi a podstatnÄ› lÃ©pe vyhovuje standardÅ¯m XML. StejnÄ› jako v
+      pÅ™Ã­padÄ› regulÃ¡rnÃ­ch vÃ½razÅ¯ v minulÃ© verzi to mÅ¯Å¾e vÃ©st k nÄ›kterÃ½m 
+      nefunkÄnÃ­m poskytovatelÅ¯m, ale drtivou vÄ›tÅ¡inu jsem jich zkouÅ¡el a
       fungovaly.
 
-    * Opìt zprovoznìna kompilace pod FreePascalem. V souboru Source\build.txt
-      je popis, jak YTD zkompilovat. Do Source byly pøesunuty i skripty pro
+    * OpÄ›t zprovoznÄ›na kompilace pod FreePascalem. V souboru Source\build.txt
+      je popis, jak YTD zkompilovat. Do Source byly pÅ™esunuty i skripty pro
       kompilaci programu.
 
 
 
   v0.40
 
-    * Novı poskytovatel: Cas.sk.
+    * NovÃ½ poskytovatel: Cas.sk.
 
-    * Novı poskytovatel: MediaSport.cz.
+    * NovÃ½ poskytovatel: MediaSport.cz.
 
-    * Free.zoznam.sk: Video se ukládalo s pøíponou .php.
+    * Free.zoznam.sk: Video se uklÃ¡dalo s pÅ™Ã­ponou .php.
 
-    * LiveLeak.com: Podpora pro embedded verze odkazù.
+    * LiveLeak.com: Podpora pro embedded verze odkazÅ¯.
 
-    * MSFotbal.ct24.cz: Pùvodní odkazy (na vlastní subdoménì) u neexistují,
-      k videu se ale stále dá dostat pøes "obecné" odkazy CT24.cz.
+    * MSFotbal.ct24.cz: PÅ¯vodnÃ­ odkazy (na vlastnÃ­ subdomÃ©nÄ›) uÅ¾ neexistujÃ­,
+      k videu se ale stÃ¡le dÃ¡ dostat pÅ™es "obecnÃ©" odkazy CT24.cz.
 
-    * Rozhlas.cz: Opìt funguje (sice u není potøeba, protoe na stránkách
-      je pøímı odkaz na download, ale kdy u byl kdysi podporován...). Byla
-      opravena chyba, kdy se za jistıch okolností mohly soubory nechtìnì 
-      pøepisovat.
+    * Rozhlas.cz: OpÄ›t funguje (sice uÅ¾ nenÃ­ potÅ™eba, protoÅ¾e na strÃ¡nkÃ¡ch
+      je pÅ™Ã­mÃ½ odkaz na download, ale kdyÅ¾ uÅ¾ byl kdysi podporovÃ¡n...). Byla
+      opravena chyba, kdy se za jistÃ½ch okolnostÃ­ mohly soubory nechtÄ›nÄ› 
+      pÅ™episovat.
 
-    * YouTube.com: Opìt funguje, po další zmìnì stránek YouTube.
+    * YouTube.com: OpÄ›t funguje, po dalÅ¡Ã­ zmÄ›nÄ› strÃ¡nek YouTube.
 
-    * Grafická verze: Okna pro vıbìr souboru (pøi ukládání nebo naèítání)
-      pouívají grafickou podobu odpovídající Windows, ve kterıch jsou spuštìné
-      - dosud pouívaly zobrazení odpovídající Windows 98.
+    * GrafickÃ¡ verze: Okna pro vÃ½bÄ›r souboru (pÅ™i uklÃ¡dÃ¡nÃ­ nebo naÄÃ­tÃ¡nÃ­)
+      pouÅ¾Ã­vajÃ­ grafickou podobu odpovÃ­dajÃ­cÃ­ Windows, ve kterÃ½ch jsou spuÅ¡tÄ›nÃ©
+      - dosud pouÅ¾Ã­valy zobrazenÃ­ odpovÃ­dajÃ­cÃ­ Windows 98.
 
-    * CLI verze: Podpora pro návratové kódy (errorlevel). Popis je uveden v
-      pøíslušné sekci v dokumentaci.
+    * CLI verze: Podpora pro nÃ¡vratovÃ© kÃ³dy (errorlevel). Popis je uveden v
+      pÅ™Ã­sluÅ¡nÃ© sekci v dokumentaci.
 
-    * CLI verze: Chyba v parametrech nebo "zobrazovací" parametry (-?, -v, -l)
-      ukonèí další zpracování pøíkazové øádky a vyskoèí z programu.
+    * CLI verze: Chyba v parametrech nebo "zobrazovacÃ­" parametry (-?, -v, -l)
+      ukonÄÃ­ dalÅ¡Ã­ zpracovÃ¡nÃ­ pÅ™Ã­kazovÃ© Å™Ã¡dky a vyskoÄÃ­ z programu.
 
-    * Drobné optimalizace velikosti programu.
+    * DrobnÃ© optimalizace velikosti programu.
 
-    * Opraveno ukládání seznamu nestaenıch souborù: pokud byl seznam prázdnı,
-      nepøepsal u døíve uloenı seznam.
+    * Opraveno uklÃ¡dÃ¡nÃ­ seznamu nestaÅ¾enÃ½ch souborÅ¯: pokud byl seznam prÃ¡zdnÃ½,
+      nepÅ™epsal uÅ¾ dÅ™Ã­ve uloÅ¾enÃ½ seznam.
 
-    * Program nyní pouívá pro regulární vırazy komponentu TPerlRegEx místo
-      pùvodní DPCRE. To sice mùe vést k problémùm u nìkterıch poskytovatelù, 
-      kteøí døíve fungovali (øadu z nich jsem testoval a fungují, ale 
-      neovìøoval jsem všechny), ale umonilo mi to obejít se bez knihovny
-      PCRE.DLL a hlavnì to bude mnohem lépe udrovatelné do budoucnosti,
-      protoe TPerlRegExp je celkem pravidelnì aktualizován a oficiálnì
-      podporuje i nové verze Delphi (2009 a 2010).
+    * Program nynÃ­ pouÅ¾Ã­vÃ¡ pro regulÃ¡rnÃ­ vÃ½razy komponentu TPerlRegEx mÃ­sto
+      pÅ¯vodnÃ­ DPCRE. To sice mÅ¯Å¾e vÃ©st k problÃ©mÅ¯m u nÄ›kterÃ½ch poskytovatelÅ¯, 
+      kteÅ™Ã­ dÅ™Ã­ve fungovali (Å™adu z nich jsem testoval a fungujÃ­, ale 
+      neovÄ›Å™oval jsem vÅ¡echny), ale umoÅ¾nilo mi to obejÃ­t se bez knihovny
+      PCRE.DLL a hlavnÄ› to bude mnohem lÃ©pe udrÅ¾ovatelnÃ© do budoucnosti,
+      protoÅ¾e TPerlRegExp je celkem pravidelnÄ› aktualizovÃ¡n a oficiÃ¡lnÄ›
+      podporuje i novÃ© verze Delphi (2009 a 2010).
 
 
 
   v0.39
 
-    * GUI verze: Automaticky se ukládá seznam videí ke staení, a tento seznam
-      se automaticky naèítá pøi startu programu. To znamená, e mùete YouTube
-      Downloader ukonèit a pozdìji pokraèovat tam, kde skonèil (videa se ovšem
-      budou stahovat opìt od zaèátku, navazování pøerušeného spojení není
-      podporováno).
+    * GUI verze: Automaticky se uklÃ¡dÃ¡ seznam videÃ­ ke staÅ¾enÃ­, a tento seznam
+      se automaticky naÄÃ­tÃ¡ pÅ™i startu programu. To znamenÃ¡, Å¾e mÅ¯Å¾ete YouTube
+      Downloader ukonÄit a pozdÄ›ji pokraÄovat tam, kde skonÄil (videa se ovÅ¡em
+      budou stahovat opÄ›t od zaÄÃ¡tku, navazovÃ¡nÃ­ pÅ™eruÅ¡enÃ©ho spojenÃ­ nenÃ­
+      podporovÃ¡no).
 
-      Pokud je YouTube Downloader spuštìn v portable reimu (nastavení
-      DontUseRegistry je v INI souboru nastaveno na 1) a tato funkce má 
-      fungovat, musí bıt INI soubor zapisovatelnı.
+      Pokud je YouTube Downloader spuÅ¡tÄ›n v portable reÅ¾imu (nastavenÃ­
+      DontUseRegistry je v INI souboru nastaveno na 1) a tato funkce mÃ¡ 
+      fungovat, musÃ­ bÃ½t INI soubor zapisovatelnÃ½.
 
-    * Aby byla zajištìna správná funkce pøedchozí funkènosti na všech Windows,
-      byla zmìnìna vıchozí hodnota DontUseRegistry na 0 - "pouívat registry".
-      Pokud chcete provozovat YouTube Downloader v portable reimu, MUSÍTE
-      vytvoøit INI soubor a zapsat do nìj DontUseRegistry=1 (viz dokumentace).
+    * Aby byla zajiÅ¡tÄ›na sprÃ¡vnÃ¡ funkce pÅ™edchozÃ­ funkÄnosti na vÅ¡ech Windows,
+      byla zmÄ›nÄ›na vÃ½chozÃ­ hodnota DontUseRegistry na 0 - "pouÅ¾Ã­vat registry".
+      Pokud chcete provozovat YouTube Downloader v portable reÅ¾imu, MUSÃTE
+      vytvoÅ™it INI soubor a zapsat do nÄ›j DontUseRegistry=1 (viz dokumentace).
 
-    * VideaCesky.cz: Nìkterá videa nešla stáhnout.
+    * VideaCesky.cz: NÄ›kterÃ¡ videa neÅ¡la stÃ¡hnout.
 
-    * Novı zdroj: Aktualne.cz (Aktualne.Centrum.cz).
+    * NovÃ½ zdroj: Aktualne.cz (Aktualne.Centrum.cz).
 
-    * Novı zdroj: AutoTube.cz.
+    * NovÃ½ zdroj: AutoTube.cz.
 
-    * Novı zdroj: Bomba.cz.
+    * NovÃ½ zdroj: Bomba.cz.
 
-    * Novı zdroj: DeutscheBahn.com.
+    * NovÃ½ zdroj: DeutscheBahn.com.
 
-    * Novı zdroj: GameAnyone.com.
+    * NovÃ½ zdroj: GameAnyone.com.
 
-    * Novı zdroj: iHned.cz.
+    * NovÃ½ zdroj: iHned.cz.
 
-    * Novı zdroj: Novinky.cz.
+    * NovÃ½ zdroj: Novinky.cz.
 
-    * Novı zdroj: PublicTV.cz.
+    * NovÃ½ zdroj: PublicTV.cz.
 
 
 
   v0.38
 
-    * Pøidána podpora pro další varianty URL u msfotbal.ct24.cz.
+    * PÅ™idÃ¡na podpora pro dalÅ¡Ã­ varianty URL u msfotbal.ct24.cz.
 
-    * Aktualizována podpora YouTube na zmìnìnou strukturu z 17.6.2010.
+    * AktualizovÃ¡na podpora YouTube na zmÄ›nÄ›nou strukturu z 17.6.2010.
 
-    * GUI: Dvojklikem na stáhnutém videu se toto video spustí ve vıchozím
-      pøehrávaèi (podle formátu).
+    * GUI: Dvojklikem na stÃ¡hnutÃ©m videu se toto video spustÃ­ ve vÃ½chozÃ­m
+      pÅ™ehrÃ¡vaÄi (podle formÃ¡tu).
 
-    * Novı zdroj: CestyKSobe.cz
+    * NovÃ½ zdroj: CestyKSobe.cz
 
 
 
   v0.37
 
-    * Nìkolik úprav v kódu vıraznì zkracuje command-line verzi YTD - pokud
-      je zakázáno grafické rozhraní, klesne délka programu na necelou
-      polovinu pùvodní velikosti.
+    * NÄ›kolik Ãºprav v kÃ³du vÃ½raznÄ› zkracuje command-line verzi YTD - pokud
+      je zakÃ¡zÃ¡no grafickÃ© rozhranÃ­, klesne dÃ©lka programu na necelou
+      polovinu pÅ¯vodnÃ­ velikosti.
 
-      Následovat budou úpravy pro zkrácení GUI verze.
+      NÃ¡sledovat budou Ãºpravy pro zkrÃ¡cenÃ­ GUI verze.
 
-      (Ano, já vím, e dnes jsou tak velké disky, e ušetøenıch 100 KB
-      nikoho nezajímá. Ale co se dá dìlat, mì se malé programy líbí...)
+      (Ano, jÃ¡ vÃ­m, Å¾e dnes jsou tak velkÃ© disky, Å¾e uÅ¡etÅ™enÃ½ch 100 KB
+      nikoho nezajÃ­mÃ¡. Ale co se dÃ¡ dÄ›lat, mÄ› se malÃ© programy lÃ­bÃ­...)
 
-    * Èeská televize: Podpora pro videa uvnitø èlánkù na ÈT24, jako je napø.
+    * ÄŒeskÃ¡ televize: Podpora pro videa uvnitÅ™ ÄlÃ¡nkÅ¯ na ÄŒT24, jako je napÅ™.
       http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
-      Je tøeba zadat ne èlánek (URL vıše), ale pøímo URL videa, napø.           
+      Je tÅ™eba zadat ne ÄlÃ¡nek (URL vÃ½Å¡e), ale pÅ™Ã­mo URL videa, napÅ™.           
       http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
 
       Podpora pro msfotbal.ct24.cz.
 
-    * Novı zdroj: Slovenská televize.
+    * NovÃ½ zdroj: SlovenskÃ¡ televize.
 
-    * Pøi testu na novou verzi (CLI: parametrem -v; GUI: v oknì About) se
-      nepouíval proxy server, i kdy byl v INI souboru nastaven.
+    * PÅ™i testu na novou verzi (CLI: parametrem -v; GUI: v oknÄ› About) se
+      nepouÅ¾Ã­val proxy server, i kdyÅ¾ byl v INI souboru nastaven.
 
 
 
   v0.36
 
-    * Uvolnìna kontrola pøi konverzi øetìzcù mezi kódováními - program nebude
-      vyhazovat chybu konverze v pøípadì, e narazí na neznámı znak, prostì
-      ho nahradí jinım. (Øeší nestabilní chování Èeské televize, která se
-      nìkdy stáhne a nìkdy - se stejnım URL - zase ne.)
+    * UvolnÄ›na kontrola pÅ™i konverzi Å™etÄ›zcÅ¯ mezi kÃ³dovÃ¡nÃ­mi - program nebude
+      vyhazovat chybu konverze v pÅ™Ã­padÄ›, Å¾e narazÃ­ na neznÃ¡mÃ½ znak, prostÄ›
+      ho nahradÃ­ jinÃ½m. (Å˜eÅ¡Ã­ nestabilnÃ­ chovÃ¡nÃ­ ÄŒeskÃ© televize, kterÃ¡ se
+      nÄ›kdy stÃ¡hne a nÄ›kdy - se stejnÃ½m URL - zase ne.)
 
     * Podpora pro lokalizace. 
 
-      - Vyuívání existujících pøekladù: Ve vıchozím stavu pouije program
-        jazykovou verzi podle nastavení Windows, lze si ale vynutit konkrétní
-        jazyk pomocí nastavení Language v INI souboru (viz dokumentace).
+      - VyuÅ¾Ã­vÃ¡nÃ­ existujÃ­cÃ­ch pÅ™ekladÅ¯: Ve vÃ½chozÃ­m stavu pouÅ¾ije program
+        jazykovou verzi podle nastavenÃ­ Windows, lze si ale vynutit konkrÃ©tnÃ­
+        jazyk pomocÃ­ nastavenÃ­ Language v INI souboru (viz dokumentace).
 
-      - Tvorba vlastních pøekladù: Postupujte prosím podle pøíslušné sekce 
+      - Tvorba vlastnÃ­ch pÅ™ekladÅ¯: Postupujte prosÃ­m podle pÅ™Ã­sluÅ¡nÃ© sekce 
         v dokumentaci.
 
 
 
   v0.35
 
-    * Novì podporované servery:
+    * NovÄ› podporovanÃ© servery:
         - 5min.com
         - eHow.com
         - ExtremeTube.com (porno)
@@ -2066,11 +2110,11 @@ CHANGELOG
 
   v0.34
 
-    * Odstranìno zapomenuté konzolové okno pøi spouštìní GUI verze.
+    * OdstranÄ›no zapomenutÃ© konzolovÃ© okno pÅ™i spouÅ¡tÄ›nÃ­ GUI verze.
 
-    * Aktualizována podpora MySpace. Pozor, tıká se pouze videí hostovanıch
-      pøímo na serveru MySpace - jsou i taková, co jsou hostována jinde (napø.
-      na Hulu.com), a ta stáhnout nejdou.
+    * AktualizovÃ¡na podpora MySpace. Pozor, tÃ½kÃ¡ se pouze videÃ­ hostovanÃ½ch
+      pÅ™Ã­mo na serveru MySpace - jsou i takovÃ¡, co jsou hostovÃ¡na jinde (napÅ™.
+      na Hulu.com), a ta stÃ¡hnout nejdou.
 
     * Podpora pro TV Noe (http://tvnoe.tbsystem.cz).
 
@@ -2080,10 +2124,10 @@ CHANGELOG
 
     * Podpora pro VitalMtb.com.
 
-    * Pokud uivatel odsouhlasí pøepsání existujícího souboru, pokusí se YTD
-      tento soubor smazat a teprve potom do nìj zaène zapisovat. (Jde o pokus,
-      jak obejít zvláštní chování Windows 7, které nechtìjí dovolit zápis do
-      existujícího souboru).
+    * Pokud uÅ¾ivatel odsouhlasÃ­ pÅ™epsÃ¡nÃ­ existujÃ­cÃ­ho souboru, pokusÃ­ se YTD
+      tento soubor smazat a teprve potom do nÄ›j zaÄne zapisovat. (Jde o pokus,
+      jak obejÃ­t zvlÃ¡Å¡tnÃ­ chovÃ¡nÃ­ Windows 7, kterÃ© nechtÄ›jÃ­ dovolit zÃ¡pis do
+      existujÃ­cÃ­ho souboru).
 
 
 
@@ -2091,28 +2135,28 @@ CHANGELOG
 
     * Stream.cz: Podpora pro HQ videa.
 
-    * Joj.sk: Adresa poøadu detekuje další dva moné zpùsoby, jak se u Joj
-      zapisují informace o poøadu. Dosavadní poøady se tak dokonce mohly
-      (a nemusely) stahovat špatnì - mohlo se stáhnout nìco jiného, ne co
-      jste stáhnout chtìli. Doporuèuji downloady z Joj.sk dùkladnì sledovat
-      a hlásit pøípadné chyby, protoe není vylouèeno, e Joj bude mít ve 
-      svıch kódech nìjakou další divoèárnu.
+    * Joj.sk: Adresa poÅ™adu detekuje dalÅ¡Ã­ dva moÅ¾nÃ© zpÅ¯soby, jak se u Joj
+      zapisujÃ­ informace o poÅ™adu. DosavadnÃ­ poÅ™ady se tak dokonce mohly
+      (a nemusely) stahovat Å¡patnÄ› - mohlo se stÃ¡hnout nÄ›co jinÃ©ho, neÅ¾ co
+      jste stÃ¡hnout chtÄ›li. DoporuÄuji downloady z Joj.sk dÅ¯kladnÄ› sledovat
+      a hlÃ¡sit pÅ™Ã­padnÃ© chyby, protoÅ¾e nenÃ­ vylouÄeno, Å¾e Joj bude mÃ­t ve 
+      svÃ½ch kÃ³dech nÄ›jakou dalÅ¡Ã­ divoÄÃ¡rnu.
 
-      Tím by mìlo bıt opravené i pøípadné nestahování HQ verze.
+      TÃ­m by mÄ›lo bÃ½t opravenÃ© i pÅ™Ã­padnÃ© nestahovÃ¡nÃ­ HQ verze.
 
-    * VideaCesky.cz: Spolu s filmem se stahují i titulky.
+    * VideaCesky.cz: Spolu s filmem se stahujÃ­ i titulky.
 
-    * Ve zdrojovém kódu knihovny MSDL chybìly soubory .po potøebné pro
+    * Ve zdrojovÃ©m kÃ³du knihovny MSDL chybÄ›ly soubory .po potÅ™ebnÃ© pro
       kompilaci.
 
-    * Podpora pro proxy servery. V INI souboru jsou pro nì poloky ProxyHost,
+    * Podpora pro proxy servery. V INI souboru jsou pro nÄ› poloÅ¾ky ProxyHost,
       ProxyPort, ProxyUser a ProxyPassword. Viz dokumentace.
 
 
 
   v0.32
 
-    * Mírnì pøeuspoøádány ikonky v GUI verzi, aby byly v logiètìjších celcích.
+    * MÃ­rnÄ› pÅ™euspoÅ™Ã¡dÃ¡ny ikonky v GUI verzi, aby byly v logiÄtÄ›jÅ¡Ã­ch celcÃ­ch.
 
     * Podpora pro MegaVideo.com a MegaPorn.com.
 
@@ -2120,60 +2164,60 @@ CHANGELOG
 
     * Podpora pro UStream.tv.
 
-      Poznámka pro vıvojáøe: Podpora AMF je nekompletní, mimo jiné chybí
-      komplet všechno kolem AMF3. Podpora bude doplnìna, a/pokud bude potøeba.
+      PoznÃ¡mka pro vÃ½vojÃ¡Å™e: Podpora AMF je nekompletnÃ­, mimo jinÃ© chybÃ­
+      komplet vÅ¡echno kolem AMF3. Podpora bude doplnÄ›na, aÅ¾/pokud bude potÅ™eba.
 
 
 
   v0.31
 
-    * V implementaci televize Joj bylo prohozené datum, take se stahoval
-      špatnı soubor.
+    * V implementaci televize Joj bylo prohozenÃ© datum, takÅ¾e se stahoval
+      Å¡patnÃ½ soubor.
 
 
 
   v0.30
 
-    * Experimentání podpora pro Joj.sk. Pouívám hodnì pochybnı zpùsob pro 
-      získávání adresy videa i jeho stahování, proto se dá oèekávat, e to
-      nebude fungovat na všechny poøady. A na takovı pøípad narazíte, budu
-      potøebovat jeho URL.
+    * ExperimentÃ¡nÃ­ podpora pro Joj.sk. PouÅ¾Ã­vÃ¡m hodnÄ› pochybnÃ½ zpÅ¯sob pro 
+      zÃ­skÃ¡vÃ¡nÃ­ adresy videa i jeho stahovÃ¡nÃ­, proto se dÃ¡ oÄekÃ¡vat, Å¾e to
+      nebude fungovat na vÅ¡echny poÅ™ady. AÅ¾ na takovÃ½ pÅ™Ã­pad narazÃ­te, budu
+      potÅ™ebovat jeho URL.
 
-    * Podpora pro Metropol TV (tvpraha11.cz; pokud jsou i jiné adresy, budu
-      je potøebovat znát).
+    * Podpora pro Metropol TV (tvpraha11.cz; pokud jsou i jinÃ© adresy, budu
+      je potÅ™ebovat znÃ¡t).
 
-    * Podpora pro VideaCesky.cz. Obdobnım zpùsobem jde snadno doplòovat
-      další sekundární zdroje (nemají vlastní videa, odkazují na cizí stránky).
+    * Podpora pro VideaCesky.cz. ObdobnÃ½m zpÅ¯sobem jde snadno doplÅˆovat
+      dalÅ¡Ã­ sekundÃ¡rnÃ­ zdroje (nemajÃ­ vlastnÃ­ videa, odkazujÃ­ na cizÃ­ strÃ¡nky).
 
 
 
   v0.29
 
-    * Další opravy pro kompatibilitu s FreePascalem. GUI verze s ním hned
-      tak fungovat nebude, pokud vùbec nìkdy.
+    * DalÅ¡Ã­ opravy pro kompatibilitu s FreePascalem. GUI verze s nÃ­m hned
+      tak fungovat nebude, pokud vÅ¯bec nÄ›kdy.
 
-    * Opravena chyba v RTMPDUMP (pouívá ho napø. TV Nova nebo Barrandov),
-      která dovolila pøi jednom spuštìní programu stáhnout jen jeden RTMP
+    * Opravena chyba v RTMPDUMP (pouÅ¾Ã­vÃ¡ ho napÅ™. TV Nova nebo Barrandov),
+      kterÃ¡ dovolila pÅ™i jednom spuÅ¡tÄ›nÃ­ programu stÃ¡hnout jen jeden RTMP
       stream.
 
-      Tato chyba také zpùsobovala, e se dva souèasnì stahované RTMP streamy
-      ukládaly do jediného souboru, co tento soubor kompletnì znefunkènilo.
-      I to je nyní opraveno a je moné stahovat dva streamy najednou.
+      Tato chyba takÃ© zpÅ¯sobovala, Å¾e se dva souÄasnÄ› stahovanÃ© RTMP streamy
+      uklÃ¡daly do jedinÃ©ho souboru, coÅ¾ tento soubor kompletnÄ› znefunkÄnilo.
+      I to je nynÃ­ opraveno a je moÅ¾nÃ© stahovat dva streamy najednou.
 
-    * Zaveden koncept "koncovıch poskytovatelù", kterı dovolí lépe øídit
-      automatické stahování tak, aby se z jednoho skuteèného zdroje stahoval
-      v jednu chvíli jen jeden stream (napø. iPrima.cz vyuívá Stream.cz,
-      take je ádoucí, aby v pøípadì, e bìí stahování ze Stream.cz,
-      downloady z iPrima.cz poèkaly).
+    * Zaveden koncept "koncovÃ½ch poskytovatelÅ¯", kterÃ½ dovolÃ­ lÃ©pe Å™Ã­dit
+      automatickÃ© stahovÃ¡nÃ­ tak, aby se z jednoho skuteÄnÃ©ho zdroje stahoval
+      v jednu chvÃ­li jen jeden stream (napÅ™. iPrima.cz vyuÅ¾Ã­vÃ¡ Stream.cz,
+      takÅ¾e je Å¾Ã¡doucÃ­, aby v pÅ™Ã­padÄ›, Å¾e bÄ›Å¾Ã­ stahovÃ¡nÃ­ ze Stream.cz,
+      downloady z iPrima.cz poÄkaly).
 
-    * V grafické verzi se nezohledòovalo nastavení "PreferRealMedia" u Èeské
+    * V grafickÃ© verzi se nezohledÅˆovalo nastavenÃ­ "PreferRealMedia" u ÄŒeskÃ©
       televize.
 
 
 
   v0.28
 
-    * Podpora pro nové poskytovatele médií:
+    * Podpora pro novÃ© poskytovatele mÃ©diÃ­:
        - Facebook.com
        - Kukaj.sk
        - LibimSeTi.cz
@@ -2182,22 +2226,22 @@ CHANGELOG
        - Videoalbumy.azet.sk
        - Wrzuta.pl
 
-    * Videa z Nova.cz se nyní stahují ve vyšší kvalitì (.mp4).
+    * Videa z Nova.cz se nynÃ­ stahujÃ­ ve vyÅ¡Å¡Ã­ kvalitÄ› (.mp4).
 
-    * RTMPDUMP_DLL.DLL sestaven s knihovnou PolarSSL místo OpenSSL. Díky tomu
-      je odstranìna závislost na OpenSSL knihovnách (CRYPTOEAY32-0.9.8.DLL,
-      SSLEAY32-0.9.8.DLL) za cenu prodlouení RTMPDUMP_DLL o nìjakıch 180 KB.
+    * RTMPDUMP_DLL.DLL sestaven s knihovnou PolarSSL mÃ­sto OpenSSL. DÃ­ky tomu
+      je odstranÄ›na zÃ¡vislost na OpenSSL knihovnÃ¡ch (CRYPTOEAY32-0.9.8.DLL,
+      SSLEAY32-0.9.8.DLL) za cenu prodlouÅ¾enÃ­ RTMPDUMP_DLL o nÄ›jakÃ½ch 180 KB.
 
-    * Program lze nyní zkompilovat FreePascalem (http://www.freepascal.org/),
-      ovìøeno na verzi 2.4.0. Podporována je ale zatím jen command-line verze,
-      GUI verzi sice jde pøeloit (s vyuitím projektu Lazarus), ale nebude
+    * Program lze nynÃ­ zkompilovat FreePascalem (http://www.freepascal.org/),
+      ovÄ›Å™eno na verzi 2.4.0. PodporovÃ¡na je ale zatÃ­m jen command-line verze,
+      GUI verzi sice jde pÅ™eloÅ¾it (s vyuÅ¾itÃ­m projektu Lazarus), ale nebude
       fungovat.
 
 
 
   v0.27
 
-    * Podpora pro nové poskytovatele médií:
+    * Podpora pro novÃ© poskytovatele mÃ©diÃ­:
        - Bing.com
        - Bofunk.com
        - Break.com.
@@ -2243,49 +2287,49 @@ CHANGELOG
        - XVideos.com (pozor, porno)
        - YouPorn.com (pozor, porno)
        - Yuvutu.com (pozor, porno)
-       - ZkoukniTo.cz (vèetnì adult sekce)
+       - ZkoukniTo.cz (vÄetnÄ› adult sekce)
 
-    * Dokumentace pøeloena do angliètiny.
+    * Dokumentace pÅ™eloÅ¾ena do angliÄtiny.
 
-    * Další doèištìní zdrojového kódu.
+    * DalÅ¡Ã­ doÄiÅ¡tÄ›nÃ­ zdrojovÃ©ho kÃ³du.
 
-    * Vyjasnìno licencování. Program je uvolnìn pod GNU GPL3 licencí.
+    * VyjasnÄ›no licencovÃ¡nÃ­. Program je uvolnÄ›n pod GNU GPL3 licencÃ­.
 
-    * RTMPDUMP aktualizován na verzi 2.2d.
+    * RTMPDUMP aktualizovÃ¡n na verzi 2.2d.
 
-    * Knihovna RTMPDUMP_DLL.DLL upravena tak, aby se snáze udrovala a aby
-      šlo vyuívat všechny monosti, které RTMPDUMP nabízí.
+    * Knihovna RTMPDUMP_DLL.DLL upravena tak, aby se snÃ¡ze udrÅ¾ovala a aby
+      Å¡lo vyuÅ¾Ã­vat vÅ¡echny moÅ¾nosti, kterÃ© RTMPDUMP nabÃ­zÃ­.
 
-    * Knihovna MSDL_DLL.DLL upravena tak, aby se snáze udrovala a aby
-      šlo vyuívat všechny monosti, které MSDL nabízí.
+    * Knihovna MSDL_DLL.DLL upravena tak, aby se snÃ¡ze udrÅ¾ovala a aby
+      Å¡lo vyuÅ¾Ã­vat vÅ¡echny moÅ¾nosti, kterÃ© MSDL nabÃ­zÃ­.
 
-    * Podpora pro INI soubor s vıchozími nastaveními. Detaily jsou uvedeny
+    * Podpora pro INI soubor s vÃ½chozÃ­mi nastavenÃ­mi. Detaily jsou uvedeny
       v dokumentaci.
 
-    * Èeská televize se nyní stahuje v nejvyšší kvalitì a podporován je kromì
-      Windows Media streamu i stream Real Media. Nastavení je øešeno parametrem
+    * ÄŒeskÃ¡ televize se nynÃ­ stahuje v nejvyÅ¡Å¡Ã­ kvalitÄ› a podporovÃ¡n je kromÄ›
+      Windows Media streamu i stream Real Media. NastavenÃ­ je Å™eÅ¡eno parametrem
       v INI souboru.
 
-    * Opraveno stahování programu PORT Èeské televize, aby se stahoval i pøímo
-      program a ne jenom reklama pøed ním.
+    * Opraveno stahovÃ¡nÃ­ programu PORT ÄŒeskÃ© televize, aby se stahoval i pÅ™Ã­mo
+      program a ne jenom reklama pÅ™ed nÃ­m.
 
-    * Parametr -l na pøíkazové øádce vypíše seznam poskytovatelù.
+    * Parametr -l na pÅ™Ã­kazovÃ© Å™Ã¡dce vypÃ­Å¡e seznam poskytovatelÅ¯.
 
-    * Parametr -v na pøíkazové øádce zkontroluje dostupnost novìjší verze.
+    * Parametr -v na pÅ™Ã­kazovÃ© Å™Ã¡dce zkontroluje dostupnost novÄ›jÅ¡Ã­ verze.
 
-    * V GUI verzi je nové tlaèítko About (F1), které vedle základních informací
-      (copyright, homepage programu atd.) zkontroluje dostupnost novìjší verze
-      a zobrazí seznam podporovanıch poskytovatelù (podobnì jako parametr -l  
-      na pøíkazové øádce).
+    * V GUI verzi je novÃ© tlaÄÃ­tko About (F1), kterÃ© vedle zÃ¡kladnÃ­ch informacÃ­
+      (copyright, homepage programu atd.) zkontroluje dostupnost novÄ›jÅ¡Ã­ verze
+      a zobrazÃ­ seznam podporovanÃ½ch poskytovatelÅ¯ (podobnÄ› jako parametr -l  
+      na pÅ™Ã­kazovÃ© Å™Ã¡dce).
 
-    * Názvy filmù stahovanıch z YouTube mají správnou èeštinu.
+    * NÃ¡zvy filmÅ¯ stahovanÃ½ch z YouTube majÃ­ sprÃ¡vnou ÄeÅ¡tinu.
 
 
 
   v0.26
 
-    * Podpora pro "stránky" na YouTube - seznam videí jednoho tvùrce (napø.
-      http://www.youtube.com/titanicpiano14). Chovají se obdobnì jako 
+    * Podpora pro "strÃ¡nky" na YouTube - seznam videÃ­ jednoho tvÅ¯rce (napÅ™.
+      http://www.youtube.com/titanicpiano14). ChovajÃ­ se obdobnÄ› jako 
       playlisty.
 
 
@@ -2298,116 +2342,116 @@ CHANGELOG
 
   v0.24
 
-    * Nìkterá YouTube videa nelze stahovat zpùsobem, kterı obchází kontrolu
-      vìku, ale jdou stahovat zpùsobem pùvodním (z verze 0.22). Kód byl upraven
-      tak, aby se v pøípadì selhání nového zpùsobu stahování zkusil ještì
-      zpùsob starı.
+    * NÄ›kterÃ¡ YouTube videa nelze stahovat zpÅ¯sobem, kterÃ½ obchÃ¡zÃ­ kontrolu
+      vÄ›ku, ale jdou stahovat zpÅ¯sobem pÅ¯vodnÃ­m (z verze 0.22). KÃ³d byl upraven
+      tak, aby se v pÅ™Ã­padÄ› selhÃ¡nÃ­ novÃ©ho zpÅ¯sobu stahovÃ¡nÃ­ zkusil jeÅ¡tÄ›
+      zpÅ¯sob starÃ½.
 
-      Pøíkladem je video http://www.youtube.com/watch?v=REpXf0cmJ64
+      PÅ™Ã­kladem je video http://www.youtube.com/watch?v=REpXf0cmJ64
 
 
 
   v0.23
 
-    * Pøepracována práce s playlisty tak, aby vıstupy (pro command-line
-      verzi) byly pøehlednìjší a snáze se pøidávaly další formáty playlistù.
+    * PÅ™epracovÃ¡na prÃ¡ce s playlisty tak, aby vÃ½stupy (pro command-line
+      verzi) byly pÅ™ehlednÄ›jÅ¡Ã­ a snÃ¡ze se pÅ™idÃ¡valy dalÅ¡Ã­ formÃ¡ty playlistÅ¯.
 
-    * Podpora pro YouTube videa oznaèená jako "jen pro dospìlé".
+    * Podpora pro YouTube videa oznaÄenÃ¡ jako "jen pro dospÄ›lÃ©".
 
-    * Parametr -e pro logování nepodaøenıch downloadù.
+    * Parametr -e pro logovÃ¡nÃ­ nepodaÅ™enÃ½ch downloadÅ¯.
 
-    * Parametr -s pro vloení odkazù z HTML zdroje. Podporovány jsou lokální
-      soubory i stránky na webu. Pøíklad:
+    * Parametr -s pro vloÅ¾enÃ­ odkazÅ¯ z HTML zdroje. PodporovÃ¡ny jsou lokÃ¡lnÃ­
+      soubory i strÃ¡nky na webu. PÅ™Ã­klad:
 
       ytd.exe -s "http://www.zive.cz"
       ytd.exe -s "c:\temp\zive.html"
 
-    * Do grafického rozhraní byly doplnìny funkce pro naètení seznamu URL ze
-      souboru (jako -i v CLI verzi), naètení podporovanıch URL z HTML souboru 
-      a naètení podporovanıch URL z HTML stránky (obojí jako -s v CLI).
+    * Do grafickÃ©ho rozhranÃ­ byly doplnÄ›ny funkce pro naÄtenÃ­ seznamu URL ze
+      souboru (jako -i v CLI verzi), naÄtenÃ­ podporovanÃ½ch URL z HTML souboru 
+      a naÄtenÃ­ podporovanÃ½ch URL z HTML strÃ¡nky (obojÃ­ jako -s v CLI).
 
-    * V grafickém rozhraní lze nyní uloit seznam nestaenıch odkazù do
-      souboru, kterı lze pozdìji naèíst pomocí parametru -i.
+    * V grafickÃ©m rozhranÃ­ lze nynÃ­ uloÅ¾it seznam nestaÅ¾enÃ½ch odkazÅ¯ do
+      souboru, kterÃ½ lze pozdÄ›ji naÄÃ­st pomocÃ­ parametru -i.
 
 
 
   v0.22
 
-    * V grafickém prostøedí se zobrazuje nápovìda pro jednotlivá tlaèítka.
+    * V grafickÃ©m prostÅ™edÃ­ se zobrazuje nÃ¡povÄ›da pro jednotlivÃ¡ tlaÄÃ­tka.
 
-    * Zmìnìna vıchozí reakce na existující soubor. Starší verze tento soubor
-      bez ptaní pøepsaly. Verze 0.22 se uivatele zeptá na poadovanou akci,
-      je moné té pouít parametry -n (nepøepisovat), -a (pøepisovat),
-      -r (automaticky pøejmenovávat) a -k (ptát se uivatele).
+    * ZmÄ›nÄ›na vÃ½chozÃ­ reakce na existujÃ­cÃ­ soubor. StarÅ¡Ã­ verze tento soubor
+      bez ptanÃ­ pÅ™epsaly. Verze 0.22 se uÅ¾ivatele zeptÃ¡ na poÅ¾adovanou akci,
+      je moÅ¾nÃ© tÃ©Å¾ pouÅ¾Ã­t parametry -n (nepÅ™episovat), -a (pÅ™episovat),
+      -r (automaticky pÅ™ejmenovÃ¡vat) a -k (ptÃ¡t se uÅ¾ivatele).
 
-      Grafická verze se ptá pokadé, kdy narazí na existující soubor, kromì
-      pøípadu, kdy je zaškrtnuta volba "Auto-overwrite" - pak se automaticky
-      pøepisuje jako v pøedchozích verzích.
+      GrafickÃ¡ verze se ptÃ¡ pokaÅ¾dÃ©, kdyÅ¾ narazÃ­ na existujÃ­cÃ­ soubor, kromÄ›
+      pÅ™Ã­padu, kdy je zaÅ¡krtnuta volba "Auto-overwrite" - pak se automaticky
+      pÅ™episuje jako v pÅ™edchozÃ­ch verzÃ­ch.
 
-    * Grafická verze se minimalizuje do traye.
+    * GrafickÃ¡ verze se minimalizuje do traye.
 
-    * Pro stahování z YouTube jsou podporovány playlisty (ve formátu
-      http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E) - stáhne
-      se vdy celı playlist.
+    * Pro stahovÃ¡nÃ­ z YouTube jsou podporovÃ¡ny playlisty (ve formÃ¡tu
+      http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E) - stÃ¡hne
+      se vÅ¾dy celÃ½ playlist.
 
 
 
   v0.21
 
-    * Podpora pro Markízu a spol. znefunkènila YouTube a ostatní providery
-      fungující na bázi protokolu HTTP.
+    * Podpora pro MarkÃ­zu a spol. znefunkÄnila YouTube a ostatnÃ­ providery
+      fungujÃ­cÃ­ na bÃ¡zi protokolu HTTP.
 
 
 
   v0.20
 
-    * Èeská televize: Podpora pro poøady programu PORT.
+    * ÄŒeskÃ¡ televize: Podpora pro poÅ™ady programu PORT.
 
 
 
   v0.19
 
-    * Nìkteré vytvoøené regulární vırazy se z pamìti neuvolòovaly, dokud
-      aplikace neskonèila.
+    * NÄ›kterÃ© vytvoÅ™enÃ© regulÃ¡rnÃ­ vÃ½razy se z pamÄ›ti neuvolÅˆovaly, dokud
+      aplikace neskonÄila.
 
-    * YouTube: Video "http://www.youtube.com/watch?v=7INIRLe7x0Y" se ukládalo
-      s pøíponou ".mp4", ale správnì je ".flv". Je moné, e jsou i další
-      podobné pøípady, pøíponu pøiøazuji pomocí vıètu a zdaleka nemám 
-      kompletní seznam. Kdy narazíte na video uloené pod špatnou pøíponou,
-      dejte mi prosím vìdìt.
+    * YouTube: Video "http://www.youtube.com/watch?v=7INIRLe7x0Y" se uklÃ¡dalo
+      s pÅ™Ã­ponou ".mp4", ale sprÃ¡vnÄ› je ".flv". Je moÅ¾nÃ©, Å¾e jsou i dalÅ¡Ã­
+      podobnÃ© pÅ™Ã­pady, pÅ™Ã­ponu pÅ™iÅ™azuji pomocÃ­ vÃ½Ätu a zdaleka nemÃ¡m 
+      kompletnÃ­ seznam. KdyÅ¾ narazÃ­te na video uloÅ¾enÃ© pod Å¡patnou pÅ™Ã­ponou,
+      dejte mi prosÃ­m vÄ›dÄ›t.
 
     * Podpora pro http://www.tvcom.cz.
 
-    * Podpora pro http://www.markiza.sk. Pokud je poøad tvoøen nìkolika
-      samostatnımi soubory, budou staeny všechny.
+    * Podpora pro http://www.markiza.sk. Pokud je poÅ™ad tvoÅ™en nÄ›kolika
+      samostatnÃ½mi soubory, budou staÅ¾eny vÅ¡echny.
 
-    * Podpora pro http://www.rozhlas.cz. Pokud je poøad tvoøen nìkolika
-      samostatnımi soubory, budou staeny všechny.
+    * Podpora pro http://www.rozhlas.cz. Pokud je poÅ™ad tvoÅ™en nÄ›kolika
+      samostatnÃ½mi soubory, budou staÅ¾eny vÅ¡echny.
 
 
 
   v0.18
 
-    * Podpora pro zmìnìnı design YouTube.
+    * Podpora pro zmÄ›nÄ›nÃ½ design YouTube.
 
 
 
   v0.17
 
-    * Podpora pro protokoly MMS, MMSH, RTSP a jejich varianty tunelované
-      pøes FTP a HTTP. Podpora je øešena pomocí knihovny MSDL_DLL.DLL,
-      která vznikla drobnou úpravou programu MSDL (http://msdl.sf.net/).
+    * Podpora pro protokoly MMS, MMSH, RTSP a jejich varianty tunelovanÃ©
+      pÅ™es FTP a HTTP. Podpora je Å™eÅ¡ena pomocÃ­ knihovny MSDL_DLL.DLL,
+      kterÃ¡ vznikla drobnou Ãºpravou programu MSDL (http://msdl.sf.net/).
 
-    * Podpora pro iVysílání Èeské televize.
+    * Podpora pro iVysÃ­lÃ¡nÃ­ ÄŒeskÃ© televize.
 
-    * RTMPDUMP aktualizován na nejèerstvìjší verzi.
+    * RTMPDUMP aktualizovÃ¡n na nejÄerstvÄ›jÅ¡Ã­ verzi.
 
 
 
   v0.16
 
-    * Zkráceny vıpisy v command-line verzi programu, aby se pøi stahování
-      souborù vìtších ne 100 MB nemnoily øádky s prùbìhem.
+    * ZkrÃ¡ceny vÃ½pisy v command-line verzi programu, aby se pÅ™i stahovÃ¡nÃ­
+      souborÅ¯ vÄ›tÅ¡Ã­ch neÅ¾ 100 MB nemnoÅ¾ily Å™Ã¡dky s prÅ¯bÄ›hem.
 
     * Podpora pro videa televize Nova (nova.cz).
 
@@ -2415,13 +2459,13 @@ CHANGELOG
 
   v0.15:
   
-    * Restrukturalizován zdrojovı kód, aby umoòoval lépe pøidávat další
-      zdroje médií.
+    * RestrukturalizovÃ¡n zdrojovÃ½ kÃ³d, aby umoÅ¾Åˆoval lÃ©pe pÅ™idÃ¡vat dalÅ¡Ã­
+      zdroje mÃ©diÃ­.
 
-    * Podpora pro stahování streamù pøenášenıch protokolem RTMP. Download
-      je øešen pomocí knihovny RTMPDUMP_DLL.DLL, která vznikla drobnou
-      úpravou programu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Knihovna
-      potøebuje OpenSSL verze 0.9.8, konkrétnì knihovny SSLEAY32-0.9.8.DLL
+    * Podpora pro stahovÃ¡nÃ­ streamÅ¯ pÅ™enÃ¡Å¡enÃ½ch protokolem RTMP. Download
+      je Å™eÅ¡en pomocÃ­ knihovny RTMPDUMP_DLL.DLL, kterÃ¡ vznikla drobnou
+      Ãºpravou programu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Knihovna
+      potÅ™ebuje OpenSSL verze 0.9.8, konkrÃ©tnÄ› knihovny SSLEAY32-0.9.8.DLL
       a CRYPTOEAY32-0.9.8.DLL.
 
     * Podpora pro Barrandov.tv.
@@ -2430,72 +2474,72 @@ CHANGELOG
 
   v0.14:
 
-    * Podpora pro Stream.cz z minulé verze rozhodila ostatní zdroje
-      videa, které kvùli tomu nefungovaly. To je nyní opraveno.
+    * Podpora pro Stream.cz z minulÃ© verze rozhodila ostatnÃ­ zdroje
+      videa, kterÃ© kvÅ¯li tomu nefungovaly. To je nynÃ­ opraveno.
 
-    * Upraveno grafické rozhraní (ikonky, tlaèítka atd.).
+    * Upraveno grafickÃ© rozhranÃ­ (ikonky, tlaÄÃ­tka atd.).
 
-    * Pøidána monost zkompilovat jen CLI nebo jen GUI verzi programu:
-      Pøi spouštìní BUILD.BAT mùete pouít parametr "CLI" (jen command
-      line verze) resp. "GUI" (jen grafická verze) (v obou pøípadech bez
-      uvozovek). "CLI" vıraznì zmenší vıslednı EXE soubor, "GUI" odstraní
-      okno konzole. Ve vıchozím stavu se kompiluje verze s CLI i GUI
-      souèasnì.
+    * PÅ™idÃ¡na moÅ¾nost zkompilovat jen CLI nebo jen GUI verzi programu:
+      PÅ™i spouÅ¡tÄ›nÃ­ BUILD.BAT mÅ¯Å¾ete pouÅ¾Ã­t parametr "CLI" (jen command
+      line verze) resp. "GUI" (jen grafickÃ¡ verze) (v obou pÅ™Ã­padech bez
+      uvozovek). "CLI" vÃ½raznÄ› zmenÅ¡Ã­ vÃ½slednÃ½ EXE soubor, "GUI" odstranÃ­
+      okno konzole. Ve vÃ½chozÃ­m stavu se kompiluje verze s CLI i GUI
+      souÄasnÄ›.
 
-    * Knihovna Synapse aktualizována na release 39. Problém se Stream.cz
-      (viz upozornìní vıše) ale stále trvá.
+    * Knihovna Synapse aktualizovÃ¡na na release 39. ProblÃ©m se Stream.cz
+      (viz upozornÄ›nÃ­ vÃ½Å¡e) ale stÃ¡le trvÃ¡.
 
-    * Podpora pro download z iPrima.cz (pouívá Stream.cz).
+    * Podpora pro download z iPrima.cz (pouÅ¾Ã­vÃ¡ Stream.cz).
 
 
 
   v0.13:
 
-    * Pøidána podpora pro Stream.cz. Je v tom ale zatím neodhalená chyba,
-      viz vıše v sekci "podporované weby a formáty."
+    * PÅ™idÃ¡na podpora pro Stream.cz. Je v tom ale zatÃ­m neodhalenÃ¡ chyba,
+      viz vÃ½Å¡e v sekci "podporovanÃ© weby a formÃ¡ty."
 
-    * Kromì názvu videa a souboru se nyní zobrazuje i adresa, ze které
-      lze video stáhnout "ruènì" (napø. WGETem).
+    * KromÄ› nÃ¡zvu videa a souboru se nynÃ­ zobrazuje i adresa, ze kterÃ©
+      lze video stÃ¡hnout "ruÄnÄ›" (napÅ™. WGETem).
 
 
 
   v0.12:
 
-    * Nefungovalo stahování filmù, které na YouTube nemìly nìkterou
+    * Nefungovalo stahovÃ¡nÃ­ filmÅ¯, kterÃ© na YouTube nemÄ›ly nÄ›kterou
       HD verzi.
 
-    * Kompletnì pøepracovaná GUI verze. Nyní zobrazuje seznam URL ke
-      staení, umí stahovat víc odkazù najednou atd. 
+    * KompletnÄ› pÅ™epracovanÃ¡ GUI verze. NynÃ­ zobrazuje seznam URL ke
+      staÅ¾enÃ­, umÃ­ stahovat vÃ­c odkazÅ¯ najednou atd. 
 
 
 
   v0.11:
 
-    * Experimentální podpora pro vyšší formáty HD videa (720HQ, 1080p).
-      Prosím, pokud narazíte na video, kde to nefunguje, pošlete mi
+    * ExperimentÃ¡lnÃ­ podpora pro vyÅ¡Å¡Ã­ formÃ¡ty HD videa (720HQ, 1080p).
+      ProsÃ­m, pokud narazÃ­te na video, kde to nefunguje, poÅ¡lete mi
       odkaz.
 
 
 
   v0.10:
 
-    * Kompletnì restrukturalizováno, aby se daly snadno pøidávat další
+    * KompletnÄ› restrukturalizovÃ¡no, aby se daly snadno pÅ™idÃ¡vat dalÅ¡Ã­
       zdroje videa.
 
-    * Zmìnìn tvar všech vıstupù, aby byl pøehlednìjší.
+    * ZmÄ›nÄ›n tvar vÅ¡ech vÃ½stupÅ¯, aby byl pÅ™ehlednÄ›jÅ¡Ã­.
 
     * Podpora pro n-joy.cz.
 
     * Podpora pro blip.tv.
 
-    * Podpora pro seznam URL v souboru (pomocí parametru -i).
+    * Podpora pro seznam URL v souboru (pomocÃ­ parametru -i).
 
-    * Pozor, program nyní potøebuje knihovnu pcre.dll (pøiloena).
+    * Pozor, program nynÃ­ potÅ™ebuje knihovnu pcre.dll (pÅ™iloÅ¾ena).
 
-    * Pøidány informace o aplikaci pro GetFileVersionEx. Pøidána ikonka.
+    * PÅ™idÃ¡ny informace o aplikaci pro GetFileVersionEx. PÅ™idÃ¡na ikonka.
 
-    * Pøidáno jednoduché grafické rozhraní, které se zobrazí, pokud program
-      spustíte bez parametrù.
+    * PÅ™idÃ¡no jednoduchÃ© grafickÃ© rozhranÃ­, kterÃ© se zobrazÃ­, pokud program
+      spustÃ­te bez parametrÅ¯.
 
 
 
@@ -2507,6 +2551,6 @@ CHANGELOG
 
   v0.05:
 
-    * Pøeuspoøádány zdrojové kódy a buildovací dávka.
+    * PÅ™euspoÅ™Ã¡dÃ¡ny zdrojovÃ© kÃ³dy a buildovacÃ­ dÃ¡vka.
 
     * Podpora pro URL ve tvaru http://www.youtube.com/watch/v/(id)

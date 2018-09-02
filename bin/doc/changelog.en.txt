@@ -1,11 +1,56 @@
-______________________________________________________________________________
+Ôªø______________________________________________________________________________
 
-YTD v1.15                                                    (c) 2009-12 Pepak
+YTD v1.16                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.16:
+
+    * New providers:
+      - Azet.sk
+      - EuroSeptik.cz
+        - Subtitle download is also supported. By default the english subtitles
+          will be downloaded, but you can change it in the configuration by
+          using e.g. "P≈ôepis, angliƒçtina" or "P≈ôepis, ƒçe≈°tina" (the text can
+          be found on the video's page; you don't need to provide the whole
+          text, an identifying part such as "ƒçe≈°tina" will be fine).
+      - Matrix-2001.cz
+      - MetroProjekt.cz
+      - T-Music.cz (thanks to Balutbj)
+      - Vikend.Nova.cz (and likely the other Nova.cz subdomains, too)
+
+    * Updated providers:
+      - FunnyOrDie.com
+      - YouTube.com
+
+    * Removed support for Huste.tv (and Huste.sk), because it requires a login
+      and I don't have an account there. If I had an account to play with, the
+      support would probably return pretty quickly.
+
+    * Fixed the file deletion issue on invalid downloads - until now, empty
+      files only got deleted on "success", but not on actual errors such as
+      YouTube's 403 Forbidden.
+
+    * Fixed the filenames generated for RTMP and MS protocols in the unicode
+      version. This fixes the random errors while downloading from ceskatelevize.cz,
+      which would work every time in the ANSI version.
+
+    * RTMPDUMP updated to version 2012-09-22. The main feature of this version
+      is the realtime mode, which sacrifices some speed but greatly improves
+      the downloaded file's stability: In the normal mode, RTMPDUMP frequently
+      pauses and unpauses the playback, which forces the server to send a large
+      chunk of data without bandwidth limitation (which improves speed), but
+      unfortunately some servers skip back a few seconds on unpause, which 
+      makes the downloaded movie virtually unusable. Realtime mode is turned on
+      by default for all providers, but you can turn it off (to get better
+      speed) in the provider's configuration.
+
+    * Documentation converted to Unicode enconding.
+
+
 
   v1.15:
 
@@ -893,8 +938,8 @@ CHANGELOG
       Make sure you properly escape the URLs when downloading from the 
       command-line.
 
-    * Joj.sk: Support for videos with their own subdomain ("Ano, öÈfe", "NovÈ
-      b˝vanie" etc.).
+    * Joj.sk: Support for videos with their own subdomain ("Ano, ≈°√©fe", "Nov√©
+      b√Ωvanie" etc.).
 
     * PornHub.com: Updated to the current page code.
 
@@ -1098,7 +1143,7 @@ CHANGELOG
       been tested yet, though, because I only found one such video and it
       didn't work even in the browser).
 
-    * Nova.cz: Movie "Ordinace v r˘ûovÈ zahradÏ 2, 250. dÌl" (and perhaps
+    * Nova.cz: Movie "Ordinace v r≈Ø≈æov√© zahradƒõ 2, 250. d√≠l" (and perhaps
       some others) works now. The reason it hadn't worked was, there isn't
       a high-quality version of the movie online, but the server still 
       incorrectly reports that it was downloaded successfully. I solved the
@@ -1252,7 +1297,7 @@ CHANGELOG
 
       2) Good news: Fortunately, the old iVysilani is still working, on page
          http://www.ceskatelevize.cz/ivysilani-jako-driv/ (thanks to Pepa
-         and P·ja for informing me). This version of YTD supports these new
+         and P√°ja for informing me). This version of YTD supports these new
          (old) addresses.
 
       3) More good news: CT also provides some of its movies to Stream.cz.

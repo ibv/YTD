@@ -1,6 +1,6 @@
-______________________________________________________________________________
+ï»¿______________________________________________________________________________
 
-YTD v1.15                                                    (c) 2009-12 Pepak
+YTD v1.16                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -106,18 +106,18 @@ will need to use MSDL directly.
 5. HDS PROTOCOL
 ---------------
 
-Od verze 1.15 je podporován protokol Adobe HDS. Jde o protokol postavenı na
-HTTP, ve kterém je video tvoøeno tzv. manifestem (záhlavím) a potom sekvencí
-mnoha fragmentù FLV souboru, které se stahují samostatnì a které je tøeba
-vhodnì zkombinovat. Implementace protokolu vychází ze skriptu AdobeHDS.php
+Od verze 1.15 je podporovÃ¡n protokol Adobe HDS. Jde o protokol postavenÃ½ na
+HTTP, ve kterÃ©m je video tvoÅ™eno tzv. manifestem (zÃ¡hlavÃ­m) a potom sekvencÃ­
+mnoha fragmentÅ¯ FLV souboru, kterÃ© se stahujÃ­ samostatnÄ› a kterÃ© je tÅ™eba
+vhodnÄ› zkombinovat. Implementace protokolu vychÃ¡zÃ­ ze skriptu AdobeHDS.php
 (https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php) od autora K-S-V,
-kterı jsem v øadì ohledù upravil.
+kterÃ½ jsem v Å™adÄ› ohledÅ¯ upravil.
 
-V základní implementaci (DEFINE SIMPLIFIEDHDSDOWNLOADER) jsem pøijal nìkolik
-zjednodušujících pøedpokladù, které potøebám YTD plnì vyhovují a mìly by bıt
-u drtivé vìtšiny serverù splnìny. Vıhodou je øádovì jednodušší implementace,
-by za cenu moné nefunkènosti u nìkterıch serverù a zejména bez monosti
-navazovat pøerušené spojení (které YTD stejnì nepodporuje).
+V zÃ¡kladnÃ­ implementaci (DEFINE SIMPLIFIEDHDSDOWNLOADER) jsem pÅ™ijal nÄ›kolik
+zjednoduÅ¡ujÃ­cÃ­ch pÅ™edpokladÅ¯, kterÃ© potÅ™ebÃ¡m YTD plnÄ› vyhovujÃ­ a mÄ›ly by bÃ½t
+u drtivÃ© vÄ›tÅ¡iny serverÅ¯ splnÄ›ny. VÃ½hodou je Å™Ã¡dovÄ› jednoduÅ¡Å¡Ã­ implementace,
+byÅ¥ za cenu moÅ¾nÃ© nefunkÄnosti u nÄ›kterÃ½ch serverÅ¯ a zejmÃ©na bez moÅ¾nosti
+navazovat pÅ™eruÅ¡enÃ© spojenÃ­ (kterÃ© YTD stejnÄ› nepodporuje).
 
 
 
@@ -458,7 +458,7 @@ except in file/directory names. Logical values (true-false) are stored as
     <avoid_hd>
       - Child of <Barrandov_tv>; provides an option to avoid trying to locate
         HD content (the HD-locating code is rather wacky).
-        najít HD verzi videa a stáhnout tu, kterou mu server sám pøedhodí.
+        najÃ­t HD verzi videa a stÃ¡hnout tu, kterou mu server sÃ¡m pÅ™edhodÃ­.
       - Possible values are "0" (try to locate HD content) a "1" (don't try).
       - Default value is "0" (try to locate HD content).
 
@@ -554,7 +554,21 @@ except in file/directory names. Logical values (true-false) are stored as
       - Note: This setting only applies to RTMP-based providers.
       - Possible values are "0" (download as file) and "1" (download as
         live stream).
-      - Default value is "1" (download as live stream).
+      - Default value is "0" (download as file) for most servers.
+
+    <realtime>
+      - Child of a provider; gives you an option to choose, whether you want 
+        to download videos as fast as possible, or whether you prefer slower
+        but safer. RTMPDUMP tries to speed-up the downloading by sending a 
+        frequent pause request followed by a continue request, which forces
+        the server to send a quick burst of data to facilitate buffering;
+        unfortunatelly, some servers tend to skip back a few seconds when
+        paused, and stream downloaded after such skip-back is virtually useless
+        for playback. The realtime mode prevents this pause/continue hack.
+      - Note: This setting only applies to RTMP-based providers.
+      - Possible values are "0" (download as fast as possible) and "1" 
+        (download in realtime mode).
+      - Default value is "1" (download in realtime mode).
 
     <secure_token>
       - Child of a provider; defines the SecureToken used by the provider's
@@ -870,7 +884,7 @@ Used libraries and their licenses:
   - description: Downloading of the Adobe HDS streams.
 
 - DxGetText
-  - authors: Lars B. Dybdahl, Peter Thörnqvist
+  - authors: Lars B. Dybdahl, Peter ThÃ¶rnqvist
   - source: http://dxgettext.po.dk/
   - license: custom, freeware
   - description: Support for internationalization
@@ -913,7 +927,7 @@ Used libraries and their licenses:
   - description: Regular expressions support
 
 - RTMPDUMP
-  - autoøi: Andrej Stepanchuk, Howard Chu
+  - autoÅ™i: Andrej Stepanchuk, Howard Chu
   - source: http://rtmpdump.mplayerhq.hu/
             https://github.com/svnpenn/rtmpdump
   - license: GNU GPL v2
@@ -932,7 +946,7 @@ Used libraries and their licenses:
   - description: Icons used in the GUI version of YouTube Downloader
 
 - Synapse
-  - author: Lukáš Gebauer
+  - author: LukÃ¡Å¡ Gebauer
   - source: http://synapse.ararat.cz/
   - license: custom, freeware
   - description: Support for TCP/IP, HTTP and other common protocols
@@ -940,7 +954,7 @@ Used libraries and their licenses:
 Translations:
 
 - Russian: Litew (litew9@gmail.com).
-- Slovak: Vladimír Kubala (kubalav@gmail.com).
+- Slovak: VladimÃ­r Kubala (kubalav@gmail.com).
 
 Graphics:
 

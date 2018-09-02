@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downFunnyOrDie;
+unit downAzetSk;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,13 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_FunnyOrDie = class(THttpDownloader)
+  TDownloader_AzetSk = class(THttpDownloader)
     private
     protected
-      UrlListRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -66,75 +63,51 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
+// http://tivi.azet.sk/video/1371198/tento-druh-kultury-mame-najradsej.html
+// http://adam.azet.sk/clanky/13149/adam-girl-simona-divoska-co-nepokazi-ziadnu-zabavu.html
+
 const
-  URLREGEXP_BEFORE_ID = 'funnyordie\.com/videos/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?<!videoalbumy\.)azet\.sk/.+$';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_LIST =   '\bvideo_tag\.attr\s*\(\s*''src''\s*,\s*''(?P<URL>https?://[^'']+?(?P<BITRATE>\d+)\.mp4)''';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_TITLE;
+  REGEXP_MOVIE_URL =    REGEXP_URL_PARAM_FLASHVARS_FILE;
 
-{ TDownloader_FunnyOrDie }
+{ TDownloader_AzetSk }
 
-class function TDownloader_FunnyOrDie.Provider: string;
+class function TDownloader_AzetSk.Provider: string;
 begin
-  Result := 'FunnyOrDie.com';
+  Result := 'Azet.sk';
 end;
 
-class function TDownloader_FunnyOrDie.UrlRegExp: string;
+class function TDownloader_AzetSk.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_FunnyOrDie.Create(const AMovieID: string);
+constructor TDownloader_AzetSk.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  UrlListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_FunnyOrDie.Destroy;
+destructor TDownloader_AzetSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(UrlListRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_FunnyOrDie.GetMovieInfoUrl: string;
+function TDownloader_AzetSk.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.funnyordie.com/videos/' + MovieID;
-end;
-
-function TDownloader_FunnyOrDie.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  Url, BestUrl, sBitrate: string;
-  Bitrate, BestBitrate: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  BestUrl := '';
-  BestBitrate := -1;
-  if GetRegExpVars(UrlListRegExp, Page, ['URL', 'BITRATE'], [@Url, @sBitrate]) then
-    repeat
-      Bitrate := StrToIntDef(sBitrate, 0);
-      if Bitrate > BestBitrate then
-        begin
-        BestBitrate := Bitrate;
-        BestUrl := Url;
-        end;
-    until not GetRegExpVarsAgain(UrlListRegExp, ['URL', 'BITRATE'], [@Url, @sBitrate]);
-  if BestUrl <> '' then
-    begin
-    MovieUrl := BestUrl;
-    SetPrepared(True);
-    Result := True;
-    end;
+  Result := MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_FunnyOrDie);
+  RegisterDownloader(TDownloader_AzetSk);
 
 end.

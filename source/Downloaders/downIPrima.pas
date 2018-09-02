@@ -148,7 +148,7 @@ end;
 
 class function TDownloader_iPrima.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRtmpLiveStream, dfPreferRtmpLiveStream];
+  Result := inherited Features + TDownloader_iPrima_Stream.Features {$IFDEF PRIMA_LIVEBOX} + TDownloader_iPrima_LiveBox.Features {$ENDIF} ;
 end;
 
 constructor TDownloader_iPrima.Create(const AMovieID: string);

@@ -148,6 +148,8 @@ begin
 end;
 
 function THttpDownloader.Download: boolean;
+const
+  MINIMUM_SIZE_TO_KEEP = 10240;
 var
   FN, FinalFN: string;
 begin
@@ -192,13 +194,14 @@ begin
             VideoDownloader.OutputStream.Free;
             VideoDownloader.OutputStream := nil;
             if Result then
-              if (not FileExists(FN)) or (GetFileSize(FN) <= 1024) then
+              if (not FileExists(FN)) or (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
                 begin
-                if FileExists(FN) then
-                  DeleteFile(PChar(FN));
                 SetLastErrorMsg(ERR_HTTP_NO_DATA_READ);
                 Result := False;
                 end;
+            if not Result then
+              if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+                DeleteFile(PChar(FN));
             if Result then
               if FN <> FinalFN then
                 begin

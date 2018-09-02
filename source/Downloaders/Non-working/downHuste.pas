@@ -34,21 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downFunnyOrDie;
+unit downHuste;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, uCompatibility,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_FunnyOrDie = class(THttpDownloader)
+  TDownloader_Huste = class(THttpDownloader)
     private
     protected
-      UrlListRegExp: TRegExp;
+      VideoIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,75 +66,102 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
+// http://zabava.huste.tv/clip/p-e138-dracica-marianna?_fid=moow
 const
-  URLREGEXP_BEFORE_ID = 'funnyordie\.com/videos/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = '^';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'huste\.(?:sk|tv)/.+$';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_LIST =   '\bvideo_tag\.attr\s*\(\s*''src''\s*,\s*''(?P<URL>https?://[^'']+?(?P<BITRATE>\d+)\.mp4)''';
+  REGEXP_MOVIE_TITLE =  '<title>(?P<TITLE>.*?)(?:\s*&ndash;\s*HUSTE\.(?:SK|TV))?</title>';
+  REGEXP_VIDEO_ID =     '\bclipId=(?P<ID>\d+)';
 
-{ TDownloader_FunnyOrDie }
+{ TDownloader_Huste }
 
-class function TDownloader_FunnyOrDie.Provider: string;
+class function TDownloader_Huste.Provider: string;
 begin
-  Result := 'FunnyOrDie.com';
+  Result := 'Huste.sk';
 end;
 
-class function TDownloader_FunnyOrDie.UrlRegExp: string;
+class function TDownloader_Huste.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
 end;
 
-constructor TDownloader_FunnyOrDie.Create(const AMovieID: string);
+constructor TDownloader_Huste.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUtf8;
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  UrlListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
+  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
 end;
 
-destructor TDownloader_FunnyOrDie.Destroy;
+destructor TDownloader_Huste.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(UrlListRegExp);
+  RegExFreeAndNil(VideoIdRegExp);
   inherited;
 end;
 
-function TDownloader_FunnyOrDie.GetMovieInfoUrl: string;
+function TDownloader_Huste.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.funnyordie.com/videos/' + MovieID;
+  Result := MovieID;
 end;
 
-function TDownloader_FunnyOrDie.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Huste.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; 
 var
-  Url, BestUrl, sBitrate: string;
-  Bitrate, BestBitrate: integer;
+  InfoXml: TXmlDoc;
+  Node: TXmlNode;
+  ID, BestUrl, sQuality, Url: string;
+  i, j, BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  BestUrl := '';
-  BestBitrate := -1;
-  if GetRegExpVars(UrlListRegExp, Page, ['URL', 'BITRATE'], [@Url, @sBitrate]) then
-    repeat
-      Bitrate := StrToIntDef(sBitrate, 0);
-      if Bitrate > BestBitrate then
+  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXml(Http, 'http://www.huste.tv/services/Video.php?clip=' + ID, InfoXml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else
+    try
+      InfoXml.SaveToFile('huste.xml');
+      if XmlNodeByPath(InfoXml, 'files', Node) then
         begin
-        BestBitrate := Bitrate;
-        BestUrl := Url;
+        BestQuality := -1;
+        BestUrl := '';
+        for i := 0 to Pred(Node.NodeCount) do
+          if Node[i].Name = 'file' then
+            if GetXmlAttr(Node[i], '', 'url', Url) then
+              begin
+              Quality := 0;
+              if GetXmlAttr(Node[i], '', 'label', sQuality) then
+                begin
+                for j := 1 to Length(sQuality) do
+                  if CharInSet(sQuality[j], ['0'..'9']) then
+                    Quality := 10 * Quality + Ord(sQuality[j]) - Ord('0')
+                  else
+                    Break;
+                end;
+              if Quality > BestQuality then
+                begin
+                BestQuality := Quality;
+                BestUrl := Url;
+                end;
+              end;
+        if BestUrl <> '' then
+          begin
+          SetName(UnpreparedName);
+          i := Pos(':', BestUrl);
+          MovieUrl := 'http' + Copy(BestUrl, i, MaxInt);
+          SetPrepared(True);
+          Result := True;
+          end;
         end;
-    until not GetRegExpVarsAgain(UrlListRegExp, ['URL', 'BITRATE'], [@Url, @sBitrate]);
-  if BestUrl <> '' then
-    begin
-    MovieUrl := BestUrl;
-    SetPrepared(True);
-    Result := True;
-    end;
+    finally
+      FreeAndNil(InfoXml);
+      end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_FunnyOrDie);
+  RegisterDownloader(TDownloader_Huste);
 
 end.

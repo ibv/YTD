@@ -1,29 +1,29 @@
-______________________________________________________________________________
+ï»¿______________________________________________________________________________
 
-YTD v1.15                                                    (c) 2009-12 Pepak
+YTD v1.16                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
-Nástroj pro stahování videa z YouTube a dalších webovıch úloiš videa. Funguje 
-z pøíkazové øádky, odkud pøijme libovolnı poèet URL ke staení, pøípadnì
-soubor se seznamem URL. Soubory ukládá pod název z YouTube, preferuje
+NÃ¡stroj pro stahovÃ¡nÃ­ videa z YouTube a dalÅ¡Ã­ch webovÃ½ch ÃºloÅ¾iÅ¡Å¥ videa. Funguje 
+z pÅ™Ã­kazovÃ© Å™Ã¡dky, odkud pÅ™ijme libovolnÃ½ poÄet URL ke staÅ¾enÃ­, pÅ™Ã­padnÄ›
+soubor se seznamem URL. Soubory uklÃ¡dÃ¡ pod nÃ¡zev z YouTube, preferuje
 HD video, pokud je k dispozici.
 
 
 
 0. OBSAH
 --------
-1. Podporované weby
+1. PodporovanÃ© weby
 2. Protokol HTTPS
 3. Protokol RTMP
 4. Protokoly MMS/RTSP
 5. Protokol HDS
 6. Playlisty
-7. Konverze stáhnutıch souborù
-8. Distribuèní archív
+7. Konverze stÃ¡hnutÃ½ch souborÅ¯
+8. DistribuÄnÃ­ archÃ­v
 9. Konfigurace
-10. Syntaxe pøíkazového øádku
-11. Návratové kódy
+10. Syntaxe pÅ™Ã­kazovÃ©ho Å™Ã¡dku
+11. NÃ¡vratovÃ© kÃ³dy
 12. Lokalizace
 13. Podpora
 14. Kompilace
@@ -32,10 +32,10 @@ HD video, pokud je k dispozici.
 
 
 
-1. PODPOROVANÉ WEBY
+1. PODPOROVANÃ‰ WEBY
 -------------------
 
-Seznam podporovanıch webù vèetnì ukázkovıch URL a pøípadnıch poznámek naleznete
+Seznam podporovanÃ½ch webÅ¯ vÄetnÄ› ukÃ¡zkovÃ½ch URL a pÅ™Ã­padnÃ½ch poznÃ¡mek naleznete
 v souboru providers.txt.
 
 
@@ -43,9 +43,9 @@ v souboru providers.txt.
 2. PROTOKOL HTTPS
 -----------------
 
-Pro podporu protokolu HTTPS (pouívá ho napø. RockStarGames.tv) je vyadováno,
-aby byly ve vašich Windows nainstalované OpenSSL knihovny (CRYPTOEAY32.DLL, 
-SSLEAY32.DLL), nejlépe ve verzi 0.98. Mùete je stáhnout na stránkách projektu
+Pro podporu protokolu HTTPS (pouÅ¾Ã­vÃ¡ ho napÅ™. RockStarGames.tv) je vyÅ¾adovÃ¡no,
+aby byly ve vaÅ¡ich Windows nainstalovanÃ© OpenSSL knihovny (CRYPTOEAY32.DLL, 
+SSLEAY32.DLL), nejlÃ©pe ve verzi 0.98. MÅ¯Å¾ete je stÃ¡hnout na strÃ¡nkÃ¡ch projektu
 OpenSSL (http://www.openssl.org).
 
 
@@ -53,718 +53,731 @@ OpenSSL (http://www.openssl.org).
 3. PROTOKOL RTMP
 ----------------
 
-Od verze 0.15 program zahrnuje podporu pro streamované video podle protokolu
-RTMP. Protokol je implementován pomocí knihovny vzniklé drobnou úpravou 
-projektu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Tato implementace má øadu
-nedostatkù, se kterımi je tøeba poèítat:
+Od verze 0.15 program zahrnuje podporu pro streamovanÃ© video podle protokolu
+RTMP. Protokol je implementovÃ¡n pomocÃ­ knihovny vzniklÃ© drobnou Ãºpravou 
+projektu RTMPDUMP (http://rtmpdump.mplayerhq.hu). Tato implementace mÃ¡ Å™adu
+nedostatkÅ¯, se kterÃ½mi je tÅ™eba poÄÃ­tat:
 
-1) Neumí pøesnì urèit celkovou velikost videa. Velikost je odhadována na
-   základì dosud staené velikosti, dosud staeného èasu a celkového èasu
+1) NeumÃ­ pÅ™esnÄ› urÄit celkovou velikost videa. Velikost je odhadovÃ¡na na
+   zÃ¡kladÄ› dosud staÅ¾enÃ© velikosti, dosud staÅ¾enÃ©ho Äasu a celkovÃ©ho Äasu
    videa.
 
-2) Z knihovny nejsou do Downloaderu pøedávány informace o chybách. Místo
-   toho je v TEMP adresáøi uivatele generován klasickı log projektu RTMPDUMP,
-   ve kterém lze pøíèiny pøípadnıch chyb dohledat.
+2) Z knihovny nejsou do Downloaderu pÅ™edÃ¡vÃ¡ny informace o chybÃ¡ch. MÃ­sto
+   toho je v TEMP adresÃ¡Å™i uÅ¾ivatele generovÃ¡n klasickÃ½ log projektu RTMPDUMP,
+   ve kterÃ©m lze pÅ™Ã­Äiny pÅ™Ã­padnÃ½ch chyb dohledat.
 
-3) Aby šlo stahovat z RTMP streamù, jsou vyadovány následující DLL knihovny:
-   - RTMPDUMP_DLL.DLL - je souèástí YTD.
+3) Aby Å¡lo stahovat z RTMP streamÅ¯, jsou vyÅ¾adovÃ¡ny nÃ¡sledujÃ­cÃ­ DLL knihovny:
+   - RTMPDUMP_DLL.DLL - je souÄÃ¡stÃ­ YTD.
 
-4) Nelze stoprocentnì detekovat, zda bylo video staeno kompletní.
+4) Nelze stoprocentnÄ› detekovat, zda bylo video staÅ¾eno kompletnÃ­.
 
-Od verze 0.78 lze pøímo stahovat URL zaloená na protokolu RTMP - mùete tedy
-do programu vloit adresy jako "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4".
-Poadavkem ovšem je, aby pøíslušnému serveru staèila ke spuštìní videa právì
-jenom adresa (a nebyly vyadovány dodateèné parametry) - v jiném pøípadì YTD
-pouít nelze (pouijte RTMPDUMP).
+Od verze 0.78 lze pÅ™Ã­mo stahovat URL zaloÅ¾enÃ¡ na protokolu RTMP - mÅ¯Å¾ete tedy
+do programu vloÅ¾it adresy jako "rtmp://iconcerts.infomaniak.ch/icpreview/mp4:trk-09-black_kids_nme_awards_shows-001_site_16-9-2500.mp4".
+PoÅ¾adavkem ovÅ¡em je, aby pÅ™Ã­sluÅ¡nÃ©mu serveru staÄila ke spuÅ¡tÄ›nÃ­ videa prÃ¡vÄ›
+jenom adresa (a nebyly vyÅ¾adovÃ¡ny dodateÄnÃ© parametry) - v jinÃ©m pÅ™Ã­padÄ› YTD
+pouÅ¾Ã­t nelze (pouÅ¾ijte RTMPDUMP).
 
 
 
 4. PROTOKOLY MMS/RTSP
 ---------------------
 
-Od verze 0.17 je podporována rodina protokolù kolem MMS a RTSP (mimo jiné
-Microsoftí streamy, Real streamy a øada dalších). Protokol je implementován
-pomocí knihovny vzniklé drobnou úpravou projektu MSDL (http://msdl.sf.net/).
-Poèítejte s tím, e cílem bylo mít úpravu hotovou rychle a s minimem zmìn
-v pùvodním projektu (podobnì jako u podpory RTMP vıše), take jsem spoustu
-monıch variant prostì ignoroval; a je budu potøebovat, rozšíøím pøíslušnì
-úpravy MSDL.
+Od verze 0.17 je podporovÃ¡na rodina protokolÅ¯ kolem MMS a RTSP (mimo jinÃ©
+MicrosoftÃ­ streamy, Real streamy a Å™ada dalÅ¡Ã­ch). Protokol je implementovÃ¡n
+pomocÃ­ knihovny vzniklÃ© drobnou Ãºpravou projektu MSDL (http://msdl.sf.net/).
+PoÄÃ­tejte s tÃ­m, Å¾e cÃ­lem bylo mÃ­t Ãºpravu hotovou rychle a s minimem zmÄ›n
+v pÅ¯vodnÃ­m projektu (podobnÄ› jako u podpory RTMP vÃ½Å¡e), takÅ¾e jsem spoustu
+moÅ¾nÃ½ch variant prostÄ› ignoroval; aÅ¾ je budu potÅ™ebovat, rozÅ¡Ã­Å™Ã­m pÅ™Ã­sluÅ¡nÄ›
+Ãºpravy MSDL.
 
-Pozn.: Celková velikost stahovaného streamu je jen odhad, kterı nemusí bıt
-úplnì pøesnı. Klidnì se mùe stát, e pøenos skonèí v 93 % a pøesto se
-ohlásí jako úspìšnı - a pøehráním skuteènì zjistíte, e stream je staen
-kompletnì.
+Pozn.: CelkovÃ¡ velikost stahovanÃ©ho streamu je jen odhad, kterÃ½ nemusÃ­ bÃ½t
+ÃºplnÄ› pÅ™esnÃ½. KlidnÄ› se mÅ¯Å¾e stÃ¡t, Å¾e pÅ™enos skonÄÃ­ v 93 % a pÅ™esto se
+ohlÃ¡sÃ­ jako ÃºspÄ›Å¡nÃ½ - a pÅ™ehrÃ¡nÃ­m skuteÄnÄ› zjistÃ­te, Å¾e stream je staÅ¾en
+kompletnÄ›.
 
-Od verze 0.78 lze pøímo stahovat URL zaloená na protokolu MMS - mùete tedy
-do programu vloit adresy jako "mms://netshow.play.cz/proglas/audio_15681.wma".
-Poadavkem ovšem je, aby pøíslušnému serveru staèila ke spuštìní videa právì
-jenom adresa (a nebyly vyadovány dodateèné parametry) - v takovém pøípadì
-YTD pouít nelze.
+Od verze 0.78 lze pÅ™Ã­mo stahovat URL zaloÅ¾enÃ¡ na protokolu MMS - mÅ¯Å¾ete tedy
+do programu vloÅ¾it adresy jako "mms://netshow.play.cz/proglas/audio_15681.wma".
+PoÅ¾adavkem ovÅ¡em je, aby pÅ™Ã­sluÅ¡nÃ©mu serveru staÄila ke spuÅ¡tÄ›nÃ­ videa prÃ¡vÄ›
+jenom adresa (a nebyly vyÅ¾adovÃ¡ny dodateÄnÃ© parametry) - v takovÃ©m pÅ™Ã­padÄ›
+YTD pouÅ¾Ã­t nelze.
 
 
 
 5. PROTOKOL HDS
 ---------------
 
-Od verze 1.15 je podporován protokol Adobe HDS. Jde o protokol postavenı na
-HTTP, ve kterém je video tvoøeno tzv. manifestem (záhlavím) a potom sekvencí
-mnoha fragmentù FLV souboru, které se stahují samostatnì a které je tøeba
-vhodnì zkombinovat. Implementace protokolu vychází ze skriptu AdobeHDS.php
+Od verze 1.15 je podporovÃ¡n protokol Adobe HDS. Jde o protokol postavenÃ½ na
+HTTP, ve kterÃ©m je video tvoÅ™eno tzv. manifestem (zÃ¡hlavÃ­m) a potom sekvencÃ­
+mnoha fragmentÅ¯ FLV souboru, kterÃ© se stahujÃ­ samostatnÄ› a kterÃ© je tÅ™eba
+vhodnÄ› zkombinovat. Implementace protokolu vychÃ¡zÃ­ ze skriptu AdobeHDS.php
 (https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php) od autora K-S-V,
-kterı jsem v øadì ohledù upravil.
+kterÃ½ jsem v Å™adÄ› ohledÅ¯ upravil.
 
-V základní implementaci (DEFINE SIMPLIFIEDHDSDOWNLOADER) jsem pøijal nìkolik
-zjednodušujících pøedpokladù, které potøebám YTD plnì vyhovují a mìly by bıt
-u drtivé vìtšiny serverù splnìny. Vıhodou je øádovì jednodušší implementace,
-by za cenu moné nefunkènosti u nìkterıch serverù a zejména bez monosti
-navazovat pøerušené spojení (které YTD stejnì nepodporuje).
+V zÃ¡kladnÃ­ implementaci (DEFINE SIMPLIFIEDHDSDOWNLOADER) jsem pÅ™ijal nÄ›kolik
+zjednoduÅ¡ujÃ­cÃ­ch pÅ™edpokladÅ¯, kterÃ© potÅ™ebÃ¡m YTD plnÄ› vyhovujÃ­ a mÄ›ly by bÃ½t
+u drtivÃ© vÄ›tÅ¡iny serverÅ¯ splnÄ›ny. VÃ½hodou je Å™Ã¡dovÄ› jednoduÅ¡Å¡Ã­ implementace,
+byÅ¥ za cenu moÅ¾nÃ© nefunkÄnosti u nÄ›kterÃ½ch serverÅ¯ a zejmÃ©na bez moÅ¾nosti
+navazovat pÅ™eruÅ¡enÃ© spojenÃ­ (kterÃ© YTD stejnÄ› nepodporuje).
 
 
 
 6. PLAYLISTY
 ------------
 
-Od verze 0.19 jsou podporovány zdroje, ve kterıch je jeden poøad tvoøen
-nìkolika samostatnımi mediálními soubory (napø. Markiza.sk). YouTube
-Downloader momentálnì neumoòuje vybrat, které ze souborù se stáhnou a
-které ne - stahují se vdy všechny.
+Od verze 0.19 jsou podporovÃ¡ny zdroje, ve kterÃ½ch je jeden poÅ™ad tvoÅ™en
+nÄ›kolika samostatnÃ½mi mediÃ¡lnÃ­mi soubory (napÅ™. Markiza.sk). YouTube
+Downloader momentÃ¡lnÄ› neumoÅ¾Åˆuje vybrat, kterÃ© ze souborÅ¯ se stÃ¡hnou a
+kterÃ© ne - stahujÃ­ se vÅ¾dy vÅ¡echny.
 
 
 
-7. KONVERZE STÁHNUTİCH SOUBORÙ
+7. KONVERZE STÃHNUTÃCH SOUBORÅ®
 ------------------------------
 
-Od verze 0.50 podporuje YouTube Downloader funkci, která do jisté míry
-umoòuje konvertovat stáhnuté soubory do jinıch formátù - nabízí rozhraní,
-pomocí kterého lze po dokonèení downloadu nebo po kliknutím na pøíslušné
-tlaèítko v grafickém prostøedí spustit externí aplikaci a pøedat jí jméno
-stáhnutého souboru (a pøípadnì další parametry). Tato externí aplikace pak
-mùe udìlat cokoliv, vèetnì konverze do jiného formátu. 
+Od verze 0.50 podporuje YouTube Downloader funkci, kterÃ¡ do jistÃ© mÃ­ry
+umoÅ¾Åˆuje konvertovat stÃ¡hnutÃ© soubory do jinÃ½ch formÃ¡tÅ¯ - nabÃ­zÃ­ rozhranÃ­,
+pomocÃ­ kterÃ©ho lze po dokonÄenÃ­ downloadu nebo po kliknutÃ­m na pÅ™Ã­sluÅ¡nÃ©
+tlaÄÃ­tko v grafickÃ©m prostÅ™edÃ­ spustit externÃ­ aplikaci a pÅ™edat jÃ­ jmÃ©no
+stÃ¡hnutÃ©ho souboru (a pÅ™Ã­padnÄ› dalÅ¡Ã­ parametry). Tato externÃ­ aplikace pak
+mÅ¯Å¾e udÄ›lat cokoliv, vÄetnÄ› konverze do jinÃ©ho formÃ¡tu. 
 
-Pokud smaete konfiguraèní soubor a spustíte YouTube Downloader v grafickém
-reimu, vytvoøí standardní konfiguraèní soubor, kde jsou nadefinovány tøi 
-základní konverze, vyuívající program MEncoder (souèást projektu MPlayer, 
-domovská stránka http://www.mplayerhq.hu) pro
+Pokud smaÅ¾ete konfiguraÄnÃ­ soubor a spustÃ­te YouTube Downloader v grafickÃ©m
+reÅ¾imu, vytvoÅ™Ã­ standardnÃ­ konfiguraÄnÃ­ soubor, kde jsou nadefinovÃ¡ny tÅ™i 
+zÃ¡kladnÃ­ konverze, vyuÅ¾Ã­vajÃ­cÃ­ program MEncoder (souÄÃ¡st projektu MPlayer, 
+domovskÃ¡ strÃ¡nka http://www.mplayerhq.hu) pro
 
-a) pøevod videa do kontejneru AVI. Tato funkce je velmi rychlá a nedochází
-   pøi ní ke zmìnì kvality, nemusí ale fungovat pro všechny vstupní formáty
-   (napø. pro mnoho souborù .FLV, ne-li pro všechny) a hlavnì zmìní jenom
-   kontejner, ale ne obsah, take pro pøehrání stále potøebujete kodeky,
-   které byly potøeba pro pùvodní video. Vıznam konverze je víceménì omezen
-   jen na programy, které nepodporují jiné kontejnery ne AVI.
+a) pÅ™evod videa do kontejneru AVI. Tato funkce je velmi rychlÃ¡ a nedochÃ¡zÃ­
+   pÅ™i nÃ­ ke zmÄ›nÄ› kvality, nemusÃ­ ale fungovat pro vÅ¡echny vstupnÃ­ formÃ¡ty
+   (napÅ™. pro mnoho souborÅ¯ .FLV, ne-li pro vÅ¡echny) a hlavnÄ› zmÄ›nÃ­ jenom
+   kontejner, ale ne obsah, takÅ¾e pro pÅ™ehrÃ¡nÃ­ stÃ¡le potÅ™ebujete kodeky,
+   kterÃ© byly potÅ™eba pro pÅ¯vodnÃ­ video. VÃ½znam konverze je vÃ­cemÃ©nÄ› omezen
+   jen na programy, kterÃ© nepodporujÃ­ jinÃ© kontejnery neÅ¾ AVI.
 
-b) konverzi videa do kontejneru AVI s kodekem XVID+MP3. Zde u jde o plnou
-   rekompresi, s vlastnostmi v zásadì opaènımi ne u pøevodu kontejneru -
-   je to pomalé a dochází ke ztrátì kvality, ale funguje to pro (skoro)
-   všechny vstupní soubory a vısledek pak pøehrajete v kadém pøehrávaèi,
-   pokud ovšem podporuje kodek XVID (to u jsou dnes snad všechny).
+b) konverzi videa do kontejneru AVI s kodekem XVID+MP3. Zde uÅ¾ jde o plnou
+   rekompresi, s vlastnostmi v zÃ¡sadÄ› opaÄnÃ½mi neÅ¾ u pÅ™evodu kontejneru -
+   je to pomalÃ© a dochÃ¡zÃ­ ke ztrÃ¡tÄ› kvality, ale funguje to pro (skoro)
+   vÅ¡echny vstupnÃ­ soubory a vÃ½sledek pak pÅ™ehrajete v kaÅ¾dÃ©m pÅ™ehrÃ¡vaÄi,
+   pokud ovÅ¡em podporuje kodek XVID (to uÅ¾ jsou dnes snad vÅ¡echny).
 
-c) konverzi videa do kontejneru AVI s kodekem H264+MP3. Platí to samé co pro
-   pøedchozí pøípad.
+c) konverzi videa do kontejneru AVI s kodekem H264+MP3. PlatÃ­ to samÃ© co pro
+   pÅ™edchozÃ­ pÅ™Ã­pad.
 
-Pro všechny tøi varianty jsou nastaveny nìjaké základní parametry, ovšem 
-zdùrazòuji, e moje zkušenosti s konverzemi jsou mizivé a tudí ty parametry
-s jistotou nebudou optimální. Nebuïte tedy pøekvapeni dosaenımi vısledky.
-Pokud se najde nìjakı expert ochotnı moje nastavení zoptimalizovat, budu jen
-rád.
+Pro vÅ¡echny tÅ™i varianty jsou nastaveny nÄ›jakÃ© zÃ¡kladnÃ­ parametry, ovÅ¡em 
+zdÅ¯razÅˆuji, Å¾e moje zkuÅ¡enosti s konverzemi jsou mizivÃ© a tudÃ­Å¾ ty parametry
+s jistotou nebudou optimÃ¡lnÃ­. NebuÄte tedy pÅ™ekvapeni dosaÅ¾enÃ½mi vÃ½sledky.
+Pokud se najde nÄ›jakÃ½ expert ochotnÃ½ moje nastavenÃ­ zoptimalizovat, budu jen
+rÃ¡d.
 
-Co potøebujete udìlat pro to, aby konverze chodily:
+Co potÅ™ebujete udÄ›lat pro to, aby konverze chodily:
 
-1. Stáhnout si a nainstalovat kompletní MPlayer (obsahuje i MEncoder.exe).
+1. StÃ¡hnout si a nainstalovat kompletnÃ­ MPlayer (obsahuje i MEncoder.exe).
 
-2. MEncoder.exe zkopírovat do adresáøe v PATH nebo do adresáøe, kde je
-   nainstalovanı YouTube Downloader.
+2. MEncoder.exe zkopÃ­rovat do adresÃ¡Å™e v PATH nebo do adresÃ¡Å™e, kde je
+   nainstalovanÃ½ YouTube Downloader.
 
-3. Aktivovat konvertování. Slouí k tomu nastavení <converters><activated>,
-   které je standardnì nastaveno na hodnotu 0 (nula) a které musíte pøepsat
-   na hodnotu 1. Konfiguraèní soubor zobrazíte pøímo z programu tlaèítkem
-   "Upravit konfiguraèní soubor", pak v nìm najdìte "<activated>" (bez 
-   uvozovek) a pøepište nulu za ním na jednièku.
+3. Aktivovat konvertovÃ¡nÃ­. SlouÅ¾Ã­ k tomu nastavenÃ­ <converters><activated>,
+   kterÃ© je standardnÄ› nastaveno na hodnotu 0 (nula) a kterÃ© musÃ­te pÅ™epsat
+   na hodnotu 1. KonfiguraÄnÃ­ soubor zobrazÃ­te pÅ™Ã­mo z programu tlaÄÃ­tkem
+   "Upravit konfiguraÄnÃ­ soubor", pak v nÄ›m najdÄ›te "<activated>" (bez 
+   uvozovek) a pÅ™epiÅ¡te nulu za nÃ­m na jedniÄku.
 
-4. a) Pokud chcete automaticky zkonvertovat všechny soubory:
+4. a) Pokud chcete automaticky zkonvertovat vÅ¡echny soubory:
 
-      V grafickém prostøedí kliknout na ikonku "Vybrat konvertovaè" (film s
-      tukou) a vybrat si jeden z pøednastavenıch konvertovaèù. Od té chvíle
-      budou všechny novì staené soubory pøedhozeny tomuto konvertovaèi
-      (ve vıchozím stavu jeden po druhém, program je nastaven tak, aby 
-      v jednu chvíli automaticky bìel jen jeden konverzní proces).
+      V grafickÃ©m prostÅ™edÃ­ kliknout na ikonku "Vybrat konvertovaÄ" (film s
+      tuÅ¾kou) a vybrat si jeden z pÅ™ednastavenÃ½ch konvertovaÄÅ¯. Od tÃ© chvÃ­le
+      budou vÅ¡echny novÄ› staÅ¾enÃ© soubory pÅ™edhozeny tomuto konvertovaÄi
+      (ve vÃ½chozÃ­m stavu jeden po druhÃ©m, program je nastaven tak, aby 
+      v jednu chvÃ­li automaticky bÄ›Å¾el jen jeden konverznÃ­ proces).
 
-   b) Pokud chcete zkonvertovat jen soubory, které sám urèíte:
+   b) Pokud chcete zkonvertovat jen soubory, kterÃ© sÃ¡m urÄÃ­te:
 
-      V grafickém prostøedí vybrat jeden nebo více souborù a kliknout na
-      ikonu "Zkonvertovat" (film se zelenou šipkou). Konverze bude spuštìna
-      pro všechny zvolené filmy, bez ohledu na to, kolik jich je a jestli
-      byly úspìšnì dokonèeny.
+      V grafickÃ©m prostÅ™edÃ­ vybrat jeden nebo vÃ­ce souborÅ¯ a kliknout na
+      ikonu "Zkonvertovat" (film se zelenou Å¡ipkou). Konverze bude spuÅ¡tÄ›na
+      pro vÅ¡echny zvolenÃ© filmy, bez ohledu na to, kolik jich je a jestli
+      byly ÃºspÄ›Å¡nÄ› dokonÄeny.
 
-Od verze 1.01 je díky ffmpegmannovi ve vıchozí konfiguraci podporován i 
-program FFmpeg (http://ffmpeg.org/), pro kterı jsou nadefinované ty samé
-tøi základní konverze. Všechny postupy jsou v zásadì stejné, jen místo
+Od verze 1.01 je dÃ­ky ffmpegmannovi ve vÃ½chozÃ­ konfiguraci podporovÃ¡n i 
+program FFmpeg (http://ffmpeg.org/), pro kterÃ½ jsou nadefinovanÃ© ty samÃ©
+tÅ™i zÃ¡kladnÃ­ konverze. VÅ¡echny postupy jsou v zÃ¡sadÄ› stejnÃ©, jen mÃ­sto
 mencoder.exe pracujete s ffmpeg.exe.
 
-Pokroèilí uivatelé mohou zásahem do konfigurace zmìnit nastavení tìchto
-úloh nebo pøidat úlohy úplnì nové. Pokud vám nevyhovuje MEncoder, mùete
-pouít jinı program - a nemusíte se vùbec omezovat na programy pro konverzi
-videa, funkce je napsána natolik obecnì, abyste mohli tøeba spustit nìjakı
-BAT skript nebo video nìkomu poslat mailem. Popis dostupnıch nastavení je
-uveden níe v sekci Konfigurace.
+PokroÄilÃ­ uÅ¾ivatelÃ© mohou zÃ¡sahem do konfigurace zmÄ›nit nastavenÃ­ tÄ›chto
+Ãºloh nebo pÅ™idat Ãºlohy ÃºplnÄ› novÃ©. Pokud vÃ¡m nevyhovuje MEncoder, mÅ¯Å¾ete
+pouÅ¾Ã­t jinÃ½ program - a nemusÃ­te se vÅ¯bec omezovat na programy pro konverzi
+videa, funkce je napsÃ¡na natolik obecnÄ›, abyste mohli tÅ™eba spustit nÄ›jakÃ½
+BAT skript nebo video nÄ›komu poslat mailem. Popis dostupnÃ½ch nastavenÃ­ je
+uveden nÃ­Å¾e v sekci Konfigurace.
 
-Ve verzi spouštìné z pøíkazového øádku tato funkce podporována není - tuto
-verzi je moné skriptovat "samu od sebe" a mì pøipadá zbyteèné zavádìt
-duplicitní funkci, která pøinese jen zvıšené riziko chyb a ádnou skuteènou
-vıhodu.
+Ve verzi spouÅ¡tÄ›nÃ© z pÅ™Ã­kazovÃ©ho Å™Ã¡dku tato funkce podporovÃ¡na nenÃ­ - tuto
+verzi je moÅ¾nÃ© skriptovat "samu od sebe" a mÄ› pÅ™ipadÃ¡ zbyteÄnÃ© zavÃ¡dÄ›t
+duplicitnÃ­ funkci, kterÃ¡ pÅ™inese jen zvÃ½Å¡enÃ© riziko chyb a Å¾Ã¡dnou skuteÄnou
+vÃ½hodu.
 
 
 
-8. DISTRIBUÈNÍ ARCHÍV
+8. DISTRIBUÄŒNÃ ARCHÃV
 ---------------------
 
-A do verze 0.86 vèetnì byl YTD distribuován v archívu ZIP s tím, e si ho
-uivatel sám rozbalí tam, kam bude potøebovat. Toto øešení jsem zvolil kvùli
-tomu, aby šlo YTD snadno pøenášet mezi poèítaèi a operaèními systémy, bohuel
-se ale postupnì zaèalo objevovat èím dál více lidí, kteøí prostì otevøeli
-ZIP jako adresáø (od Windows XP vıše), odklikli ytd.exe, vesele ignorovali
-hlášení Windows, e to nemusí fungovat správnì, pokud se nerozbalí všechny
-soubory, a poté se na mì obraceli s dotazy, proè jim nefunguje stahování z
-Èeské televize...
+AÅ¾ do verze 0.86 vÄetnÄ› byl YTD distribuovÃ¡n v archÃ­vu ZIP s tÃ­m, Å¾e si ho
+uÅ¾ivatel sÃ¡m rozbalÃ­ tam, kam bude potÅ™ebovat. Toto Å™eÅ¡enÃ­ jsem zvolil kvÅ¯li
+tomu, aby Å¡lo YTD snadno pÅ™enÃ¡Å¡et mezi poÄÃ­taÄi a operaÄnÃ­mi systÃ©my, bohuÅ¾el
+se ale postupnÄ› zaÄalo objevovat ÄÃ­m dÃ¡l vÃ­ce lidÃ­, kteÅ™Ã­ prostÄ› otevÅ™eli
+ZIP jako adresÃ¡Å™ (od Windows XP vÃ½Å¡e), odklikli ytd.exe, vesele ignorovali
+hlÃ¡Å¡enÃ­ Windows, Å¾e to nemusÃ­ fungovat sprÃ¡vnÄ›, pokud se nerozbalÃ­ vÅ¡echny
+soubory, a potÃ© se na mÄ› obraceli s dotazy, proÄ jim nefunguje stahovÃ¡nÃ­ z
+ÄŒeskÃ© televize...
 
-Od verze 0.87 tedy pøecházím k novému distribuènímu modelu, zaloeném na
-formátu .exe. Snail jsem se ale zachovat co nejvíce vıhod tradièního 
-distribuèního modelu a dokonce k nim pøidat:
+Od verze 0.87 tedy pÅ™echÃ¡zÃ­m k novÃ©mu distribuÄnÃ­mu modelu, zaloÅ¾enÃ©m na
+formÃ¡tu .exe. SnaÅ¾il jsem se ale zachovat co nejvÃ­ce vÃ½hod tradiÄnÃ­ho 
+distribuÄnÃ­ho modelu a dokonce k nim pÅ™idat:
 
-1. Distribuèní archív je bìnı samorozbalovací archív ve formátu 7-zip
-   (http://www.7-zip.org). Pokud tedy nemùete nebo nechcete projít bìnou
-   instalací, mùete archív rozbalit pomocí 7-zipu "ruènì". Stejnì jako
-   døíve YTD ádnou skuteènou instalaci nepotøebuje, staèí ho nahrát do
-   libovolného adresáøe.
+1. DistribuÄnÃ­ archÃ­v je bÄ›Å¾nÃ½ samorozbalovacÃ­ archÃ­v ve formÃ¡tu 7-zip
+   (http://www.7-zip.org). Pokud tedy nemÅ¯Å¾ete nebo nechcete projÃ­t bÄ›Å¾nou
+   instalacÃ­, mÅ¯Å¾ete archÃ­v rozbalit pomocÃ­ 7-zipu "ruÄnÄ›". StejnÄ› jako
+   dÅ™Ã­ve YTD Å¾Ã¡dnou skuteÄnou instalaci nepotÅ™ebuje, staÄÃ­ ho nahrÃ¡t do
+   libovolnÃ©ho adresÃ¡Å™e.
 
-2. Pokud spustíte distribuèní archív, nabídne vám monost instalace, která
-   pouze zkopíruje soubory do zvoleného adresáøe, volitelnì zaloí zástupce, 
-   a spustí grafickou verzi YTD. Rozhodnì neprovádí ádné zápisy mimo zvolenı 
-   adresáø (kromì volitelnıch zástupcù na Ploše a ve Start menu) ani v 
-   registrech, take by nemìla nic poškodit.
+2. Pokud spustÃ­te distribuÄnÃ­ archÃ­v, nabÃ­dne vÃ¡m moÅ¾nost instalace, kterÃ¡
+   pouze zkopÃ­ruje soubory do zvolenÃ©ho adresÃ¡Å™e, volitelnÄ› zaloÅ¾Ã­ zÃ¡stupce, 
+   a spustÃ­ grafickou verzi YTD. RozhodnÄ› neprovÃ¡dÃ­ Å¾Ã¡dnÃ© zÃ¡pisy mimo zvolenÃ½ 
+   adresÃ¡Å™ (kromÄ› volitelnÃ½ch zÃ¡stupcÅ¯ na PloÅ¡e a ve Start menu) ani v 
+   registrech, takÅ¾e by nemÄ›la nic poÅ¡kodit.
 
-3. Z instalátoru máte dále monost pøímo spustit YTD, bez instalace. Je to
-   pomalejší (distribuèní archív stejnì musí rozbalit do doèasného adresáøe)
-   a nepøátelské k firewallùm (protoe vlastní pøenosy provádí pokadé jinı
-   exe soubor), ale funkènì je to plnohodnotné.
+3. Z instalÃ¡toru mÃ¡te dÃ¡le moÅ¾nost pÅ™Ã­mo spustit YTD, bez instalace. Je to
+   pomalejÅ¡Ã­ (distribuÄnÃ­ archÃ­v stejnÄ› musÃ­ rozbalit do doÄasnÃ©ho adresÃ¡Å™e)
+   a nepÅ™Ã¡telskÃ© k firewallÅ¯m (protoÅ¾e vlastnÃ­ pÅ™enosy provÃ¡dÃ­ pokaÅ¾dÃ© jinÃ½
+   exe soubor), ale funkÄnÄ› je to plnohodnotnÃ©.
 
-4. Pokud spustíte distribuèní archív s parametrem --gui, rovnou se spustí
-   grafická verze bez instalace (jako v bodu 3, ale bez zásahu uivatele).
+4. Pokud spustÃ­te distribuÄnÃ­ archÃ­v s parametrem --gui, rovnou se spustÃ­
+   grafickÃ¡ verze bez instalace (jako v bodu 3, ale bez zÃ¡sahu uÅ¾ivatele).
 
-5. Pokud spustíte distribuèní archív s jinımi parametry, spustí se standardní
-   command-line verze YTD a tyto parametry se jí pøedají. Mùete tedy napø.
-   spustit stahování videa, ani byste se museli obtìovat s instalací.
+5. Pokud spustÃ­te distribuÄnÃ­ archÃ­v s jinÃ½mi parametry, spustÃ­ se standardnÃ­
+   command-line verze YTD a tyto parametry se jÃ­ pÅ™edajÃ­. MÅ¯Å¾ete tedy napÅ™.
+   spustit stahovÃ¡nÃ­ videa, aniÅ¾ byste se museli obtÄ›Å¾ovat s instalacÃ­.
 
-6. Tento model distribuce navíc umoòuje automatickou aktualizaci programu
-   (z grafického rozhraní i z pøíkazové øádky - viz parametr -u).
+6. Tento model distribuce navÃ­c umoÅ¾Åˆuje automatickou aktualizaci programu
+   (z grafickÃ©ho rozhranÃ­ i z pÅ™Ã­kazovÃ© Å™Ã¡dky - viz parametr -u).
 
 
 
 9. KONFIGURACE
 --------------
 
-Od verze 0.50 pouívá YouTube Downloader pro svoji konfiguraci XML soubor
-"ytd.xml". Umístìn mùe bıt ve tøech místech:
+Od verze 0.50 pouÅ¾Ã­vÃ¡ YouTube Downloader pro svoji konfiguraci XML soubor
+"ytd.xml". UmÃ­stÄ›n mÅ¯Å¾e bÃ½t ve tÅ™ech mÃ­stech:
 
-1) Aktuální pracovní adresáø. Toto je primární umístìní.
+1) AktuÃ¡lnÃ­ pracovnÃ­ adresÃ¡Å™. Toto je primÃ¡rnÃ­ umÃ­stÄ›nÃ­.
 
-2) Adresáø, ve kterém je YTD.exe. Toto umístìní se pouije, pokud v pracovním
-   adresáøi konfiguraèní soubor neexistuje a v adresáøi YTD ano.
+2) AdresÃ¡Å™, ve kterÃ©m je YTD.exe. Toto umÃ­stÄ›nÃ­ se pouÅ¾ije, pokud v pracovnÃ­m
+   adresÃ¡Å™i konfiguraÄnÃ­ soubor neexistuje a v adresÃ¡Å™i YTD ano.
 
-3) Adresáø "YouTube Downloader" v uivatelském profilu Windows (%APPDATA%).
-   Toto umístìní se zkoumá v pøípadì, e primární XML soubor neexistuje
-   nebo e je v nìm pro aplikaci vypnut pøenositelnı (portable) reim.
+3) AdresÃ¡Å™ "YouTube Downloader" v uÅ¾ivatelskÃ©m profilu Windows (%APPDATA%).
+   Toto umÃ­stÄ›nÃ­ se zkoumÃ¡ v pÅ™Ã­padÄ›, Å¾e primÃ¡rnÃ­ XML soubor neexistuje
+   nebo Å¾e je v nÄ›m pro aplikaci vypnut pÅ™enositelnÃ½ (portable) reÅ¾im.
 
-Konfiguraèní parametry jsou vdy ukládány jako obsahy XML tagù. V souladu
-s XML standardem jsou názvy tagù citlivé na velikost písmen (case-sensitive);
-jejich obsahy obecnì citlivé nejsou (case-insensitive), ale je vhodné pouívat
-v nich jen malá písmena. Logické hodnoty (ano-ne) jsou ukládány jako "1" (ano)
+KonfiguraÄnÃ­ parametry jsou vÅ¾dy uklÃ¡dÃ¡ny jako obsahy XML tagÅ¯. V souladu
+s XML standardem jsou nÃ¡zvy tagÅ¯ citlivÃ© na velikost pÃ­smen (case-sensitive);
+jejich obsahy obecnÄ› citlivÃ© nejsou (case-insensitive), ale je vhodnÃ© pouÅ¾Ã­vat
+v nich jen malÃ¡ pÃ­smena. LogickÃ© hodnoty (ano-ne) jsou uklÃ¡dÃ¡ny jako "1" (ano)
 a "0" (ne).
 
 <ytd> 
-  - Koøenovı prvek; jeho název mùe bıt v zásadì libovolnı, program to (zatím) 
-    nekontroluje. Obsahuje všechna nastavení.
+  - KoÅ™enovÃ½ prvek; jeho nÃ¡zev mÅ¯Å¾e bÃ½t v zÃ¡sadÄ› libovolnÃ½, program to (zatÃ­m) 
+    nekontroluje. Obsahuje vÅ¡echna nastavenÃ­.
 
 <config>
-  - Potomek <ytd>; obsahuje základní konfiguraci spoleènou pro grafickou i 
+  - Potomek <ytd>; obsahuje zÃ¡kladnÃ­ konfiguraci spoleÄnou pro grafickou i 
     textovou verzi programu.
 
   <portable_mode>
-    - Potomek <config>; obsahuje logickou hodnotu urèující, jestli YTD pracuje
-      v pøenositelném (portable) nebo standardním reimu. Ani jeden z reimù
-      nezapisuje do registru Windows, liší se však tím, do kterého XML souboru
-      jsou ukládána uivatelská nastavení: v portable reimu se zapisují do 
-      souboru "ytd.xml" v adresáøi, ve kterém je program nahrán (a kde tedy 
-      musí bıt právo zápisu, pokud se má konfigurace ukládat úspìšnì), ve 
-      standardním reimu se ukládají do "ytd.xml" v uivatelském profilu (kde 
-      je za bìnıch okolností právo zápisu vdy).
-    - Moné hodnoty jsou "1" (zapnout portable reim) a "0" (vypnout).
-    - Vıchozí hodnota je "0".
+    - Potomek <config>; obsahuje logickou hodnotu urÄujÃ­cÃ­, jestli YTD pracuje
+      v pÅ™enositelnÃ©m (portable) nebo standardnÃ­m reÅ¾imu. Ani jeden z reÅ¾imÅ¯
+      nezapisuje do registru Windows, liÅ¡Ã­ se vÅ¡ak tÃ­m, do kterÃ©ho XML souboru
+      jsou uklÃ¡dÃ¡na uÅ¾ivatelskÃ¡ nastavenÃ­: v portable reÅ¾imu se zapisujÃ­ do 
+      souboru "ytd.xml" v adresÃ¡Å™i, ve kterÃ©m je program nahrÃ¡n (a kde tedy 
+      musÃ­ bÃ½t prÃ¡vo zÃ¡pisu, pokud se mÃ¡ konfigurace uklÃ¡dat ÃºspÄ›Å¡nÄ›), ve 
+      standardnÃ­m reÅ¾imu se uklÃ¡dajÃ­ do "ytd.xml" v uÅ¾ivatelskÃ©m profilu (kde 
+      je za bÄ›Å¾nÃ½ch okolnostÃ­ prÃ¡vo zÃ¡pisu vÅ¾dy).
+    - MoÅ¾nÃ© hodnoty jsou "1" (zapnout portable reÅ¾im) a "0" (vypnout).
+    - VÃ½chozÃ­ hodnota je "0".
 
   <language>
-    - Potomek <config>; urèuje, jakı jazyk má bıt pouit pro zobrazení textù
+    - Potomek <config>; urÄuje, jakÃ½ jazyk mÃ¡ bÃ½t pouÅ¾it pro zobrazenÃ­ textÅ¯
       programu. 
-    - Monımi hodnotami jsou dvouznakové ISO kódy jazykù, viz sekce Lokalizace
-      níe. Povolen je i prázdnı øetìzec, kterı znaèí jazyk podle nastavení
-      operaèního systému.
-    - Vıchozí hodnota je prázdnı øetìzec (jazyk podle nastavení OS).
-    - Pozor: V distribuèním archívu jsou k dispozici jazykové soubory jen pro
-      èeštinu ("cs") a angliètinu ("en"); další jazyky èekají na to, a je 
-      nìkdo pøeloí.
+    - MoÅ¾nÃ½mi hodnotami jsou dvouznakovÃ© ISO kÃ³dy jazykÅ¯, viz sekce Lokalizace
+      nÃ­Å¾e. Povolen je i prÃ¡zdnÃ½ Å™etÄ›zec, kterÃ½ znaÄÃ­ jazyk podle nastavenÃ­
+      operaÄnÃ­ho systÃ©mu.
+    - VÃ½chozÃ­ hodnota je prÃ¡zdnÃ½ Å™etÄ›zec (jazyk podle nastavenÃ­ OS).
+    - Pozor: V distribuÄnÃ­m archÃ­vu jsou k dispozici jazykovÃ© soubory jen pro
+      ÄeÅ¡tinu ("cs") a angliÄtinu ("en"); dalÅ¡Ã­ jazyky ÄekajÃ­ na to, aÅ¾ je 
+      nÄ›kdo pÅ™eloÅ¾Ã­.
 
   <destination_path>
-    - Potomek <config>; urèuje, do kterého adresáøe se mají videa ukládat.
-    - Monou hodnotou je buï prázdnı øetìzec (znaèí aktuální pracovní adresáø,
-      co je obvykle adresáø, ze kterého byl program spuštìn), nebo libovolná
-      platná cesta, absolutní ("c:\download") i relativní ("..\downoad").
-      V pøípadì portable verze doporuèuji vyhnout se absolutním cestám a 
-      pouívat buï prázdnı øetìzec nebo cestu relativní,
-    - Vıchozí hodnota je prázdnı øetìzec (aktuální pracovní adresáø).
-    - Odpovídá parametru -o na pøíkazové øádce.
+    - Potomek <config>; urÄuje, do kterÃ©ho adresÃ¡Å™e se majÃ­ videa uklÃ¡dat.
+    - MoÅ¾nou hodnotou je buÄ prÃ¡zdnÃ½ Å™etÄ›zec (znaÄÃ­ aktuÃ¡lnÃ­ pracovnÃ­ adresÃ¡Å™,
+      coÅ¾ je obvykle adresÃ¡Å™, ze kterÃ©ho byl program spuÅ¡tÄ›n), nebo libovolnÃ¡
+      platnÃ¡ cesta, absolutnÃ­ ("c:\download") i relativnÃ­ ("..\downoad").
+      V pÅ™Ã­padÄ› portable verze doporuÄuji vyhnout se absolutnÃ­m cestÃ¡m a 
+      pouÅ¾Ã­vat buÄ prÃ¡zdnÃ½ Å™etÄ›zec nebo cestu relativnÃ­,
+    - VÃ½chozÃ­ hodnota je prÃ¡zdnÃ½ Å™etÄ›zec (aktuÃ¡lnÃ­ pracovnÃ­ adresÃ¡Å™).
+    - OdpovÃ­dÃ¡ parametru -o na pÅ™Ã­kazovÃ© Å™Ã¡dce.
 
   <error_log>
-    - Potomek <config>; urèuje, do kterého souboru se bude ukládat seznam URL,
-      které se z nìjakého dùvodu nepodaøilo stáhnout.
-    - Monou hodnotou je buï prázdnı øetìzec (øíká, e se seznam chybnıch URL
-      ukládat nebude) nebo cesta k souboru.
-    - Vıchozí hodnota je prázdnı øetìzec (neukládat seznam chyb).
-    - Grafická verze programu tuto poloku nepouívá.
-    - Odpovídá parametru -e na pøíkazové øádce.
+    - Potomek <config>; urÄuje, do kterÃ©ho souboru se bude uklÃ¡dat seznam URL,
+      kterÃ© se z nÄ›jakÃ©ho dÅ¯vodu nepodaÅ™ilo stÃ¡hnout.
+    - MoÅ¾nou hodnotou je buÄ prÃ¡zdnÃ½ Å™etÄ›zec (Å™Ã­kÃ¡, Å¾e se seznam chybnÃ½ch URL
+      uklÃ¡dat nebude) nebo cesta k souboru.
+    - VÃ½chozÃ­ hodnota je prÃ¡zdnÃ½ Å™etÄ›zec (neuklÃ¡dat seznam chyb).
+    - GrafickÃ¡ verze programu tuto poloÅ¾ku nepouÅ¾Ã­vÃ¡.
+    - OdpovÃ­dÃ¡ parametru -e na pÅ™Ã­kazovÃ© Å™Ã¡dce.
 
   <overwrite_mode>
-    - Potomek <config>; øíká, jak se má program zachovat v pøípadì, e pøi
-      ukládání videa narazí na existující soubor.
-    - Moné hodnoty jsou:
-        "ask" - zeptat se uivatele na akci.
-        "never" - pøeskoèit soubor (pøedpoklad: u byl staen døíve).
-        "always" - pøepsat soubor (pøedpoklad: pøedchozí verze je chybná).
-        "rename" - pojmenovat novı soubor tak, aby mìl jedineèné jméno
-                   (pøedpoklad: pùvodní soubor je jinı ne ten, co stahuji 
-                   teï).
-    - Vıchozí hodnota je "ask" (zeptat se uivatele).
-    - Odpovídá parametrùm -k (ask), -n (never), -a (always), -r (rename) na
-      pøíkazové øádce.
+    - Potomek <config>; Å™Ã­kÃ¡, jak se mÃ¡ program zachovat v pÅ™Ã­padÄ›, Å¾e pÅ™i
+      uklÃ¡dÃ¡nÃ­ videa narazÃ­ na existujÃ­cÃ­ soubor.
+    - MoÅ¾nÃ© hodnoty jsou:
+        "ask" - zeptat se uÅ¾ivatele na akci.
+        "never" - pÅ™eskoÄit soubor (pÅ™edpoklad: uÅ¾ byl staÅ¾en dÅ™Ã­ve).
+        "always" - pÅ™epsat soubor (pÅ™edpoklad: pÅ™edchozÃ­ verze je chybnÃ¡).
+        "rename" - pojmenovat novÃ½ soubor tak, aby mÄ›l jedineÄnÃ© jmÃ©no
+                   (pÅ™edpoklad: pÅ¯vodnÃ­ soubor je jinÃ½ neÅ¾ ten, co stahuji 
+                   teÄ).
+    - VÃ½chozÃ­ hodnota je "ask" (zeptat se uÅ¾ivatele).
+    - OdpovÃ­dÃ¡ parametrÅ¯m -k (ask), -n (never), -a (always), -r (rename) na
+      pÅ™Ã­kazovÃ© Å™Ã¡dce.
 
   <auto_try_html_parser>
-    - Potomek <config>; zapíná nebo vypíná podporu pro automatické pouití 
-      HTML parseru na neznámá URL - tzn. YTD napøed zkusí, jestli jde o známou 
-      adresu, a kdy ne, stáhne ji jako HTML soubor a v nìm zkusí vyhledat
-      známé adresy (jako parametr -s). Tím je zajištìna podpora pro servery
-      jako Zive.cz nebo Vlaky,net, které svá videa ukládají na cizí servery.
-    - Moné hodnoty jsou "1" (povolit automatické pouití HTML parseru)
-      nebo "0" (zakázat).
-    - Vıchozí hodnota je "1" (povolit automatické pouití HTML parseru).
-    - Odpovídá parametrùm -ah (povolit), -ah- (zakázat) na pøíkazové øádce.
+    - Potomek <config>; zapÃ­nÃ¡ nebo vypÃ­nÃ¡ podporu pro automatickÃ© pouÅ¾itÃ­ 
+      HTML parseru na neznÃ¡mÃ¡ URL - tzn. YTD napÅ™ed zkusÃ­, jestli jde o znÃ¡mou 
+      adresu, a kdyÅ¾ ne, stÃ¡hne ji jako HTML soubor a v nÄ›m zkusÃ­ vyhledat
+      znÃ¡mÃ© adresy (jako parametr -s). TÃ­m je zajiÅ¡tÄ›na podpora pro servery
+      jako Zive.cz nebo Vlaky,net, kterÃ© svÃ¡ videa uklÃ¡dajÃ­ na cizÃ­ servery.
+    - MoÅ¾nÃ© hodnoty jsou "1" (povolit automatickÃ© pouÅ¾itÃ­ HTML parseru)
+      nebo "0" (zakÃ¡zat).
+    - VÃ½chozÃ­ hodnota je "1" (povolit automatickÃ© pouÅ¾itÃ­ HTML parseru).
+    - OdpovÃ­dÃ¡ parametrÅ¯m -ah (povolit), -ah- (zakÃ¡zat) na pÅ™Ã­kazovÃ© Å™Ã¡dce.
 
   <subtitles_enabled>
-    - Potomek <config>; umoòuje vypnout podporu titulkù v celé aplikaci.
-    - Moné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).
-    - Vıchozí hodnota je "1" (povolit stahování titulkù).
+    - Potomek <config>; umoÅ¾Åˆuje vypnout podporu titulkÅ¯ v celÃ© aplikaci.
+    - MoÅ¾nÃ© hodnoty jsou "1" (povolit stahovÃ¡nÃ­ titulkÅ¯) nebo "0" (zakÃ¡zat).
+    - VÃ½chozÃ­ hodnota je "1" (povolit stahovÃ¡nÃ­ titulkÅ¯).
 
   <download_to_temp_files>
-    - Potomek <config>; urèuje, jestli se soubory ukládají rovnou pod svım
-      definitivním jménem nebo s dodateènou pøíponou .part, která je po
-      skonèení downloadu odstranìna.
-    - Moné hodnoty jsou "1" (povolit dodateènou pøíponu) nebo "0" (zakázat).
-    - Vıchozí hodnota je "0" (zakázat dodateènou pøíponu).
+    - Potomek <config>; urÄuje, jestli se soubory uklÃ¡dajÃ­ rovnou pod svÃ½m
+      definitivnÃ­m jmÃ©nem nebo s dodateÄnou pÅ™Ã­ponou .part, kterÃ¡ je po
+      skonÄenÃ­ downloadu odstranÄ›na.
+    - MoÅ¾nÃ© hodnoty jsou "1" (povolit dodateÄnou pÅ™Ã­ponu) nebo "0" (zakÃ¡zat).
+    - VÃ½chozÃ­ hodnota je "0" (zakÃ¡zat dodateÄnou pÅ™Ã­ponu).
 
   <download_to_provider_subdirectories>
-    - Potomek <config>; urèuje, jestli se soubory ukládají rovnou do adresáøe
-      <destination_path> nebo do jeho podadresáøe podle jména poskytovatele
-      médií (tzn. soubory z YouTube do podadresáøe YouTube.com apod.).
-    - Moné hodnoty jsou "1" (povolit podadresáøe) nebo "0" (zakázat).
-    - Vıchozí hodnota je "0" (zakázat podadresáøe).
+    - Potomek <config>; urÄuje, jestli se soubory uklÃ¡dajÃ­ rovnou do adresÃ¡Å™e
+      <destination_path> nebo do jeho podadresÃ¡Å™e podle jmÃ©na poskytovatele
+      mÃ©diÃ­ (tzn. soubory z YouTube do podadresÃ¡Å™e YouTube.com apod.).
+    - MoÅ¾nÃ© hodnoty jsou "1" (povolit podadresÃ¡Å™e) nebo "0" (zakÃ¡zat).
+    - VÃ½chozÃ­ hodnota je "0" (zakÃ¡zat podadresÃ¡Å™e).
 
   <proxy_server>
-    - Potomek <config>; umoòuje nastavit proxy server pro vaši sí. Proxy 
-      server je v souèasné dobì podporován a ovìøen pro protokoly HTTP a 
-      MMS/RTSP. V pøípadì protokolu RTMP se mi nepodaøilo funkènost ovìøit.
+    - Potomek <config>; umoÅ¾Åˆuje nastavit proxy server pro vaÅ¡i sÃ­Å¥. Proxy 
+      server je v souÄasnÃ© dobÄ› podporovÃ¡n a ovÄ›Å™en pro protokoly HTTP a 
+      MMS/RTSP. V pÅ™Ã­padÄ› protokolu RTMP se mi nepodaÅ™ilo funkÄnost ovÄ›Å™it.
 
     <active>
-      - Potomek <proxy_server>; øíká, jestli je proxy server aktivní (bude
-        se pouívat) nebo neaktivní.
-      - Moné hodnoty jsou "1" (pouívat proxy) a "0" (nepouívat proxy).
-      - Vıchozí hodnota je "0" (nepouívat proxy).
+      - Potomek <proxy_server>; Å™Ã­kÃ¡, jestli je proxy server aktivnÃ­ (bude
+        se pouÅ¾Ã­vat) nebo neaktivnÃ­.
+      - MoÅ¾nÃ© hodnoty jsou "1" (pouÅ¾Ã­vat proxy) a "0" (nepouÅ¾Ã­vat proxy).
+      - VÃ½chozÃ­ hodnota je "0" (nepouÅ¾Ã­vat proxy).
 
     <host>
-      - Potomek <proxy_server>; urèuje adresu, na které proxy server èeká.
-      - Moné hodnoty: prázdnı øetìzec (nepouívat proxy) nebo libovolná
-        pøípustná internetová adresa (èíselná nebo doménové jméno).
-      - Vıchozí hodnota je prázdnı øetìzec (nepouívat proxy).
+      - Potomek <proxy_server>; urÄuje adresu, na kterÃ© proxy server ÄekÃ¡.
+      - MoÅ¾nÃ© hodnoty: prÃ¡zdnÃ½ Å™etÄ›zec (nepouÅ¾Ã­vat proxy) nebo libovolnÃ¡
+        pÅ™Ã­pustnÃ¡ internetovÃ¡ adresa (ÄÃ­selnÃ¡ nebo domÃ©novÃ© jmÃ©no).
+      - VÃ½chozÃ­ hodnota je prÃ¡zdnÃ½ Å™etÄ›zec (nepouÅ¾Ã­vat proxy).
 
     <port>
-      - Potomek <proxy_server>; urèuje port, na kterém proxy server èeká.
-      - Moné hodnoty: èísla od 1 do 65535. Bìné jsou hodnoty 3128, 8080.
-      - Vıchozí hodnota je 3128.
+      - Potomek <proxy_server>; urÄuje port, na kterÃ©m proxy server ÄekÃ¡.
+      - MoÅ¾nÃ© hodnoty: ÄÃ­sla od 1 do 65535. BÄ›Å¾nÃ© jsou hodnoty 3128, 8080.
+      - VÃ½chozÃ­ hodnota je 3128.
 
     <user>
-      - Potomek <proxy_server>; urèuje uivatelské jméno, kterım se svému
-        proxy serveru pøihlašujete. Podporováno je pouze pro protokol HTTP
-        a jeho funkènost není ovìøena.
-      - Monou hodnotou je libovolné platné uivatelské jméno nebo prázdnı
-        øetìzec (autorizace se nepouívá).
-      - Vıchozí hodnotou je prázdnı øetìzec (autorizace se nepouívá).
+      - Potomek <proxy_server>; urÄuje uÅ¾ivatelskÃ© jmÃ©no, kterÃ½m se svÃ©mu
+        proxy serveru pÅ™ihlaÅ¡ujete. PodporovÃ¡no je pouze pro protokol HTTP
+        a jeho funkÄnost nenÃ­ ovÄ›Å™ena.
+      - MoÅ¾nou hodnotou je libovolnÃ© platnÃ© uÅ¾ivatelskÃ© jmÃ©no nebo prÃ¡zdnÃ½
+        Å™etÄ›zec (autorizace se nepouÅ¾Ã­vÃ¡).
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec (autorizace se nepouÅ¾Ã­vÃ¡).
 
     <password>
-      - Potomek <proxy_server>; urèuje heslo pro pøihlášení k proxy serveru.
-      - Monou hodnotou je jakıkoliv øetìzec.
-      - Vıchozí hodnotou je prázdnı øetìzec (bez hesla).
+      - Potomek <proxy_server>; urÄuje heslo pro pÅ™ihlÃ¡Å¡enÃ­ k proxy serveru.
+      - MoÅ¾nou hodnotou je jakÃ½koliv Å™etÄ›zec.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec (bez hesla).
 
 <gui>
-  - Potomek <ytd>; obsahuje nastavení specifická pro grafickou verzi programu.
-    Za normálních okolností tyto údaje nemìníte ruènì, ale napø. klikáním na
-    tlaèítka a podobnì.
+  - Potomek <ytd>; obsahuje nastavenÃ­ specifickÃ¡ pro grafickou verzi programu.
+    Za normÃ¡lnÃ­ch okolnostÃ­ tyto Ãºdaje nemÄ›nÃ­te ruÄnÄ›, ale napÅ™. klikÃ¡nÃ­m na
+    tlaÄÃ­tka a podobnÄ›.
 
   <auto_start_downloads>
-    - Potomek <gui>; øíká, jestli se mají novì pøidané odkazy automaticky
-      spouštìt nebo jestli si je spustíte sami ruènì tlaèítkem Start.
-    - Moné hodnoty jsou "1" (spouštìt automaticky) a "0" (poèkat na ádost
-      uivatele).
-    - Vıchozí hodnotou je "1" (spouštìt automaticky).
+    - Potomek <gui>; Å™Ã­kÃ¡, jestli se majÃ­ novÄ› pÅ™idanÃ© odkazy automaticky
+      spouÅ¡tÄ›t nebo jestli si je spustÃ­te sami ruÄnÄ› tlaÄÃ­tkem Start.
+    - MoÅ¾nÃ© hodnoty jsou "1" (spouÅ¡tÄ›t automaticky) a "0" (poÄkat na Å¾Ã¡dost
+      uÅ¾ivatele).
+    - VÃ½chozÃ­ hodnotou je "1" (spouÅ¡tÄ›t automaticky).
 
   <check_for_new_version>
-    - Potomek <gui>; urèuje, jestli se má program pøi spuštìní grafické verze
-      pokusit o zjištìní dostupnosti novìjších verzí. I v pøípadì, e test
-      zakáete, mùe program novou verzi zjistit, ale jen na vyádání - buï 
-      parametrem -v na pøíkazovém øádku nebo tím, e otevøete okno "O 
+    - Potomek <gui>; urÄuje, jestli se mÃ¡ program pÅ™i spuÅ¡tÄ›nÃ­ grafickÃ© verze
+      pokusit o zjiÅ¡tÄ›nÃ­ dostupnosti novÄ›jÅ¡Ã­ch verzÃ­. I v pÅ™Ã­padÄ›, Å¾e test
+      zakÃ¡Å¾ete, mÅ¯Å¾e program novou verzi zjistit, ale jen na vyÅ¾Ã¡dÃ¡nÃ­ - buÄ 
+      parametrem -v na pÅ™Ã­kazovÃ©m Å™Ã¡dku nebo tÃ­m, Å¾e otevÅ™ete okno "O 
       aplikaci".
-    - Moné hodnoty jsou "1" (zjišovat verze) a "0" (nezjišovat).
-    - Vıchozí hodnotou je "1" (testovat novou verzi).
+    - MoÅ¾nÃ© hodnoty jsou "1" (zjiÅ¡Å¥ovat verze) a "0" (nezjiÅ¡Å¥ovat).
+    - VÃ½chozÃ­ hodnotou je "1" (testovat novou verzi).
 
   <monitor_clipboard>
-    - Potomek <gui>; urèuje, jestli má program sledovat zmìny ve schránce
-      (clipboardu) a automaticky zaøazovat známá URL do seznamu ke staení.
-    - Moné hodnoty jsou "1" (sledovat zmìny) a "0" (nesledovat).
-    - Vıchozí hodnotou je "0" (nesledovat zmìny ve schránce).
+    - Potomek <gui>; urÄuje, jestli mÃ¡ program sledovat zmÄ›ny ve schrÃ¡nce
+      (clipboardu) a automaticky zaÅ™azovat znÃ¡mÃ¡ URL do seznamu ke staÅ¾enÃ­.
+    - MoÅ¾nÃ© hodnoty jsou "1" (sledovat zmÄ›ny) a "0" (nesledovat).
+    - VÃ½chozÃ­ hodnotou je "0" (nesledovat zmÄ›ny ve schrÃ¡nce).
 
 <modules>
-  - Potomek <ytd>. V této sekci se nacházejí specifická nastavení pro 
-    jednotlivé poskytovatele.
+  - Potomek <ytd>. V tÃ©to sekci se nachÃ¡zejÃ­ specifickÃ¡ nastavenÃ­ pro 
+    jednotlivÃ© poskytovatele.
 
   <Barrandov_tv>
-    - Potomek <modules>; obsahuje nastavení pro TV Barrandov.
+    - Potomek <modules>; obsahuje nastavenÃ­ pro TV Barrandov.
 
     <avoid_hd>
-      - Potomek <Barrandov_tv>; urèuje, e se program vùbec nemá pokoušet
-        najít HD verzi videa a stáhnout tu, kterou mu server sám pøedhodí.
-      - Moné hodnoty jsou "0" (zkoušet vysokou kvalitu) a "1" (nezkoušet).
-      - Vıchozí hodnotou je "0" (zkoušet vysokou kvalitu).
+      - Potomek <Barrandov_tv>; urÄuje, Å¾e se program vÅ¯bec nemÃ¡ pokouÅ¡et
+        najÃ­t HD verzi videa a stÃ¡hnout tu, kterou mu server sÃ¡m pÅ™edhodÃ­.
+      - MoÅ¾nÃ© hodnoty jsou "0" (zkouÅ¡et vysokou kvalitu) a "1" (nezkouÅ¡et).
+      - VÃ½chozÃ­ hodnotou je "0" (zkouÅ¡et vysokou kvalitu).
 
   <CeskaTelevize_cz>
-    - Potomek <modules>; obsahuje nastavení pro Èeskou televizi.
+    - Potomek <modules>; obsahuje nastavenÃ­ pro ÄŒeskou televizi.
 
     <max_bitrate>
-      - Potomek <CeskaTelevize_cz>; øíká, jakı maximální bitrate videa má YTD
-        stahovat. Ovšem pouze, pokud má na vıbìr - pokud je k dispozici jenom
-        kvalitnìjší verze, tak se stáhne kvalitnìjší.
-      - Monou hodnotou je libovolné celé èíslo. Pokud je toto èíslo záporné
-        nebo nula, budou se stahovat videa s libovolnım bitrate.
-        Èeská televize nyní (6.3.2012) pouívá bitraty 2000, 1000 a 500.
-      - Vıchozí hodnotou je "0" (neomezovat bitrate).
+      - Potomek <CeskaTelevize_cz>; Å™Ã­kÃ¡, jakÃ½ maximÃ¡lnÃ­ bitrate videa mÃ¡ YTD
+        stahovat. OvÅ¡em pouze, pokud mÃ¡ na vÃ½bÄ›r - pokud je k dispozici jenom
+        kvalitnÄ›jÅ¡Ã­ verze, tak se stÃ¡hne kvalitnÄ›jÅ¡Ã­.
+      - MoÅ¾nou hodnotou je libovolnÃ© celÃ© ÄÃ­slo. Pokud je toto ÄÃ­slo zÃ¡pornÃ©
+        nebo nula, budou se stahovat videa s libovolnÃ½m bitrate.
+        ÄŒeskÃ¡ televize nynÃ­ (6.3.2012) pouÅ¾Ã­vÃ¡ bitraty 2000, 1000 a 500.
+      - VÃ½chozÃ­ hodnotou je "0" (neomezovat bitrate).
 
   <Nova_cz>
-    - Potomek <modules>; obsahuje nastavení pro TV Nova.
+    - Potomek <modules>; obsahuje nastavenÃ­ pro TV Nova.
 
     <low_quality>
-      - Potomek <Nova_cz>; urèuje, jestli se má video stahovat v nízké kvalitì
-        místo standardní vysoké. Dùvod je ten, e nìkterá videa (k 24.3.2011
-        napø. "Ordinace v rùové zahradì 2 - díl 250") nejsou ve vysoké kvalitì
-        k dispozici a YTD nemá šanci toto spolehlivì zjistit.
-      - Moné hodnoty jsou "0" (vysoká kvalitu) a "1" (nízká kvalita).
-      - Vıchozí hodnotou je "0" (vysoká kvalita).
+      - Potomek <Nova_cz>; urÄuje, jestli se mÃ¡ video stahovat v nÃ­zkÃ© kvalitÄ›
+        mÃ­sto standardnÃ­ vysokÃ©. DÅ¯vod je ten, Å¾e nÄ›kterÃ¡ videa (k 24.3.2011
+        napÅ™. "Ordinace v rÅ¯Å¾ovÃ© zahradÄ› 2 - dÃ­l 250") nejsou ve vysokÃ© kvalitÄ›
+        k dispozici a YTD nemÃ¡ Å¡anci toto spolehlivÄ› zjistit.
+      - MoÅ¾nÃ© hodnoty jsou "0" (vysokÃ¡ kvalitu) a "1" (nÃ­zkÃ¡ kvalita).
+      - VÃ½chozÃ­ hodnotou je "0" (vysokÃ¡ kvalita).
 
     <secret>
-      - Potomek <Nova_cz>; definuje tajné heslo pouívané pro autentizaci
-        pøehravaèe. Bez tohoto hesla nelze videa pøehrávat ani stahovat. 
-        K získání hesla se nebudu z právních dùvodù vyjadøovat, pouijte 
-        Google nebo jinı vyhledávací nástroj.
-      - Moná je jakákoliv hodnota.
-      - Vıchozí hodnotou je prázdnı øetìzec (kterı ovšem nebude fungovat).
+      - Potomek <Nova_cz>; definuje tajnÃ© heslo pouÅ¾Ã­vanÃ© pro autentizaci
+        pÅ™ehravaÄe. Bez tohoto hesla nelze videa pÅ™ehrÃ¡vat ani stahovat. 
+        K zÃ­skÃ¡nÃ­ hesla se nebudu z prÃ¡vnÃ­ch dÅ¯vodÅ¯ vyjadÅ™ovat, pouÅ¾ijte 
+        Google nebo jinÃ½ vyhledÃ¡vacÃ­ nÃ¡stroj.
+      - MoÅ¾nÃ¡ je jakÃ¡koliv hodnota.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec (kterÃ½ ovÅ¡em nebude fungovat).
 
   <YouTube_com>
-    - Potomek <modules>; obsahuje nastavení pro YouTube.
+    - Potomek <modules>; obsahuje nastavenÃ­ pro YouTube.
 
     <max_video_width>
-      - Potomek <YouTube_com>; urèuje maximální horizontální rozlišení videa,
-        které se mùe stahovat. Videa s vyšším rozlišením budou ignorována.
-      - Monou hodnotou je libovolné celé èíslo. Pokud je toto èíslo záporné
-        nebo nula, budou se stahovat videa s libovolnım rozlišením.
-      - Vıchozí hodnotou je "0" (neomezovat rozlišení).
+      - Potomek <YouTube_com>; urÄuje maximÃ¡lnÃ­ horizontÃ¡lnÃ­ rozliÅ¡enÃ­ videa,
+        kterÃ© se mÅ¯Å¾e stahovat. Videa s vyÅ¡Å¡Ã­m rozliÅ¡enÃ­m budou ignorovÃ¡na.
+      - MoÅ¾nou hodnotou je libovolnÃ© celÃ© ÄÃ­slo. Pokud je toto ÄÃ­slo zÃ¡pornÃ©
+        nebo nula, budou se stahovat videa s libovolnÃ½m rozliÅ¡enÃ­m.
+      - VÃ½chozÃ­ hodnotou je "0" (neomezovat rozliÅ¡enÃ­).
 
     <max_video_height>
-      - Potomek <YouTube_com>; urèuje maximální vertikální rozlišení videa,
-        které se mùe stahovat. Videa s vyšším rozlišením budou ignorována.
-      - Monou hodnotou je libovolné celé èíslo. Pokud je toto èíslo záporné
-        nebo nula, budou se stahovat videa s libovolnım rozlišením.
-      - Vıchozí hodnotou je "0" (neomezovat rozlišení).
+      - Potomek <YouTube_com>; urÄuje maximÃ¡lnÃ­ vertikÃ¡lnÃ­ rozliÅ¡enÃ­ videa,
+        kterÃ© se mÅ¯Å¾e stahovat. Videa s vyÅ¡Å¡Ã­m rozliÅ¡enÃ­m budou ignorovÃ¡na.
+      - MoÅ¾nou hodnotou je libovolnÃ© celÃ© ÄÃ­slo. Pokud je toto ÄÃ­slo zÃ¡pornÃ©
+        nebo nula, budou se stahovat videa s libovolnÃ½m rozliÅ¡enÃ­m.
+      - VÃ½chozÃ­ hodnotou je "0" (neomezovat rozliÅ¡enÃ­).
 
     <preferred_languages>
-      - Potomek <YouTube_com>; urèuje preferované jazyky pro stahování titulkù
-        a jejich prioritu. Pokud jsou v nìm k dispozici, stahují se titulky 
-        z nejvíce preferovaného (prvního v poøadí) jazyka, jinak z druhého,
-        atd., a pokud neuspìje ádnı preferovanı jazyk, stáhnou se první
-        dostupné titulky bez ohledu na jazyk.
-      - Oèekává se hodnota ve tvaru "jazyk1,jazyk2,jazyk3" - tzn. øetìzec
-        zkratek jazykù oddìlenıch èárkou (pouze èárkou, bez mezer!). Zkratky
-        jsou pravdìpodobnì ve formátu ISO, ovìøeno je "cs" pro èeštinu a "en"
-        pro angliètinu. Pøíkladem tedy mùe bıt hodnota "cs,en".
-      - Vıchozí hodnotou je "en" (preferovat titulky v angliètinì).
+      - Potomek <YouTube_com>; urÄuje preferovanÃ© jazyky pro stahovÃ¡nÃ­ titulkÅ¯
+        a jejich prioritu. Pokud jsou v nÄ›m k dispozici, stahujÃ­ se titulky 
+        z nejvÃ­ce preferovanÃ©ho (prvnÃ­ho v poÅ™adÃ­) jazyka, jinak z druhÃ©ho,
+        atd., aÅ¾ pokud neuspÄ›je Å¾Ã¡dnÃ½ preferovanÃ½ jazyk, stÃ¡hnou se prvnÃ­
+        dostupnÃ© titulky bez ohledu na jazyk.
+      - OÄekÃ¡vÃ¡ se hodnota ve tvaru "jazyk1,jazyk2,jazyk3" - tzn. Å™etÄ›zec
+        zkratek jazykÅ¯ oddÄ›lenÃ½ch ÄÃ¡rkou (pouze ÄÃ¡rkou, bez mezer!). Zkratky
+        jsou pravdÄ›podobnÄ› ve formÃ¡tu ISO, ovÄ›Å™eno je "cs" pro ÄeÅ¡tinu a "en"
+        pro angliÄtinu. PÅ™Ã­kladem tedy mÅ¯Å¾e bÃ½t hodnota "cs,en".
+      - VÃ½chozÃ­ hodnotou je "en" (preferovat titulky v angliÄtinÄ›).
 
     <avoid_webm>
-      - Potomek <YouTube_com>; urèuje, jestli se mají stahovat videa i ve
-        formátu (kontejneru) .webm.
-      - Moné hodnoty jsou "1" (nestahovat WebM) nebo "0" (stahovat).
-      - Vıchozí hodnota je "0" (stahovat).
+      - Potomek <YouTube_com>; urÄuje, jestli se majÃ­ stahovat videa i ve
+        formÃ¡tu (kontejneru) .webm.
+      - MoÅ¾nÃ© hodnoty jsou "1" (nestahovat WebM) nebo "0" (stahovat).
+      - VÃ½chozÃ­ hodnota je "0" (stahovat).
 
-  - Všichni poskytovatelé mají následující nastavení:
+  - VÅ¡ichni poskytovatelÃ© majÃ­ nÃ¡sledujÃ­cÃ­ nastavenÃ­:
 
     <subtitles_enabled>
-      - Potomek konkrétního poskytovatele; umoòuje vypnout podporu titulkù 
-        pro tohoto konkrétního poskytovatele.
-      - Moné hodnoty jsou "1" (povolit stahování titulkù) nebo "0" (zakázat).
-      - Vıchozí hodnota je "1" (povolit stahování titulkù).
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; umoÅ¾Åˆuje vypnout podporu titulkÅ¯ 
+        pro tohoto konkrÃ©tnÃ­ho poskytovatele.
+      - MoÅ¾nÃ© hodnoty jsou "1" (povolit stahovÃ¡nÃ­ titulkÅ¯) nebo "0" (zakÃ¡zat).
+      - VÃ½chozÃ­ hodnota je "1" (povolit stahovÃ¡nÃ­ titulkÅ¯).
 
     <convert_subtitles>
-      - Potomek konkrétního poskytovatele; øíká, jestli se titulky mají nebo 
-        nemají konvertovat z vıchozího formátu serveru do formátu .srt.
-      - Moné hodnoty jsou "1" (povolit konverzi) nebo "0" (zakázat).
-      - Vıchozí hodnota je "1" (povolit konverzi).
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; Å™Ã­kÃ¡, jestli se titulky majÃ­ nebo 
+        nemajÃ­ konvertovat z vÃ½chozÃ­ho formÃ¡tu serveru do formÃ¡tu .srt.
+      - MoÅ¾nÃ© hodnoty jsou "1" (povolit konverzi) nebo "0" (zakÃ¡zat).
+      - VÃ½chozÃ­ hodnota je "1" (povolit konverzi).
 
     <live_stream>
-      - Potomek konkrétního poskytovatele; urèuje, jestli se video stream 
-        stahuje jako ivé video nebo jako soubor. Hlavní rozdíl je v tom, e
-        soubor se stahuje mnohem rychleji, ale je náchylnı na pøesnou
-        synchronizaci mezi serverem a klientem a mùe vést k rozpadu obrazu
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; urÄuje, jestli se video stream 
+        stahuje jako Å¾ivÃ© video nebo jako soubor. HlavnÃ­ rozdÃ­l je v tom, Å¾e
+        soubor se stahuje mnohem rychleji, ale je nÃ¡chylnÃ½ na pÅ™esnou
+        synchronizaci mezi serverem a klientem a mÅ¯Å¾e vÃ©st k rozpadu obrazu
         a/nebo zvuku.
-      - Pozn.: Má smysl pouze pro poskytovatele fungující na protokolu RTMP.
-      - Moné hodnoty jsou "0" (stahovat jako soubor) a "1" (ivé video).
-      - Vıchozí hodnotou je "1" (stahovat jako ivé video).
+      - Pozn.: MÃ¡ smysl pouze pro poskytovatele fungujÃ­cÃ­ na protokolu RTMP.
+      - MoÅ¾nÃ© hodnoty jsou "0" (stahovat jako soubor) a "1" (Å¾ivÃ© video).
+      - VÃ½chozÃ­ hodnotou je pro vÄ›tÅ¡inu serverÅ¯ "0" (stahovat jako soubor).
+
+    <realtime>
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; urÄuje, jestli se video stream 
+        zaloÅ¾enÃ½ na protokolu RTMP stahuje v reÅ¾imu realtime. Bez realtime
+        se RTMPDUMP snaÅ¾Ã­ urychlit stahovÃ¡nÃ­ tÃ­m, Å¾e Äasto stream zapauzuje
+        a zase znovu spustÃ­, coÅ¾ je pro server instrukce k tomu, aby poslal
+        rychle vÄ›tÅ¡Ã­ dÃ¡vku dat (kvÅ¯li bufferovÃ¡nÃ­). BohuÅ¾el, nÄ›kterÃ© servery
+        se pÅ™i pauze vrÃ¡tÃ­ o nÄ›kolik sekund zpÃ¡tky a takovÃ½ stream je pak po
+        uloÅ¾enÃ­ prakticky nepouÅ¾itelnÃ½. V reÅ¾imu realtime RTMPDUMP pauzy
+        neposÃ­lÃ¡ a tudÃ­Å¾ server nemÃ¡ dÅ¯vod skÃ¡kat se streamem zpÃ¡tky.
+      - Pozn.: MÃ¡ smysl pouze pro poskytovatele fungujÃ­cÃ­ na protokolu RTMP.
+      - MoÅ¾nÃ© hodnoty jsou "0" (stahovat co nejrychleji) a "1" (reÅ¾im realtime).
+      - VÃ½chozÃ­ hodnotou je "1" (stahovat v reÅ¾imu realtime).
 
     <secure_token>
-      - Potomek konkrétního poskytovatele; definuje tzv. SecureToken, kterı 
-        pouívá pøehravaè poskytovatele k identifikaci oprávnìného klienta. 
-        Bez tohoto tokenu nelze videa pøehrávat ani stahovat. K získání tokenu
-        se nebudu z právních dùvodù vyjadøovat, pouijte Google nebo jinı
-        vyhledávací nástroj.
-      - Pozn.: Má smysl pouze pro poskytovatele, kteøí ho vyadují.
-      - Moná je jakákoliv hodnota.
-      - Vıchozí hodnotou je prázdnı øetìzec (kterı ovšem nebude fungovat).
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; definuje tzv. SecureToken, kterÃ½ 
+        pouÅ¾Ã­vÃ¡ pÅ™ehravaÄ poskytovatele k identifikaci oprÃ¡vnÄ›nÃ©ho klienta. 
+        Bez tohoto tokenu nelze videa pÅ™ehrÃ¡vat ani stahovat. K zÃ­skÃ¡nÃ­ tokenu
+        se nebudu z prÃ¡vnÃ­ch dÅ¯vodÅ¯ vyjadÅ™ovat, pouÅ¾ijte Google nebo jinÃ½
+        vyhledÃ¡vacÃ­ nÃ¡stroj.
+      - Pozn.: MÃ¡ smysl pouze pro poskytovatele, kteÅ™Ã­ ho vyÅ¾adujÃ­.
+      - MoÅ¾nÃ¡ je jakÃ¡koliv hodnota.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec (kterÃ½ ovÅ¡em nebude fungovat).
 
     <username>
-      - Potomek konkrétního poskytovatele; urèuje vaše pøihlašovací jméno u
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; urÄuje vaÅ¡e pÅ™ihlaÅ¡ovacÃ­ jmÃ©no u
         tohoto poskytele.
-      - Moná je jakákoliv hodnota.
-      - Pozn.: Má smysl pouze pro poskytovatele, kteøí vyadují pøihlášení.
-      - Vıchozí hodnotou je prázdnı øetìzec.
+      - MoÅ¾nÃ¡ je jakÃ¡koliv hodnota.
+      - Pozn.: MÃ¡ smysl pouze pro poskytovatele, kteÅ™Ã­ vyÅ¾adujÃ­ pÅ™ihlÃ¡Å¡enÃ­.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec.
 
     <password>
-      - Potomek konkrétního poskytovatele; urèuje vaše pøihlašovací heslo u
+      - Potomek konkrÃ©tnÃ­ho poskytovatele; urÄuje vaÅ¡e pÅ™ihlaÅ¡ovacÃ­ heslo u
         tohoto poskytele.
-      - Pozn.: Má smysl pouze pro poskytovatele, kteøí vyadují pøihlášení.
-      - Moná je jakákoliv hodnota.
-      - Vıchozí hodnotou je prázdnı øetìzec.
+      - Pozn.: MÃ¡ smysl pouze pro poskytovatele, kteÅ™Ã­ vyÅ¾adujÃ­ pÅ™ihlÃ¡Å¡enÃ­.
+      - MoÅ¾nÃ¡ je jakÃ¡koliv hodnota.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec.
 
 
 <converters>
-  - Potomek <ytd>. V této sekci jsou nadefinovány parametry jednotlivıch 
-    konvertovaèù (aplikací volanıch funkcí Konverze nebo automaticky po
-    stáhnutí filmu).
+  - Potomek <ytd>. V tÃ©to sekci jsou nadefinovÃ¡ny parametry jednotlivÃ½ch 
+    konvertovaÄÅ¯ (aplikacÃ­ volanÃ½ch funkcÃ­ Konverze nebo automaticky po
+    stÃ¡hnutÃ­ filmu).
 
   <activated>
-    - Potomek <converters>; slouí programu jako dùkaz, e uivatel èetl 
-      dokumentaci a je si tudí vìdom toho, e konvertování nebude fungovat
-      samo od sebe, ale je tøeba ho napøed vhodnım zpùsobem nastavit.
-    - Moné hodnoty jsou "0" (konvertery nejsou aktivovány) a "1" (jsou).
-    - Vıchozí hodnotou je "0" (konvertory nejsou aktivovány).
+    - Potomek <converters>; slouÅ¾Ã­ programu jako dÅ¯kaz, Å¾e uÅ¾ivatel Äetl 
+      dokumentaci a je si tudÃ­Å¾ vÄ›dom toho, Å¾e konvertovÃ¡nÃ­ nebude fungovat
+      samo od sebe, ale je tÅ™eba ho napÅ™ed vhodnÃ½m zpÅ¯sobem nastavit.
+    - MoÅ¾nÃ© hodnoty jsou "0" (konvertery nejsou aktivovÃ¡ny) a "1" (jsou).
+    - VÃ½chozÃ­ hodnotou je "0" (konvertory nejsou aktivovÃ¡ny).
 
   <selected>
-    - Potomek <converters>; urèuje, kterı konvertovaè se má automaticky pouít
-      pro všechny stáhnuté filmy.
-    - Moné hodnoty jsou prázdnı øetìzec (automatická konverze se nebude
-      provádìt) nebo nìkterá hodnota atributu "id" poloek <converter> (viz
-      dále).
-    - Vıchozí hodnotou je prázdnı øetìzec (neprovádìt automatické konverze).
+    - Potomek <converters>; urÄuje, kterÃ½ konvertovaÄ se mÃ¡ automaticky pouÅ¾Ã­t
+      pro vÅ¡echny stÃ¡hnutÃ© filmy.
+    - MoÅ¾nÃ© hodnoty jsou prÃ¡zdnÃ½ Å™etÄ›zec (automatickÃ¡ konverze se nebude
+      provÃ¡dÄ›t) nebo nÄ›kterÃ¡ hodnota atributu "id" poloÅ¾ek <converter> (viz
+      dÃ¡le).
+    - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec (neprovÃ¡dÄ›t automatickÃ© konverze).
 
   <max_threads>
-    - Potomek <converters>; urèuje, maximálnì kolik automatickıch konverzních 
-      úloh smí soubìnì probíhat. Doporuèuji nechat zde hodnotu 1, a pokud u
-      ji budete zvyšovat, nezvyšujte ji nad poèet procesorù ve vašem poèítaèi.
-      I to mùe bıt pøíliš, pokud chcete mít rychlou odezvu systému.
-    - Moné hodnoty jsou èísla od nuly vıše, pøièem nula vypíná automatické
+    - Potomek <converters>; urÄuje, maximÃ¡lnÄ› kolik automatickÃ½ch konverznÃ­ch 
+      Ãºloh smÃ­ soubÄ›Å¾nÄ› probÃ­hat. DoporuÄuji nechat zde hodnotu 1, a pokud uÅ¾
+      ji budete zvyÅ¡ovat, nezvyÅ¡ujte ji nad poÄet procesorÅ¯ ve vaÅ¡em poÄÃ­taÄi.
+      I to mÅ¯Å¾e bÃ½t pÅ™Ã­liÅ¡, pokud chcete mÃ­t rychlou odezvu systÃ©mu.
+    - MoÅ¾nÃ© hodnoty jsou ÄÃ­sla od nuly vÃ½Å¡e, pÅ™iÄemÅ¾ nula vypÃ­nÃ¡ automatickÃ©
       konverze.
-    - Vıchozí hodnotou je 1.
+    - VÃ½chozÃ­ hodnotou je 1.
 
   <converter>
-    - Potomek <converters>; kadı vıskyt této poloky definuje jeden konkrétní 
-      konvertovaè. Kadı konvertovaè musí mít atribut "id" s nìjakou jedineènou 
-      hodnotou, která bude pouita do <selected>.
+    - Potomek <converters>; kaÅ¾dÃ½ vÃ½skyt tÃ©to poloÅ¾ky definuje jeden konkrÃ©tnÃ­ 
+      konvertovaÄ. KaÅ¾dÃ½ konvertovaÄ musÃ­ mÃ­t atribut "id" s nÄ›jakou jedineÄnou 
+      hodnotou, kterÃ¡ bude pouÅ¾ita do <selected>.
 
     <title>
-      - Potomek <converter>; obsahuje název, kterı se bude zobrazovat uivateli
-        ve formuláøi pro vıbìr konvertovaèe.
-      - Monou hodnotou je libovolnı øetìzec. Program sám s ním nijak nepracuje,
-        jen ho zobrazuje uivateli, proto je vhodné zvolit nìco popisného.
-      - Vıchozí hodnotou je prázdnı øetìzec.
+      - Potomek <converter>; obsahuje nÃ¡zev, kterÃ½ se bude zobrazovat uÅ¾ivateli
+        ve formulÃ¡Å™i pro vÃ½bÄ›r konvertovaÄe.
+      - MoÅ¾nou hodnotou je libovolnÃ½ Å™etÄ›zec. Program sÃ¡m s nÃ­m nijak nepracuje,
+        jen ho zobrazuje uÅ¾ivateli, proto je vhodnÃ© zvolit nÄ›co popisnÃ©ho.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec.
 
     <exe_path>
-      - Potomek <converter>; urèuje název programu nebo skriptu, kterı se má 
-        spustit. Pokud není program v PATH nebo v adresáøi YouTube Downloaderu,
-        musí zde bıt uvedena celá cesta.
-      - Monou hodnotou je libovolná cesta, mùe obsahovat i mezery (v takovém
-        pøípadì ji NEDÁVEJTE do uvozovek).
-      - Vıchozí hodnotou je prázdnı øetìzec.
+      - Potomek <converter>; urÄuje nÃ¡zev programu nebo skriptu, kterÃ½ se mÃ¡ 
+        spustit. Pokud nenÃ­ program v PATH nebo v adresÃ¡Å™i YouTube Downloaderu,
+        musÃ­ zde bÃ½t uvedena celÃ¡ cesta.
+      - MoÅ¾nou hodnotou je libovolnÃ¡ cesta, mÅ¯Å¾e obsahovat i mezery (v takovÃ©m
+        pÅ™Ã­padÄ› ji NEDÃVEJTE do uvozovek).
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec.
 
     <command_line>
-      - Potomek <converter>; obsahuje pøíkazovou øádku, která bude programu
-        pøedána. Kromì pevnıch parametrù (napø. -ovc copy -oac copy) zde mohou
-        bıt i promìnné, které YouTube Downloader nahradí skuteènımi údaji.
+      - Potomek <converter>; obsahuje pÅ™Ã­kazovou Å™Ã¡dku, kterÃ¡ bude programu
+        pÅ™edÃ¡na. KromÄ› pevnÃ½ch parametrÅ¯ (napÅ™. -ovc copy -oac copy) zde mohou
+        bÃ½t i promÄ›nnÃ©, kterÃ© YouTube Downloader nahradÃ­ skuteÄnÃ½mi Ãºdaji.
         Jsou to:
 
-          {$FULLPATH} .... celá cesta k souboru
-          {$FILENAME} .... pouze název souboru bez cesty
-          {$FILEPATH} .... jen adresáø souboru (cesta souboru bez názvu)
-          {$FILEEXT} ..... pøípona souboru, vèetnì teèky
-          {$FILENOEXT} ... název souboru bez cesty a bez pøípony
-          {$TITLE} ....... název filmu (napø. pro úèely tagování)
+          {$FULLPATH} .... celÃ¡ cesta k souboru
+          {$FILENAME} .... pouze nÃ¡zev souboru bez cesty
+          {$FILEPATH} .... jen adresÃ¡Å™ souboru (cesta souboru bez nÃ¡zvu)
+          {$FILEEXT} ..... pÅ™Ã­pona souboru, vÄetnÄ› teÄky
+          {$FILENOEXT} ... nÃ¡zev souboru bez cesty a bez pÅ™Ã­pony
+          {$TITLE} ....... nÃ¡zev filmu (napÅ™. pro ÃºÄely tagovÃ¡nÃ­)
 
 
-      - Monou hodnotou je libovolnı øetìzec, i prázdnı.
-      - Vıchozí hodnotou je prázdnı øetìzec.
+      - MoÅ¾nou hodnotou je libovolnÃ½ Å™etÄ›zec, i prÃ¡zdnÃ½.
+      - VÃ½chozÃ­ hodnotou je prÃ¡zdnÃ½ Å™etÄ›zec.
 
     <visibility>
-      - Potomek <converter>; urèuje, jak se má konvertovaè spouštìt.
-      - Moné hodnoty jsou "visible" (standardní spuštìní), "minimized"
-        (konvertovaè se spustí normálnì, ale jeho okno bude minimalizováno)
-        a "hidden" (konvertovaè se spustí neviditelnì).
-      - Vıchozí hodnota je "minimized".
+      - Potomek <converter>; urÄuje, jak se mÃ¡ konvertovaÄ spouÅ¡tÄ›t.
+      - MoÅ¾nÃ© hodnoty jsou "visible" (standardnÃ­ spuÅ¡tÄ›nÃ­), "minimized"
+        (konvertovaÄ se spustÃ­ normÃ¡lnÄ›, ale jeho okno bude minimalizovÃ¡no)
+        a "hidden" (konvertovaÄ se spustÃ­ neviditelnÄ›).
+      - VÃ½chozÃ­ hodnota je "minimized".
 
 
 
-10. SYNTAXE PØÍKAZOVÉHO ØÁDKU
+10. SYNTAXE PÅ˜ÃKAZOVÃ‰HO Å˜ÃDKU
 -----------------------------
 
   ytd.exe <param> [<param>] [<param>] ...
 
-  kde <param> je buï URL, nebo jedna z následujících moností:
+  kde <param> je buÄ URL, nebo jedna z nÃ¡sledujÃ­cÃ­ch moÅ¾nostÃ­:
 
-  Pro verzi pro pøíkazovı øádek:
+  Pro verzi pro pÅ™Ã­kazovÃ½ Å™Ã¡dek:
 
-    -h, -? ........ Zobrazí nápovìdu.
-    -i <soubor> ... Stáhne všechna URL z textového souboru <soubor>, kde
-                    kadı øádek reprezentuje jednu URL.
-    -o <cesta> .... Soubory se budou stahovat do adresáøe <cesta>. Vıchozí
-                    hodnotou je aktuální pracovní adresáø.
-    -e <soubor> ... Do souboru <soubor> se budou zapisovat všechny downloady,
-                    které skonèily chybou.
-    -s <zdroj> .... <zdroj> (soubor nebo URL) se prohledá na podporované
-                    odkazy a ty nalezené se stáhnou.
-    -n ............ Nikdy nepøepisovat existující soubory.
-    -a ............ Vdy pøepsat existující soubory.
-    -r ............ Pokud soubor se stejnım názvem existuje, automaticky
-                    vygenerovat novı název, kterı u bude jedineènı.
-    -k ............ Pokud soubor existuje, zeptat se uivatele (vıchozí).
-    -l ............ Zobrazí seznam podporovanıch poskytovatelù médií.
-    -v ............ Zkontroluje dostupnost novìjší verze programu.
-    -u ............ Pokud existuje novìjší verze, stáhne ji a zaktualizuje se.
-                    Pozor, po aktualizaci byste nemìli YTD tak pùl sekundy
-                    spouštìt, aby mìl pøíleitost pøepsat svùj .exe soubor
-                    novou verzí.
-    -ah[-] ........ (Ne-) pokusit se pouít HTML parser na neznámá URL.
-    -nd ........... Jen vypíše parametry potøebné pro stáhnutí videa, vlastní
-                    download pøeskoèí. Hodí se v pøípadech, kdy chcete pøidat
-                    nìjaké vlastní parametry.
+    -h, -? ........ ZobrazÃ­ nÃ¡povÄ›du.
+    -i <soubor> ... StÃ¡hne vÅ¡echna URL z textovÃ©ho souboru <soubor>, kde
+                    kaÅ¾dÃ½ Å™Ã¡dek reprezentuje jednu URL.
+    -o <cesta> .... Soubory se budou stahovat do adresÃ¡Å™e <cesta>. VÃ½chozÃ­
+                    hodnotou je aktuÃ¡lnÃ­ pracovnÃ­ adresÃ¡Å™.
+    -e <soubor> ... Do souboru <soubor> se budou zapisovat vÅ¡echny downloady,
+                    kterÃ© skonÄily chybou.
+    -s <zdroj> .... <zdroj> (soubor nebo URL) se prohledÃ¡ na podporovanÃ©
+                    odkazy a ty nalezenÃ© se stÃ¡hnou.
+    -n ............ Nikdy nepÅ™episovat existujÃ­cÃ­ soubory.
+    -a ............ VÅ¾dy pÅ™epsat existujÃ­cÃ­ soubory.
+    -r ............ Pokud soubor se stejnÃ½m nÃ¡zvem existuje, automaticky
+                    vygenerovat novÃ½ nÃ¡zev, kterÃ½ uÅ¾ bude jedineÄnÃ½.
+    -k ............ Pokud soubor existuje, zeptat se uÅ¾ivatele (vÃ½chozÃ­).
+    -l ............ ZobrazÃ­ seznam podporovanÃ½ch poskytovatelÅ¯ mÃ©diÃ­.
+    -v ............ Zkontroluje dostupnost novÄ›jÅ¡Ã­ verze programu.
+    -u ............ Pokud existuje novÄ›jÅ¡Ã­ verze, stÃ¡hne ji a zaktualizuje se.
+                    Pozor, po aktualizaci byste nemÄ›li YTD tak pÅ¯l sekundy
+                    spouÅ¡tÄ›t, aby mÄ›l pÅ™Ã­leÅ¾itost pÅ™epsat svÅ¯j .exe soubor
+                    novou verzÃ­.
+    -ah[-] ........ (Ne-) pokusit se pouÅ¾Ã­t HTML parser na neznÃ¡mÃ¡ URL.
+    -nd ........... Jen vypÃ­Å¡e parametry potÅ™ebnÃ© pro stÃ¡hnutÃ­ videa, vlastnÃ­
+                    download pÅ™eskoÄÃ­. HodÃ­ se v pÅ™Ã­padech, kdy chcete pÅ™idat
+                    nÄ›jakÃ© vlastnÃ­ parametry.
 
 
   Pro grafickou verzi:
 
-    --gui ......... Pokud se mají pouívat jakékoliv parametry pro grafickou
-                    verzi, musí bıt uveden i tento parametr. Jinak toti je
-                    existence parametrù pokynem pro spuštìní verze pro pøíkazovı
-                    øádek.
-    -new .......... Spustit další instanci YTD. Standardnì se spouští jenom
+    --gui ......... Pokud se majÃ­ pouÅ¾Ã­vat jakÃ©koliv parametry pro grafickou
+                    verzi, musÃ­ bÃ½t uveden i tento parametr. Jinak totiÅ¾ je
+                    existence parametrÅ¯ pokynem pro spuÅ¡tÄ›nÃ­ verze pro pÅ™Ã­kazovÃ½
+                    Å™Ã¡dek.
+    -new .......... Spustit dalÅ¡Ã­ instanci YTD. StandardnÄ› se spouÅ¡tÃ­ jenom
                     jedna instance.
 
 
-  Napø.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
+  NapÅ™.: ytd.exe "http://www.youtube.com/watch?v=6wXkI4t7nuc"
          ytd.exe -i c:\temp\seznam.txt
          ytd.exe -a "http://www.youtube.com/watch?v=6wXkI4t7nuc"
          ytd.exe --gui "http://www.youtube.com/watch?v=6wXkI4t7nuc"
 
-  Pokud nejsou uvedeny parametry, spustí se grafická verze programu.
+  Pokud nejsou uvedeny parametry, spustÃ­ se grafickÃ¡ verze programu.
 
-  K dispozici jsou i tøi speciální parametry, slouící pro instalace resp.
-  aktualizace programu. Nejsou zdokumentovány, zájemce odkazuji na funkci
+  K dispozici jsou i tÅ™i speciÃ¡lnÃ­ parametry, slouÅ¾Ã­cÃ­ pro instalace resp.
+  aktualizace programu. Nejsou zdokumentovÃ¡ny, zÃ¡jemce odkazuji na funkci
   FindStartupType v YTD.dpr.
 
 
 
-11. NÁVRATOVÉ KÓDY
+11. NÃVRATOVÃ‰ KÃ“DY
 ------------------
 
-Verze pro pøíkazovı øádek podporuje návratové kódy (errorlevel). Moné hodnoty
+Verze pro pÅ™Ã­kazovÃ½ Å™Ã¡dek podporuje nÃ¡vratovÃ© kÃ³dy (errorlevel). MoÅ¾nÃ© hodnoty
 jsou:
 
-  0 ..... Operace a všechny downloady probìhly úspìšnì. 
-          Pozor! V pøípadì stahování z playlistu nebo ze souboru s URL staèí,
-          aby se úspìšnì stáhnul libovolnı odkaz. Pokud chcete vyuívat 
-          návratové kódy, je vhodné stahovat vdy jen jeden soubor a pro více
-          souborù zavolat víckrát YouTube Downloader.
-  1 ..... Chyba pøi kterémkoliv downloadu.
-  2 ..... Nebyly nalezeny ádné pouitelné URL.
-  3 ..... Neplatná syntaxe. Byl uveden neznámı parametr nebo nebyla uvedena
-          povinná hodnota parametru (napø. pro parametr -i, viz vıše).
-  4 ..... Chybnı obsah parametru. Chyba je vyvolána u parametrù s povinnou
-          hodnotou, pokud sice hodnota je zadána, ale její obsah není oèekáván
-          - napø. pokud za parametru -i zadáte název neexistujícího souboru).
-  5 ..... Nepodaøilo se zjistit nebo stáhnout aktuální verzi.
+  0 ..... Operace a vÅ¡echny downloady probÄ›hly ÃºspÄ›Å¡nÄ›. 
+          Pozor! V pÅ™Ã­padÄ› stahovÃ¡nÃ­ z playlistu nebo ze souboru s URL staÄÃ­,
+          aby se ÃºspÄ›Å¡nÄ› stÃ¡hnul libovolnÃ½ odkaz. Pokud chcete vyuÅ¾Ã­vat 
+          nÃ¡vratovÃ© kÃ³dy, je vhodnÃ© stahovat vÅ¾dy jen jeden soubor a pro vÃ­ce
+          souborÅ¯ zavolat vÃ­ckrÃ¡t YouTube Downloader.
+  1 ..... Chyba pÅ™i kterÃ©mkoliv downloadu.
+  2 ..... Nebyly nalezeny Å¾Ã¡dnÃ© pouÅ¾itelnÃ© URL.
+  3 ..... NeplatnÃ¡ syntaxe. Byl uveden neznÃ¡mÃ½ parametr nebo nebyla uvedena
+          povinnÃ¡ hodnota parametru (napÅ™. pro parametr -i, viz vÃ½Å¡e).
+  4 ..... ChybnÃ½ obsah parametru. Chyba je vyvolÃ¡na u parametrÅ¯ s povinnou
+          hodnotou, pokud sice hodnota je zadÃ¡na, ale jejÃ­ obsah nenÃ­ oÄekÃ¡vÃ¡n
+          - napÅ™. pokud za parametru -i zadÃ¡te nÃ¡zev neexistujÃ­cÃ­ho souboru).
+  5 ..... NepodaÅ™ilo se zjistit nebo stÃ¡hnout aktuÃ¡lnÃ­ verzi.
   253 ... Instalace nebo upgrade selhala.
-  254 ... Aplikace byla pøerušena z popudu uivatele.
-  255 ... V aplikaci došlo k vıjimce, tzn. chyba v programu.
+  254 ... Aplikace byla pÅ™eruÅ¡ena z popudu uÅ¾ivatele.
+  255 ... V aplikaci doÅ¡lo k vÃ½jimce, tzn. chyba v programu.
 
 
 
 12. LOKALIZACE
 --------------
 
-Pro lokalizaci pouívá YouTube Downloader GNU GetText. Pro pøípadné zájemce
-to znamená, e pokud GetText znáte, mùete se okamitì pustit do tvorby nového
-pøekladu. Pokud zatím GetText neznáte, doporuèuji se s ním seznámit, protoe
-jde o jeden z nejrozšíøenìjších lokalizaèních nástrojù. Jedinı problém je,
-najít nìjakı srozumitelnı návod - ty, co jsem našel, jsou vesmìs dost obtínì
-èitelné, pokud u dopøedu nevíte, o co v GetTextu jde. Ale s vhodnım nástrojem,
-jako je napø. POEdit (http://www.poedit.net/), se to dá zvládnout za pochodu.
+Pro lokalizaci pouÅ¾Ã­vÃ¡ YouTube Downloader GNU GetText. Pro pÅ™Ã­padnÃ© zÃ¡jemce
+to znamenÃ¡, Å¾e pokud GetText znÃ¡te, mÅ¯Å¾ete se okamÅ¾itÄ› pustit do tvorby novÃ©ho
+pÅ™ekladu. Pokud zatÃ­m GetText neznÃ¡te, doporuÄuji se s nÃ­m seznÃ¡mit, protoÅ¾e
+jde o jeden z nejrozÅ¡Ã­Å™enÄ›jÅ¡Ã­ch lokalizaÄnÃ­ch nÃ¡strojÅ¯. JedinÃ½ problÃ©m je,
+najÃ­t nÄ›jakÃ½ srozumitelnÃ½ nÃ¡vod - ty, co jsem naÅ¡el, jsou vesmÄ›s dost obtÃ­Å¾nÄ›
+ÄitelnÃ©, pokud uÅ¾ dopÅ™edu nevÃ­te, o co v GetTextu jde. Ale s vhodnÃ½m nÃ¡strojem,
+jako je napÅ™. POEdit (http://www.poedit.net/), se to dÃ¡ zvlÃ¡dnout za pochodu.
 
-Pro pøekládání budete potøebovat soubor "default.pot", kterı obsahuje základní
-(nepøeloené) texty. Najdete ho v adresáøi "Source\Locale". Pomocí POEditu nebo
-jiného nástroje (klidnì si vystaèíte i s Notepadem, akorát to bude nepohodlné)
-ho uloíte do souboru "default.po" (.pot je vzor, .po je pracovní soubor) ,
-v nìm jednotlivé texty pøeloíte a hotovı pøeklad pak zkompilujete do souboru
-"default.mo". Tento soubor pak ulote do adresáøe "(exe)\Locale\(jazyk)\LC_MESSAGES",
+Pro pÅ™eklÃ¡dÃ¡nÃ­ budete potÅ™ebovat soubor "default.pot", kterÃ½ obsahuje zÃ¡kladnÃ­
+(nepÅ™eloÅ¾enÃ©) texty. Najdete ho v adresÃ¡Å™i "Source\Locale". PomocÃ­ POEditu nebo
+jinÃ©ho nÃ¡stroje (klidnÄ› si vystaÄÃ­te i s Notepadem, akorÃ¡t to bude nepohodlnÃ©)
+ho uloÅ¾Ã­te do souboru "default.po" (.pot je vzor, .po je pracovnÃ­ soubor) ,
+v nÄ›m jednotlivÃ© texty pÅ™eloÅ¾Ã­te a hotovÃ½ pÅ™eklad pak zkompilujete do souboru
+"default.mo". Tento soubor pak uloÅ¾te do adresÃ¡Å™e "(exe)\Locale\(jazyk)\LC_MESSAGES",
 kde:
-   - "(exe)" je adresáø, ve kterém je uloenı "ytd.exe"
-   - "(jazyk)" je adresáø pojmenovanı podle dvouznakové ISO zkratky jazyka;
-     pro èeštinu to je "cs", pro angliètinu "en", další si mùete dohledat na
+   - "(exe)" je adresÃ¡Å™, ve kterÃ©m je uloÅ¾enÃ½ "ytd.exe"
+   - "(jazyk)" je adresÃ¡Å™ pojmenovanÃ½ podle dvouznakovÃ© ISO zkratky jazyka;
+     pro ÄeÅ¡tinu to je "cs", pro angliÄtinu "en", dalÅ¡Ã­ si mÅ¯Å¾ete dohledat na
      Wikipedii: http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
-Pokud jde o jazyk, pro kterı jsou nastavena vaše Windows, mìl by se pouít
-automaticky pøi pøíštím spuštìní YTD. Pøípadnì si mùete vynutit pouití
-tohoto jazyka pomocí nastavení "Language" v INI souboru (viz vıše).
+Pokud jde o jazyk, pro kterÃ½ jsou nastavena vaÅ¡e Windows, mÄ›l by se pouÅ¾Ã­t
+automaticky pÅ™i pÅ™Ã­Å¡tÃ­m spuÅ¡tÄ›nÃ­ YTD. PÅ™Ã­padnÄ› si mÅ¯Å¾ete vynutit pouÅ¾itÃ­
+tohoto jazyka pomocÃ­ nastavenÃ­ "Language" v INI souboru (viz vÃ½Å¡e).
 
-Pokud mi svùj pøeklad pošlete (budu potøebovat oba soubory, "default.mo"
-i "default.po"), rád ho zaøadím do budoucích verzí YouTube Downloaderu.
+Pokud mi svÅ¯j pÅ™eklad poÅ¡lete (budu potÅ™ebovat oba soubory, "default.mo"
+i "default.po"), rÃ¡d ho zaÅ™adÃ­m do budoucÃ­ch verzÃ­ YouTube Downloaderu.
 
 
 
 13. PODPORA
 -----------
 
-Podporu naleznete na následujících stránkách:
+Podporu naleznete na nÃ¡sledujÃ­cÃ­ch strÃ¡nkÃ¡ch:
 
-- Pepakovo fórum: 
+- Pepakovo fÃ³rum: 
   http://forum.pepak.net
-- Stránka YouTube Downloader: 
+- StrÃ¡nka YouTube Downloader: 
   http://www.pepak.net/ytd
-- Stránka YouTube Downloader - podpora: 
+- StrÃ¡nka YouTube Downloader - podpora: 
   http://www.pepak.net/ytd/youtube-downloader-podpora/
 
 
@@ -772,12 +785,12 @@ Podporu naleznete na následujících stránkách:
 14. KOMPILACE
 -------------
 
-Na domácí stránce programu naleznete i jeho zdrojovı kód, kterı si mùete sami
-zkompilovat. Kód je zcela sobìstaènı v tom smyslu, e nevyaduje nainstalovanou
-ádnou komponentu tøetích stran - vystaèí si s komponentami, které jsou dodány
-ve standardní instalaci pøíslušného programovacího jazyka. 
+Na domÃ¡cÃ­ strÃ¡nce programu naleznete i jeho zdrojovÃ½ kÃ³d, kterÃ½ si mÅ¯Å¾ete sami
+zkompilovat. KÃ³d je zcela sobÄ›staÄnÃ½ v tom smyslu, Å¾e nevyÅ¾aduje nainstalovanou
+Å¾Ã¡dnou komponentu tÅ™etÃ­ch stran - vystaÄÃ­ si s komponentami, kterÃ© jsou dodÃ¡ny
+ve standardnÃ­ instalaci pÅ™Ã­sluÅ¡nÃ©ho programovacÃ­ho jazyka. 
 
-Podporovány jsou následující kompilátory:
+PodporovÃ¡ny jsou nÃ¡sledujÃ­cÃ­ kompilÃ¡tory:
 
 - Delphi 5.0
 - Delphi 7.0
@@ -786,47 +799,47 @@ Podporovány jsou následující kompilátory:
 - Delphi XE2
 - FreePascal
 
-Program by mìl jít s minimálními úpravami zkompilovat i na ostatních verzích
-Delphi od 5.0 vıše, protoe ale tyto verze nemám k dispozici, nemohl jsem je
-vyzkoušet.
+Program by mÄ›l jÃ­t s minimÃ¡lnÃ­mi Ãºpravami zkompilovat i na ostatnÃ­ch verzÃ­ch
+Delphi od 5.0 vÃ½Å¡e, protoÅ¾e ale tyto verze nemÃ¡m k dispozici, nemohl jsem je
+vyzkouÅ¡et.
 
-Doporuèenım zpùsobem, jak YouTube Downloader zkompilovat, je skript BUILD.BAT
-v adresáøi SOURCE, kterı se postará o všechny závislosti a specifika 
-jednotlivıch verzí kompilátorù (více o tom níe). Skript pøijímá (volitelnì)
-následující parametry:
+DoporuÄenÃ½m zpÅ¯sobem, jak YouTube Downloader zkompilovat, je skript BUILD.BAT
+v adresÃ¡Å™i SOURCE, kterÃ½ se postarÃ¡ o vÅ¡echny zÃ¡vislosti a specifika 
+jednotlivÃ½ch verzÃ­ kompilÃ¡torÅ¯ (vÃ­ce o tom nÃ­Å¾e). Skript pÅ™ijÃ­mÃ¡ (volitelnÄ›)
+nÃ¡sledujÃ­cÃ­ parametry:
 
-  -? ............ Zobrazit nápovìdu.
-  -h ............ Zobrazit nápovìdu.
+  -? ............ Zobrazit nÃ¡povÄ›du.
+  -h ............ Zobrazit nÃ¡povÄ›du.
 
-  delphi ........ Pro kompilaci pouít Delphi (obecnou verzi). Kompiluje se 
-                  pøíkazem DCC32, kterı musí bıt v cestì (PATH).
-  fpc ........... Pro kompilaci pouít FreePascal. Kompiluje se pøíkazem FPC,
-                  kterı musí bıt v cestì (PATH).
+  delphi ........ Pro kompilaci pouÅ¾Ã­t Delphi (obecnou verzi). Kompiluje se 
+                  pÅ™Ã­kazem DCC32, kterÃ½ musÃ­ bÃ½t v cestÄ› (PATH).
+  fpc ........... Pro kompilaci pouÅ¾Ã­t FreePascal. Kompiluje se pÅ™Ã­kazem FPC,
+                  kterÃ½ musÃ­ bÃ½t v cestÄ› (PATH).
 
   cli ........... Do programu bude zahrnuta command-line verze.
   nocli ......... Do programu nebude zahrnuta command-line verze.
-  gui ........... Do programu bude zahrnuta grafická verze.
-  nogui ......... Do programu nebude zahrnuta grafická verze.
+  gui ........... Do programu bude zahrnuta grafickÃ¡ verze.
+  nogui ......... Do programu nebude zahrnuta grafickÃ¡ verze.
   xxx ........... Do programu bude zahrnuta podpora pro porno providery.
   noxxx ......... Do programu nebude zahrnuta podpora pro porno providery.
-  setup ......... Do programu bude zahrnut kód pro instalace a upgrade.
-  nosetup ....... Do programu nebude zahrnut kód pro instalace a upgrade.
+  setup ......... Do programu bude zahrnut kÃ³d pro instalace a upgrade.
+  nosetup ....... Do programu nebude zahrnut kÃ³d pro instalace a upgrade.
 
-  (a nìkolik dalších parametrù, které jsou nedokumentované a nedoporuèené)
+  (a nÄ›kolik dalÅ¡Ã­ch parametrÅ¯, kterÃ© jsou nedokumentovanÃ© a nedoporuÄenÃ©)
 
-Pokud chcete YouTube Downloader zkompilovat pøímo z Delphi IDE, napø. za úèelem
-ladìní, je to také moné, ale pro kadou verzi Delphi je tøeba ponìkud odlišné
-nastavení adresáøù v Project Options; Search path se liší v nìkolika polokách:
+Pokud chcete YouTube Downloader zkompilovat pÅ™Ã­mo z Delphi IDE, napÅ™. za ÃºÄelem
+ladÄ›nÃ­, je to takÃ© moÅ¾nÃ©, ale pro kaÅ¾dou verzi Delphi je tÅ™eba ponÄ›kud odliÅ¡nÃ©
+nastavenÃ­ adresÃ¡Å™Å¯ v Project Options; Search path se liÅ¡Ã­ v nÄ›kolika poloÅ¾kÃ¡ch:
 
-- Cesta "lib\pepak\delphi5" MUSÍ bıt na prvním místì v Delphi 5.0 (a podle
-  diskusí na webu i Delphi 6.0) a NESMÍ bıt vùbec uvedena ve vyšších verzích.
-- Cesta ke knihovnì DxGetText se liší podle kompilátoru:
+- Cesta "lib\pepak\delphi5" MUSÃ bÃ½t na prvnÃ­m mÃ­stÄ› v Delphi 5.0 (a podle
+  diskusÃ­ na webu i Delphi 6.0) a NESMÃ bÃ½t vÅ¯bec uvedena ve vyÅ¡Å¡Ã­ch verzÃ­ch.
+- Cesta ke knihovnÄ› DxGetText se liÅ¡Ã­ podle kompilÃ¡toru:
   - Delphi 5.0 - "lib\dxgettext\delphi5"
-  - Delphi 2009 a vyšší - "lib\dxgettext\delphi2009"
+  - Delphi 2009 a vyÅ¡Å¡Ã­ - "lib\dxgettext\delphi2009"
   - FreePascal - "lib\dxgettext\fpc"
-  - ostatní - "lib\dxgettext"
+  - ostatnÃ­ - "lib\dxgettext"
 
-Pro FreePascal je grafické prostøedí podporováno pouze pøi pøímém vyuití
+Pro FreePascal je grafickÃ© prostÅ™edÃ­ podporovÃ¡no pouze pÅ™i pÅ™Ã­mÃ©m vyuÅ¾itÃ­
 WinAPI (DEFINE GUI_WINAPI v ytd.inc).
 
 
@@ -847,96 +860,96 @@ http://magazin.stahuj.centrum.cz/youtube-downloader-stahujte-videa-i-z-ceskych-w
 16. LICENCE
 -----------
 
-YouTube Downloader je publikován pod tzv. novou BSD licencí. Její text 
+YouTube Downloader je publikovÃ¡n pod tzv. novou BSD licencÃ­. JejÃ­ text 
 naleznete v souboru DOC/LICENSE.TXT.
 
-Pokud potøebujete program pøelicencovat pod jinou licenci, dejte mi vìdìt.
+Pokud potÅ™ebujete program pÅ™elicencovat pod jinou licenci, dejte mi vÄ›dÄ›t.
 
-Komponenty tøetích stran, umístìné v adresáøi SOURCE/LIB, se øídí svımi 
-vlastními licencemi. Z tohoto dùvodu nelze pouít licenci GNU GPL (ádnou
-verzi) ani na YouTube Downloader, ani na odvozené programy!
+Komponenty tÅ™etÃ­ch stran, umÃ­stÄ›nÃ© v adresÃ¡Å™i SOURCE/LIB, se Å™Ã­dÃ­ svÃ½mi 
+vlastnÃ­mi licencemi. Z tohoto dÅ¯vodu nelze pouÅ¾Ã­t licenci GNU GPL (Å¾Ã¡dnou
+verzi) ani na YouTube Downloader, ani na odvozenÃ© programy!
 
 Knihovny a jejich licence:
 
 - AdobeHDS
   - autor: K-S-V
   - zdroj: https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php
-  - licence: neznámá open-source
-  - popis: Stahování Adobe HDS streamù.
+  - licence: neznÃ¡mÃ¡ open-source
+  - popis: StahovÃ¡nÃ­ Adobe HDS streamÅ¯.
 
 - DxGetText
-  - autoøi: Lars B. Dybdahl, Peter Thörnqvist
+  - autoÅ™i: Lars B. Dybdahl, Peter ThÃ¶rnqvist
   - zdroj: http://dxgettext.po.dk/
-  - licence: vlastní, freeware
-  - popis: Podpora pro lokalizace (další jazyky) programu
+  - licence: vlastnÃ­, freeware
+  - popis: Podpora pro lokalizace (dalÅ¡Ã­ jazyky) programu
 
 - FastMM
   - autor: Pierre le Riche
   - zdroj: http://fastmm.sourceforge.net/
   - licence: GNU LGPL 2.1 / Mozilla Public License 1.1
-  - popis: Rychlejší pamìovı manaer (pouívá se jen v DEBUG reimu kvùli
-           schopnosti odhalit chybné alokace a dealokace pamìti).
+  - popis: RychlejÅ¡Ã­ pamÄ›Å¥ovÃ½ manaÅ¾er (pouÅ¾Ã­vÃ¡ se jen v DEBUG reÅ¾imu kvÅ¯li
+           schopnosti odhalit chybnÃ© alokace a dealokace pamÄ›ti).
 
 - lkJSON
   - autor: Leonid Koninin
   - zdroj: http://sourceforge.net/projects/lkjson/files
   - licence: BSD
-  - popis: Knihovna pro práci s JSON
+  - popis: Knihovna pro prÃ¡ci s JSON
 
 - MSDL
   - autor: Jun "metro" Oyama (me_t_ro@yahoo.com)
   - zdroj: http://msdl.sourceforge.net/
   - licence: GNU GPL v3
-  - popis: Nástroj pro stahování protokolù MMS, RTSP a jejich variant
+  - popis: NÃ¡stroj pro stahovÃ¡nÃ­ protokolÅ¯ MMS, RTSP a jejich variant
 
 - MSDL_DLL
   - autor: Pepak
   - zdroj: http://www.pepak.net/download/youtube-downloader/
   - licence: GNU GPL v3
-  - popis: MSDL upravené tak, aby se volalo jako DLL knihovna
+  - popis: MSDL upravenÃ© tak, aby se volalo jako DLL knihovna
 
 - NativeXml
   - autor: Nils Haeck
   - zdroj: http://www.simdesign.nl/xml.html
-  - licence: vlastní, freeware
-  - Práce s XML
+  - licence: vlastnÃ­, freeware
+  - PrÃ¡ce s XML
 
 - PerlRegEx
   - autor: Jan Goyvaerts
   - zdroj: http://www.regular-expressions.info/delphi.html
   - licence: Mozilla Public License 1.1
-  - popis: Vyhodnocování regulárních vırazù
+  - popis: VyhodnocovÃ¡nÃ­ regulÃ¡rnÃ­ch vÃ½razÅ¯
 
 - RTMPDUMP
-  - autoøi: Andrej Stepanchuk, Howard Chu
+  - autoÅ™i: Andrej Stepanchuk, Howard Chu
   - zdroj: http://rtmpdump.mplayerhq.hu/
            https://github.com/svnpenn/rtmpdump
   - licence: GNU GPL v2
-  - popis: Nástroj pro stahování protokolu RTMP a jeho variant.
+  - popis: NÃ¡stroj pro stahovÃ¡nÃ­ protokolu RTMP a jeho variant.
 
 - RTMPDUMP_DLL
   - autor: Pepak
   - zdroj: http://www.pepak.net/download/youtube-downloader/
   - licence: GNU GPL v2
-  - popis: RTMPDUMP upravenı tak, aby se volal jako DLL knihovna
+  - popis: RTMPDUMP upravenÃ½ tak, aby se volal jako DLL knihovna
 
 - Silk Icon Pack
   - autor: Mark James
   - zdroj: http://www.famfamfam.com/lab/icons/silk/
   - licence: Creative Common Attribution 2.5
-  - popis: Ikonky Silk pouité v grafické verzi programu.
+  - popis: Ikonky Silk pouÅ¾itÃ© v grafickÃ© verzi programu.
 
 - Synapse
-  - autor: Lukáš Gebauer
+  - autor: LukÃ¡Å¡ Gebauer
   - zdroj: http://synapse.ararat.cz/
-  - licence: vlastní, freeware
-  - popis: Práce s TCP/IP, HTTP a dalšími síovımi protokoly
+  - licence: vlastnÃ­, freeware
+  - popis: PrÃ¡ce s TCP/IP, HTTP a dalÅ¡Ã­mi sÃ­Å¥ovÃ½mi protokoly
 
-Jazykové verze:
+JazykovÃ© verze:
 
-- Ruština: Litew (litew9@gmail.com).
-- Slovenština: Vladimír Kubala (kubalav@gmail.com).
+- RuÅ¡tina: Litew (litew9@gmail.com).
+- SlovenÅ¡tina: VladimÃ­r Kubala (kubalav@gmail.com).
 
 Grafika:
 
-- Ikonku programu vytvoøil uivatel KRYSPIN ze serveru Hofyland.cz.
+- Ikonku programu vytvoÅ™il uÅ¾ivatel KRYSPIN ze serveru Hofyland.cz.

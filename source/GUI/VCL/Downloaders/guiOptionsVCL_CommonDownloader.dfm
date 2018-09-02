@@ -1,15 +1,16 @@
 inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
+  Height = 252
   object PanelCommonOptions: TPanel
     Left = 0
     Top = 0
     Width = 320
-    Height = 137
+    Height = 161
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     object LabelSecureToken: TLabel
       Left = 8
-      Top = 50
+      Top = 74
       Width = 71
       Height = 13
       Caption = 'Secure &Token:'
@@ -17,7 +18,7 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     end
     object LabelUserName: TLabel
       Left = 8
-      Top = 82
+      Top = 106
       Width = 54
       Height = 13
       Caption = '&User name:'
@@ -25,7 +26,7 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     end
     object LabelPassword: TLabel
       Left = 8
-      Top = 106
+      Top = 130
       Width = 49
       Height = 13
       Caption = '&Password:'
@@ -59,7 +60,7 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     end
     object EditSecureToken: TEdit
       Left = 112
-      Top = 48
+      Top = 72
       Width = 193
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -67,7 +68,7 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     end
     object EditUserName: TEdit
       Left = 112
-      Top = 80
+      Top = 104
       Width = 193
       Height = 21
       Anchors = [akLeft, akTop, akRight]
@@ -75,18 +76,26 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     end
     object EditPassword: TEdit
       Left = 112
-      Top = 104
+      Top = 128
       Width = 193
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 5
     end
+    object CheckRealtime: TCheckBox
+      Left = 8
+      Top = 48
+      Width = 305
+      Height = 17
+      Caption = '&Realtime mode (may be slower, but doesn'#39't skip back)'
+      TabOrder = 6
+    end
   end
   object PanelSpecificOptions: TPanel
     Left = 0
-    Top = 137
+    Top = 161
     Width = 320
-    Height = 103
+    Height = 91
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1

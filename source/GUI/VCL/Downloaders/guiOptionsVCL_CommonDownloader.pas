@@ -57,6 +57,7 @@ type
     EditUserName: TEdit;
     LabelPassword: TLabel;
     EditPassword: TEdit;
+    CheckRealtime: TCheckBox;
   private
     fDownloaderClass: TDownloaderClass;
   protected
@@ -141,6 +142,8 @@ begin
   {$ENDIF}
   if Supports(dfRtmpLiveStream, [CheckLiveStream]) then
     CheckLiveStream.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features);
+  if Supports(dfRtmpRealtime, [CheckRealtime]) then
+    CheckRealtime.Checked := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in DownloaderClass.Features);
   if Supports(dfRequireSecureToken, [LabelSecureToken, EditSecureToken]) then
     EditSecureToken.Text := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, '');
   if Supports(dfUserLogin, [LabelUserName, EditUserName, LabelPassword, EditPassword]) then
@@ -163,6 +166,8 @@ begin
   {$ENDIF}
   if Supports(dfRtmpLiveStream) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, CheckLiveStream.Checked);
+  if Supports(dfRtmpRealtime) then
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, CheckRealtime.Checked);
   if Supports(dfRequireSecureToken) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, EditSecureToken.Text);
   if Supports(dfUserLogin) then

@@ -97,6 +97,7 @@ const
   IDC_EDIT_USERNAME = 1008;
   IDC_LABEL_PASSWORD = 1009;
   IDC_EDIT_PASSWORD = 1010;
+  IDC_CHECKBOX_REALTIME = 1011;
 
 { TFrameDownloaderOptionsPageCommon }
 
@@ -243,6 +244,8 @@ begin
   {$ENDIF}
   if Supports(dfRtmpLiveStream, [IDC_CHECKBOX_LIVESTREAM]) then
     CheckDlgButton(Self.Handle, IDC_CHECKBOX_LIVESTREAM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features)]);
+  if Supports(dfRtmpRealTime, [IDC_CHECKBOX_REALTIME]) then
+    CheckDlgButton(Self.Handle, IDC_CHECKBOX_REALTIME, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in DownloaderClass.Features)]);
   if Supports(dfRequireSecureToken, [IDC_LABEL_SECURETOKEN, IDC_EDIT_SECURETOKEN]) then
     SetWindowText(EditSecureToken, PChar(Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, '')));
   if Supports(dfUserLogin, [IDC_LABEL_USERNAME, IDC_EDIT_USERNAME, IDC_LABEL_PASSWORD, IDC_EDIT_PASSWORD]) then
@@ -284,6 +287,13 @@ begin
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, True);
       BST_UNCHECKED:
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, False);
+      end;
+  if Supports(dfRtmpRealtime) then
+    case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_REALTIME) of
+      BST_CHECKED:
+        Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, True);
+      BST_UNCHECKED:
+        Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, False);
       end;
   if Supports(dfRequireSecureToken) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, GetWindowTextAsString(EditSecureToken));

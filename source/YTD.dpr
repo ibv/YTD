@@ -101,6 +101,7 @@ uses
       guiOptionsWINAPI_CommonDownloader in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CommonDownloader.pas',
       guiOptionsWINAPI_Barrandov in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Barrandov.pas',
       guiOptionsWINAPI_CT in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CT.pas',
+      guiOptionsWINAPI_EuroSeptik in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_EuroSeptik.pas',
       guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
       guiOptionsWINAPI_YouTube in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_YouTube.pas',
       {$IFDEF CONVERTERS}
@@ -117,6 +118,7 @@ uses
       guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
       guiOptionsVCL_Barrandov in 'GUI\VCL\Downloaders\guiOptionsVCL_Barrandov.pas' {FrameDownloaderOptionsPage_Barrandov: TFrame},
       guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
+      guiOptionsVCL_EuroSeptik in 'GUI\VCL\Downloaders\guiOptionsVCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
       guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
       guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       {$IFDEF CONVERTERS}
@@ -145,6 +147,7 @@ uses
   downAngryAlien in 'Downloaders\downAngryAlien.pas',
   downArchive in 'Downloaders\downArchive.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
+  downAzetSk in 'Downloaders\downAzetSk.pas',
   downBahnorama in 'Downloaders\downBahnorama.pas',
   downBandZone in 'Downloaders\downBandZone.pas',
   downBarrandovTV in 'Downloaders\downBarrandovTV.pas',
@@ -191,6 +194,7 @@ uses
   downEKucharkaNet in 'Downloaders\downEKucharkaNet.pas',
   downESPN in 'Downloaders\downESPN.pas',
   downEuroGamer in 'Downloaders\downEuroGamer.pas',
+  downEuroSeptik in 'Downloaders\downEuroseptik.pas',
   downEVTV1 in 'Downloaders\downEVTV1.pas',
   downFacebook in 'Downloaders\downFacebook.pas',
   downFarmarHladaZenu in 'Downloaders\downFarmarHladaZenu.pas',
@@ -218,7 +222,6 @@ uses
   downHokejCz in 'Downloaders\downHokejCz.pas',
   downHrej in 'Downloaders\downHrej.pas',
   downHudebniVideoKlipy in 'Downloaders\downHudebniVideoKlipy.pas',
-  downHuste in 'Downloaders\downHuste.pas',
   downiConcerts in 'Downloaders\downIConcerts.pas',
   downiDnes_Embed in 'Downloaders\downIDnes_Embed.pas',
   downiDnes in 'Downloaders\downIDnes.pas',
@@ -245,6 +248,7 @@ uses
   downMamaOzenMa in 'Downloaders\downMamaOzenMa.pas',
   downMarkiza in 'Downloaders\downMarkiza.pas',
   downMarkizaParticka in 'Downloaders\downMarkizaParticka.pas',
+  downMatrix2001 in 'Downloaders\downMatrix2001.pas',
   downMediaSport in 'Downloaders\downMediaSport.pas',
   downMegaVideo in 'Downloaders\downMegaVideo.pas',
   downMegaVideo_Embed in 'Downloaders\downMegaVideo_Embed.pas',
@@ -254,6 +258,7 @@ uses
   downMetropolCZ in 'Downloaders\downMetropolCZ.pas',
   downMetropolCZ_Zpravy in 'Downloaders\downMetropolCZ_Zpravy.pas',
   downMetropolTV in 'Downloaders\downMetropolTV.pas',
+  downMetroProjekt in 'Downloaders\downMetroProjekt.pas',
   downMixerCZ in 'Downloaders\downMixerCZ.pas',
   downMojeTelevize in 'Downloaders\downMojeTelevize.pas',
   downMojeVideo in 'Downloaders\downMojeVideo.pas',
@@ -338,6 +343,7 @@ uses
   downTeacherTube in 'Downloaders\downTeacherTube.pas',
   downTed in 'Downloaders\downTed.pas',
   downThatVideoSite in 'Downloaders\downThatVideoSite.pas',
+  downTMusic in 'Downloaders\downTMusic.pas',
   downTodaysBigThing in 'Downloaders\downTodaysBigThing.pas',
   downTontuyau in 'Downloaders\downTontuyau.pas',
   downTopReceptyCZ in 'Downloaders\downTopReceptyCZ.pas',
@@ -447,8 +453,12 @@ uses
       // Needs some improved RTMP handling
     downDosGamesArchive in 'Downloaders\Non-working\downDosGamesArchive.pas',
       // Requires FTP support
+    downEuroVisionSports in 'Downloaders\Non-working\downEuroVisionSports.pas',
+      // Requires a token
     downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
       // Download only works for logged-in users
+    downHuste in 'Downloaders\Non-working\downHuste.pas',
+      // Requires login and password, should be easy enough to finish when I get them
     downTipovani in 'Downloaders\Non-working\downTipovani.pas',
       // Some transformation of movie ID is needed
     downWat in 'Downloaders\Non-working\downWat.pas',

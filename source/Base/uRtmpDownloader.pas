@@ -55,6 +55,7 @@ type
       function GetLive: boolean;
       function GetPageUrl: string;
       function GetPlaypath: string;
+      function GetRealtime: boolean;
       function GetRtmpApp: string;
       function GetRtmpUrl: string;
       function GetSecureToken: string;
@@ -65,6 +66,7 @@ type
       procedure SetLive(const Value: boolean);
       procedure SetPageUrl(const Value: string);
       procedure SetPlaypath(const Value: string);
+      procedure SetRealtime(const Value: boolean);
       procedure SetRtmpApp(const Value: string);
       procedure SetRtmpUrl(const Value: string);
       procedure SetSecureToken(const Value: string);
@@ -105,6 +107,7 @@ type
       property FlashVer: string read GetFlashVer write SetFlashVer;
       property SecureToken: string read GetSecureToken write SetSecureToken;
       property Live: boolean read GetLive write SetLive;
+      property Realtime: boolean read GetRealtime write SetRealtime;
     end;
 
 implementation
@@ -117,6 +120,7 @@ const
   OPTION_LIVE = 'v';
   OPTION_PAGEURL = 'p';
   OPTION_PLAYPATH = 'y';
+  OPTION_REALTIME = 'R';
   OPTION_RTMPAPP = 'a';
   OPTION_RTMPURL = 'r';
   OPTION_TOKEN = 'T';
@@ -133,13 +137,14 @@ end;
 
 class function TRtmpDownloader.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRtmpLiveStream];
+  Result := inherited Features + [dfRtmpLiveStream, dfRtmpRealtime, dfPreferRtmpRealtime];
 end;
 
 constructor TRtmpDownloader.Create(const AMovieID: string);
 begin
   inherited;
   Self.Live := (dfRtmpLiveStream in Features) and (dfPreferRtmpLiveStream in Features);
+  Self.RealTime := (dfRtmpRealtime in Features) and (dfPreferRtmpRealtime in Features);
 end;
 
 destructor TRtmpDownloader.Destroy;
@@ -262,6 +267,20 @@ begin
     DeleteRtmpDumpOption(OPTION_LIVE);
 end;
 
+function TRtmpDownloader.GetRealtime: boolean;
+var Index: integer;
+begin
+  Result := IndexOfRtmpDumpOption(OPTION_REALTIME, Index);
+end;
+
+procedure TRtmpDownloader.SetRealtime(const Value: boolean);
+begin
+  if Value then
+    SetRtmpDumpOption(OPTION_REALTIME, '')
+  else
+    DeleteRtmpDumpOption(OPTION_REALTIME);
+end;
+
 function TRtmpDownloader.GetPageUrl: string;
 begin
   Result := GetRtmpDumpOption(OPTION_PAGEURL);
@@ -362,6 +381,7 @@ function TRtmpDownloader.Prepare: boolean;
 begin
   ClearRtmpDumpOptions;
   Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
+  Self.RealTime := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in Features);
   Result := inherited Prepare;
   if dfRequireSecureToken in Features then
     if Self.Token <> '' then

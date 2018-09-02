@@ -162,7 +162,7 @@ class function TDownloader_YouTube.Features: TDownloaderFeatures;
 begin
   Result := inherited Features + [
     {$IFDEF SUBTITLES} dfSubtitles {$IFDEF CONVERTSUBTITLES} , dfSubtitlesConvert {$ENDIF} {$ENDIF}
-    , dfRtmpLiveStream
+    , dfRtmpLiveStream, dfRtmpRealtime
     ];
 end;
 
@@ -370,7 +370,7 @@ end;
 
 function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; out Url: string; out Downloader: TDownloader): boolean;
 var
-  FoundFormat, Server, Stream: string;
+  FoundFormat, Server, Stream, Signature: string;
   Formats: TStringArray;
   i: integer;
   HTTPDownloader: TDownloader_YouTube_HTTP;
@@ -381,12 +381,14 @@ begin
   Downloader := nil;
   if GetRegExpAllVar(FormatUrlMapRegExp, FormatUrlMap, 'ITEM', Formats) then
     for i := 0 to Pred(Length(Formats)) do
-      if GetRegExpVarPairs(FormatUrlMapVarsRegExp, Formats[i], ['itag', 'url', 'conn', 'stream'], [@FoundFormat, @Url, @Server, @Stream]) then
+      if GetRegExpVarPairs(FormatUrlMapVarsRegExp, Formats[i], ['itag', 'url', 'conn', 'stream', 'sig'], [@FoundFormat, @Url, @Server, @Stream, @Signature]) then
         if FoundFormat = VideoFormat then
           begin
           if Url <> '' then
             begin
             Url := UrlDecode(Url);
+            if Signature <> '' then
+              Url := Url + '&signature=' + UrlDecode(Signature);
             HTTPDownloader := TDownloader_YouTube_HTTP.Create(Url);
             HTTPDownloader.Cookies.Assign(Http.Cookies);
             Downloader := HTTPDownloader;

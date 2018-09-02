@@ -63,7 +63,12 @@ type
   TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
 
 type
-  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} , dfRtmpLiveStream, dfPreferRtmpLiveStream, dfRequireSecureToken, dfUserLogin );
+  TDownloaderFeature = (
+    dfDummy
+    {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF}
+    , dfRtmpLiveStream, dfPreferRtmpLiveStream, dfRtmpRealTime, dfPreferRtmpRealTime
+    , dfRequireSecureToken, dfUserLogin
+    );
   TDownloaderFeatures = set of TDownloaderFeature;
 
 const
@@ -147,6 +152,7 @@ type
       function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlPath(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlExt(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetRelativeUrl(CurrentUrl, Path: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -1042,6 +1048,47 @@ begin
       Result := Copy(Result, 1, i);
       Break;
       end;
+end;
+
+function TDownloader.GetRelativeUrl(CurrentUrl, Path: string): string;
+var
+  i: integer;
+begin
+  if Path = '' then
+    Result := CurrentUrl
+  else
+    begin
+    i := Pos('://', Path);
+    if i > 1 then
+      Result := CurrentUrl
+    else if Path[1] = '/' then
+      if (Length(Path) >= 2) and (Path[2] = '/') then
+        Result := Copy(CurrentUrl, 1, Pos('://', CurrentUrl)) + Path // two slashes are already at the beginning of Path
+      else
+        Result := ExtractUrlRoot(CurrentUrl) + Path
+    else if Path[1] = '.' then
+      begin
+      CurrentUrl := ExtractUrlPath(CurrentUrl);
+      while (Path <> '') and (Path[1] = '.') do
+        begin
+        Delete(Path, 1, 1);
+        if Path <> '' then
+          if Path[1] = '/' then
+            Delete(Path, 1, 1)
+          else if Path[1] = '.' then
+            begin
+            Delete(Path, 1, 1);
+            if Path <> '' then
+              if Path[1] = '/' then
+                Delete(Path, 1, 1);
+            CurrentUrl := ExtractUrlPath(CurrentUrl);
+            end;
+        end;
+      Result := CurrentUrl + Path;
+      end
+    else
+      Result := ExtractUrlPath(CurrentUrl) + Path;
+    end;
 end;
 
 function TDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;

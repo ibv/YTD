@@ -34,21 +34,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downHuste;
+unit downTMusic;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, uCompatibility,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Huste = class(THttpDownloader)
+  TDownloader_TMusic = class(THttpDownloader)
     private
-    protected
-      VideoIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -66,102 +64,57 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://hudba.huste.sk/exkluzivne/kat:videoklipy/klip:2010-05-26-videoklipy-get-low-skener.html
-// http://hudba.huste.tv/grimaso-feat-s-a-s-suvereno/2010-05-26-videoklipy-get-low-skener.html
+// http://www.t-music.cz/video/124044/
+// http://www.t-music.cz/video/124044/embed/
 const
-  URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*huste\.(?:sk|tv)/.+';
+  URLREGEXP_BEFORE_ID = 't-music\.cz/video/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<title>(?P<TITLE>.*?)(?:\s*-HUSTE\.(?:SK|TV))?</title>';
-  REGEXP_VIDEO_ID =     '\bvideoId=(?P<ID>[0-9]+)';
+  REGEXP_MOVIE_TITLE =  '<h1>\s*(?:<span>.*?</span>\s*)?(?P<TITLE>.*?)</h1>';
+  REGEXP_MOVIE_URL =    '\bpresetFile\s*:\s*''[^'']*[?&]link=(?P<URL>https?[^''&]+)';
 
-{ TDownloader_Huste }
+{ TDownloader_TMusic }
 
-class function TDownloader_Huste.Provider: string;
+class function TDownloader_TMusic.Provider: string;
 begin
-  Result := 'Huste.sk';
+  Result := 'T-Music.cz';
 end;
 
-class function TDownloader_Huste.UrlRegExp: string;
+class function TDownloader_TMusic.UrlRegExp: string;
 begin
-  Result := URLREGEXP_BEFORE_ID + '(?P<' + MovieIDParamName + '>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Huste.Create(const AMovieID: string);
+constructor TDownloader_TMusic.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  VideoIdRegExp := RegExCreate(REGEXP_VIDEO_ID);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_Huste.Destroy;
+destructor TDownloader_TMusic.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Huste.GetMovieInfoUrl: string;
+function TDownloader_TMusic.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
+  Result := 'http://www.t-music.cz/video/' + MovieID + '/';
 end;
 
-function TDownloader_Huste.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; 
-var
-  InfoXml: TXmlDoc;
-  Node: TXmlNode;
-  ID, BestUrl, sQuality, Url: string;
-  i, j, BestQuality, Quality: integer;
+function TDownloader_TMusic.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, 'http://www.huste.tv/services/Video.php?clip=' + ID, InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      if XmlNodeByPath(InfoXml, 'files', Node) then
-        begin
-        BestQuality := -1;
-        BestUrl := '';
-        for i := 0 to Pred(Node.NodeCount) do
-          if Node[i].Name = 'file' then
-            if GetXmlAttr(Node[i], '', 'url', Url) then
-              begin
-              Quality := 0;
-              if GetXmlAttr(Node[i], '', 'label', sQuality) then
-                begin
-                for j := 1 to Length(sQuality) do
-                  if CharInSet(sQuality[j], ['0'..'9']) then
-                    Quality := 10 * Quality + Ord(sQuality[j]) - Ord('0')
-                  else
-                    Break;
-                end;
-              if Quality > BestQuality then
-                begin
-                BestQuality := Quality;
-                BestUrl := Url;
-                end;
-              end;
-        if BestUrl <> '' then
-          begin
-          SetName(UnpreparedName);
-          i := Pos(':', BestUrl);
-          MovieUrl := 'http' + Copy(BestUrl, i, MaxInt);
-          SetPrepared(True);
-          Result := True;
-          end;
-        end;
-    finally
-      FreeAndNil(InfoXml);
-      end;
+  MovieUrl := UrlDecode(MovieUrl);
+  Result := Prepared;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Huste);
+  RegisterDownloader(TDownloader_TMusic);
 
 end.

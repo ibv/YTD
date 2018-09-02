@@ -735,24 +735,20 @@ AMFProp_Decode(AMFObjectProperty *prop, const char *pBuffer, int nSize,
 	break;
       }
     case AMF_LONG_STRING:
+    case AMF_XML_DOC:
       {
 	unsigned int nStringSize = AMF_DecodeInt32(pBuffer);
 	if (nSize < (long)nStringSize + 4)
 	  return -1;
 	AMF_DecodeLongString(pBuffer, &prop->p_vu.p_aval);
 	nSize -= (4 + nStringSize);
-	prop->p_type = AMF_STRING;
+	if (prop->p_type == AMF_LONG_STRING)
+	  prop->p_type = AMF_STRING;
 	break;
       }
     case AMF_RECORDSET:
       {
 	RTMP_Log(RTMP_LOGERROR, "AMF_RECORDSET reserved!");
-	return -1;
-	break;
-      }
-    case AMF_XML_DOC:
-      {
-	RTMP_Log(RTMP_LOGERROR, "AMF_XML_DOC not supported!");
 	return -1;
 	break;
       }
@@ -1125,7 +1121,7 @@ AMF_GetProp(AMFObject *obj, const AVal *name, int nIndex)
 {
   if (nIndex >= 0)
     {
-      if (nIndex <= obj->o_num)
+      if (nIndex < obj->o_num)
 	return &obj->o_props[nIndex];
     }
   else

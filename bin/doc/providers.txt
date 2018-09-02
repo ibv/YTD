@@ -1,13 +1,13 @@
-______________________________________________________________________________
+Ôªø______________________________________________________________________________
 
-YTD v1.15                                                    (c) 2009-12 Pepak
+YTD v1.16                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
-PODPOROVANÕ POSKYTOVATEL… / SUPPORTED PROVIDERS
+PODPOROVAN√ç POSKYTOVATEL√â / SUPPORTED PROVIDERS
 -----------------------------------------------
 
-ProsÌm ËtÏte pozn·mky k protokol˘m RTMP a MS v souboru ytd.cz.txt.
+Pros√≠m ƒçtƒõte pozn√°mky k protokol≈Øm RTMP a MS v souboru ytd.cz.txt.
 Please read the notes to protocols RTMP and MS in file ytd.en.txt.
 
 ------------------------------------------------------------------------------
@@ -29,6 +29,8 @@ AngryAlien.com      | HTTP     |       | http://www.angryalien.com/0605/freddyja
 Archive.org         | HTTP     | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16d1t01_vbr.mp3
                     |          | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16.sbd.vernon.9127.sbeok.shnf_vbr.m3u
 AutoTube.cz         | HTTP     |       | http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
+Azet.sk             | HTTP     |       | http://tivi.azet.sk/video/1371198/tento-druh-kultury-mame-najradsej.html
+                    |          |       | http://adam.azet.sk/clanky/13149/adam-girl-simona-divoska-co-nepokazi-ziadnu-zabavu.html
 Bahnorama.com       | HTTP     |       | http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
 BandZone.cz         | HTTP     |       | http://bandzone.cz/teensjazzbandvelkelosiny?at=video;vi=9556
 Barrandov.tv        | RTMP     | 8     | http://www.barrandov.tv/54698-nikdy-nerikej-nikdy-upoutavka-epizoda-12
@@ -92,6 +94,7 @@ eHow.com            | HTTP     |       | http://www.ehow.com/video_4871930_clean
 eKucharka.net       | HTTP     |       | http://ekucharka.net/jablka-v-zupanu
 ESPN.go.com         | HTTP     |       | http://espn.go.com/video/clip?id=5163631
 EuroGamer.cz        | HTTP     |       | http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
+EuroSeptik          | HTTP     |       | http://euroseptik.cz/nigel-farage-vs-barroso-brok-kapo-schulz-tohle-je-zvracena-demokracie/
 EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnum=15099&aid=
 Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php?v=1131482863478
 FarmarHladaZenu.sk  | HTTP     |       | http://www.farmarhladazenu.sk/epizody/detail/farmar-hlada-zenu-2-novi-farmari.html
@@ -117,8 +120,6 @@ HejbejSe.tv         | HTTP     |       | http://www.hejbejse.tv/video/klip/Petra
 Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
 HudebniVideoKlipy.cz| HTTP     |       | http://www.hudebnivideoklipy.cz/chinaski-kerka-119555.html
-Huste.sk            | HTTP     |       | http://hudba.huste.sk/exkluzivne/kat:videoklipy/klip:2010-05-26-videoklipy-get-low-skener.html
-                    |          |       | http://hudba.huste.tv/grimaso-feat-s-a-s-suvereno/2010-05-26-videoklipy-get-low-skener.html
 i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
 iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
                     |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
@@ -150,6 +151,7 @@ MamaOzenMa.sk       | HTTP     |       | http://www.mamaozenma.sk/video-mama-oze
 Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
                     |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
+Matrix-2001.cz      | HTTP     |       | http://www.matrix-2001.cz/clanek-detail/4650-david-wilcock-enigma-2012/
 MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
                     |          |       | http://www.megavideo.com/v/HF2OV2PPf800ca3bd438e6d30c2490a75932d6331
@@ -160,6 +162,7 @@ Metoo.sk            | MS       |       | http://pohoda.metoo.sk/pohoda2011-fiber
                     | RTMP     |       | http://www.metoo.sk/vychodna2012?relacia=vrchovska
 Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
                     |          |       | http://www.metropol.cz/zpravy/z-prahy/tradicni-plavecky-zavod-otuzilcu-startuje-v-1100/
+MetroProjekt.cz     | HTTP     |       | http://www.metroprojekt.cz/cz/aktualne/metro-d/metro-d-animace.html
 Mixer.cz            | HTTP     |       | http://www.mixer.cz/1/41102-video-games
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
@@ -188,6 +191,7 @@ News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid
 NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
 Nova.cz             | RTMP     | 8     | http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
+                    |          |       | http://vikend.nova.cz/clanek/novinky/vikend-20-3-sedmimilove-boty.html
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
@@ -258,6 +262,8 @@ Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
 STV.sk              | RTMP     | 9     | http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
 Super.cz            | HTTP     |       | http://www.super.cz/11797-facky-nadavky-rev-i-plac-tohle-jsou-ty-nejsilenejsi-situace-ktere-vymena-manzelek-predstavila.html
+T-Music.cz          | HTTP     |       | http://www.t-music.cz/video/124044/
+                    |          |       | http://www.t-music.cz/video/124044/embed/
 Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
 TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
 Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html
@@ -318,7 +324,7 @@ Youtube.com         | HTTP     |       | http://www.youtube.com/v/b5AWQ5aBjgE
 Youtube-nocookie.com| HTTP     |       | http://www.youtube-nocookie.com/v/LiVxKci9Uto?version=3&hl=en_US
 Z1TV.cz             | HTTP     |       | http://www.z1tv.cz/interview-z1/interview-z1-kobzanova-diana-1972.html?page=1
 Zapiks.fr           | HTTP     |       | http://www.zapiks.fr/open-air-episode-5-a-week-in.html
-ZDF.de              | MS       |       | http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/ƒgypten---4-Geheimnis-des-ewigen-Lebens
+ZDF.de              | MS       |       | http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/√Ñgypten---4-Geheimnis-des-ewigen-Lebens
 ZkoukniTo.cz        | HTTP     |       | http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
 Zmozek.cz           | HTTP     |       | http://www.zmozek.cz/textypisni.php?pisen=415
 Zoznam.sk           | HTTP     |       | http://free.zoznam.sk/video/Splhajuci-buldozer
@@ -373,26 +379,26 @@ ZlutySnih.cz        | HTTP     | F     |
 Zvraceny.cz         | HTTP     | F     |
 ------------------------------------------------------------------------------
 
-F ... FunkËnÌ pouze v plnÈ (ne-lite) verzi YTD kv˘li porno obsahu.
+F ... Funkƒçn√≠ pouze v pln√© (ne-lite) verzi YTD kv≈Øli porno obsahu.
 
       Available only in the full (non-lite) version of YTD due to porn content.
 
 
 
-N ... Nepodporov·no.
+N ... Nepodporov√°no.
 
       Not supported.
 
 
 
-X ... Moment·lnÏ nefunkËnÌ.
+X ... Moment√°lnƒõ nefunkƒçn√≠.
       
       Currently non-working.
 
 
 
-1 ... NaËÌt·nÌ obsahu playlist˘ nezobrazuje û·dn˝ v˝stup a m˘ûe trvat i dost
-      dlouho. Nenechte se znervÛznit tÌm, ûe se zd·nlivÏ nic nedÏje.
+1 ... Naƒç√≠t√°n√≠ obsahu playlist≈Ø nezobrazuje ≈æ√°dn√Ω v√Ωstup a m≈Ø≈æe trvat i dost
+      dlouho. Nenechte se znerv√≥znit t√≠m, ≈æe se zd√°nlivƒõ nic nedƒõje.
 
       Please don't be concerned about an apparent lack of progress while
       processing playlist. Parsing long playlists can take quite a some time
@@ -400,39 +406,39 @@ X ... Moment·lnÏ nefunkËnÌ.
 
 
 
-2 ... Poskytovatel je velmi nestabilnÌ a bÏûnÏ se st·v·, ûe jednu minutu video
-      jde a druhou nejde. Je t¯eba to zkouöet.
+2 ... Poskytovatel je velmi nestabiln√≠ a bƒõ≈ænƒõ se st√°v√°, ≈æe jednu minutu video
+      jde a druhou nejde. Je t≈ôeba to zkou≈°et.
 
       The provider is highly unstable and may start or stop working at any
       moment without any apparent reason. You need to keep trying.
 
 
 
-3 ... SkuteËn˝m poskytovatelem je CeskaTelevize.cz.
+3 ... Skuteƒçn√Ωm poskytovatelem je CeskaTelevize.cz.
 
       The real provider is CeskaTelevize.cz.
 
 
 
-4 ... NenÌ detekov·n skuteËn˝ n·zev videa.
+4 ... Nen√≠ detekov√°n skuteƒçn√Ω n√°zev videa.
 
       The intended video name is not detected.
 
 
 
-5 ... NÏkter· videa jsou hostovan· na cizÌch serverech a nelze je stahovat
-      p¯Ìmo. M˘ûete vöak pouûÌt funkci "P¯idat URL z HTML str·nky".
+5 ... Nƒõkter√° videa jsou hostovan√° na ciz√≠ch serverech a nelze je stahovat
+      p≈ô√≠mo. M≈Ø≈æete v≈°ak pou≈æ√≠t funkci "P≈ôidat URL z HTML str√°nky".
 
       Some movies are hosted on third-party servers and can't be downloaded
       directly. You can use the function "Add URLs from HTML page".
 
 
 
-6 ... Pozor: Nepoda¯ilo se mi plnÏ dekÛdovat zp˘sob, jak se z URL Ël·nku dostat
-      k URL videa. Z tohoto d˘vodu jsem pouûil velmi pras·ck˝ hack, kter˝ 
-      postupnÏ vyzkouöÌ vöechny servery, na kter˝ch by video mohlo b˝t. To je 
-      za prvÈ pomalÈ, za druhÈ nespolehlivÈ a za t¯etÌ se snadno m˘ûe st·t, ûe 
-      v·s Nova za tento zp˘sob ˙toku na jejich servery zabanuje.
+6 ... Pozor: Nepoda≈ôilo se mi plnƒõ dek√≥dovat zp≈Øsob, jak se z URL ƒçl√°nku dostat
+      k URL videa. Z tohoto d≈Øvodu jsem pou≈æil velmi pras√°ck√Ω hack, kter√Ω 
+      postupnƒõ vyzkou≈°√≠ v≈°echny servery, na kter√Ωch by video mohlo b√Ωt. To je 
+      za prv√© pomal√©, za druh√© nespolehliv√© a za t≈ôet√≠ se snadno m≈Ø≈æe st√°t, ≈æe 
+      v√°s Nova za tento zp≈Øsob √∫toku na jejich servery zabanuje.
 
       Note: I couldn't properly decode, how to get a video URL from a given
       article URL. In order to get this provider to work, I had to resort to 
@@ -442,8 +448,8 @@ X ... Moment·lnÏ nefunkËnÌ.
 
 
 
-7 ... P¯i pouûitÌ command-line verze YTD je t¯eba vÏnovat pozornost spr·vnÈmu
-      zaps·nÌ URL, aby vyhovovalo poûadavk˘m p¯ÌkazovÈho interpretu (CMD.EXE).
+7 ... P≈ôi pou≈æit√≠ command-line verze YTD je t≈ôeba vƒõnovat pozornost spr√°vn√©mu
+      zaps√°n√≠ URL, aby vyhovovalo po≈æadavk≈Øm p≈ô√≠kazov√©ho interpretu (CMD.EXE).
 
       When using the command-line version of YTD, please make sure to properly
       escape the URL, so that it satisfied the requirements of command 
@@ -451,10 +457,10 @@ X ... Moment·lnÏ nefunkËnÌ.
 
 
 
-8 ... Pro spr·vnou funkci je vyûadov·n Secure Token. Jde o tajn˝ ¯etÏzec,
-      kter˝m se klient autentizuje serveru a potvrzuje tak, ûe je opr·vnÏn
-      si o mÈdia ¯Ìkat. ZÌsk·nÌ tohoto tokenu je na v·s - z pr·vnÌch d˘vod˘
-      ho neprozradÌm ani ne¯eknu, kde a jak ho zÌskat.
+8 ... Pro spr√°vnou funkci je vy≈æadov√°n Secure Token. Jde o tajn√Ω ≈ôetƒõzec,
+      kter√Ωm se klient autentizuje serveru a potvrzuje tak, ≈æe je opr√°vnƒõn
+      si o m√©dia ≈ô√≠kat. Z√≠sk√°n√≠ tohoto tokenu je na v√°s - z pr√°vn√≠ch d≈Øvod≈Ø
+      ho neprozrad√≠m ani ne≈ôeknu, kde a jak ho z√≠skat.
 
       A Secure Token is required for proper function. Secure Token is a
       secret string, which is used to authentize the client to the server
@@ -464,13 +470,13 @@ X ... Moment·lnÏ nefunkËnÌ.
 
 
 
-9 ... N·zev videa nenÌ detekov·n.
+9 ... N√°zev videa nen√≠ detekov√°n.
 
       Stream name is not detected.
 
 
 
-10 .. Server podporuje a/nebo vyûaduje p¯ihl·öenÌ. P¯ihlaöovacÌ ˙daje m˘ûete
+10 .. Server podporuje a/nebo vy≈æaduje p≈ôihl√°≈°en√≠. P≈ôihla≈°ovac√≠ √∫daje m≈Ø≈æete
       nastavit v konfiguraci poskytovatele.
 
       The server supports and/or requires a login. You may set up the login

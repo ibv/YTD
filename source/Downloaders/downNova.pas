@@ -141,8 +141,8 @@ uses
 // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 // http://voyo.nova.cz/home/plus-video/321-kriminalka-andel-podraz
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!tn\.)nova\.cz/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?<!tn\.)nova\.cz/.+$';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -158,13 +158,12 @@ const
 const
   NOVA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Nova.cz';
   NOVA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
-  NOVA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://voyo.nova.cz/%s';
 
 { TDownloader_Nova }
 
 class function TDownloader_Nova.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRtmpLiveStream, dfPreferRtmpLiveStream];
+  Result := inherited Features + TDownloader_Nova_RTMP.Features + TDownloader_Nova_MS.Features;
 end;
 
 class function TDownloader_Nova.Provider: string;
@@ -200,7 +199,7 @@ end;
 
 function TDownloader_Nova.GetMovieInfoUrl: string;
 begin
-  Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
+  Result := MovieID;
 end;
 
 function TDownloader_Nova.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
@@ -259,7 +258,7 @@ end;
 
 function TDownloader_Nova_RTMP.GetMovieInfoUrl: string;
 begin
-  Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
+  Result := MovieID;
 end;
 
 function TDownloader_Nova_RTMP.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -362,7 +361,7 @@ end;
 
 function TDownloader_Nova_MS.GetMovieInfoUrl: string;
 begin
-  Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
+  Result := MovieID;
 end;
 
 function TDownloader_Nova_MS.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
