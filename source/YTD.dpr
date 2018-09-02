@@ -398,7 +398,6 @@ uses
   {$IFDEF XXX}
     xxx8teenXXX in 'Downloaders\XXX\xxx8teenXXX.pas',
     xxxAdultLoop in 'Downloaders\XXX\xxxAdultLoop.pas',
-    xxxBeeg in 'Downloaders\XXX\xxxBeeg.pas',
     xxxBrazzers in 'Downloaders\XXX\xxxBrazzers.pas',
     xxxCastingXXX in 'Downloaders\XXX\xxxCastingXXX.pas',
     xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
@@ -428,7 +427,6 @@ uses
     xxxSexDoma in 'Downloaders\XXX\xxxSexDoma.pas',
     xxxShufuni in 'Downloaders\XXX\xxxShufuni.pas',
     xxxSlutLoad in 'Downloaders\XXX\xxxSlutLoad.pas',
-    xxxSpankingTube in 'Downloaders\XXX\xxxSpankingTube.pas',
     xxxSpankWire in 'Downloaders\XXX\xxxSpankWire.pas',
     xxxTeenMpegs in 'Downloaders\XXX\xxxTeenMpegs.pas',
     xxxTheYNC in 'Downloaders\XXX\xxxTheYNC.pas',

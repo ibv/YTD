@@ -58,10 +58,12 @@ type
 
   TRegExp = class(TPerlRegEx)
     public
+      class function Match(const Pattern, Subject, SubexpressionName: PCREString; out Value: PCREString): boolean; overload;
       function Match(const Subject: PCREString): boolean; overload;
       function SubexpressionByName(const Name: PCREString): PCREString; overload;
       function SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean; overload;
       {$IFDEF UNICODE}
+      class function Match(const Pattern, Subject, SubexpressionName: string; out Value: string): boolean; overload;
       function Match(const Subject: string): boolean; overload;
       function SubexpressionByName(const Name: string): string; overload;
       function SubexpressionByName(const Name: string; out Value: string): boolean; overload;
@@ -161,6 +163,31 @@ begin
 end;
 
 { TRegExp }
+
+class function TRegExp.Match(const Pattern, Subject, SubexpressionName: PCREString; out Value: PCREString): boolean;
+var
+  RE: TRegExp;
+begin
+  Result := False;
+  RE := RegExCreate(Pattern);
+  try
+    if RE.Match(Subject) then
+      Result := RE.SubexpressionByName(SubexpressionName, Value);
+  finally
+    RegExFreeAndNil(RE);
+    end;
+end;
+
+{$IFDEF UNICODE}
+class function TRegExp.Match(const Pattern, Subject, SubexpressionName: string; out Value: string): boolean;
+var
+  V: PCREString;
+begin
+  Result := Match(PCREString(Pattern), PCREString(Subject), PCREString(SubexpressionName), V);
+  if Result then
+    Value := string(V);
+end;
+{$ENDIF}
 
 function TRegExp.Match(const Subject: PCREString): boolean;
 begin

@@ -135,7 +135,11 @@ function WaitForExclusiveAccess(FN: string): Boolean;
 function GetComputerName: string;
 function FindSpecialDirectory(const ID: integer; out Dir: string): boolean;
 function FindShortcutByTarget(Dir, Target: string; out FileName: string): boolean;
-function CreateShortcut(FileName, Target: string): boolean;
+function CreateShortcut(FileName, Target: string): boolean; overload;
+function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean; overload;
+function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
+function RegisterUninstallApplication(const KeyName, DisplayName, CommandLine: string): boolean;
+function UnregisterUninstallApplication(const KeyName: string): boolean;
 {$ENDIF}
 
 {$IFDEF USYSTEM_NET}
@@ -173,7 +177,7 @@ function SystemTempDir: string;
 function SystemTempFile(const Dir, Prefix: string): string; overload;
 function SystemTempFile(const Dir, Prefix, Extension: string): string; overload;
 function AddLastSlash(const Path: string): string;
-procedure ForceDeleteDirectory(APath: string);
+function ForceDeleteDirectory(APath: string): boolean;
 function GetFileSize(const FileName: string): int64;
 function GetFileDateTime(const FileName: string; out CreationTime, ModificationTime, AccessTime: TDateTime): boolean; overload;
 function GetFileDateTime(const FileName: string): TDateTime; overload;
@@ -1000,6 +1004,97 @@ begin
     CoUninitialize;
     end;
 end;
+
+function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer; const FileName, Parameters: string): boolean;
+var
+  IObject: IUnknown;
+  FN, Dir, ShortcutFile: string;
+begin
+  CoInitialize(nil);
+  try
+    Result := False;
+    if (CoCreateInstance(CLSID_ShellLink, nil, CLSCTX_INPROC_SERVER or CLSCTX_LOCAL_SERVER, IUnknown, IObject) and $80000000) = 0 then
+      try
+        if FileName = '' then
+          FN := ParamStr(0)
+        else
+          FN := FileName;
+        with IObject as IShellLink do
+          begin
+          SetPath(PChar(FN));
+          SetWorkingDirectory(PChar(ExtractFilePath(FN)));
+          if Parameters <> '' then
+            SetArguments(PChar(Parameters));
+          end;
+        if WhereCSIDL = 0 then
+          Dir := Where
+        else
+          Dir := GetSpecialFolder(WhereCSIDL);
+        if Dir = '' then
+          ShortcutFile := ShortcutName
+        else
+          ShortcutFile := Dir + '\' + ShortcutName;
+        with IObject as IPersistFile do
+          Save(PWideChar(WideString(ShortcutFile)), False);
+        Result := True;
+      finally
+        IObject := nil;
+        end;
+  finally
+    CoUninitialize;
+    end;
+end;
+
+function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
+var
+  Dir, ShortcutFile: string;
+begin
+  if WhereCSIDL = 0 then
+    Dir := Where
+  else
+    Dir := GetSpecialFolder(WhereCSIDL);
+  if Dir = '' then
+    ShortcutFile := ShortcutName
+  else
+    ShortcutFile := Dir + '\' + ShortcutName;
+  if FileExists(ShortcutFile) then
+    Result := SysUtils.DeleteFile(ShortcutFile)
+  else
+    Result := True;
+end;
+
+const
+  BaseKeyForUninstallData {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\';
+
+function RegisterUninstallApplication(const KeyName, DisplayName, CommandLine: string): boolean;
+var
+  Key: string;
+  KeyHandle: HKEY;
+begin
+  Result := False;
+  if (KeyName <> '') and (DisplayName <> '') and (CommandLine <> '') then
+    begin
+    Key := BaseKeyForUninstallData + KeyName;
+    if RegCreateKeyEx(HKEY_LOCAL_MACHINE, PChar(Key), 0, nil, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, nil, KeyHandle, nil) = ERROR_SUCCESS then
+      try
+        if RegSetValueEx(KeyHandle, 'DisplayName', 0, REG_SZ, PChar(DisplayName), Succ(Length(DisplayName))*Sizeof(Char)) = ERROR_SUCCESS then
+          if RegSetValueEx(KeyHandle, 'UninstallString', 0, REG_SZ, PChar(CommandLine), Succ(Length(CommandLine))*Sizeof(Char)) = ERROR_SUCCESS then
+            if RegSetValueEx(KeyHandle, 'QuietUninstallString', 0, REG_SZ, PChar(CommandLine), Succ(Length(CommandLine))*Sizeof(Char)) = ERROR_SUCCESS then
+              Result := True;
+      finally
+        RegCloseKey(KeyHandle);
+        if not Result then
+          RegDeleteKey(HKEY_LOCAL_MACHINE, PChar(Key));
+        end;
+    end;
+end;
+
+function UnregisterUninstallApplication(const KeyName: string): boolean;
+begin
+  Result := False;
+  if KeyName <> '' then
+    Result := RegDeleteKey(HKEY_LOCAL_MACHINE, PChar(BaseKeyForUninstallData + KeyName)) = ERROR_SUCCESS;
+end;
 {$ENDIF}
 
 {$IFDEF USYSTEM_NET}
@@ -1217,10 +1312,11 @@ begin
 // FreeMem(pszPath);
 end;
 
-procedure ForceDeleteDirectory(APath: string);
+function ForceDeleteDirectory(APath: string): boolean;
 var SR: TSearchRec;
     OK: integer;
 begin
+  Result := True;
   if APath = '' then
     Exit;
   APath := IncludeTrailingPathDelimiter(APath);
@@ -1231,7 +1327,8 @@ begin
       if Longbool(SR.Attr and faDirectory) then
         begin
         if (SR.Name <> '.') and (SR.Name <> '..') then
-          ForceDeleteDirectory(APath + SR.Name + '\');
+          if not ForceDeleteDirectory(APath + SR.Name + '\') then
+            Result := False;
         end
       else
         begin
@@ -1244,14 +1341,16 @@ begin
             {$WARN SYMBOL_PLATFORM ON}
           {$ENDIF}
         {$ENDIF}
-        SysUtils.DeleteFile(APath + SR.Name);
+        if not SysUtils.DeleteFile(APath + SR.Name) then
+          Result := False;
         end;
       OK := FindNext(SR);
       end;
   finally
     SysUtils.FindClose(SR);
     end;
-  RemoveDir(ExcludeTrailingPathDelimiter(APath));
+  if Result then
+    Result := RemoveDir(ExcludeTrailingPathDelimiter(APath));
 end;
 
 function SystemTempDir: string;

@@ -63,7 +63,14 @@ type
 implementation
 
 uses
+  uDownloadClassifier,
   uLanguages, uMessages;
+
+// Known media formats
+const
+  URLREGEXP_BEFORE_ID = '^';
+  URLREGEXP_ID =        'https?://[^/]+/[^?]+\.(?:avi|mp[34g]|flv)';
+  URLREGEXP_AFTER_ID =  '';
 
 { THttpDirectDownloader }
 
@@ -74,10 +81,7 @@ end;
 
 class function THttpDirectDownloader.UrlRegExp: string;
 begin
-  Raise EDownloaderError.Create('THttpDirectDownloader.UrlRegExp is not supported.');
-  {$IFDEF FPC}
-  Result := '';
-  {$ENDIF}
+  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
 constructor THttpDirectDownloader.Create(const AMovieID: string);
@@ -116,5 +120,10 @@ begin
     Result := True;
     end;
 end;
+
+initialization
+  {$IFDEF DIRECTDOWNLOADERS}
+  RegisterDownloader(THttpDirectDownloader);
+  {$ENDIF}
 
 end.

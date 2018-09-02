@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;DEBUG
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=--gui
+RunParams=http://www.perfectgirls.net/375497/Slender_girl_with_long__blonde_hair__Anjelica_is_having_sex_with_her_boyfriend__in_the_morning
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=49
 Release=0
-Build=1211
+Build=1224
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.49.0.1211
+FileVersion=1.49.0.1224
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=

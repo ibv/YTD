@@ -46,6 +46,7 @@ const
   SETUP_PARAM_UPGRADE_GUI {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '--upgrade-gui';
   SETUP_PARAM_INSTALL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '--install';
   SETUP_PARAM_INSTALL_GUI {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '--install-gui';
+  SETUP_PARAM_UNINSTALL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '--uninstall';
 
 implementation
 

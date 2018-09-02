@@ -63,7 +63,7 @@ nopath:
 	INVOKE GetCommandLineA
 	MOV edi, eax
 	LEA ebx, setupcmdline
-	MOV cmdline, EBX
+	MOV cmdline, ebx
 	OR eax, eax
 	JE UnexpectedError
 	CMP BYTE PTR [edi], 0

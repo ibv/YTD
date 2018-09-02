@@ -41,8 +41,8 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  HttpSend,
-  uCompatibility, uOptions, {$IFDEF SETUP} uSetup, {$ENDIF} uFunctions;
+  HttpSend, SynaUtil,
+  uCompatibility, uOptions, {$IFDEF SETUP} uSetup, {$ENDIF} uFunctions, uPCRE;
 
 type
   TYTDUpgrade = class;
@@ -269,8 +269,8 @@ function TYTDUpgrade.GetNewestVersionUrl(const BaseUrl: string; out Version, Url
   // Note: Must be thread-safe
 var
   Http: THttpSend;
-  Ver: string;
-  n: integer;
+  Ver, Protocol, User, Password, Host, Port, Path, Parameters: string;
+  IsRedirect: boolean;
 begin
   Result := False;
   Version := '';
@@ -280,25 +280,20 @@ begin
     try
       if Http.HttpMethod('HEAD', Url) then
         if (Http.ResultCode >= 200) and (Http.ResultCode < 400) then
+          begin
+          IsRedirect := FindHttpHeader(Http, 'Location', Url);
           if FindHttpHeader(Http, 'X-YTD-Version', Version) then
             Result := True
-          else if FindHttpHeader(Http, 'Location', Url) then
+          else if IsRedirect then
             begin
-            Ver := ChangeFileExt(Url, '');
-            n := Length(Ver);
-            while (n >= 1) and CharInSet(Ver[n], ['0'..'9']) do
-              Dec(n);
-            if (n >= 1) and (Ver[n] = '.') then
-              repeat
-                Dec(n);
-                if (n < 1) or (not CharInSet(Ver[n], ['0'..'9'])) then
-                  begin
-                  Version := Copy(Ver, Succ(n), MaxInt);
-                  Result := True;
-                  Break;
-                  end;
-              until False;
+            ParseUrl(Url, Protocol, User, Password, Host, Port, Path, Parameters);
+            if TRegExp.Match('[/-](?P<VER>\d+(?:\.\d+)+)[.-].*?$', Path, 'VER', Ver) then
+              begin
+              Version := Ver;
+              Result := True;
+              end;
             end;
+          end;
     finally
       FreeAndNil(Http);
       end;

@@ -237,7 +237,11 @@ end;
 
 function StringToAnsiEncodedUtf8(const Value: string; BOM: boolean = False): AnsiString;
 begin
+  {$IFDEF UNICODE}
   Result := WideToAnything(CP_UTF8, @Value[1], Length(Value));
+  {$ELSE}
+  Result := WideToUtf8(AnsiToWide(Value));
+  {$ENDIF}
   if BOM then
     Result := #$ef#$bb#$bf + Result;
 end;

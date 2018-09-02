@@ -359,12 +359,12 @@ end;
 
 procedure TFormOptions.actDesktopShortcutExecute(Sender: TObject);
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), SETUP_PARAM_GUI);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), ''{SETUP_PARAM_GUI});
 end;
 
 procedure TFormOptions.actStartMenuShortcutExecute(Sender: TObject);
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), SETUP_PARAM_GUI);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), ''{SETUP_PARAM_GUI});
 end;
 
 procedure TFormOptions.ShowDownloaderOptionsPage(Index: integer);

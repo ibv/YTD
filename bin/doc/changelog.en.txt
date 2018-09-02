@@ -1,11 +1,67 @@
 ﻿______________________________________________________________________________
 
-YTD v1.52                                                    (c) 2009-15 Pepak
+YTD v1.53                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.53:
+
+    * New providers
+      - Bewusst.tv
+      - Gazeta.tv (used from, e.f., wyborcza.pl)
+      - LiveStream.com
+      - PerfectGirls.net (porn)
+      - RT.com
+      - TheGuardian.com
+      - TVP.pl
+
+    * Updated providers:
+      - SpankingTube.com
+      - VideaCesky.cz
+
+    * Removed providers:
+      - Beeg.com (can't get it to work).
+
+    * Fixed the bug from version 1.50-1.52, which prevented automatic
+      updates from working (YTD reported that it "Failed to execute the
+      upgrade file").
+
+    * Fixed multiple bugs due to missing or damaged configuration files:
+
+      a) On first run, if you chose the normal (non-portable) version,
+         YTD failed due to non-existent file with script definitions.
+
+      b) If you started a normal (non-portable) version but there was
+         no configuration file in user's profile, the config would get
+         saved into the main configuration file.
+
+    * Added UAC manifest to the installation program. Thanks to this,
+      the installation should now work even on Windows 10 machines with
+      UAC enabled. This also fixes the Windows 7 and newer's warning that
+      installation didn't complete successfully.
+
+    * Added an uninstallation program, accessible from Control Panels.
+
+    * The install program now creates shortcuts in the shared Start menu
+      rather than user's. The reason is that I wanted to maintain consistency
+      with the previous change which only works with shared locations.
+
+    * Modified the playlist downloader: If a video name is not known,
+      the standard video name supplied by the video's provider will be
+      used instead of the standard "Playlist item 1".
+
+    * Parser for generic HTML pages now supports direct links to known
+      media file formats (MP3, MP4 etc.). That should improve YTD's
+      compatibility with some previously unsupported webpages.
+
+    * The <if> command of the scripting language got a few new conditions:
+      var_exists, xml_var_exists. Details can be found in the scripting
+      language's documentation in sections 3.13.2 and 3.13.3.
+
+
 
   v1.52:
 

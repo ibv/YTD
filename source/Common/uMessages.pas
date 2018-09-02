@@ -46,6 +46,9 @@ const
   APPLICATION_CAPTION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} + ' v' + {$INCLUDE 'ytd.version'};
   APPLICATION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.pepak.net/ytd';
   APPLICATION_SHORTCUT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD.lnk';
+  {$IFDEF SETUP}
+  APPLICATION_UNINSTALL_ID {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD_Pepak';
+  {$ENDIF}
 
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
@@ -77,6 +80,8 @@ resourcestring
   MSG_MSDL_NOT_FOUND_ACTION_SUFFIX = 'Would you like to download and install MSDL?';
   MSG_EXTERNAL_LIBS_DOWNLOAD = 'Download URL:';
   MSG_EXTERNAL_LIBS_WERE_DOWNLOADED = 'External libraries have been downloaded and installed.'#10'Please restart YTD to activate them.';
+  MSG_WANT_TO_UNINSTALL = 'Are you sure you want to uninstall YTD?';
+  MSG_UNINSTALL_COMPLETE = 'Uninstallation completed.';
 
   // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!'; // Attempted to access data which depends Prepare without running Prepare

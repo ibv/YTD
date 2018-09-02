@@ -138,7 +138,8 @@ end;
 
 function TPlaylistDownloader.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
 begin
-  Result := Format(MSG_PLAYLIST_ITEM, [Index]);
+  //Result := Format(MSG_PLAYLIST_ITEM, [Index]);
+  Result := '';
 end;
 
 function TPlaylistDownloader.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;

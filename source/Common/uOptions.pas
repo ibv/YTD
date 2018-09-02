@@ -77,6 +77,8 @@ type
       function BooleanToXml(const Value: boolean): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property Xml: TXmlDoc read fXml;
       property XmlFileName: string read fXmlFileName write fXmlFileName;
+      property MainXmlFileName: string read fMainXmlFileName;
+      property UserXmlFileName: string read fUserXmlFileName;
     protected
       function GetPortableMode: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetPortableMode(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -332,7 +334,7 @@ begin
   Xml.Root.Name := XML_ROOTNAME;
   try
     if (not Load(IgnoreInitErrors)) or (not PortableMode) then
-      if (fUserXmlFileName <> '') and FileExists(fUserXmlFileName) then
+      if (fUserXmlFileName <> '') and (FileExists(fUserXmlFileName) or (not PortableMode)) then
         begin
         XmlFileName := fUserXmlFileName;
         Load(IgnoreInitErrors);
@@ -663,7 +665,7 @@ function TYTDOptions.GetScriptFileName: string;
 const
   DEFS_FILENAME = 'ytd-defs.xml';
 var
-  MainFileName: string;
+  MainFileName, ProfileDir: string;
 begin
   Result := GetOption(XML_PATH_SCRIPTFILENAME, '');
   if Result = '' then
@@ -673,9 +675,14 @@ begin
       Result := MainFileName
     else
       begin
-      Result := ExtractFilePath(XmlFileName) + DEFS_FILENAME;
+      ProfileDir := ExtractFilePath(XmlFileName);
+      Result := ProfileDir + DEFS_FILENAME;
       if (not FileExists(Result)) or (GetFileDateTime(Result) < GetFileDateTime(MainFileName)) then
+        begin
+        if not DirectoryExists(ProfileDir) then
+          CreateDir(ProfileDir);
         CopyFile(PChar(MainFileName), PChar(Result), False);
+        end;
       end;
     end;
 end;

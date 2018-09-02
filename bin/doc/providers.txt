@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.52+                                                   (c) 2009-15 Pepak
+YTD v1.53+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -37,6 +37,7 @@ Azet.sk             | HTTP     |       | http://tivi.azet.sk/video/1371198/tento
 Bahnorama.com       | HTTP     |       | http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
 BandZone.cz         | HTTP     |       | http://bandzone.cz/teensjazzbandvelkelosiny?at=video;vi=9556
 Barrandov.tv        | HTTP     |       | http://www.barrandov.tv/video/15468-hlavni-zpravy-24-6-2013
+Bewusst.tv          | HTTP     |       | http://bewusst.tv/umgang-mit-herausfordernden-zeiten/
 Bing.com            | HTTP     |       | http://www.bing.com/videos/watch/video/surfer-mounts-hd-camera-to-board/1abwgqhhl
 Blenus.com          | HTTP     |       | http://www.blennus.com/index.php?option=content&task=view&id=1027&Itemid=
 Blip.tv             | HTTP     |       | http://blip.tv/play/hIVV4tIUAg
@@ -113,6 +114,7 @@ GameSpot.com        | HDS      |       | http://www.gamespot.com/e3/microsoft-pr
                     |          |       | http://www.gamespot.com/videos/embed/6419027/
 GameZone.com        | RTMP     |       | http://www.gamezone.com/videos/guild-wars-2-cinematic-conversation-trailer
 Games.Tiscali.cz    | HTTP     |       | http://games.tiscali.cz/video/zhodnotte-alternativni-pruchod-far-cry-3-dema-z-e3-2011-56300
+Gazeta.tv           | HTTP     |       | http://www.gazeta.tv/plej/29,107457,18675257,88292,video.html?embed=0&autoplay=1
 GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
 Gordon.ura.cz       | Nested   |       | http://gordon.ura.cz/?p=1932
 GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
@@ -153,6 +155,7 @@ LevelTV.Hrej.cz     | HTTP     | 9,10  | http://leveltv.hrej.cz/include/2012/led
 LibimSeTi.cz        | HTTP     |       | http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
 LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272904024
                     |          |       | http://www.liveleak.com/e/57d_1278546690
+LiveStream.com      | HTTP     |       | http://livestream.com/accounts/5718087/events/4480901
 LiveVideo.com       | HTTP     |       | http://www.livevideo.com/liveshow/brian3maria
 Loupak.cz           | HTTP     |       | http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
 Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
@@ -247,6 +250,7 @@ RockstarGames.com   | HTTPS    |       | https://tv.rockstargames.com/videos/vie
 Rozhlas.cz          | HTTP     |       | http://prehravac.rozhlas.cz/audio/2483476
                     |          |       | http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
 RozzlobeniMuzi.com  | HTTP     | F     | http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
+RT.com              | HTTP     |       | https://www.rt.com/shows/sophieco/324941-nuclear-cold-war-us/
 RTA.cz              | MS       |       | http://www.rta.cz/?article=140331
                     |          |       | http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 Rtl.be              | HTTP     |       | http://www.rtl.be/videos/video/456817.aspx
@@ -291,6 +295,7 @@ Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewke
 TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
 Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html
 ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/penguins_dont_like_water
+TheGuardian.com     | HTTP     |       | http://www.theguardian.com/environment/2015/dec/30/giant-squid-that-swam-into-japanese-bay-guided-back-out-to-sea-by-diver
 TN.Nova.cz          | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
@@ -306,6 +311,8 @@ TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
 TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
 TVNoe.cz            | HTTP     |       | http://www.tvnoe.cz/video/5638
 TVNoviny.sk         | HTTP     | 8     | http://tvnoviny.sk/video/videospravy/televizne-noviny/2432970
+TVP.pl              | HTTP     |       | http://vod.tvp.pl/21576772/inka-1946
+                    |          |       | http://vod.tvp.pl/sess/tvplayer.php?object_id=21576772&autoplay=true
 TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66
 TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
 TV-Vysocina.cz      | MS       | 9     | http://www.tv-vysocina.cz/index.php?page=2&datum=2011-12-16%2018:10:00&vselect1=4927&jednotlive=1

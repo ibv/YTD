@@ -67,7 +67,7 @@ uses
 const
   REGEXP_URL = '(?:\bhref'
              + '|\bsrc'
-             + '|<param\s+name=(?P<Q1>["''])movie(?P=Q1)\s+value=)\s*=\s*(?P<Q>["''])(?P<URL>(?:https?|mmsh?|rtmpt?e?)://.+?)(?P=Q)'
+             + '|<param\s+name=(?P<Q1>["''])movie(?P=Q1)\s+value=)\s*=\s*(?P<Q>["''])(?P<URL>(?:(?:https?|mmsh?|rtmpt?e?):/)?/.+?)(?P=Q)'
              ;
   REGEXP_TITLE = REGEXP_TITLE_TITLE;
 
@@ -95,12 +95,15 @@ begin
 end;
 
 function TPlaylist_HTML.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
+var
+  Url: string;
 begin
-  Result := inherited GetPlayListItemURL(Match, Index);
-  Result := HtmlDecode(Result);
-  Classifier.Url := Result;
-  if Classifier.Downloader = nil then
-    Result := '';
+  Result := '';
+  Url := inherited GetPlayListItemURL(Match, Index);
+  Url := GetRelativeUrl(LastUrl, HtmlDecode(Url));
+  Classifier.Url := Url;
+  if Classifier.Downloader <> nil then
+    Result := Url;
 end;
 
 function TPlaylist_HTML.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
@@ -109,8 +112,8 @@ var
 begin
   if Match.SubexpressionByName('NAME', ItemName) then
     Result := ItemName
-  else if UnpreparedName <> '' then
-    Result := UnpreparedName
+//  else if UnpreparedName <> '' then
+//    Result := UnpreparedName
   else
     Result := inherited GetPlayListItemName(Match, Index);
 end;

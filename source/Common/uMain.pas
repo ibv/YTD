@@ -74,10 +74,15 @@ uses
       guiMainVCL,
     {$ENDIF}
   {$ENDIF}
-  uFunctions, uMessages;
+  uSystem, uFunctions, uMessages;
 
 type
-  TStartupType = ( {$IFDEF CLI} stCLI, {$ENDIF} {$IFDEF GUI} stGUI, stGUIexplicit, {$ENDIF} {$IFDEF SETUP} stInstall, {$ENDIF} stNone);
+  TStartupType = ( {$IFDEF CLI} stCLI, {$ENDIF} {$IFDEF GUI} stGUI, stGUIexplicit, {$ENDIF} {$IFDEF SETUP} stInstall, stUninstallPhase1, stUninstallPhase2, {$ENDIF} stNone);
+
+const
+  RESCODE_OK = 0;
+  RESCODE_INSTALL_FAILED = 253;
+  RESCODE_UNINSTALL_FAILED = 252;
 
 var
   StartedFromIDE: boolean;
@@ -155,6 +160,16 @@ begin
       Break;
       end
     {$ENDIF}
+    else if AnsiCompareText(Param, SETUP_PARAM_UNINSTALL) = 0 then
+      begin
+      InstallDir := '';
+      if i < ParamCount then
+        InstallDir := ParamStr(Succ(i));
+      if (InstallDir <> '') and FileExists(InstallDir) then
+        Result := stUninstallPhase2
+      else
+        Result := stUninstallPhase1;
+      end
     else if (AnsiCompareText(Param, SETUP_PARAM_UPGRADE) = 0) or (AnsiCompareText(Param, SETUP_PARAM_UPGRADE_GUI) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL_GUI) = 0) then
       begin
       if i < ParamCount then
@@ -279,6 +294,7 @@ var OK: boolean;
     InstDir, InstExe: string;
 begin
   OK := False;
+  ExitCode := RESCODE_INSTALL_FAILED;
   InstDir := IncludeTrailingPathDelimiter(InstallDir);
   InstExe := InstDir + ExtractFileName(ParamStr(0));
   if InstallDir <> '' then
@@ -289,7 +305,8 @@ begin
       if DesktopShortcut then
         CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe, SETUP_PARAM_GUI);
       if StartMenuShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe, SETUP_PARAM_GUI);
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, InstExe, SETUP_PARAM_GUI);
+      RegisterUninstallApplication(APPLICATION_UNINSTALL_ID, 'YTD (pepak)', AnsiQuotedStr(InstExe, '"') + ' --uninstall');
       end;
     end;
   if not OK then
@@ -304,7 +321,6 @@ begin
       {$ENDIF}
         MessageBox(0, PChar(ERR_INSTALL_FAILED), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
     {$ENDIF}
-    ExitCode := 253;
     end
   else
     begin
@@ -312,6 +328,64 @@ begin
     if RestartYTD then
       Run(InstExe, '', ExcludeTrailingPathDelimiter(InstDir));
     end;
+end;
+
+procedure RunUninstallPhase1;
+var
+  Dir, FileName, FN: string;
+begin
+  ExitCode := RESCODE_UNINSTALL_FAILED;
+  if MessageBox(0, PChar(MSG_WANT_TO_UNINSTALL), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+    begin
+    Dir := IncludeTrailingPathDelimiter(SystemTempFile(SystemTempDir, 'YTD'));
+    CreateDir(Dir);
+    FileName := Dir + ExtractFileName(ParamStr(0));
+    if CopyFile(PChar(ParamStr(0)), PChar(FileName), False) then
+      begin
+      FN := 'setup.exe';
+      if FileExists(ExtractFilePath(ParamStr(0)) + FN) then
+        if CopyFile(PChar(FN), PChar(Dir + FN), False) then
+          FileName := Dir + FN;
+      if FileExists(FileName) then
+        if Run(FileName, SETUP_PARAM_UNINSTALL + ' ' + AnsiQuotedStr(ParamStr(0), '"')) then
+          begin
+          {$IFDEF DIRTYHACKS}
+          Sleep(100); // Without this, the FileName doesn't actually execute. Might be necessary to use CreateProcess?
+          {$ENDIF}
+          ExitCode := 0;
+          end;
+      end;
+    end;
+end;
+
+procedure RunUninstallPhase2(const ExeFileName: string);
+const
+  MAX_DELETE_TRIES = 5;
+  DELAY_BETWEEN_TRIES = 100;
+var
+  Dir: string;
+  i: integer;
+begin
+  ExitCode := RESCODE_UNINSTALL_FAILED;
+  if InstallDir <> '' then
+    if FileExists(ExeFileName) then
+      if FileContentsSame(ExeFileName, ParamStr(0)) then
+        begin
+        Dir := ExcludeTrailingPathDelimiter(ExtractFilePath(ExeFileName));
+        if (Dir <> '') and (ExtractFilePath(Dir) <> '') then
+          begin
+          for i := 1 to MAX_DELETE_TRIES do
+            if ForceDeleteDirectory(Dir) then
+              Break
+            else
+              Sleep(DELAY_BETWEEN_TRIES);
+          DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ExeFileName);
+          DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, ExeFileName);
+          UnregisterUninstallApplication(APPLICATION_UNINSTALL_ID);
+          ExitCode := 0;
+          MessageBox(0, PChar(MSG_UNINSTALL_COMPLETE), PChar(APPLICATION_TITLE), MB_OK or MB_TASKMODAL);
+          end;
+        end;
 end;
 {$ENDIF}
 
@@ -368,6 +442,10 @@ begin
       {$IFDEF SETUP}
       stInstall:
         RunInstall(InstallDir, DesktopShortcut, StartMenuShortcut, RestartYTD);
+      stUninstallPhase1:
+        RunUninstallPhase1;
+      stUninstallPhase2:
+        RunUninstallPhase2(InstallDir);
       {$ENDIF}
       end;
   except

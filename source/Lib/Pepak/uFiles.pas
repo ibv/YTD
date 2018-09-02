@@ -745,6 +745,7 @@ var
   UTF16Buf: Word;
   StrBuf: RawByteString;
   StrBufSize, OddZeroCount, EvenZeroCount, i, n: integer;
+  HighAsciiFound: boolean;
 begin
   fEncoding := feAnsi;
   fBigEndian := False;
@@ -793,6 +794,19 @@ begin
     SetLength(StrBuf, StrBufSize);
     StrBufSize := Read(StrBuf[1], StrBufSize);
     SetLength(StrBuf, StrBufSize);
+    // If no high-ASCII chars are present, assume ANSI
+    HighAsciiFound := False;
+    for i := 1 to Length(StrBuf) do
+      if StrBuf[i] >= #128 then
+        begin
+        HighAsciiFound := True;
+        Break;
+        end;
+    if not HighAsciiFound then
+      begin
+      fEncoding := feANSI;
+      Exit;
+      end;
     // Try to convert the stream as UTF8. If it succeeds, assume UTF8
     if (Size <= MAX_SIZE_FOR_AUTODETECT) then
       begin

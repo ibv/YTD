@@ -253,12 +253,12 @@ end;
 
 procedure TFrameMainOptions.ButtonShortcutOnDesktopClick;
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), SETUP_PARAM_GUI);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), ''{SETUP_PARAM_GUI});
 end;
 
 procedure TFrameMainOptions.ButtonShortcutInStartMenuClick;
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), SETUP_PARAM_GUI);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), ''{SETUP_PARAM_GUI});
 end;
 
 initialization

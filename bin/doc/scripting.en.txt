@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.51+                                                   (c) 2009-15 Pepak
+YTD v1.53+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -425,6 +425,32 @@ error.
             <condition type="regexp_match" id="title" content="data">
               <debug>Regexp with id="title" matched the data in variable "data"</debug>
             </condition>
+
+    3.13.2 "var_exists"
+
+        The condition tag gets processed as if it were a <get_var> tag
+        (see section 4.1 below). If successful, that is, if a variable
+        exists, the condition is satisfied.
+
+        Example:
+
+            <condition type="var_exists" id="title">
+              <debug>Variable "title" exists</debug>
+            </condition>
+
+    3.13.3 "xml_var_exists"
+
+        The condition tag gets processed as if it were a <get_xml_var> tag
+        (see section 4.2 below). If successful, that is, if a XML content
+        identified by the path and/or attribute exists, the condition is 
+        satisfied.
+
+        Example:
+
+            <condition type="var_exists" id="xmlinfo" path="video/url">
+              <debug>Node &lt;video&gt;&lt;url&gt; exists</debug>
+            </condition>
+
 
 
 3.14 <pause>

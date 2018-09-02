@@ -56,6 +56,7 @@ function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState): boolea
 function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState; const Current, Total: int64): boolean; overload;
 function GetSpecialFolder(FolderID: integer): string;
 function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean;
+function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
 function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle = 0): boolean; overload;
 function Run(const FileName, CommandLine: string; OwnerHandle: THandle = 0): boolean; overload;
 function Run(const FileName: string; OwnerHandle: THandle = 0): boolean; overload;
@@ -70,6 +71,7 @@ function DownloadFromHttp(const Url: string; Options: TYTDOptions; Stream: TStre
 function SafeRelativeFileName(const FileName: string): string;
 function Unzip(const FileName, DestinationDir: string): boolean; overload;
 function Unzip(Stream: TStream; const DestinationDir: string): boolean; overload;
+function FileContentsSame(const FileName1, FileName2: string): boolean;
 
 implementation
 
@@ -206,6 +208,24 @@ begin
   finally
     CoUninitialize;
     end;
+end;
+
+function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
+var
+  Dir, ShortcutFile: string;
+begin
+  if WhereCSIDL = 0 then
+    Dir := Where
+  else
+    Dir := GetSpecialFolder(WhereCSIDL);
+  if Dir = '' then
+    ShortcutFile := ShortcutName
+  else
+    ShortcutFile := Dir + '\' + ShortcutName;
+  if FileExists(ShortcutFile) then
+    Result := SysUtils.DeleteFile(ShortcutFile)
+  else
+    Result := True;
 end;
 
 function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle): boolean; overload;
@@ -448,6 +468,45 @@ begin
       end;
   finally
     FreeAndNil(Zip);
+    end;
+end;
+
+function FileContentsSame(const FileName1, FileName2: string): boolean;
+const
+  BUFFER_SIZE = 32768;
+var
+  File1, File2: TFileStream;
+  Buffer1, Buffer2: array[0..BUFFER_SIZE-1] of byte;
+  n1, n2: integer;
+begin
+  Result := False;
+  if FileExists(FileName1) and FileExists(FileName2) then
+    begin
+    File1 := TFileStream.Create(FileName1, fmOpenRead or fmShareDenyWrite);
+    try
+      File2 := TFileStream.Create(FileName2, fmOpenRead or fmShareDenyWrite);
+      try
+        if File1.Size = File2.Size then
+          begin
+          Result := True;
+          while Result do
+            begin
+            n1 := File1.Read(Buffer1[0], BUFFER_SIZE);
+            n2 := File2.Read(Buffer2[0], BUFFER_SIZE);
+            if n1 <> n2 then
+              Result := False
+            else if n1 <= 0 then
+              Break
+            else
+              Result := CompareMem(@Buffer1[0], @Buffer2[0], n1);
+            end;
+          end;
+      finally
+        FreeAndNil(File2);
+        end;
+    finally
+      FreeAndNil(File1);
+      end;
     end;
 end;
 

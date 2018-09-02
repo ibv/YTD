@@ -1,11 +1,68 @@
 ﻿______________________________________________________________________________
 
-YTD v1.52                                                    (c) 2009-15 Pepak
+YTD v1.53                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.53:
+
+    * Noví poskytovatelé:
+      - Bewusst.tv
+      - Gazeta.tv (používá se např. z wyborcza.pl)
+      - LiveStream.com
+      - PerfectGirls.net (porno)
+      - RT.com
+      - TheGuardian.com
+      - TVP.pl
+
+    * Aktualizovaní poskytovatelé:
+      - SpankingTube.com
+      - VideaCesky.cz
+
+    * Odstranění poskytovatelé:
+      - Beeg.com (nedaří se dekódovat).
+
+    * Opravena chyba z verzí 1.50-1.52, kvůli které nešlo provádět 
+      automatické aktualizace (YTD hlásil, že "Nepodařilo se spustit 
+      aktualizační soubor.").
+
+    * Opraveny chyby kvůli neplatným nebo neexistujícím konfiguračním
+      souborům:
+
+      a) Při prvním spuštění programu a volbě normální (ne portable) verze
+         došlo k chybě, že neexistuje soubor s definicemi skriptů.
+
+      b) Při spuštění programu v normálním (ne portable) režimu, pokud
+         neexistoval konfigurační soubor v profilu uživatele, tak se
+         konfigurace ukládala do hlavního konfiguračního souboru.
+
+    * Doplněn UAC manifest pro instalační program. Díky tomu by nyní měla
+      fungovat instalace i upgrade správně i na počítačích s Windows 10
+      a zapnutým UAC. Na Windows 7 a novějších už se nebude zobrazovat
+      upozornění, že instalace nedoběhla správně.
+
+    * Doplněn odinstalační program, dostupný standardně z ovládacích panelů.
+
+    * Instalační program nyní vytváří odkaz ve společném Start menu, nikoliv
+      uživatelském. Souvisí to s předchozí změnou, která vyžaduje společné
+      umístění odinstalačního souboru.
+
+    * Stahování z playlistu nyní v případě, že není určeno jméno videa,
+      místo standardního názvu "1. položka playlistu" použije název videa,
+      jak ho dodá jeho poskytovatel.
+
+    * Při dekódování obecné HTML stránky se automaticky vyhledávají i
+      odkazy na známé formáty mediálních souborů (MP3, MP4 atd.). To
+      umožní stahovat z mnoha dalších dříve nepodporovaných stránek.
+
+    * Do skriptovacího jazyka byly k příkazu <if> doplněny další typy
+      podmínek: var_exists, xml_var_exists. Podrobnosti jsou v dokumentaci
+      skriptovacího jazyka (sekce 3.13.2, 3.13.3).
+
+
 
   v1.52:
 

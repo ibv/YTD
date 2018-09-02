@@ -93,8 +93,10 @@ type
       procedure ProcessHDSDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessHLSDownload(Node: TXmlNode; Vars: TScriptVariables);
       function ProcessNodeContent(Node: TXmlNode; Vars: TScriptVariables): string;
-      function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string;
-      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
+      function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
+      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
+      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string; overload;
@@ -775,7 +777,9 @@ begin
     end;
   // URL
   if not GetNodeContent(Node, 'url', Vars, Url) then
-    ScriptError(ERR_SCRIPTS_URL_NOT_FOUND, Node);
+    ScriptError(ERR_SCRIPTS_URL_NOT_FOUND, Node)
+  else
+    Url := GetRelativeUrl(RelativeUrl, Url);
   // POST Data
   if GetNodeContent(Node, 'post_data', Vars, PostData) then
     Method := hmPOST
@@ -850,6 +854,17 @@ begin
     end;
 end;
 
+function TScriptedDownloader.ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
+begin
+  // This way because multiple error conditions exist
+  try
+    Value := ProcessGetVar(Node, Vars);
+    Result := True;
+  except
+    Result := False;
+    end;
+end;
+
 function TScriptedDownloader.ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string;
 var
   VarName: string;
@@ -859,6 +874,17 @@ begin
     ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
   else
     Result := Vars[VarName];
+end;
+
+function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
+begin
+  // This way because multiple error conditions exist
+  try
+    Value := ProcessGetVar(Node, Vars);
+    Result := True;
+  except
+    Result := False;
+    end;
 end;
 
 function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
@@ -1056,6 +1082,10 @@ begin
   ConditionType := XmlAttribute(Node, 'type');
   if ConditionType = 'regexp_match' then
     Result := ProcessRegExp(Node, Vars, Dummy)
+  else if ConditionType = 'var_exists' then
+    Result := ProcessGetVar(Node, Vars, Dummy)
+  else if ConditionType = 'xml_var_exists' then
+    Result := ProcessGetXmlVar(Node, Vars, Dummy)
   else
     ScriptError(ERR_SCRIPTS_UNKNOWN_CONDITION, Node);
 end;

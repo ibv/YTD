@@ -87,19 +87,22 @@ const
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
   REGEXP_MOVIE_AREA = '(?P<AREA><div\s[^>]*\bid="contentArea".*)';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..5] of string
+  REGEXP_EXTRACT_NESTED_URLS: array[0..6] of string
     = ('\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="movie"\s+value="\s*(?P<URL>https?://.+?)"',
        '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<embed\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"',
-       '<iframe\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"'
+       '<iframe\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"',
+       '\.setup\s*\(\s*\{.*?\bfile\s*:\s*"(?P<URL>https?://[^"]+)"'
        );
   {$IFDEF SUBTITLES}
-  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..2] of string
+  REGEXP_EXTRACT_SUBTITLE_URLS: array[0..3] of string
     = ('\sflashvars="(?:[^"]*&amp;)?captions\.file=\s*(?P<SUBTITLES>https?://[^&"]+)',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
-       '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)');
+       '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?captions\.file=(?P<SUBTITLES>https?://[^&"]+)',
+       '\.setup\s*\(\s*\{.*?\btracks\s*:\s*\[\s*\{.*?\bfile\s*:\s*"(?P<SUBTITLES>https?://[^"]+\.srt)"'
+       );
   {$ENDIF}
 
 { TDownloader_VideaCesky }

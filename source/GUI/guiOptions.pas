@@ -162,30 +162,46 @@ const
   XML_DEFAULT_MINIMIZETOTRAY = True;
 
 procedure TYTDOptionsGUI.Init;
+var
+  XmlFileExists, WantPortableMode: boolean;
 begin
   fLoadSuccessful := False;
   inherited;
-  if not fLoadSuccessful then
+  XmlFileExists := FileExists(XmlFileName);
+  if (not fLoadSuccessful) or (not XmlFileExists) then
     begin
     {$IFDEF GUI_WINAPI}
     MessageBox(0, PChar(_(INITIALRUN_WELCOMEMSG)), PChar(APPLICATION_TITLE), MB_OK or MB_ICONWARNING or MB_TASKMODAL);
     {$ELSE}
     MessageDlg(_(INITIALRUN_WELCOMEMSG), mtWarning, [mbOK], 0);
     {$ENDIF}
-    BuildDefaultConfig;
-//    {$IFDEF CONVERTERS}
-//    Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
-//    {$ENDIF}
-    {$IFDEF GUI_WINAPI}
-    PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
-    {$ELSE}
-    PortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
-    {$ENDIF}
+    if fLoadSuccessful then
+      WantPortableMode := PortableMode
+    else
+      begin
+      {$IFDEF GUI_WINAPI}
+      WantPortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
+      {$ELSE}
+      WantPortableMode := MessageDlg(_(INITIALRUN_WANTPORTABLE), mtConfirmation, [mbYes, mbNo], 0) = idYes;
+      {$ENDIF}
+      // Generate an empty XML file in the application's directory
+      if not WantPortableMode then
+        begin
+        if FileExists(XmlFileName) then
+          DeleteFile(PChar(XmlFileName));
+        PortableMode := False;
+        end;
+      end;
+    // Now create a real XML file in the profile directory
+    if not XmlFileExists then
+      BuildDefaultConfig;
+    PortableMode := WantPortableMode;
     {$IFDEF GUI_WINAPI}
     CheckForNewVersionOnStartup := MessageBox(0, PChar(_(INITIALRUN_WANTNEWVERSIONCHECK)), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}
     CheckForNewVersionOnStartup := MessageDlg(_(INITIALRUN_WANTNEWVERSIONCHECK), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}
+    Save;
     end;
 end;
 
