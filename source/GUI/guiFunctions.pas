@@ -82,10 +82,15 @@ begin
 end;
 
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
-var BugReportUrl: string;
+var
+  BugReportUrl, DefsVersion: string;
 begin
+  DefsVersion := '';
+  if TScriptedDownloader.MainScriptEngine <> nil then
+    DefsVersion := TScriptedDownloader.MainScriptEngine.Version;
   BugReportUrl := Format(BUGREPORT_URL,
                        [ APPLICATION_VERSION,
+                         DefsVersion,
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
                        ]);

@@ -49,7 +49,7 @@ const
 
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
-  BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&url=%s&error=%s';
+  BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&defs=%s&url=%s&error=%s';
 
 
 {gnugettext: scan-all}
@@ -103,7 +103,6 @@ resourcestring
 
   ERR_SCRIPTS_ERROR = 'Script error: ';
   ERR_SCRIPTS_URL_NOT_FOUND = 'URL not found.';
-  ERR_SCRIPTS_BASEURL_NOT_FOUND = 'Base URL not found.';
   ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED = 'Url pattern is empty.';
   ERR_SCRIPTS_SCRIPT_NOT_FOUND = 'Requested script "%s" not found.';
   ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY = 'Script may not be empty.';
@@ -120,6 +119,7 @@ resourcestring
   MSG_SCRIPTS_UNKNOWN_COMMAND = 'Unknown command.';
   MSG_SCRIPTS_DOWNLOAD_FAILED = 'Download failed: %s';
   MSG_SCRIPTS_UNEXPECTED_NODE_TYPE = 'Unexpected node type.';
+  ERR_XML_ELEMENT_NOT_FOUND = 'XML element not found.';
 
 {gnugettext: reset}
 

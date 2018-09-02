@@ -75,6 +75,7 @@ type
       function GetCursorRow: integer;
       procedure SetCursorCol(const Value: integer);
       procedure SetCursorRow(const Value: integer);
+      function GetConsoleWindowHandle: THandle;
     protected // Application info
       function AppTitle: string; virtual; abstract;
       function AppVersion: string; virtual; abstract;
@@ -101,6 +102,7 @@ type
       property CursorCol: integer read GetCursorCol write SetCursorCol;
       property LineSeparator: string read fLineSeparator write fLineSeparator;
       property ConvertWritesToOEM: boolean read fConvertWritesToOEM write fConvertWritesToOEM;
+      property ConsoleWindowHandle: THandle read GetConsoleWindowHandle;
     protected // Output methods
       procedure ShowHeader; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowError(const Msg: string); overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -409,6 +411,14 @@ end;
 procedure TConsoleApp.SetTextColor(const Value: TConsoleColor);
 begin
   SetTextAttribute(Value, TextBackground);
+end;
+
+function TConsoleApp.GetConsoleWindowHandle: THandle;
+begin
+  if @GetConsoleWindow <> nil then
+    Result := GetConsoleWindow
+  else
+    Result := 0;
 end;
 
 function TConsoleApp.GetCursorCol: integer;

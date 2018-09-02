@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=-v
+RunParams=http://www.dailymail.co.uk/news/article-2472674/World-View-Enterprises-plans-luxury-balloon-flights-edge-space.html
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
-MinorVer=37
+MinorVer=40
 Release=0
-Build=1069
+Build=1095
 Debug=0
 PreRelease=0
 Special=0
@@ -68,26 +68,27 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.37.0.1069
+FileVersion=1.40.0.1095
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YTD
-ProductVersion=1.37.0.1058
+ProductVersion=1.40.0.1074
 Comments=http://www.pepak.net/ytd
 [Excluded Packages]
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlConditionals]
-Count=8
+Count=9
 Item0=PEPAK;PEPAK_YTD;
-Item1=PEPAK;PEPAK_YTD;DEBUG;
-Item2=PEPAK;PEPAK_YTD;NO_XXX;
-Item3=PEPAK;PEPAK_YTD;XXX;
-Item4=PEPAK;PEPAK_YTD;XXXx;
-Item5=PEPAK;PEPAK_YTD;XXX;NO_GUI
-Item6=PEPAK;PEPAK_YTD;XXX;DEBUG
-Item7=PEPAK;PEPAK_YTD;XXX;DEBUG;
+Item1=PEPAK;PEPAK_YTD;DEBUG
+Item2=PEPAK;PEPAK_YTD;DEBUG;
+Item3=PEPAK;PEPAK_YTD;NO_XXX;
+Item4=PEPAK;PEPAK_YTD;XXX;
+Item5=PEPAK;PEPAK_YTD;XXXx;
+Item6=PEPAK;PEPAK_YTD;XXX;NO_GUI
+Item7=PEPAK;PEPAK_YTD;XXX;DEBUG
+Item8=PEPAK;PEPAK_YTD;XXX;DEBUG;
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

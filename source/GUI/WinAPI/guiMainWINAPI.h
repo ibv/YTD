@@ -30,3 +30,4 @@
 #define ACTION_OPTIONS                          40023
 #define ACTION_EXPLOREFOLDER                    40024
 #define ACTION_PLAY                             40025
+#define ACTION_MENU                             40026

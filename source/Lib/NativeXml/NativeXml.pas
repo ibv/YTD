@@ -5407,22 +5407,25 @@ begin
   {$IFDEF PEPAK}
     // TNativeXml has a serious bug with XML files without XML declaration: It defaults
     // to assuming the encoding is ANSI, while XML specs say it should be UTF-8.
-    EncodingNode := TXmlNode.Create(Self);
-    try
-      // Note: Stream seeking is totally fucked up in TsdCodecStream if I just want to
-      // record current position and return back. I had to publish the real stream and
-      // work with it.
-      StreamStart := FCodecStream.FStream.Position;
-      EncodingNode.ReadFromStream(S);
-      FCodecStream.FStream.Position := StreamStart;
-      AutodetectedEncoding := FCodecStream.Encoding;
-      FCodecStream.Encoding := seUTF8;
-      if EncodingNode.ElementType = xeDeclaration then
-        if EncodingNode.HasAttribute('encoding') then
-          if AnsiCompareText(string(EncodingNode.AttributeByName['encoding']), 'utf-8') <> 0 then
-            FCodecStream.Encoding := AutodetectedEncoding;
-    finally
-      FreeAndNil(EncodingNode);
+    if FCodecStream <> nil then
+      begin
+      EncodingNode := TXmlNode.Create(Self);
+      try
+        // Note: Stream seeking is totally fucked up in TsdCodecStream if I just want to
+        // record current position and return back. I had to publish the real stream and
+        // work with it.
+        StreamStart := FCodecStream.FStream.Position;
+        EncodingNode.ReadFromStream(S);
+        FCodecStream.FStream.Position := StreamStart;
+        AutodetectedEncoding := FCodecStream.Encoding;
+        FCodecStream.Encoding := seUTF8;
+        if EncodingNode.ElementType = xeDeclaration then
+          if EncodingNode.HasAttribute('encoding') then
+            if AnsiCompareText(string(EncodingNode.AttributeByName['encoding']), 'utf-8') <> 0 then
+              FCodecStream.Encoding := AutodetectedEncoding;
+      finally
+        FreeAndNil(EncodingNode);
+        end;
       end;
   {$ENDIF}
 

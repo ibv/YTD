@@ -56,12 +56,16 @@ type
     private
       fName: string;
       fValue: string;
+      fXml: TXmlDoc;
+      procedure SetValue(const AValue: string);
+      function GetXml: TXmlDoc;
     protected
     public
       constructor Create(const AName: string);
       destructor Destroy; override;
       property Name: string read fName;
-      property Value: string read fValue write fValue;
+      property Value: string read fValue write SetValue;
+      property Xml: TXmlDoc read GetXml;
     end;
 
   TScriptVariables = class
@@ -72,6 +76,7 @@ type
       function GetVariable(Index: integer): TScriptVariable;
       procedure SetValue(const Name, Value: string);
       function GetExists(const Name: string): boolean;
+    function GetXml(const Name: string): TXmlDoc;
     protected
     public
       constructor Create;
@@ -81,6 +86,7 @@ type
       property Count: integer read GetCount;
       property Variables[Index: integer]: TScriptVariable read GetVariable;
       property Values[const Name: string]: string read GetValue write SetValue; default;
+      property Xml[const Name: string]: TXmlDoc read GetXml;
       property Exists[const Name: string]: boolean read GetExists;
     end;
 
@@ -100,7 +106,6 @@ type
     fRegExpCache: TRegExpCache;
   protected
     procedure InitData;
-    function GetUrlBase(const ID: string; out BeforeUrl, AfterUrl: string): boolean;
     function InternalGetScriptForUrl(const Url: string; Urls: TXmlNode; out Node: TXmlNode; out MovieID: string): boolean;
     property Xml: TXmlDoc read fXml;
     property FileName: string read fFileName;
@@ -133,6 +138,7 @@ implementation
 uses
   uCompatibility,
   uFunctions,
+  uStrings,
   uMessages;
 
 type
@@ -141,7 +147,7 @@ type
 procedure ScriptError(const Msg: string; Node: TXmlNode);
 var
   Str: TMemoryStream;
-  Tag: string;
+  Tag: AnsiString;
 begin
   Tag := '';
   if Node <> nil then
@@ -160,7 +166,7 @@ begin
   if Tag = '' then
     Raise EScriptedDownloaderScriptError.Create(ERR_SCRIPTS_ERROR + Msg)
   else
-    Raise EScriptedDownloaderScriptError.Create(ERR_SCRIPTS_ERROR + Msg + EOLN + {$IFDEF UNICODE} string {$ENDIF} (Tag));
+    Raise EScriptedDownloaderScriptError.Create(ERR_SCRIPTS_ERROR + Msg + EOLN + UTF8ToString(Tag));
 end;
 
 { TScriptVariable }
@@ -170,11 +176,37 @@ begin
   inherited Create;
   fName := AName;
   fValue := '';
+  fXml := nil;
 end;
 
 destructor TScriptVariable.Destroy;
 begin
+  FreeAndNil(fXml);
   inherited;
+end;
+
+function TScriptVariable.GetXml: TXmlDoc;
+begin
+  if fXml = nil then
+    begin
+    fXml := TXmlDoc.Create;
+    try
+      fXml.ReadFromString(Value);
+    except
+      FreeAndNil(fXml);
+      Raise;
+      end;
+    end;
+  Result := fXml;
+end;
+
+procedure TScriptVariable.SetValue(const AValue: string);
+begin
+  if fValue <> AValue then
+    begin
+    fValue := AValue;
+    FreeAndNil(fXml);
+    end;
 end;
 
 { TScriptVariables }
@@ -249,6 +281,16 @@ begin
     Raise EScriptedDownloaderScriptError.CreateFmt(ERR_SCRIPTS_VARIABLE_NOT_FOUND, [Name]);
 end;
 
+function TScriptVariables.GetXml(const Name: string): TXmlDoc;
+var
+  Index: integer;
+begin
+  if Find(Name, Index) then
+    Result := Variables[Index].Xml
+  else
+    Raise EScriptedDownloaderScriptError.CreateFmt(ERR_SCRIPTS_VARIABLE_NOT_FOUND, [Name]);
+end;
+
 procedure TScriptVariables.SetValue(const Name, Value: string);
 var
   Index: integer;
@@ -308,7 +350,7 @@ end;
 function TScriptEngine.InternalGetScriptForUrl(const Url: string; Urls: TXmlNode; out Node: TXmlNode; out MovieID: string): boolean;
 var
   UrlNode: TXmlNode;
-  ScriptID, BaseUrlID, UrlRegExp, SubexpressionName, UrlBefore, UrlAfter: string;
+  ScriptID, UrlRegExp, SubexpressionName: string;
   RE: TRegExp;
   i: integer;
 begin
@@ -319,16 +361,12 @@ begin
     if UrlNode.Name = 'url' then
       begin
       UrlRegExp := XmlValueIncludingCData(UrlNode);
-      BaseUrlID := XmlAttribute(UrlNode, 'base');
-      if BaseUrlID <> '' then
-        if not GetUrlBase(BaseUrlID, UrlBefore, UrlAfter) then
-          ScriptError(ERR_SCRIPTS_BASEURL_NOT_FOUND, UrlNode)
-        else
-          UrlRegExp := UrlBefore + UrlRegExp + UrlAfter;
       if UrlRegExp = '' then
         ScriptError(ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED, UrlNode)
       else
         begin
+        if XmlAttribute(UrlNode, 'direct') = '' then
+          UrlRegExp := '^https?://(?:[a-z0-9-]+\.)*' + UrlRegExp;
         RE := RegExpCache.GetRegExp(UrlRegExp);
         if RE.Match(Url) then
           begin
@@ -363,20 +401,6 @@ begin
   {$ENDIF}
   else
     Result := False;
-end;
-
-function TScriptEngine.GetUrlBase(const ID: string; out BeforeUrl, AfterUrl: string): boolean;
-var
-  Node: TXmlNode;
-begin
-  if not XmlNodeByPathAndAttr(Xml, 'url_bases/url_base', 'id', ID, Node) then
-    Result := False
-  else
-    begin
-    BeforeUrl := XmlAttribute(Node, 'before');
-    AfterUrl := XmlAttribute(Node, 'after');
-    Result := True;
-    end;
 end;
 
 procedure TScriptEngine.InitData;

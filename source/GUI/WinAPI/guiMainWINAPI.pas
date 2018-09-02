@@ -120,6 +120,7 @@ type
       function ActionOptions: boolean;
       function ActionPlay: boolean;
       function ActionExploreFolder: boolean;
+      function ActionMenu: boolean;
       {$IFDEF THREADEDVERSION}
       procedure NewYTDEvent(Sender: TYTDUpgrade);
       procedure NewDefsEvent(Sender: TYTDUpgrade);
@@ -141,6 +142,7 @@ type
       procedure DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem); virtual;
       procedure DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem); virtual;
       function DownloadListGetDisplayInfo(DispInfo: PLVDispInfo): boolean; virtual;
+      procedure GetProgress(out Progress, Total: int64);
       {$IFDEF SYSTRAY}
     protected
       fNotifyIconData: TNotifyIconData;
@@ -186,6 +188,7 @@ const
   ACTION_OPTIONS = 40023;
   ACTION_EXPLOREFOLDER = 40024;
   ACTION_PLAY = 40025;
+  ACTION_MENU = 40026;
 
 
 //
@@ -415,9 +418,9 @@ begin
   DesiredHeight := Options.MainFormHeight;
   if GetWindowRect(Handle, Current) then
     begin
-    if DesiredLeft <= -32768 then
+    if (DesiredLeft <= -32768) or (DesiredLeft >= (GetSystemMetrics(SM_CXSCREEN) + 20)) then
       DesiredLeft := Current.Left;
-    if DesiredTop <= -32768 then
+    if (DesiredTop <= -32768) or (DesiredTop >= (GetSystemMetrics(SM_CYSCREEN) + 20)) then
       DesiredTop := Current.Top;
     if DesiredWidth <= 0 then
       DesiredWidth := Current.Right - Current.Left + 1;
@@ -529,6 +532,8 @@ begin
           Result := ActionExploreFolder;
         ACTION_PLAY:
           Result := ActionPlay;
+        ACTION_MENU:
+          Result := ActionMenu;
         end;
     end;
 end;
@@ -828,6 +833,16 @@ begin
     DownloadList.Items[Index].ExploreMedia;
 end;
 
+function TFormMain.ActionMenu: boolean;
+var
+  Current: TRect;
+begin
+  if GetWindowRect(Handle, Current) then
+    Result := DoContextMenu(PopupMenu, Point(Current.Left, Current.Top))
+  else
+    Result := DoContextMenu(PopupMenu, Point(0, 0))
+end;
+
 function TFormMain.ActionOptions: boolean;
 var F: TFormOptions;
 begin
@@ -1124,6 +1139,7 @@ end;
 procedure TFormMain.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);
 var Ticks: DWORD;
     Idx: integer;
+    Progress, Total: int64;
 begin
   Ticks := GetTickCount;
   if (Ticks > NextProgressUpdate) or ((NextProgressUpdate > $f0000000) and (Ticks < $10000000)) then
@@ -1132,7 +1148,27 @@ begin
     Idx := Sender.IndexOf(Item);
     if Idx >= 0 then
       RefreshItem(Idx);
+    GetProgress(Progress, Total);
+    if Total > 0 then
+      ShowTotalProgressBar(Self.Handle, pbsNormal, Progress, Total)
+    else
+      ShowTotalProgressBar(Self.Handle, pbsNoProgress);
     end;
+end;
+
+procedure TFormMain.GetProgress(out Progress, Total: int64);
+var
+  i: integer;
+begin
+  Progress := 0;
+  Total := 0;
+  if DownloadList <> nil then
+    for i := 0 to Pred(DownloadList.Count) do
+      if DownloadList[i].State in [dtsWaiting, dtsPreparing, dtsDownloading] then
+        begin
+        Inc(Progress, DownloadList[i].DownloadedSize);
+        Inc(Total, DownloadList[i].TotalSize);
+        end;
 end;
 
 procedure TFormMain.RefreshItem(Index: integer);

@@ -137,10 +137,11 @@ type
     Editconfigfile1: TMenuItem;
     actOptions: TAction;
     actPlay: TAction;
-    ActExploreFolder: TAction;
+    actExploreFolder: TAction;
     N5: TMenuItem;
     mnuPlay: TMenuItem;
     mnuExplore: TMenuItem;
+    actMenu: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -168,9 +169,13 @@ type
     procedure actEditConfigFileExecute(Sender: TObject);
     procedure actOptionsExecute(Sender: TObject);
     procedure actPlayExecute(Sender: TObject);
-    procedure ActExploreFolderExecute(Sender: TObject);
+    procedure actExploreFolderExecute(Sender: TObject);
+    procedure actMenuExecute(Sender: TObject);
   protected
     fLoading: boolean;
+    fNextTotalRecalculation: TDateTime;
+    fTotalProgress: int64;
+    fTotalData: int64;
     {$IFDEF SYSTRAY}
     fNotifyIconData: TNotifyIconData;
     procedure WMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
@@ -187,6 +192,7 @@ type
     procedure NewYTDEvent(Sender: TYTDUpgrade);
     procedure NewDefsEvent(Sender: TYTDUpgrade);
     {$ENDIF}
+    procedure GetProgress(out Progress, Total: int64);
   protected
     DownloadList: TDownloadList;
     NextProgressUpdate: DWORD;
@@ -280,9 +286,9 @@ begin
     // Use double-buffered listview (removes flickering)
     SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
     // Window size
-    if Options.MainFormLeft > -32768 then
+    if (Options.MainFormLeft > -32768) and (Options.MainFormLeft < (Screen.Width + 20)) then
       Self.Left := Options.MainFormLeft;
-    if Options.MainFormTop > -32768 then
+    if (Options.MainFormTop > -32768) and (Options.MainFormTop < (Screen.Height + 20)) then
       Self.Top := Options.MainFormTop;
     if Options.MainFormWidth > 0 then
       Self.Width := Options.MainFormWidth;
@@ -329,6 +335,27 @@ begin
   FreeAndNil(Upgrade);
   {$ENDIF}
   FreeAndNil(Options);
+end;
+
+procedure TFormYTD.GetProgress(out Progress, Total: int64);
+var
+  i: integer;
+begin
+  if Now >= fNextTotalRecalculation then
+    begin
+    fTotalProgress := 0;
+    fTotalData := 0;
+    if DownloadList <> nil then
+      for i := 0 to Pred(DownloadList.Count) do
+        if DownloadList[i].State in [dtsWaiting, dtsPreparing, dtsDownloading] then
+          begin
+          Inc(fTotalProgress, DownloadList[i].DownloadedSize);
+          Inc(fTotalData, DownloadList[i].TotalSize);
+          end;
+    end;
+  fNextTotalRecalculation := Now + 0.5/(24*60*60);
+  Progress := fTotalProgress;
+  Total := fTotalData;
 end;
 
 procedure TFormYTD.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -495,6 +522,7 @@ var DlItem: TDownloadListItem;
     {$IFNDEF FPC}
     iStateImage: integer;
     {$ENDIF}
+    Progress, Total: int64;
 begin
   if DownloadList <> nil then
     if Item.Index < DownloadList.Count then
@@ -567,6 +595,11 @@ begin
       Item.SubItems.Add(sSize);
       Item.SubItems.Add(sProgress);
       end;
+  GetProgress(Progress, Total);
+  if Total > 0 then
+    ShowTotalProgressBar(Self.Handle, pbsNormal, Progress, Total)
+  else
+    ShowTotalProgressBar(Self.Handle, pbsNoProgress);
 end;
 
 procedure TFormYTD.actAddNewUrlExecute(Sender: TObject);
@@ -948,10 +981,18 @@ begin
     PlayMedia(Downloads.Selected.Index);
 end;
 
-procedure TFormYTD.ActExploreFolderExecute(Sender: TObject);
+procedure TFormYTD.actExploreFolderExecute(Sender: TObject);
 begin
   if Downloads.Selected <> nil then
     ExploreMedia(Downloads.Selected.Index);
+end;
+
+procedure TFormYTD.actMenuExecute(Sender: TObject);
+var
+  P: TPoint;
+begin
+  P := ClientToScreen(Point(0, 0));
+  DownloadsPopup.Popup(P.X, P.Y);
 end;
 
 end.

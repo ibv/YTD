@@ -83,6 +83,7 @@ type
     public
       constructor Create; override;
       destructor Destroy; override;
+      function Execute: DWORD; override;
       property Options: TYTDOptions read fOptions;
     end;
 
@@ -425,6 +426,10 @@ begin
     if Result = RESCODE_NOURLS then
       ShowError(_('No valid URLs found.')); // CLI: Error message for invalid command line argument
     end;
+  if Result = RESCODE_OK then
+    ShowTotalProgressBar(ConsoleWindowHandle, pbsNoProgress)
+  else
+    ShowTotalProgressBar(ConsoleWindowHandle, pbsError, 1, 1);
 end;
 
 procedure TYTD.DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean);
@@ -450,10 +455,12 @@ begin
         for i := 1 to n do
           ProgressBar[i] := '#';
         Write(Format(_('  Downloading: <%s> %d.%d%% (%s/%s)') + NewLine, [ProgressBar, Proc div 10, Proc mod 10, PrettySize(DownloadedSize), PrettySize(TotalSize)])); // CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
+        ShowTotalProgressBar(ConsoleWindowHandle, pbsNormal, DownloadedSize, TotalSize);
         end
       else
         begin
         Write(Format(_('  Downloading: %s') + NewLine, [PrettySize(DownloadedSize)])); // CLI progress bar. %: Downloaded size
+        ShowTotalProgressBar(ConsoleWindowHandle, pbsUnknown);
         end;
       end;
     end;
@@ -600,6 +607,21 @@ begin
     Result := -1;
 end;
 
+function TYTD.Execute: DWORD;
+begin
+  try
+    Result := inherited Execute;
+  except
+    on EAbort do
+      Raise;
+    on Exception do
+      begin
+      ShowTotalProgressBar(ConsoleWindowHandle, pbsError, 1, 1);
+      Raise;
+      end;
+  end;
+end;
+
 function TYTD.DownloadURLsFromFileList(const FileName: string): integer;
 var T: TextFile;
     s: string;
@@ -662,6 +684,7 @@ begin
           WriteColored(ccLightCyan, '[S]'); Write(_('kip it, ')); // CLI: File already exists. [S]kip it
           WriteColored(ccLightCyan, '[O]'); Write(_('verwrite it, or ')); // CLI: File already exists. [O]verwrite it
           WriteColored(ccLightCyan, '[R]'); Write(_('ename it? ')); // CLI: File already exists. [R]ename it
+          ShowTotalProgressBar(ConsoleWindowHandle, pbsError);
           Readln(Answer);
           if Answer <> '' then
             case Upcase(Answer[1]) of

@@ -63,7 +63,8 @@ type
     protected
       function GetNewestVersionUrl(const BaseUrl: string; out Version, Url: string): boolean;
       function GetNewestVersion(const BaseUrl: string; out Version, Url: string; out Data: TStream): boolean;
-      procedure NotifyUser;
+      procedure NotifyNewYTDFound;
+      procedure NotifyNewDefsFound;
     public
       constructor Create(AOptions: TYTDOptions);
       destructor Destroy; override;
@@ -89,9 +90,9 @@ type
 implementation
 
 const
-  BASE_UPGRADE_URL = 'http://ytd.pepak.net/' {$IFDEF DEBUG} + 'develop/' {$ENDIF} ;
-  NEWEST_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = BASE_UPGRADE_URL {$IFNDEF XXX} + 'lite' {$ELSE} {$IFDEF UNICODE} + 'unicode' {$ELSE} + 'ansi' {$ENDIF} {$ENDIF} {$IFDEF DEBUG} + '/index.php' {$ENDIF} ;
-  NEWEST_DEFS_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = BASE_UPGRADE_URL + 'defs' {$IFDEF DEBUG} + '/index.php' {$ENDIF} ;
+  BASE_UPGRADE_URL = 'http://ytd.pepak.net/';
+  NEWEST_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = BASE_UPGRADE_URL {$IFNDEF XXX} + 'lite' {$ELSE} {$IFDEF UNICODE} + 'unicode' {$ELSE} + 'ansi' {$ENDIF} {$ENDIF} ;
+  NEWEST_DEFS_VERSION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = BASE_UPGRADE_URL + 'defs' ;
 
 {$IFDEF THREADEDVERSION}
 type
@@ -172,12 +173,13 @@ begin
               end;
           end;
         end;
-      if (fOnlineYTDVersion <> '') or (fOnlineDefsVersion <> '') then
-        begin
-        Synchronize(NotifyUser);
-        fOnlineYTD := nil; // Will be deleted by TYTDUpgrade
-        fOnlineDefs := nil; // Will be deleted by TYTDUpgrade
-        end;
+      {$IFDEF DELPHITHREADS}
+      Synchronize(NotifyUser);
+      {$ELSE}
+      NotifyUser;
+      {$ENDIF}
+      fOnlineYTD := nil; // Will be deleted by TYTDUpgrade
+      fOnlineDefs := nil; // Will be deleted by TYTDUpgrade
     finally
       FreeAndNil(fOnlineYTD);
       FreeAndNil(fOnlineDefs);
@@ -202,14 +204,15 @@ begin
     YTDUpgrade.fOnlineYTDVersion := Self.fOnlineYTDVersion;
     YTDUpgrade.fOnlineYTDUrl := Self.fOnlineYTDUrl;
     YTDUpgrade.fOnlineYTD := Self.fOnlineYTD;
+    YTDUpgrade.NotifyNewYTDFound;
     end;
   if fTask in [uttTestUpgrades, uttDownloadDefsUpgrade] then
     begin
     YTDUpgrade.fOnlineDefsVersion := Self.fOnlineDefsVersion;
     YTDUpgrade.fOnlineDefsUrl := Self.fOnlineDefsUrl;
     YTDUpgrade.fOnlineDefs := Self.fOnlineDefs;
+    YTDUpgrade.NotifyNewDefsFound;
     end;
-  YTDUpgrade.NotifyUser;
 end;
 
 {$ENDIF}
@@ -248,19 +251,18 @@ begin
   inherited;
 end;
 
-procedure TYTDUpgrade.NotifyUser;
+procedure TYTDUpgrade.NotifyNewYTDFound;
   // Note: Must be called in a thread-safe manner (e.g. form Synchronize)
 begin
-  if OnlineYTDVersion <> '' then
-    begin
-    if Assigned(OnNewYTDFound) then
-      OnNewYTDFound(Self);
-    end;
-  if OnlineDefsVersion <> '' then
-    begin
-    if Assigned(OnNewDefsFound) then
-      OnNewDefsFound(Self);
-    end
+  if Assigned(OnNewYTDFound) then
+    OnNewYTDFound(Self);
+end;
+
+procedure TYTDUpgrade.NotifyNewDefsFound;
+  // Note: Must be called in a thread-safe manner (e.g. form Synchronize)
+begin
+  if Assigned(OnNewDefsFound) then
+    OnNewDefsFound(Self);
 end;
 
 function TYTDUpgrade.GetNewestVersionUrl(const BaseUrl: string; out Version, Url: string): boolean;
@@ -369,15 +371,17 @@ begin
     fOnlineYTDVersion := Version;
     fOnlineYTDUrl := Url;
     Result := True;
+    if Notify then
+      NotifyNewYTDFound;
     end;
   if GetNewestVersionUrl(NEWEST_DEFS_VERSION_URL, Version, Url) then
     begin
     fOnlineDefsVersion := Version;
     fOnlineDefsUrl := Url;
     Result := True;
+    if Notify then
+      NotifyNewDefsFound;
     end;
-  if Notify then
-    NotifyUser;
 end;
 
 function TYTDUpgrade.DownloadYTDUpgrade(InBackground, Notify: boolean): boolean;
@@ -400,6 +404,8 @@ begin
     fOnlineYTDUrl := Url;
     fOnlineYTD := Data;
     Result := True;
+    if Notify then
+      NotifyNewYTDFound;
     end;
 end;
 
@@ -423,9 +429,9 @@ begin
     fOnlineDefsUrl := Url;
     fOnlineDefs := Data;
     Result := True;
+    if Notify then
+      NotifyNewDefsFound;
     end;
-  if Notify then
-    NotifyUser;
 end;
 
 function TYTDUpgrade.UpgradeYTD: boolean;

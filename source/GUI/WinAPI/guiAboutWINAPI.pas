@@ -361,9 +361,15 @@ end;
 
 procedure TFormAbout.NewYTDEvent(Sender: TYTDUpgrade);
 begin
-  if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
+  fNewestVersionUrl := Sender.OnlineYTDUrl;
+  if Sender.OnlineYTDVersion = '' then
     begin
-    fNewestVersionUrl := Sender.OnlineYTDUrl;
+    fNewestVersionColor := clRed;
+    SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_('not found')));
+    end
+  else
+    begin
+    fNewestVersionColor := clBlack;
     SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTVERSION, PChar(_( Sender.OnlineYTDVersion )));
     if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
       begin
@@ -376,9 +382,15 @@ end;
 
 procedure TFormAbout.NewDefsEvent(Sender: TYTDUpgrade);
 begin
-  if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
+  fNewestDefsUrl := Sender.OnlineDefsUrl;
+  if Sender.OnlineDefsVersion = '' then
     begin
-    fNewestDefsUrl := Sender.OnlineDefsUrl;
+    fNewestDefsColor := clRed;
+    SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION, PChar(_('not found')));
+    end
+  else
+    begin
+    fNewestDefsColor := clBlack;
     SetDlgItemText(Self.Handle, IDC_LABEL_NEWESTDEFSVERSION, PChar(_( Sender.OnlineDefsVersion )));
     if TScriptedDownloader.MainScriptEngine <> nil then
       if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then

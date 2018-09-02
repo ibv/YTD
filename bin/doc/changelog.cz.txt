@@ -1,11 +1,36 @@
 ﻿______________________________________________________________________________
 
-YTD v1.40                                                    (c) 2009-14 Pepak
+YTD v1.41                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.41:
+
+    * Noví poskytovatelé:
+      - 1tv.ru
+      - dailymail.co.uk
+      - rtl.be
+
+    * Aktualizovaní poskytovatelé:
+      - Super.cz
+
+    * Opraveno nečitelné hlášení o chybě skriptu v Unicode verzi.
+
+    * Opravena chyba aktualizace v případě Unicode verze. Pokud se nenajde
+      informace o verzi, je o této skutečnosti uživatel v rámci okna "O
+      aplikaci" informován.
+
+    * Ve Windows 7 a vyšších se v ikonce zobrazuje celkový průběh stahování.
+
+    * Klávesou F10 vyvoláte menu.
+
+    * Pokud by uložená pozice hlavního okna vyžadovala zobrazení mimo 
+      viditelnou oblast obrazovky, tak se tato uložená pozice ignoruje.
+
+
 
   v1.40:
 

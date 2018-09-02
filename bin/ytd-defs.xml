@@ -1,6 +1,21 @@
 ﻿<ytd-defs>
-	<version>1.40.20140712.0</version>
+	<version>1.41.20140720.0</version>
 	<scripts>
+
+		<script id="1tv.ru" provider="1tv.ru">
+			<regexps>
+				<regexp id="playlist" match="CONTENT"><![CDATA[\bplaylistObj\s*=\s*\[(?P<CONTENT>.+?)\]\s*;]]></regexp>
+				<regexp id="movie" match="URL"><![CDATA[\{[^}]*'file'\s*:\s*'(?P<URL>https?://[^']+)'\s*,\s*'title'\s*:\s*'(?P<TITLE>[^']*)'[^}]*\}]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="ansi"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="playlist"><regexp id="playlist" content="page"/></set_var>
+			<multi_regexp id="movie" content="playlist" var_prefix="movie_" match="URL,TITLE">
+				<http_download>
+					<title><get_var id="movie_TITLE"/></title>
+					<url><get_var id="movie_URL"/></url>
+				</http_download>
+			</multi_regexp>
+		</script>
 
 		<script id="aktualne.cz" provider="Aktualne.cz">
 			<regexps>
@@ -57,6 +72,14 @@
 			</multi_regexp>
 		</script>
 
+		<script id="dailymail.co.uk" provider="DailyMail.co.uk">
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<http_download>
+				<title><regexp id="meta_articletag" content="page"/></title>
+				<url><regexp id="meta_ogvideo" content="page"/></url>
+			</http_download>
+		</script>
+
 		<script id="facebook.com" provider="Facebook.com">
 			<regexps>
 				<regexp id="item" match="CONTENT"><![CDATA[swf\s*=\s*new\s+SWFObject\s*\((?P<CONTENT>.+?)\breturn\s+swf\s*;]]></regexp>
@@ -85,6 +108,36 @@
 				<playpath><regexp id="playpath" content="page"/></playpath>
 				<!-- lze pouzivat take rtmp_app, swf_url, tc_url, page_url, swf_vfy, flashver, live, realtime -->
 			</rtmp_download>
+		</script>
+
+		<script id="rtl.be" provider="RTL.be">
+			<regexps>
+				<regexp id="idvid" match="ID"><![CDATA[\bidvid\s*=\s*'(?P<ID>\d+)']]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="idvid"><regexp id="idvid" content="page"/></set_var>
+			<set_var id="info"><download_page encoding="xml"><url>http://www.rtl.be/videos/GetFlashParams.aspx?sPublisherKey=&amp;id=<get_var id="idvid"/>&amp;bFlash=1&amp;bEmbed=0&amp;bAutoStart=1&amp;bAutoMute=0&amp;sDummyPath=/videos&amp;ts=<timestamp type="unix"/></url></download_page></set_var>
+			<http_download>
+				<title><get_xml_var id="info" path="VPO/Title"/></title>
+				<url><get_xml_var id="info" path="VPO/URL"/></url>
+			</http_download>
+		</script>
+
+		<script id="super.cz" provider="Super.cz">
+			<regexps>
+				<regexp id="url" match="URL"><![CDATA[(?:&amp;|&|^:)cdn2(?P<QUALITY>HD|HQ|LQ)=(?P<URL>[^&]+)]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="flashvars"><regexp id="param_name_flashvars" content="page"/></set_var>
+			<multi_regexp id="url" content="flashvars" var_prefix="urls_" match="QUALITY,URL">
+				<best_var id="urls_QUALITY" type="enumeration" order="HD,HQ,LQ">
+					<set_var id="url"><get_var id="urls_URL"/></set_var>
+				</best_var>
+			</multi_regexp>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><get_var id="url"/></url>
+			</http_download>
 		</script>
 
 		<script id="vimeo.com" provider="Vimeo.com">
@@ -132,24 +185,28 @@
 	<regexps>
 		<regexp id="title" match="NAME"><![CDATA[<title>\s*(?P<NAME>.*?)\s*</title>]]></regexp>
 		<regexp id="h1" match="NAME"><![CDATA[<h1[^>]*>\s*(?P<NAME>.*?)\s*</h1>]]></regexp>
-		<regexp id="meta_ogtitle" match="NAME"><![CDATA[<meta\s+(name|property)="og:title"\s+(content|value)="(?P<NAME>[^"]*)"]]></regexp>
+		<regexp id="meta_ogtitle" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:title(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
+		<regexp id="meta_ogvideo" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:video(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
+		<regexp id="meta_articletag" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])article:tag(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="json_file_colon" match="CONTENT"><![CDATA[\bfile\s*:\s*(?P<QUOTE>['"])(?P<CONTENT>.*?)(?P=QUOTE)]]></regexp>
 		<regexp id="iframe_src" match="CONTENT"><![CDATA[<iframe\b[^>]*\ssrc=(?P<QUOTE>['"])(?P<CONTENT>.*?)(?P=QUOTE)]]></regexp>
+		<regexp id="param_name_flashvars" match="CONTENT"><![CDATA[<param\s+name=(?P<QUOTE1>['"])flashvars(?P=QUOTE1)\s+value=(?P<QUOTE2>['"])(?P<CONTENT>.+?)(?P=QUOTE2)]]></regexp>
 	</regexps>
-	<url_bases>
-		<url_base id="common_http" before="^https?://(?:[a-z0-9-]+\.)*" after="" />
-	</url_bases>
 	<urls>
-		<url script="aktualne.cz" base="common_http"><![CDATA[aktualne(?:\.centrum)?\.cz/.+$]]></url>
-		<url script="cestyksobe.cz" base="common_http"><![CDATA[cestyksobe\.cz/.+$]]></url>
-		<url script="csfd.cz" base="common_http"><![CDATA[csfd\.cz/.+$]]></url>
-		<url script="facebook.com" base="common_http"><![CDATA[facebook\.com/.+$]]></url>
-		<url script="mc2.sk" base="common_http"><![CDATA[mc2\.sk/.+$]]></url>
-		<url script="vimeo.com" base="common_http" subexpression="ID"><![CDATA[player\.vimeo\.com/video/(?P<ID>\d+)]]></url>
-		<url script="vimeo.com" base="common_http" subexpression="ID"><![CDATA[vimeo\.com/(?P<ID>\d+)]]></url>
+		<url script="1tv.ru"><![CDATA[1tv\.ru/.+$]]></url>
+		<url script="aktualne.cz"><![CDATA[aktualne(?:\.centrum)?\.cz/.+$]]></url>
+		<url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
+		<url script="csfd.cz"><![CDATA[csfd\.cz/.+$]]></url>
+		<url script="dailymail.co.uk"><![CDATA[dailymail\.co\.uk/.+$]]></url>
+		<url script="facebook.com"><![CDATA[facebook\.com/.+$]]></url>
+		<url script="mc2.sk"><![CDATA[mc2\.sk/.+$]]></url>
+		<url script="rtl.be"><![CDATA[rtl\.be/.+$]]></url>
+		<url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
+		<url script="vimeo.com" subexpression="ID"><![CDATA[player\.vimeo\.com/video/(?P<ID>\d+)]]></url>
+		<url script="vimeo.com" subexpression="ID"><![CDATA[vimeo\.com/(?P<ID>\d+)]]></url>
 		<!-- ***** Adult ******************************************* -->
 		<adult>
-		<url script="123video.nl" base="common_http" subexpression="ID"><![CDATA[123video\.nl/playvideos\.asp\?([^&]*&)*?MovieID=(?P<ID>\d+)]]></url>
+		<url script="123video.nl" subexpression="ID"><![CDATA[123video\.nl/playvideos\.asp\?([^&]*&)*?MovieID=(?P<ID>\d+)]]></url>
 		</adult>
 	</urls>
 </ytd-defs>

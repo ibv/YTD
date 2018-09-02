@@ -109,6 +109,98 @@ const
 
 const
   SEE_MASK_NOZONECHECKS = $00800000;
+
+const
+  CLSID_TaskbarList: TGUID = '{56FDF344-FD6D-11D0-958A-006097C9A090}';
+
+type
+  HIMAGELIST = THandle;
+  
+type
+  ITaskbarList = interface(IUnknown)
+    ['{56FDF342-FD6D-11D0-958A-006097C9A090}']
+    function HrInit: HRESULT; stdcall;
+    function AddTab(hwnd: HWND): HRESULT; stdcall;
+    function DeleteTab(hwnd: HWND): HRESULT; stdcall;
+    function ActivateTab(hwnd: HWND): HRESULT; stdcall;
+    function SetActiveAlt(hwnd: HWND): HRESULT; stdcall;
+  end;
+
+  ITaskbarList2 = interface(ITaskbarList)
+    ['{602D4995-B13A-429B-A66E-1935E44F4317}']
+    function MarkFullscreenWindow(hwnd: HWND; fFullscreen: BOOL): HRESULT; stdcall;
+  end;
+
+type
+  THUMBBUTTON = record 
+    dwMask: DWORD;
+    iId: UINT;
+    iBitmap: UINT;
+    hIcon: HICON;
+    szTip: packed array[0..259] of WCHAR;
+    dwFlags: DWORD;
+  end;
+  tagTHUMBBUTTON = THUMBBUTTON;
+  TThumbButton = THUMBBUTTON;
+  PThumbButton = ^TThumbButton;
+
+const
+  // THUMBBUTTON flags
+  THBF_ENABLED        =  $0000;
+  THBF_DISABLED       =  $0001;
+  THBF_DISMISSONCLICK =  $0002;
+  THBF_NOBACKGROUND   =  $0004;
+  THBF_HIDDEN         =  $0008;
+  THBF_NONINTERACTIVE =  $0010;
+  // THUMBBUTTON mask
+  THB_BITMAP          =  $0001;
+  THB_ICON            =  $0002;
+  THB_TOOLTIP         =  $0004;
+  THB_FLAGS           =  $0008;
+  THBN_CLICKED        =  $1800;
+
+const
+  TBPF_NOPROGRESS    = 0; 
+  TBPF_INDETERMINATE = $1;
+  TBPF_NORMAL        = $2;
+  TBPF_ERROR         = $4;
+  TBPF_PAUSED        = $8;
+
+  TBATF_USEMDITHUMBNAIL   = $1; 
+  TBATF_USEMDILIVEPREVIEW = $2;
+
+type
+  ITaskbarList3 = interface(ITaskbarList2) 
+    ['{EA1AFB91-9E28-4B86-90E9-9E9F8A5EEFAF}']
+    function SetProgressValue(hwnd: HWND; ullCompleted, ullTotal: UInt64): HRESULT; stdcall;
+    function SetProgressState(hwnd: HWND; tbpFlags: Integer): HRESULT; stdcall;
+    function RegisterTab(hwndTab, hwndMDI: HWND): HRESULT; stdcall;
+    function UnregisterTab(hwndTab: HWND): HRESULT; stdcall;
+    function SetTabOrder(hwndTab, hwndInsertBefore: HWND): HRESULT; stdcall;
+    function SetTabActive(hwndTab, hwndMDI: HWND; tbatFlags: Integer): HRESULT; stdcall;
+    function ThumbBarAddButtons(hwnd: HWND; cButtons: UINT; pButton: PThumbButton): HRESULT; stdcall;
+    function ThumbBarUpdateButtons(hwnd: HWND; cButtons: UINT; pButton: PThumbButton): HRESULT; stdcall;
+    function ThumbBarSetImageList(hwnd: HWND; himl: HIMAGELIST): HRESULT; stdcall;
+    function SetOverlayIcon(hwnd: HWND; hIcon: HICON; pszDescription: LPCWSTR): HRESULT; stdcall;
+    function SetThumbnailTooltip(hwnd: HWND; pszTip: LPCWSTR): HRESULT; stdcall;
+    function SetThumbnailClip(hwnd: HWND; var prcClip: TRect): HRESULT; stdcall;
+  end;
+
+type
+  STPFLAG = Integer;
+
+const
+  STPF_NONE                      = 0;
+  STPF_USEAPPTHUMBNAILALWAYS     = $1;
+  STPF_USEAPPTHUMBNAILWHENACTIVE = $2;
+  STPF_USEAPPPEEKALWAYS          = $4;
+  STPF_USEAPPPEEKWHENACTIVE      = $8;
+
+type
+  ITaskbarList4 = interface(ITaskbarList3)
+    ['{C43DC798-95D1-4BEA-9030-BB99E2983A1A}']
+    function SetTabProperties(hwndTab: HWND; stpFlags: STPFLAG): HRESULT; stdcall;
+  end;
 {$ENDIF}
 
 {$IFNDEF DELPHIXE2_UP}

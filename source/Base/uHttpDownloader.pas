@@ -180,8 +180,8 @@ begin
             VideoDownloader.OutputStream.Free;
             VideoDownloader.OutputStream := nil;
             VideoDownloader.OutputStream := TFileStream.Create(FN, fmOpenWrite or fmShareDenyWrite);
-            VideoDownloader.Sock.OnStatus := SockStatusMonitor;
             {$ENDIF}
+            VideoDownloader.Sock.OnStatus := SockStatusMonitor;
             BytesTransferred := 0;
             if not DownloadPage(VideoDownloader, MovieURL) then
               SetLastErrorMsg(ERR_DOWNLOAD_FAILED)

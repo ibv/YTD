@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit uFunctions;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE COMOBJ}
+{$DEFINE COMOBJ}
 
 interface
 
@@ -48,7 +48,12 @@ uses
   {$ENDIF}
   uMessages, uCompatibility, uFiles, uStrings;
 
+type
+  TProgressBarState = (pbsNoProgress, pbsUnknown, pbsNormal, pbsError, pbsPaused);
+
 function PrettySize(Size: int64): string;
+function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState): boolean; overload;
+function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState; const Current, Total: int64): boolean; overload;
 function GetSpecialFolder(FolderID: integer): string;
 function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean;
 function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle = 0): boolean; overload;
@@ -84,6 +89,55 @@ begin
     Result := PrettySizeInternal(Size, 30, 'G')
   else
     Result := PrettySizeInternal(Size, 40, 'T')
+end;
+
+var
+  TaskBarListInitialized: boolean = False;
+  TaskBarList: ITaskbarList = nil;
+  TaskBarList2: ITaskbarList2 = nil;
+  TaskBarList3: ITaskbarList3 = nil;
+  TaskBarList4: ITaskbarList4 = nil;
+
+function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState): boolean;
+begin
+  Result := ShowTotalProgressBar(Handle, State, -1, -1);
+end;
+
+function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState; const Current, Total: int64): boolean;
+const
+  States: array[TProgressBarState] of DWORD = (TBPF_NOPROGRESS, TBPF_INDETERMINATE, TBPF_NORMAL, TBPF_ERROR, TBPF_PAUSED);
+begin
+  Result := False;
+  if (Win32MajorVersion > 6) or ((Win32MajorVersion = 6) and (Win32MinorVersion >= 1)) then
+    begin
+    if not TaskBarListInitialized then
+      begin
+      TaskBarListInitialized := True;
+      CoInitialize(nil);
+      {$IFDEF COMOBJ}
+      TaskBarList := CreateComObject(CLSID_TaskbarList) as ITaskbarList;
+      {$ELSE}
+      if (CoCreateInstance(CLSID_TaskbarList, nil, CLSCTX_INPROC_SERVER, ITaskbarList, TaskBarList) and $80000000) <> 0 then
+        TaskBarList := nil;
+      {$ENDIF}
+      if TaskBarList <> nil then
+        begin
+        Supports(TaskBarList, ITaskBarList2, TaskBarList2);
+        Supports(TaskBarList, ITaskBarList3, TaskBarList3);
+        Supports(TaskBarList, ITaskBarList4, TaskBarList4);
+        end;
+      end;
+    if TaskBarList3 <> nil then
+      begin
+      TaskBarList3.SetProgressState(Handle, States[State]);
+      if (Current >= 0) and (Total > 0) then
+        if Current <= Total then
+          TaskBarList3.SetProgressValue(Handle, Current, Total)
+        else
+          TaskBarList3.SetProgressValue(Handle, Total, Total);
+      Result := True;
+      end;
+    end;
 end;
 
 function GetSpecialFolder(FolderID: integer): string;

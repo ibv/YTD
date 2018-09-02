@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.40                                                    (c) 2009-14 Pepak
+YTD v1.41                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -16,6 +16,7 @@ Provider            | Protocol | Notes | URL(s)
 ------------------------------------------------------------------------------
 123Video.nl         | HTTP     |       | http://www.123video.nl/playvideos.asp?MovieID=949808
 1hd.ro              | RTMP     |       | http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
+1tv.ru              | HTTP     |       | http://www.1tv.ru/swfxml/newsvideolist/20.07.2014/6
 3news.co.nz         | HTTP     |       | http://www.3news.co.nz/Nearly-there-for-trans-Tasman-rowers-Team-Gallagher/tabid/309/articleID/239458/Default.aspx
 4tv.cz              | HTTP     |       | http://4tv.cz/serialy/simpsonovi-1989/s01e01/8
 5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
@@ -75,6 +76,7 @@ CT24.cz             | HTTP     | 3     | http://www.ct24.cz/regionalni/87267-vrc
                     |          | 3     | http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
 Current.com         | HTTP     |       | http://current.com/shows/the-rotten-tomatoes-show/92561962_angelina-jolies-top-5-hottest-parts.htm
 DailyHaha.com       | HTTP     |       | http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
+DailyMail.co.uk     | HTTP     |       | http://www.dailymail.co.uk/news/article-2472674/World-View-Enterprises-plans-luxury-balloon-flights-edge-space.html
 DailyMotion.com     | HTTP     |       | http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
 DeutscheBahn.com    | HTTP     |       | http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
 Denik.cz            | HTTP     |       | http://www.denik.cz/multimedia/video/2857495.html
@@ -243,6 +245,7 @@ Rozhlas.cz          | HTTP     |       | http://prehravac.rozhlas.cz/audio/24834
 RozzlobeniMuzi.com  | HTTP     | F     | http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 RTA.cz              | MS       |       | http://www.rta.cz/?article=140331
                     |          |       | http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
+Rtl.be              | HTTP     |       | http://www.rtl.be/videos/video/456817.aspx
 Rtl.nl              | MS       |       | http://www.rtl.nl/xl/#/u/e6820785-1c71-381e-a3fa-37c6acc343b9/
                     |          |       | http://www.rtl.nl/system/s4m/xldata/uuid/e6820785-1c71-381e-a3fa-37c6acc343b9.xml
 RTVS.sk             | RTMP     |       | http://www.rtvs.sk/televizia/program/detail/4686/milujem-slovensko/archiv?date=17.05.2013
@@ -278,7 +281,7 @@ StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
 STV.sk              | RTMP     | 9     | http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
-Super.cz            | HTTP     |       | http://www.super.cz/11797-facky-nadavky-rev-i-plac-tohle-jsou-ty-nejsilenejsi-situace-ktere-vymena-manzelek-predstavila.html
+Super.cz            | HTTP     |       | http://www.super.cz/278385-misto-jidla-pije-divne-koktejly-a-na-figure-je-to-znat-nadherna-miss-predvedla-telo-v-nebezpecnych-satech.html
 T-Music.cz          | HTTP     |       | http://www.t-music.cz/video/124044/
                     |          |       | http://www.t-music.cz/video/124044/embed/
 Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e

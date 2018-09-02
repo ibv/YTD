@@ -1,11 +1,38 @@
 ﻿______________________________________________________________________________
 
-YTD v1.40                                                    (c) 2009-14 Pepak
+YTD v1.41                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.41:
+
+    * New providers:
+      - 1tv.ru
+      - dailymail.co.uk
+      - rtl.be
+
+    * Updated providers:
+      - Super.cz
+
+    * Fixed the unreadable error message for incorrect scripts in the Unicode
+      version.
+
+    * Fixed an incorrect upgrade check in the Unicode version. If a version
+      info is not found, the user is informed of this fact in the "About"
+      window.
+
+    * Support for the global progress bar in the taskbar icon in Windows 7
+      or newer.
+
+    * Key F10 opens the main menu.
+
+    * Ignore the stored location of the main window if it would result in
+      the main window being placed outside of the visible screen area.
+
+
 
   v1.40:
 

@@ -167,9 +167,15 @@ end;
 
 procedure TFormAbout.NewYTDEvent(Sender: TYTDUpgrade);
 begin
-  if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
+  if Sender.OnlineYTDVersion = '' then
+    begin
+    LabelNewestVersion.Caption := _('not found');
+    LabelNewestVersion.Font.Color := clRed;
+    end
+  else
     begin
     LabelNewestVersion.Caption := Sender.OnlineYTDVersion;
+    LabelNewestVersion.Font.Color := clBlack;
     if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
       begin
       SetUrlStyle(LabelNewestVersion);
@@ -180,9 +186,15 @@ end;
 
 procedure TFormAbout.NewDefsEvent(Sender: TYTDUpgrade);
 begin
-  if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
+  if Sender.OnlineDefsVersion = '' then
+    begin
+    LabelNewestDefsVersion.Caption := _('not found');
+    LabelNewestDefsVersion.Font.Color := clRed;
+    end
+  else
     begin
     LabelNewestDefsVersion.Caption := Sender.OnlineDefsVersion;
+    LabelNewestDefsVersion.Font.Color := clBlack;
     if TScriptedDownloader.MainScriptEngine <> nil then
       if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then
         begin

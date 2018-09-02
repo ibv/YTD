@@ -40,7 +40,7 @@ unit uScriptedDownloader;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Windows,
   uPCRE, uXML, HttpSend, blcksock,
   uDownloader, uOptions, uScripts;
 
@@ -86,6 +86,7 @@ type
       procedure ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
       function ProcessNodeContent(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessCopy(Node: TXmlNode; Vars: TScriptVariables): string;
@@ -93,6 +94,7 @@ type
       function ProcessDecodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
     public
       class function MainScriptEngine: TScriptEngine;
@@ -568,20 +570,22 @@ var
 begin
   case Node.ElementType of
     xeCData:
-      Result := {$IFDEF UNICODE} string {$ENDIF} (Node.ValueDirect);
+      Result := {$IFDEF UNICODE} string {$ENDIF} (Node.ValueAsUnicodeString);
     xeCharData:
-      Result := {$IFDEF UNICODE} string {$ENDIF} (Node.ValueDirect);
+      Result := {$IFDEF UNICODE} string {$ENDIF} (Node.ValueAsUnicodeString);
     xeComment:
       Result := '';
     xeNormal:
       begin
-      Result := {$IFDEF UNICODE} string {$ENDIF} (Node.ValueDirect);
+      Result := {$IFDEF UNICODE} string {$ENDIF} (Node.ValueAsUnicodeString);
       for i := 0 to Pred(Node.NodeCount) do
         begin
         ChildNode := Node.Nodes[i];
         if ChildNode.ElementType = xeNormal then
           if ChildNode.Name = 'get_var' then
             Result := Result + ProcessGetVar(ChildNode, Vars)
+          else if ChildNode.Name = 'get_xml_var' then
+            Result := Result + ProcessGetXmlVar(ChildNode, Vars)
           else if ChildNode.Name = 'download_page' then
             Result := Result + ProcessDownloadPage(ChildNode, Vars)
           else if ChildNode.Name = 'regexp' then
@@ -596,6 +600,8 @@ begin
             Result := Result + ProcessDecodeJS(ChildNode, Vars)
           else if ChildNode.Name = 'decode_base64' then
             Result := Result + ProcessDecodeBase64(ChildNode, Vars)
+          else if ChildNode.Name = 'timestamp' then
+            Result := Result + ProcessTimestamp(ChildNode, Vars)
           else
             ScriptError(MSG_SCRIPTS_UNKNOWN_COMMAND, ChildNode)
         else
@@ -731,6 +737,26 @@ begin
     ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
   else
     Result := Vars[VarName];
+end;
+
+function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
+var
+  VarName, ResultAttribute: string;
+  DataNode: TXmlNode;
+begin
+  VarName := XmlAttribute(Node, 'id');
+  if VarName = '' then
+    ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
+  else if not XmlNodeByPathAndAttr(Vars.Xml[VarName], XmlAttribute(Node, 'path'), XmlAttribute(Node, 'attr'), XmlAttribute(Node, 'attr_value'), DataNode) then
+    ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node)
+  else
+    begin
+    ResultAttribute := XmlAttribute(Node, 'result_attr');
+    if ResultAttribute = '' then
+      Result := XmlValueIncludingCData(DataNode)
+    else if not XmlAttribute(DataNode, ResultAttribute, Result) then
+      ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node);
+    end;
 end;
 
 function TScriptedDownloader.CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
@@ -926,6 +952,17 @@ end;
 function TScriptedDownloader.ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
 begin
   Result := Base64Decode(ProcessNodeContent(Node, Vars));
+end;
+
+function TScriptedDownloader.ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
+var
+  TimestampType: string;
+begin
+  TimestampType := XmlAttribute(Node, 'type');
+  if (TimestampType = '') or (AnsiCompareText(TimestampType, 'unix') = 0) then
+    Result := IntToStr(Trunc((Now - 25569) * 24*60*60))
+  else
+    ScriptError(Format(ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE, ['type', TimestampType]), Node);
 end;
 
 initialization
