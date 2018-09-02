@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=http://www.youtube.com/playlist?list=PLA0862DE02BF19ECB
 HostApplication=
 [Version Info]
 IncludeVerInfo=1

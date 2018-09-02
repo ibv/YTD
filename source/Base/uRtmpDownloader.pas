@@ -84,6 +84,7 @@ type
       procedure SetProxyUrl;
     protected
       function GetContentUrl: string; override;
+      function GetFileNameExt: string; override;
     public
       class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
@@ -158,6 +159,15 @@ begin
     else
       s := Format('%s -%s "%s"', [s, RtmpDumpOptions[i].ShortOption, RtmpDumpOptions[i].Argument]);
   Result := Format('rtmpdump %s -o "%s"', [s, FileName]);
+end;
+
+function TRtmpDownloader.GetFileNameExt: string;
+begin
+  Result := '';
+  if Playpath <> '' then
+    Result := ExtractFileExt(Playpath);
+  if Result = '' then
+    Result := inherited GetFileNameExt;
 end;
 
 procedure TRtmpDownloader.SetProxyUrl;

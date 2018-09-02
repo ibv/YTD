@@ -58,6 +58,7 @@ type
       DirectUrlRegExp: TRegExp;
     protected
       function GetFileName: string; override;
+      function GetFileNameExt: string; override;
       function GetContentUrl: string; override;
       function GetLastErrorMsg: string; override;
       function GetThisFileName: string; virtual;
@@ -186,6 +187,14 @@ begin
         Result := {ChangeFileExt(}Result{, '')} + NestedExt;
       end;
     end;
+end;
+
+function TNestedDownloader.GetFileNameExt: string;
+begin
+  if NestedDownloader <> nil then
+    Result := NestedDownloader.FileNameExt
+  else
+    Result := inherited FileNameExt;
 end;
 
 function TNestedDownloader.GetThisFileName: string;

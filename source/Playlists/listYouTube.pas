@@ -68,10 +68,11 @@ uses
   uDownloadClassifier;
 
 // http://www.youtube.com/view_play_list?p=90D6E7C4DE68E49E
+// http://www.youtube.com/playlist?list=PLA0862DE02BF19ECB
 // http://www.youtube.com/embed/videoseries?list=PLA0862DE02BF19ECB
 // http://gdata.youtube.com/feeds/api/playlists/A0862DE02BF19ECB
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:view_play_list\?p=|embed/videoseries\?list=(?:PL)?|feeds/api/playlists/)';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:view_play_list\?p=|playlist\?list=|embed/videoseries\?list=(?:PL)?|feeds/api/playlists/)';
   URLREGEXP_ID =        '[^/?&"]+';
   URLREGEXP_AFTER_ID =  '';
 

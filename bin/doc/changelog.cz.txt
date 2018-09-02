@@ -1,11 +1,24 @@
 ______________________________________________________________________________
 
-YTD v1.05                                                    (c) 2009-12 Pepak
+YTD v1.06                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.06:
+
+    * iPrima.cz: Podpora pro Prima Play.
+
+    * VKontakte.ru: Podpora pro videa, která nemají kvalitu 720. Lepší práce
+      s názvy souborù.
+
+    * YouTube.com: Podpora pro playlisty ve tvaru "playlist?list=...".
+
+    * Nìkolik drobných úprav v získávání názvù souborù.
+
+
 
   v1.05:
 

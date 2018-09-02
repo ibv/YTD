@@ -101,7 +101,7 @@ type
       property LastURL: string read fLastUrl;
     protected
       function GetDefaultFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetFileNameExt: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function GetFileNameExt: string; virtual;
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
       procedure DoProgress; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -181,6 +181,7 @@ type
       property Prepared: boolean read fPrepared;
       property Name: string read GetName;
       property FileName: string read GetFileName;
+      property FileNameExt: string read GetFileNameExt;
       property ContentUrl: string read GetContentUrl;
       property LastErrorMsg: string read GetLastErrorMsg;
       property TotalSize: int64 read GetTotalSize;

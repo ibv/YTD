@@ -93,7 +93,6 @@ type
       LiveBoxAuthRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -114,22 +113,22 @@ uses
 // http://www.iprima.cz/videoarchiv/44524/all/all
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima\.cz/';
-  URLREGEXP_ID =        '(?:videoarchiv|videoplayer)/.+';
+  URLREGEXP_ID =        '(?:videoarchiv|videoplayer|iprima)/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '<h3\s+id="videoTitle">(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
   REGEXP_STREAM_ID = '<param\s+name="flashvars"\s+value="[^"]*&id=(?P<STREAMID>[0-9]+)';
   REGEXP_STREAM_CDNID = '<param\s+name="flashvars"\s+value="[^"]*&cdnID=(?P<STREAMID>[0-9]+)';
   {$IFDEF PRIMA_LIVEBOX}
   //REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,)\s*width\s*,\s*height\s*,\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
-  REGEXP_LIVEBOX = '''hq_id''\s*:\s*''(?P<HQ>[^'']*)''\s*,\s*''lq_id''\s*:\s*''(?P<LQ>[^'']*)''';
+  REGEXP_LIVEBOX = '''hq_id''\s*:\s*''(?P<HQ>[^'']*)''\s*,\s*''lq_id''\s*:\s*''(?P<LQ>[^'']*)''(?:.*?''zoneGEO''\s*:\s*(?P<ZONEGEO>[0-9]*))?';
   REGEXP_LIVEBOX_AUTH = '''(?P<AUTH>\?auth=.*?)''';
   {$ENDIF}
 
 const
   PRIMA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
-  PRIMA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.iprima.cz/%s';
+  PRIMA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://play.iprima.cz/%s';
   PRIMA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'iPrima.cz';
 
 { TDownloader_iPrima }
@@ -153,7 +152,7 @@ constructor TDownloader_iPrima.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+    MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   {$IFDEF PRIMA_LIVEBOX}
   LiveBoxRegExp := RegExCreate(REGEXP_LIVEBOX);
   {$ENDIF}
@@ -324,18 +323,18 @@ end;
 function TDownloader_iPrima_LiveBox.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   PlayerHttp: THttpSend;
-  EmbedPlayer, Auth, HQStream, LQStream, Stream: string;
+  EmbedPlayer, Auth, HQStream, LQStream, ZoneGEO, Geo, Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   PlayerHttp := CreateHttp;
-  if not GetRegExpVars(LiveBoxRegExp, Page, ['HQ', 'LQ'], [@HQStream, @LQStream]) then
+  if not GetRegExpVars(LiveBoxRegExp, Page, ['HQ', 'LQ', 'ZONEGEO'], [@HQStream, @LQStream, @ZoneGEO]) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     try
       PlayerHttp.Cookies.Assign(Http.Cookies);
       PlayerHttp.Headers.Add('Referer: ' + GetMovieInfoUrl);
-      if not DownloadPage(PlayerHttp, Format('http://embed.livebox.cz/iprima/player-embed.js?__tok%d__=%d', [Random(1073741824), Random(1073741824)]), EmbedPlayer, peUnknown, hmGET, False) then
+      if not DownloadPage(PlayerHttp, Format('http://embed.livebox.cz/iprimaplay/player-embed-v2.js?__tok%d__=%d', [Random(1073741824), Random(1073741824)]), EmbedPlayer, peUnknown, hmGET, False) then
         SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
       else if not GetRegExpVar(LiveBoxAuthRegExp, EmbedPlayer, 'AUTH', Auth) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
@@ -345,14 +344,17 @@ begin
           Stream := HQStream
         else
           Stream := LQStream;
-        MovieUrl := 'rtmp://bcastjw.livebox.cz:80/iprima_token_1' + Auth; // '?auth=_any_|1331380805|e0bdc430140646104fb9509b5c76791c78da9ce7';
-        Self.Live := False;
+        if StrToIntDef(ZoneGeo, 0) > 0 then
+          Geo := '_1'
+        else
+          Geo := '';
+        MovieUrl := 'rtmp://bcastlw.livebox.cz:80/iprima_token' + Geo + Auth; // '?auth=_any_|1331380805|e0bdc430140646104fb9509b5c76791c78da9ce7';
         Self.RtmpUrl := MovieURL;
         Self.PlayPath := 'mp4:' + Stream;
-        //Self.FlashVer := 'WIN 11,1,1,.02,63';
-        //Self.SwfUrl := 'http://embed.livebox.cz/iprima/player_embed.swf?nocache=1331373541533';
-        //Self.TcUrl := MovieUrl;
-        //Self.PageUrl := GetMovieInfoUrl;
+        Self.FlashVer := 'WIN 11,1,102,63';
+        Self.SwfUrl := 'http://embed.livebox.cz/iprimaplay/flash/LiveboxPlayer.swf'; // + '?nocache=' + UnixTime;
+        Self.TcUrl := MovieUrl;
+        Self.PageUrl := GetMovieInfoUrl;
         Result := True;
         SetPrepared(True);
         end;
@@ -362,11 +364,6 @@ begin
 end;
 
 {$ENDIF}
-
-function TDownloader_iPrima_LiveBox.GetFileNameExt: string;
-begin
-  Result := '.flv';
-end;
 
 initialization
   RegisterDownloader(TDownloader_iPrima);

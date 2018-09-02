@@ -106,7 +106,11 @@ begin
 end;
 
 function TDownloader_VKontakteRuEmbed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Host, UID, VTag, Title: string;
+const
+  Quality: array[0..3] of integer = (720, 480, 360, 240);
+var
+  Host, UID, VTag, Url, Title: string;
+  i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -119,10 +123,17 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['VTag']))
   else
     begin
-    SetName(UrlDecode(Title));
-    MovieUrl := Host + 'u' + UID + '/video/' + VTag + '.720.mp4';
-    SetPrepared(True);
-    Result := True;
+    for i := 0 to Pred(Length(Quality)) do
+      begin
+      Url := Format('%su%s/video/%s.%d.mp4', [Host, UID, VTag, Quality[i]]);
+      if DownloadPage(Http, Url, hmHEAD) then
+        begin
+        SetName(HtmlDecode(UrlDecode(Title)));
+        MovieUrl := Url;
+        SetPrepared(True);
+        Result := True;
+        end;
+      end;
     end;
 end;
 
