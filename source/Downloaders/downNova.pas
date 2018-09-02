@@ -279,34 +279,84 @@ end;
 function TDownloader_Nova.TryMSDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;
 const
   QualitySuffix: array[boolean] of string = ('-LQ', '-HQ');
+  SoapQuality: array[0..2] of string = ('hd', 'hq', 'lq');
+  SOAP_REQUEST = ''
+    + '<GetSecuredUrl xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://streaming.kitd.cz/cdn/nova">'
+    + '<token></token>'
+    + '<mediaId>%0:s</mediaId>'
+    + '<id>%1:s</id>'
+    + '<type>Archive</type>'
+    + '<format>%2:s</format>'
+    + '</GetSecuredUrl>'
+    ;
 var
-  InfoUrl, StreamInfo, Year, Month, ID: string;
+  InfoUrl, StreamInfo, Year, Month, ID, Url: string;
   MSDownloader: TMSDirectDownloader;
+  RequestXml, ResponseXml: TXmlDoc;
+  ResponseHeaderNode, ResponseBodyNode: TXmlNode;
+  i: integer;
 begin
   Result := False;
-  InfoUrl := Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash'
-                    + '&prod=%0:s&unit=%1:s&media=%2:s&site=%3:s&section=%4:s&subsite=%5:s'
-                    + '&embed=0&mute=0&size=&realSite=%3:s&width=704&height=441&hdEnabled=%6:d'
-                    {$IFDEF VOYO_PLUS}
-                    + '&hash=%7:s&dev=&8:s&wv=1&sts=%9:s&r=%10:d
-                    {$ENDIF}
-                    + '&finish=finishedPlayer', [
-                    {0}ProductID, {1}UnitID, {2}MediaID, {3}SiteID, {4}SectionID, {5}Subsite
-                    , {6}Integer(LowQuality)
-                    {$IFDEF VOYO_PLUS}
-                    , {7}Hash, {8}Device, {9}Timestamp, {10}Random(65535)
-                    {$ENDIF}
-                    ]);
-  Writeln(InfoUrl);
-  if DownloadPage(Http, InfoUrl, StreamInfo) then
-    if GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
+  if not Result then
+    begin
+    InfoUrl := Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash'
+                      + '&prod=%0:s&unit=%1:s&media=%2:s&site=%3:s&section=%4:s&subsite=%5:s'
+                      + '&embed=0&mute=0&size=&realSite=%3:s&width=704&height=441&hdEnabled=%6:d'
+                      {$IFDEF VOYO_PLUS}
+                      + '&hash=%7:s&dev=&8:s&wv=1&sts=%9:s&r=%10:d
+                      {$ENDIF}
+                      + '&finish=finishedPlayer', [
+                      {0}ProductID, {1}UnitID, {2}MediaID, {3}SiteID, {4}SectionID, {5}Subsite
+                      , {6}Integer(LowQuality)
+                      {$IFDEF VOYO_PLUS}
+                      , {7}Hash, {8}Device, {9}Timestamp, {10}Random(65535)
+                      {$ENDIF}
+                      ]);
+    if DownloadPage(Http, InfoUrl, StreamInfo) then
+      if GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
+        begin
+        MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
+        MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
+        MSDownloader.Options := Options;
+        Downloader := MSDownloader;
+        Result := True;
+        end;
+    end;
+  if not Result then
+    begin
+    if LowQuality then
+      i := Pred(Length(SoapQuality))
+    else
+      i := 0;
+    while (not Result) and (i >= 0) and (i < Length(SoapQuality)) do
       begin
-      MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
-      MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
-      MSDownloader.Options := Options;
-      Downloader := MSDownloader;
-      Result := True;
+      RequestXml := TXmlDoc.Create;
+      try
+        RequestXml.LoadFromBinaryString( {$IFDEF UNICODE} AnsiString {$ENDIF} (Format(SOAP_REQUEST, [MediaID, UnitID, SoapQuality[i]])));
+        if DownloadSoap(Http, 'http://fcdn-dir.kitd.cz/Services/Player.asmx', 'http://streaming.kitd.cz/cdn/nova/GetSecuredUrl', nil, RequestXml.Root, ResponseXml, ResponseHeaderNode, ResponseBodyNode) then
+          try
+            if ResponseBodyNode <> nil then
+              if GetXmlVar(ResponseBodyNode, 'GetSecuredUrlResponse/GetSecuredUrlResult', Url) then
+                if Url <> '' then
+                  begin
+                  MovieUrl := Url;
+                  MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
+                  MSDownloader.Options := Options;
+                  Downloader := MSDownloader;
+                  Result := True;
+                  end;
+          finally
+            FreeAndNil(ResponseXml);
+            end;
+        if LowQuality then
+          Dec(i)
+        else
+          Inc(i);
+      finally
+        FreeAndNil(RequestXml);
+        end;
       end;
+    end;
 end;
 
 function TDownloader_Nova.TryRTMPDownloader(Http: THttpSend; const SiteID, SectionID, Subsite, ProductID, UnitID, MediaID: string; out Downloader: TDownloader): boolean;

@@ -1,11 +1,23 @@
 ﻿______________________________________________________________________________
 
-YTD v1.21                                                    (c) 2009-13 Pepak
+YTD v1.22                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.22:
+
+    * Nova.cz: 
+      - Opraven zapomenutý ladící tisk, který v GUI verzi způsoboval chybu při 
+        stahování.
+      - Podpora pro stahování Voyo+. Akorát pak to video nejde přehrát, protože
+        je chráněné DRM a já nemám zaplacený příslušný klíč, ale teoreticky
+        pokud si Voyo+ platíte, tak by vám stáhnuté soubory měly jít přehrát.
+        Určitě by mě zajímalo, kdyby mi to někdo potvrdil nebo vyvrátil.
+
+
 
   v1.21:
 

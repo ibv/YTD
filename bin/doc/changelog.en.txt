@@ -1,11 +1,22 @@
 ﻿______________________________________________________________________________
 
-YTD v1.21                                                    (c) 2009-13 Pepak
+YTD v1.22                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.22:
+
+    * Nova.cz: 
+      - Fixed a forgotten debug print, which crashed any download in the GUI
+        version.
+      - Support for Voyo+. The movies download, but I can't verify that they
+        also play, because they are DRM-protected and I don't own the key.
+        I would welcome a thumbs up (or down) from someone who does.
+
+
 
   v1.21:
 
