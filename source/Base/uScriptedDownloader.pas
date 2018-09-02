@@ -84,6 +84,8 @@ type
       procedure ProcessHttpDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessRtmpDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessHDSDownload(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessHLSDownload(Node: TXmlNode; Vars: TScriptVariables);
       function ProcessNodeContent(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
@@ -94,6 +96,7 @@ type
       function ProcessDecodeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessStripTags(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
     public
@@ -126,6 +129,8 @@ uses
   uHttpDirectDownloader,
   uRtmpDirectDownloader,
   uNestedDirectDownloader,
+  uHDSDirectDownloader,
+  uHLSDirectDownloader,
   NativeXml;
 
 const
@@ -369,6 +374,10 @@ begin
         ProcessHttpDownload(ChildNode, Vars)
       else if ChildNode.Name = 'rtmp_download' then
         ProcessRtmpDownload(ChildNode, Vars)
+      else if ChildNode.Name = 'hds_download' then
+        ProcessHDSDownload(ChildNode, Vars)
+      else if ChildNode.Name = 'hls_download' then
+        ProcessHLSDownload(ChildNode, Vars)
       else if ChildNode.Name = 'nested_download' then
         ProcessNestedDownload(ChildNode, Vars)
       else if ChildNode.Name = 'multi_regexp' then
@@ -458,6 +467,38 @@ var
 begin
   ProcessCommonDownload(Node, Vars, Url, Title, Ext);
   Downloader := TNestedDirectDownloader.CreateWithName(Url, Title);
+  try
+    Downloader.SetFileNameExt(Ext);
+    AddDownloader(Downloader);
+  except
+    FreeAndNil(Downloader);
+    Raise;
+    end;
+end;
+
+procedure TScriptedDownloader.ProcessHDSDownload(Node: TXmlNode; Vars: TScriptVariables);
+var
+  Downloader: THDSDirectDownloader;
+  Url, Title, Ext: string;
+begin
+  ProcessCommonDownload(Node, Vars, Url, Title, Ext);
+  Downloader := THDSDirectDownloader.CreateWithName(Url, Title);
+  try
+    Downloader.SetFileNameExt(Ext);
+    AddDownloader(Downloader);
+  except
+    FreeAndNil(Downloader);
+    Raise;
+    end;
+end;
+
+procedure TScriptedDownloader.ProcessHLSDownload(Node: TXmlNode; Vars: TScriptVariables);
+var
+  Downloader: THLSDirectDownloader;
+  Url, Title, Ext: string;
+begin
+  ProcessCommonDownload(Node, Vars, Url, Title, Ext);
+  Downloader := THLSDirectDownloader.CreateWithName(Url, Title);
   try
     Downloader.SetFileNameExt(Ext);
     AddDownloader(Downloader);
@@ -600,6 +641,8 @@ begin
             Result := Result + ProcessDecodeJS(ChildNode, Vars)
           else if ChildNode.Name = 'decode_base64' then
             Result := Result + ProcessDecodeBase64(ChildNode, Vars)
+          else if ChildNode.Name = 'strip_tags' then
+            Result := Result + ProcessStripTags(ChildNode, Vars)
           else if ChildNode.Name = 'timestamp' then
             Result := Result + ProcessTimestamp(ChildNode, Vars)
           else
@@ -952,6 +995,11 @@ end;
 function TScriptedDownloader.ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
 begin
   Result := Base64Decode(ProcessNodeContent(Node, Vars));
+end;
+
+function TScriptedDownloader.ProcessStripTags(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := StripTags(ProcessNodeContent(Node, Vars));
 end;
 
 function TScriptedDownloader.ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;

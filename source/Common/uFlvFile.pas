@@ -116,6 +116,7 @@ type
       function GetSegmentCount: integer;
       function GetSegmentGroup(Index: integer): THDSSegmentGroup;
       function GetSegmentGroupCount: integer;
+      function GetNumberOfFragments: DWORD;
     protected
       function ParseSegmentBox(var BoxData: PAnsiChar; var BoxSize: integer): boolean;
       function ParseFragmentBox(var BoxData: PAnsiChar; var BoxSize: integer): boolean;
@@ -154,6 +155,7 @@ type
       property FragmentGroups[Index: integer]: THDSFragmentGroup read GetFragmentGroup;
       property FragmentCount: integer read GetFragmentCount;
       property Fragments[Index: integer]: THDSFragmentInfo read GetFragment;
+      property NumberOfFragments: DWORD read GetNumberOfFragments;
     end;
 
   THDSSegmentGroup = class
@@ -201,7 +203,7 @@ type
     THDSFragmentInfo = class
     private
       fFragment: DWORD;
-      fTimestamp: UInt64;
+      fFragmentTimestamp: UInt64;
       fDuration: DWORD;
       fDiscontinuityIndicator: Byte;
       fGroup: THDSFragmentGroup;
@@ -210,7 +212,7 @@ type
       constructor Create(AFragment: DWORD; ATimestamp: UInt64; ADuration: DWORD; ADiscontinuityIndicator: Byte; AGroup: THDSFragmentGroup);
       destructor Destroy; override;
       property Fragment: DWORD read fFragment;
-      property Timestamp: UInt64 read fTimestamp;
+      property FragmentTimestamp: UInt64 read fFragmentTimestamp;
       property Duration: DWORD read fDuration;
       property DiscontinuityIndicator: Byte read fDiscontinuityIndicator;
       property Group: THDSFragmentGroup read fGroup;
@@ -919,6 +921,20 @@ begin
   FragmentList.Sort(FragmentSorter);
 end;
 
+function THDSMediaInfo.GetNumberOfFragments: DWORD;
+var
+  i: integer;
+  Frag: DWORD;
+begin
+  Result := 0;
+  for i := 0 to Pred(SegmentCount) do
+    begin
+    Frag := Segments[i].FirstFragment + Segments[i].FragmentsPerSegment;
+    if Frag > Result then
+      Result := Frag;
+    end;
+end;
+
 { THDSSegmentGroup }
 
 constructor THDSSegmentGroup.Create;
@@ -968,7 +984,7 @@ constructor THDSFragmentInfo.Create(AFragment: DWORD; ATimestamp: UInt64; ADurat
 begin
   inherited Create;
   fFragment := AFragment;
-  fTimestamp := ATimestamp;
+  fFragmentTimestamp := ATimestamp;
   fDuration := ADuration;
   fDiscontinuityIndicator := ADiscontinuityIndicator;
   fGroup := AGroup;

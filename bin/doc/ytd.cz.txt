@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.41                                                    (c) 2009-14 Pepak
+YTD v1.42                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -18,17 +18,18 @@ HD video, pokud je k dispozici.
 3. Protokol RTMP
 4. Protokoly MMS/RTSP
 5. Protokol HDS
-6. Playlisty
-7. Konverze stáhnutých souborů
-8. Distribuční archív
-9. Konfigurace
-10. Syntaxe příkazového řádku
-11. Návratové kódy
-12. Lokalizace
-13. Podpora
-14. Kompilace
-15. Napsali o programu
-16. Licence
+6. Protokol HLS
+7. Playlisty
+8. Konverze stáhnutých souborů
+9. Distribuční archív
+10. Konfigurace
+11. Syntaxe příkazového řádku
+12. Návratové kódy
+13. Lokalizace
+14. Podpora
+15. Kompilace
+16. Napsali o programu
+17. Licence
 
 
 
@@ -121,7 +122,22 @@ navazovat přerušené spojení (které YTD stejně nepodporuje).
 
 
 
-6. PLAYLISTY
+6. PROTOKOL HLS
+---------------
+
+Od verze 1.42 je podporován protokol HLS. Jde o protokol postavený na HTTP
+a je tvořen .m3u playlistem, který odkazuje na sadu dalších .m3u playlistů
+(podle kvality videa), z nichž každý už obsahuje přímo jednotlivé části
+videa. Zatím jsem viděl pouze implementaci, ve které jsou jednotlivé části
+tvořené soubory typu .ts, které jde jednoduše spojit dohromady a přehrát
+pokročilejšími přehrávači (Mplayer, VideoLAN, KMPlayer apod.). Může se stát,
+že nějaká další serverová implementace bude používat jiný formát pro kusy
+videa a spojování pak nebude tak jednoduché. Až to nastane, budu se tím
+zabývat.
+
+
+
+7. PLAYLISTY
 ------------
 
 Od verze 0.19 jsou podporovány zdroje, ve kterých je jeden pořad tvořen
@@ -131,7 +147,7 @@ které ne - stahují se vždy všechny.
 
 
 
-7. KONVERZE STÁHNUTÝCH SOUBORŮ
+8. KONVERZE STÁHNUTÝCH SOUBORŮ
 ------------------------------
 
 Od verze 0.50 podporuje YouTube Downloader funkci, která do jisté míry
@@ -215,7 +231,7 @@ výhodu.
 
 
 
-8. DISTRIBUČNÍ ARCHÍV
+9. DISTRIBUČNÍ ARCHÍV
 ---------------------
 
 Až do verze 0.86 včetně byl YTD distribuován v archívu ZIP s tím, že si ho
@@ -260,8 +276,8 @@ distribučního modelu a dokonce k nim přidat:
 
 
 
-9. KONFIGURACE
---------------
+10. KONFIGURACE
+---------------
 
 Od verze 0.50 používá YouTube Downloader pro svoji konfiguraci XML soubor
 "ytd.xml". Umístěn může být ve třech místech:
@@ -668,7 +684,7 @@ a "0" (ne).
 
 
 
-10. SYNTAXE PŘÍKAZOVÉHO ŘÁDKU
+11. SYNTAXE PŘÍKAZOVÉHO ŘÁDKU
 -----------------------------
 
   ytd.exe <param> [<param>] [<param>] ...
@@ -726,7 +742,7 @@ a "0" (ne).
 
 
 
-11. NÁVRATOVÉ KÓDY
+12. NÁVRATOVÉ KÓDY
 ------------------
 
 Verze pro příkazový řádek podporuje návratové kódy (errorlevel). Možné hodnoty
@@ -751,7 +767,7 @@ jsou:
 
 
 
-12. LOKALIZACE
+13. LOKALIZACE
 --------------
 
 Pro lokalizaci používá YouTube Downloader GNU GetText. Pro případné zájemce
@@ -783,7 +799,7 @@ i "default.po"), rád ho zařadím do budoucích verzí YouTube Downloaderu.
 
 
 
-13. PODPORA
+14. PODPORA
 -----------
 
 Podporu naleznete na následujících stránkách:
@@ -797,7 +813,7 @@ Podporu naleznete na následujících stránkách:
 
 
 
-14. KOMPILACE
+15. KOMPILACE
 -------------
 
 Na domácí stránce programu naleznete i jeho zdrojový kód, který si můžete sami
@@ -860,7 +876,7 @@ WinAPI (DEFINE GUI_WINAPI v ytd.inc).
 
 
 
-54. NAPSALI O PROGRAMU
+16. NAPSALI O PROGRAMU
 ----------------------
 
 http://blog.zarohem.cz/clanek.asp?cislo=1605
@@ -873,7 +889,7 @@ http://magazin.stahuj.centrum.cz/youtube-downloader-stahujte-videa-i-z-ceskych-w
 
 
 
-16. LICENCE
+17. LICENCE
 -----------
 
 YouTube Downloader je publikován pod tzv. novou BSD licencí. Její text 

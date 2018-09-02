@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.41                                                    (c) 2009-14 Pepak
+YTD v1.42                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -19,16 +19,17 @@ has several variants, the highest-quality one is downloaded.
 3. RTMP protocol
 4. MMS/RTSP protocols
 5. HDS protocol
-6. Playlists
-7. Conversion of downloaded files
-8. The distribution archive
-9. Configuration
-10. Command-line syntax
-11. Result codes
-12. Localization
-13. Support
-14. Compiling
-15. License
+6. HLS protocol
+7. Playlists
+8. Conversion of downloaded files
+9. The distribution archive
+10. Configuration
+11. Command-line syntax
+12. Result codes
+13. Localization
+14. Support
+15. Compiling
+16. License
 
 
 
@@ -106,22 +107,37 @@ will need to use MSDL directly.
 5. HDS PROTOCOL
 ---------------
 
-Od verze 1.15 je podporován protokol Adobe HDS. Jde o protokol postavený na
-HTTP, ve kterém je video tvořeno tzv. manifestem (záhlavím) a potom sekvencí
-mnoha fragmentů FLV souboru, které se stahují samostatně a které je třeba
-vhodně zkombinovat. Implementace protokolu vychází ze skriptu AdobeHDS.php
-(https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php) od autora K-S-V,
-který jsem v řadě ohledů upravil.
+Since version 1.15 the Adobe HDS protocol is supported. It is a HTTP-based
+protocol consisting of a manifest (header) and a sequence of fragments of
+a FLV file, which must be downloaded separately and combined. My implementation
+is based on the AdobeHDS.php script (https://raw.github.com/K-S-V/Scripts/master/AdobeHDS.php) 
+by K-S-V, which I modified in a number of aspects.
 
-V základní implementaci (DEFINE SIMPLIFIEDHDSDOWNLOADER) jsem přijal několik
-zjednodušujících předpokladů, které potřebám YTD plně vyhovují a měly by být
-u drtivé většiny serverů splněny. Výhodou je řádově jednodušší implementace,
-byť za cenu možné nefunkčnosti u některých serverů a zejména bez možnosti
-navazovat přerušené spojení (které YTD stejně nepodporuje).
+The simplified implementation (DEFINE SIMPLIFIEDHDSDOWNLOADER) is based on a 
+number of assumptions which are quite sufficient for YTD's needs and should 
+be satisfied by most servers. The advantage if this approach is a much 
+simplified code, although it may fail with some servers. The most significant
+disadvantage is the inability to resume broken downloads (which are not
+supported by YTD, anyway).
 
 
 
-6. PLAYLISTS
+6. HLS PROTOCOL
+---------------
+
+Since version 1.42, the HLS protocol is supported. It is a HTTP-based protocol
+built around a .m3u playlist, which contains several other .m3u playlists
+(one for each video quality) and these in turn contain links to the movie
+chunks. So far I have only seen an implementation which uses a .ts format
+for these chunks, which makes it easy to combine them and then play the 
+result using an advanced media player such as Mplayer, VideoLAN or KMPlayer.
+It is possible that other implementations will use different formats, ones
+which won't be as easy to combine. When that happens, I will see what can
+I do about it.
+
+
+
+7. PLAYLISTS
 ------------
 
 Since version 0.19, sources which contain multiple files on one page are
@@ -131,7 +147,7 @@ of course use the GUI version and delete unwanted streams from there.
 
 
 
-7. CONVERSION OF DOWNLOADED FILES
+8. CONVERSION OF DOWNLOADED FILES
 ---------------------------------
 
 Version 0.50 added support for calling external applications after a download
@@ -218,7 +234,7 @@ the downloaded files, you can always do so in a BAT file.
 
 
 
-8. THE DISTRIBUTION ARCHIVE
+9. THE DISTRIBUTION ARCHIVE
 ---------------------------
 
 Up to version 0.86, YTD was distrubuted in the form of a standard ZIP archive,
@@ -263,7 +279,7 @@ of the ZIP archive as possible while adding new ones:
 
 
 
-9. CONFIGURATION
+10. CONFIGURATION
 ----------------
 
 Since version 0.50 stores YouTube Downloader its configuration in a XML file
@@ -687,8 +703,8 @@ except in file/directory names. Logical values (true-false) are stored as
 
 
 
-10. COMMAND-LINE SYNTAX
-----------------------
+11. COMMAND-LINE SYNTAX
+-----------------------
 
   ytd.exe <param> [<param>] [<param>] ...
 
@@ -745,7 +761,7 @@ except in file/directory names. Logical values (true-false) are stored as
 
 
 
-11. RESULT CODES
+12. RESULT CODES
 ----------------
 
 The command-line version supports result codes (errorlevel). Possible values
@@ -772,7 +788,7 @@ are:
 
 
 
-12. LOCALIZATION
+13. LOCALIZATION
 ----------------
 
 YouTube Downloader uses GNU GetText for its localization needs. If you are
@@ -802,7 +818,7 @@ and "default.po" files) for inclusion in future versions of YouTube Downloader.
 
 
 
-13. SUPPORT
+14. SUPPORT
 -----------
 
 Support is provided at:
@@ -816,7 +832,7 @@ Support is provided at:
 
 
 
-14. COMPILING
+15. COMPILING
 -------------
 
 Source code to YouTube Downloader can be downloaded from the program's
@@ -878,7 +894,7 @@ With FreePascal, the graphical interface is only supported in the WinAPI mode
 
 
 
-15. LICENSE
+16. LICENSE
 -----------
 
 YouTube Downloader is published under the new BSD license. You can read the

@@ -1,11 +1,29 @@
 ﻿______________________________________________________________________________
 
-YTD v1.41                                                    (c) 2009-14 Pepak
+YTD v1.42                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.42:
+
+    * Noví poskytovatelé:
+      - Cloudzilla.to
+      - Film.Seznam.cz
+      - GameSpot.com
+      - Natabanu.com
+
+    * Aktualizovaní poskytovatelé:
+      - XHamster.com
+
+    * Upraven stahovač pro HDS streamy. GameSpot s ním chodí správně, těžko
+      ale odhadnout, jestli současná úprava vyhovuje specifikacím. Mohla by.
+
+    * Nový stahovač pro HLS streamy (např. Seznam.cz).
+
+
 
   v1.41:
 

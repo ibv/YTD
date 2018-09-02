@@ -83,6 +83,8 @@ uses
   uPlaylistDownloader in 'Base\uPlaylistDownloader.pas',
   uHDSDownloader in 'Base\uHDSDownloader.pas',
   uHDSDirectDownloader in 'Base\uHDSDirectDownloader.pas',
+  uHLSDownloader in 'Base\uHLSDownloader.pas',
+  uHLSDirectDownloader in 'Base\uHLSDirectDownloader.pas',
   uScriptedDownloader in 'Base\uScriptedDownloader.pas',
   // Command Line Version
   {$IFDEF CLI}

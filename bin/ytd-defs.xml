@@ -1,5 +1,5 @@
 ﻿<ytd-defs>
-	<version>1.41.20140720.0</version>
+	<version>1.42.20140801.0</version>
 	<scripts>
 
 		<script id="1tv.ru" provider="1tv.ru">
@@ -45,6 +45,17 @@
 				<title><regexp id="h1" content="page"/></title>
 				<url><decode_html><regexp id="iframe_src" content="page"/></decode_html></url>
 			</nested_download>
+		</script>
+
+		<script id="cloudzilla.to" provider="Cloudzilla.to">
+			<regexps>
+				<regexp id="url" match="URL"><![CDATA[var\s+vurl\s*=\s*"(?P<URL>https?://.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<http_download>
+				<title><regexp id="div_title" content="page"/></title>
+				<url><regexp id="url" content="page"/></url>
+			</http_download>
 		</script>
 
 		<script id="csfd.cz" provider="CSFD.cz">
@@ -96,6 +107,40 @@
 			</http_download>
 		</script>
 
+		<script id="film.seznam.cz" provider="Seznam.cz">
+			<regexps>
+				<regexp id="title" match="TITLE"><![CDATA[<h1>\s*<span class="movieName">\s*(?P<TITLE>.*?)\s*</span>]]></regexp>
+				<regexp id="url" match="URL"><![CDATA[\bvideoSrcHls\s*:\s*'(?P<URL>https?://.+?)']]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<hls_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><regexp id="url" content="page"/></url>
+				<extension>.ts</extension>
+			</hls_download>
+		</script>
+
+		<script id="gamespot.com-embed" provider="GameSpot.com">
+			<regexps>
+				<regexp id="title" match="TITLE"><![CDATA[<div\s+class="av-video-title">(?P<TITLE>.*?)</div>]]></regexp>
+				<regexp id="info" match="CONTENT"><![CDATA[\sdata-video="(?P<CONTENT>.+?)"]]></regexp>
+				<regexp id="streams" match="CONTENT"><![CDATA["videoStreams"\s*:\s*\{(?P<CONTENT>.+?)\}]]></regexp>
+				<regexp id="stream"><![CDATA["(?P<QUALITY>[^"]+)"\s*:\s*"(?P<URL>[^"]+)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url>http://www.gamespot.com/videos/embed/<get_var id="_movie_id"/>/</url></download_page></set_var>
+			<set_var id="info"><decode_html><regexp id="info" content="page"/></decode_html></set_var>
+			<set_var id="streams"><regexp id="streams" content="info"/></set_var>
+			<multi_regexp id="stream" content="streams" var_prefix="stream_" match="QUALITY,URL">
+				<best_var id="stream_QUALITY" type="enumeration" order="f4m_stream,f4m_hd,f4m_high,f4m_low">
+					<set_var id="url"><decode_js><get_var id="stream_URL"/></decode_js></set_var>
+				</best_var>
+			</multi_regexp>
+			<hds_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><get_var id="url"/>?hdcore=3.3.1</url>
+			</hds_download>
+		</script>
+
 		<script id="mc2.sk" provider="MC2.sk">
 			<regexps>
 				<regexp id="server" match="URL"><![CDATA[\.addVariable\s*\(\s*"node"\s*,\s*"(?P<URL>rtmpt?e?://[^"/]+)]]></regexp>
@@ -108,6 +153,19 @@
 				<playpath><regexp id="playpath" content="page"/></playpath>
 				<!-- lze pouzivat take rtmp_app, swf_url, tc_url, page_url, swf_vfy, flashver, live, realtime -->
 			</rtmp_download>
+		</script>
+
+		<script id="natabanu.com" provider="Natabanu.com">
+			<regexps>
+				<regexp id="info"><![CDATA[<div\s+class="item-page">.*?<h2>(?P<TITLE>.*?)</h2>.*?<iframe\s+width=.*?\ssrc="(?P<URL>https?://.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<multi_regexp id="info" content="page" var_prefix="info_" match="TITLE,URL">
+				<nested_download>
+					<title><strip_tags><get_var id="info_TITLE"/></strip_tags></title>
+					<url><get_var id="info_URL"/></url>
+				</nested_download>
+			</multi_regexp>
 		</script>
 
 		<script id="rtl.be" provider="RTL.be">
@@ -176,7 +234,18 @@
 			</download_page></set_var>
 			<http_download>
 				<title><regexp id="title" content="page"/></title>
-				<url>http://<get_var id="server"/>/<copy start="0" length="-3"><get_var id="_movie_id"/></copy>/<get_var id="_movie_id"/>.flv></url>
+				<url>http://<get_var id="server"/>/<copy start="0" length="-3"><get_var id="_movie_id"/></copy>/<get_var id="_movie_id"/>.flv</url>
+			</http_download>
+		</script>
+
+		<script id="xhamster.com" provider="XHamster.com">
+			<regexps>
+				<regexp id="video" match="URL"><![CDATA[<video\b[^>]*\sfile="(?P<URL>https?://.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<http_download>
+				<title><regexp id="h1" content="page"/></title>
+				<url><regexp id="video" content="page"/></url>
 			</http_download>
 		</script>
 
@@ -186,6 +255,7 @@
 		<regexp id="title" match="NAME"><![CDATA[<title>\s*(?P<NAME>.*?)\s*</title>]]></regexp>
 		<regexp id="h1" match="NAME"><![CDATA[<h1[^>]*>\s*(?P<NAME>.*?)\s*</h1>]]></regexp>
 		<regexp id="meta_ogtitle" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:title(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
+		<regexp id="div_title" match="NAME"><![CDATA[<div\s+[^>]*\bid="title"[^>]*>\s*(?P<NAME>.*?)\s*</div>]]></regexp>
 		<regexp id="meta_ogvideo" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:video(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="meta_articletag" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])article:tag(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="json_file_colon" match="CONTENT"><![CDATA[\bfile\s*:\s*(?P<QUOTE>['"])(?P<CONTENT>.*?)(?P=QUOTE)]]></regexp>
@@ -196,10 +266,14 @@
 		<url script="1tv.ru"><![CDATA[1tv\.ru/.+$]]></url>
 		<url script="aktualne.cz"><![CDATA[aktualne(?:\.centrum)?\.cz/.+$]]></url>
 		<url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
+		<url script="cloudzilla.to"><![CDATA[cloudzilla.to/embed/.+$]]></url>
 		<url script="csfd.cz"><![CDATA[csfd\.cz/.+$]]></url>
 		<url script="dailymail.co.uk"><![CDATA[dailymail\.co\.uk/.+$]]></url>
 		<url script="facebook.com"><![CDATA[facebook\.com/.+$]]></url>
+		<url script="film.seznam.cz"><![CDATA[film\.seznam\.cz(?:/.+)?$]]></url>
+		<url script="gamespot.com-embed" subexpression="ID"><![CDATA[gamespot\.com/videos/embed/(?P<ID>\d+)]]></url>
 		<url script="mc2.sk"><![CDATA[mc2\.sk/.+$]]></url>
+		<url script="natabanu.com"><![CDATA[natabanu\.com/.+$]]></url>
 		<url script="rtl.be"><![CDATA[rtl\.be/.+$]]></url>
 		<url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
 		<url script="vimeo.com" subexpression="ID"><![CDATA[player\.vimeo\.com/video/(?P<ID>\d+)]]></url>
@@ -207,6 +281,7 @@
 		<!-- ***** Adult ******************************************* -->
 		<adult>
 		<url script="123video.nl" subexpression="ID"><![CDATA[123video\.nl/playvideos\.asp\?([^&]*&)*?MovieID=(?P<ID>\d+)]]></url>
+		<url script="xhamster.com"><![CDATA[xhamster\.com/.+$]]></url>
 		</adult>
 	</urls>
 </ytd-defs>

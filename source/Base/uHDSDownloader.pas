@@ -56,8 +56,8 @@ type
       fStreamUrl: string;
       fStreamMetadata: AnsiString;
       fAborted: Boolean;
-      fFragmentsToDownload: integer;
-      fFragmentsDownloaded: integer;
+      fFragmentsToDownload: int64;
+      fFragmentsDownloaded: int64;
       fDownloadedThisFragment: int64;
       fDownloadedPreviousFragments: int64;
     protected
@@ -246,7 +246,7 @@ begin
       fVideoDownloader := CreateHttp;
       fVideoDownloader.Cookies.Assign(Http.Cookies);
       fVideoDownloader.Sock.OnStatus := SockStatusMonitor;
-      fFragmentsToDownload := fMediaInfo.FragmentCount;
+      fFragmentsToDownload := fMediaInfo.NumberOfFragments;
       fFragmentsDownloaded := 0;
       fDownloadedThisFragment := 0;
       fDownloadedPreviousFragments := 0;
@@ -345,9 +345,9 @@ var
   Output: TFlvFile;
   Stream: TFileStream;
   FragmentDownloaded: boolean;
-  Fragment: DWORD;
+  Fragment, FragmentCount: DWORD;
   FragmentData, FlvData: AnsiString;
-  i, Retry: integer;
+  Retry: integer;
 begin
   inherited Download;
   Result := False;
@@ -372,11 +372,11 @@ begin
       SetLastErrorMsg(ERR_HTTP_NO_DATA_READ);
       Output := nil;
       try
-        for i := 0 to Pred(MediaInfo.FragmentCount) do
+        FragmentCount := MediaInfo.NumberOfFragments;
+        for Fragment := 0 to Pred(FragmentCount) do
           begin
           if Aborted then
             Exit;
-          Fragment := MediaInfo.Fragments[i].Fragment;
           if (Fragment = 0)  then
             begin
             Dec(fFragmentsToDownload);
@@ -465,14 +465,14 @@ begin
   if (VideoDownloader <> nil) then
     begin
     Result := Result + VideoDownloader.DownloadSize;
-    AverageSizePerFragment := Result div int64(Succ(fFragmentsDownloaded));
+    AverageSizePerFragment := Result div Succ(fFragmentsDownloaded);
     end
   else
     if fFragmentsDownloaded = 0 then
       AverageSizePerFragment := 0
     else
       AverageSizePerFragment := Result div fFragmentsDownloaded;
-  Result := Result + int64(fFragmentsToDownload - fFragmentsDownloaded) * AverageSizePerFragment;
+  Result := Result + (fFragmentsToDownload - fFragmentsDownloaded) * AverageSizePerFragment;
 end;
 
 end.

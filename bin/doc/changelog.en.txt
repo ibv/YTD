@@ -1,11 +1,30 @@
 ﻿______________________________________________________________________________
 
-YTD v1.41                                                    (c) 2009-14 Pepak
+YTD v1.42                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.42:
+
+    * New providers:
+      - Cloudzilla.to
+      - Film.Seznam.cz
+      - GameSpot.com
+      - Natabanu.com
+
+    * Updated providers:
+      - XHamster.com
+
+    * Modified the HDS downloader. GameSpot works fine with this new version.
+      I hope other servers will work to, but I have no idea whether this hope
+      is justified.
+
+    * A support for HDS protocol (e.g. Seznam.cz).
+
+
 
   v1.41:
 

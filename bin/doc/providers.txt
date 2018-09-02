@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.41                                                    (c) 2009-14 Pepak
+YTD v1.42                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -65,6 +65,7 @@ CKKlic.cz           | HTTP     |       | http://www.ckklic.cz/zajezdy/rafting/dl
 Clevver.com         | HTTP     |       | http://www.clevver.com/ctv/videof/245041/the-kids-are-all-right-movie-trailer.html
 Clipfish.de         | HTTP     |       | http://www.clipfish.de/video/3306089/baby-kaenguruh-versucht-zu-schwimmen/
                     |          |       | http://www.clipfish.de/special/lets-dance/home/
+Cloudzilla.to       | HTTP     |       | http://www.cloudzilla.to/embed/ZUKQ6ZMA23PZQDGHDE1NJ0QJC/
 CNBC.com            | RTMP     |       | http://www.cnbc.com/id/15840232?video=3000016920&play=1
                     |          |       | http://video.cnbc.com/gallery/?video=3000016920
 CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:1934920
@@ -101,6 +102,7 @@ Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php
                     |          |       | http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
                     |          |       | http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
 FileCabi.net        | HTTP     |       | http://www.filecabi.net/video/hiddendogstopsrobbery.html
+Film.Seznam.cz      | HLS      |       | http://film.seznam.cz
 Fishki.net          | HTTP     | 4     | http://fishki.net/comment.php?id=79682
 Flickr.com          | HTTP     |       | http://www.flickr.com/photos/landersz/2403626167/
 FreeCaster.tv       | multiple |       | http://freecaster.tv/freeski/1012253
@@ -112,6 +114,8 @@ G4TV.com            | HTTP     |       | http://www.g4tv.com/videos/53181/Duke-N
 GameAnyone.com      | HTTP     |       | http://www.gameanyone.com/game/PC/936.html
                     |          |       | http://www.gameanyone.com/video/88319
 GamePark.cz         | HTTP     |       | http://www.gamepark.cz/lineage_2_babylon_371564.htm
+GameSpot.com        | HDS      |       | http://www.gamespot.com/e3/microsoft-press-conference-2014/
+                    |          |       | http://www.gamespot.com/videos/embed/6419027/
 GameZone.com        | RTMP     |       | http://www.gamezone.com/videos/guild-wars-2-cinematic-conversation-trailer
 Games.Tiscali.cz    | HTTP     |       | http://games.tiscali.cz/video/zhodnotte-alternativni-pruchod-far-cry-3-dema-z-e3-2011-56300
 GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
@@ -195,6 +199,7 @@ N-joy.cz            | HTTP     |       | http://n-joy.cz/video/shank-5-minut-hra
 NaHnoji.cz          | HTTP     |       | http://nahnoji.cz/watch_video.php?v=UBMX421YR7ON
                     |          |       | http://nahnoji.cz/player/embed_player.php?vid=7103
 NaStojaka.cz        | HTTP     |       | http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
+Natabanu.com        | HTTP     |       | http://www.natabanu.com/serija/karadayi/23101-karadayi-epizoda-55.html
 NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=5766
 NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
 NebickoVPapulke.sk  | HTTP     |       | http://www.nebickovpapulke.sk/epizoda/epizoda-26-sisi-bardejov
