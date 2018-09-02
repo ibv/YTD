@@ -134,7 +134,7 @@ begin
     if ReadVideoPath(Http, SmilUrl, VideoPath) then
       if ReadVideoServer(Http, VideoHost, VideoServer, VideoApp) then
           begin
-          SetName(Title);
+          Name := Title;
           MovieUrl := 'rtmp://' + VideoServer + '/' + VideoApp + '/' + VideoPath;
           Self.RtmpUrl := MovieUrl;
           Self.SwfUrl := 'http://www.nbc.com/[[IMPORT]]/video.nbcuni.com/outlet/extensions/inext_video_player/video_player_extension.swf?4.5.3';

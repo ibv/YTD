@@ -126,7 +126,7 @@ begin
     MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE_PATTERN, [Year, Week]));
     try
       if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', Title) then
-        SetName(Title);
+        Name := Title;
     finally
       RegExFreeAndNil(MovieTitleRegExp);
       end;

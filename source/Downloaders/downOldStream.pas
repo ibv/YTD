@@ -198,7 +198,7 @@ begin
         if DownloadXml(Http, 'http://flash.stream.cz/get_info/' + ID, Xml) then
           try
             if GetXmlVar(Xml, 'video/title', Title) then
-              SetName(Title);
+              Name := Title;
           finally
             Xml.Free;
             end;
@@ -209,7 +209,7 @@ begin
     if DownloadPage(Http, 'http://cdn-dispatcher.stream.cz/?id=' + CdnID, hmHEAD) then
       begin
       if Title <> '' then
-        SetName(Title);
+        Name := Title;
       MovieURL := LastUrl;
       Result := True;
       SetPrepared(True);

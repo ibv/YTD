@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.47+                                                   (c) 2009-15 Pepak
+YTD v1.50+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -78,6 +78,14 @@ Požadavkem ovšem je, aby příslušnému serveru stačila ke spuštění videa
 jenom adresa (a nebyly vyžadovány dodatečné parametry) - v jiném případě YTD
 použít nelze (použijte RTMPDUMP).
 
+Od verze 1.50 není knihovna podporující protokol přímo součástí instalace.
+YTD vám její stažení nabídne při spuštění GUI verze, nebo si ji můžete
+stáhnout ručně na adrese:
+
+    http://www.pepak.net/files/youtube/external/rtmpdump.zip
+
+Stažený soubor rozbalte do adresáře YTD.
+
 
 
 4. PROTOKOLY MMS/RTSP
@@ -101,6 +109,14 @@ do programu vložit adresy jako "mms://netshow.play.cz/proglas/audio_15681.wma".
 Požadavkem ovšem je, aby příslušnému serveru stačila ke spuštění videa právě
 jenom adresa (a nebyly vyžadovány dodatečné parametry) - v takovém případě
 YTD použít nelze.
+
+Od verze 1.50 není knihovna podporující protokol přímo součástí instalace.
+YTD vám její stažení nabídne při spuštění GUI verze, nebo si ji můžete
+stáhnout ručně na adrese:
+
+    http://www.pepak.net/files/youtube/external/msdl.zip
+
+Stažený soubor rozbalte do adresáře YTD.
 
 
 
@@ -438,6 +454,27 @@ a "0" (ne).
     - Možné hodnoty jsou "1" (vypnout varování) nebo "0" (zapnout).
     - Výchozí hodnota je "0" (zapnout varování).
 
+  <ignore_missing_rtmpdump>
+    - Potomek <config>; umožňuje vypnout varování před chybějící knihovnou
+      RtmpDump.
+    - Možné hodnoty jsou "1" (vypnout varování) nebo "0" (zapnout).
+    - Výchozí hodnota je "0" (zapnout varování).
+
+  <ignore_missing_msdl>
+    - Potomek <config>; umožňuje vypnout varování před chybějící knihovnou
+      MSDL.
+    - Možné hodnoty jsou "1" (vypnout varování) nebo "0" (zapnout).
+    - Výchozí hodnota je "0" (zapnout varování).
+
+  <add_index_to_names>
+    - Potomek <config>; nastavuje, jestli a jak se budou upravovat jména
+      videí stáhnutá pomocí playlistů.
+    - Možné hodnoty jsou:
+      - "none" - jména se nijak neupravují.
+      - "start" - na začátek jména bude doplněna informace o pořadí videa.
+      - "end" - na začátek jména bude doplněna informace o pořadí videa.
+    - Výchozí hodnota je "none" (jména se neupravují).
+
 <gui>
   - Potomek <ytd>; obsahuje nastavení specifická pro grafickou verzi programu.
     Za normálních okolností tyto údaje neměníte ručně, ale např. klikáním na
@@ -449,6 +486,13 @@ a "0" (ne).
     - Možné hodnoty jsou "1" (spouštět automaticky) a "0" (počkat na žádost
       uživatele).
     - Výchozí hodnotou je "1" (spouštět automaticky).
+
+  <auto_delete_finished_downloads>
+    - Potomek <gui>; říká, jestli se po úspěšném stáhnutí mají řády ze seznamu
+      automaticky smazat. Pozor, nelze vždy bezpečně určit, jestli se skutečně
+      stáhl celý soubor, někdy to program jen odhaduje!
+    - Možné hodnoty jsou "1" (mazat) a "0" (nemazat).
+    - Výchozí hodnotou je "0" (nemazat).
 
   <check_for_new_version>
     - Potomek <gui>; určuje, jestli se má program při spuštění grafické verze
@@ -464,6 +508,12 @@ a "0" (ne).
       (clipboardu) a automaticky zařazovat známá URL do seznamu ke stažení.
     - Možné hodnoty jsou "1" (sledovat změny) a "0" (nesledovat).
     - Výchozí hodnotou je "0" (nesledovat změny ve schránce).
+
+  <minimize_to_tray>
+    - Potomek <gui>; určuje, jestli se má program při zmenšení skrýt do
+      ikonky v systémovém tray nebo se minimalizovat normálně.
+    - Možné hodnoty jsou "1" (tray) a "0" (normální).
+    - Výchozí hodnotou je "1" (tray).
 
 <modules>
   - Potomek <ytd>. V této sekci se nacházejí specifická nastavení pro 

@@ -150,7 +150,7 @@ begin
         if BestUrl <> '' then
           begin
           MovieUrl := Url;
-          SetName(Title);
+          Name := Title;
           SetPrepared(True);
           Result := True;
           end;

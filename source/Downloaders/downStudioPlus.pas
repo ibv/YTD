@@ -135,7 +135,7 @@ begin
           else
             Title := Title + ' - ' + Part[i];
       if Title <> '' then
-        SetName(Title);
+        Name := Title;
       end;
 end;
 

@@ -55,6 +55,7 @@ type
       EditDownloadDir: THandle;
       ComboConverter: THandle;
       EditRetryCount: THandle;
+      ComboAddIndexToNames: THandle;
       procedure CreateObjects;
       procedure DestroyObjects;
     protected
@@ -69,6 +70,7 @@ type
       procedure LabelConverterClick;
       procedure ComboConverterChange;
       {$ENDIF}
+      procedure LabelAddIndexToNameClick;
       procedure ButtonDownloadDirClick;
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
@@ -102,6 +104,9 @@ const
   IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS = 1012;
   IDC_LABEL_RETRYCOUNT = 1013;
   IDC_EDIT_RETRYCOUNT = 1014;
+  IDC_CHECKBOX_AUTODELETEFINISHED = 1015;
+  IDC_LABEL_ADDINDEXTONAMES = 1016;
+  IDC_COMBO_ADDINDEXTONAMES = 1017;
 
 const
   ACTION_DOWNLOADDIR = 40001;
@@ -124,6 +129,7 @@ begin
   EditDownloadDir := GetDlgItem(Self.Handle, IDC_EDIT_DOWNLOADDIR);
   ComboConverter := GetDlgItem(Self.Handle, IDC_COMBO_CONVERTER);
   EditRetryCount := GetDlgItem(Self.Handle, IDC_EDIT_RETRYCOUNT);
+  ComboAddIndexToNames := GetDlgItem(Self.Handle, IDC_COMBO_ADDINDEXTONAMES);
 end;
 
 procedure TFrameDownloadOptions.DestroyObjects;
@@ -132,6 +138,7 @@ begin
   EditDownloadDir := 0;
   ComboConverter := 0;
   EditRetryCount := 0;
+  ComboAddIndexToNames := 0;
 end;
 
 function TFrameDownloadOptions.DoInitDialog: boolean;
@@ -143,6 +150,7 @@ begin
   fConverterIndex := SendMessage(ComboConverter, CB_GETCURSEL, 0, 0);
   // Make sure everything can be resized easily
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTOSTARTDOWNLOADS), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTODELETEFINISHED), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES), [akTop, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DOWNLOADTOTEMPFILES), [akTop, akLeft, akRight]);
@@ -152,6 +160,7 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_DOWNLOADDIR), [akTop, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_EDIT_RETRYCOUNT), [akTop, akLeft]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_COMBO_CONVERTER), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_COMBO_ADDINDEXTONAMES), [akTop, akLeft, akRight]);
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'OPTIONS_DOWNLOADS_ACTIONS');
 end;
@@ -210,6 +219,11 @@ begin
           Result := True;
           end;
         {$ENDIF}
+        IDC_LABEL_ADDINDEXTONAMES:
+          begin
+          LabelAddIndexToNameClick;
+          Result := True;
+          end;
         IDC_BUTTON_DOWNLOADDIR:
           begin
           ButtonDownloadDirClick;
@@ -223,24 +237,21 @@ end;
 
 procedure TFrameDownloadOptions.LoadFromOptions;
 const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
-      OverwriteMode: array [TOverwriteMode] of integer = (2, 1, 3, 0);
+      OverwriteMode: array[TOverwriteMode] of integer = (2, 1, 3, 0);
+      AddIndexToName: array[TIndexForNames] of integer = (0, 1, 2);
 begin
-  // Auto Start Downloads
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_AUTOSTARTDOWNLOADS, CheckboxConsts[Options.AutoStartDownloads]);
-  // Auto Try HTML Parser
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_AUTODELETEFINISHED, CheckboxConsts[Options.AutoDeleteFinishedDownloads]);
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER, CheckboxConsts[Options.AutoTryHtmlParser]);
-  // Download Subtitles
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_ENABLESUBTITLES, CheckboxConsts[Options.SubtitlesEnabled]);
-  // Download to temp files
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_DOWNLOADTOTEMPFILES, CheckboxConsts[Options.DownloadToTempFiles]);
-  // Download to temp files
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS, CheckboxConsts[Options.DownloadToProviderSubdirs]);
   // Overwrite mode
   SendMessage(ComboOverwriteMode, CB_RESETCONTENT, 0, 0);
-  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Ask user'))));
-  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Overwrite'))));
-  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Skip'))));
-  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(PChar(_('Rename automatically'))));
+  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(OVERWRITEMODE_ASKUSER));
+  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(OVERWRITEMODE_OVERWRITE));
+  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(OVERWRITEMODE_SKIP));
+  SendMessage(ComboOverwriteMode, CB_ADDSTRING, 0, LPARAM(OVERWRITEMODE_RENAME));
   SendMessage(ComboOverwriteMode, CB_SETCURSEL, OverwriteMode[Options.OverwriteMode], 0);
   // Download Directory
   SetWindowText(EditDownloadDir, PChar(Options.DestinationPath));
@@ -252,10 +263,17 @@ begin
   {$ELSE}
   EnableWindow(ComboConverter, False);
   {$ENDIF}
+  // Add index to names
+  SendMessage(ComboAddIndexToNames, CB_RESETCONTENT, 0, 0);
+  SendMessage(ComboAddIndexToNames, CB_ADDSTRING, 0, LPARAM(ADDINDEXTONAMES_NONE));
+  SendMessage(ComboAddIndexToNames, CB_ADDSTRING, 0, LPARAM(ADDINDEXTONAMES_START));
+  SendMessage(ComboAddIndexToNames, CB_ADDSTRING, 0, LPARAM(ADDINDEXTONAMES_END));
+  SendMessage(ComboAddIndexToNames, CB_SETCURSEL, AddIndexToName[Options.AddIndexToNames], 0);
 end;
 
 procedure TFrameDownloadOptions.SaveToOptions;
 const OverwriteMode: array[0..3] of TOverwriteMode = (omAsk, omAlways, omNever, omRename);
+      AddIndexToName: array[0..2] of TIndexForNames = (ifnNone, ifnStart, ifnEnd);
 var idx: integer;
 {$IFDEF CONVERTERS}
     SelectedID: string;
@@ -267,6 +285,13 @@ begin
       Options.AutoStartDownloads := True;
     BST_UNCHECKED:
       Options.AutoStartDownloads := False;
+    end;
+  // Auto Delete Finished Downloads
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_AUTODELETEFINISHED) of
+    BST_CHECKED:
+      Options.AutoDeleteFinishedDownloads := True;
+    BST_UNCHECKED:
+      Options.AutoDeleteFinishedDownloads := False;
     end;
   // Auto Try HTML Parser
   case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_AUTOTRYHTMLPARSER) of
@@ -309,6 +334,10 @@ begin
   if DecodeConverterComboBox(ComboConverter, Options, SelectedID) then
     Options.SelectedConverterID := SelectedID;
   {$ENDIF}
+  // Add index to name
+  idx := SendMessage(ComboAddIndexToNames, CB_GETCURSEL, 0, 0);
+  if (idx <> CB_ERR) and (idx >= 0) and (idx < Length(AddIndexToName)) then
+    Options.AddIndexToNames := AddIndexToName[idx];
 end;
 
 procedure TFrameDownloadOptions.LabelOverwriteModeClick;
@@ -343,6 +372,11 @@ begin
   {$ENDIF}
 end;
 {$ENDIF}
+
+procedure TFrameDownloadOptions.LabelAddIndexToNameClick;
+begin
+  SetFocus(ComboAddIndexToNames);
+end;
 
 procedure TFrameDownloadOptions.ButtonDownloadDirClick;
 var Dir: string;

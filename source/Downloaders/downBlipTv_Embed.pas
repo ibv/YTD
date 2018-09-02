@@ -139,7 +139,7 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
-      SetName(Title);
+      Name := Title;
       MovieURL := UrlDecode(Trim(Copy(Url, Succ(Length(URL_PREFIX)), MaxInt)));
       SetPrepared(True);
       Result := True;

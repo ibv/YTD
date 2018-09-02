@@ -106,7 +106,7 @@ end;
 function TDownloader_NovaMov_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  SetName(ExtractUrlFileName(MovieUrl));
+  Name := ExtractUrlFileName(MovieUrl);
   Result := Prepared;
 end;
 

@@ -109,7 +109,7 @@ begin
   Result := False;
   if MovieUrl <> '' then
     begin
-    SetName(ChangeFileExt(ExtractUrlFileName(MovieUrl), ''));
+    Name := ChangeFileExt(ExtractUrlFileName(MovieUrl), '');
     SetPrepared(True);
     Result := True;
     end;

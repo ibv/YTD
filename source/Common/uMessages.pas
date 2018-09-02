@@ -50,8 +50,12 @@ const
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
   BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&defs=%s&url=%s&error=%s';
+  MY_OPENSSL_URL = 'http://ytd.pepak.net/openssl';
   OPENSSL_URL = 'http://slproweb.com/products/Win32OpenSSL.html';
-
+  MY_RTMPDUMP_URL = 'http://ytd.pepak.net/rtmpdump';
+  RTMPDUMP_URL = MY_RTMPDUMP_URL;
+  MY_MSDL_URL = 'http://ytd.pepak.net/msdl';
+  MSDL_URL = MY_MSDL_URL;
 
 {gnugettext: scan-all}
 resourcestring
@@ -65,8 +69,14 @@ resourcestring
   MSG_FAILED_TO_DOWNLOAD_UPGRADE = 'Failed to download upgrade data: '; // Failed to download the upgrade file
   MSG_FAILED_TO_UPGRADE_DEFINITIONS = 'Failed to upgrade the script definitions.';
   MSG_FAILED_TO_DOWNLOAD_DEFINITIONS = 'Failed to download the script definitions.';
-  MSG_OPENSSL_NOT_FOUND = 'You don''t seem to have the OpenSSL library installed.'#10'YTD uses OpenSSL to enable the SSL protocol.'#10'Without SSL, you won''t be able to download'#10'from YouTube any many other sites.';
+  MSG_OPENSSL_NOT_FOUND = 'You don''t seem to have the OpenSSL library (32bit) installed.'#10'YTD uses OpenSSL to enable the SSL protocol.'#10'Without SSL, you won''t be able to download'#10'from YouTube any many other sites.';
   MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX = 'Would you like to download and install OpenSSL?';
+  MSG_RTMPDUMP_NOT_FOUND = 'You don''t seem to have the RtmpDump library installed.'#10'YTD uses RtmpDump to handle the RTMP protocol.'#10'Without RTMP, you won''t be able to download'#10'from many sites.';
+  MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX = 'Would you like to download and install RtmpDump?';
+  MSG_MSDL_NOT_FOUND = 'You don''t seem to have the MSDL library installed.'#10'YTD uses MSDL to handle various Microsoft protocols.'#10'Without them, you won''t be able to download'#10'from some sites.';
+  MSG_MSDL_NOT_FOUND_ACTION_SUFFIX = 'Would you like to download and install MSDL?';
+  MSG_EXTERNAL_LIBS_DOWNLOAD = 'Download URL:';
+  MSG_EXTERNAL_LIBS_WERE_DOWNLOADED = 'External libraries have been downloaded and installed.'#10'Please restart YTD to activate them.';
 
   // Downloader errors
   ERR_DOWNLOADER_IS_NOT_PREPARED = 'Downloader is not prepared!'; // Attempted to access data which depends Prepare without running Prepare
@@ -120,8 +130,12 @@ resourcestring
   ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY = 'Attribute "%s" may not be empty.';
   ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE = 'Attribute "%s" has invalid value "%s".';
   MSG_SCRIPTS_UNKNOWN_COMMAND = 'Unknown command.';
+  MSG_SCRIPTS_UNKNOWN_COMMAND_NAMED = 'Unknown command "%s".';
   MSG_SCRIPTS_DOWNLOAD_FAILED = 'Download failed: %s';
   MSG_SCRIPTS_UNEXPECTED_NODE_TYPE = 'Unexpected node type.';
+  MSG_SCRIPTS_MULTIPLE_ELSE = 'Multiple <else> tags encountered.';
+  MSG_SCRIPTS_IF_NOT_SATISFIED = 'No satisfied condition found.';
+  MSG_SCRIPTS_UNKNOWN_CONDITION = 'Unknown condition.';
   ERR_XML_ELEMENT_NOT_FOUND = 'XML element not found.';
 
 {gnugettext: reset}

@@ -64,19 +64,21 @@ type
       fHtmlPlaylist: TPlaylist_HTML;
       fHtmlFilePlaylist: TPlaylist_HTMLfile;
       fUrlList: TStringList;
+      fNameList: TStringList;
       fOptions: TYTDOptions;
       fPrepareOnly: boolean;
     protected
-      function DoDownload(const Url: string; Downloader: TDownloader): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DoDownload(const Url, Title: string; Downloader: TDownloader): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure DownloaderFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadUrlList: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function DownloadURL(const URL: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadURL(const URL: string; const Title: string = ''): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadURLsFromFileList(const FileName: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadURLsFromHTML(const Source: string): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure ShowProviders; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ShowVersion(DoUpgrade: boolean): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       property UrlList: TStringList read fUrlList;
+      property NameList: TStringList read fNameList;
       property DownloadClassifier: TDownloadClassifier read fDownloadClassifier;
       property HtmlPlaylist: TPlaylist_HTML read fHtmlPlaylist;
       property HtmlFilePlaylist: TPlaylist_HTMLfile read fHtmlFilePlaylist;
@@ -97,7 +99,7 @@ const
 implementation
 
 uses
-  uScriptedDownloader;
+  uScriptedDownloader, uRtmpDownloader, uMSDownloader;
 
 { TYTD }
 
@@ -111,6 +113,7 @@ begin
   fHtmlPlaylist := TPlaylist_HTML.Create('');
   fHtmlFilePlaylist := TPlaylist_HTMLfile.Create('');
   fUrlList := TStringList.Create;
+  fNameList := TStringList.Create;
 end;
 
 destructor TYTD.Destroy;
@@ -120,6 +123,7 @@ begin
   FreeAndNil(fHtmlPlaylist);
   FreeAndNil(fHtmlFilePlaylist);
   FreeAndNil(fUrlList);
+  FreeAndNil(fNameList);
   inherited;
 end;
 
@@ -278,15 +282,29 @@ begin
 end;
 
 function TYTD.DoExecute: integer;
+
+  procedure TestLibraryPresence(Present: boolean; const Msg, Url: string);
+    begin
+      if not Present then
+        begin
+        WritelnColored(ccLightRed, Msg);
+        if Url <> '' then
+          begin
+          Write(MSG_EXTERNAL_LIBS_DOWNLOAD);
+          Write(' ');
+          WriteColored(ccWhite, Url);
+          Writeln;
+          end;
+        Writeln;
+        end;
+    end;
+
 var Param: string;
     n: integer;
 begin
-  if not IsSSLAvailable then
-    begin
-    Writeln;
-    WritelnColored(ccLightRed, MSG_OPENSSL_NOT_FOUND);
-    Writeln;
-    end;
+  TestLibraryPresence(IsSSLAvailable, MSG_OPENSSL_NOT_FOUND, MY_OPENSSL_URL);
+  TestLibraryPresence(TRtmpDownloader.CheckForPrerequisites, MSG_RTMPDUMP_NOT_FOUND, MY_RTMPDUMP_URL);
+  TestLibraryPresence(TMSDownloader.CheckForPrerequisites, MSG_MSDL_NOT_FOUND, MY_MSDL_URL);
   if ParamCount = 0 then
     begin
     ShowSyntax;
@@ -472,7 +490,7 @@ begin
     end;
 end;
 
-function TYTD.DoDownload(const Url: string; Downloader: TDownloader): boolean;
+function TYTD.DoDownload(const Url, Title: string; Downloader: TDownloader): boolean;
 
   procedure ShowDownloadError(const Url, Msg: string);
     begin
@@ -496,6 +514,7 @@ begin
           begin
           Result := True;
           UrlList.Add(Playlist[i]);
+          NameList.Add(Playlist.Names[i]);
           Write(_('  Playlist item: ')); // CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
           if Playlist.Names[i] <> '' then
             begin
@@ -517,6 +536,8 @@ begin
       Downloader.OnFileNameValidate := DownloaderFileNameValidate;
       if Downloader.Prepare {$IFDEF MULTIDOWNLOADS} and Downloader.First {$ENDIF} then
         begin
+        if Title <> '' then
+          Downloader.Name := Title;
         {$IFDEF MULTIDOWNLOADS}
         repeat
         {$ENDIF}
@@ -576,15 +597,17 @@ begin
     if DownloadClassifier.Downloader = nil then
       ShowError(_('Unknown URL.')) // CLI: URL couldn't be assigned to any available downloader
     else
-      if DoDownload(DownloadClassifier.URL, DownloadClassifier.Downloader) then
+      if DoDownload(DownloadClassifier.URL, NameList[0], DownloadClassifier.Downloader) then
         Inc(Result);
     UrlList.Delete(0);
+    NameList.Delete(0);
     end;
 end;
 
-function TYTD.DownloadURL(const URL: string): boolean;
+function TYTD.DownloadURL(const URL, Title: string): boolean;
 begin
   UrlList.Add(URL);
+  NameList.Add(Title);
   Result := DownloadUrlList > 0;
   if not Result then
     if Options.AutoTryHtmlParser then
@@ -607,7 +630,7 @@ begin
   else
     Playlist := HtmlFilePlaylist;
   Playlist.MovieID := Source;
-  if DoDownload(Source, Playlist) then
+  if DoDownload(Source, '', Playlist) then
     Result := DownloadUrlList
   else
     Result := -1;
@@ -640,7 +663,10 @@ begin
       Readln(T, s);
       s := Trim(s);
       if s <> '' then
+        begin
         UrlList.Add(s);
+        NameList.Add('');
+        end;
       end;
   finally
     CloseFile(T);

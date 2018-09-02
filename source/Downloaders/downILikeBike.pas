@@ -112,7 +112,7 @@ begin
   Result := GetRegExpVars(YearMonthRegExp, MovieID, ['YEAR', 'MONTH'], [@Year, @Month]);
   if Result then
     begin
-    SetName(Format('I Like Bike %s-%s', [Month, Year]));
+    Name := Format('I Like Bike %s-%s', [Month, Year]);
     Url := Format('http://bcastb.livebox.cz/up/ilikebike/%s/_%s%s.wmv', [Year, Month, Year]);
     end;
 end;

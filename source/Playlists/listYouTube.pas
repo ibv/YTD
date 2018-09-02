@@ -80,8 +80,8 @@ const
 
 const
   REGEXP_PLAYLIST_ITEM = '(?P<ITEM><tr\s+class="pl-video\b.*?</tr>)';
-  REGEXP_ITEM_ID = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL|SP)?%s(?:"|&amp;)';
-  REGEXP_ITEM_TITLE = '<span\s+class="(?:video-)?title\b[^>]*>(?P<TITLE>.*?)</span>';
+  REGEXP_ITEM_ID = '\sdata-video-id="(?P<ID>.+?)"';
+  REGEXP_ITEM_TITLE = '\sdata-title="(?P<TITLE>.+?)"';
   //REGEXP_PLAYLIST_ITEM = '<a\b[^>]*\shref="/watch\?v=(?P<ID>[^&"]+)&amp;list=(?:PL)?%s(?:"|&amp;)[^>]*>(?P<NAME>[^<]+)</a>';
   REGEXP_NEXT_PAGE = '<a\s+href="(?P<URL>https?://(?:[a-z0-9-]+\.)*youtube\.com/view_play_list\?p=[^"&]+&sort_field=[^&"]*&page=[0-9]+)"\s+class="yt-uix-pager-link"\s+data-page="(?P<PAGE>[0-9]+)"';
 
@@ -100,6 +100,7 @@ end;
 constructor TPlaylist_YouTube.Create(const AMovieID: string);
 begin
   inherited;
+  InfoPageEncoding := peUTF8;
   //PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
   PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
   ItemIDRegExp := RegExCreate(Format(REGEXP_ITEM_ID, [PlaylistID]));

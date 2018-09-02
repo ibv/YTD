@@ -136,7 +136,7 @@ begin
           fSubtitlesExt := ExtractUrlExt(Captions);
           end;
     {$ENDIF}
-    SetName(ChangeFileExt(Location, ''));
+    Name := ChangeFileExt(Location, '');
     MovieUrl := Streamer + '/mp4:' + Location;
     Self.RtmpUrl := Streamer;
     Self.Playpath := 'mp4:' + Location;

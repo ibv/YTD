@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.49+                                                   (c) 2009-15 Pepak
+YTD v1.50+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -257,6 +257,7 @@ RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d3
                     |          |       | http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
                     | HDS      |       | http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
                     |          |       | http://rutube.ru/player.swf?hash=5936573
+RVP.cz              | HTTP     |       | http://audiovideo.rvp.cz/video/2799/ONLINE-SETKANI-SKOLA-V-POHODE.html
 SchoolOfCare.ru     | HTTP     |       | http://schoolofcare.ru/masha/339/
 Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx
 SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
@@ -390,6 +391,7 @@ TheYNC.com          | HTTP     | F     |
 TnaFlix.com         | HTTP     | F     |
 Tube8.com           | HTTP     | F     |
 TubeSSS.com         | HTTP     | F     |
+Tumblr.com          | HTTP     | F     |
 XHamster.com        | HTTP     | F     |
 XNXX.com            | HTTP     | F     |
 XTube.com           | HTTP     | F     |

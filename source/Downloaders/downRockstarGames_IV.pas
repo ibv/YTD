@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SSL_OpenSSL,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -112,7 +112,7 @@ begin
   else
     begin
     if GetXmlVar(Node, 'desc', Title) then
-      SetName(Title);
+      Name := Title;
     MovieUrl := 'http://media.rockstargames.com/flies/' + Path;
     SetPrepared(True);
     Result := True;

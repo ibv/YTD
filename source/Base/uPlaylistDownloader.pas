@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, uOptions, HttpSend,
   uDownloader, uCommonDownloader;
 
 type
@@ -60,6 +60,7 @@ type
       function GetItemCount: integer; virtual;
       function GetItemUrl(Index: integer): string; virtual;
       function GetItemName(Index: integer): string; virtual;
+      function AddIndexToNames: boolean;virtual;
       property UrlList: TStringList read fUrlList;
       property NameList: TStringList read fNameList;
     public
@@ -67,6 +68,7 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      function Prepare: boolean; override;
       property Count: integer read GetItemCount;
       property Urls[Index: integer]: string read GetItemUrl; default;
       property Names[Index: integer]: string read GetItemName;
@@ -75,7 +77,7 @@ type
 implementation
 
 uses
-  uMessages;
+  uLanguages, uMessages;
   
 const
   URLREGEXP_BEFORE_ID = '^';
@@ -179,6 +181,35 @@ begin
     Result := True;
     SetPrepared(True);
     end;
+end;
+
+function TPlaylistDownloader.Prepare: boolean;
+const
+  IndexOptFormats: array[TIndexForNames] of string = (
+    '%0:s',
+    '%1:s %0:s',
+    '%0:s %1:s'
+  );
+var
+  i, n: integer;
+  IndexOpt: TIndexForNames;
+begin
+  Result := inherited Prepare;
+  if Result and AddIndexToNames then
+    begin
+    IndexOpt := Options.AddIndexToNames;
+    if IndexOpt <> ifnNone then
+      begin
+      n := Length(IntToStr(NameList.Count));
+      for i := 0 to Pred(NameList.Count) do
+        NameList[i] := Format(IndexOptFormats[IndexOpt], [NameList[i], Format(_('[%*.*d of %d]'), [n, n, i+1, NameList.Count])]);
+      end;
+    end;
+end;
+
+function TPlaylistDownloader.AddIndexToNames: boolean;
+begin
+  Result := True;
 end;
 
 end.

@@ -62,6 +62,9 @@ uses
   {$IFDEF USYSTEM_NET}
   WinSock,
   {$ENDIF}
+  {$IFDEF USYSTEM_INFO}
+  MultiMon,
+  {$ENDIF}
   Messages;
 
 {$IFDEF USYSTEM_CONSOLE}
@@ -193,6 +196,7 @@ type
   TWindowsVersion = (wvUnknown, wvWin95, wvWin98, wvWinME, wvWinNT, wvWin2000, wvWinXP, wvWinServer2003, wvWinVista, wvWin7, wvWin8);
 
 function GetWindowsVersion: TWindowsVersion;
+function GetMonitorName(Handle: THandle; out DeviceID, Name: string): boolean;
 {$ENDIF}
 
 implementation
@@ -1657,6 +1661,24 @@ begin
             ;
         end;
       end;
+end;
+
+function GetMonitorName(Handle: THandle; out DeviceID, Name: string): boolean;
+var
+  Info: TMonitorInfoEx;
+  Disp: TDisplayDevice;
+begin
+  Result := False;
+  Info.cbSize := Sizeof(Info);
+  if GetMonitorInfo(Handle, @Info) then
+    begin
+    DeviceID := Info.szDevice;
+    Name := DeviceID;
+    Disp.cb := Sizeof(Disp);
+    if EnumDisplayDevices(PChar(DeviceID), 0, Disp, 0) then
+      Name := Disp.DeviceString;
+    Result := True;
+    end;
 end;
 {$ENDIF}
 

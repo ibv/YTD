@@ -158,7 +158,7 @@ begin
                       ExtList.Add(ExtractFileExt(FileName));
                       {$ELSE}
                       if Title <> '' then
-                        SetName(Title);
+                        Name := Title;
                       Extension := ExtractFileExt(FileName);
                       {$ENDIF}
                       SetPrepared(True);

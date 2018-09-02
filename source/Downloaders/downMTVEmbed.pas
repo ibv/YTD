@@ -160,7 +160,7 @@ begin
           SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
-          SetName(Title);
+          Name := Title;
           MovieUrl := BestUrl;
           Self.RtmpUrl := BestUrl;
           SetPrepared(True);

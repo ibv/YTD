@@ -116,7 +116,7 @@ type
       function GetTotalSize: int64; virtual;
       function GetDownloadedSize: int64; virtual;
       procedure DoProgress; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function ValidateFileName(var FileName: string): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function InternalValidateFileName(var FileName: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function CreateHttp: THttpSend; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure ClearHttp(Http: THttpSend);
@@ -190,7 +190,7 @@ type
       constructor Create(const AMovieID: string); virtual;
       destructor Destroy; override;
       function Prepare: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
-      function ValidateFileName: boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ValidateFileName: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Download: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       procedure AbortTransfer; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$IFDEF MULTIDOWNLOADS}
@@ -202,7 +202,7 @@ type
       {$ENDIF}
     public
       property Prepared: boolean read fPrepared;
-      property Name: string read GetName;
+      property Name: string read GetName write SetName;
       property FileName: string read GetFileName;
       property FileNameExt: string read GetFileNameExt;
       property ContentUrl: string read GetContentUrl;
@@ -708,7 +708,7 @@ begin
     end;
 end;
 
-function TDownloader.ValidateFileName(var FileName: string): boolean;
+function TDownloader.InternalValidateFileName(var FileName: string): boolean;
 var
   Dir: string;
 begin
@@ -728,7 +728,7 @@ begin
     begin
     SetFileName('');
     FN := GetFileName;
-    Result := ValidateFileName(FN);
+    Result := InternalValidateFileName(FN);
     if Result then
       SetFileName(ExpandFileName(FN))
     else

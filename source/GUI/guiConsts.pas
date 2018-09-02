@@ -77,6 +77,17 @@ resourcestring
 {$ENDIF}
 
 resourcestring
+  OVERWRITEMODE_ASKUSER = 'Ask user';
+  OVERWRITEMODE_OVERWRITE = 'Overwrite';
+  OVERWRITEMODE_SKIP = 'Skip';
+  OVERWRITEMODE_RENAME = 'Rename automatically';
+
+resourcestring
+  ADDINDEXTONAMES_NONE = 'Don''t add index to names';
+  ADDINDEXTONAMES_START = 'Put the index at the start of a name';
+  ADDINDEXTONAMES_END = 'Put the index at the end of a name';
+
+resourcestring
   MAINFORM_EDIT_CONFIG =
     'Config file will open now, but please do not edit'#10 +
     'it right away: YTD will overwrite the file before'#10 +

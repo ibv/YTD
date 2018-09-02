@@ -199,7 +199,7 @@ begin
   Result := False;
   if LocateMegaVideoParams(Page, PageXml, Http, Title, Server, Key1, Key2, FileID) then
     begin
-    SetName(UrlDecode(Title));
+    Name := UrlDecode(Title);
     MovieUrl := 'http://www' + Server + '.' + MasterDomain + '/files/' + DecryptFileID(FileID, Key1, Key2) + '/';
     SetPrepared(True);
     Result := True;

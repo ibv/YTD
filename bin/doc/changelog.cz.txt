@@ -1,11 +1,71 @@
 ﻿______________________________________________________________________________
 
-YTD v1.49                                                    (c) 2009-15 Pepak
+YTD v1.50                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.50:
+
+    * Noví poskytovatelé:
+      - RVP.cz
+      - Tumblr.com (porno)
+
+    * Aktualizovaní poskytovatelé:
+      - Aktualne.cz
+      - XHamster.com
+      - YouTube.com
+
+    * Upozornění na chybějící OpenSSL bylo doplněno o možnost přímo stáhnout
+      a nainstalovat funkční verzi OpenSSL z mého serveru. To by mělo odstanit
+      často se vyskytující problém, kdy si uživatelé nedokážou vybrat správnou
+      verzi. Funkce stáhne verzi OpenSSL, kterou mám ověřenou jako funkční,
+      a nahraje ji do adresáře YTD - nebudou tedy ovlivněny jiné programy.
+      Pozor, aby toto fungovalo, budete patrně muset spustit YTD s právy
+      správce (záleží na tom, do kterého adresáře je YTD nainstalovaný).
+
+    * Z distribučního archívu byly z důvodu stoprocentního dodržení autorských
+      práv odstraněny knihovny RTMPDUMP (pro podporu protokolu RTMP) a MSDL
+      (pro podporu RTSP a dalších protokolů). Pokud při startu zjistí, že je
+      nemáte nainstalované, nabídne vám jejich stažení a instalaci (pro tu
+      budete opět potřebovat práva správce).
+
+      Knihovny si můžete stáhnout také ručně na adrese:
+      http://www.pepak.net/files/youtube/external/rtmpdump.zip
+      http://www.pepak.net/files/youtube/external/msdl.zip
+      
+      Pozn.: Původní řešení bylo pravděpodobně také právně v pořádku, ale 
+      pohybovalo se na hraně toho, co GPL dovoluje. Nyní je YTD zcela čisté, 
+      GPL knihovny v něm nejsou obsaženy.
+
+    * Nová nastavení v konfiguraci:
+
+      - Minimalizovat do traye:
+
+        Určuje, jestli se YTD při minimalizaci skryje do ikonky v systémovém 
+        trayi (výchozí), nebo jestli se bude minimalizovat normálně.
+
+      - Automaticky mazat dokončené downloady:
+
+        Pokud je tato volba zapnuta a download skončí úspěšně, bude jeho
+        záznam automaticky smazán ze seznamu. Stáhnuté video samozřejmě
+        zůstane na disku.
+        Pozor, zdaleka ne u všech poskytovatelů se dá spolehlivě určit,
+        jestli download doběhl úspěšně. V některých případech YTD jen hádá
+        a může se snadno stát, že jeho odhad bude chybný!
+
+      - Přidávat index k položkám playlistu:
+
+        Zde máte možnost vybrat, jestli a jak se bude k názvům položek 
+        playlistu přidávat jejich pořadí. Varianty jsou nepřidávat (výchozí
+        hodnota), přidávat na začátek (bude vytvářet jména jako "[1 z 5] xxx")
+        a přidávat na konec (bude vytvářet jména jako "xxx [1 z 5]").
+
+    * Do skriptovacího jazyka přibyl podmíněný příkaz <if>.
+
+
 
   v1.49:
 

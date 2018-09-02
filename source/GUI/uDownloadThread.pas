@@ -40,7 +40,7 @@ unit uDownloadThread;
 interface
 
 uses
-  SysUtils, Classes, 
+  SysUtils, Classes,
   uDownloader, uPlaylistDownloader,
   uCompatibility;
 
@@ -62,7 +62,9 @@ type
 
   TDownloadThread = class(TThread)
     private
+      fThreadFinished: boolean;
       fDownloader: TDownloader;
+      fTitle: string;
       fState: TDownloadThreadState;
       fOnStateChange: TDTStateChangeEvent;
       fOnDownloadProgress: TDTDownloadProgressEvent;
@@ -90,12 +92,15 @@ type
       procedure SyncReportError; virtual;
     protected
       procedure Execute; override;
+      procedure DoTerminate; override;
       property Downloader: TDownloader read fDownloader;
+      property Title: string read fTitle;
       property State: TDownloadThreadState read fState write SetState;
     public
-      constructor Create(ADownloader: TDownloader; CreateSuspended: Boolean); virtual;
+      constructor Create(ADownloader: TDownloader; const ATitle: string; CreateSuspended: Boolean); virtual;
       destructor Destroy; override;
     public
+      property ThreadFinished: boolean read fThreadFinished;
       property OnStateChange: TDTStateChangeEvent read fOnStateChange write fOnStateChange;
       property OnDownloadProgress: TDTDownloadProgressEvent read fOnDownloadProgress write fOnDownloadProgress;
       property OnFileNameValidate: TDTDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
@@ -107,9 +112,10 @@ implementation
 
 { TDownloadThread }
 
-constructor TDownloadThread.Create(ADownloader: TDownloader; CreateSuspended: Boolean);
+constructor TDownloadThread.Create(ADownloader: TDownloader; const ATitle: string; CreateSuspended: Boolean);
 begin
   fDownloader := ADownloader;
+  fTitle := ATitle;
   fState := dtsWaiting;
   FreeOnTerminate := True;
   inherited Create(CreateSuspended);
@@ -150,6 +156,8 @@ begin
               Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
             if Terminated then
               Break;
+            if Title <> '' then
+              Downloader.Name := Title;
             State := dtsDownloading;
             {$IFDEF MULTIDOWNLOADS}
             repeat
@@ -164,15 +172,16 @@ begin
             {$IFDEF MULTIDOWNLOADS}
             until not Downloader.Next;
             {$ENDIF}
-            State := dtsFinished;
+            if not Terminated then
+              State := dtsFinished;
             Break;
             end;
         until True;
         if Terminated then
-          begin
-          State := dtsAborted;
-          Downloader.AbortTransfer;
-          end;
+          if State in [dtsPreparing, dtsDownloading] then
+            State := dtsAborted;
+          if State in [dtsDownloading] then
+            Downloader.AbortTransfer;
       finally
         Downloader.OnProgress := CallersDownloaderProgressEvent;
         Downloader.OnFileNameValidate := CallersDownloaderFileNameValidateEvent;
@@ -278,6 +287,12 @@ procedure TDownloadThread.SyncReportError;
 begin
   if Assigned(OnException) then
     OnException(Self, ReportException);
+end;
+
+procedure TDownloadThread.DoTerminate;
+begin
+  fThreadFinished := True;
+  inherited;
 end;
 
 end.

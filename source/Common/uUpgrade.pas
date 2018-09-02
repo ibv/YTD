@@ -308,9 +308,6 @@ begin
 end;
 
 function TYTDUpgrade.GetNewestVersion(const BaseUrl: string; out Version, Url: string; out Data: TStream): boolean;
-var
-  Http: THttpSend;
-  Again: boolean;
 begin
   Result := False;
   Version := '';
@@ -318,38 +315,19 @@ begin
   try
     if GetNewestVersionUrl(BaseUrl, Version, Url) then
       begin
-      Http := Options.CreateHttp;
-      try
-        repeat
-          Again := False;
-          Http.Clear;
-          if Http.HttpMethod('HEAD', Url) then
-            if CheckRedirect(HTTP, Url) then
-              Again := True
-            else if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
-              begin
-              Http.Clear;
-              if Http.HttpMethod('GET', Url) then
-                begin
-                Data := TMemoryStream.Create;
-                try
-                  Data.CopyFrom(Http.Document, 0);
-                  Data.Position := 0;
-                  Result := True;
-                except
-                  FreeAndNil(Data);
-                  Raise;
-                  end;
-                end;
-              end;
-        until not Again;
-      finally
-        FreeAndNil(Http);
-        end;
+      Data := TMemoryStream.Create;
+      if DownloadFromHttp(Url, Options, Data) then
+        begin
+        Data.Position := 0;
+        Result := True;
+        end
+      else
+        FreeAndNil(Data);
       end;
   except
     Version := '';
     FreeAndNil(Data);
+    Result := False;
     end;
 end;
 

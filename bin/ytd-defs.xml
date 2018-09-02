@@ -1,5 +1,5 @@
 <ytd-defs>
-	<version>1.49.20150621.0</version>
+	<version>1.50.20150808.0</version>
 	<scripts>
 
 		<script id="1tv.ru" provider="1tv.ru">
@@ -32,24 +32,36 @@
 
 		<script id="aktualne.cz" provider="Aktualne.cz">
 			<regexps>
+				<regexp id="youtube" match="ID"><![CDATA[\{\s*type\s*:\s*'youtube'\s*,\s*data\s*:\s*'(?P<ID>[^/?&%']+)']]></regexp>
 				<regexp id="url_bitrate" match="BITRATE"><![CDATA[[?&]s=(?P<BITRATE>\d+)]]></regexp>
 				<regexp id="url_format" match="FORMAT"><![CDATA[[?&]c=(?P<FORMAT>\w+)]]></regexp>
 			</regexps>
 			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
-			<multi_regexp id="json_file_colon" content="page" var_prefix="urls_" match="CONTENT">
-				<set_var id="bitrate"><regexp id="url_bitrate" content="urls_CONTENT"/></set_var>
-				<set_var id="format"><regexp id="url_format" content="urls_CONTENT"/></set_var>
-				<best_var id="bitrate" type="numeric_ascending" reset="format">
-					<best_var id="format" type="enumeration" order="mp4,webm">
-						<set_var id="url"><get_var id="urls_CONTENT"/></set_var>
-					</best_var>
-				</best_var>
-			</multi_regexp>
-			<http_download>
-				<title><regexp id="meta_ogtitle" content="page"/></title>
-				<url><get_var id="url"/></url>
-				<extension>.mp4</extension>
-			</http_download>
+			<set_var id="title"><regexp id="meta_ogtitle" content="page"/></set_var>
+			<if>
+				<condition type="regexp_match" id="youtube" content="page">
+					<nested_download>
+						<title><get_var id="title"/></title>
+						<url>http://www.youtube.com/watch?v=<regexp id="youtube" content="page"/></url>
+					</nested_download>
+				</condition>
+				<else>
+					<multi_regexp id="json_file_colon" content="page" var_prefix="urls_" match="CONTENT">
+						<set_var id="bitrate"><regexp id="url_bitrate" content="urls_CONTENT"/></set_var>
+						<set_var id="format"><regexp id="url_format" content="urls_CONTENT"/></set_var>
+						<best_var id="bitrate" type="numeric_ascending" reset="format">
+							<best_var id="format" type="enumeration" order="mp4,webm">
+								<set_var id="url"><get_var id="urls_CONTENT"/></set_var>
+							</best_var>
+						</best_var>
+					</multi_regexp>
+					<http_download>
+						<title><get_var id="title"/></title>
+						<url><get_var id="url"/></url>
+						<extension>.mp4</extension>
+					</http_download>
+				</else>
+			</if>
 		</script>
 
 		<script id="ceknito.sk" provider="CekniTo.sk">
@@ -240,6 +252,17 @@
 			</http_download>
 		</script>
 
+		<script id="rvp.cz" provider="RVP.cz">
+			<regexps>
+				<regexp id="url" match="URL"><![CDATA[<param\s+name="flashvars"\s+value="*(?:[^"]*&amp;amp;)?file=(?P<URL>https?://[^&"]+)]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<http_download>
+				<title><regexp id="h3" content="page"/></title>
+				<url><decode_html><regexp id="url" content="page"/></decode_html></url>
+			</http_download>
+		</script>
+
 		<script id="rtvs.sk" provider="RTVS.sk">
 			<regexps>
 				<regexp id="info_url" match="URL"><![CDATA[\$\.getJSON\s*\(\s*'(?P<URL>.+?)']]></regexp>
@@ -286,6 +309,25 @@
 			<http_download>
 				<title><regexp id="title" content="page"/></title>
 				<url><get_var id="url"/></url>
+			</http_download>
+		</script>
+
+		<script id="tumblr.com" provider="Tumblr.com">
+			<regexps>
+				<regexp id="title" match="NAME"><![CDATA['/video/(?P<NAME>.+?)/]]></regexp>
+				<regexp id="url" match="URL"><![CDATA[<source\s+src="(?P<URL>https?://[^"]+?(?:/(?P<QUALITY>\d+))?)"\s+type="video/(?P<FORMAT>[^"]+)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<multi_regexp id="url" content="page" var_prefix="urls_" match="QUALITY,URL,FORMAT">
+				<best_var id="urls_QUALITY" type="numeric">
+					<set_var id="url"><get_var id="urls_URL"/></set_var>
+					<set_var id="format"><get_var id="urls_FORMAT"/></set_var>
+				</best_var>
+			</multi_regexp>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><get_var id="url"/></url>
+				<extension>.<get_var id="format"/></extension>
 			</http_download>
 		</script>
 
@@ -444,13 +486,10 @@
 		</script>
 
 		<script id="xhamster.com" provider="XHamster.com">
-			<regexps>
-				<regexp id="video" match="URL"><![CDATA[<video\b[^>]*\sfile="(?P<URL>https?://.+?)"]]></regexp>
-			</regexps>
 			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
 			<http_download>
 				<title><regexp id="h1" content="page"/></title>
-				<url><regexp id="video" content="page"/></url>
+				<url><regexp id="js_file_colon" content="page"/></url>
 			</http_download>
 		</script>
 
@@ -471,6 +510,7 @@
 		<regexp id="title" match="NAME"><![CDATA[<title\b[^>]*>\s*(?P<NAME>.*?)\s*</title>]]></regexp>
 		<regexp id="h1" match="NAME"><![CDATA[<h1[^>]*>\s*(?P<NAME>.*?)\s*</h1>]]></regexp>
 		<regexp id="h2" match="NAME"><![CDATA[<h2[^>]*>\s*(?P<NAME>.*?)\s*</h2>]]></regexp>
+		<regexp id="h3" match="NAME"><![CDATA[<h3[^>]*>\s*(?P<NAME>.*?)\s*</h3>]]></regexp>
 		<regexp id="meta_ogtitle" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:title(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="meta_description" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])description(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="div_title" match="NAME"><![CDATA[<div\s+[^>]*\bid="title"[^>]*>\s*(?P<NAME>.*?)\s*</div>]]></regexp>
@@ -502,8 +542,10 @@
 		<url script="optobone.cz"><![CDATA[optobone\.cz/.+$]]></url>
 		<url script="rtl.be"><![CDATA[rtl\.be/.+$]]></url>
 		<url script="rtvs.sk"><![CDATA[rtvs\.sk/.+$]]></url>
+		<url script="rvp.cz"><![CDATA[rvp\.cz/.+$]]></url>
 		<url script="sultancesky.cz"><![CDATA[sultancesky\.cz/.+$]]></url>
 		<url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
+		<url script="tumblr.com"><![CDATA[tumblr\.com/video/.+]]></url>
 		<url script="tv7.cz"><![CDATA[tv7\.cz/.+$]]></url>
 		<url script="tvcom.cz"><![CDATA[tvcom\.cz/.+$]]></url>
 		<url script="video.tiscali.cz"><![CDATA[video\.tiscali\.cz/.+$]]></url>

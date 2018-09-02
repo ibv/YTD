@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SSL_OpenSSL,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -125,7 +125,7 @@ begin
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
-        SetName(Title);
+        Name := Title;
         MovieURL := Url;
         Result := True;
         SetPrepared(True);

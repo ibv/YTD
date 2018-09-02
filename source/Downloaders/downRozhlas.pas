@@ -116,7 +116,7 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := Prepared;
   if Result then
-    SetName(StripTags(Name));
+    Name := StripTags(Name);
 end;
 
 initialization

@@ -149,7 +149,7 @@ begin
               end;
         if BestUrl <> '' then
           begin
-          SetName(UnpreparedName);
+          Name := UnpreparedName;
           i := Pos(':', BestUrl);
           MovieUrl := 'http' + Copy(BestUrl, i, MaxInt);
           SetPrepared(True);

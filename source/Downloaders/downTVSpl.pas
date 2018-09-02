@@ -129,7 +129,7 @@ begin
   else
     begin
     if GetXmlVar(Node, 'title', Title) then
-      SetName(Title);
+      Name := Title;
     {$IFDEF DIRTYHACKS}
     ParseUrl(Streamer, Protocol, User, Password, Host, Port, Path, Para);
     Streamer := 'rtmp://' + Host + ':1935' + Path;

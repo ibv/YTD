@@ -105,7 +105,7 @@ end;
 function TDownloader_PornHost.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  SetName(MovieID + ExtractFileExt(MovieURL));
+  Name := MovieID + ExtractFileExt(MovieURL);
   Result := Prepared;
 end;
 

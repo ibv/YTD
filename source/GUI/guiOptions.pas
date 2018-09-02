@@ -54,16 +54,24 @@ type
     private
       fLoadSuccessful: boolean;
     protected
-      function GetMainFormLeft: integer;
-      procedure SetMainFormLeft(const Value: integer);
-      function GetMainFormTop: integer;
-      procedure SetMainFormTop(const Value: integer);
-      function GetMainFormWidth: integer;
-      procedure SetMainFormWidth(const Value: integer);
-      function GetMainFormHeight: integer;
-      procedure SetMainFormHeight(const Value: integer);
-      function GetDownloadListColumnWidth(Index: integer): integer;
-      procedure SetDownloadListColumnWidth(Index: integer; const Value: integer);
+      function GetMainFormLeft: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMainFormLeft(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetMainFormTop: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMainFormTop(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetMainFormWidth: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMainFormWidth(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetMainFormHeight: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMainFormHeight(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetDownloadListColumnWidth(Index: integer): integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetDownloadListColumnWidth(Index: integer; const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetCheckForNewVersionOnStartup: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetCheckForNewVersionOnStartup(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetMonitorClipboard: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetMonitorClipboard(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      {$IFDEF SYSTRAY}
+      function GetMinimizeToTray: boolean;
+      procedure SetMinimizeToTray(const Value: boolean);
+      {$ENDIF}
     protected
       function Load(IgnoreErrors: boolean = True): boolean; override;
       function IgnoreInitErrors: boolean; override;
@@ -76,6 +84,11 @@ type
       property MainFormWidth: integer read GetMainFormWidth write SetMainFormWidth;
       property MainFormHeight: integer read GetMainFormHeight write SetMainFormHeight;
       property DownloadListColumnWidth[Index: integer]: integer read GetDownloadListColumnWidth write SetDownloadListColumnWidth;
+      property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
+      property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
+      {$IFDEF SYSTRAY}
+      property MinimizeToTray: boolean read GetMinimizeToTray write SetMinimizeToTray;
+      {$ENDIF}
     end;
 
 implementation
@@ -110,7 +123,7 @@ const
       'the program''s website or by entering the About window.'#10#10 +
       'Should YTD automatically check for new versions?'
       ;
-  DEFAULT_CONVERTER_TO_AVI = 
+  DEFAULT_CONVERTER_TO_AVI =
       'Change container to .AVI'
       ;
   DEFAULT_CONVERTER_TO_XVID =
@@ -135,12 +148,18 @@ const
   XML_PATH_MAINFORMWIDTH = 'gui/main_form/width';
   XML_PATH_MAINFORMHEIGHT = 'gui/main_form/height';
   XML_PATH_DOWNLOADLISTCOLUMNWIDTH = 'gui/download_list/column_%d_width';
+  XML_PATH_CHECKFORNEWVERSIONONSTARTUP = 'gui/check_for_new_version';
+  XML_PATH_MONITORCLIPBOARD = 'gui/monitor_clipboard';
+  XML_PATH_MINIMIZETOTRAY = 'gui/minimize_to_tray';
 
 const
   XML_DEFAULT_MAINFORMLEFT = -32768;
   XML_DEFAULT_MAINFORMTOP = -32768;
   XML_DEFAULT_MAINFORMWIDTH = -32768;
   XML_DEFAULT_MAINFORMHEIGHT = -32768;
+  XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
+  XML_DEFAULT_MONITORCLIPBOARD = False;
+  XML_DEFAULT_MINIMIZETOTRAY = True;
 
 procedure TYTDOptionsGUI.Init;
 begin
@@ -276,9 +295,41 @@ begin
   SetOption(Format(XML_PATH_DOWNLOADLISTCOLUMNWIDTH, [Index]), IntToStr(Value));
 end;
 
+function TYTDOptionsGUI.GetCheckForNewVersionOnStartup: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_CHECKFORNEWVERSIONONSTARTUP), XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP);
+end;
+
+procedure TYTDOptionsGUI.SetCheckForNewVersionOnStartup(const Value: boolean);
+begin
+  SetOption(XML_PATH_CHECKFORNEWVERSIONONSTARTUP, BooleanToXml(Value));
+end;
+
+function TYTDOptionsGUI.GetMonitorClipboard: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_MONITORCLIPBOARD), XML_DEFAULT_MONITORCLIPBOARD);
+end;
+
+procedure TYTDOptionsGUI.SetMonitorClipboard(const Value: boolean);
+begin
+  SetOption(XML_PATH_MONITORCLIPBOARD, BooleanToXml(Value));
+end;
+
 function TYTDOptionsGUI.IgnoreInitErrors: boolean;
 begin
   Result := False;
 end;
+
+{$IFDEF SYSTRAY}
+function TYTDOptionsGUI.GetMinimizeToTray: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_MINIMIZETOTRAY), XML_DEFAULT_MINIMIZETOTRAY);
+end;
+
+procedure TYTDOptionsGUI.SetMinimizeToTray(const Value: boolean);
+begin
+  SetOption(XML_PATH_MINIMIZETOTRAY, BooleanToXml(Value));
+end;
+{$ENDIF}
 
 end.

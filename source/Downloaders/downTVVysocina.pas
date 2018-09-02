@@ -122,7 +122,7 @@ begin
   else
     begin
     MovieUrl := URL_ROOT + Path;
-    SetName(ChangeFileExt(ExtractUrlFileName(MovieUrl), ''));
+    Name := ChangeFileExt(ExtractUrlFileName(MovieUrl), '');
     SetPrepared(True);
     Result := True;
     Exit;

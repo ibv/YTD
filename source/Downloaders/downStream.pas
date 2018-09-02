@@ -143,7 +143,7 @@ begin
   if BestUrl <> '' then
     begin
     MovieUrl := JSDecode(BestUrl);
-    SetName(UrlDecode(UnpreparedName));
+    Name := UrlDecode(UnpreparedName);
     SetPrepared(True);
     Result := True;
     end;

@@ -1,4 +1,6 @@
 unit uFAR;
+{$INCLUDE 'ufar.inc'}
+{$INCLUDE 'pepak.inc'}
 
 interface
 
@@ -15,7 +17,7 @@ var
 
 //===== Classes ================================================================
 
-{$IFNDEF FAR3}
+{$IFNDEF FAR3_UP}
 type
   TPluginPanelItemFlags = DWORD;
   TFarDialogItemFlags = DWORD;
@@ -28,6 +30,7 @@ type
 
 type
   TFarCharArray = array of TFarChar;
+  PFarCharArray = array of PFarChar;
 
 type
   TFarPanelItem = class;
@@ -40,7 +43,7 @@ type
     fCreationTime: FILETIME;
     fLastAccessTime: FILETIME;
     fLastWriteTime: FILETIME;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fChangeTime: FILETIME;
     {$ENDIF}
     fFileSize: Int64;
@@ -65,7 +68,7 @@ type
     property CreationTime: FILETIME read fCreationTime;
     property LastAccessTime: FILETIME read fLastAccessTime;
     property LastWriteTime: FILETIME read fLastWriteTime;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     property ChangeTime: FILETIME read fChangeTime;
     {$ENDIF}
     property FileSize: Int64 read fFileSize;
@@ -87,7 +90,7 @@ type
   TFarPanelInfo = class
   private
     fHandle: THandle;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fPluginHandle: THandle;
     fOwnerGUID: TGUID;
     fFlags: TPANELINFOFLAGS;
@@ -104,7 +107,7 @@ type
     fSortMode: DWORD;
     fPanelType: DWORD;
     fDirectory: string;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fDirectoryParam: string;
     fDirectoryPlugin: TGUID;
     fDirectoryFile: string;
@@ -120,7 +123,7 @@ type
     destructor Destroy; override;
     procedure ApplySelection;
     procedure Refresh;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     property PluginHandle: THandle read fPluginHandle;
     property OwnerGUID: TGUID read fOwnerGUID;
     property Flags: TPANELINFOFLAGS read fFlags;
@@ -137,7 +140,7 @@ type
     property SortMode: DWORD read fSortMode;
     property PanelType: DWORD read fPanelType;
     property Directory: string read fDirectory;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     property DirectoryParam: string read fDirectoryParam;
     property DirectoryPlugin: TGUID read fDirectoryPlugin;
     property DirectoryFile: string read fDirectoryFile;
@@ -152,7 +155,7 @@ type
 type
   TFarConfig = class
   private
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fPluginGUID: TGUID;
     fSettingsHandle: THandle;
     fCurrentKey: integer;
@@ -181,14 +184,14 @@ type
     function ReadKeyNames(List: TStrings): boolean;
     property CurrentPath: string read fCurrentPath;
   public
-    constructor Create( {$IFDEF FAR3} APluginGUID: TGUID {$ELSE} const APath: string {$ENDIF} ; ADoOpen: boolean);
+    constructor Create( {$IFDEF FAR3_UP} APluginGUID: TGUID {$ELSE} const APath: string {$ENDIF} ; ADoOpen: boolean);
     destructor Destroy; override;
   end;
 
 type
   TFarDialog = class
   private
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fPluginGUID: TGUID;
     fDialogGUID: TGUID;
     {$ELSE}
@@ -235,7 +238,7 @@ type
     property LastY: integer read fLastY;
   public
     class function GetDialogInstance(const Handle: THandle): TFarDialog;
-    constructor Create( {$IFDEF FAR3} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
+    constructor Create( {$IFDEF FAR3_UP} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
     destructor Destroy; override;
     procedure ClearDialog; virtual;
   end;
@@ -245,7 +248,7 @@ type
 
   TFarProgress = class
   private
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fPluginGUID: TGUID;
     fDialogGUID: TGUID;
     {$ELSE}
@@ -267,7 +270,7 @@ type
     procedure PrepareConsole;
     procedure CleanupConsole;
   public
-    constructor Create( {$IFDEF FAR3} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
+    constructor Create( {$IFDEF FAR3_UP} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
     destructor Destroy; override;
     procedure Show(const Msg: array of PFarChar); overload;
     procedure Show(TitleMsg, DescriptionMsg: integer; const FileName: string; Progress, Max: int64); overload;
@@ -335,14 +338,14 @@ type
     class function SetProgressState(State: DWORD): boolean; overload;
   end;
 
-{$IFDEF FAR3}
+{$IFDEF FAR3_UP}
 var
   PluginID: TGUID;
 {$ENDIF}
 
 const
   GUID_NULL: TGUID = (D1: 0; D2: 0; D3: 0; D4: (0, 0, 0, 0, 0, 0, 0, 0));
-  {$IFNDEF FAR3}
+  {$IFNDEF FAR3_UP}
   FMSG_NONE = 0;
   {$ENDIF}
 
@@ -418,7 +421,7 @@ end;
 
 class function TFarUtils.GetConsoleRect: TSmallRect;
 begin
-  if FarApi.AdvControl( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_GETFARRECT, {$IFDEF FAR3} 0, {$ENDIF} @Result) = 0 then begin
+  if FarApi.AdvControl( {$IFDEF FAR3_UP} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_GETFARRECT, {$IFDEF FAR3_UP} 0, {$ENDIF} @Result) = 0 then begin
     Result.Left := 0;
     Result.Top := 0;
     Result.Right := 79;
@@ -441,7 +444,7 @@ begin
   if MsgId < 0 then
     Result := NO_MESSAGE
   else
-    Result := FarApi.GetMsg( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , MsgId);
+    Result := FarApi.GetMsg( {$IFDEF FAR3_UP} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , MsgId);
 end;
 
 class function TFarUtils.Menu(const MenuID: TGUID; Title, HelpTopic: PFarChar; Items: TStrings; out ItemIndex: integer): boolean;
@@ -459,13 +462,13 @@ begin
     SetLength(MenuTexts, Count);
     for i := 0 to Pred(Count) do begin
       MenuTexts[i] := Items[i];
-      {$IFDEF FAR3}
+      {$IFDEF FAR3_UP}
       MenuItems[i].Flags := MIF_NONE;
       {$ENDIF}
       MenuItems[i].TextPtr := PFarChar(MenuTexts[i]);
     end;
     Res := FarApi.Menu(
-             {$IFDEF FAR3}
+             {$IFDEF FAR3_UP}
              PluginID,
              MenuID,
              {$ELSE}
@@ -493,16 +496,16 @@ class function TFarUtils.SetProgressState(State: DWORD; Progress, Total: Int64):
 var
   Value: TProgressValue;
 begin
-  Result := FarApi.AdvControl( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSSTATE, {$IFDEF FAR3} State, nil {$ELSE} Pointer(State) {$ENDIF} ) <> 0;
-  if (State <> {$IFDEF FAR3} TBPS_NOPROGRESS {$ELSE} PS_NOPROGRESS {$ENDIF} ) then
+  Result := FarApi.AdvControl( {$IFDEF FAR3_UP} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSSTATE, {$IFDEF FAR3_UP} State, nil {$ELSE} Pointer(State) {$ENDIF} ) <> 0;
+  if (State <> {$IFDEF FAR3_UP} TBPS_NOPROGRESS {$ELSE} PS_NOPROGRESS {$ENDIF} ) then
     if (Progress >= 0) and (Total > 0) then begin
       FillChar(Value, Sizeof(Value), 0);
-      {$IFDEF FAR3}
+      {$IFDEF FAR3_UP}
       Value.StructSize := Sizeof(Value);
       {$ENDIF}
       Value.Completed := Progress;
       Value.Total := Total;
-      if FarApi.AdvControl( {$IFDEF FAR3} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSVALUE, {$IFDEF FAR3} 0, {$ENDIF} @Value) = 0 then
+      if FarApi.AdvControl( {$IFDEF FAR3_UP} PluginID {$ELSE} FarApi.ModuleNumber {$ENDIF} , ACTL_SETPROGRESSVALUE, {$IFDEF FAR3_UP} 0, {$ENDIF} @Value) = 0 then
         Result := False;
     end;
 end;
@@ -533,7 +536,7 @@ begin
   GetMem(MsgArray, n * Sizeof(PFarChar));
   for i := 0 to Pred(n) do
     MsgArray^[i] := Msg[i];
-  Result := FarApi.Message( {$IFDEF FAR3} PluginID, GUID_NULL {$ELSE} FarApi.ModuleNumber {$ENDIF} , Flags, nil, MsgArray, n, ButtonCount);
+  Result := FarApi.Message( {$IFDEF FAR3_UP} PluginID, GUID_NULL {$ELSE} FarApi.ModuleNumber {$ENDIF} , Flags, nil, MsgArray, n, ButtonCount);
 end;
 
 class function TFarUtils.TempFileName: string;
@@ -632,21 +635,21 @@ var
   Info: TPanelInfo;
   i: Integer;
   nSize: integer;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Buffer: array of Byte;
   pDir: PFarPanelDirectory;
   {$ELSE}
-  Buffer: array of TFarChar;
+  Buffer: TFarCharArray;
   {$ENDIF}
 begin
   FillChar(Info, Sizeof(Info), 0);
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Info.StructSize := Sizeof(Info);
   {$ENDIF}
   if FarApi.Control(APanelHandle, FCTL_GETPANELINFO, 0, @Info) <> 0 then begin
     fHandle := APanelHandle;
     // Read panel info
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fPluginHandle := Info.PluginHandle;
     fOwnerGUID := Info.OwnerGuid;
     fFlags := Info.Flags;
@@ -668,16 +671,16 @@ begin
         fItems.Add(TFarPanelItem.Create(Self, i));
     // Read directory info
     fDirectory := '';
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     fDirectoryParam := '';
     fDirectoryPlugin := GUID_NULL;
     fDirectoryFile := '';
     {$ENDIF}
-    nSize := FarApi.Control(APanelHandle, {$IFDEF FAR3} FCTL_GETPANELDIRECTORY {$ELSE} FCTL_GETPANELDIR {$ENDIF} , 0, nil);
+    nSize := FarApi.Control(APanelHandle, {$IFDEF FAR3_UP} FCTL_GETPANELDIRECTORY {$ELSE} FCTL_GETPANELDIR {$ENDIF} , 0, nil);
     if nSize > 0 then begin
       SetLength(Buffer, nSize);
       FillChar(Buffer[0], nSize, 0);
-      {$IFDEF FAR3}
+      {$IFDEF FAR3_UP}
       pDir := @Buffer[0];
       pDir^.StructSize := Sizeof(pDir^);
       FarApi.Control(APanelHandle, FCTL_GETPANELDIRECTORY, nSize, pDir);
@@ -722,7 +725,7 @@ var
   nSize: size_t;
   Buffer: array of Byte;
   PPI: PPluginPanelItem;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarGetPluginPanelItem;
   {$ENDIF}
 begin
@@ -732,26 +735,26 @@ begin
     SetLength(Buffer, nSize);
     FillChar(Buffer[0], nSize, 0);
     PPI := @Buffer[0];
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     Rec.StructSize := Sizeof(Rec);
     Rec.Size := nSize;
     Rec.Item := PPI;
     {$ENDIF}
-    FarApi.Control(Panel.Handle, FCTL_GETPANELITEM, AIndex, {$IFDEF FAr3} @Rec {$ELSE} PPI {$ENDIF} );
-    fCreationTime := {$IFDEF FAR3} PPI^.CreationTime {$ELSE} PPI^.FindData.ftCreationTime {$ENDIF} ;
-    fLastAccessTime := {$IFDEF FAR3} PPI^.LastAccessTime {$ELSE} PPI^.FindData.ftLastAccessTime {$ENDIF} ;
-    fLastWriteTime := {$IFDEF FAR3} PPI^.LastWriteTime {$ELSE} PPI^.FindData.ftLastWriteTime {$ENDIF} ;
-    {$IFDEF FAR3}
+    FarApi.Control(Panel.Handle, FCTL_GETPANELITEM, AIndex, {$IFDEF FAr3_UP} @Rec {$ELSE} PPI {$ENDIF} );
+    fCreationTime := {$IFDEF FAR3_UP} PPI^.CreationTime {$ELSE} PPI^.FindData.ftCreationTime {$ENDIF} ;
+    fLastAccessTime := {$IFDEF FAR3_UP} PPI^.LastAccessTime {$ELSE} PPI^.FindData.ftLastAccessTime {$ENDIF} ;
+    fLastWriteTime := {$IFDEF FAR3_UP} PPI^.LastWriteTime {$ELSE} PPI^.FindData.ftLastWriteTime {$ENDIF} ;
+    {$IFDEF FAR3_UP}
     fChangeTime := PPI^.ChangeTime;
     {$ENDIF}
-    fFileSize := {$IFDEF FAR3} PPI^.FileSize {$ELSE} PPI^.FindData.nFileSize {$ENDIF} ;
-    fAllocationSize := {$IFDEF FAR3} PPI^.AllocationSize {$ELSE} PPI^.FindData.nPackSize {$ENDIF} ;
-    fFileName := TFarUtils.CopyString( {$IFDEF FAR3} PPI^.FileName {$ELSE} PPI^.FindData.cFileName {$ENDIF} );
-    fAlternateFileName := TFarUtils.CopyString( {$IFDEF FAR3} PPI^.AlternateFileName {$ELSE} PPI^.FindData.cAlternateFileName {$ENDIF} );
+    fFileSize := {$IFDEF FAR3_UP} PPI^.FileSize {$ELSE} PPI^.FindData.nFileSize {$ENDIF} ;
+    fAllocationSize := {$IFDEF FAR3_UP} PPI^.AllocationSize {$ELSE} PPI^.FindData.nPackSize {$ENDIF} ;
+    fFileName := TFarUtils.CopyString( {$IFDEF FAR3_UP} PPI^.FileName {$ELSE} PPI^.FindData.cFileName {$ENDIF} );
+    fAlternateFileName := TFarUtils.CopyString( {$IFDEF FAR3_UP} PPI^.AlternateFileName {$ELSE} PPI^.FindData.cAlternateFileName {$ENDIF} );
     fDescription := TFarUtils.CopyString(PPI^.Description);
     fOwner := TFarUtils.CopyString(PPI^.Owner);
     fFlags := PPI^.Flags;
-    fFileAttributes := {$IFDEF FAR3} PPI^.FileAttributes {$ELSE} PPI^.FindData.dwFileAttributes {$ENDIF} ;
+    fFileAttributes := {$IFDEF FAR3_UP} PPI^.FileAttributes {$ELSE} PPI^.FindData.dwFileAttributes {$ENDIF} ;
     fNumberOfLinks := PPI^.NumberOfLinks;
     fCRC32 := PPI^.CRC32;
   end;
@@ -818,8 +821,8 @@ begin
     Item := Items[Result];
     LastItem := Items[Result + X1];
     if (Item <> nil) and (LastItem <> nil) then begin
-      Item^.X1 := LastItem^.X1 + integer(StrLen(LastItem^. {$IFDEF FAR3} Data {$ELSE} PtrData {$ENDIF} )) + 5;
-      if StrPos(LastItem^. {$IFDEF FAR3} Data {$ELSE} PtrData {$ENDIF} , '&') <> nil then
+      Item^.X1 := LastItem^.X1 + integer(StrLen(LastItem^. {$IFDEF FAR3_UP} Data {$ELSE} PtrData {$ENDIF} )) + 5;
+      if StrPos(LastItem^. {$IFDEF FAR3_UP} Data {$ELSE} PtrData {$ENDIF} , '&') <> nil then
         Dec(Item^.X1);
       Item^.X2 := Item^.X2 + Item^.X1;
     end;
@@ -840,7 +843,7 @@ begin
   Item^.Y1 := Y1;
   Item^.X2 := X2;
   Item^.Y2 := Y2;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Item^.Param.VBuf := Param;
   Item^.History := History;
   Item^.Mask := Mask;
@@ -853,9 +856,9 @@ begin
     Item^.Param.VBuf := Param;
   {$ENDIF}
   Item^.Flags := Flags;
-  Item^. {$IFDEF FAR3} Data {$ELSE} PtrData {$ENDIF} := Data;
-  Item^. {$IFDEF FAR3} MaxLength {$ELSE} MaxLen {$ENDIF} := MaxLength;
-  {$IFDEF FAR3}
+  Item^. {$IFDEF FAR3_UP} Data {$ELSE} PtrData {$ENDIF} := Data;
+  Item^. {$IFDEF FAR3_UP} MaxLength {$ELSE} MaxLen {$ENDIF} := MaxLength;
+  {$IFDEF FAR3_UP}
   Item^.UserData := TIntPtr(UserData);
   {$ENDIF}
   fLastX := X1;
@@ -906,7 +909,7 @@ end;
 function TFarDialog.Build(X1, Y1, X2, Y2: integer; Flags: TFarDialogFlags; HelpTopic: PFarChar): boolean;
 begin
   FreeDialogHandle;
-  fDialogHandle := FarApi.DialogInit( {$IFDEF FAR3} fPluginGUID, fDialogGUID, {$ELSE} fPluginHandle, {$ENDIF} X1, Y1, X2, Y2, HelpTopic, fItems, fCount, 0, Flags, @FarDialogProc, NativeInt(Self));
+  fDialogHandle := FarApi.DialogInit( {$IFDEF FAR3_UP} fPluginGUID, fDialogGUID, {$ELSE} fPluginHandle, {$ENDIF} X1, Y1, X2, Y2, HelpTopic, fItems, fCount, 0, Flags, @FarDialogProc, NativeInt(Self));
   Result := fDialogHandle <> INVALID_HANDLE_VALUE;
 end;
 
@@ -919,12 +922,12 @@ begin
   fCount := 0;
 end;
 
-constructor TFarDialog.Create( {$IFDEF FAR3} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
+constructor TFarDialog.Create( {$IFDEF FAR3_UP} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
 begin
   inherited Create;
   fActiveDialogs.Add(Self);
   fDialogHandle := INVALID_HANDLE_VALUE;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   fPluginGUID := APluginGUID;
   fDialogGUID := ADialogGUID;
   {$ELSE}
@@ -1026,11 +1029,11 @@ var
 begin
   Result := '';
   if DialogHandle <> INVALID_HANDLE_VALUE then begin
-    Len := SendDlgMessage( {$IFDEF FAR3} DM_GETTEXT {$ELSE} DM_GETTEXTLENGTH {$ENDIF} , Index, nil);
+    Len := SendDlgMessage( {$IFDEF FAR3_UP} DM_GETTEXT {$ELSE} DM_GETTEXTLENGTH {$ENDIF} , Index, nil);
     if Len > 0 then begin
       SetLength(Result, Len);
       FillChar(Rec, Sizeof(Rec), 0);
-      {$IFDEF FAR3}
+      {$IFDEF FAR3_UP}
       Rec.StructSize := Sizeof(Rec);
       {$ENDIF}
       Rec.PtrLength := Len;
@@ -1042,7 +1045,7 @@ end;
 
 function TFarDialog.SendDlgMessage(Msg, Param1: TIntPtr; Param2: Pointer): TIntPtr;
 begin
-  Result := FarApi.SendDlgMessage(DialogHandle, Msg, Param1, {$IFNDEF FAR3} NativeInt {$ENDIF} (Param2));
+  Result := FarApi.SendDlgMessage(DialogHandle, Msg, Param1, {$IFNDEF FAR3_UP} NativeInt {$ENDIF} (Param2));
 end;
 
 procedure TFarDialog.SetItemChecked(Index: integer; const Value: boolean);
@@ -1067,7 +1070,7 @@ var
 begin
   if DialogHandle <> INVALID_HANDLE_VALUE then begin
     FillChar(Rec, Sizeof(Rec), 0);
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     Rec.StructSize := Sizeof(Rec);
     {$ENDIF}
     Rec.PtrLength := Length(Value);
@@ -1082,7 +1085,7 @@ procedure TFarConfig.Close;
 begin
   //if fSettingsHandle <> 0 then
   //  Log('Close');
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   fCurrentKey := 0;
   if fSettingsHandle <> 0 then begin
     FarApi.SettingsControl(fSettingsHandle, SCTL_FREE, 0, nil);
@@ -1097,10 +1100,10 @@ begin
   fCurrentPath := '';
 end;
 
-constructor TFarConfig.Create( {$IFDEF FAR3} APluginGUID: TGUID {$ELSE} const APath: string {$ENDIF} ; ADoOpen: boolean);
+constructor TFarConfig.Create( {$IFDEF FAR3_UP} APluginGUID: TGUID {$ELSE} const APath: string {$ENDIF} ; ADoOpen: boolean);
 begin
   inherited Create;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   fPluginGUID := APluginGUID;
   fCurrentKey := 0;
   {$ELSE}
@@ -1114,7 +1117,7 @@ end;
 function TFarConfig.DeleteKey(const Name: string): boolean;
 var
   OldPath: string;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarSettingsValue;
   {$ENDIF}
 begin
@@ -1124,7 +1127,7 @@ begin
   OldPath := CurrentPath;
   try
     if Open(OldPath + '\' + Name) then begin
-      {$IFDEF FAR3}
+      {$IFDEF FAR3_UP}
       FillChar(Rec, SizeOf(Rec), 0);
       Rec.StructSize := SizeOf(Rec);
       Rec.Root := fCurrentKey;
@@ -1140,7 +1143,7 @@ begin
 end;
 
 function TFarConfig.DeleteValue(const Name: string): boolean;
-{$IFDEF FAR3}
+{$IFDEF FAR3_UP}
 var
   Rec: TFarSettingsValue;
 {$ENDIF}
@@ -1148,7 +1151,7 @@ begin
   Result := False;
   if not IsOpen then
     Exit;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1167,7 +1170,7 @@ end;
 
 function TFarConfig.IsOpen: boolean;
 begin
-  Result := {$IFDEF FAR3} fSettingsHandle <> 0 {$ELSE} fCurrentKey <> 0 {$ENDIF} ;
+  Result := {$IFDEF FAR3_UP} fSettingsHandle <> 0 {$ELSE} fCurrentKey <> 0 {$ENDIF} ;
 end;
 
 function TFarConfig.IsOpen(const Path: string): boolean;
@@ -1176,7 +1179,7 @@ begin
 end;
 
 function TFarConfig.Open(Path: string): boolean;
-{$IFDEF FAR3}
+{$IFDEF FAR3_UP}
 var
   Rec: TFarSettingsCreate;
   RecVal: TFarSettingsValue;
@@ -1192,7 +1195,7 @@ begin
   else begin
     Result := False;
     Close;
-    {$IFDEF FAR3}
+    {$IFDEF FAR3_UP}
     Rec.StructSize := SizeOf(Rec);
     Rec.Guid := fPluginGUID;
     Rec.Handle := 0;
@@ -1260,7 +1263,7 @@ end;
 
 function TFarConfig.ReadIntegerEx(const Name: string; out Value: int64): boolean;
 var
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarSettingsItem;
   {$ELSE}
   DataType, DataSize, dwValue: DWORD;
@@ -1269,7 +1272,7 @@ begin
   Result := False;
   if not IsOpen then
     Exit;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1299,7 +1302,7 @@ end;
 
 function TFarConfig.ReadKeyNames(List: TStrings): boolean;
 var
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarSettingsEnum;
   Item: PFarSettingsName;
   i: Integer;
@@ -1314,7 +1317,7 @@ begin
   if not IsOpen then
     Exit;
   //Log('TFarConfig.ReadKeyNames');
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1349,7 +1352,7 @@ end;
 
 function TFarConfig.ReadStringEx(const Name: string; out Value: string): boolean;
 var
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarSettingsItem;
   {$ELSE}
   DataType, DataSize, n: DWORD;
@@ -1358,7 +1361,7 @@ begin
   Result := False;
   if not IsOpen then
     Exit;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1386,7 +1389,7 @@ end;
 
 function TFarConfig.ReadValueNames(List: TStrings): boolean;
 var
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarSettingsEnum;
   Item: PFarSettingsName;
   i: Integer;
@@ -1401,7 +1404,7 @@ begin
   if not IsOpen then
     Exit;
   //Log('TFarConfig.ReadValueNames');
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1437,7 +1440,7 @@ end;
 
 function TFarConfig.WriteInteger(const Name: string; const Value: int64): boolean;
 var
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Rec: TFarSettingsItem;
   {$ELSE}
   dwValue: DWORD;
@@ -1446,7 +1449,7 @@ begin
   Result := False;
   if not IsOpen then
     Exit;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1464,7 +1467,7 @@ begin
 end;
 
 function TFarConfig.WriteString(const Name, Value: string): boolean;
-{$IFDEF FAR3}
+{$IFDEF FAR3_UP}
 var
   Rec: TFarSettingsItem;
 {$ENDIF}
@@ -1472,7 +1475,7 @@ begin
   Result := False;
   if not IsOpen then
     Exit;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   FillChar(Rec, SizeOf(Rec), 0);
   Rec.StructSize := SizeOf(Rec);
   Rec.Root := fCurrentKey;
@@ -1520,10 +1523,10 @@ begin
   fLastProgressTicks := 0;
 end;
 
-constructor TFarProgress.Create( {$IFDEF FAR3} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
+constructor TFarProgress.Create( {$IFDEF FAR3_UP} APluginGUID, ADialogGUID: TGUID {$ELSE} APluginHandle: THandle {$ENDIF} );
 begin
   inherited Create;
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   fPluginGUID := APluginGUID;
   fDialogGUID := ADialogGUID;
   {$ELSE}
@@ -1641,13 +1644,13 @@ end;
 class function TFarEditor.GetFileName(EditorID: TIntPtr; out FileName: string): boolean;
 var
   n: Integer;
-  Buffer: array of TFarChar;
+  Buffer: TFarCharArray;
 begin
   Result := False;
-  n := FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_GETFILENAME, {$IFDEF FAR3} 0, {$ENDIF} nil);
+  n := FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_GETFILENAME, {$IFDEF FAR3_UP} 0, {$ENDIF} nil);
   if n > 0 then begin
     SetLength(Buffer, n);
-    n := FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_GETFILENAME, {$IFDEF FAR3} n, {$ENDIF} @Buffer[0]);
+    n := FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_GETFILENAME, {$IFDEF FAR3_UP} n, {$ENDIF} @Buffer[0]);
     if n > 0 then begin
       FileName := TFarUtils.CopyLString(@Buffer[0], Pred(n));
       Result := True;
@@ -1658,10 +1661,10 @@ end;
 class function TFarEditor.GetInfo(EditorID: TIntPtr; out Info: TEditorInfo): boolean;
 begin
   FillChar(Info, Sizeof(Info), 0);
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Info.StructSize := Sizeof(Info);
   {$ENDIF}
-  Result := FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_GETINFO, {$IFDEF FAR3} 0, {$ENDIF} @Info) <> 0;
+  Result := FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_GETINFO, {$IFDEF FAR3_UP} 0, {$ENDIF} @Info) <> 0;
 end;
 
 class function TFarEditor.GetString(EditorID, RowNumber: TIntPtr; out Str: string): boolean;
@@ -1677,11 +1680,11 @@ var
 begin
   Result := False;
   FillChar(Info, Sizeof(Info), 0);
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Info.StructSize := Sizeof(Info);
   {$ENDIF}
   Info.StringNumber := RowNumber;
-  if FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_GETSTRING, {$IFDEF FAR3} 0, {$ENDIF} @Info) <> 0 then begin
+  if FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_GETSTRING, {$IFDEF FAR3_UP} 0, {$ENDIF} @Info) <> 0 then begin
     Str := TFarUtils.CopyLString(Info.StringText, Info.StringLength);
     if Info.SelStart = -1 then begin
       SelStart := 0;
@@ -1699,7 +1702,7 @@ end;
 
 class function TFarEditor.Refresh(EditorID: TIntPtr): boolean;
 begin
-  Result := FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_REDRAW, {$IFDEF FAR3} 0, {$ENDIF} nil) <> 0;
+  Result := FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_REDRAW, {$IFDEF FAR3_UP} 0, {$ENDIF} nil) <> 0;
 end;
 
 class function TFarEditor.SetCursorPosition(EditorID, RowNumber: TIntPtr): boolean;
@@ -1725,7 +1728,7 @@ var
   Info: TEditorSetPosition;
 begin
   FillChar(Info, Sizeof(Info), 0);
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Info.StructSize := Sizeof(Info);
   {$ENDIF}
   Info.CurLine := RowNumber;
@@ -1734,7 +1737,7 @@ begin
   Info.TopScreenLine := TopScreenLine;
   Info.LeftPos := LeftPos;
   Info.Overtype := Overtype;
-  Result := FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_SETPOSITION, {$IFDEF FAR3} 0, {$ENDIF} @Info) <> 0;
+  Result := FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_SETPOSITION, {$IFDEF FAR3_UP} 0, {$ENDIF} @Info) <> 0;
 end;
 
 class function TFarEditor.SetString(EditorID, RowNumber: TIntPtr; const Str: string): boolean;
@@ -1742,14 +1745,14 @@ var
   Info: TEditorSetString;
 begin
   FillChar(Info, Sizeof(Info), 0);
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Info.StructSize := Sizeof(Info);
   {$ENDIF}
   Info.StringNumber := RowNumber;
   Info.StringLength := Length(Str);
   Info.StringText := PFarChar(Str);
   Info.StringEOL := nil;
-  Result := FarApi.EditorControl( {$IFDEF FAR3} EditorID, {$ENDIF} ECTL_SETSTRING, {$IFDEF FAR3} 0, {$ENDIF} @Info) <> 0;
+  Result := FarApi.EditorControl( {$IFDEF FAR3_UP} EditorID, {$ENDIF} ECTL_SETSTRING, {$IFDEF FAR3_UP} 0, {$ENDIF} @Info) <> 0;
 end;
 
 { TFarEditorManaged }

@@ -125,7 +125,7 @@ begin
       else
         begin
         if GetXmlVar(InfoXml, 'recording/title', Title) then
-          SetName(Title);
+          Name := Title;
         MovieUrl := Format('http://%s/waveform/%s', [Server, Stream]);
         SetPrepared(True);
         Result := True;

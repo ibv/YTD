@@ -80,6 +80,8 @@ type
       procedure ProcessSetVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessIf(Node: TXmlNode; Vars: TScriptVariables);
+      function TestCondition(Node: TXmlNode; Vars: TScriptVariables): boolean;
       procedure ProcessCommonDownload(Node: TXmlNode; Vars: TScriptVariables; out Url, Title, FileNameExt: string);
       procedure ProcessHttpDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessRtmpDownload(Node: TXmlNode; Vars: TScriptVariables);
@@ -92,7 +94,8 @@ type
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
-      function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
+      function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string; overload;
       function ProcessCopy(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessReplace(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeHtml(Node: TXmlNode; Vars: TScriptVariables): string;
@@ -309,7 +312,7 @@ begin
     fCurrentDownloadIndex := Succ(fCurrentDownloadIndex);
     if (fCurrentDownloadIndex >= 0) and (fCurrentDownloadIndex < DownloaderCount) then
       begin
-      SetName(Downloaders[fCurrentDownloadIndex].Name);
+      Name := Downloaders[fCurrentDownloadIndex].Name;
       SetFileName('');
       Result := True;
       end;
@@ -397,6 +400,8 @@ begin
         ProcessNestedDownload(ChildNode, Vars)
       else if ChildNode.Name = 'multi_regexp' then
         ProcessMultiRegExp(ChildNode, Vars)
+      else if ChildNode.Name = 'if' then
+        ProcessIf(ChildNode, Vars)
       else
         ScriptError(MSG_SCRIPTS_UNKNOWN_COMMAND, ChildNode);
     end;
@@ -614,7 +619,7 @@ begin
   BestVarValue := Vars[BestVarName];
   SortType := XmlAttribute(Node, 'type');
   BetterValue := False;
-  if SortType = 'numeric_ascending' then
+  if (SortType = 'numeric_ascending') or (SortType = 'numeric') then
     BetterValue := StrToInt(VarValue) > StrToIntDef(BestVarValue, -MaxInt)
   else if SortType = 'numeric_descending' then
     BetterValue := StrToInt(VarValue) < StrToIntDef(BestVarValue, MaxInt)
@@ -915,7 +920,7 @@ begin
     Result := RegExCreate(Pattern, Options);
 end;
 
-function TScriptedDownloader.ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string;
+function TScriptedDownloader.ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
 var
   RE: TRegExp;
   RegExpNode: TXmlNode;
@@ -930,11 +935,16 @@ begin
     if not XmlAttribute(Node, 'match', VarName) then
       if not XmlAttribute(RegExpNode, 'match', VarName) then
         ScriptError(ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY, Node);
-    if not GetRegExpVar(RE, Text, VarName, Result) then
-      ScriptError(ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP, Node);
+    Result := GetRegExpVar(RE, Text, VarName, Value);
   finally
     RegExFreeAndNil(RE);
     end;
+end;
+
+function TScriptedDownloader.ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  if not ProcessRegExp(Node, Vars, Result) then
+    ScriptError(ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP, Node);
 end;
 
 procedure TScriptedDownloader.ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
@@ -996,6 +1006,54 @@ begin
   finally
     RegExFreeAndNil(RE);
     end;
+end;
+
+procedure TScriptedDownloader.ProcessIf(Node: TXmlNode; Vars: TScriptVariables);
+var
+  SomeConditionSatisfied: boolean;
+  ChildNode, ElseNode: TXmlNode;
+  i: integer;
+begin
+  SomeConditionSatisfied := False;
+  ElseNode := nil;
+  for i := 0 to Pred(Node.NodeCount) do
+    begin
+    ChildNode := Node.Nodes[i];
+    if ChildNode.ElementType = xeNormal then
+      if ChildNode.Name = 'condition' then
+        begin
+        if TestCondition(ChildNode, Vars) then
+          begin
+          ProcessScript(ChildNode, Vars);
+          SomeConditionSatisfied := True;
+          Break;
+          end;
+        end
+      else if ChildNode.Name = 'else' then
+        if ElseNode = nil then
+          ElseNode := ChildNode
+        else
+          ScriptError(MSG_SCRIPTS_MULTIPLE_ELSE, Node)
+      else
+        ScriptError(Format(MSG_SCRIPTS_UNKNOWN_COMMAND_NAMED, [ChildNode.Name]), Node)
+    end;
+  if not SomeConditionSatisfied then
+    if ElseNode <> nil then
+      ProcessScript(ElseNode, Vars)
+    else
+      ScriptError(MSG_SCRIPTS_IF_NOT_SATISFIED, Node);
+end;
+
+function TScriptedDownloader.TestCondition(Node: TXmlNode; Vars: TScriptVariables): boolean;
+var
+  ConditionType, Dummy: string;
+begin
+  Result := False;
+  ConditionType := XmlAttribute(Node, 'type');
+  if ConditionType = 'regexp_match' then
+    Result := ProcessRegExp(Node, Vars, Dummy)
+  else
+    ScriptError(MSG_SCRIPTS_UNKNOWN_CONDITION, Node);
 end;
 
 function TScriptedDownloader.ProcessCopy(Node: TXmlNode; Vars: TScriptVariables): string;

@@ -46,7 +46,7 @@ uses
   UITypes,
   {$ENDIF}
   uLanguages, uMessages, uOptions, uDialogs, uFunctions, guiFunctions,
-  uDownloadClassifier, uDownloader,
+  uDownloadClassifier, uDownloader, guiOptions,
   guiDownloaderOptions, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader;
   
 type
@@ -97,6 +97,12 @@ type
     LabelRetryCount: TLabel;
     EditRetryCount: TEdit;
     CheckIgnoreOpenSSLWarning: TCheckBox;
+    CheckIgnoreRtmpDumpWarning: TCheckBox;
+    CheckIgnoreMSDLWarning: TCheckBox;
+    CheckMinimizeToTray: TCheckBox;
+    Label1: TLabel;
+    ComboAddIndexToNames: TComboBox;
+    CheckAutoDeleteFinishedDownloads: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
@@ -108,7 +114,7 @@ type
     procedure ListDownloaderOptionsClick(Sender: TObject);
   private
     fLoading: boolean;
-    fOptions: TYTDOptions;
+    fOptions: TYTDOptionsGUI;
     {$IFDEF CONVERTERS}
     fConverterIndex: integer;
     {$ENDIF}
@@ -122,7 +128,7 @@ type
     property DownloaderOptionsPages[Index: integer]: TFrameDownloaderOptionsPage read GetDownloaderOptionsPages;
     property DownloaderOptionsPageCount: integer read GetDownloaderOptionsPageCount;
   public
-    property Options: TYTDOptions read fOptions write fOptions;
+    property Options: TYTDOptionsGUI read fOptions write fOptions;
   end;
 
 implementation
@@ -143,6 +149,15 @@ begin
   {$IFDEF GETTEXT}
   TranslateProperties(self);
   {$ENDIF}
+  ComboOverwriteMode.Items.Clear;
+  ComboOverwriteMode.Items.Add(OVERWRITEMODE_ASKUSER);
+  ComboOverwriteMode.Items.Add(OVERWRITEMODE_OVERWRITE);
+  ComboOverwriteMode.Items.Add(OVERWRITEMODE_SKIP);
+  ComboOverwriteMode.Items.Add(OVERWRITEMODE_RENAME);
+  ComboAddIndexToNames.Items.Clear;
+  ComboAddIndexToNames.Items.Add(ADDINDEXTONAMES_NONE);
+  ComboAddIndexToNames.Items.Add(ADDINDEXTONAMES_START);
+  ComboAddIndexToNames.Items.Add(ADDINDEXTONAMES_END);
   PageOptions.ActivePageIndex := 0;
   DestroyDownloaderOptions;
 end;
@@ -154,6 +169,7 @@ end;
 
 procedure TFormOptions.FormShow(Sender: TObject);
 const OverwriteMode: array [TOverwriteMode] of integer = (2, 1, 3, 0);
+      AddIndexToNames: array[TIndexForNames] of integer = (0, 1, 2);
 begin
   fLoading := True;
   try
@@ -162,9 +178,13 @@ begin
     CheckCheckNewVersions.Checked := Options.CheckForNewVersionOnStartup;
     CheckMonitorClipboard.Checked := Options.MonitorClipboard;
     CheckIgnoreOpenSSLWarning.Checked := Options.IgnoreMissingOpenSSL;
+    CheckIgnoreRtmpDumpWarning.Checked := Options.IgnoreMissingRtmpDump;
+    CheckIgnoreMSDLWarning.Checked := Options.IgnoreMissingMSDL;
+    CheckMinimizeToTray.Checked := Options.MinimizeToTray;
     EditLanguage.Text := Options.Language;
     // Download options
     CheckAutoDownload.Checked := Options.AutoStartDownloads;
+    CheckAutoDeleteFinishedDownloads.Checked := Options.AutoDeleteFinishedDownloads;
     CheckAutoTryHtmlParser.Checked := Options.AutoTryHtmlParser;
     CheckSubtitlesEnabled.Checked := Options.SubtitlesEnabled;
     CheckDownloadToTempFiles.Checked := Options.DownloadToTempFiles;
@@ -179,6 +199,7 @@ begin
     LabelConverter.Visible := False;
     ComboConverter.Visible := False;
     {$ENDIF}
+    ComboAddIndexToNames.ItemIndex := AddIndexToNames[Options.AddIndexToNames];
     // Network options
     CheckUseProxy.Checked := Options.ProxyActive;
     EditProxyHost.Text := Options.ProxyHost;
@@ -269,6 +290,7 @@ end;
 
 procedure TFormOptions.actOKExecute(Sender: TObject);
 const OverwriteMode: array[0..3] of TOverwriteMode = (omAsk, omAlways, omNever, omRename);
+      AddIndexToNames: array[0..2] of TIndexForNames = (ifnNone, ifnStart, ifnEnd);
 var
   i: integer;
   {$IFDEF CONVERTERS}
@@ -281,8 +303,12 @@ begin
   Options.Language := EditLanguage.Text;
   Options.MonitorClipboard := CheckMonitorClipboard.Checked;
   Options.IgnoreMissingOpenSSL := CheckIgnoreOpenSSLWarning.Checked;
+  Options.IgnoreMissingRtmpDump := CheckIgnoreRtmpDumpWarning.Checked;
+  Options.IgnoreMissingMSDL := CheckIgnoreMSDLWarning.Checked;
+  Options.MinimizeToTray := CheckMinimizeToTray.Checked;
   // Download options
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
+  Options.AutoDeleteFinishedDownloads := CheckAutoDeleteFinishedDownloads.Checked;
   Options.AutoTryHtmlParser := CheckAutoTryHtmlParser.Checked;
   Options.SubtitlesEnabled := CheckSubtitlesEnabled.Checked;
   Options.DownloadToTempFiles := CheckDownloadToTempFiles.Checked;
@@ -295,6 +321,7 @@ begin
     if DecodeConverterComboBox(ComboConverter, Options, NewID) then
       Options.SelectedConverterID := NewID;
   {$ENDIF}
+  Options.AddIndexToNames := AddIndexToNames[ComboAddIndexToNames.ItemIndex];
   // Network
   Options.ProxyActive := CheckUseProxy.Checked;
   Options.ProxyHost := EditProxyHost.Text;

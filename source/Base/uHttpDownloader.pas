@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
-  uPCRE, uXml, uHttp, HttpSend, blcksock, ssl_openssl,
+  uPCRE, uXml, uHttp, HttpSend, blcksock,
   uDownloader, uCommonDownloader;
 
 type
@@ -259,7 +259,7 @@ begin
     DownloadIndex := Succ(DownloadIndex);
     if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then
       begin
-      SetName(NameList[DownloadIndex]);
+      Name := NameList[DownloadIndex];
       SetFileName('');
       MovieURL := UrlList[DownloadIndex];
       Result := True;

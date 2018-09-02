@@ -125,7 +125,7 @@ begin
     repeat
       if Path <> '' then
         begin
-        SetName(Title);
+        Name := Title;
         MovieUrl := GetRelativeUrl(GetMovieInfoUrl, Path);
         {$IFDEF MULTIDOWNLOADS}
         NameList.Add(Title);

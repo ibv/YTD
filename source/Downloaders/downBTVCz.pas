@@ -124,7 +124,7 @@ begin
   else
     begin
     if Datum <> '' then
-      SetName(UnpreparedName + ' - ' + Datum);
+      Name := UnpreparedName + ' - ' + Datum;
     MovieUrl := Url;
     SetPrepared(True);
     Result := True;

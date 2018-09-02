@@ -129,7 +129,7 @@ function TNestedDirectDownloader.AfterPrepareFromPage(var Page: string; PageXml:
 begin
   Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
   if fForcedName <> '' then
-    SetName(fForcedName);
+    Name := fForcedName;
 end;
 
 end.

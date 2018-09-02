@@ -142,7 +142,7 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
-      SetName(Title);
+      Name := Title;
       MovieURL := StripSlashes(Url);
       Result := True;
       SetPrepared(True);

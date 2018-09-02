@@ -154,7 +154,7 @@ begin
     else
       begin
       MovieUrl := Url;
-      SetName(UrlDecode(Title));
+      Name := UrlDecode(Title);
       SetPrepared(True);
       Result := True;
       end;

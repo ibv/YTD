@@ -120,7 +120,7 @@ begin
       else
         begin
         if GetXmlVar(Xml, 'TITLE', Title) then
-          SetName(Title);
+          Name := Title;
         MovieUrl := Url;
         Result := True;
         SetPrepared(True);

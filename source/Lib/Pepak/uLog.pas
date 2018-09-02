@@ -1,4 +1,5 @@
 unit uLog;
+{$INCLUDE 'pepak.inc'}
 {$INCLUDE 'uLog.inc'}
 
 interface
@@ -77,7 +78,7 @@ var
 begin
   {$IFDEF DEBUGLOG}
   Log('%sDirectory: "%s"', [Indent, Panel.Directory]);
-  {$IFDEF FAR3}
+  {$IFDEF FAR3_UP}
   Log('%s - Directory param: "%s"', [Indent, Panel.DirectoryParam]);
   Log('%s - Directory file: "%s"', [Indent, Panel.DirectoryFile]);
   {$ENDIF}

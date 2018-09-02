@@ -40,7 +40,7 @@ unit guiFunctions;
 interface
 
 uses
-  SysUtils, Windows, ShellApi,
+  SysUtils, Classes, Windows, ShellApi,
   {$IFDEF SETUP}
     uSetup,
     {$IFNDEF GUI_WINAPI}
@@ -58,7 +58,8 @@ procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 function IsHttpProtocol(const Url: string): boolean;
 procedure UpgradeYTD(Upgrade: TYTDUpgrade; OwnerHandle: THandle);
 function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle): boolean;
-procedure CheckForOpenSSL(OwnerHandle: THandle; Options: TYTDOptions);
+function DownloadAndInstallExternalLibrary(const Url: string; OwnerHandle: THandle; Options: TYTDOptions): boolean;
+procedure CheckForExternalLibraries(OwnerHandle: THandle; Options: TYTDOptions);
 
 {$IFDEF SINGLEINSTANCE}
 procedure RegisterMainInstance(const MainFormHandle: THandle);
@@ -69,7 +70,7 @@ function FindMainInstance(out MainFormHandle: THandle): boolean;
 implementation
 
 uses
-  uScriptedDownloader;
+  uScriptedDownloader, uRtmpDownloader, uMSDownloader;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 var n: int64;
@@ -273,12 +274,56 @@ end;
 
 {$ENDIF}
 
-procedure CheckForOpenSSL(OwnerHandle: THandle; Options: TYTDOptions);
+function DownloadAndInstallExternalLibrary(const Url: string; OwnerHandle: THandle; Options: TYTDOptions): boolean;
+var
+  LibData: TMemoryStream;
 begin
+  Result := False;
+  LibData := TMemoryStream.Create;
+  try
+    if DownloadFromHttp(Url, Options, LibData) then
+      begin
+      LibData.Position := 0;
+      if Unzip(LibData, ExtractFilePath(ExpandFileName(ParamStr(0)))) then
+        Result := True;
+      end;
+  finally
+    FreeAndNil(LibData);
+    end;
+end;
+
+procedure CheckForExternalLibraries(OwnerHandle: THandle; Options: TYTDOptions);
+var
+  NeedsRestart: boolean;
+begin
+  NeedsRestart := False;
+  // OpenSSL
   if not IsSSLAvailable then
     if not Options.IgnoreMissingOpenSSL then
       if MessageBox(OwnerHandle, PChar(MSG_OPENSSL_NOT_FOUND + #10#10 + MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
-        Run(OPENSSL_URL);
+        if DownloadAndInstallExternalLibrary(MY_OPENSSL_URL, OwnerHandle, Options) then
+          NeedsRestart := True
+        else
+          Run(OPENSSL_URL);
+  // RtmpDump
+  if not TRtmpDownloader.CheckForPrerequisites then
+    if not Options.IgnoreMissingRtmpDump then
+      if MessageBox(OwnerHandle, PChar(MSG_RTMPDUMP_NOT_FOUND + #10#10 + MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+        if DownloadAndInstallExternalLibrary(MY_RTMPDUMP_URL, OwnerHandle, Options) then
+          NeedsRestart := True
+        else
+          Run(RTMPDUMP_URL);
+  // RtmpDump
+  if not TMSDownloader.CheckForPrerequisites then
+    if not Options.IgnoreMissingMSDL then
+      if MessageBox(OwnerHandle, PChar(MSG_MSDL_NOT_FOUND + #10#10 + MSG_MSDL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+        if DownloadAndInstallExternalLibrary(MY_MSDL_URL, OwnerHandle, Options) then
+          NeedsRestart := True
+        else
+          Run(MSDL_URL);
+  // Restart?
+  if NeedsRestart then
+    MessageBox(OwnerHandle, PChar(MSG_EXTERNAL_LIBS_WERE_DOWNLOADED), PChar(APPLICATION_TITLE), MB_ICONINFORMATION or MB_OK or MB_TASKMODAL)
 end;
 
 initialization

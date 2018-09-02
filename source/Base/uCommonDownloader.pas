@@ -196,7 +196,7 @@ procedure TCommonDownloader.SetMovieUrl(const Value: string);
 begin
   fMovieUrl := Value;
   if (Value <> '') and (UnpreparedName = '') then
-    SetName(ExtractUrlFileName(MovieUrl));
+    Name := ExtractUrlFileName(MovieUrl);
 end;
 
 {$IFDEF SUBTITLES}
@@ -313,7 +313,7 @@ begin
             SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
           else
             begin
-            SetName('');
+            Name := '';
             MovieURL := '';
             {$IFDEF SUBTITLES}
             fSubtitles := '';
@@ -322,7 +322,7 @@ begin
             // If regular expression for TITLE is set, use it to get title.
             if MovieTitleRegExp <> nil then
               if GetRegExpVar(MovieTitleRegExp, Page, 'TITLE', s) then
-                SetName(HtmlDecode(s));
+                Name := HtmlDecode(s);
             // If a function for building URL is provided, use it.
             if BuildMovieURL(s) then
               MovieURL := s

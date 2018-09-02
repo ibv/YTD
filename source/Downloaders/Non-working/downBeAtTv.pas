@@ -125,7 +125,7 @@ begin
   {$ENDIF}
   else
     begin
-    SetName(Title);
+    Name := Title;
     MovieUrl := Format('http://video.aws.be-at.tv/%s/%s/1000/0.flv', [SessionID, VideoID]);
     {$IFDEF MULTIDOWNLOADS}
 {

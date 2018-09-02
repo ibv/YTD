@@ -175,7 +175,7 @@ begin
   Result := False;
   if GetMediaInfoFromPage(Page, Http, Title, Url) then
       begin
-      SetName(Title);
+      Name := Title;
       MovieUrl := Url;
       SetPrepared(True);
       Result := True;

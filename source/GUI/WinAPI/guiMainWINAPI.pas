@@ -399,15 +399,18 @@ begin
   StartClipboardMonitor;
   // Tray icon
   {$IFDEF SYSTRAY}
-    Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
-    fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
-    fNotifyIconData.Wnd := Self.Handle;
-    fNotifyIconData.uID := Integer(Self);
-    fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
-    fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
-    fNotifyIconData.hIcon := Icon;
-    StrPCopy(fNotifyIconData.szTip, Copy(APPLICATION_CAPTION, 1, Pred(Length(fNotifyIconData.szTip))));
-    Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
+    if Options.MinimizeToTray then
+      begin
+      Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+      fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
+      fNotifyIconData.Wnd := Self.Handle;
+      fNotifyIconData.uID := Integer(Self);
+      fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
+      fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
+      fNotifyIconData.hIcon := Icon;
+      StrPCopy(fNotifyIconData.szTip, Copy(APPLICATION_CAPTION, 1, Pred(Length(fNotifyIconData.szTip))));
+      Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
+      end;
   {$ENDIF}
   // Facilitate resizing
   SetControlAnchors(DownloadListHandle, [akTop, akLeft, akRight, akBottom]);
@@ -444,7 +447,7 @@ begin
   // Redraw screen
   ActionRefresh;
   // Check for OpenSSL
-  CheckForOpenSSL(0, Options);
+  CheckForExternalLibraries(0, Options);
 end;
 
 function TFormMain.DoClose: boolean;
@@ -470,7 +473,8 @@ begin
     SaveSettings;
     StopClipboardMonitor;
     {$IFDEF SYSTRAY}
-    Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+    if Options.MinimizeToTray then
+      Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
     {$ENDIF}
     Accelerators := 0;
     DestroyObjects;
@@ -641,8 +645,9 @@ end;
 function TFormMain.DoSize(ResizeType, NewWidth, NewHeight: integer): boolean;
 begin
   {$IFDEF SYSTRAY}
-  if ResizeType = SIZE_MINIMIZED then
-    ShowWindow(Self.Handle, SW_HIDE);
+  if Options.MinimizeToTray then
+    if ResizeType = SIZE_MINIMIZED then
+      ShowWindow(Self.Handle, SW_HIDE);
   {$ENDIF}
   Result := inherited DoSize(ResizeType, NewWidth, NewHeight);
 end;
@@ -1136,11 +1141,13 @@ begin
   Idx := Sender.IndexOf(Item);
   if Self.Handle <> 0 then
     ShowApiError(SendMessage(DownloadListHandle, LVM_SETITEMCOUNT, Sender.Count, 0) = 0);
-  if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
-    if DownloadList[Idx].State = dtsFinished then
-      SaveSettings;
   if Idx >= 0 then
+    begin
     RefreshItem(Idx);
+    if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
+      if DownloadList[Idx].State = dtsFinished then
+        SaveSettings;
+    end;
 end;
 
 procedure TFormMain.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);

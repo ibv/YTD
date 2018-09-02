@@ -161,7 +161,7 @@ begin
   else
     try
       //if GetXmlAttr(Xml, '', 'title', Title) then
-      //  SetName(Title);
+      //  Name := Title;
       if not XmlNodeByPath(Xml, 'files', Files) then
         SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
       else

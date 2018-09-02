@@ -181,7 +181,7 @@ begin
                         if GetRegExpVar(TitleFixRegExp, TitleNode.Value, 'TITLE', Title) then
                           SetName(Title)
                         else
-                          SetName(TitleNode.Value);
+                          Name := TitleNode.Value;
                       Exit;
                       end;
 
@@ -202,7 +202,7 @@ begin
                 NameList.Add(Title);
               UrlList.Add(Url);
               {$ELSE}
-                SetName(Trim(Title));
+                Name := Trim(Title);
               MovieUrl := Url;
               SetPrepared(True);
               Result := True;

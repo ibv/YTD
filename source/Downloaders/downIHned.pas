@@ -158,7 +158,7 @@ function TDownloader_IHned.Prepare: boolean;
 begin
   Result := inherited Prepare;
   if Result then
-    SetName(StripTags(Name));
+    Name := StripTags(Name);
 end;
 
 initialization

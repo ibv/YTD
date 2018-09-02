@@ -133,7 +133,7 @@ begin
     else
       begin
       Cookies.Assign(Http.Cookies);
-      SetName(HtmlDecode(UrlDecode(Title)));
+      Name := HtmlDecode(UrlDecode(Title));
       MovieUrl := HtmlDecode(Url);
       SetPrepared(True);
       Result := True;

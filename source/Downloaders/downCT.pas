@@ -225,9 +225,9 @@ begin
       else
         NameList.Add(Title);
       end;
-    SetName(NameList[0]);
+    Name := NameList[0];
     {$ENDIF}
-    SetName(Title);
+    Name := Title;
     MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
     SetPrepared(True);
     Result := True;
@@ -294,7 +294,7 @@ begin
     DownloadIndex := Succ(DownloadIndex);
     if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then
       begin
-      SetName(NameList[DownloadIndex]);
+      Name := NameList[DownloadIndex];
       SetFileName('');
       MovieURL := UrlList[DownloadIndex];
       Result := True;

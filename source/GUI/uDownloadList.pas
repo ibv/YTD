@@ -83,7 +83,7 @@ type
       {$IFDEF CONVERTERS}
       procedure DownloadItemConvertThreadFinished(Sender: TObject); virtual;
       {$ENDIF}
-      function AddNewItem(const Source: string; Downloader: TDownloader): integer; virtual;
+      function AddNewItem(const Source, Title: string; Downloader: TDownloader): integer; virtual;
       function AutoTryHtmlParser: boolean;
       property List: TStringList read fList;
       property DownloadingList: TList read fDownloadingList;
@@ -100,7 +100,7 @@ type
       {$IFDEF CONVERTERS}
       procedure ConvertAll; virtual;
       {$ENDIF}
-      function Add(const Url: string): integer; virtual;
+      function Add(const Url: string; const Title: string = ''): integer; virtual;
       function AddFromHTML(const Source: string): integer; virtual;
       function IndexOf(Item: TDownloadListItem): integer; virtual;
       procedure Delete(Item: TDownloadListItem); overload; virtual;
@@ -190,10 +190,11 @@ begin
   Result := TDownloadListItem(DownloadingList[Index]);
 end;
 
-function TDownloadList.AddNewItem(const Source: string; Downloader: TDownloader): integer; 
+function TDownloadList.AddNewItem(const Source, Title: string; Downloader: TDownloader): integer; 
 var Item: TDownloadListItem;
 begin
   Item := TDownloadListItem.Create(Downloader, True);
+  Item.Title := Title;
   Item.RetryCount := Options.DownloadRetryCount;
   Item.Options := Options;
   Item.OnStateChange := DownloadItemStateChange;
@@ -210,11 +211,11 @@ begin
     StartAll;
 end;
 
-function TDownloadList.Add(const Url: string): integer;
+function TDownloadList.Add(const Url, Title: string): integer;
 begin
   DownloadClassifier.Url := Url;
   if DownloadClassifier.Downloader <> nil then
-    Result := AddNewItem(Url, DownloadClassifier.Downloader)
+    Result := AddNewItem(Url, Title, DownloadClassifier.Downloader)
   else if AutoTryHtmlParser then
     Result := AddFromHTML(Url)
   else
@@ -229,7 +230,7 @@ begin
     Downloader := TPlaylist_HTML.Create(Source)
   else
     Downloader := TPlaylist_HTMLfile.Create(Source);
-  Result := AddNewItem(Source, Downloader);
+  Result := AddNewItem(Source, '', Downloader);
 end;
 
 function TDownloadList.IndexOf(Item: TDownloadListItem): integer;
@@ -244,10 +245,13 @@ end;
 
 procedure TDownloadList.Delete(Index: integer);
 begin
-  Stop(Items[Index]);
-  List.Objects[Index].Free;
-  List.Delete(Index);
-  NotifyList;
+  if Index >= 0 then
+    begin
+    Stop(Items[Index]);
+    List.Objects[Index].Free;
+    List.Delete(Index);
+    NotifyList;
+    end;
 end;
 
 procedure TDownloadList.DownloadItemDownloadProgress(Sender: TObject);
@@ -336,10 +340,12 @@ begin
     begin
     Playlist := TPlaylistDownloader(Item.Downloader);
     for i := 0 to Pred(Playlist.Count) do
-      Add(Playlist[i]);
+      Add(Playlist[i], Playlist.Names[i]);
     end;
-  if Options.AutoStartDownloads then
+  if Options.AutoStartDownloads and (Item.State <> dtsAborted) then
     StartAll;
+  if Options.AutoDeleteFinishedDownloads and (Item.State = dtsFinished) then
+    Delete(Item);
 end;
 
 procedure TDownloadList.NotifyList;

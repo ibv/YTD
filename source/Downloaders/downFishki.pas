@@ -120,7 +120,7 @@ end;
 function TDownloader_Fishki.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  SetName(ChangeFileExt(ExtractUrlFileName(MovieUrl), ''));
+  Name := ChangeFileExt(ExtractUrlFileName(MovieUrl), '');
   Result := Prepared;
 end;
 {$ENDIF}

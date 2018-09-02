@@ -67,6 +67,7 @@ uses
   {$IFDEF SETUP}
   uSetup in 'Common\uSetup.pas',
   {$ENDIF}
+  ssl_openssl,
   uDownloadClassifier in 'Common\uDownloadClassifier.pas',
   uDownloader in 'Base\uDownloader.pas',
   uCommonDownloader in 'Base\uCommonDownloader.pas',

@@ -110,7 +110,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    SetName(ChangeFileExt(ExtractUrlFileName(Url), ''));
+    Name := ChangeFileExt(ExtractUrlFileName(Url), '');
     MovieUrl := Url;
     Result := True;
     SetPrepared(True);

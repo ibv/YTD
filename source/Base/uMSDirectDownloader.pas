@@ -90,7 +90,7 @@ end;
 constructor TMSDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
 begin
   Create(AMovieID);
-  SetName(AMovieName);
+  Name := AMovieName;
 end;
 
 destructor TMSDirectDownloader.Destroy;
@@ -112,7 +112,7 @@ begin
   else
     begin
     if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
+      Name := ExtractUrlFileName(MovieID);
     MovieURL := MovieID;
     SetPrepared(True);
     Result := True;

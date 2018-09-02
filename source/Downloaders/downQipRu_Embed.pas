@@ -123,7 +123,7 @@ begin
     if DownloadPage(Http, 'http://file.qip.ru/embed/' + MovieID, hmHEAD) then
       if GetRegExpVar(RealUrlRegExp, LastUrl, 'URL', Url) then
         begin
-        SetName('Qip-movie-' + MovieID); // no name available
+        Name := 'Qip-movie-' + MovieID; // no name available
         Url := UrlDecode(Url);
         Result := True;
         end;

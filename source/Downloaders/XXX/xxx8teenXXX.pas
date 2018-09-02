@@ -125,7 +125,7 @@ begin
                 if GetXmlVar(Node[i], 'title', s) and (s <> '') then
                   SetName(BaseName + ' ' + s)
                 else
-                  SetName(BaseName);
+                  Name := BaseName;
                 MovieUrl := Url;
                 SetPrepared(True);
                 Result := True;

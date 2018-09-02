@@ -110,7 +110,7 @@ function TDownloader_UlozTo.AfterPrepareFromPage(var Page: string; PageXml: TXml
 begin
   Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
   if Result then
-    SetName(StripTags(Name));
+    Name := StripTags(Name);
 end;
 
 initialization

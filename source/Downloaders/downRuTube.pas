@@ -276,7 +276,7 @@ begin
   Result := False;
   if (fServer <> '') and (fStream <> '') then
     begin
-    SetName(fName);
+    Name := fName;
     MovieUrl := fServer + fStream;
     Self.RtmpUrl := MovieUrl;
     Self.Playpath := Copy(fStream, 2, MaxInt);

@@ -43,21 +43,21 @@ OutputDir=..\Bin
 UnitOutputDir=Units
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\NativeXml;lib\lkJSON;Units
+SearchPath=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\nativexml;lib\lkjson;lib\scizipfile;Units
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
 Conditionals=PEPAK;PEPAK_YTD;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=https://www.youtube.com/watch?v=WaChM8-2lc4
+RunParams=http://video.aktualne.cz/48-hodin-v/cozumel-karibsky-ostrov-plodnosti/r~6a3d47a23d2211e5a896002590604f2e/
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
-MinorVer=45
+MinorVer=49
 Release=0
-Build=1145
+Build=1206
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +68,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.45.0.1145
+FileVersion=1.49.0.1206
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YTD
-ProductVersion=1.45.0.1122
+ProductVersion=1.49.0.1150
 Comments=http://www.pepak.net/ytd
 [Excluded Packages]
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
@@ -93,8 +93,10 @@ Item8=PEPAK;PEPAK_YTD;XXX;DEBUG;
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=1
-Item0=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\NativeXml;lib\lkJSON;Units
+Count=3
+Item0=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\nativexml;lib\lkjson;lib\scizipfile;Units
+Item1=$(DELPHI)\Lib\Debug;lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\nativexml;lib\lkjson;lib\scizipfile;Units
+Item2=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\NativeXml;lib\lkJSON;Units
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=Units

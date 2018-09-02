@@ -61,6 +61,7 @@ type
       function GetContentUrl: string; override;
       procedure SetProxyUrl;
     public
+      class function CheckForPrerequisites: boolean;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       function Download: boolean; override;
@@ -78,6 +79,11 @@ begin
 end;
 
 { TMSDownloader }
+
+class function TMSDownloader.CheckForPrerequisites: boolean;
+begin
+  Result := Msdl_Init;
+end;
 
 constructor TMSDownloader.Create(const AMovieID: string);
 begin

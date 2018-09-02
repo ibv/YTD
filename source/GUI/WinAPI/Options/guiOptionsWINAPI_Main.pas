@@ -86,6 +86,9 @@ const
   IDC_BUTTON_SHORTCUTINSTARTMENU = 1005;
   IDC_CHECKBOX_MONITORCLIPBOARD = 1006;
   IDC_CHECKBOX_DISABLEOPENSSLWARNING = 1007;
+  IDC_CHECKBOX_DISABLERTMPDUMPWARNING = 1008;
+  IDC_CHECKBOX_DISABLEMSDLWARNING = 1009;
+  IDC_CHECKBOX_MINIMIZETOTRAY = 1010;
 
 { TFrameMainOptions }
 
@@ -123,6 +126,9 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTONDESKTOP), [akBottom, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_BUTTON_SHORTCUTINSTARTMENU), [akBottom, akLeft, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DISABLEOPENSSLWARNING), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DISABLERTMPDUMPWARNING), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_DISABLEMSDLWARNING), [akTop, akLeft, akRight]);
+  SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY), [akTop, akLeft, akRight]);
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'OPTIONS_MAIN_ACTIONS');
 end;
@@ -168,15 +174,13 @@ end;
 procedure TFrameMainOptions.LoadFromOptions;
 const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
-  // Portable mode
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_PORTABLEMODE, CheckboxConsts[Options.PortableMode]);
-  // Check for new version automatically
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_CHECKNEWVERSION, CheckboxConsts[Options.CheckForNewVersionOnStartup]);
-  // Monitor clipboard
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_MONITORCLIPBOARD, CheckboxConsts[Options.MonitorClipboard]);
-  // OpenSSL warnings
   CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLEOPENSSLWARNING, CheckboxConsts[Options.IgnoreMissingOpenSSL]);
-  // Language
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLERTMPDUMPWARNING, CheckboxConsts[Options.IgnoreMissingRtmpDump]);
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_DISABLEMSDLWARNING, CheckboxConsts[Options.IgnoreMissingMSDL]);
+  CheckDlgButton(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY, CheckboxConsts[Options.MinimizeToTray]);
   SetWindowText(EditLanguage, PChar(Options.Language));
 end;
 
@@ -209,6 +213,27 @@ begin
       Options.IgnoreMissingOpenSSL := True;
     BST_UNCHECKED:
       Options.IgnoreMissingOpenSSL := False;
+    end;
+  // RtmpDump warning
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_DISABLERTMPDUMPWARNING) of
+    BST_CHECKED:
+      Options.IgnoreMissingRtmpDump := True;
+    BST_UNCHECKED:
+      Options.IgnoreMissingRtmpDump := False;
+    end;
+  // MSDL warning
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_DISABLEMSDLWARNING) of
+    BST_CHECKED:
+      Options.IgnoreMissingMSDL := True;
+    BST_UNCHECKED:
+      Options.IgnoreMissingMSDL := False;
+    end;
+  // Minimize to tray
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_MINIMIZETOTRAY) of
+    BST_CHECKED:
+      Options.MinimizeToTray := True;
+    BST_UNCHECKED:
+      Options.MinimizeToTray := False;
     end;
   // Language
   Options.Language := GetWindowTextAsString(EditLanguage);

@@ -121,7 +121,7 @@ begin
     begin
     if GetXmlVar(Node, 'media:title', Title) then
       if Title <> '' then
-        SetName(Title);
+        Name := Title;
     for i := 0 to Pred(Node.NodeCount) do
       if Node[i].Name = 'media:content' then
         if GetXmlAttr(Node[i], '', 'url', Url) then
@@ -132,7 +132,7 @@ begin
               begin
               MovieUrl := Url;
               if UnpreparedName = '' then
-                SetName('Google Video ' + MovieID);
+                Name := 'Google Video ' + MovieID;
               SetPrepared(True);
               Result := True;
               Exit;

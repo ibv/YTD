@@ -70,6 +70,7 @@ type
       fConvertThread: TThread;
       fConvertHandle: THandle;
       fOnConvertThreadFinished: TNotifyEvent;
+    fTitle: string;
       {$ENDIF}
     protected
       procedure SetState(Value: TDownloadThreadState); virtual;
@@ -106,6 +107,7 @@ type
       procedure PlayMedia; virtual;
       procedure ExploreMedia; virtual;
       function Download: boolean; virtual;
+      property Title: string read fTitle write fTitle;
       property Downloader: TDownloader read fDownloader;
       property State: TDownloadThreadState read fState;
       property TotalSize: int64 read fTotalSize;
@@ -316,7 +318,7 @@ end;
 procedure TDownloadListItem.CreateThread;
 begin
   Downloader.Options := Options;
-  fThread := TDownloadThread.Create(Downloader, True);
+  fThread := TDownloadThread.Create(Downloader, Title, True);
   Thread.OnStateChange := ThreadStateChange;
   Thread.OnDownloadProgress := ThreadDownloadProgress;
   Thread.OnFileNameValidate := ThreadFileNameValidate;
@@ -359,18 +361,7 @@ begin
     {$ENDIF}
     Thread.Terminate;
     {$IFDEF DELPHITHREADS}
-      Thread.WaitFor;
-    {$ELSE}
-      {$IFDEF DIRTYHACKS}
-      Sleep(10);
-      {$ELSE}
-      'I have no idea how to properly quit the thread...'
-      // WaitFor doesn't work, ClearThread works but I would need to clear
-      // events such as OnProgress first (and that would mean clearing
-      // something which may no longer exist), I can't use a loop
-      // while Assigned(Thread) do Sleep, because that is apparently an
-      // endless loop...
-      {$ENDIF}
+    Thread.WaitFor;
     {$ENDIF}
     end;
 end;

@@ -262,7 +262,7 @@ begin
       if Result then
         begin
         if (Name = '') or (Name = ExtractUrlFileName(MovieUrl)) then
-          SetName(NestedDownloader.Name);
+          Name := NestedDownloader.Name;
         {
         if MovieUrl = '' then
           if NestedDownloader is TCommonDownloader then
@@ -367,7 +367,7 @@ end;
 procedure TNestedDownloader.NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean);
 begin
   FileName := GetThisFileName;
-  Valid := ValidateFileName(FileName);
+  Valid := InternalValidateFileName(FileName);
 end;
 
 function TNestedDownloader.GetLastErrorMsg: string;

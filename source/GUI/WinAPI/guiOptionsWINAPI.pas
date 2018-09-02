@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes, Windows, Messages, CommCtrl, ShellApi,
   uApiCommon, uApiFunctions, uApiForm, uApiGraphics, uApiTabControl,
-  uLanguages, uMessages, uOptions, guiConsts, guiFunctions, uDialogs;
+  uLanguages, uMessages, uOptions, guiOptions, guiConsts, guiFunctions, uDialogs;
 
 type
   TFrameOptions = class;
@@ -50,7 +50,7 @@ type
   TFormOptions = class(TApiForm)
     protected
     private
-      fOptions: TYTDOptions;
+      fOptions: TYTDOptionsGUI;
     private
       PageOptions: TApiTabControl;
       procedure CreateObjects;
@@ -67,17 +67,17 @@ type
     public
       constructor Create(AOwner: TApiForm; const ADialogResourceName: string); override;
       destructor Destroy; override;
-      property Options: TYTDOptions read fOptions write fOptions;
+      property Options: TYTDOptionsGUI read fOptions write fOptions;
     end;
 
   TFrameOptions = class(TApiTabSheet)
     private
-      fOptions: TYTDOptions;
+      fOptions: TYTDOptionsGUI;
     protected
     public
       procedure LoadFromOptions; virtual; abstract;
       procedure SaveToOptions; virtual; abstract;
-      property Options: TYTDOptions read fOptions write fOptions;
+      property Options: TYTDOptionsGUI read fOptions write fOptions;
     end;
   TFrameOptionsClass = class of TFrameOptions;
 

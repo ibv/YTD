@@ -84,6 +84,7 @@ end;
 constructor TPlaylist_YouTube_Page.Create(const AMovieID: string);
 begin
   inherited;
+  InfoPageEncoding := peUTF8;
   InfoPageIsXml := True;
 end;
 

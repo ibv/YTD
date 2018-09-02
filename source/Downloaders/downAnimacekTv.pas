@@ -119,7 +119,7 @@ begin
   else
     begin
     if GetXmlAttr(PageXml, 'mediainfo', 'name', Title) then
-      SetName(Title);
+      Name := Title;
     Server := 'rtmpe://' + Server;
     MovieUrl := Server + '/' + Stream;
     Self.RtmpUrl := Server;

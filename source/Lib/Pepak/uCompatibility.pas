@@ -105,6 +105,7 @@ const
 
 {$IFNDEF DELPHI2010_UP}
 const
+  CSIDL_APPDATA = 26;
   CSIDL_PROGRAM_FILES = 38;
 
 const

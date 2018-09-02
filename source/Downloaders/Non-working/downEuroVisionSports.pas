@@ -152,7 +152,7 @@ begin
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
                   else
                     begin
-                    SetName(Title);
+                    Name := Title;
                     MovieUrl := Server + Stream;
                     SetPrepared(True);
                     Result := True;

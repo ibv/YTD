@@ -119,7 +119,7 @@ begin
           NameList.Add(Title);
           UrlList.Add(Url);
           {$ELSE}
-          SetName(Title);
+          Name := Title;
           MovieURL := Url;
           Result := True;
           SetPrepared(True);

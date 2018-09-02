@@ -179,7 +179,7 @@ begin
               if (not GetXmlAttr(Info.Root.Nodes[i], '', 'role', Role)) or (Role <> 'advertisement') then
                 begin
                 if GetXmlAttr(Info.Root.Nodes[i], '', 'title', Title) then
-                  SetName(Title);
+                  Name := Title;
                 MovieUrl := Url;
                 MSDownloader := TDownloader_Hasici150_MS.CreateWithName(MovieUrl, UnpreparedName);
                 MSDownloader.Options := Options;

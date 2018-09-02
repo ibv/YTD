@@ -165,7 +165,7 @@ begin
           else
             begin
             GetRegExpVar(VideoExtensionRegExp, Path, 'EXT', Extension);
-            SetName(Title);
+            Name := Title;
             MovieUrl := Host + Path;
             SetPrepared(True);
             Result := True;

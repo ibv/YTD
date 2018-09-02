@@ -116,7 +116,7 @@ begin
     if (not GetXmlVar(Node, 'title', Title)) or (Title = '') then
       if (not GetXmlVar(Node, 'perex', Title)) or (Title = '') then
         Title := ExtractUrlFileName(Url);
-    SetName(Title);
+    Name := Title;
     MovieUrl := Url;
     SetPrepared(True);
     Result := True;

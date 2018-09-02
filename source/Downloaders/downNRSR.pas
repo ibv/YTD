@@ -122,7 +122,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
   else
     begin
-    SetName(StripTags(UnpreparedName));
+    Name := StripTags(UnpreparedName);
     Self.RtmpUrl := Server;
     Self.Playpath := ChangeFileExt(Stream, '');
     MovieUrl := Self.RtmpUrl + '/' + Self.Playpath;

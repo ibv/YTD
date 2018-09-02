@@ -133,7 +133,7 @@ begin
     else
       MovieUrl := UrlLQ;
     if Title <> '' then
-      SetName(Title);
+      Name := Title;
     SetPrepared(True);
     Result := True;
     end;

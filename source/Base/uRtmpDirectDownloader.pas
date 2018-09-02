@@ -96,7 +96,7 @@ end;
 constructor TRtmpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string);
 begin
   Create(AMovieID);
-  SetName(AMovieName);
+  Name := AMovieName;
 end;
 
 destructor TRtmpDirectDownloader.Destroy;
@@ -118,7 +118,7 @@ begin
   else
     begin
     if UnpreparedName = '' then
-      SetName(ExtractUrlFileName(MovieID));
+      Name := ExtractUrlFileName(MovieID);
     RestoreRtmpDumpOptions;
     MovieURL := MovieID;
     if RtmpUrl = '' then

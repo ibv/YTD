@@ -131,7 +131,7 @@ begin
   if Result then
     begin
     MovieUrl := JSDecode(MovieURL);
-    SetName(JSDecode(Name));
+    Name := JSDecode(Name);
     end;
 end;
 

@@ -132,7 +132,7 @@ begin
                 NameList.Add(Title);
                 UrlList.Add('http://www.publictv.cz' + HREF);
                 {$ELSE}
-                SetName(Title);
+                Name := Title;
                 MovieUrl := 'http://www.publictv.cz' + HREF;
                 Result := True;
                 SetPrepared(True);

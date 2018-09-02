@@ -89,6 +89,7 @@ type
       function GetContentUrl: string; override;
       function GetFileNameExt: string; override;
     public
+      class function CheckForPrerequisites: boolean;
       class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -135,6 +136,11 @@ begin
 end;
 
 { TRtmpDownloader }
+
+class function TRtmpDownloader.CheckForPrerequisites: boolean;
+begin
+  Result := RtmpDump_Init;
+end;
 
 class function TRtmpDownloader.Features: TDownloaderFeatures;
 begin

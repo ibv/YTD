@@ -41,12 +41,12 @@ unit uFunctions;
 interface
 
 uses
-  SysUtils, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
+  SysUtils, Classes, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
   HttpSend, SynaUtil, Blcksock,
   {$IFDEF SETUP}
   uSetup,
   {$ENDIF}
-  uMessages, uCompatibility, uFiles, uStrings;
+  uMessages, uCompatibility, uFiles, uStrings, uOptions;
 
 type
   TProgressBarState = (pbsNoProgress, pbsUnknown, pbsNormal, pbsError, pbsPaused);
@@ -66,8 +66,18 @@ function IsHttpProtocol(const Url: string): boolean;
 function IncludeTrailingSlash(const Path: string): string;
 function FindHttpHeader(Http: THttpSend; Header: string; out Value: string): boolean;
 function IsSSLAvailable: boolean;
+function DownloadFromHttp(const Url: string; Options: TYTDOptions; Stream: TStream): boolean;
+function SafeRelativeFileName(const FileName: string): string;
+function Unzip(const FileName, DestinationDir: string): boolean; overload;
+function Unzip(Stream: TStream; const DestinationDir: string): boolean; overload;
 
 implementation
+
+uses
+  {$IFNDEF DELPHI7_UP}
+  FileCtrl,
+  {$ENDIF}
+  SciZipFile;
 
 function PrettySize(Size: int64): string;
 
@@ -316,6 +326,129 @@ end;
 function IsSSLAvailable: boolean;
 begin
   Result := blcksock.SSLImplementation <> TSSLNone;
+end;
+
+function DownloadFromHttp(const Url: string; Options: TYTDOptions; Stream: TStream): boolean;
+var
+  Http: THttpSend;
+  Again: boolean;
+  RealUrl: string;
+begin
+  Result := False;
+  try
+    Http := Options.CreateHttp;
+    try
+      RealUrl := Url;
+      repeat
+        Again := False;
+        Http.Clear;
+        if Http.HttpMethod('HEAD', RealUrl) then
+          if CheckRedirect(HTTP, RealUrl) then
+            Again := True
+          else if (Http.ResultCode >= 200) and (Http.ResultCode < 300) then
+            begin
+            Http.Clear;
+            if Http.HttpMethod('GET', RealUrl) then
+              begin
+              Http.Document.Position := 0;
+              Stream.CopyFrom(Http.Document, Http.Document.Size);
+              Result := True;
+              end;
+            end;
+      until not Again;
+    finally
+      FreeAndNil(Http);
+      end;
+  except
+    Result := False;
+    end;
+end;
+
+function SafeRelativeFileName(const FileName: string): string;
+var
+  Dir: string;
+  start, i, n: integer;
+begin
+  Result := '';
+  start := 1;
+  i := 1;
+  n := Length(FileName);
+  while (i <= n) do
+    if (FileName[i] = '\') or (FileName[i] = '/') then
+      begin
+      Dir := Copy(FileName, start, i-start);
+      if Dir <> '' then
+        if Dir = '' then
+          // Nothing to do
+        else if Dir = '..' then
+          Result := ExtractFilePath(Result)
+        else
+          Result := Result + Dir + '\';
+      Inc(i);
+      start := i;
+      end
+    else
+      Inc(i);
+  if (i <> start) then
+    Result := Result + Copy(FileName, start, MaxInt);
+end;
+
+function Unzip(const FileName, DestinationDir: string): boolean;
+var
+  FS: TFileStream;
+begin
+  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  try
+    Result := Unzip(FS, DestinationDir);
+  finally
+    FreeAndNil(FS);
+    end;
+end;
+
+function Unzip(Stream: TStream; const DestinationDir: string): boolean; 
+var
+  Zip: TZipFile;
+  i: integer;
+  Dir, FN: string;
+  Data: AnsiString;
+  FS: TFileStream;
+begin
+  Result := True;
+  Zip := TZipFile.Create;
+  try
+    Zip.LoadFromStream(Stream);
+    if DestinationDir <> '' then
+      Dir := IncludeTrailingPathDelimiter(DestinationDir)
+    else
+      Dir := '';
+    for i := 0 to Pred(Zip.Count) do
+      begin
+      FN := string(Zip.Name[i]);
+      if FN <> '' then
+        try
+          FN := ExcludeTrailingPathDelimiter(Dir + SafeRelativeFileName(FN));
+          if (Zip.Attr[i] and FILE_ATTRIBUTE_DIRECTORY) <> 0 then
+            ForceDirectories(FN)
+          else
+            begin
+            Data := Zip.Data[i];
+            ForceDirectories(ExcludeTrailingPathDelimiter(ExtractFilePath(FN)));
+            FS := TFileStream.Create(FN, fmCreate);
+            try
+              if Data <> '' then
+                FS.WriteBuffer(Data[1], Length(Data));
+            finally
+              FreeAndNil(FS);
+              end;
+            end;
+        except
+          on E: Exception do
+            Result := False;
+          end;
+      end;
+  finally
+    FreeAndNil(Zip);
+    end;
 end;
 
 end.

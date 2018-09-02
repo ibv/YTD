@@ -88,7 +88,7 @@ end;
 constructor THttpDirectDownloader.CreateWithName(const AMovieID, AMovieName: string; ACookies: TStrings);
 begin
   Create(AMovieID);
-  SetName(AMovieName);
+  Name := AMovieName;
   if ACookies <> nil then
     Cookies.Assign(ACookies);
 end;

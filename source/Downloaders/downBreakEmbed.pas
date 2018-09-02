@@ -131,7 +131,7 @@ begin
   else
     begin
     MovieUrl := UrlDecode(Url) + '?' + Token;
-    SetName(DeletePrefix(UrlDecode(Title), TitlePrefix));
+    Name := DeletePrefix(UrlDecode(Title), TitlePrefix);
     SetPrepared(True);
     Result := True;
     end;

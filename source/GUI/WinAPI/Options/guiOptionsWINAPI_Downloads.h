@@ -16,4 +16,8 @@
 #define IDC_CHECKBOX_DOWNLOADTOPROVIDERSUBDIRS  1012
 #define IDC_LABEL_RETRYCOUNT                    1013
 #define IDC_EDIT_RETRYCOUNT                     1014
+#define IDC_CHECKBOX_AUTODELETEFINISHED         1015
+#define IDC_LABEL_ADDINDEXTONAMES               1016
+#define IDC_COMBO_ADDINDEXTONAMES               1017
+
 #define ACTION_DOWNLOADDIR                      40001

@@ -111,7 +111,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    SetName(Title);
+    Name := Title;
     {$IFDEF MYSPACE_USES_RTMP}
       // Note: Url is somewhat incorrect, MySpace uses protocol "rtmp" while in fact it should be "rtmpe"
       MovieURL := StringReplace(Url, 'rtmp://', 'rtmpe://', [rfIgnoreCase]);

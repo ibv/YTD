@@ -202,7 +202,7 @@ begin
       DownloadIndex := Succ(DownloadIndex);
       if (DownloadIndex >= 0) and (DownloadIndex < IDList.Count) then
         begin
-        SetName(ChangeFileExt(IDList[DownloadIndex], ''));
+        Name := ChangeFileExt(IDList[DownloadIndex], '');
         Self.Playpath := IDList[DownloadIndex];
         SetFileName('');
         Result := True;

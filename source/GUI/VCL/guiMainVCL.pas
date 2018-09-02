@@ -272,16 +272,19 @@ begin
     NextClipboardViewer := 0;
     StartClipboardMonitor;
     {$IFDEF SYSTRAY}
-    Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
-    fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
-    fNotifyIconData.Wnd := Self.Handle;
-    fNotifyIconData.uID := Integer(Self);
-    fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
-    fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
-    fNotifyIconData.hIcon := Application.Icon.Handle;
-    StrPCopy(fNotifyIconData.szTip, Copy(Caption, 1, Pred(Length(fNotifyIconData.szTip))));
-    Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
-    Application.OnMinimize := ApplicationMinimize;
+    if Options.MinimizeToTray then
+      begin
+      Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+      fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
+      fNotifyIconData.Wnd := Self.Handle;
+      fNotifyIconData.uID := Integer(Self);
+      fNotifyIconData.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;
+      fNotifyIconData.uCallbackMessage := WM_NOTIFYICON;
+      fNotifyIconData.hIcon := Application.Icon.Handle;
+      StrPCopy(fNotifyIconData.szTip, Copy(Caption, 1, Pred(Length(fNotifyIconData.szTip))));
+      Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);
+      Application.OnMinimize := ApplicationMinimize;
+      end;
     {$ENDIF}
     // Use double-buffered listview (removes flickering)
     SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
@@ -308,7 +311,7 @@ begin
           AddTask(Param);
       end;
     {$ENDIF}
-    CheckForOpenSSL(0, Options);
+    CheckForExternalLibraries(0, Options);
   finally
     fLoading := False;
     end;
@@ -329,7 +332,8 @@ begin
   DownloadList.StopAll;
   StopClipboardMonitor;
   {$IFDEF SYSTRAY}
-  Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+  if Options.MinimizeToTray then
+    Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
   FreeAndNil(DownloadList);
   {$IFDEF THREADEDVERSION}
@@ -489,21 +493,17 @@ begin
 end;
 
 procedure TFormYTD.DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem);
-{$IFNDEF FPC}
 var Idx: integer;
-{$ENDIF}
 begin
-  {$IFDEF FPC}
-  Refresh;
-  {$ELSE}
   Idx := Sender.IndexOf(Item);
   Downloads.Items.Count := Sender.Count;
-  if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
-    if DownloadList[Idx].State = dtsFinished then
-      SaveSettings;
   if Idx >= 0 then
+    begin
     Downloads.UpdateItems(Idx, Idx);
-  {$ENDIF}
+    if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
+      if DownloadList[Idx].State = dtsFinished then
+        SaveSettings;
+    end;
 end;
 
 procedure TFormYTD.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);

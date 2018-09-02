@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.47+                                                   (c) 2009-15 Pepak
+YTD v1.50+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -80,6 +80,14 @@ directly into YTD. It will only work if the provider's server only needs video
 URL to start a playback - if it needs extra parameters, you can't use YTD and
 will need to use RTMPDUMP directly.
 
+Since version 1.50, the support library is not included in the distribution
+archive. YTD will offer to download it for you when you start the GUI version,
+or you can download it manually from:
+
+    http://www.pepak.net/files/youtube/external/rtmpdump.zip
+
+Unzip the downloaded file to YTD's directory.
+
 
 
 4. MMS/RTSP PROTOCOLS
@@ -101,6 +109,14 @@ can enter URLs such as "mms://netshow.play.cz/proglas/audio_15681.wma"
 directly into YTD. It will only work if the provider's server only needs video
 URL to start a playback - if it needs extra parameters, you can't use YTD and
 will need to use MSDL directly.
+
+Since version 1.50, the support library is not included in the distribution
+archive. YTD will offer to download it for you when you start the GUI version,
+or you can download it manually from:
+
+    http://www.pepak.net/files/youtube/external/msdl.zip
+
+Unzip the downloaded file to YTD's directory.
 
 
 
@@ -451,6 +467,27 @@ except in file/directory names. Logical values (true-false) are stored as
     - Possible values are "1" (disable the warning) and "0" (enable).
     - Default value is "1" (enable the warning).
 
+  <ignore_missing_rtmpdump>
+    - Child of <config>; lets you disable the warning about missing RtmpDump
+      libraries.
+    - Possible values are "1" (disable the warning) and "0" (enable).
+    - Default value is "1" (enable the warning).
+
+  <ignore_missing_msdl>
+    - Child of <config>; lets you disable the warning about missing MSDL
+      libraries.
+    - Possible values are "1" (disable the warning) and "0" (enable).
+    - Default value is "1" (enable the warning).
+
+  <add_index_to_names>
+    - Child of <config>; specifies if and how the movie titles will be modified
+      when downloading playlists.
+    - Possible values are:
+      - "none" - the names are not modified.
+      - "start" - add the playlist index at the beginning of a name.
+      - "end" - add the playlist index at the end of a name.
+    - Default value is "none" (do not modify names).
+
 <gui>
   - Child of <ytd>; stores settings specific to the graphical version of YTD.
     Usually, you don't change these settings here; they have their own controls
@@ -461,6 +498,14 @@ except in file/directory names. Logical values (true-false) are stored as
       downloading automatically or wait until you click on the Start button.
     - Possible values are "1" (start automatically) and "0" (manual start).
     - Default value is "1" (start automatically).
+
+  <auto_delete_finished_downloads>
+    - Child of <gui>; specifies, whether a successfully downloaded URL should
+      be automatically deleted from the URL list. Note, however, that it is
+      not always possible to precisely determine the success; sometimes YTD has
+      to guess whether the download finished successfully or not.
+    - Possible values are "1" (delete) and "0" (don't delete).
+    - Default value is "0" (don't delete).
 
   <check_for_new_version>
     - Child of <gui>; specifies, whether a check for new version may be 
@@ -476,6 +521,19 @@ except in file/directory names. Logical values (true-false) are stored as
       download list.
     - Possible values are "1" (enable monitoring) and "0" (disable it).
     - Default value is "0" (disable monitoring).
+
+  <minimize_to_tray>
+    - Child of <gui>; if turned on, YTD will minimize to a tray icon, otherwise
+      normal Windows minimalization is used.
+      download list.
+    - Possible values are "1" (tray) and "0" (normal).
+    - Default value is "1" (tray).
+
+    - Potomek <gui>; určuje, jestli se má program při zmenšení skrýt do
+      ikonky v systémovém tray nebo se minimalizovat normálně.
+    - Možné hodnoty jsou "1" (tray) a "0" (normální).
+    - Výchozí hodnotou je "1" (tray).
+
 
 <modules>
   - Child of <ytd>. This section stores provider-specific options.

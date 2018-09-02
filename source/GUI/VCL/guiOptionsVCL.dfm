@@ -44,14 +44,14 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 543
     Height = 389
-    ActivePage = TabMain
+    ActivePage = TabDownloadOptions
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet
       Caption = 'Main settings'
       object LabelLanguage: TLabel
         Left = 8
-        Top = 124
+        Top = 180
         Width = 51
         Height = 13
         Caption = '&Language:'
@@ -68,7 +68,7 @@ object FormOptions: TFormOptions
       end
       object CheckCheckNewVersions: TCheckBox
         Left = 8
-        Top = 32
+        Top = 24
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
@@ -77,7 +77,7 @@ object FormOptions: TFormOptions
       end
       object EditLanguage: TEdit
         Left = 112
-        Top = 120
+        Top = 176
         Width = 177
         Height = 21
         TabOrder = 4
@@ -102,21 +102,48 @@ object FormOptions: TFormOptions
       end
       object CheckMonitorClipboard: TCheckBox
         Left = 7
-        Top = 56
+        Top = 40
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
-        Caption = '&Monitor clipboard for downloadable URLs'
+        Caption = 'Mo&nitor clipboard for downloadable URLs'
         TabOrder = 2
       end
       object CheckIgnoreOpenSSLWarning: TCheckBox
         Left = 7
-        Top = 80
+        Top = 56
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
-        Caption = '&Disable OpenSSL warning'
+        Caption = 'Disable &OpenSSL warning'
         TabOrder = 3
+      end
+      object CheckIgnoreRtmpDumpWarning: TCheckBox
+        Left = 7
+        Top = 72
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Disable &RtmpDump warning'
+        TabOrder = 7
+      end
+      object CheckIgnoreMSDLWarning: TCheckBox
+        Left = 7
+        Top = 88
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Disable &MSDL warning'
+        TabOrder = 8
+      end
+      object CheckMinimizeToTray: TCheckBox
+        Left = 7
+        Top = 104
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Minimize to system &tray'
+        TabOrder = 9
       end
     end
     object TabDownloadOptions: TTabSheet
@@ -124,7 +151,7 @@ object FormOptions: TFormOptions
       ImageIndex = 1
       object LabelOverwriteMode: TLabel
         Left = 8
-        Top = 164
+        Top = 188
         Width = 60
         Height = 13
         Caption = '&Existing files:'
@@ -140,7 +167,7 @@ object FormOptions: TFormOptions
       end
       object LabelConverter: TLabel
         Left = 8
-        Top = 220
+        Top = 244
         Width = 49
         Height = 13
         Caption = '&Converter:'
@@ -148,11 +175,19 @@ object FormOptions: TFormOptions
       end
       object LabelRetryCount: TLabel
         Left = 8
-        Top = 188
+        Top = 212
         Width = 58
         Height = 13
         Caption = '&Retry count:'
         FocusControl = EditRetryCount
+      end
+      object Label1: TLabel
+        Left = 8
+        Top = 164
+        Width = 141
+        Height = 13
+        Caption = 'Append &index to playlist items:'
+        FocusControl = ComboAddIndexToNames
       end
       object CheckAutoDownload: TCheckBox
         Left = 8
@@ -164,27 +199,22 @@ object FormOptions: TFormOptions
         TabOrder = 0
       end
       object ComboOverwriteMode: TComboBox
-        Left = 112
-        Top = 160
-        Width = 416
+        Left = 176
+        Top = 184
+        Width = 352
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 7
-        Items.Strings = (
-          'Ask user'
-          'Overwrite'
-          'Skip'
-          'Rename automatically')
+        TabOrder = 9
       end
       object EditDownloadDir: TEdit
-        Left = 112
+        Left = 176
         Top = 136
-        Width = 400
+        Width = 336
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 5
+        TabOrder = 6
       end
       object BtnDownloadDir: TButton
         Left = 511
@@ -193,17 +223,17 @@ object FormOptions: TFormOptions
         Height = 21
         Action = actDownloadDir
         Anchors = [akTop, akRight]
-        TabOrder = 6
+        TabOrder = 7
       end
       object ComboConverter: TComboBox
-        Left = 112
-        Top = 216
-        Width = 416
+        Left = 176
+        Top = 240
+        Width = 352
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 9
+        TabOrder = 11
         OnChange = ComboConverterChange
       end
       object CheckSubtitlesEnabled: TCheckBox
@@ -213,42 +243,61 @@ object FormOptions: TFormOptions
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Download &subtitles if available'
-        TabOrder = 2
+        TabOrder = 3
       end
       object CheckAutoTryHtmlParser: TCheckBox
         Left = 8
-        Top = 32
+        Top = 40
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Automatically try &HTML parser'
-        TabOrder = 1
+        TabOrder = 2
       end
       object CheckDownloadToTempFiles: TCheckBox
         Left = 8
-        Top = 80
+        Top = 72
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Append a .part e&xtension while downloading'
-        TabOrder = 3
+        TabOrder = 4
       end
       object CheckDownloadToProviderSubdirs: TCheckBox
         Left = 8
-        Top = 104
+        Top = 88
         Width = 520
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Store media into su&bdirectories according to their providers'
-        TabOrder = 4
+        TabOrder = 5
       end
       object EditRetryCount: TEdit
-        Left = 112
-        Top = 184
+        Left = 176
+        Top = 208
         Width = 49
         Height = 21
         Anchors = [akLeft, akTop, akRight]
+        TabOrder = 10
+      end
+      object ComboAddIndexToNames: TComboBox
+        Left = 176
+        Top = 160
+        Width = 352
+        Height = 21
+        Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
+        ItemHeight = 13
         TabOrder = 8
+      end
+      object CheckAutoDeleteFinishedDownloads: TCheckBox
+        Left = 8
+        Top = 24
+        Width = 520
+        Height = 17
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Automatically delete &finished downloads'
+        TabOrder = 1
       end
     end
     object TabNetworkOptions: TTabSheet
@@ -350,8 +399,8 @@ object FormOptions: TFormOptions
     end
   end
   object ActionList: TActionList
-    Left = 16
-    Top = 240
+    Left = 456
+    Top = 48
     object actOK: TAction
       Caption = '&OK'
       ShortCut = 16397

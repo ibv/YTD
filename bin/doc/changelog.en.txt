@@ -1,11 +1,75 @@
 ﻿______________________________________________________________________________
 
-YTD v1.49                                                    (c) 2009-15 Pepak
+YTD v1.50                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.50:
+
+    * New providers:
+      - RVP.cz
+      - Tumblr.com (porn)
+
+    * Updated providers:
+      - Aktualne.cz
+      - XHamster.com
+      - YouTube.com
+
+    * The notification about missing OpenSSL was enhanced with the ability to
+      download and install a verified OpenSSL version from my server. That
+      should help the users who can't decide which version of OpenSSL to 
+      install. The downloaded version will get unpacked into YTD's directory,
+      so it won't influence any other programs on the computer.
+      Note that you may need to run YTD with administrative privileges if
+      you want to make use of this functionality (it depends on the access
+      rights to the directory where YTD is installed).
+
+    * In order to satisfy copyright requirements completely, I removed the
+      RTMPDUMP (RTMP protocol support, GPLv2) and MSDL (RTSP protocol support,
+      GPLv3) libraries.
+
+      If YTD detects that these libraries are missing, it will offer you to
+      download and install them separately, thus satisfying both GPLs. It
+      works the same way the OpenSSL installation (above) does.
+
+      You can also download the libraries manually:
+      http://www.pepak.net/files/youtube/external/rtmpdump.zip
+      http://www.pepak.net/files/youtube/external/msdl.zip
+      
+      Note: The original implementation was probably OK, but it was rather 
+      stretching the grey zone of GPL. The current implementation satisfies
+      GPL completely, YTD no longer contains any GPL code.
+
+    * New configuration settings:
+
+      - Minimize to tray:
+
+        You can now decide whether you want YTD to minimize into a tray icon
+        (default) or simply minimize to taskbar.
+
+      - Automatically delete finished downloads:
+
+        When you enable this option, after a download is completed, its record
+        will be removed from the download list automatically. Of course this 
+        only influences the download list, the downloaded video will remain.
+        Beware, though, that it is not always possible to correctly determine
+        whether a download completed successfully. In some cases YTD has to
+        make a guess, and this guess could easily be wrong!
+
+      - Add index to the playlist's items:
+
+        By default playlist items are named as per their detected title. Using
+        this option, you can supplement the title with the item's index -
+        either by appending the index to the end of the title, giving you
+        names such as "xxx [1 of 5]", or by placing the index before the
+        title, giving you names such as "[1 of 5] xxx".
+
+    * The scripting language now has a <if> command for conditional execution.
+
+
 
   v1.49:
 

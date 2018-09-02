@@ -130,7 +130,7 @@ begin
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else
         begin
-        SetName(Title);
+        Name := Title;
         MovieURL := Url;
         SetPrepared(True);
         Result := True;

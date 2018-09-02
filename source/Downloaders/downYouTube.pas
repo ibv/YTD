@@ -561,7 +561,7 @@ begin
   if InfoFound then
     begin
     if Title <> '' then
-      SetName(Title);
+      Name := Title;
     MovieUrl := Url;
     SetPrepared(True);
     Result := True;

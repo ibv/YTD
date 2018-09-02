@@ -46,6 +46,7 @@ uses
 
 type
   TOverwriteMode = (omNever, omAlways, omRename, omAsk);
+  TIndexForNames = (ifnNone, ifnStart, ifnEnd);
 
   {$IFDEF CONVERTERS}
   TConverterVisibility = (cvVisible, cvMinimized, cvHidden);
@@ -99,16 +100,20 @@ type
       procedure SetErrorLog(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetAutoStartDownloads: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetAutoStartDownloads(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetCheckForNewVersionOnStartup: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure SetCheckForNewVersionOnStartup(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function GetMonitorClipboard: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure SetMonitorClipboard(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetAutoDeleteFinishedDownloads: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetAutoDeleteFinishedDownloads(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetAutoTryHtmlParser: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetAutoTryHtmlParser(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetDownloadRetryCount: integer; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetDownloadRetryCount(const Value: integer); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetIgnoreMissingOpenSSL: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetIgnoreMissingOpenSSL(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetIgnoreMissingRtmpDump: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetIgnoreMissingRtmpDump(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetIgnoreMissingMSDL: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetIgnoreMissingMSDL(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetAddIndexToNames: TIndexForNames;
+      procedure SetAddIndexToNames(const Value: TIndexForNames);
       function GetScriptFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -161,11 +166,13 @@ type
       property DestinationPath: string read GetDestinationPath write SetDestinationPath;
       property ErrorLog: string read GetErrorLog write SetErrorLog;
       property AutoStartDownloads: boolean read GetAutoStartDownloads write SetAutoStartDownloads;
-      property CheckForNewVersionOnStartup: boolean read GetCheckForNewVersionOnStartup write SetCheckForNewVersionOnStartup;
-      property MonitorClipboard: boolean read GetMonitorClipboard write SetMonitorClipboard;
+      property AutoDeleteFinishedDownloads: boolean read GetAutoDeleteFinishedDownloads write SetAutoDeleteFinishedDownloads;
       property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
       property DownloadRetryCount: integer read GetDownloadRetryCount write SetDownloadRetryCount;
       property IgnoreMissingOpenSSL: boolean read GetIgnoreMissingOpenSSL write SetIgnoreMissingOpenSSL;
+      property IgnoreMissingRtmpDump: boolean read GetIgnoreMissingRtmpDump write SetIgnoreMissingRtmpDump;
+      property IgnoreMissingMSDL: boolean read GetIgnoreMissingMSDL write SetIgnoreMissingMSDL;
+      property AddIndexToNames: TIndexForNames read GetAddIndexToNames write SetAddIndexToNames;
       property ScriptFileName: string read GetScriptFileName;
       {$IFDEF CONVERTERS}
         property SelectedConverterID: string read GetSelectedConverterID write SetSelectedConverterID;
@@ -225,12 +232,11 @@ const
   XML_PATH_OVERWRITEMODE = 'config/overwrite_mode';
   XML_PATH_DESTINATIONPATH = 'config/destination_path';
   XML_PATH_ERRORLOG = 'config/error_log';
+  XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
+  XML_PATH_DELETFINISHEDDOWNLOADS = 'gui/auto_delete_finished_downloads';
   XML_PATH_AUTOTRYHTMLPARSER = 'config/auto_try_html_parser';
   XML_PATH_DOWNLOADRETRYCOUNT = 'config/download_retry_count';
   XML_PATH_SCRIPTFILENAME = 'config/script_filename';
-  XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
-  XML_PATH_CHECKFORNEWVERSIONONSTARTUP = 'gui/check_for_new_version';
-  XML_PATH_MONITORCLIPBOARD = 'gui/monitor_clipboard';
   XML_PATH_URLLIST = 'download_list';
   XML_PATH_CONVERTERLIST = 'converters';
   XML_PATH_SELECTEDCONVERTER = XML_PATH_CONVERTERLIST + '/selected';
@@ -244,6 +250,9 @@ const
   XML_PATH_DOWNLOADTOTEMPFILES = 'config/download_to_temp_files';
   XML_PATH_DOWNLOADTOPROVIDERSUBDIRS = 'config/download_to_provider_subdirectories';
   XML_PATH_IGNOREMISSINGOPENSSL = 'config/ignore_missing_openssl';
+  XML_PATH_IGNOREMISSINGRTMPDUMP = 'config/ignore_missing_rtmpdump';
+  XML_PATH_IGNOREMISSINGMSDL = 'config/ignore_missing_msdl';
+  XML_PATH_ADDINDEXTONAMES = 'config/add_index_to_names';
 
 const
   XML_DEFAULT_PORTABLEMODE = False;
@@ -256,11 +265,10 @@ const
   XML_DEFAULT_OVERWRITEMODE = omAsk;
   XML_DEFAULT_DESTINATIONPATH = '';
   XML_DEFAULT_ERRORLOG = '';
+  XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
+  XML_DEFAULT_DELETFINISHEDDOWNLOADS = False;
   XML_DEFAULT_AUTOTRYHTMLPARSER = True;
   XML_DEFAULT_DOWNLOADRETRYCOUNT = 0;
-  XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
-  XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP = True;
-  XML_DEFAULT_MONITORCLIPBOARD = False;
   XML_DEFAULT_SCRIPTFILENAME = 'ytd-defs.xml';
   XML_DEFAULT_SELECTEDCONVERTER = '';
   {$IFDEF CONVERTERSMUSTBEACTIVATED}
@@ -276,6 +284,9 @@ const
   XML_DEFAULT_DOWNLOADTOTEMPFILES = False;
   XML_DEFAULT_DOWNLOADTOPROVIDERSUBDIRS = False;
   XML_DEFAULT_IGNOREMISSINGOPENSSL = False;
+  XML_DEFAULT_IGNOREMISSINGRTMPDUMP = False;
+  XML_DEFAULT_IGNOREMISSINGMSDL = False;
+  XML_DEFAULT_ADDINDEXTONAMES = ifnNone;
 
 resourcestring
   MSG_CANT_OVERWRITE_FILE = 'Cannot overwrite file "%s".';
@@ -618,24 +629,14 @@ begin
   SetOption(XML_PATH_AUTOSTARTDOWNLOADS, BooleanToXml(Value));
 end;
 
-function TYTDOptions.GetCheckForNewVersionOnStartup: boolean;
+function TYTDOptions.GetAutoDeleteFinishedDownloads: boolean;
 begin
-  Result := XmlToBoolean(GetOption(XML_PATH_CHECKFORNEWVERSIONONSTARTUP), XML_DEFAULT_CHECKFORNEWVERSIONONSTARTUP);
+  Result := XmlToBoolean(GetOption(XML_PATH_DELETFINISHEDDOWNLOADS), XML_DEFAULT_DELETFINISHEDDOWNLOADS);
 end;
 
-procedure TYTDOptions.SetCheckForNewVersionOnStartup(const Value: boolean);
+procedure TYTDOptions.SetAutoDeleteFinishedDownloads(const Value: boolean);
 begin
-  SetOption(XML_PATH_CHECKFORNEWVERSIONONSTARTUP, BooleanToXml(Value));
-end;
-
-function TYTDOptions.GetMonitorClipboard: boolean;
-begin
-  Result := XmlToBoolean(GetOption(XML_PATH_MONITORCLIPBOARD), XML_DEFAULT_MONITORCLIPBOARD);
-end;
-
-procedure TYTDOptions.SetMonitorClipboard(const Value: boolean);
-begin
-  SetOption(XML_PATH_MONITORCLIPBOARD, BooleanToXml(Value));
+  SetOption(XML_PATH_DELETFINISHEDDOWNLOADS, BooleanToXml(Value));
 end;
 
 function TYTDOptions.GetAutoTryHtmlParser: boolean;
@@ -871,6 +872,50 @@ end;
 procedure TYTDOptions.SetIgnoreMissingOpenSSL(const Value: boolean);
 begin
   SetOption(XML_PATH_IGNOREMISSINGOPENSSL, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetIgnoreMissingRtmpDump: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_IGNOREMISSINGRTMPDUMP), XML_DEFAULT_IGNOREMISSINGRTMPDUMP);
+end;
+
+procedure TYTDOptions.SetIgnoreMissingRtmpDump(const Value: boolean);
+begin
+  SetOption(XML_PATH_IGNOREMISSINGRTMPDUMP, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetIgnoreMissingMSDL: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_IGNOREMISSINGMSDL), XML_DEFAULT_IGNOREMISSINGMSDL);
+end;
+
+procedure TYTDOptions.SetIgnoreMissingMSDL(const Value: boolean);
+begin
+  SetOption(XML_PATH_IGNOREMISSINGMSDL, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetAddIndexToNames: TIndexForNames;
+var
+  Opt: string;
+begin
+  Opt := GetOption(XML_PATH_ADDINDEXTONAMES);
+  if Opt = 'none' then
+    Result := ifnNone
+  else if Opt = 'start' then
+    Result := ifnStart
+  else if Opt = 'end' then
+    Result := ifnEnd
+  else
+    Result := XML_DEFAULT_ADDINDEXTONAMES;
+end;
+
+procedure TYTDOptions.SetAddIndexToNames(const Value: TIndexForNames);
+begin
+  case Value of
+    ifnNone:  SetOption(XML_PATH_ADDINDEXTONAMES, 'none');
+    ifnStart: SetOption(XML_PATH_ADDINDEXTONAMES, 'start');
+    ifnEnd:   SetOption(XML_PATH_ADDINDEXTONAMES, 'end');
+    end;
 end;
 
 end.

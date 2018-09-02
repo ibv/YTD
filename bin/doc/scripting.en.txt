@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.47+                                                   (c) 2009-15 Pepak
+YTD v1.50+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -189,6 +189,7 @@ error.
         Available options are:
           - "numeric_ascending" - the variable contains numeric data, the
             highest value is the best.
+          - "numeric" - the same as "numeric_ascending"
           - "numeric_descending" - dtto, except that the lowest value is best.
           - "enumeration" - the variable contains string data. The order
             of the values is defined by the "order" attribute.
@@ -385,6 +386,45 @@ error.
         generally want to use either a <best_var> (to choose the URL with
         best quality) or <set_var> (if you only wanted to choose e.g. the
         last URL in the list).
+
+
+3.13 <if>
+---------
+
+    This command allows you to branch processing according to various
+    conditions. This is useful when a provider uses several alternative
+    processing paths. The structure of the command is always as follows:
+
+        <if>
+          <condition type="..." ...>(script></condition>
+          <condition type="..." ...>(script></condition>
+          ...
+          <condition type="..." ...>(script></condition>
+          <else>(script)</else>
+        </if>
+
+    The <if> command processes the individual conditions in sequence. The
+    first one that is satisfied will be processed and the others will be
+    ignored. The <else> branch will only get processed if none of the
+    conditions succeed, and if there is no <else> branch, the script will
+    fail with an error. Multiple <else> branches are forbidden.
+
+    Inside <condition> and <else>, you can provide anything which is permitted
+    within a <script> tag.
+
+    Values permitted in the "type" attribute of <condition> are:
+
+    3.13.1 "regexp_match"
+
+        The condition tag gets processed as if it were a <regexp> tag (see
+        section 4.4 below). If successful, i.e. if a regular expression 
+        matches a variable, the condition is satisfied.
+
+        Example:
+
+            <condition type="regexp_match" id="title" content="data">
+              <debug>Regexp with id="title" matched the data in variable "data"</debug>
+            </condition>
 
 
 

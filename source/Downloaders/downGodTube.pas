@@ -131,7 +131,7 @@ begin
               NameList.Add(Title);
               UrlList.Add(Url);
               {$ELSE}
-              SetName(Title);
+              Name := Title;
               MovieUrl := Url;
               Result := True;
               SetPrepared(True);
