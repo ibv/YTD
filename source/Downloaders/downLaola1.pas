@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downLaola1;
 {$INCLUDE 'ytd.inc'}
-{.$DEFINE LAOLA1_HTTP} // Balutbj tvrdi, ze mu to funguje, ale me ne
+{$DEFINE LAOLA1_HTTP} // RTMP verze uz nefunguje
 
 interface
 
@@ -75,7 +75,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_ID =     '"flashvars"\s*,\s*"playkey=(?P<ID>' + {$IFDEF LAOLA1_HTTP} '[^"&]+' {$ELSE} '[0-9]+' {$ENDIF} + ')';
+  REGEXP_MOVIE_ID =     '"flashvars"\s*,\s*"streamid=(?P<ID>\d+)';
 
 { TDownloader_Laola1 }
 
@@ -112,60 +112,35 @@ end;
 function TDownloader_Laola1.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   ID, Server, Stream: string;
-  {$IFNDEF LAOLA1_HTTP}
-  Status, Auth: string;
-  {$ENDIF}
+  ServerNode, StreamsNode: TXmlNode;
   Info: TXmlDoc;
-  Node: TXmlNode;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, {$IFDEF LAOLA1_HTTP} 'http://www.laola1.tv/server/ondemand_xml_esi.php?playkey=' + ID {$ELSE} Format('http://streamaccess.laola1.tv/flash/vod/22/%s_high.xml?partnerid=22&streamid=%s', [ID, ID]) {$ENDIF}, Info) then
+  else if not DownloadXml(Http, Format('http://streamaccess.unas.tv/hdflash/vod/22/%s.xml?partnerid=22&streamid=%s', [ID, ID]), Info) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try
-      {$IFDEF LAOLA1_HTTP}
-      if not (XmlNodeByPath(Info, 'video/high', Node) or XmlNodeByPath(Info, 'video/low', Node)) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else if not GetXmlAttr(Node, '', 'server', Server) then
+      if not XmlNodeByPathAndAttr(Info, 'head/meta', 'name', 'httpBase', ServerNode) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
-      else if not GetXmlAttr(Node, '', 'pfad', Stream) then
+      else if not GetXmlAttr(ServerNode, '', 'content', Server) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+      else if not XmlNodeByPath(Info, 'body/switch', StreamsNode) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+      else if not Smil_FindBestVideo(StreamsNode, Stream) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
       else
         begin
-        MovieUrl := Format('http://%s/%s.flv', [Server, Stream]);
+        MovieUrl := Server + Stream;
+        {$IFNDEF LAOLA1_HTTP}
+        Self.RtmpUrl := MovieUrl;
+        Self.PlayPath := Stream;
+        {$ENDIF}
         SetPrepared(True);
         Result := True;
         end;
-      {$ELSE}
-      if not XmlNodeByPath(Info, 'token', Node) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else if (not GetXmlAttr(Node, '', 'status', Status)) or (StrToIntDef(Status, -1) <> 0) then
-        if GetXmlAttr(Node, '', 'statustext', Status) then
-          SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Status]))
-        else
-          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else if not GetXmlAttr(Node, '', 'auth', Auth) then
-        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['auth']))
-      else if not GetXmlAttr(Node, '', 'url', Server) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
-      else if not GetXmlAttr(Node, '', 'stream', Stream) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
-      else
-        begin
-        Self.RtmpUrl := Format('rtmp://%s?_fcs_vhost=%s&auth=%s&aifp=v001&slist=%s', [Server, Copy(Server, 1, Pred(Pos('/', Server))), Auth, Stream]);
-        //Self.FlashVer := FLASH_DEFAULT_VERSION;
-        //Self.SwfUrl := 'http://www.laola1.tv/swf/player.v12.4.swf';
-        //Self.TcUrl := Self.RtmpUrl;
-        //Self.PageUrl := GetMovieInfoUrl;
-        Self.Playpath := 'mp4:' + Stream;
-        MovieUrl := Self.RtmpUrl + '   ' + Self.Playpath;
-        SetPrepared(True);
-        Result := True;
-        end;
-      {$ENDIF}
     finally
       FreeAndNil(Info);
       end;

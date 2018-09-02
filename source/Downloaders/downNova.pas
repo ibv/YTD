@@ -338,13 +338,14 @@ begin
             if ResponseBodyNode <> nil then
               if GetXmlVar(ResponseBodyNode, 'GetSecuredUrlResponse/GetSecuredUrlResult', Url) then
                 if Url <> '' then
-                  begin
-                  MovieUrl := Url;
-                  MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
-                  MSDownloader.Options := Options;
-                  Downloader := MSDownloader;
-                  Result := True;
-                  end;
+                  if AnsiCompareText(Copy(Url, 1, 4), 'rtmp') <> 0 then
+                    begin
+                    MovieUrl := Url;
+                    MSDownloader := TMSDirectDownloader.CreateWithName(MovieUrl, UnpreparedName);
+                    MSDownloader.Options := Options;
+                    Downloader := MSDownloader;
+                    Result := True;
+                    end;
           finally
             FreeAndNil(ResponseXml);
             end;

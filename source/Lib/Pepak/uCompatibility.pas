@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uCompatibility;
-{$INCLUDE 'pepak.inc'}
+{$INCLUDE 'jedi.inc'}
 
 interface
 
@@ -92,7 +92,7 @@ const
 
 function CharInSet(C: Char; S: TSysCharSet): boolean;
 
-function StartsText(const SubStr, Str: string): boolean; 
+function StartsText(const SubStr, Str: string): boolean;
 {$ENDIF}
 
 const

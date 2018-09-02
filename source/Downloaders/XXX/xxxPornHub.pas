@@ -51,6 +51,7 @@ type
     protected
       FlashVarsRegExp: TRegExp;
       FlashVarsItemsRegExp: TRegExp;
+      FlashVarsItemsQualityRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -77,6 +78,7 @@ const
 const
   REGEXP_FLASHVARS = REGEXP_FLASHVARS_JS;
   REGEXP_FLASHVARS_ITEMS = REGEXP_PARSER_FLASHVARS_JS;
+  REGEXP_FLASHVARS_ITEMS_QUALITY = '"quality_(?P<QUALITY>\d+)[^"]*"\s*:\s*"(?P<URL>.+?)"';
 
 { TDownloader_PornHub }
 
@@ -96,12 +98,14 @@ begin
   InfoPageEncoding := peUTF8;
   FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
   FlashVarsItemsRegExp := RegExCreate(REGEXP_FLASHVARS_ITEMS);
+  FlashVarsItemsQualityRegExp := RegExCreate(REGEXP_FLASHVARS_ITEMS_QUALITY);
 end;
 
 destructor TDownloader_PornHub.Destroy;
 begin
   RegExFreeAndNil(FlashVarsRegExp);
   RegExFreeAndNil(FlashVarsItemsRegExp);
+  RegExFreeAndNil(FlashVarsItemsQualityRegExp);
   inherited;
 end;
 
@@ -112,7 +116,8 @@ end;
 
 function TDownloader_PornHub.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  FlashVars, Title, Url, Encrypted: string;
+  FlashVars, Title, Url, Encrypted, BestUrl, sQuality: string;
+  BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -122,7 +127,24 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     begin
-    Url := UrlDecode(Url);
+    BestUrl := Url;
+    if BestUrl = '' then
+      begin
+      BestQuality := -1;
+      if GetRegExpVars(FlashVarsItemsQualityRegExp, FlashVars, ['QUALITY', 'URL'], [@sQuality, @Url]) then
+        repeat
+          if Url <> '' then
+            begin
+            Quality := StrToIntDef(sQuality, 0);
+            if Quality > BestQuality then
+              begin
+              BestUrl := Url;
+              BestQuality := Quality;
+              end;
+            end;
+        until not GetRegExpVarsAgain(FlashVarsItemsQualityRegExp, ['QUALITY', 'URL'], [@sQuality, @Url]);
+      end;
+    Url := UrlDecode(BestUrl);
     if Url <> '' then
       if AnsiCompareText(Encrypted, 'true') = 0 then
         if Title <> '' then

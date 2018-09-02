@@ -66,7 +66,7 @@ uses
 
 // http://myvi.ru/ru/flash/player/pre/oQ_uJCGiADipN8mzgriJzJrAJsecK5PYnBZErn47vhimBnv5c3zTqNrrV3chb6TFH0
 const
-  URLREGEXP_BEFORE_ID = 'myvi\.ru/ru/flash/player/(?:pre/)?';
+  URLREGEXP_BEFORE_ID = 'myvi\.ru/(?:ru/flash/)?player/(?:pre/)?';
   URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 

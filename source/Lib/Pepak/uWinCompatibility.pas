@@ -34,70 +34,63 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSefka;
-{$INCLUDE 'ytd.inc'}
+unit uWinCompatibility;
+{$INCLUDE 'jedi.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, downJoj_Porady;
+  SysUtils, Classes, Windows;
 
-type
-  TDownloader_Sefka = class(TDownloader_Joj_Porady)
-    private
-    protected
-      function GetMovieInfoUrl: string; override;{*}
-      function TheServer: string; override;
-    public
-      class function UrlRegExp: string; override;{*}
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
-    end;
+procedure FixFormatSettingsForWindows8; overload;
+  // Needed because Delphi up to XE2 (at least) have a faulty GetLocaleChar
+  // implementation which causes long locale chars (e.g. DateSeparator under
+  // Windows 8) to remain at their default value.
+{$IFDEF DELPHI2009_UP}
+procedure FixFormatSettingsForWindows8(const Locale: LCID; var FormatSettings: TFormatSettings); overload;
+{$ENDIF}
 
 implementation
 
-uses
-  uStringConsts,
-  uDownloadClassifier,
-  uMessages;
-
-// http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
-// http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
-const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*sefka\.';
-  URLREGEXP_ID =        '(cz|joj\.sk)/.+?\.html';
-  URLREGEXP_AFTER_ID =  '';
-
-{ TDownloader_Sefka }
-
-class function TDownloader_Sefka.UrlRegExp: string;
+function GetLocaleChar(Locale, LocaleType: integer; Default: Char): Char;
+var
+  i, n: Integer;
+  Buffer: array[0..255] of Char;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Default;
+  n := GetLocaleInfo(Locale, LocaleType, Buffer, SizeOf(Buffer));
+  for i := 0 to Pred(n) do
+    if Buffer[i] <> ' ' then
+      begin
+      Result := Buffer[i];
+      Break;
+      end;
 end;
 
-constructor TDownloader_Sefka.Create(const AMovieID: string);
+{$IFDEF DELPHI2009_UP}
+procedure FixFormatSettingsForWindows8(const Locale: LCID; var FormatSettings: TFormatSettings);
 begin
-  inherited;
+  FormatSettings.ThousandSeparator := GetLocaleChar(Locale, LOCALE_STHOUSAND, FormatSettings.ThousandSeparator);
+  FormatSettings.DecimalSeparator := GetLocaleChar(Locale, LOCALE_SDECIMAL, FormatSettings.DecimalSeparator);
+  FormatSettings.DateSeparator := GetLocaleChar(Locale, LOCALE_SDATE, FormatSettings.DateSeparator);
+  FormatSettings.TimeSeparator := GetLocaleChar(Locale, LOCALE_STIME, FormatSettings.TimeSeparator);
+  FormatSettings.ListSeparator := GetLocaleChar(Locale, LOCALE_SLIST, FormatSettings.ListSeparator);
 end;
+{$ENDIF}
 
-destructor TDownloader_Sefka.Destroy;
+procedure FixFormatSettingsForWindows8;
+var
+  Locale: LCID;
 begin
-  inherited;
-end;
-
-function TDownloader_Sefka.GetMovieInfoUrl: string;
-begin
-  Result := 'http://www.sefka.' + MovieID;
-end;
-
-function TDownloader_Sefka.TheServer: string;
-begin
-  Result := 'n11.joj.sk';
+  Locale := GetThreadLocale;
+  SysUtils.ThousandSeparator := GetLocaleChar(Locale, LOCALE_STHOUSAND, SysUtils.ThousandSeparator);
+  SysUtils.DecimalSeparator := GetLocaleChar(Locale, LOCALE_SDECIMAL, SysUtils.DecimalSeparator);
+  SysUtils.DateSeparator := GetLocaleChar(Locale, LOCALE_SDATE, SysUtils.DateSeparator);
+  SysUtils.TimeSeparator := GetLocaleChar(Locale, LOCALE_STIME, SysUtils.TimeSeparator);
+  SysUtils.ListSeparator := GetLocaleChar(Locale, LOCALE_SLIST, SysUtils.ListSeparator);
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Sefka);
-
+  FixFormatSettingsForWindows8;
+  
 end.

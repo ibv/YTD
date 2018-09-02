@@ -1,11 +1,40 @@
 ﻿______________________________________________________________________________
 
-YTD v1.25                                                    (c) 2009-13 Pepak
+YTD v1.26                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.26:
+
+    * Updated providers:
+      - Hrej.cz
+      - Koukni.cz
+      - Pornhub.com
+      - Rutube.ru
+
+    * Joj.sk: Works again. Note that the sub-sites such as mamaozenma.joj.sk
+      now use the main module and as such they need the subdomained URL, not
+      the older second-level domains (mamaozenma.sk etc.).
+
+    * Stv.sk: YTD itself can handle the provider, but unfortunately the server
+      seems to be incompatible with the current RTMPDUMP and for that reason
+      only a "playback stopped" video gets downloaded.
+
+    * VideoPortal.sk: Support removed, because the Joj.sk movies are now
+      supported directly by the Joj.sk module. If there are any non-Joj.sk
+      movies, they never worked anyway, and apparently nobody missed them.
+
+    * The RTMPDUMP library updated. This might cause regressions with servers
+      based on the RTMP protocol. Please let me know if you notice any.
+
+    * Fixed the Byte-order-mark in the Unicode version. It was sometimes
+      working incorrectly e.g. with YouTube videos' subtitles if they were
+      being converted to .srt format.
+
+
 
   v1.25:
 

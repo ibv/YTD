@@ -50,6 +50,7 @@ type
     private
     protected
       MovieIDRegExp: TRegExp;
+      VideoBalancerRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -90,6 +91,7 @@ const
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
   REGEXP_MOVIE_ID = '<iframe[^>]*\ssrc=\\"[^"]+/embed/(?P<ID>\d+)';
+  REGEXP_VIDEOBALANCER = '"video_balancer"\s*:\s*\{[^}]*"default"\s*:\s*"(?P<URL>https?://.+?)"';
 
 type
   TDownloader_RuTube_HDS = class(THDSDirectDownloader);
@@ -127,12 +129,14 @@ begin
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  VideoBalancerRegExp := RegExCreate(REGEXP_VIDEOBALANCER);
 end;
 
 destructor TDownloader_RuTube.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(VideoBalancerRegExp);
   inherited;
 end;
 
@@ -143,7 +147,7 @@ end;
 
 function TDownloader_RuTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Info, ID, Url, InfoUrl, Response, ResponseStr, Server: string;
+  Info, ID, Url, InfoUrl, Response, ResponseStr, Server, TrackInfo: string;
   Prot, User, Pass, Host, Port, Path, Para: string;
   BestStream, Stream, Bitrate: string;
   i, BestQuality, Quality: integer;
@@ -152,16 +156,19 @@ var
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
+  Referer := 'referer=' + UrlEncode(GetMovieInfoUrl);
   if not DownloadPage(Http, 'http://rutube.ru/api/video/' + MovieID, Info) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(MovieIDRegExp, Info, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not DownloadXmlVar(Http, 'http://rutube.ru/trackinfo/' + ID + '.xml?referer=' + UrlEncode(GetMovieInfoUrl), 'video_balancer/default', Url) then
+  else if not DownloadPage(Http, 'http://rutube.ru/api/play/trackinfo/' + ID + '/?' + Referer, Trackinfo) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
+  else if not GetRegExpVar(VideoBalancerRegExp, TrackInfo, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
   else
     begin
     Xml := nil;
-    Url := Url + '?referer=' + UrlEncode(GetMovieInfoUrl);
+    Url := Url + '?' + Referer;
     InfoUrl := StringReplace(Url, 'http://video.', 'http://bl.', []);
     if not DownloadXml(Http, InfoUrl, Xml) then
       if DownloadXml(Http, Url, Xml) then

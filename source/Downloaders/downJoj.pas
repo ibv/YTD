@@ -36,7 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downJoj;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE ALLOW_MDY_DATE} // Allow switching of day and month. Not recommended!
 
 interface
 
@@ -90,18 +89,13 @@ uses
 // http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX
-                        + '(?<!csmatalent\.)'
-                        + '(?<!farmarhladazenu\.)'
-                        + '(?<!mamaozenma\.)'
-                        + '(?<!sefka\.)'
-                        + 'joj\.sk/' + REGEXP_SOMETHING;
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'joj\.sk/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_ID = '\bvideoId\s*:\s*"(?P<ID>[0-9]+)"';
-  REGEXP_PAGE_ID = '\bpageId\s*:\s*"(?P<ID>[0-9]+)"';
+  REGEXP_MOVIE_ID = '&amp;videoId=(?P<ID>\d+)';
+  REGEXP_PAGE_ID = '&amp;pageId=(?P<ID>\d+)';
 
 { TDownloader_Joj }
 
@@ -188,16 +182,11 @@ begin
               end;
         if BestPath <> '' then
           begin
-          {$IFDEF DIRTYHACKS}
-            {$IFDEF DELPHI6_UP}
-              {$MESSAGE WARN 'Joj.sk: nevim, jak zjistit jmeno serveru'}
-            {$ENDIF}
-            //MovieUrl := 'rtmp://n15.joj.sk/' + BestPath;
-            Self.RtmpUrl := 'rtmp://' + Server;
-            Self.Playpath := BestPath;
-            SetPrepared(True);
-            Result := True;
-          {$ENDIF}
+          Self.RtmpUrl := 'rtmp://' + Server;
+          Self.Playpath := BestPath;
+          MovieUrl := RtmpUrl + BestPath;
+          SetPrepared(True);
+          Result := True;
           end;
         end;
     finally

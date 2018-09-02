@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: YTD 1.15\n"
 "POT-Creation-Date: 2013-04-07 18:25\n"
-"PO-Revision-Date: 2013-04-07 18:27+0100\n"
+"PO-Revision-Date: 2013-05-19 11:21+0100\n"
 "Last-Translator: Pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -562,7 +562,7 @@ msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckRealtime..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:90
 msgid "&Realtime mode (may be slower, but doesn't skip back)"
-msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
+msgstr "&Režim realtime stahování (mnohem pomalejší, ale stabilnější)"
 
 #. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..LabelMaximumVideoBitrate..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:8

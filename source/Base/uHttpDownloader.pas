@@ -289,6 +289,8 @@ begin
 end;
 
 function THttpDownloader.GetContentUrl: string;
+const
+  PARAM_SEPARATOR = {$IFDEF DEBUG} #13#10 {$ELSE} ' ' {$ENDIF} ;
 var
   Http: THttpSend;
   s: string;
@@ -302,10 +304,10 @@ begin
       begin
       s := '';
       for i := 0 to Pred(Headers.Count) do
-        s := Format('%s --header="%s"', [s, Headers[i]]);
+        s := Format('%s' + PARAM_SEPARATOR + '--header="%s"', [s, Headers[i]]);
       for i := 0 to Pred(Cookies.Count) do
-        s := Format('%s --header="Cookie: %s"', [s, Cookies[i]]);
-      Result := Format('wget --user-agent="%s"%s -O "%s" "%s"', [Http.UserAgent, s, FileName, inherited GetContentUrl]);
+        s := Format('%s' + PARAM_SEPARATOR + '--header="Cookie: %s"', [s, Cookies[i]]);
+      Result := Format('wget' + PARAM_SEPARATOR + '--user-agent="%s"%s' + PARAM_SEPARATOR + '-O "%s"' + PARAM_SEPARATOR + '"%s"', [Http.UserAgent, s, FileName, inherited GetContentUrl]);
       end;
   finally
     FreeAndNil(Http);

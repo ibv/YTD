@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.25                                                    (c) 2009-13 Pepak
+YTD v1.26                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -70,10 +70,6 @@ CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:19349
 CriticalPast.com    | RTMP     |       | http://www.criticalpast.com/video/65675022388_Nazi-dignitary-at-harvest-festival_Sudeten-German-Party_Nazi
 CrunchyRoll.com     | RTMP     | X     | http://www.crunchyroll.com/library/Naruto_Shippuden
 CSFD.cz             | HTTP     |       | http://www.csfd.cz/film/241720-lidice/videa/
-CSmaTalent.cz       | HTTP     |       | http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
-                    |          |       | http://www.csmatalent.cz/video-cz/detail/cesko-slovensko-ma-talent-04-09-2011.html
-CSmaTalent.sk       | HTTP     |       | http://www.csmatalent.sk/epizody/detail/divadlo-29-8-2010.html
-                    |          |       | http://www.csmatalent.sk/novinky-divadla/clanok/sila-lasky-z-armenska.html
 CT24.cz             | HTTP     | 3     | http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
                     |          | 3     | http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
                     |          | 3     | http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
@@ -101,7 +97,6 @@ EVTV1.com           | HTTP     |       | http://www.evtv1.com/player.aspx?itemnu
 Facebook.com        | HTTP     |       | http://www.facebook.com/video/video.php?v=1131482863478
                     |          |       | http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
                     |          |       | http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
-FarmarHladaZenu.sk  | HTTP     |       | http://www.farmarhladazenu.sk/epizody/detail/farmar-hlada-zenu-2-novi-farmari.html
 FileCabi.net        | HTTP     |       | http://www.filecabi.net/video/hiddendogstopsrobbery.html
 Fishki.net          | HTTP     | 4     | http://fishki.net/comment.php?id=79682
 Flickr.com          | HTTP     |       | http://www.flickr.com/photos/landersz/2403626167/
@@ -156,7 +151,6 @@ LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272
                     |          |       | http://www.liveleak.com/e/57d_1278546690
 LiveVideo.com       | HTTP     |       | http://www.livevideo.com/liveshow/brian3maria
 Loupak.cz           | HTTP     |       | http://www.loupak.cz/video/auto-moto/5536-zena-neresi-misto-na-parkovani
-MamaOzenMa.sk       | HTTP     |       | http://mamaozenma.joj.sk/video-mama-ozen-ma/detail/drama-u-pavla.html
 Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
                     |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
@@ -252,8 +246,6 @@ RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d3
                     | HDS      |       | http://rutube.ru/video/fe3300d02a3c2058cbffece783c43997/
                     |          |       | http://rutube.ru/player.swf?hash=5936573
 SchoolOfCare.ru     | HTTP     |       | http://schoolofcare.ru/masha/339/
-Sefka.cz            | HTTP     |       | http://www.sefka.cz/epizody-cz/detail/sefka-20-03-2011.html
-Sefka.sk            | HTTP     |       | http://www.sefka.sk/epizody/detail/sefka-20-03-2011.html
 Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx
 SerialyCZ.cz        | HTTP     |       | http://www.serialycz.cz/2011/01/chuck-04x12/
 SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
@@ -314,7 +306,6 @@ VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A
 VideoBB.com         | HTTP     |       | http://www.videobb.com/video/oh53koNnCV5S
 VideoClipsDump.com  | HTTP     |       | http://www.videoclipsdump.com/media/1951/Karate_Fail/
 VideoPortal.sf.tv   | RTMP     |       | http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
-VideoPortal.sk      | HTTP     |       | http://www.videoportal.sk/cetelemania/martin-kittner.html
 Videu.de            | HTTP     |       | http://www.videu.de/video/4etN3FlaaY
 Vii.sk              | HTTP     |       | http://www.vii.sk/video/35sfxgmr0l/simpsonovi-23x13-fiesta-s-lizou/
 Viki.com            | HTTP     |       | http://a1.vikiassets.com/channels/1565-secret-garden/videos/32690

@@ -580,12 +580,14 @@ Download(RTMP * rtmp,		// connected RTMP object
 		}
 	    }
 	}
-#ifdef _DEBUG
       else
 	{
+#ifdef _DEBUG
 	  RTMP_Log(RTMP_LOGDEBUG, "zero read!");
-	}
 #endif
+	  if (rtmp->m_read.status == RTMP_READ_EOF)
+	    break;
+	}
 
     }
   while (!RTMP_ctrlC && nRead > -1 && RTMP_IsConnected(rtmp) && !RTMP_IsTimedout(rtmp));
@@ -639,6 +641,8 @@ void usage(char *prog)
 	  RTMP_LogPrintf
 	    ("\n%s: This program dumps the media content streamed over RTMP.\n\n", prog);
 	  RTMP_LogPrintf("--help|-h               Prints this help screen.\n");
+	  RTMP_LogPrintf
+	    ("--url|-i url            URL with options included (e.g. rtmp://host[:port]/path swfUrl=url tcUrl=url)\n");
 	  RTMP_LogPrintf
 	    ("--rtmp|-r url           URL (e.g. rtmp://host[:port]/path)\n");
 	  RTMP_LogPrintf
@@ -760,6 +764,7 @@ main(int argc, char **argv)
   uint32_t dStopOffset = 0;
   RTMP rtmp = { 0 };
 
+  AVal fullUrl = { 0, 0 };
   AVal swfUrl = { 0, 0 };
   AVal tcUrl = { 0, 0 };
   AVal pageUrl = { 0, 0 };
@@ -822,6 +827,7 @@ main(int argc, char **argv)
     {"protocol", 1, NULL, 'l'},
     {"playpath", 1, NULL, 'y'},
     {"playlist", 0, NULL, 'Y'},
+    {"url", 1, NULL, 'i'},
     {"rtmp", 1, NULL, 'r'},
     {"swfUrl", 1, NULL, 's'},
     {"tcUrl", 1, NULL, 't'},
@@ -857,7 +863,7 @@ main(int argc, char **argv)
 
   while ((opt =
 	  getopt_long(argc, argv,
-		      "hVveqzRr:s:t:p:a:b:f:o:u:C:n:c:l:y:Ym:k:d:A:B:T:w:x:W:X:S:#j:",
+		      "hVveqzRr:s:t:i:p:a:b:f:o:u:C:n:c:l:y:Ym:k:d:A:B:T:w:x:W:X:S:#j:",
 		      longopts, NULL)) != -1)
     {
       switch (opt)
@@ -1000,6 +1006,9 @@ main(int argc, char **argv)
 	      }
 	    break;
 	  }
+	case 'i':
+	  STR2AVAL(fullUrl, optarg);
+          break;
 	case 's':
 	  STR2AVAL(swfUrl, optarg);
 	  break;
@@ -1078,32 +1087,32 @@ main(int argc, char **argv)
 	}
     }
 
-  if (!hostname.av_len)
+  if (!hostname.av_len && !fullUrl.av_len)
     {
       RTMP_Log(RTMP_LOGERROR,
 	  "You must specify a hostname (--host) or url (-r \"rtmp://host[:port]/playpath\") containing a hostname");
       return RD_FAILED;
     }
-  if (playpath.av_len == 0)
+  if (playpath.av_len == 0 && !fullUrl.av_len)
     {
       RTMP_Log(RTMP_LOGERROR,
 	  "You must specify a playpath (--playpath) or url (-r \"rtmp://host[:port]/playpath\") containing a playpath");
       return RD_FAILED;
     }
 
-  if (protocol == RTMP_PROTOCOL_UNDEFINED)
+  if (protocol == RTMP_PROTOCOL_UNDEFINED && !fullUrl.av_len)
     {
       RTMP_Log(RTMP_LOGWARNING,
 	  "You haven't specified a protocol (--protocol) or rtmp url (-r), using default protocol RTMP");
       protocol = RTMP_PROTOCOL_RTMP;
     }
-  if (port == -1)
+  if (port == -1 && !fullUrl.av_len)
     {
       RTMP_Log(RTMP_LOGWARNING,
 	  "You haven't specified a port (--port) or rtmp url (-r), using default port 1935");
       port = 0;
     }
-  if (port == 0)
+  if (port == 0 && !fullUrl.av_len)
     {
       if (protocol & RTMP_FEATURE_SSL)
 	port = 443;
@@ -1185,9 +1194,20 @@ main(int argc, char **argv)
 	}
     }
 
-  RTMP_SetupStream(&rtmp, protocol, &hostname, port, &sockshost, &playpath,
-		   &tcUrl, &swfUrl, &pageUrl, &app, &auth, &swfHash, swfSize,
-		   &flashVer, &subscribepath, &usherToken, dSeek, dStopOffset, bLiveStream, timeout);
+  if (!fullUrl.av_len)
+    {
+      RTMP_SetupStream(&rtmp, protocol, &hostname, port, &sockshost, &playpath,
+		       &tcUrl, &swfUrl, &pageUrl, &app, &auth, &swfHash, swfSize,
+		       &flashVer, &subscribepath, &usherToken, dSeek, dStopOffset, bLiveStream, timeout);
+    }
+  else
+    {
+      if (RTMP_SetupURL(&rtmp, fullUrl.av_val) == FALSE)
+        {
+          RTMP_Log(RTMP_LOGERROR, "Couldn't parse URL: %s", fullUrl.av_val);
+          return RD_FAILED;
+	}
+    }
 
   /* Try to keep the stream moving if it pauses on us */
   if (!bLiveStream && !bRealtimeStream && !(protocol & RTMP_FEATURE_HTTP))

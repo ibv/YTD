@@ -79,6 +79,7 @@ type
       function PrepareToken: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       {$IFDEF SUBTITLES}
     protected
+      fSubtitleUrl: string;
       fSubtitleUrlRegExps: array of TRegExp;
       fSubtitleRegExps: array of TRegExp;
       fSubtitlesEnabled: boolean;
@@ -199,28 +200,40 @@ begin
 end;
 
 function TCommonDownloader.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var i: integer;
-    Url, Subs: string;
-    s: AnsiString;
+
+  function DownloadSubtitles(const Url: string): boolean;
+    var
+      s: AnsiString;
+    begin
+      Result := DownloadBinary(Http, Url, s);
+      if Result then
+        begin
+        fSubtitles := s;
+        fSubtitlesExt := ExtractFileExt(Url);
+        end;
+    end;
+
+var
+  i: integer;
+  Url, Subs: string;
 begin
   Result := False;
   fSubtitles := '';
   fSubtitlesExt := '';
   if SubtitlesEnabled then
     begin
-    for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
-      if GetRegExpVar(fSubtitleUrlRegExps[i], Page, 'SUBTITLES', Url) then
-        begin
-        if not IsHttpProtocol(Url) then
-          Url := GetRelativeUrl(GetMovieInfoUrl, Url);
-        if DownloadBinary(Http, Url, s) then
+    if fSubtitleUrl <> '' then
+      Result := DownloadSubtitles(fSubtitleUrl);
+    if not Result then
+      for i := 0 to Pred(Length(fSubtitleUrlRegExps)) do
+        if GetRegExpVar(fSubtitleUrlRegExps[i], Page, 'SUBTITLES', Url) then
           begin
-          fSubtitles := s;
-          fSubtitlesExt := ExtractFileExt(Url);
-          Result := True;
-          Break;
+          if not IsHttpProtocol(Url) then
+            Url := GetRelativeUrl(GetMovieInfoUrl, Url);
+          Result := DownloadSubtitles(Url);
+          if Result then
+            Break;
           end;
-        end;
     if not Result then
       for i := 0 to Pred(Length(fSubtitleRegExps)) do
         if GetRegExpVar(fSubtitleRegExps[i], Page, 'SUBTITLES', Subs) then

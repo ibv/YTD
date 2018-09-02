@@ -110,7 +110,7 @@ end;
 
 function TDownloader_STV.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.stv.sk/online/archiv/' + MovieID;
+  Result := 'http://www1.stv.sk/online/archiv/' + MovieID;
 end;
 
 function TDownloader_STV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -132,6 +132,7 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['auth']))
   else
     begin
+    Auth := Auth + IntToStr(UnixTimestamp);
     MovieUrl := Server + '?auth=' + Auth;
     Self.RtmpUrl := MovieUrl;
     Self.Playpath := 'mp4:' + ID + '?auth=' + Auth;

@@ -125,7 +125,7 @@ const
   {$IFDEF PRIMA_LIVEBOX}
   //REGEXP_LIVEBOX = '\bLiveboxPlayer\.init\s*\((?:\s*''[^'']*''\s*,)\s*width\s*,\s*height\s*,\s*''(?P<HQ>[^'']*)''\s*,\s*''(?P<LQ>[^'']*)''';
   REGEXP_LIVEBOX = '''hq_id''\s*:\s*''(?P<HQ>[^'']*)''\s*,\s*''lq_id''\s*:\s*''(?P<LQ>[^'']*)''(?:.*?''zoneGEO''\s*:\s*(?P<ZONEGEO>[0-9]*))?';
-  REGEXP_LIVEBOX_AUTH = '\biph_full_url\b.*?\?auth=(?:''\s*\+\s*(?P<QUOTE>[''"])(?P=QUOTE)\s*\+\s*'')?(?P<AUTH>.*?)''';
+  REGEXP_LIVEBOX_AUTH = '\?auth=(?:''\s*\+\s*(?P<QUOTE>[''"])(?P=QUOTE)\s*\+\s*'')?(?P<AUTH>.*?)''';
   REGEXP_LIVEBOX_URLPREFIX = '\biph_full_url\s*=\s*''(?P<URL>https?://.+?)''';
   {$ENDIF}
 

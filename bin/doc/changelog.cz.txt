@@ -1,11 +1,42 @@
 ﻿______________________________________________________________________________
 
-YTD v1.25                                                    (c) 2009-13 Pepak
+YTD v1.26                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.26:
+
+    * Aktualizovaní poskytovatelé:
+      - Hrej.cz
+      - Koukni.cz
+      - Pornhub.com
+      - Rutube.ru
+
+    * Joj.sk: Opět funkční, včetně všech pořadů (Mama ožeň ma apod.). Jen je
+      nyní potřeba používat URL, kde pořad je subdoménou joj.sk (např.
+      mamaozenma.joj.sk místo www.mamaozenma.sk).
+
+    * Stv.sk: YTD samotný opět s webem funguje, ale RTMPDUMP nedokáže video
+      stáhnout - místo požadovaného streamu se stáhne pouze upozornění o tom,
+      že přehrávání bylo ukončeno. Důvod neznám, patrně nekompatibilita mezi
+      serverem a RTMPDUMPem. Pokud je to tak, nemohu s tím nic dělat.
+
+    * VideoPortal.sk: Vyřazen z podpory, protože původně byl řešen jako pořad
+      Joj.sk, ale ty padly s tím, jak Joj přešlo na společnou podobu stránek.
+      Pokud tam existují videa nenavázaná na Joj, dejte mi vědět URL a podporu
+      zařídím extra.
+
+    * Aktualizována knihovna RTMPDUMP. To může mít neblahé efekty na všechny
+      servery používající protokol RTMP. Na případné nefunkční weby mě prosím
+      upozorněte.
+
+    * Opraven Byte-order-mark v Unicode verzi programu. Projevoval se například
+      v titulcích na YouTube, pokud se měla provádět konverze do .srt.
+
+
 
   v1.25:
 

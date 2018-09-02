@@ -42,13 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Hrej = class(TNestedDownloader)
+  TDownloader_Hrej = class(THttpDownloader)
     private
     protected
+      MovieInfoUrlRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -71,7 +74,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_H2;
-  REGEXP_MOVIE_URL = REGEXP_URL_EMBED_SRC;
+  REGEXP_MOVIE_INFO_URL = '<param\s+name="movie"\s+value="[^"]*?[?&]xml_data_url=(?P<URL>.+?)["&]';
 
 { TDownloader_Hrej }
 
@@ -90,19 +93,39 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  MovieInfoUrlRegExp := RegExCreate(REGEXP_MOVIE_INFO_URL);
 end;
 
 destructor TDownloader_Hrej.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(NestedUrlRegExp);
+  RegExFreeAndNil(MovieInfoUrlRegExp);
   inherited;
 end;
 
 function TDownloader_Hrej.GetMovieInfoUrl: string;
 begin
   Result := 'http://www.hrej.cz/' + MovieID;
+end;
+
+function TDownloader_Hrej.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  InfoUrl, Url: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'URL', InfoUrl) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadXmlVar(Http, GetRelativeUrl(GetMovieInfoUrl, UrlDecode(InfoUrl)), 'flv', Url) then
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+  else if Url='' then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

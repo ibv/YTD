@@ -213,7 +213,7 @@ begin
   Result := WideToUtf8(AnsiToWide(Value));
   {$ENDIF}
   if BOM then
-    Result := #$ef#$bb#$bf + Result;
+    Result := {$IFDEF UNICODE} Char($feff) {$ELSE} #$ef#$bb#$bf {$ENDIF} + Result;
 end;
 
 function StrTr(const Kde, Co, Cim: string): string;

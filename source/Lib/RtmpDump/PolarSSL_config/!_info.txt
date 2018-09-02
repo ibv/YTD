@@ -1,0 +1,16 @@
+Na konec souboru include/polarssl/config.h doplnit:
+
+// pepak
+#define POLARSSL_HAVE_ASM
+#undef POLARSSL_DEBUG_MSG
+#undef POLARSSL_GENPRIME
+#undef POLARSSL_PKCS1_V21
+#undef POLARSSL_SELF_TEST
+#undef POLARSSL_CAMELLIA_C
+#undef POLARSSL_CERTS_C
+#undef POLARSSL_DEBUG_C
+#undef POLARSSL_DES_C
+#undef POLARSSL_ERROR_C
+#undef POLARSSL_PADLOCK_C
+#undef POLARSSL_SSL_SRV_C
+#undef POLARSSL_VERSION_C

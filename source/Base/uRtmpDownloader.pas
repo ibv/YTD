@@ -153,6 +153,8 @@ begin
 end;
 
 function TRtmpDownloader.GetContentUrl: string;
+const
+  PARAM_SEPARATOR = {$IFDEF DEBUG} #13#10 {$ELSE} ' ' {$ENDIF} ;
 var
   s: string;
   i: integer;
@@ -161,10 +163,10 @@ begin
   s := '';
   for i := 0 to Pred(Length(RtmpDumpOptions)) do
     if RtmpDumpOptions[i].Argument = '' then
-      s := Format('%s -%s', [s, RtmpDumpOptions[i].ShortOption])
+      s := Format('%s' + PARAM_SEPARATOR + '-%s', [s, RtmpDumpOptions[i].ShortOption])
     else
-      s := Format('%s -%s "%s"', [s, RtmpDumpOptions[i].ShortOption, RtmpDumpOptions[i].Argument]);
-  Result := Format('rtmpdump %s -o "%s"', [s, FileName]);
+      s := Format('%s' + PARAM_SEPARATOR + '-%s "%s"', [s, RtmpDumpOptions[i].ShortOption, RtmpDumpOptions[i].Argument]);
+  Result := Format('rtmpdump %s' + PARAM_SEPARATOR + '-o "%s"', [s, FileName]);
 end;
 
 function TRtmpDownloader.GetFileNameExt: string;

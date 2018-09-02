@@ -48,6 +48,8 @@ type
   TDownloader_Koukni = class(THttpDownloader)
     private
     protected
+      MovieInfoRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -74,10 +76,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_URL =    '\bclip\s*:\s*\{.*?\burl\s*:\s*''(?P<URL>.+?)''';
-  {$IFDEF SUBTITLES}
-  REGEXP_SUBTITLES_URL = '\bcaptionUrl\s*:\s*''(?P<SUBTITLES>.+?)''';
-  {$ENDIF}
+  REGEXP_MOVIE_INFO =   '(?P<INFO><video\b.*?</video>)';
 
 { TDownloader_Koukni }
 
@@ -105,21 +104,13 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peAnsi;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-  {$IFDEF SUBTITLES}
-  SetLength(fSubtitleUrlRegExps, 1);
-  fSubtitleUrlRegExps[0] := RegExCreate(REGEXP_SUBTITLES_URL);
-  {$ENDIF}
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
 destructor TDownloader_Koukni.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  {$IFDEF SUBTITLES}
-  RegExFreeAndNil(fSubtitleUrlRegExps[0]);
-  SetLength(fSubtitleUrlRegExps, 0);
-  {$ENDIF}
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
@@ -129,12 +120,38 @@ begin
 end;
 
 function TDownloader_Koukni.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  InfoXml: TXmlDoc;
+  Node: TXmlNode;
+  Info, Stream, SubsUrl: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  if Prepared then
-    if not IsHttpProtocol(MovieUrl) then
-      MovieUrl := GetRelativeUrl(GetMovieInfoUrl, MovieUrl);
-  Result := Prepared;
+  Result := False;
+  if not GetRegExpVar(MovieInfoRegExp, Page, 'INFO', Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else
+    begin
+    InfoXml := TXmlDoc.Create;
+    try
+      InfoXml.LoadFromBinaryString( {$IFDEF UNICODE} AnsiString {$ENDIF} (Info));
+      if not XmlNodeByPathAndAttr(InfoXml, 'source', 'type', 'video/mp4', Node) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+      else if not GetXmlAttr(Node, '', 'src', Stream) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+      else
+        begin
+        MovieUrl := GetRelativeUrl(GetMovieInfoUrl, Stream);
+        {$IFDEF SUBTITLES}
+        if GetXmlAttr(InfoXml, 'track', 'src', SubsUrl) then
+          fSubtitleUrl := GetRelativeUrl(GetMovieInfoUrl, SubsUrl);
+        {$ENDIF}
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      FreeAndNil(InfoXml);
+      end;
+    end;
 end;
 
 initialization
