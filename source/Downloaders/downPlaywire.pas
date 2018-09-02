@@ -34,24 +34,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVideoBB;
+unit downPlaywire;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uOptions,
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_VideoBB = class(THttpDownloader)
+  TDownloader_Playwire = class(TRtmpDownloader)
     private
     protected
-      MovieParamsRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -64,85 +62,103 @@ implementation
 
 uses
   uStringConsts,
-  uJSON, uLkJSON,
-  uDownloadClassifier,
-  uMessages;
+  uMessages,
+  uDownloadClassifier;
 
-// http://www.videobb.com/video/oh53koNnCV5S
-// http://videobb.com/watch_video.php?v=vxDeVeCYyzx5
+// http://cdn.playwire.com/343/embed/28047.html
 const
-  URLREGEXP_BEFORE_ID = 'videobb\.com/';
+  URLREGEXP_BEFORE_ID = 'cdn\.playwire\.com/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<meta\s+content="(?:videobb\s*-\s*)?(?P<TITLE>[^"]*)"\s*name="title"';
-  REGEXP_MOVIE_PARAMS = '<param\s+value="setting=(?<PARAM>[^"]*)"\s+name="FlashVars"';
+  REGEXP_MOVIE_TITLE =  '<title>\s*(?:Playwire\s+Video\s*-\s*)?(?P<TITLE>.*?)\s*</title>';
 
-{ TDownloader_VideoBB }
+{ TDownloader_Playwire }
 
-class function TDownloader_VideoBB.Provider: string;
+class function TDownloader_Playwire.Provider: string;
 begin
-  Result := 'VideoBB.com';
+  Result := 'Playwire.com';
 end;
 
-class function TDownloader_VideoBB.UrlRegExp: string;
+class function TDownloader_Playwire.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_VideoBB.Create(const AMovieID: string);
+constructor TDownloader_Playwire.Create(const AMovieID: string);
 begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
+  inherited;
+  InfoPageEncoding := peUnknown;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
 end;
 
-destructor TDownloader_VideoBB.Destroy;
+destructor TDownloader_Playwire.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieParamsRegExp);
   inherited;
 end;
 
-function TDownloader_VideoBB.GetMovieInfoUrl: string;
+function TDownloader_Playwire.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.videobb.com/' + MovieID;
+  Result := 'http://cdn.playwire.com/' + MovieID;
 end;
 
-function TDownloader_VideoBB.GetFileNameExt: string;
-begin
-  Result := '.flv';
-end;
-
-function TDownloader_VideoBB.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Playwire.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Param: string;
-  Settings: TJSON;
-  JsonUrl: TJSONNode;
+  InfoUrl, BaseUrl: string;
+  Xml: TXmlDoc;
+  Node: TXmlNode;
+  i, BestQuality, Quality: integer;
+  BestStream, Stream, sHeight, sBitrate: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAM', Param) then
+  if not DownloadXmlVar(Http, ChangeFileExt(GetMovieInfoUrl, '.xml'), 'src', InfoUrl) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, Base64Decode(Param), Page) then
+  else if not DownloadXml(Http, InfoUrl, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
-    begin
-    Settings := JSONCreate(Page);
-    if not JSONNodeByPath(Settings, 'settings/res/0/u', JsonUrl) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieUrl := Base64Decode(JsonUrl.Value);
-      SetPrepared(True);
-      Result := True;
+    try
+      if not GetXmlVar(Xml, 'baseURL', BaseUrl) then
+        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['baseURL']))
+      else if not XmlNodeByPath(Xml, '', Node) then
+        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+      else
+        begin
+        BestStream := '';
+        BestQuality := -1;
+        for i := 0 to Pred(Node.NodeCount) do
+          if Node[i].Name = 'media' then
+            if GetXmlAttr(Node[i], '', 'url', Stream) then
+              if GetXmlAttr(Node[i], '', 'height', sHeight) then
+                if GetXmlAttr(Node[i], '', 'bitrate', sBitrate) then
+                  begin
+                  Quality := StrToIntDef(sHeight, 1) * StrToIntDef(sBitrate, 1);
+                  if Quality > BestQuality then
+                    begin
+                    BestStream := Stream;
+                    BestQuality := Quality;
+                    end;
+                  end;
+        if BestStream <> '' then
+          begin
+          Self.RtmpUrl := StringReplace(BaseUrl, '_definst_', '', [rfReplaceAll]);
+          Self.SwfVfy := 'http://cdn.playwire.com/bolt.swf';
+          Self.PageUrl := GetMovieInfoUrl;
+          Self.Playpath := BestStream;
+          Self.FlashVer := FLASH_DEFAULT_VERSION;
+          MovieUrl := Self.RtmpUrl + '/' + Self.PlayPath;
+          SetPrepared(True);
+          Result := True;
+          end;
+        end;
+    finally
+      FreeAndNil(Xml);
       end;
-    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_VideoBB);
+  RegisterDownloader(TDownloader_Playwire);
 
 end.

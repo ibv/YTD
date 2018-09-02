@@ -72,7 +72,7 @@ uses
 
 // http://www.megavideo.com/?v=2MJBY4HB
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*megavideo\.com/(?:video/?)?\?v=';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*megavideo\.com/.+?[?&]v=';
   URLREGEXP_ID =        '[^/?&]+';
   URLREGEXP_AFTER_ID =  '';
 

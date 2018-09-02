@@ -69,8 +69,9 @@ uses
   uMessages;
 
 // http://www.vimeo.com/10777111
+// http://player.vimeo.com/video/32373779
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*vimeo\.com/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*vimeo\.com/(?:video/)?';
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 

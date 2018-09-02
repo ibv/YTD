@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.97                                     (c) 2009-11 Pepak
+YouTube Downloader v0.98                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -33,12 +33,14 @@ Blenus.com          | HTTP     |       | http://www.blennus.com/index.php?option
 Blip.tv             | HTTP     |       | http://blip.tv/play/hIVV4tIUAg
                     |          |       | http://blip.tv/file/1607673/
                     |          | 1     | http://thespoonyone.blip.tv
+BMovies.com         | RTMP     |       | http://bmovies.com/movie/night-living-dead
 Bofunk.com          | HTTP     |       | http://www.bofunk.com/video/10444/ingenious_way_to_mow_your_grass.html
 Bolt.com            | HTTP     |       | http://boltagain.ning.com/video/vacation-wellness
 Bomba.cz            | HTTP     |       | http://www.bomba.cz/video/simpsnovi-vs-cesti-politici/
 Break.com           | HTTP     |       | http://www.break.com/usercontent/2007/10/South-Africa-Win-Rugby-World-Cup-385706.html
                     |          |       | http://media1.break.com/static/app/v1/global/swf/player10.swf?sVidLoc=http%3a%2f%2fvideo1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.flv&sThumbLoc=http%3a%2f%2fmedia1.break.com%2fdnet%2fmedia%2f2007%2f8%2fdude-blows-off-firecracker-in-teeth.jpg&contentURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html&sShareURL=http%3a%2f%2fwww.break.com%2findex%2fdude-blows-off-firecracker-in-teeth.html%23TellAFriendhttp%3a%2f%2fstats.break.com%2finvoke.txt&iContentID=359418&autoplay=0&embed=2&contentidencoded=359418&categoryid=4&userid=1620903&mode=embed&linktitle=Funny+Videos&sVidTitle=EMBED-Dude+Blows+Off+Firecracker+In+Teeth&icon=1B608EE7AFCE3765E176F3C6FBB98002B3D18C64572F2307D76FAB7CA970F3B1D7D7
                     |          |       | http://embed.break.com/MzU5NDE4
+B-TV.cz             | HTTP     |       | http://www.b-tv.cz/mydlo-hi-fi-tv.html?ep=2163
 Cas.sk              | HTTP     |       | http://www.cas.sk/clanok/172890/testovanie-brzd-trochu-inak.html
                     |          |       | http://adam.cas.sk/clanky/7431/moto-aston-martin-rapide-2011.html
 CD.cz               | HTTP     |       | http://www.cd.cz/tv/aktuality/300_rekonstrukce-nadrazi-v-ceskem-brode
@@ -58,6 +60,7 @@ CNBC.com            | RTMP     |       | http://www.cnbc.com/id/15840232?video=3
                     |          |       | http://video.cnbc.com/gallery/?video=3000016920
 CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:1934920
 CrunchyRoll.com     | RTMP     | X     | http://www.crunchyroll.com/library/Naruto_Shippuden
+CSFD.cz             | HTTP     |       | http://www.csfd.cz/film/241720-lidice/videa/
 CSmaTalent.cz       | HTTP     |       | http://www.csmatalent.cz/epizody-cz/detail/divadlo-29-8-2010.html
                     |          |       | http://www.csmatalent.cz/video-cz/detail/cesko-slovensko-ma-talent-04-09-2011.html
 CSmaTalent.sk       | HTTP     |       | http://www.csmatalent.sk/epizody/detail/divadlo-29-8-2010.html
@@ -97,6 +100,9 @@ FunnyOrDie.com      | HTTP     |       | http://www.funnyordie.com/videos/544d80
 G4TV.com            | HTTP     |       | http://www.g4tv.com/videos/53181/Duke-Nukem-Forever-Launch-Trailer/
 GameAnyone.com      | HTTP     |       | http://www.gameanyone.com/game/PC/936.html
                     |          |       | http://www.gameanyone.com/video/88319
+GamePark.cz         | HTTP     |       | http://www.gamepark.cz/lineage_2_babylon_371564.htm
+GameZone.com        | RTMP     |       | http://www.gamezone.com/videos/guild-wars-2-cinematic-conversation-trailer
+Games.Tiscali.cz    | HTTP     |       | http://games.tiscali.cz/video/zhodnotte-alternativni-pruchod-far-cry-3-dema-z-e3-2011-56300
 GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
 GrindTV.com         | HTTP     |       | http://www.grindtv.com/surf/video/surfing_ancientstyle_surfboards_in_peru_wred_bull_team/
 Guba.com            | HTTP     |       | http://www.guba.com/watch/3000693318/Pulp-Fiction-Laugh-Track
@@ -122,6 +128,9 @@ iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/
 Joj.sk              | HTTP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
                     |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
                     |          |       | http://anosefe.joj.sk/anosefe-epizody/2011-05-16-ano-sefe-.html
+KanalTurk.com.tr    | HTTP     |       | http://www.kanalturk.com.tr/video/?vId=13409
+Kinobox.cz          | HTTP     |       | http://www.kinobox.cz/porady/video/6273-prednaska-henriho-monforta-21112011
+Kontraband.com      | HTTP     |       | http://www.kontraband.com/videos/23388/Failed-Slam-Dunks/
 Kukaj.sk            | HTTP     |       | http://www.kukaj.sk/videa/5860/
 LibimSeTi.cz        | HTTP     |       | http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
 LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272904024
@@ -134,8 +143,11 @@ Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-marki
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
 MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
+                    |          |       | http://www.megavideo.com/v/HF2OV2PPf800ca3bd438e6d30c2490a75932d6331
 MetaCafe.com        | HTTP     |       | http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
 Metoo.cz            | MS       |       | http://www.metoo.cz/tvstream/play/532
+Metoo.sk            | MS       |       | http://pohoda.metoo.sk/pohoda2011-fibernet/?relacia=cluster
+                    |          |       | http://www.metoo.sk/voicestv?relacia=vl26-sto-much-stratasoul-bene-sewologylab
 Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
@@ -172,6 +184,7 @@ OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=
 PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
 PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
 PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
+PlayWire.com        | RTMP     |       | http://cdn.playwire.com/343/embed/28047.html
 PracticalMethod.com | HTTP     |       | http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
 PrahovaHD.ro        | RTMP     |       | http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
 PrazdninyVTelci.cz  | MS       |       | http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
@@ -182,10 +195,12 @@ PublicTV.cz         | HTTP     |       | http://www.publictv.cz/cz/menu/3/videoa
 Qip.ru              | HTTP     |       | http://file.qip.ru/embed/141785477/17228276
 R1ZAK.cz            | HTTP     |       | http://www.r1zak.cz/archiv-vysilani/
 Raajje.tv           | HTTP     |       | http://www.raajje.tv/video/991/president-anni-diving
+Rajce.iDnes.cz      | HTTP     |       | http://pso.rajce.idnes.cz/Koncert_28._10._2011_v_Semilech/
 Revver.com          | HTTP     |       | http://www.revver.com/video/2378230/super-mario-bros-2-on-the-nes-level-x/
 RingTV.com          | HTTP     |       | http://www.ringtv.com/video/frankie_gomez_training/
 RockstarGames.com   | HTTPS    |       | https://tv.rockstargames.com/videos/view/id/3E0BA6CD17179520
-Rozhlas.cz          | HTTP     |       | http://www.rozhlas.cz/vltava/porady/_zprava/676996
+Rozhlas.cz          | HTTP     |       | http://prehravac.rozhlas.cz/audio/2483476
+                    |          |       | http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
 RozzlobeniMuzi.com  | HTTP     | F     | http://www.rozzlobenimuzi.com/?linkid=23073-konec_sikany.htm
 RTA.cz              | MS       |       | http://www.rta.cz/?article=140331
                     |          |       | http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
@@ -197,6 +212,7 @@ Sefka.sk            | HTTP     |       | http://www.sefka.sk/epizody/detail/sefk
 Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx
 SerialyCZ.cz        | HTTP     |       | http://www.serialycz.cz/2011/01/chuck-04x12/
 SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
+ShackNews.com       |          |       | http://www.shacknews.com/file/29576/minecraft-xbox-live-trailer
 Sme.sk              | HTTP     |       | http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
                     |          |       | http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
 Snotr.com           | HTTP     |       | http://www.snotr.com/video/4280
@@ -206,6 +222,7 @@ Sport.cz            | HTTP     |       | http://fotbal.sport.cz/clanek/183261-vi
 SportStream.cz      | RTMP     |       | http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
 Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
+SteamPowered.com    | HTTP     |       | http://store.steampowered.com/video/220
 Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
 Stream.cz           | HTTP     |       | http://www.stream.cz/video/437197-meziplyn-30
                     |          |       | http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
@@ -222,6 +239,7 @@ ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/peng
 TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
 TotallyCrap.com     | RTMP     |       | http://www.totallycrap.com/videos/videos_man_tries_to_commit_suicide_by_laying_under_a_truck/
+TV2Nord.dk          | RTMP     |       | http://www.tv2nord.dk/arkiv/2011/11/10?video_id=30106&autoplay=1
 TV4Play.se          | HTTP     |       | http://www.tv4play.se/sport/alpint?title=inga_svenska_skidskyttemedaljer&videoid=1295009
 TV7.cz              | HTTP     |       | http://www.tv7.cz/?vid=1062
 TVcom.cz            | MS       |       | http://bojove-sporty.tvcom.cz/video/545-budo-show-zlin-2006-dil-1.htm
@@ -236,6 +254,7 @@ VeeHD.com           | HTTP     |       | http://veehd.com/video/4639434_Solar-Si
 VideaCesky.cz       | HTTP     |       | http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
 Video.Google.com    | HTTP     |       | http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
                     |          |       | http://video.google.com/videoplay?docid=-9077214414651731007&ei=y-8dS-n9JZ6q2wK7o-CRCA
+Video.Nur.kz        | HTTP     |       | http://video.nur.kz/view=8irrnc87
 Video.Tiscali.cz    | HTTP     |       | http://video.tiscali.cz/the-duty-calls-trailer-283 
 VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
 VideoBB.com         | HTTP     |       | http://www.videobb.com/video/oh53koNnCV5S
@@ -248,9 +267,11 @@ VKontakte.ru        | HTTP     |       | http://vkontakte.ru/video_ext.php?oid=9
 WeGame.com          | HTTP     |       | http://www.wegame.com/watch/Pick_up_the_can/
 Wimp.com            | HTTP     |       | http://www.wimp.com/frazilice/
 WordPress.tv        | HTTP     |       | http://wordpress.tv/2010/09/18/jane-wells-how-wordpress-decisions-get-made/
+World-Club.net      | HTTP     |       | http://world-club.net/viewpage.php?page_id=7377
 Wrzuta.pl           | HTTP     |       | http://w772.wrzuta.pl/film/7KI3ZUDHrUK/
                     |          |       | http://goovnoh.wrzuta.pl/audio/8U1t8UQ4f8W/
 Yikers.com          | HTTP     |       | http://www.yikers.com/video_dog_and_turtle_eat_cereal_together.html
+Youtu.be            | HTTP     |       | http://youtu.be/zJM_N3JG1yg
 Youtube.com         | HTTP     |       | http://www.youtube.com/v/b5AWQ5aBjgE
                     |          |       | http://www.youtube.com/watch/v/b5AWQ5aBjgE
                     |          |       | http://www.youtube.com/watch?v=b5AWQ5aBjgE
@@ -260,6 +281,7 @@ Youtube.com         | HTTP     |       | http://www.youtube.com/v/b5AWQ5aBjgE
                     |          |       | http://www.youtube.com/titanicpiano14
                     |          |       | http://www.youtube.com/user/titanicpiano14
                     | RTMP     |       | http://www.youtube.com/watch?v=KNalERXqSTE
+Youtube-nocookie.com| HTTP     |       | http://www.youtube-nocookie.com/v/LiVxKci9Uto?version=3&hl=en_US
 Z1TV.cz             | HTTP     |       | http://www.z1tv.cz/interview-z1/interview-z1-kobzanova-diana-1972.html?page=1
 ZDF.de              | MS       |       | http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/Ägypten---4-Geheimnis-des-ewigen-Lebens
 ZkoukniTo.cz        | HTTP     |       | http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
@@ -282,10 +304,12 @@ KeezMovies.com      | HTTP     | F     |
 MachoVideo.com      | HTTP     | F     |
 MegaPorn.com        | HTTP     | F     |
 MojePorno.sk        | HTTP     | F     |
+Motherless.com      | HTTP     | F,9   |
 PornHost.com        | HTTP     | F     |
 PornHub.com         | HTTP     | F     |
 PornoTube.com       | HTTP     | F     |
 PornoZdarma.cz      | HTTP     | F     |
+RawTube.com         | HTTP     | F     |
 RedTube.com         | HTTP     | F     |
 Rude.com            | HTTP     | F     |
 Sex-Doma.cz         | HTTP     | F     |

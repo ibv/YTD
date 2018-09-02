@@ -1,11 +1,59 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.97                                     (c) 2009-11 Pepak
+YouTube Downloader v0.98                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.98:
+
+    * Noví poskytovatelé:
+      - BMovies.com
+      - B-TV.cz
+      - CSFD.cz
+      - GamePark.cz
+      - GameZone.com
+      - Games.Tiscali.cz
+      - KanalTurk.com.tr
+      - Kinobox.cz
+      - Metoo.sk
+      - Motherless.com (porno)
+      - PlayWire.com
+      - Rajce.iDnes.cz
+      - RawTube.com (porno)
+      - ShackNews.com
+      - SteamPowered.com
+      - TV2Nord.dk
+      - Video.Nur.cz
+      - World-Club.net
+      - Youtu.be
+      - YouTube-nocookie.com
+      Tím se dostáváme na 250 podporovaných poskytovatelù.
+
+    * CeskaTelevize.cz: ÈT24 opìt bìží.
+
+    * MegaVideo.com: Podpora pro embedované pøehrávaèe.
+
+    * Rozhlas.cz: Opìt bìží.
+
+    * YouTube.com: Aktualizován seznam formátù, které YouTube používá, takže
+      by už se nemìlo stávat, že se video stáhne do souboru se špatnou 
+      pøíponou.
+
+    * Lite verze: Do Lite verze se už pøed mnoha verzemi dostalo nìkolik porno
+      poskytovatelù. Nyní byli odstranìni a provìøil jsem, že už tam žádní
+      nezbyli.
+
+    * RTMP: Výchozí nastavení pro živé vysílání je "vypnuto" pro všechny
+      servery kromì Èeské televize, Novy, Primy a Barrandova, protože jsem
+      zjistil, že u mnoha "normálních" serverù toto nastavení pøekáží ve
+      stahování videa. Doporuèuji smazat konfiguraèní soubor a nechat YTD
+      vytvoøit nový, aby tuto zmìnu pøevzal (jinak si ponechá nastavení
+      pùvodní).
+
+
 
   v0.97:
 

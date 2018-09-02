@@ -34,22 +34,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit downBMovies;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uOptions,
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_BMovies = class(TRtmpDownloader)
     private
     protected
+      Extension: string;
+      MovieInfoRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -62,64 +66,84 @@ implementation
 
 uses
   uStringConsts,
-  uDownloadClassifier,
-  uMessages;
+  uStringUtils,
+  uMessages,
+  uDownloadClassifier;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+// http://bmovies.com/movie/bad-taste
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'bmovies\.com/movie/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_INFO =   '<param\s+name="FlashVars"\s+value="(?:[^"]*&)?moviename=(?P<GENRE>[^/]+)/(?P<STREAM>.+?)"';
 
-{ TDownloader_Rozhlas }
+{ TDownloader_BMovies }
 
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_BMovies.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := 'bMovies.com';
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_BMovies.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_BMovies.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_BMovies.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_BMovies.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
+  Result := 'http://bmovies.com/movie/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
+function TDownloader_BMovies.GetFileNameExt: string;
 begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
+  Result := Extension;
 end;
 
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_BMovies.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const
+  BMOVIES_APP = 'a4278/o37/bmovies/%s';
+  BMOVIES_URL = 'rtmp://dmgx.fcod.llnwd.net/' + BMOVIES_APP;
+var
+  Genre, Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := False;
+  if not GetRegExpVars(MovieInfoRegExp, Page, ['GENRE', 'STREAM'], [@Genre, @Stream]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    Extension := ExtractFileExt(Stream);
+    Self.RtmpUrl := Format(BMOVIES_URL, [Genre]);
+    Self.RtmpApp := Format(BMOVIES_APP, [Genre]);
+    Self.Playpath := ChangeFileExt(Stream, '');
+    //Self.SwfVfy := 'http://bmovies.com/test/swf/b.swf';
+    //Self.PageUrl := GetMovieInfoUrl;
+    //Self.FlashVer := FLASH_DEFAULT_VERSION;
+    MovieUrl := Self.RtmpUrl + '/' + Stream;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  RegisterDownloader(TDownloader_BMovies);
 
 end.

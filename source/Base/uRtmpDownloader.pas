@@ -132,7 +132,7 @@ end;
 
 class function TRtmpDownloader.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRtmpLiveStream, dfPreferRtmpLiveStream];
+  Result := inherited Features + [dfRtmpLiveStream];
 end;
 
 constructor TRtmpDownloader.Create(const AMovieID: string);

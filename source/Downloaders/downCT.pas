@@ -40,7 +40,7 @@ unit downCT;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, Variants, {$ENDIF}
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
   {$IFDEF GUI}
@@ -84,6 +84,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
       {$ENDIF}
@@ -115,7 +116,7 @@ const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*&mdash;\s*iVysílání)?(?:\s*&mdash;\s*Ceská televize)?\s*</title>';
   REGEXP_MOVIE_OBJECT = '\bcallSOAP\s*\(\s*(?P<OBJECT>\{.*?\})\s*\)\s*;';
   REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
-  REGEXP_JS_PLAYER = '<a\s+href="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+id="videoPlayer_';
+  REGEXP_JS_PLAYER = '<a\s+(?:\w+="[^"]*"\s+)*\bhref="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+(?:id|target)="videoPlayer_';
   REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>https?:.+?)"';
 
 { TDownloader_CT }
@@ -128,6 +129,11 @@ end;
 class function TDownloader_CT.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+end;
+
+class function TDownloader_CT.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfPreferRtmpLiveStream];
 end;
 
 {$IFDEF GUI}
@@ -194,7 +200,7 @@ begin
         // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
       end
     else if GetRegExpVar(JavascriptPlayerRegExp, Page, 'PARAM', Param) then
-      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + UrlEncode(PARAM), HTTP_FORM_URLENCODING, NewPage) then
+      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + UrlEncode(PARAM), HTTP_FORM_URLENCODING, ['X-client: 127.0.0.1'], NewPage) then
         if GetRegExpVar(VideoPlayerUrlRegExp, NewPage, 'URL', Url) then
           Url := StripSlashes(Url);
     if Url <> '' then

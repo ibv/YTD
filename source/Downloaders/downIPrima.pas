@@ -62,6 +62,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -96,6 +97,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -123,9 +125,9 @@ const
   {$ENDIF}
 
 const
-  PRIMA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'iPrima.cz';
   PRIMA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
   PRIMA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.iprima.cz/%s';
+  PRIMA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'iPrima.cz';
 
 { TDownloader_iPrima }
 
@@ -137,6 +139,11 @@ end;
 class function TDownloader_iPrima.UrlRegExp: string;
 begin
   Result := Format(PRIMA_URLREGEXP, [MovieIDParamName]);
+end;
+
+class function TDownloader_iPrima.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRtmpLiveStream, dfPreferRtmpLiveStream];
 end;
 
 constructor TDownloader_iPrima.Create(const AMovieID: string);
@@ -282,6 +289,11 @@ end;
 class function TDownloader_iPrima_LiveBox.UrlRegExp: string;
 begin
   Result := Format(PRIMA_URLREGEXP, [MovieIDParamName]);
+end;
+
+class function TDownloader_iPrima_LiveBox.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfPreferRtmpLiveStream];
 end;
 
 constructor TDownloader_iPrima_LiveBox.Create(const AMovieID: string);

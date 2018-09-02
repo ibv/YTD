@@ -92,7 +92,7 @@ const
 
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
-  REGEXP_MOVIE_AREA = '(?P<AREA><div\b[^>]*\bid="contentArea".*)';
+  REGEXP_MOVIE_AREA = '(?P<AREA><div\s[^>]*\bid="contentArea".*)';
   REGEXP_EXTRACT_NESTED_URLS: array[0..4] of string
     = ('\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',

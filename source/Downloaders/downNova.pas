@@ -87,6 +87,7 @@ type
       procedure SetOptions(const Value: TYTDOptions); override;
     protected
     public
+      class function Features: TDownloaderFeatures; override;
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
@@ -219,6 +220,11 @@ begin
   Result := Format(NOVA_URLREGEXP, [MovieIDParamName]);
 end;
 
+class function TDownloader_Nova_RTMP.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfPreferRtmpLiveStream];
+end;
+
 constructor TDownloader_Nova_RTMP.Create(const AMovieID: string);
 begin
   inherited;
@@ -268,7 +274,6 @@ begin
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
     else
       try
-        InfoXml.SaveToFile('1.xml');
         if (not GetXmlVar(InfoXml, 'status', Status)) or (Status <> 'Ok') then
           SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
         else if not GetXmlVar(InfoXml, 'baseUrl', BaseUrl) then

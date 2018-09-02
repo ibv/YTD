@@ -112,6 +112,8 @@ begin
 end;
 
 initialization
+  {$IFDEF XXX}
   RegisterDownloader(TDownloader_Dachix);
+  {$ENDIF}
 
 end.

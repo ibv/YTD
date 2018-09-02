@@ -65,6 +65,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
       {$ENDIF}
@@ -108,6 +109,11 @@ begin
   Result := TFrameDownloaderOptionsPage_Barrandov;
 end;
 {$ENDIF}
+
+class function TDownloader_BarrandovTV.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfPreferRtmpLiveStream];
+end;
 
 constructor TDownloader_BarrandovTV.Create(const AMovieID: string);
 begin

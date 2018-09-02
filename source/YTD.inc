@@ -80,13 +80,6 @@
   // use regular expressions: One, it is shorter, and two, it turns out LkJSON
   // has bugs which may prevent the parsing.
 
-{$DEFINE BUGGYANSISTRINGCONVERT}
-  // It seems that, given Text: string, Result: string, Delphi 5 have problems 
-  // with constructs such as
-  //   Result := string(EncodeUrl(AnsiString(Text)));
-  // if Text is declared as "const" - it tends to cause Access Violation
-  // randomly.
-
 {.DEFINE NONWORKING}
   // Build the non-working providers in. By default they are only available
   // in the debug mode.

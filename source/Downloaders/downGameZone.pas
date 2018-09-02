@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit downGameZone;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,15 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_GameZone = class(TNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,61 +64,49 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+// http://www.gamezone.com/videos/guild-wars-2-cinematic-conversation-trailer
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'gamezone\.com/videos/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URL =    '<iframe\s+src="(?P<URL>https?://cdn\.playwire\.com/.+?)"';
 
-{ TDownloader_Rozhlas }
+{ TDownloader_GameZone }
 
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_GameZone.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := 'GameZone.com';
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_GameZone.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_GameZone.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUtf8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_GameZone.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_GameZone.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
-end;
-
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
-begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
-end;
-
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := 'http://www.gamezone.com/videos/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  RegisterDownloader(TDownloader_GameZone);
 
 end.

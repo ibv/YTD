@@ -110,7 +110,9 @@ type
       function CreateHttp: THttpSend; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; out Page: string; Encoding: TPageEncoding = peUnknown; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; const Headers: array of string; Clear: boolean): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Headers: array of string; out Page: string; Encoding: TPageEncoding = peUnknown; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Page: string; Encoding: TPageEncoding = peUnknown; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -123,12 +125,13 @@ type
       function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlDecode(const Text: string; Unicode: boolean = False): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function Base64Encode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function UrlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Base64Decode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function Base64Encode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function JSDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function StripSlashes(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function StripTags(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ContentTypeToExtension(const ContentType: string): string;
     protected
       function ExtractUrlRoot(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -390,11 +393,15 @@ begin
     end;
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; Clear: boolean): boolean;
-var OldInputStream, InputStream: TStream;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; const Headers: array of string; Clear: boolean): boolean;
+var
+  OldInputStream, InputStream: TStream;
+  i: integer;
 begin
   if Clear then
     Http.Clear;
+  for i := 0 to Pred(Length(Headers)) do
+    Http.Headers.Add(Headers[i]);
   InputStream := TMemoryStream.Create;
   try
     if PostData <> '' then
@@ -415,15 +422,25 @@ begin
     end;
 end;
 
-function TDownloader.DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Page: string; Encoding: TPageEncoding; Clear: boolean): boolean;
+function TDownloader.DownloadPage(Http: THttpSend; Url: string; const PostData: AnsiString; const PostMimeType: string; Clear: boolean): boolean;
+begin
+  Result := DownloadPage(Http, Url, PostData, PostMimeType, [], Clear);
+end;
+
+function TDownloader.DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; const Headers: array of string; out Page: string; Encoding: TPageEncoding; Clear: boolean): boolean;
 begin
   Page := '';
-  Result := DownloadPage(Http, Url, PostData, PostMimeType, Clear);
+  Result := DownloadPage(Http, Url, PostData, PostMimeType, Headers, Clear);
   if Result then
     begin
     Page := ConvertString(Http.Document, Encoding);
     Http.Document.Seek(0, 0);
     end;
+end;
+
+function TDownloader.DownloadPage(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Page: string; Encoding: TPageEncoding; Clear: boolean): boolean;
+begin
+  Result := DownloadPage(Http, Url, PostData, PostMimeType, [], Page, Encoding, Clear);
 end;
 
 function TDownloader.DownloadBinary(Http: THttpSend; const Url: string; out Data: AnsiString; Method: THttpMethod; Clear: boolean): boolean;
@@ -724,27 +741,27 @@ begin
       Result := StringReplace(Result, HtmlDecodeItems[i].Txt, HtmlDecodeItems[i].Html, [rfReplaceAll]);
 end;
 
-function TDownloader.UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+function TDownloader.UrlDecode(const Text: string): string;
 begin
-  Result := string(DecodeUrl(AnsiString(StringReplace(Text, '+', ' ', [rfReplaceAll]))));
+  Result := {$IFDEF UNICODE} string {$ENDIF} (DecodeUrl( {$IFDEF UNICODE} AnsiString {$ENDIF} (StringReplace(Text, '+', ' ', [rfReplaceAll]))));
 end;
 
-function TDownloader.UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+function TDownloader.UrlEncode(const Text: string): string;
 begin
-  Result := string(EncodeUrl(AnsiString(Text)));
+  Result := {$IFDEF UNICODE} string {$ENDIF} (EncodeUrl( {$IFDEF UNICODE} AnsiString {$ENDIF} (Text)));
 end;
 
-function TDownloader.Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+function TDownloader.Base64Decode(const Text: string): string;
 begin
-  Result := string(DecodeBase64(AnsiString(Text)));
+  Result :=  {$IFDEF UNICODE} string {$ENDIF} (DecodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (Text)));
 end;
 
-function TDownloader.Base64Encode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+function TDownloader.Base64Encode(const Text: string): string;
 begin
-  Result := string(EncodeBase64(AnsiString(Text)));
+  Result :=  {$IFDEF UNICODE} string {$ENDIF} (EncodeBase64( {$IFDEF UNICODE} AnsiString {$ENDIF} (Text)));
 end;
 
-function TDownloader.JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+function TDownloader.JSDecode(const Text: string): string;
 var
   i: integer;
 begin
@@ -797,7 +814,7 @@ begin
     end;
 end;
 
-function TDownloader.StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;
+function TDownloader.StripSlashes(const Text: string): string;
 var i, n: integer;
 begin
   Result := Text;
@@ -812,6 +829,65 @@ begin
       end;
     Inc(i);
     end;
+end;
+
+function TDownloader.StripTags(const Text: string): string;
+var
+  i, Start: integer;
+  Quotes: Char;
+begin
+  Result := Text;
+  i := 1;
+  while i <= Length(Result) do
+    if Result[i] = '<' then
+      if Copy(Result, i, 4) = '<!--' then
+        begin
+        Start := i;
+        while (i <= Length(Result)) and (Copy(Result, i, 3) <> '-->') do
+          Inc(i);
+        System.Delete(Result, Start, i-Start+3);
+        i := Start;
+        end
+      else if Copy(Result, i, 9) = '<![CDATA[' then
+        begin
+        System.Delete(Result, i, 9);
+        while (i <= Length(Result)) and (Copy(Result, i, 3) <> ']]>') do
+          Inc(i);
+        System.Delete(Result, i, 3);
+        end
+      else
+        begin
+        Start := i;
+        Quotes := #0;
+        while (i <= Length(Result)) do
+          if Quotes <> #0 then
+            if Result[i] = Quotes then
+              begin
+              Quotes := #0;
+              Inc(i);
+              end
+            else
+              Inc(i)
+          else
+            case Result[i] of
+              '"', '''':
+                begin
+                Quotes := Result[i];
+                Inc(i);
+                end;
+              '>':
+                begin
+                Inc(i);
+                Break;
+                end;
+              else
+                Inc(i);
+              end;
+        System.Delete(Result, Start, i-Start);
+        i := Start;
+        end
+    else
+      Inc(i);
 end;
 
 function TDownloader.ExtractUrlExt(const Url: string): string;

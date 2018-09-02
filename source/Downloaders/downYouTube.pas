@@ -163,7 +163,7 @@ class function TDownloader_YouTube.Features: TDownloaderFeatures;
 begin
   Result := inherited Features + [
     {$IFDEF SUBTITLES} dfSubtitles {$IFDEF CONVERTSUBTITLES} , dfSubtitlesConvert {$ENDIF} {$ENDIF}
-    , dfRtmpLiveStream, dfPreferRtmpLiveStream
+    , dfRtmpLiveStream
     ];
 end;
 
@@ -327,11 +327,11 @@ end;
 function TDownloader_YouTube.GetVideoFormatExt(const VideoFormat: string): string;
 begin
   case StrToIntDef(VideoFormat, 0) of
-    5, 34, 35:
+    5, 6, 34, 35:
       Result := EXTENSION_FLV;
-    43..45:
+    43..46, 100..102:
       Result := EXTENSION_WEBM;
-    17, 18:
+    13, 17, 18:
       Result := EXTENSION_3GP;
     else
       Result := EXTENSION_MP4;
@@ -451,7 +451,7 @@ begin
         if (Width <= MaxWidth) or (MaxWidth <= 0) then
           if (Height <= MaxHeight) or (MaxHeight <= 0) then
             begin
-            MaxVideoQuality := VideoQuality;
+                    MaxVideoQuality := VideoQuality;
             MaxAudioQuality := AudioQuality;
             Result := VideoFormat;
             end;

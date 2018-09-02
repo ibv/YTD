@@ -118,6 +118,8 @@ begin
 end;
 
 initialization
+  {$IFDEF XXX}
   RegisterDownloader(TDownloader_RozzlobeniMuzi);
+  {$ENDIF}
 
 end.

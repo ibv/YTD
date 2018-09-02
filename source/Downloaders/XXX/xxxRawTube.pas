@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit xxxRawTube;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,11 +45,13 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_RawTube = class(THttpDownloader)
     private
     protected
+      MovieIdRegExp: TRegExp;
+      MovieSiteRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -65,61 +67,71 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rawtube\.com/videos/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H1;
+  REGEXP_MOVIE_ID =    '\bflashvars\.id\s*=\s*"(?P<ID>.+?)"';
+  REGEXP_MOVIE_SITE =  '\bflashvars\.site\s*=\s*"(?P<SITE>.+?)"';
 
-{ TDownloader_Rozhlas }
+{ TDownloader_RawTube }
 
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_RawTube.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := 'RawTube.com';
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_RawTube.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_RawTube.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  MovieSiteRegExp := RegExCreate(REGEXP_MOVIE_SITE);
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_RawTube.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieIdRegExp);
+  RegExFreeAndNil(MovieSiteRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_RawTube.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
+  Result := 'http://www.rawtube.com/videos/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
-begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
-end;
-
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_RawTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Site, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := False;
+  if not GetRegExpVar(MovieSiteRegExp, Page, 'SITE', Site) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+  else if not GetRegExpVar(MovieIdRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    MovieUrl := 'http://' + Site + '.rawtube.com/flvs/' + ID + '.flv';
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_RawTube);
+  {$ENDIF}
 
 end.

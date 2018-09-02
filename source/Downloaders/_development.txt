@@ -33,7 +33,6 @@ HTTP	XML	XML	downCollegeHumor
 RTMP	HTML	XML	downCrunchyRoll
 HTTP	XML	XML	downCSmaTalent (<-downJoj_Porady)
 RTMP	HTML	XML	downCT
-RTMP	HTML	XML	downCT24
 HTTP	HTML	HTML	downCurrent
 HTTP	HTML	HTML1	downDailyHaha
 HTTP	HTML	HTML1	downDailyMotion

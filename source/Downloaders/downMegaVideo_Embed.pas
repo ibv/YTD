@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit downMegaVideo_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,15 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downMegaVideo;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_MegaVideo_Embed = class(TNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean; override;
+      function GetTransformedUrl(out Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,61 +66,65 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+// http://www.megavideo.com/v/HF2OV2PPf800ca3bd438e6d30c2490a75932d6331
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'megavideo\.com/v/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+{ TDownloader_MegaVideo_Embed }
 
-{ TDownloader_Rozhlas }
-
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_MegaVideo_Embed.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := TDownloader_MegaVideo.Provider;
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_MegaVideo_Embed.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_MegaVideo_Embed.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peNone;
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_MegaVideo_Embed.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_MegaVideo_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
+  Result := 'http://www.megavideo.com/v/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
+function TDownloader_MegaVideo_Embed.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
 begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
+  Page := '';
+  Xml := nil;
   Result := True;
 end;
 
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_MegaVideo_Embed.GetTransformedUrl(out Url: string): boolean;
+var
+  Http: THttpSend;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := False;
+  Http := CreateHttp;
+  try
+    if DownloadPage(Http, GetMovieInfoUrl, hmHead) then
+      begin
+      Url := LastUrl;
+      Result := True;
+      end;
+  finally
+    FreeAndNil(Http);
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  RegisterDownloader(TDownloader_MegaVideo_Embed);
 
 end.

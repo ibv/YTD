@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit downYouTu_Be;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  downYouTube;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_YouTu_Be = class(TDownloader_YouTube)
     private
     protected
-      function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -65,61 +62,30 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+// http://youtu.be/zJM_N3JG1yg
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'youtu\.be/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+{ TDownloader_YouTu_Be }
 
-{ TDownloader_Rozhlas }
-
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_YouTu_Be.UrlRegExp: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+constructor TDownloader_YouTu_Be.Create(const AMovieID: string);
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  inherited Create(AMovieID);
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+destructor TDownloader_YouTu_Be.Destroy;
 begin
   inherited;
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-end;
-
-destructor TDownloader_Rozhlas.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  inherited;
-end;
-
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
-begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
-end;
-
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
-begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
-end;
-
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  RegisterDownloader(TDownloader_YouTu_Be);
 
 end.

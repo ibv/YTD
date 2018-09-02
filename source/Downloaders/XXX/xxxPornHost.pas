@@ -110,6 +110,8 @@ begin
 end;
 
 initialization
+  {$IFDEF XXX}
   RegisterDownloader(TDownloader_PornHost);
+  {$ENDIF}
 
 end.

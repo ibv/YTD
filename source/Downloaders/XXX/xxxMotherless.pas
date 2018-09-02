@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit xxxMotherless;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,11 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_Motherless = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -65,61 +64,60 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*motherless\.com/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_URL =   '\bfile\s*:\s*(?P<QUOTE2>[''"])(?P<URL>https?://.+?)(?P=QUOTE2)';
 
-{ TDownloader_Rozhlas }
+{ TDownloader_Motherless }
 
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_Motherless.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := 'Motherless.com';
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_Motherless.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_Motherless.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_Motherless.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_Motherless.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
+  Result := 'http://motherless.com/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
-begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
-end;
-
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Motherless.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := False;
+  if MovieUrl <> '' then
+    begin
+    MovieUrl := MovieUrl + '?start=0';
+    SetName('Motherless - ' + MovieID);
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_Motherless);
+  {$ENDIF}
 
 end.

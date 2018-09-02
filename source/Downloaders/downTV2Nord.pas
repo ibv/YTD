@@ -34,22 +34,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit downTV2Nord;
 {$INCLUDE 'ytd.inc'}
+{.DEFINE LOW_QUALITY}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_TV2Nord = class(TRtmpDownloader)
     private
     protected
+      ServerRegExp: TRegExp;
+      StreamRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -65,61 +68,78 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+// http://www.tv2nord.dk/arkiv/2011/11/10?video_id=30106&autoplay=1
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'tv2nord\.dk/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE = '<div\s+class="video-archive">.*?<h2\s+class="title">\s*(?P<TITLE>.*?)\s*</h2>';
+  REGEXP_MOVIE_SERVER = '\brtmpt?e?\s*:\s*\{.*?\bnetConnectionUrl\s*:\s*''(?P<SERVER>.+?)''';
+  REGEXP_MOVIE_STREAM = '\.TV2RegionFlowplayer\s*\(*s*''(?P<STREAM>.+?)''';
 
-{ TDownloader_Rozhlas }
+{ TDownloader_TV2Nord }
 
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_TV2Nord.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := 'TV2Nord.dk';
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_TV2Nord.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_TV2Nord.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUtf8;
+  InfoPageEncoding := peAnsi;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  ServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
+  StreamRegExp := RegExCreate(REGEXP_MOVIE_STREAM);
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_TV2Nord.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(ServerRegExp);
+  RegExFreeAndNil(StreamRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_TV2Nord.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
+  Result := 'http://www.tv2nord.dk/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
-begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
-end;
-
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_TV2Nord.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Settings, Server, Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := False;
+  if not GetRegExpVar(StreamRegExp, Page, 'STREAM', Stream) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else if not DownloadPage(Http, 'http://www.tv2nord.dk/themes/tv2nord_theme/js/flowplayer-controls.js', Settings) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(ServerRegExp, Settings, 'SERVER', Server) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+  else
+    begin
+    Self.RtmpUrl := Server;
+    Self.Playpath := 'mp4:' + Stream + '_2000.mp4';
+    //Self.FlashVer := FLASH_DEFAULT_VERSION;
+    //Self.SwfUrl := 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23';
+    //Self.TcUrl := BaseUrl;
+    //Self.PageUrl := MovieID;
+    MovieUrl := Server + '/' + PlayPath;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  RegisterDownloader(TDownloader_TV2Nord);
 
 end.

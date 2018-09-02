@@ -105,6 +105,8 @@ begin
 end;
 
 initialization
+  {$IFDEF XXX}
   RegisterDownloader(TDownloader_FreeVideoCz);
+  {$ENDIF}
 
 end.

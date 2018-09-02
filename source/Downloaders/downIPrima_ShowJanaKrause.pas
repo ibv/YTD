@@ -60,6 +60,7 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
       {$IFDEF MULTIDOWNLOADS}
@@ -92,12 +93,17 @@ const
 
 class function TDownloader_ShowJanaKrause.Provider: string;
 begin
-  Result := 'iPrima.Livebox.cz';
+  Result := 'iPrima.cz/showjanakrause';
 end;
 
 class function TDownloader_ShowJanaKrause.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+end;
+
+class function TDownloader_ShowJanaKrause.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfPreferRtmpLiveStream];
 end;
 
 constructor TDownloader_ShowJanaKrause.Create(const AMovieID: string);

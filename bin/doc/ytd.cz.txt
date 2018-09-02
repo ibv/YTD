@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.97                                     (c) 2009-11 Pepak
+YouTube Downloader v0.98                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -11,16 +11,36 @@ HD video, pokud je k dispozici.
 
 
 
-PODPOROVANÉ WEBY
-----------------
+0. OBSAH
+--------
+1. Podporované weby
+2. Protokol HTTPS
+3. Protokol RTMP
+4. Protokoly MMS/RTSP
+5. Playlisty
+6. Konverze stáhnutých souborù
+7. Distribuèní archív
+8. Konfigurace
+9. Syntaxe pøíkazového øádku
+10. Návratové kódy
+11. Lokalizace
+12. Podpora
+13. Kompilace
+14. Napsali o programu
+15. Licence
+
+
+
+1. PODPOROVANÉ WEBY
+-------------------
 
 Seznam podporovaných webù vèetnì ukázkových URL a pøípadných poznámek naleznete
 v souboru providers.txt.
 
 
 
-PROTOKOL HTTPS
---------------
+2. PROTOKOL HTTPS
+-----------------
 
 Pro podporu protokolu HTTPS (používá ho napø. RockStarGames.tv) je vyžadováno,
 aby byly ve vašich Windows nainstalované OpenSSL knihovny (CRYPTOEAY32.DLL, 
@@ -29,8 +49,8 @@ OpenSSL (http://www.openssl.org).
 
 
 
-PROTOKOL RTMP
--------------
+3. PROTOKOL RTMP
+----------------
 
 Od verze 0.15 program zahrnuje podporu pro streamované video podle protokolu
 RTMP. Protokol je implementován pomocí knihovny vzniklé drobnou úpravou 
@@ -58,8 +78,8 @@ použít nelze (použijte RTMPDUMP).
 
 
 
-PROTOKOLY MMS/RTSP
-------------------
+4. PROTOKOLY MMS/RTSP
+---------------------
 
 Od verze 0.17 je podporována rodina protokolù kolem MMS a RTSP (mimo jiné
 Microsoftí streamy, Real streamy a øada dalších). Protokol je implementován
@@ -82,8 +102,8 @@ YTD použít nelze.
 
 
 
-PLAYLISTY
----------
+5. PLAYLISTY
+------------
 
 Od verze 0.19 jsou podporovány zdroje, ve kterých je jeden poøad tvoøen
 nìkolika samostatnými mediálními soubory (napø. Markiza.sk). YouTube
@@ -92,8 +112,8 @@ které ne - stahují se vždy všechny.
 
 
 
-KONVERZE STÁHNUTÝCH SOUBORÙ
----------------------------
+6. KONVERZE STÁHNUTÝCH SOUBORÙ
+------------------------------
 
 Od verze 0.50 podporuje YouTube Downloader funkci, která do jisté míry
 umožòuje konvertovat stáhnuté soubory do jiných formátù - nabízí rozhraní,
@@ -171,8 +191,8 @@ výhodu.
 
 
 
-DISTRIBUÈNÍ ARCHÍV
-------------------
+7. DISTRIBUÈNÍ ARCHÍV
+---------------------
 
 Až do verze 0.86 vèetnì byl YTD distribuován v archívu ZIP s tím, že si ho
 uživatel sám rozbalí tam, kam bude potøebovat. Toto øešení jsem zvolil kvùli
@@ -216,8 +236,8 @@ distribuèního modelu a dokonce k nim pøidat:
 
 
 
-KONFIGURACE
------------
+8. KONFIGURACE
+--------------
 
 Od verze 0.50 používá YouTube Downloader pro svoji konfiguraci XML soubor
 "ytd.xml". Umístìn mùže být ve tøech místech:
@@ -575,8 +595,8 @@ a "0" (ne).
 
 
 
-SYNTAXE
--------
+9. SYNTAXE PØÍKAZOVÉHO ØÁDKU
+----------------------------
 
   ytd.exe <param> [<param>] [<param>] ...
 
@@ -617,8 +637,8 @@ SYNTAXE
 
 
 
-NÁVRATOVÉ KÓDY
---------------
+10. NÁVRATOVÉ KÓDY
+------------------
 
 Verze pro pøíkazový øádek podporuje návratové kódy (errorlevel). Možné hodnoty
 jsou:
@@ -642,8 +662,8 @@ jsou:
 
 
 
-LOKALIZACE
-----------
+11. LOKALIZACE
+--------------
 
 Pro lokalizaci používá YouTube Downloader GNU GetText. Pro pøípadné zájemce
 to znamená, že pokud GetText znáte, mùžete se okamžitì pustit do tvorby nového
@@ -674,22 +694,22 @@ i "default.po"), rád ho zaøadím do budoucích verzí YouTube Downloaderu.
 
 
 
-PODPORA
--------
+12. PODPORA
+-----------
 
 Podporu naleznete na následujících stránkách:
 
 - Pepakovo fórum: 
   http://forum.pepak.net
 - Stránka YouTube Downloader: 
-  http://www.pepak.net/download/youtube-downloader/
+  http://www.pepak.net/ytd/youtube-downloader/
 - Stránka YouTube Downloader - podpora: 
-  http://www.pepak.net/download/youtube-downloader-podpora/
+  http://www.pepak.net/ytd/youtube-downloader-podpora/
 
 
 
-KOMPILACE
----------
+13. KOMPILACE
+-------------
 
 Na domácí stránce programu naleznete i jeho zdrojový kód, který si mùžete sami
 zkompilovat. Kód je zcela sobìstaèný v tom smyslu, že nevyžaduje nainstalovanou
@@ -746,19 +766,21 @@ Pro FreePascal není podporováno grafické prostøedí (DEFINE NO_GUI v ytd.inc).
 
 
 
-NAPSALI O PROGRAMU
-------------------
+14. NAPSALI O PROGRAMU
+----------------------
 
 http://blog.zarohem.cz/clanek.asp?cislo=1605
 http://www.grafika.cz/art/vse/youtube_downloader_074.html
 http://pctuning.tyden.cz/component/content/article/1-aktualni-zpravy/20761-navod-stahujeme-videa-i-cele-playlisty-nejen-z-youtube
 http://technet.idnes.cz/cesky-program-vam-stahne-a-ulozi-videa-z-novy-primy-ct-i-streamu-pwp-/software.aspx?c=A110424_154633_software_dvr
 http://streamdownload.okamzite.eu/youtube-downloader-zvladne-i-ceske-televize/
+http://extrawindows.cnews.cz/youtube-downloader-stahujte-video-i-z-ceskych-webu
+http://magazin.stahuj.centrum.cz/youtube-downloader-stahujte-videa-i-z-ceskych-webu/
 
 
 
-LICENCE
--------
+15. LICENCE
+-----------
 
 YouTube Downloader je publikován pod tzv. novou BSD licencí. Její text 
 naleznete v souboru DOC/LICENSE.TXT.

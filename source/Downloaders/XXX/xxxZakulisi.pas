@@ -131,6 +131,8 @@ begin
 end;
 
 initialization
+  {$IFDEF XXX}
   RegisterDownloader(TDownloader_Zakulisi);
+  {$ENDIF}
 
 end.

@@ -49,7 +49,7 @@ Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.mojeporno.sk/video/f6c5tc08o3/tematicka-akce-s-nazvom-neukojene-panicky/
+RunParams=http://games.tiscali.cz/video/zhodnotte-alternativni-pruchod-far-cry-3-dema-z-e3-2011-56300
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
@@ -57,7 +57,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=86
 Release=0
-Build=731
+Build=737
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +68,7 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YouTube Downloader
-FileVersion=0.86.0.731
+FileVersion=0.86.0.737
 InternalName=YouTube Downloader
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
@@ -76,6 +76,22 @@ OriginalFilename=ytd.exe
 ProductName=YouTube Downloader
 ProductVersion=0.82.0.614
 Comments=http://www.pepak.net/download/youtube-downloader/
+[HistoryLists\hlConditionals]
+Count=2
+Item0=PEPAK;PEPAK_YTD;XXX;
+Item1=PEPAK;PEPAK_YTD;XXX;DEBUG
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=1
+Item0=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\NativeXml;lib\lkJSON;Units
+[HistoryLists\hlUnitOutputDirectory]
+Count=1
+Item0=Units
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=..\Bin
 [Exception Log]
 EurekaLog Version=6101
 Activate=0

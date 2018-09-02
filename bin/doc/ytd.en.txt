@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.97                                     (c) 2009-11 Pepak
+YouTube Downloader v0.98                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -12,16 +12,35 @@ has several variants, the highest-quality one is downloaded.
 
 
 
-SUPPORTED PROVIDERS
--------------------
+0. TABLE OF CONTENTS
+--------------------
+1. Supported providers
+2. HTTPS protocol
+3. RTMP protocol
+4. MMS/RTSP protocols
+5. Playlists
+6. Conversion of downloaded files
+7. The distribution archive
+8. Configuration
+9. Command-line syntax
+10. Result codes
+11. Localization
+12. Support
+13. Compiling
+14. License
+
+
+
+1. SUPPORTED PROVIDERS
+----------------------
 
 The list of supported providers, along with demo URLs and notes for each, is
 located in file providers.txt.
 
 
 
-HTTPS PROTOCOL
---------------
+2. HTTPS PROTOCOL
+-----------------
 
 In order to support the HTTPS protocol (user by e.g. RockStarGames.tv) YTD
 requires OpenSSL libraries (CRYPTOEAY32.DLL, SSLEAY32.DLL), preferably in
@@ -30,8 +49,8 @@ from the OpenSSL project's server (http://www.openssl.org).
 
 
 
-RTMP PROTOCOL
--------------
+3. RTMP PROTOCOL
+----------------
 
 Since version 0.15 the program supports "real" streaming video according to
 the RTMP protocol. The protocol is implemented with a library RTMPDUMP_DLL,
@@ -61,8 +80,8 @@ will need to use RTMPDUMP directly.
 
 
 
-MMS/RTSP PROTOCOLS
-------------------
+4. MMS/RTSP PROTOCOLS
+---------------------
 
 Since version 0.17, protocol family around MMS and RTSP (e.g. Microsoft's
 streaming servers, Real servers and a number of others) is supported. The
@@ -83,8 +102,8 @@ will need to use MSDL directly.
 
 
 
-PLAYLISTS
----------
+5. PLAYLISTS
+------------
 
 Since version 0.19, sources which contain multiple files on one page are
 supported (e.g. Markiza.sk). At the moment it is not possible to choose which
@@ -93,8 +112,8 @@ of course use the GUI version and delete unwanted streams from there.
 
 
 
-CONVERSION OF DOWNLOADED FILES
-------------------------------
+6. CONVERSION OF DOWNLOADED FILES
+---------------------------------
 
 Version 0.50 added support for calling external applications after a download
 is finished. Among other common uses of this function is the possibility to
@@ -175,8 +194,8 @@ the downloaded files, you can always do so in a BAT file.
 
 
 
-THE DISTRIBUTION ARCHIVE
-------------------------
+7. THE DISTRIBUTION ARCHIVE
+---------------------------
 
 Up to version 0.86, YTD was distrubuted in the form of a standard ZIP archive,
 which would be manually unpacked to any desired location. Unfortunately, many
@@ -220,8 +239,8 @@ of the ZIP archive as possible while adding new ones:
 
 
 
-CONFIGURATION
--------------
+8. CONFIGURATION
+----------------
 
 Since version 0.50 stores YouTube Downloader its configuration in a XML file
 "ytd.xml". This file can be found in three locations:
@@ -593,8 +612,8 @@ except in file/directory names. Logical values (true-false) are stored as
 
 
 
-SYNTAX
-------
+9. COMMAND-LINE SYNTAX
+----------------------
 
   ytd.exe <param> [<param>] [<param>] ...
 
@@ -635,8 +654,8 @@ SYNTAX
 
 
 
-RESULT CODES
-------------
+10. RESULT CODES
+----------------
 
 The command-line version supports result codes (errorlevel). Possible values
 are:
@@ -662,8 +681,8 @@ are:
 
 
 
-LOCALIZATION
-------------
+11. LOCALIZATION
+----------------
 
 YouTube Downloader uses GNU GetText for its localization needs. If you are
 experienced with GetText, you can start translating right away. If you have
@@ -692,8 +711,8 @@ and "default.po" files) for inclusion in future versions of YouTube Downloader.
 
 
 
-SUPPORT
--------
+12. SUPPORT
+-----------
 
 Support is provided at:
 
@@ -706,8 +725,8 @@ Support is provided at:
 
 
 
-COMPILING
----------
+13. COMPILING
+-------------
 
 Source code to YouTube Downloader can be downloaded from the program's
 homepage. The code is completely self-contained in the sense that it doesn't
@@ -764,8 +783,8 @@ The graphical interface is not supported for FreePascal.
 
 
 
-LICENSE
--------
+14. LICENSE
+-----------
 
 YouTube Downloader is published under the new BSD license. You can read the
 full terms and conditions in file DOC/LICENSE.TXT.

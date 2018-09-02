@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downRozhlas;
+unit downCSFD;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,11 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Rozhlas = class(THttpDownloader)
+  TDownloader_CSFD = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -65,61 +64,82 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://prehravac.rozhlas.cz/audio/2484560
-// http://www.rozhlas.cz/default/default/rnp-player-2.php?id=2332250&drm=1
+// http://www.csfd.cz/film/241720-lidice/videa/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*rozhlas\.cz/(?:audio/|.*?[?&]id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'csfd\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h3>(?P<TITLE>.*?)</h3>';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    '\bplayer\.addClip\s*\(\s*"(?P<URL>https?:[^"]+)"(?P<EXTRA>.*?)\);';
 
-{ TDownloader_Rozhlas }
+{ TDownloader_CSFD }
 
-class function TDownloader_Rozhlas.Provider: string;
+class function TDownloader_CSFD.Provider: string;
 begin
-  Result := 'Rozhlas.cz';
+  Result := 'CSFD.cz';
 end;
 
-class function TDownloader_Rozhlas.UrlRegExp: string;
+class function TDownloader_CSFD.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Rozhlas.Create(const AMovieID: string);
+constructor TDownloader_CSFD.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_Rozhlas.Destroy;
+destructor TDownloader_CSFD.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Rozhlas.GetMovieInfoUrl: string;
+function TDownloader_CSFD.GetMovieInfoUrl: string;
 begin
-  Result := 'http://prehravac.rozhlas.cz/audio/' + MovieID;
+  Result := 'http://www.csfd.cz/' + MovieID;
 end;
 
-function TDownloader_Rozhlas.BuildMovieUrl(out Url: string): boolean;
-begin
-  Url := Format('http://media.rozhlas.cz/_audio/%s.mp3', [MovieID]);
-  Result := True;
-end;
-
-function TDownloader_Rozhlas.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_CSFD.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Url, Extra: string;
+  n: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := Prepared;
-  if Result then
-    SetName(StripTags(Name));
+  Result := False;
+  n := 0;
+  if MovieUrlRegExp.Match(Page) then
+    repeat
+      if MovieUrlRegExp.SubexpressionByName('URL', Url) then
+        begin
+        if MovieUrlRegExp.SubexpressionByName('EXTRA', Extra) then
+          if Pos('"advert"', Extra) > 0 then
+            Url := '';
+        if Url <> '' then
+          begin
+          Url := StripSlashes(Url);
+          MovieUrl := Url;
+          SetPrepared(True);
+          Result := True;
+          {$IFDEF MULTIDOWNLOADS}
+          UrlList.Add(Url);
+          Inc(n);
+          NameList.Add(Format('%s (%d)', [UnpreparedName, n]));
+          {$ELSE}
+          Break;
+          {$ENDIF}
+          end;
+        end;
+    until not MovieUrlRegExp.MatchAgain;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Rozhlas);
+  RegisterDownloader(TDownloader_CSFD);
 
 end.

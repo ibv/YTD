@@ -69,7 +69,7 @@ uses
 // http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'idnes\.cz/' + REGEXP_SOMETHING;
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?<!\brajce\.)' + 'idnes\.cz/' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const

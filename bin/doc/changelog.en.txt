@@ -1,11 +1,57 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.97                                     (c) 2009-11 Pepak
+YouTube Downloader v0.98                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.98:
+
+    * New providers:
+      - BMovies.com
+      - B-TV.cz
+      - CSFD.cz
+      - GamePark.cz
+      - GameZone.com
+      - Games.Tiscali.cz
+      - KanalTurk.com.tr
+      - Kinobox.cz
+      - Metoo.sk
+      - Motherless.com (porn)
+      - PlayWire.com
+      - Rajce.iDnes.cz
+      - RawTube.com (porn)
+      - ShackNews.com
+      - SteamPowered.com
+      - TV2Nord.dk
+      - Video.Nur.cz
+      - World-Club.net
+      - Youtu.be
+      - YouTube-nocookie.com
+      That makes a grand total of 250 supported providers.
+
+    * CeskaTelevize.cz: CT24 works again.
+
+    * MegaVideo.com: Support for embedded links.
+
+    * Rozhlas.cz: Works again.
+
+    * YouTube.com: Updated the format list used by YouTube. That should fix
+      the problem with movies being downloaded with an incorrect extension.
+
+    * Lite version: A long time ago some porn providers made it into the lite
+      version and started to spread. Now I removed them and checked all porn
+      providers to make sure I got them all.
+    
+    * RTMP: The default setting for "Live stream" is "disabled" for all servers
+      except for CeskaTelevize.cz, Nova.cz, iPrima.cz and Barrandov.tv, because
+      it appears that many servers can't work with live streams. I recommend
+      deleting the configuration file and let YTD create a new one, otherwise
+      you won't get the benefit of this change.
+
+
 
   v0.97:
 
