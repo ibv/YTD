@@ -49,7 +49,6 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -65,12 +64,13 @@ uses
   uMessages;
 
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*motherless\.com/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'motherless\.com/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_URL =   '\bfile\s*:\s*(?P<QUOTE2>[''"])(?P<URL>https?://.+?)(?P=QUOTE2)';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =    '"file"\s*:\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_Motherless }
 
@@ -81,18 +81,20 @@ end;
 
 class function TDownloader_Motherless.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Motherless.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_Motherless.Destroy;
 begin
+  RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
@@ -100,19 +102,6 @@ end;
 function TDownloader_Motherless.GetMovieInfoUrl: string;
 begin
   Result := 'http://motherless.com/' + MovieID;
-end;
-
-function TDownloader_Motherless.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if MovieUrl <> '' then
-    begin
-    MovieUrl := MovieUrl + '?start=0';
-    SetName('Motherless - ' + MovieID);
-    SetPrepared(True);
-    Result := True;
-    end;
 end;
 
 initialization

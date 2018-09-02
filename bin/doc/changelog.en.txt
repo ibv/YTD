@@ -1,11 +1,23 @@
 ﻿______________________________________________________________________________
 
-YTD v1.36                                                    (c) 2009-14 Pepak
+YTD v1.37                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.37:
+
+    * New providers:
+      - Heavy-R.com (porn)
+
+    * Updated providers:
+      - CeskaTelevize.cz (thanks qwerty)
+      - Motherless.com (porno)
+      - YouTube.com
+
+
 
   v1.36:
 

@@ -536,7 +536,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Copy(Url, 1, 4) <> 'http' then
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
-  else if not DownloadXml(Http, UrlDecode(Url), Xml) then
+  else if not DownloadXml(Http, StringReplace(UrlDecode(Url), 'ClientLinks?', 'ClientLink?', [rfReplaceAll]), Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try

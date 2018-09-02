@@ -43,7 +43,8 @@ interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
+  uPCRE, uXml, uCompatibility, uLanguages,
+  HttpSend, SynaCode,
   uOptions,
   {$IFDEF GUI}
     guiDownloaderOptions,
@@ -72,6 +73,7 @@ type
       Extension: string;
       MaxWidth, MaxHeight: integer;
       AvoidWebM: boolean;
+      ObfuscationScheme: string;
       {$IFDEF SUBTITLES}
         PreferredLanguages: string;
       {$ENDIF}
@@ -100,6 +102,7 @@ type
       {$IFDEF SUBTITLES}
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       {$ENDIF}
+      function Download: boolean; override;
     end;
 
 const
@@ -131,9 +134,11 @@ uses
 // http://www.youtube.com/watch?v=b5AWQ5aBjgE
 // http://www.youtube.com/embed/b5AWQ5aBjgE
 // http://www.youtube.com/watch_popup?v=b5AWQ5aBjgE
+// http://www.youtube.com/attribution_link?a=k_jl_0XPJ9A&u=/watch%3Fv%3DdW9JY5KjjWI%26feature%3Dem-uploademail
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|watch(?:_popup)?\?(?:.*&)*v=|embed/(?!videoseries)|embedded/)';
-  URLREGEXP_ID =        '[^/?&]+';
+  // Pozor, zdvojovat %, protoze se to pouziva do Format
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*youtube\.com/(?:v/|watch/v/|.*?/watch%%3Fv%%3D|watch(?:_popup)?\?(?:.*&)*v=|embed/(?!videoseries)|embedded/)';
+  URLREGEXP_ID =        '[^/?&%%]+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -159,6 +164,9 @@ type
     public
       function Prepare: boolean; override;
     end;
+
+type
+  THackNestedDownloader = class(TNestedDownloader);
 
 { TDownloader_YouTube }
 
@@ -396,6 +404,7 @@ begin
       SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format-URL Map']))
     else
       begin
+      ObfuscationScheme := PTK;
       FmtUrlMap := TextDecoder(FmtUrlMap);
       VideoFormat := GetBestVideoFormat(TextDecoder(Trim(FmtList)), FmtUrlMap);
       if VideoFormat = '' then
@@ -570,20 +579,39 @@ function TDownloader_YouTube.UpdateVevoSignature(const Signature: string): strin
 
 begin
   // Thanks to mandel99
-  // Da se to najit v html5player-vflwMrwdI.js, kdyz dam hledat Reverse. Potrebuju
-  // to trochu projit, jestli by se to nedalo vyziskat nejak automatizovane, abych
-  // to nemusel porad prepisovat. URL na skript se najde v konfiguracnim stringu
+  // Da se to najit v html5player-vflwMrwdI.js, kdyz dam hledat 'Reverse(' nebo
+  // 'Slice(' nebo 'return a.join("")' (asi 5. vyskyt)
+  // Potrebuju to trochu projit, jestli by se to nedalo vyziskat nejak automatizovane,
+  // abych to nemusel porad prepisovat. URL na skript se najde v konfiguracnim stringu
   // v "assets"\s*:\s*\{\s*"js"\s*:\s*"(?P<URL>\\/\\/s.ytimg.com\\/[^"]+?)"
   // (pozor, neobsahuje protokol, jen server a cestu).
   Result := Signature;
-  YoutubeSwap(Result, 3);
+  Slice(Result, 3);
+  YoutubeSwap(Result, 2);
+  YoutubeSwap(Result, 59);
+  Slice(Result, 2);
+  YoutubeSwap(Result, 68);
   Reverse(Result);
-  YoutubeSwap(Result, 39);
+  Slice(Result, 3);
   Reverse(Result);
-  YoutubeSwap(Result, 51);
   Slice(Result, 1);
-  YoutubeSwap(Result, 36);
-  YoutubeSwap(Result, 14);
+end;
+
+function TDownloader_YouTube.Download: boolean;
+var
+  Msg: string;
+begin
+  Result := inherited Download;
+  if not Result then
+    if LastErrorMsg = Format(ERR_HTTP_RESULT_CODE, [403]) then
+      if ObfuscationScheme <> '' then
+        begin
+        Msg := Format(_('Obfuscation scheme "%s" not yet supported'), [ObfuscationScheme]);
+        if NestedDownloader <> nil then
+          THackNestedDownloader(NestedDownloader).SetLastErrorMsg(Msg)
+        else
+          SetLastErrorMsg(Msg);
+        end;
 end;
 
 { TDownloader_YouTube_RTMP }

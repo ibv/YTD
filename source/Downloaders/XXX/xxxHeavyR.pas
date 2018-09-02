@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downFacebook;
+unit xxxHeavyR;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,15 +45,10 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Facebook = class(THttpDownloader)
+  TDownloader_HeavyR = class(THttpDownloader)
     private
     protected
-      MovieListRegExp: TRegExp;
-      MovieHDUrlRegExp: TRegExp;
-      MovieSDUrlRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -68,78 +63,50 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.facebook.com/video/video.php?v=1131482863478
-// http://www.facebook.com/media/set/?set=vb.33966109512&type=2#!/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
-// http://www.facebook.com/photo.php?v=137514062921&set=vb.33966109512&type=3&theater
 const
-  URLREGEXP_BEFORE_ID = 'facebook\.com/.*?[?&]v=';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_BEFORE_ID = 'heavy-r\.com/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_DESCRIPTION;
-  REGEXP_MOVIE_LIST = '\[\s*\[\s*"params"\s*,\s*"(?P<INFO>.+?)"';
-  REGEXP_SD_MOVIE_URL = '"sd_src"\s*:\s*"(?P<URL>.+?)"';
-  REGEXP_HD_MOVIE_URL = '"hd_src"\s*:\s*"(?P<URL>.+?)"';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =    '\bfile\s*:\s*''(?P<URL>https?://[^'']*\.mp4)''';
 
-{ TDownloader_Facebook }
+{ TDownloader_HeavyR }
 
-class function TDownloader_Facebook.Provider: string;
+class function TDownloader_HeavyR.Provider: string;
 begin
-  Result := 'Facebook.com';
+  Result := 'Heavy-R.com';
 end;
 
-class function TDownloader_Facebook.UrlRegExp: string;
+class function TDownloader_HeavyR.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Facebook.Create(const AMovieID: string);
+constructor TDownloader_HeavyR.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
-  MovieHDUrlRegExp := RegExCreate(REGEXP_HD_MOVIE_URL);
-  MovieSDUrlRegExp := RegExCreate(REGEXP_SD_MOVIE_URL);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_Facebook.Destroy;
+destructor TDownloader_HeavyR.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieListRegExp);
-  RegExFreeAndNil(MovieHDUrlRegExp);
-  RegExFreeAndNil(MovieSDUrlRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Facebook.GetMovieInfoUrl: string;
+function TDownloader_HeavyR.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.facebook.com/photo.php?v=' + MovieID;
-end;
-
-function TDownloader_Facebook.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Info, Url: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(MovieListRegExp, Page, 'INFO', Info) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else
-    begin
-    Info := UrlDecode(JSDecode(Info));
-    if not (GetRegExpVar(MovieHDUrlRegExp, Info, 'URL', Url) or GetRegExpVar(MovieSDUrlRegExp, Info, 'URL', Url)) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieURL := JSDecode(Url);
-      SetPrepared(True);
-      Result := True;
-      end;
-    end;
+  Result := 'http://www.heavy-r.com/video/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Facebook);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_HeavyR);
+  {$ENDIF}
 
 end.

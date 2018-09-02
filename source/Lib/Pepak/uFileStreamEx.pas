@@ -173,20 +173,15 @@ var
   BytesReturned, LastError: DWORD;
   Buffer: int64;
 begin
-  if GetFileType(FHandle) = FILE_TYPE_DISK then
-    if DeviceIoControl(FHandle, IOCTL_DISK_GET_LENGTH_INFO, nil, 0, @Buffer, Sizeof(Buffer), BytesReturned, nil) then
-      Result := Buffer
-    else
-      Result := -1
+  Result := -1;
+  LowDWORD := GetFileSize(FHandle, @HighDWORD);
+  LastError := GetLastError;
+  if (LastError = NO_ERROR) or (LowDWORD <> INVALID_FILE_SIZE) then
+    Result := (Int64(HighDWORD) shl 32) or Int64(LowDWORD)
   else
-    begin
-    LowDWORD := GetFileSize(FHandle, @HighDWORD);
-    LastError := GetLastError;
-    if (LastError = NO_ERROR) or (LowDWORD <> INVALID_FILE_SIZE) then
-      Result := (Int64(HighDWORD) shl 32) or Int64(LowDWORD)
-    else
-      Result := -1;
-    end;
+    if GetFileType(FHandle) = FILE_TYPE_DISK then
+      if DeviceIoControl(FHandle, IOCTL_DISK_GET_LENGTH_INFO, nil, 0, @Buffer, Sizeof(Buffer), BytesReturned, nil) then
+        Result := Buffer;
 end;
 
 function TFileStreamEx.Seek64(Offset: int64; Origin: integer): int64;
