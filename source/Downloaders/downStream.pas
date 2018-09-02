@@ -88,15 +88,15 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h1[^>]*>(?P<TITLE>.*?)</h1>';
-  REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.*?)"|\swriteSWF\s*\((?P<PARAM2>.*?)\)\s*;';
-  REGEXP_FLASHVARS_PARSER = '(?:^|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
+  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*\|[^<]*)?</title>';
+  REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.+?)"|\bwriteSWF\s*\((?P<PARAM2>.*?)\)\s*;';
+  REGEXP_FLASHVARS_PARSER = '(?:^|[&''])(?P<VARNAME>[^&'']+?)=(?P<VARVALUE>[^&'']+)';
   {
   REGEXP_MOVIE_ID_FROM_PARAMS = '[&'']id=(?P<ID>[0-9]+)';
   REGEXP_MOVIE_HDID_FROM_PARAMS = '[&'']hdID=(?P<ID>[0-9]+)';
   REGEXP_MOVIE_CDNID_FROM_PARAMS = '[&'']cdnID=(?P<ID>[0-9]+)';
   }
-  
+
 { TDownloader_Stream }
 
 class function TDownloader_Stream.Provider: string;
@@ -163,7 +163,7 @@ begin
   else
     begin
     if MovieParamsRegExp.Match(Page) then
-      if not MovieParamsRegExp.SubexpressionByName('PARAM', Params) then
+      if (not MovieParamsRegExp.SubexpressionByName('PARAM', Params)) or (Params = '') then
         Params := MovieParamsRegExp.SubexpressionByName('PARAM2');
     if Params = '' then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)

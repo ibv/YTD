@@ -69,8 +69,8 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h1>(?P<TITLE>.+?)</h1>';
-  REGEXP_MOVIE_URL = '\bembededFlashContainer\.innerHTML\s*=\s*''(?P<URL>https?://media\.shufuni\.com/[^'']+)''';
+  REGEXP_MOVIE_TITLE = '<h1>\s*(?P<TITLE>.+?)\s*</h1>';
+  REGEXP_MOVIE_URL = '\.addVariable\s*\(\s*"CDNUrl"\s*,\s*"(?P<URL>https?://.+?)"';
 
 { TDownloader_Shufuni }
 

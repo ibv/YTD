@@ -8,6 +8,7 @@ HTTP	HTML	HTML	xxxDancingBear
 HTTP	HTML	XML	xxxEmpFlix
 HTTP	HTML	HTML	xxxExtremeTube
 HTTP	HTML	HTML	xxxFreePornoZdarma (<- XHamster)
+HTTP	HTML	HTML	xxxFreeVideo
 HTTP	HTML	Nested	xxxGrinvi
 HTTP	HTML	HTML	xxxJenProMuze
 HTTP	HTML	HTML	xxxKeezMovies

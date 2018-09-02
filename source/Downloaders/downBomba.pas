@@ -50,6 +50,7 @@ type
     private
     protected
       function GetMovieInfoUrl: string; override;
+      function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -104,6 +105,12 @@ end;
 function TDownloader_Bomba.GetMovieInfoUrl: string;
 begin
   Result := Format('http://www.bomba.cz/video/%s/', [MovieID]);
+end;
+
+function TDownloader_Bomba.CreateNestedDownloaderFromURL(var Url: string): boolean;
+begin
+  Url := HtmlDecode(Url);
+  Result := inherited CreateNestedDownloaderFromURL(Url);
 end;
 
 initialization

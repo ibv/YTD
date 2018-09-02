@@ -1,11 +1,35 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.83                                     (c) 2009-11 Pepak
+YouTube Downloader v0.84                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.84:
+
+    * Nový poskytovatel: Agresori.com.
+
+    * Nový poskytovatel: FreeVideo.cz (porno).
+
+    * Nový poskytovatel: G4TV.com.
+
+    * NoVý poskytovatel: iViewTube.com.
+
+    * Nový poskytovatel: SoundCloud.com.
+
+    * Nový poskytovatel: Ted.com.
+
+    * Bomba.cz: Zprovoznìna videa s URL zakódovanou entitami.
+
+    * Music.Stream.cz: Opìt funkèní.
+
+    * Shufuni.com: Opìt funkèní.
+
+    * XTube.com: Opìt funkèní.
+
+
 
   v0.83:
 

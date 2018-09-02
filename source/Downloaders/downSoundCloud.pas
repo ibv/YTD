@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downUStream;
+unit downSoundCloud;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,11 +45,11 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_UStream = class(THttpDownloader)
+  TDownloader_SoundCloud = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetFileNameExt: string; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -61,93 +61,57 @@ implementation
 
 uses
   uStringConsts,
-  uAMF,
   uDownloadClassifier,
   uMessages;
 
-// http://www.ustream.tv/recorded/7022540
+// http://soundcloud.com/ubi_irina/1-campaign-menu
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*ustream\.tv/recorded/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'soundcloud\.com/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2\s+id="videoTitle">\s*(?P<TITLE>.*?)\s*</h2>';
+  REGEXP_MOVIE_TITLE =  '<h1[^>]*>(?:\s*<em>)?\s*(?P<TITLE>.*?)(?:\s*</em>)?\s*</h1>';
+  REGEXP_MOVIE_URL =    '"streamUrl"\s*:\s*"(?P<URL>https?://.+?)"';
 
-const
-  AMF_REQUEST_PACKET =
-    'AAAAAAABAA9WaWV3ZXIuZ2V0VmlkZW8AAi8xAAAAmAoAAAABAwAGbG9jYWxlAgAFZW5fVVMA' +
-    'B3BhZ2VVcmwCACZodHRwOi8vd3d3LnVzdHJlYW0udHYvcmVjb3JkZWQvNzAyMjU0MAAIYXV0' +
-    'b3BsYXkBAQAHYnJhbmRJZAIAATEABHJwaW4CABhycGluLjAuMDg0MTM5NzMzODk3MDAzMjcA' +
-    'B3ZpZGVvSWQCAAc3MDIyNTQwAAAJ';
+{ TDownloader_SoundCloud }
 
-{ TDownloader_UStream }
-
-class function TDownloader_UStream.Provider: string;
+class function TDownloader_SoundCloud.Provider: string;
 begin
-  Result := 'UStream.tv';
+  Result := 'SoundCloud.com';
 end;
 
-class function TDownloader_UStream.UrlRegExp: string;
+class function TDownloader_SoundCloud.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_UStream.Create(const AMovieID: string);
+constructor TDownloader_SoundCloud.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_UStream.Destroy;
+destructor TDownloader_SoundCloud.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_UStream.GetMovieInfoUrl: string;
+function TDownloader_SoundCloud.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.ustream.tv/recorded/' + MovieID;
+  Result := 'http://www.soundcloud.com/' + MovieID;
 end;
 
-function TDownloader_UStream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var AMFRequest, AMFResponse: TAMFPacket;
-    Url, ErrorMsg: TAMFValue;
+function TDownloader_SoundCloud.GetFileNameExt: string;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  AMFRequest := TAMFPacket.Create;
-  try
-    AMFRequest.LoadFromString(AnsiString(Base64Decode(AMF_REQUEST_PACKET)));
-    // Note: I don't need to check types (or make sure pointers are not null)
-    // because I use a pre-made packet which has all required properties. That
-    // is not true while parsing response packets!
-    with TAMFCommonArray(AMFRequest.Body[0].Content).Items[0] do
-      begin
-      SetValueByPath('videoId', MovieID);
-      SetValueByPath('pageUrl', GetMovieInfoUrl);
-      end;
-    if DownloadAMF(Http, 'http://216.52.240.138/gateway.php', AMFRequest, AMFResponse) then
-      try
-        if AMFResponse.HasBody(0) then
-          if AMFResponse.Body[0].Content.FindValueByPath('error/message', ErrorMsg, TAMFString) then
-            SetLastErrorMsg(Format(ERR_SERVER_ERROR, [string(ErrorMsg)]))
-          else if AMFResponse.Body[0].Content.FindValueByPath('flv', Url, TAMFString) then
-            begin
-            MovieURL := string(Url);
-            SetPrepared(True);
-            Result := True;
-            end;
-      finally
-        AMFResponse.Free;
-        end;
-  finally
-    AMFRequest.Free;
-    end;
+  Result := '.mp3';
 end;
 
 initialization
-  RegisterDownloader(TDownloader_UStream);
+  RegisterDownloader(TDownloader_SoundCloud);
 
 end.

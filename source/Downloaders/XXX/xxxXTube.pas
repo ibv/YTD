@@ -51,6 +51,7 @@ type
       FlashVarsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -72,7 +73,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
+  REGEXP_MOVIE_TITLE = '<div\s+class="content_d">\s*<div[^>]*>\s*(?P<TITLE>.*?)</div>';
   REGEXP_FLASHVARS = '\.addVariable\s*\(\s*"(?P<VARNAME>[^"]+)"\s*,\s*"(?P<VARVALUE>[^"]+)"';
 
 { TDownloader_XTube }
@@ -104,7 +105,13 @@ end;
 
 function TDownloader_XTube.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.xtube.com/play_re.php?v=' + MovieID;
+  Result := 'http://www.xtube.com/watch.php?v=' + MovieID;
+end;
+
+function TDownloader_XTube.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod): boolean;
+begin
+  Http.Cookies.Add('cookie_warning=S');
+  Result := inherited GetMovieInfoContent(Http, Url, Page, Xml, Method);
 end;
 
 function TDownloader_XTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
@@ -117,21 +124,15 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   GetRegExpVarPairs(FlashVarsRegExp, Page, ['swfURL', 'user_id', 'video_id', 'clip_id'], [@SwfUrl, @UserID, @VideoID, @ClipID]);
-  if SwfUrl = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['swfURL']))
-  else if UserID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['user_id']))
-  else if VideoID = '' then
+  if VideoID = '' then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['video_id']))
-  else if ClipID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['clip_id']))
-  else if not DownloadPage(Http, 'http://video2.xtube.com/find_video.php?user_id=' + UserID + '&clip_id=' + ClipID + '&video_id=' + VideoID, Page) then
+  else if not DownloadPage(Http, 'http://www.xtube.com/find_video.php', 'user_id=' + UrlEncode(UserID) + '&clip_id=' + UrlEncode(ClipID) + '&video_id=' + UrlEncode(VideoID), HTTP_FORM_URLENCODING, Page) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    MovieUrl := SwfUrl + Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt);
+    MovieUrl := SwfUrl + UrlDecode(Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt));
     SetPrepared(True);
     Result := True;
     end;

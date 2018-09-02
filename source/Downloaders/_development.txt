@@ -3,6 +3,7 @@ Prot.	Zdr.naz	Zdr.URL	Nazev
 HTTP	HTML	XML	down123VideoNL
 RTMP	-	HTML	down1hdRo (<-downPrahovaHD)
 HTTP	HTML	HTML	down5min
+HTTP	HTML	HTML	downAgresori
 HTTP	HTML	HTML	downAktualne
 HTTP	HTML	HTML	downAngryAlien
 MS	HTML	HTML	downAutoSalonTV
@@ -56,6 +57,7 @@ HTTP/RTMP	XML	XML	downFreeCaster
 RTMP	XML	XML	downFreeRide
 HTTP	HTML	JSON	downFreeVideoRu
 HTTP	XML	XML	downFunnyOrDie
+HTTP	XML	XML	downG4TV
 HTTP	HTML	Nested	downGameAnyone
 HTTP	XML	XML	downGodTube
 HTTP	HTML	HTML	downGrindTV
@@ -66,6 +68,7 @@ HTTP	HTML	HTML	downIConcerts
 RTMP	XML	XML	downIDnes
 RTMP	HTML	HTML	downIHned
 HTTP	HTML	HTML	downIPrima
+HTTP	HTML	HTML	downIViewTube
 HTTP	XML	XML	downJoj
 HTTP	HTML	HTML	downKontraband
 HTTP	HTML	HTML	downKukaj
@@ -119,6 +122,7 @@ HTTP	XML	XML	downSefka (<-downJoj_Porady)
 HTTP	HTML	Nested	downSerialyCZ
 HTTP	XML	XML	downSevenLoad
 HTTP	HTML	HTML	downSnotr
+HTTP	HTML	HTML	downSoundCloud
 HTTP	XML	XML	downSpike
 HTTP	HTML	HTML	downSportCZ
 RTMP	HTML	HTML	downSportStream
@@ -133,6 +137,7 @@ RTMP	HTML	XML	downSTV
 HTTP	HTML	HTML	downSuper
 HTTP	XML	XML	downTangle
 HTTP	XML	XML	downTeacherTube
+RTMP	HTML	HTML	downTed
 MS	XML	XML	downTipovani
 HTTP	XML	XML	downTodaysBigThing
 HTTP	HTML	HTML	downTontuyau

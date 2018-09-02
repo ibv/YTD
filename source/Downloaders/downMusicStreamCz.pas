@@ -36,27 +36,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downMusicStreamCz;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE USE_RTMP}
-  // It is possible to download using both HTTP and RTMP protocols
 
 interface
 
 uses
   SysUtils, Classes, Windows,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader,
-  {$IFDEF USE_RTMP} uRtmpDownloader {$ELSE} uHttpDownloader {$ENDIF} ;
+  uDownloader, uCommonDownloader, downStream;
 
 type
-  TDownloader_MusicStreamCz = class( {$IFDEF USE_RTMP} TRtmpDownloader {$ELSE} THttpDownloader {$ENDIF} )
+  TDownloader_MusicStreamCz = class(TDownloader_Stream)
     private
     protected
-      StreamIDRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -75,15 +68,7 @@ const
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_STREAM_ID = '''id=(?P<ID>[0-9]+)';
-
 { TDownloader_MusicStreamCz }
-
-class function TDownloader_MusicStreamCz.Provider: string;
-begin
-  Result := 'Stream.cz';
-end;
 
 class function TDownloader_MusicStreamCz.UrlRegExp: string;
 begin
@@ -94,69 +79,16 @@ constructor TDownloader_MusicStreamCz.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  StreamIDRegExp := RegExCreate(REGEXP_STREAM_ID);
 end;
 
 destructor TDownloader_MusicStreamCz.Destroy;
 begin
-  RegExFreeAndNil(StreamIDRegExp);
   inherited;
 end;
 
 function TDownloader_MusicStreamCz.GetMovieInfoUrl: string;
 begin
   Result := 'http://music.stream.cz/klip/' + MovieID;
-end;
-
-function TDownloader_MusicStreamCz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const DISPATCHER_URL = 'http://cdn-dispatcher.stream.cz/getSource?id=%s&proto=' + {$IFDEF USE_RTMP} 'rtmp,rtmpe' {$ELSE} 'http' {$ENDIF} ;
-var ID, CdnID, Title, BaseUrl, Service, Path: string;
-    Xml, Dispatcher: TXmlDoc;
-    Node: TXmlNode;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(StreamIDRegExp, Page, 'ID', ID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else if not DownloadXml(Http, 'http://flash.stream.cz/get_info/' + ID, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      Xml.SaveToFile('x.xml');
-      if not Xml.NodeByPath('video', Node) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else if not (GetXmlAttr(Node, '', 'hdID', CdnID) or GetXmlAttr(Node, '', 'cdnID', CdnID)) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else if not GetXmlVar(Node, 'title', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-      else if not DownloadXml(Http, Format(DISPATCHER_URL, [CdnID]), Dispatcher) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
-      else
-        try
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
-          if Dispatcher.NodeByPath('server', Node) then
-            if GetXmlAttr(Node, '', 'baseUrl', BaseUrl) then
-              if GetXmlAttr(Node, '', 'service', Service) then
-                if GetXmlAttr(Node, '', 'path', Path) then
-                  begin
-                  SetName(Title);
-                  {$IFDEF USE_RTMP}
-                  MovieUrl := BaseUrl + '/' + Service + 'mp4:' + Path;
-                  AddRtmpDumpOption('r', BaseUrl + '/' + Service);
-                  AddRtmpDumpOption('y', 'mp4:' + Path);
-                  AddRtmpDumpOption('f', 'WIN 10,1,82,76');
-                  {$ELSE}
-                  MovieUrl := BaseUrl + '/' + Path;
-                  {$ENDIF}
-                  SetPrepared(True);
-                  Result := True;
-                  end;
-        finally
-          Dispatcher.Free;
-          end;
-    finally
-      Xml.Free;
-      end;
 end;
 
 initialization

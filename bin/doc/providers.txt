@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.83                                     (c) 2009-11 Pepak
+YouTube Downloader v0.84                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -17,6 +17,7 @@ Provider            | Protocol | Notes | URL(s)
 123Video.nl         | HTTP     |       | http://www.123video.nl/playvideos.asp?MovieID=949808
 1hd.ro              | RTMP     |       | http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
 5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
+Agresori.com        | HTTP     |       | http://www.agresori.com/13913-zkurvene-naledi.html
 Aktualne.cz         | HTTP     |       | http://aktualne.centrum.cz/video/?id=316586
 AlternativaTV.cz    | HTTP     |       | http://alternativatv.cz/video/play/12225/
                     |          |       | http://alternativatv.cz/magazin/priloha/9319/12292
@@ -88,6 +89,7 @@ FreeRide.cz         | RTMP     |       | http://www.freeride.cz/snowboard/clanky
                     |          |       | http://www.freeride.cz/snowboard/video/freeridecz-karneval-2010-by-shymonkey--9121/
 FreeVideo.ru        | HTTP     |       | http://freevideo.ru/video/view/?id=v14445361101
 FunnyOrDie.com      | HTTP     |       | http://www.funnyordie.com/videos/544d80e015/where-it-is-fortunately-not-yet
+G4TV.com            | HTTP     |       | http://www.g4tv.com/videos/53181/Duke-Nukem-Forever-Launch-Trailer/
 GameAnyone.com      | HTTP     |       | http://www.gameanyone.com/game/PC/936.html
                     |          |       | http://www.gameanyone.com/video/88319
 GodTube.com         | HTTP     |       | http://www.godtube.com/featured/video/jesus-your-co-pilot-or-leader
@@ -104,6 +106,7 @@ ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
 iPrima.cz           | HTTP     |       | http://www.iprima.cz/videoarchiv/44524/all/all
                     |          |       | http://www.iprima.cz/videoplayer/85680
                     |          | N     | http://www.iprima.cz/showjanakrause
+iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/beastie-boys-make-some-noise-(official-music-video) 
 Joj.sk              | HTTP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
                     |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
                     |          |       | http://anosefe.joj.sk/anosefe-epizody/2011-05-16-ano-sefe-.html
@@ -178,6 +181,7 @@ SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drin
 Sme.sk              | HTTP     |       | http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
                     |          |       | http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
 Snotr.com           | HTTP     |       | http://www.snotr.com/video/4280
+SoundCloud.com      | HTTP     |       | http://soundcloud.com/ubi_irina/1-campaign-menu
 Spike.com           | HTTP     |       | http://www.spike.com/video/prince-of-persia/3355664
 Sport.cz            | HTTP     |       | http://fotbal.sport.cz/clanek/183261-video-wenger-si-oddechl-rosicky-mel-jen-slaby-otres-mozku.html
 SportStream.cz      | RTMP     |       | http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
@@ -185,7 +189,7 @@ Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
 Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
 Stream.cz           | HTTP     |       | http://www.stream.cz/video/437197-meziplyn-30
-Music.Stream.cz     | HTTP     | X     | http://music.stream.cz/klip/268709-avril-lavigne-what-the-hell
+Music.Stream.cz     | HTTP     |       | http://music.stream.cz/klip/268709-avril-lavigne-what-the-hell
 StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
@@ -193,6 +197,7 @@ STV.sk              | RTMP     | 3     | http://www.stv.sk/online/archiv/spravy-
 Super.cz            | HTTP     |       | http://video.super.cz/supervidea/supervidea-doporucujeme/?videoId=3950&page=1
 Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
 TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
+Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html
 ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/penguins_dont_like_water
 TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
@@ -242,6 +247,7 @@ Dachix.com          | HTTP     | F     |
 EmpFlix.com         | HTTP     | F     |
 ExtremeTube.com     | HTTP     | F     |
 FreePornoZdarma.cz  | HTTP     | F     |
+FreeVideo.cz        | HTTP     | F     |
 Grinvi.com          | HTTP     | F     |
 HardSexTube.com     | HTTP     | F     |
 JenProMuze.cz       | HTTP     | F     |

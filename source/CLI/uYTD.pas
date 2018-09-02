@@ -337,7 +337,7 @@ end;
 procedure TYTD.DownloaderProgress(Sender: TObject; TotalSize, DownloadedSize: int64; var DoAbort: boolean);
 const EmptyProgressBar = '                             ';
       ProgressBarLength = Length(EmptyProgressBar);
-      NewLine = '    '#13;
+      NewLine = '   '#13;
 var Proc: int64;
     i, n: integer;
     ProgressBar: string;

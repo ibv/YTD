@@ -68,8 +68,8 @@ uses
 
 // http://www.spike.com/video/prince-of-persia/3355664
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*spike\.com/video/[^/]+/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*spike\.com/';
+  URLREGEXP_ID =        '.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -102,7 +102,7 @@ end;
 
 function TDownloader_Spike.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.spike.com/video/dummy/' + MovieID;
+  Result := 'http://www.spike.com/' + MovieID;
 end;
 
 function TDownloader_Spike.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
