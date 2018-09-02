@@ -1898,12 +1898,14 @@ var
     js: TlkJSONstring;
     fin: Boolean;
     ws: String;
+    quote: char;
     i,j,widx: Integer;
   begin
     skip_spc(idx);
 
-    result := xe(idx) and (txt[idx] = '"');
+    result := xe(idx) and ((txt[idx]='"') or (txt[idx]=''''));
     if not result then exit;
+    quote := txt[idx];
 
     inc(idx);
     widx := idx;
@@ -1915,7 +1917,7 @@ var
       while (widx<=length(txt)) and (j=0) do
         begin
           if (i=0) and (txt[widx]='\') then i:=widx;
-          if (j=0) and (txt[widx]='"') then j:=widx;
+          if (j=0) and (txt[widx]=quote) then j:=widx;
           inc(widx);
         end;
 // incorrect string!!!

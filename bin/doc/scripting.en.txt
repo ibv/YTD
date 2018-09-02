@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.55+                                                   (c) 2009-16 Pepak
+YTD v1.56+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -464,7 +464,6 @@ error.
             </condition>
 
 
-
 3.14 <pause>
 ------------
 
@@ -516,6 +515,7 @@ error.
 
         will output two lines, first "1" and then "2".
 
+
 3.16 <multi_json>
 -------------------
 
@@ -554,6 +554,17 @@ error.
         </multi_json>
 
         will output two lines, first "1" and then "2".
+
+
+3.17 <exit>
+------------
+
+    This command will terminate the script and return the content of the
+    element as error message.
+
+    Example:
+
+    	<exit>Address <get_var id="url"/> not recognized.</exit>
 
 
 
@@ -957,3 +968,17 @@ Example:
         E.g., if "path" is "some/tag", it will search for an element "tag"
         which must lie inside element "some" which lies inside the root
         of the JSON document: "{ 'some': { 'tag': 'data' } }"
+
+
+4.18 <get_option>
+-------------------
+
+    This function will read a value from YTD options related to the current
+    provider.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - the name of the option, i.e. the name of the XML
+        node which carries the option's value.
+      - "default" (optional) - if provided, serves as the default value of
+        the option.

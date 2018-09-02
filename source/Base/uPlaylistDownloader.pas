@@ -190,14 +190,8 @@ begin
 end;
 
 function TPlaylistDownloader.Prepare: boolean;
-const
-  IndexOptFormats: array[TIndexForNames] of string = (
-    '%0:s',
-    '%1:s %0:s',
-    '%0:s %1:s'
-  );
 var
-  i, n: integer;
+  i: integer;
   IndexOpt: TIndexForNames;
 begin
   Result := inherited Prepare;
@@ -205,17 +199,14 @@ begin
     begin
     IndexOpt := Options.AddIndexToNames;
     if IndexOpt <> ifnNone then
-      begin
-      n := Length(IntToStr(NameList.Count));
       for i := 0 to Pred(NameList.Count) do
-        NameList[i] := Format(IndexOptFormats[IndexOpt], [NameList[i], Format(_('[%*.*d of %d]'), [n, n, i+1, NameList.Count])]);
-      end;
+        NameList[i] := ApplyIndexToName(NameList[i], i, NameList.Count);
     end;
 end;
 
 function TPlaylistDownloader.AddIndexToNames: boolean;
 begin
-  Result := True;
+  Result := NameList.Count > 1;
 end;
 
 end.

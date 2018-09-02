@@ -34,79 +34,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxFreeVideoCz;
+unit uDummyDownloader;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
+  uPCRE, uXml, uHttp, HttpSend, blcksock,
+  uDownloader, uCommonDownloader;
 
 type
-  TDownloader_FreeVideoCz = class(THttpDownloader)
+  TDummyDownloader = class(TCommonDownloader)
     private
     protected
-      function GetMovieInfoUrl: string; override;
     public
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
+      function Prepare: boolean; override;
+      function Download: boolean; override;
     end;
 
 implementation
 
 uses
-  uStringConsts,
-  uDownloadClassifier,
-  uMessages;
+  uLanguages,
+  uMessages,
+  uSystem;
 
-const
-  URLREGEXP_BEFORE_ID = 'freevideo\.cz/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
-  URLREGEXP_AFTER_ID =  '';
+{ TDummyDownloader }
 
-const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H2;
-  REGEXP_MOVIE_URL =    '\bclip\s*:\s*\{\s*url\s*:\s*"(?P<URL>https?://.+?)"';
-
-{ TDownloader_FreeVideoCz }
-
-class function TDownloader_FreeVideoCz.Provider: string;
+function TDummyDownloader.Prepare: boolean;
 begin
-  Result := 'FreeVideo.cz';
+  Result := False;
 end;
 
-class function TDownloader_FreeVideoCz.UrlRegExp: string;
+function TDummyDownloader.Download: boolean;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := False;
 end;
-
-constructor TDownloader_FreeVideoCz.Create(const AMovieID: string);
-begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-end;
-
-destructor TDownloader_FreeVideoCz.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
-  inherited;
-end;
-
-function TDownloader_FreeVideoCz.GetMovieInfoUrl: string;
-begin
-  Result := 'http://www.freevideo.cz/' + MovieID;
-end;
-
-initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_FreeVideoCz);
-  {$ENDIF}
 
 end.

@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
   HttpSend, SynaUtil, SynaCode,
-  uOptions, uPCRE, uXML, uAMF, uFunctions,
+  uOptions, uPCRE, uXML, uAMF, uFunctions, uLanguages,
   {$IFDEF GUI}
   guiDownloaderOptions,
   {$ENDIF}
@@ -107,6 +107,7 @@ type
       function GetFileName: string; virtual;
       function GetContentUrl: string; virtual;
       procedure SetFileName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ApplyIndexToName(const Name: string; Index, Count: integer): string;
       property UnpreparedName: string read fName;
       property LastURL: string read fLastUrl;
       property Referer: string read fReferer write fReferer;
@@ -870,6 +871,27 @@ end;
 function TDownloader.UrlEncode(const Text: string): string;
 begin
   Result := {$IFDEF UNICODE} string {$ENDIF} (EncodeUrl( {$IFDEF UNICODE} AnsiString {$ENDIF} (Text)));
+end;
+
+function TDownloader.ApplyIndexToName(const Name: string; Index, Count: integer): string;
+const
+  IndexOptFormats: array[TIndexForNames] of string = (
+    '%0:s',
+    '%1:s %0:s',
+    '%0:s %1:s'
+  );
+var
+  IndexOpt: TIndexForNames;
+  n: integer;
+begin
+  IndexOpt := Options.AddIndexToNames;
+  if IndexOpt <> ifnNone then
+    begin
+    n := Length(IntToStr(Count));
+    Result := Format(IndexOptFormats[IndexOpt], [Name, Format(_('[%*.*d of %d]'), [n, n, Index+1, Count])]);
+    end
+  else
+    Result := Name;
 end;
 
 function TDownloader.Base64Decode(const Text: string): string;

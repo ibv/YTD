@@ -80,6 +80,7 @@ type
       function GetNodeContent(Node: TXmlNode; const Path, AttrName, AttrValue: string; Vars: TScriptVariables): string; overload;
       procedure ProcessScript(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessDebug(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessExit(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessSetVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
@@ -103,6 +104,8 @@ type
       function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType): string; overload;
       function ProcessGetJsonVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessGetJsonVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
+      function ProcessGetOption(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
+      function ProcessGetOption(Node: TXmlNode; Vars: TScriptVariables): string; overload;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string; overload;
@@ -134,6 +137,7 @@ type
       function First: boolean; override;
       function Next: boolean; override;
       {$ENDIF}
+      function CurrentProvider: string;
     end;
 
 implementation
@@ -419,6 +423,8 @@ begin
         ProcessIf(ChildNode, Vars)
       else if ChildNode.Name = 'pause' then
         ProcessPause(ChildNode, Vars)
+      else if ChildNode.Name = 'exit' then
+        ProcessExit(ChildNode, Vars)
       else
         ScriptError(ERR_SCRIPTS_UNKNOWN_COMMAND, ChildNode);
     end;
@@ -711,6 +717,8 @@ begin
             Result := Result + ProcessGetXmlVar(ChildNode, Vars, xrtXml)
           else if ChildNode.Name = 'get_json_var' then
             Result := Result + ProcessGetJsonVar(ChildNode, Vars)
+          else if ChildNode.Name = 'get_option' then
+            Result := Result + ProcessGetOption(ChildNode, Vars)
           else if ChildNode.Name = 'download_page' then
             Result := Result + ProcessDownloadPage(ChildNode, Vars)
           else if ChildNode.Name = 'regexp' then
@@ -949,6 +957,30 @@ begin
     Result := JSONValue(DataNode);
 end;
 
+function TScriptedDownloader.ProcessGetOption(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
+begin
+  try
+    Value := ProcessGetOption(Node, Vars);
+    Result := True;
+  except
+    Result := False;
+    end;
+end;
+
+function TScriptedDownloader.ProcessGetOption(Node: TXmlNode; Vars: TScriptVariables): string;
+var
+  Name, Default: string;
+begin
+  Name := XmlAttribute(Node, 'id');
+  if Name = '' then
+    ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
+  else if not Options.ReadProviderOption(CurrentProvider, Name, Result) then
+    if not XmlAttribute(Node, 'default', Default) then
+      ScriptError(ERR_SCRIPTS_VARIABLE_NOT_FOUND, Node)
+    else
+      Result := Default;
+end;
+
 function TScriptedDownloader.CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
 var
   Options: TRegExpOptions;
@@ -990,6 +1022,12 @@ begin
     ScriptError(ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY, Node)
   else
     Result := RegExCreate(Pattern, Options);
+end;
+
+function TScriptedDownloader.CurrentProvider: string;
+begin
+  if not GetXmlAttr(ScriptNode, '', 'provider', Result) then
+    Result := Provider;
 end;
 
 function TScriptedDownloader.ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
@@ -1301,6 +1339,14 @@ begin
     end;
 end;
 
+procedure TScriptedDownloader.ProcessExit(Node: TXmlNode; Vars: TScriptVariables);
+var
+  Content: string;
+begin
+  Content := ProcessNodeContent(Node, Vars);
+  ScriptError(Content, nil);
+end;
+
 function TScriptedDownloader.ProcessDecodeHtml(Node: TXmlNode; Vars: TScriptVariables): string;
 begin
   Result := HtmlDecode(ProcessNodeContent(Node, Vars));
@@ -1430,8 +1476,9 @@ var
 begin
   inherited;
   if Value <> '' then
-    for i := 0 to Pred(DownloaderCount) do
-      Downloaders[i].Name := Format('%s [%d]', [Value, i+1]);
+    if DownloaderCount > 1 then
+      for i := 0 to Pred(DownloaderCount) do
+        Downloaders[i].Name := ApplyIndexToName(Value, i, DownloaderCount);
 end;
 
 initialization

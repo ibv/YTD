@@ -55,7 +55,9 @@ type
       IFrameRegExp: TRegExp;
       JavaScriptRegExp: TRegExp;
       DivRegExp: TRegExp;
+      HashRegExp: TRegExp;
       IFrameFromAjaxRegExp: TRegExp;
+      AjaxUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function FindNestedUrl(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean; override;
@@ -89,6 +91,8 @@ const
   REGEXP_DIV_URL = '<div\b[^>]*\sclass="video-player">.*?<span\b[^>]*\sdata-url="(?P<URL>(https?://[^/]+)?/ivysilani/[^"]+)"';
   REGEXP_JAVASCRIPT_ID = '\shref="javascript:void\s*\(\s*q\s*=\s*''(?P<ID>.+?)''';
   REGEXP_JAVASCRIPT_URL = '"videoPlayerUrl"\s*:\s*"(?P<URL>.+?)"';
+  REGEXP_HASH = '\bmedia_ivysilani\s*:\s*\{\s*hash\s*:\s*"(?P<HASH>.*?)"';
+  REGEXP_AJAXURL = 'CT_VideoPlayer\.config\.ajaxUrl\s*=\s*''(?P<URL>[^'']+)''';
 
 { TDownloader_CT_wrapper }
 
@@ -111,6 +115,8 @@ begin
   DivRegExp := RegExCreate(REGEXP_DIV_URL);
   JavaScriptRegExp := RegExCreate(REGEXP_JAVASCRIPT_ID);
   IFrameFromAjaxRegExp := RegExCreate(REGEXP_JAVASCRIPT_URL);
+  HashRegExp := RegExCreate(REGEXP_HASH);
+  AjaxUrlRegExp := RegExCreate(REGEXP_AJAXURL);
 end;
 
 destructor TDownloader_CT_wrapper.Destroy;
@@ -121,6 +127,8 @@ begin
   RegExFreeAndNil(DivRegExp);
   RegExFreeAndNil(JavaScriptRegExp);
   RegExFreeAndNil(IFrameFromAjaxRegExp);
+  RegExFreeAndNil(HashRegExp);
+  RegExFreeAndNil(AjaxUrlRegExp);
 end;
 
 function TDownloader_CT_wrapper.GetMovieInfoUrl: string;
@@ -140,16 +148,21 @@ end;
 
 function TDownloader_CT_wrapper.GetUrlFromJS(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
 var
-  ID, IFramePage: string;
+  ID, AjaxUrl, IFramePage: string;
 begin
   Result := False;
   if GetRegExpVar(JavaScriptRegExp, Page, 'ID', ID) and (ID <> '') then
-    if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + {$IFDEF UNICODE} AnsiString {$ENDIF} (ID), HTTP_FORM_URLENCODING_UTF8, IFramePage, peUtf8) then
+    begin
+    if not GetRegExpVar(AjaxUrlRegExp, Page, 'URL', AjaxUrl) then
+      AjaxUrl := '/ct24/ajax/';
+    AjaxUrl := GetRelativeUrl(GetMovieInfoUrl, HtmlDecode(AjaxUrl));
+    if DownloadPage(Http, AjaxUrl, 'cmd=getVideoPlayerUrl&q=' + {$IFDEF UNICODE} AnsiString {$ENDIF} (UrlEncode(ID)), HTTP_FORM_URLENCODING_UTF8, IFramePage, peUtf8) then
       if GetRegExpVar(IFrameFromAjaxRegExp, IFramePage, 'URL', Url) then
         begin
         Url := GetRelativeUrl(GetMovieInfoUrl, JSDecode(Url));
         Result := True;
         end;
+    end;
 end;
 
 function TDownloader_CT_wrapper.GetUrlFromDIV(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
@@ -157,17 +170,25 @@ begin
   Result := False;
   if GetRegExpVar(DivRegExp, Page, 'URL', Url) and (Url <> '') then
     begin
-    Url := UrlEncode(UrlDecode(HtmlDecode(GetRelativeUrl(GetMovieInfoUrl, Url))));
+    Url := HtmlDecode(GetRelativeUrl(GetMovieInfoUrl, Url));
     Result := True;
     end;
 end;
 
 function TDownloader_CT_wrapper.FindNestedUrl(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
+var
+  Hash: string;
 begin
   Result := GetUrlFromIFRAME(Page, PageXml, Http, Url)
          or GetUrlFromJS(Page, PageXml, Http, Url)
          or GetUrlFromDIV(Page, PageXml, Http, Url)
          ;
+  if Result then
+    begin
+    Referer := GetMovieInfoUrl;
+    if GetRegExpVar(HashRegExp, Page, 'HASH', Hash) then
+      Url := Url + '&hash=' + UrlEncode(Hash);
+    end;
 end;
 
 initialization

@@ -51,19 +51,12 @@ uses
       guiOptionsVCL_Joj,
     {$ENDIF}
   {$ENDIF}
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uDummyDownloader;
 
 type
-  TDownloader_Joj = class(TRtmpDownloader)
+  TDownloader_Joj = class(TDummyDownloader)
     private
     protected
-      Server: string;
-      MovieIdRegExp: TRegExp;
-    protected
-      function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      function UseTokenAsRtmpToken: boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -71,8 +64,6 @@ type
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
       {$ENDIF}
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
     end;
 
 const
@@ -95,7 +86,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_ID = '<div\b[^>]*\sdata-pageid="(?P<PAGEID>\d+)"[^>]*data-id="(?P<ID>\d+)"';
+  REGEXP_MOVIE_ID = '<div\b[^>]*\sdata-id="(?P<ID>[a-f0-9-]+)"[^>]*\sdata-pageid="(?P<PAGEID>[A-Za-z0-9+/=]+)"[^>]*';
 
 { TDownloader_Joj }
 
@@ -120,107 +111,6 @@ begin
   Result := TFrameDownloaderOptionsPage_Joj;
 end;
 {$ENDIF}
-
-constructor TDownloader_Joj.Create(const AMovieID: string);
-begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  Server := OPTION_JOJ_SERVER_DEFAULT;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieIdRegExp := RegExCreate(REGEXP_MOVIE_ID);
-end;
-
-destructor TDownloader_Joj.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIdRegExp);
-  inherited;
-end;
-
-function TDownloader_Joj.GetMovieInfoUrl: string;
-begin
-  Result := MovieID;
-end;
-
-function TDownloader_Joj.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Xml: TXmlDoc;
-    Files: TXmlNode;
-    VideoID, PageID, BestPath, Path, sQuality, Authentication: string;
-    i, j, BestQuality, Quality: integer;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVars(MovieIdRegExp, Page, ['ID', 'PAGEID'], [@VideoID, @PageID]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if VideoID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['videoId']))
-  else if PageID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['pageId']))
-  else if not DownloadXml(Http, 'http://www.joj.sk/services/Video.php?clip=' + VideoID + '&pageId=' + PageID, Xml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      //if GetXmlAttr(Xml, '', 'title', Title) then
-      //  Name := Title;
-      if not XmlNodeByPath(Xml, 'files', Files) then
-        SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-      else
-        begin
-        BestQuality := -1;
-        BestPath := '';
-        for i := 0 to Pred(Files.NodeCount) do
-          if Files.Nodes[i].Name = 'file' then
-            if GetXmlAttr(Files.Nodes[i], '', 'path', Path) then
-              begin
-              Quality := 0;
-              if GetXmlAttr(Files.Nodes[i], '', 'label', sQuality) then
-                for j := 1 to Length(sQuality) do
-                  if CharInSet(sQuality[j], ['0'..'9']) then
-                    Quality := 10 * Quality + Ord(sQuality[j]) - Ord('0')
-                  else
-                    Break;
-              if Quality > BestQuality then
-                begin
-                BestPath := Path;
-                BestQuality := Quality;
-                end;
-              end;
-        if BestPath <> '' then
-          begin
-          Authentication := ''; 
-            {$IFDEF DELPHI6_UP}
-            {$MESSAGE WARN 'TODO: Ziskat authentication'}
-            {$ENDIF}
-            // authentication prijde ze serveru jako soucast packetu, kterym
-            // server odpovida na RTMP Connect(). Otazka zni, jak se k tomu dostat,
-            // a kdyz uz se k tomu dostanu, jak pomoci toho modifikovat prikaz
-            // RTMP Play().
-          Self.RtmpUrl := 'rtmp://' + Server;
-          Self.Playpath := BestPath + '?auth=' + HexEncode(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (Authentication + Self.Token)));
-          MovieUrl := RtmpUrl + BestPath;
-          SetPrepared(True);
-          Result := True;
-          end;
-        end;
-    finally
-      FreeAndNil(Xml);
-      end;
-end;
-
-procedure TDownloader_Joj.SetOptions(const Value: TYTDOptions);
-var
-  s: string;
-begin
-  inherited;
-  s := Value.ReadProviderOptionDef(Provider, OPTION_JOJ_SERVER, OPTION_JOJ_SERVER_DEFAULT);
-  if s <> '' then
-    Server := s;
-end;
-
-function TDownloader_Joj.UseTokenAsRtmpToken: boolean;
-begin
-  Result := False;
-end;
 
 initialization
   RegisterDownloader(TDownloader_Joj);

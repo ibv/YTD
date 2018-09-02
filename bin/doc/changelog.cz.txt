@@ -1,11 +1,43 @@
 ﻿______________________________________________________________________________
 
-YTD v1.55                                                    (c) 2009-16 Pepak
+YTD v1.56                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.56:
+
+    * Noví poskytovatelé:
+      - Blesk.cz
+      - Bondagezilla.com (porno)
+      - CETV.sk
+      - Cum.sk
+      - ITNSource.com
+      - Lidovky.cz
+      - Video.Disney.cz
+
+    * Aktualizovaní poskytovatelé:
+      - CeskaTelevize.cz
+      - FreeVideo.cz
+      - iDNES.cz
+      - iPrima.cz
+      - Joj.sk
+      - Ocko.tv
+
+    * Opraveno přidávání pořadového čísla videa u skriptovaných stahovačů:
+      Nyní se stejně jako u playlistů používá nastavení z konfigurace pro
+      rozhodnutí, jestli a kam pořadí videa umístit. Navíc se u obou typů 
+      stahovačů číslování použije jen v případě, že je víc než jedno video,
+      tzn. nebude docházet k zbytečným pojmenováním "Video [1].mp4", když
+      by stačilo jednoduché "Video.mp4".
+
+    * Nové skriptovací příkazy:
+      <exit> ......... detaily viz dokumentace jazyka, kapitola 3.17.
+      <get_option> ... detaily viz dokumentace jazyka, kapitola 4.18.
+
+
 
   v1.55:
 

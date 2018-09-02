@@ -1,11 +1,42 @@
 ﻿______________________________________________________________________________
 
-YTD v1.55                                                    (c) 2009-16 Pepak
+YTD v1.56                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.56:
+
+    * New providers:
+      - Blesk.cz
+      - Bondagezilla.com (porn)
+      - CETV.sk
+      - Cum.sk
+      - ITNSource.com
+      - Lidovky.cz
+      - Video.Disney.cz
+
+    * Updated providers:
+      - CeskaTelevize.cz
+      - FreeVideo.cz
+      - iDNES.cz
+      - iPrima.cz
+      - Joj.sk
+      - Ocko.tv
+
+    * Fixed the addition of video number with scripted downloaders. Now it,
+      consistently with the behavior of playlist downloaders, respects the
+      settings in the configuration options as to whether a video number
+      should be added (and where). Also, both types now only add the number
+      if it is needed, i.e. if there is more than one video.
+
+    * New scripting commands:
+      <exit> ......... details in the documentation, chapter 3.17.
+      <get_option> ... details in the documentation, chapter 4.18.
+
+
 
   v1.55:
 

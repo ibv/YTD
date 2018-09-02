@@ -71,6 +71,7 @@ type
       StreamUrlRegExp: TRegExp;
       StreamTitleRegExp: TRegExp;
       StreamTitle2RegExp: TRegExp;
+      StreamTitleFromPageRegExp: TRegExp;
       IFrameUrlRegExp: TRegExp;
       {$IFDEF MULTIDOWNLOADS}
       property NameList: TStringList read fNameList;
@@ -116,6 +117,7 @@ const
   REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
+  REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
 
 class function TDownloader_CT.Provider: string;
 begin
@@ -145,6 +147,7 @@ begin
   StreamUrlRegExp := RegExCreate(REGEXP_STREAM_URL);
   StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE);
   StreamTitle2RegExp := RegExCreate(REGEXP_STREAM_TITLE_BETTER);
+  StreamTitleFromPageRegExp := RegExCreate(REGEXP_STREAM_TITLEFROMPAGE);
   IFrameUrlRegExp := RegExCreate(REGEXP_IFRAME_URL);
   Referer := GetMovieInfoUrl;
 end;
@@ -156,6 +159,7 @@ begin
   RegExFreeAndNil(StreamUrlRegExp);
   RegExFreeAndNil(StreamTitleRegExp);
   RegExFreeAndNil(StreamTitle2RegExp);
+  RegExFreeAndNil(StreamTitleFromPageRegExp);
   RegExFreeAndNil(IFrameUrlRegExp);
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fNameList);
@@ -216,6 +220,9 @@ begin
     Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title)));
     if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
       Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
+    if Title = '' then
+      if not GetRegExpVar(StreamTitleFromPageRegExp, Page, 'TITLE', Title) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
     {$IFDEF MULTIDOWNLOADS}
     for i := 0 to Pred(Length(Urls)) do
       begin

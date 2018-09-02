@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: YTD 1.55\n"
-"POT-Creation-Date: 2016-01-24 17:16\n"
-"PO-Revision-Date: 2016-01-24 17:16\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2016-02-21 13:37\n"
+"PO-Revision-Date: 2016-02-21 13:37\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1988,181 +1988,181 @@ msgid "checking..."
 msgstr ""
 
 #. Programmer's name for it: sxeErrorCalcStreamLength
-#: Lib/NativeXml/NativeXml.pas:1282
+#: Lib/NativeXML/NativeXml.pas:1282
 msgid "Error while calculating streamlength"
 msgstr ""
 
 #. Programmer's name for it: sxeMissingDataInBinaryStream
-#: Lib/NativeXml/NativeXml.pas:1283
+#: Lib/NativeXML/NativeXml.pas:1283
 msgid "Missing data in binary stream"
 msgstr ""
 
 #. Programmer's name for it: sxeMissingElementName
-#: Lib/NativeXml/NativeXml.pas:1284
+#: Lib/NativeXML/NativeXml.pas:1284
 msgid "Missing element name"
 msgstr ""
 
 #. Programmer's name for it: sxeMissingCloseTag
-#: Lib/NativeXml/NativeXml.pas:1285
+#: Lib/NativeXML/NativeXml.pas:1285
 msgid "Missing close tag in element %s"
 msgstr ""
 
 #. Programmer's name for it: sxeMissingDataAfterGreaterThan
-#: Lib/NativeXml/NativeXml.pas:1286
+#: Lib/NativeXML/NativeXml.pas:1286
 msgid "Missing data after \"<\" in element %s"
 msgstr ""
 
 #. Programmer's name for it: sxeMissingLessThanInCloseTag
-#: Lib/NativeXml/NativeXml.pas:1287
+#: Lib/NativeXML/NativeXml.pas:1287
 msgid "Missing \">\" in close tag of element "
 "%s"
 msgstr ""
 
 #. Programmer's name for it: sxeIncorrectCloseTag
-#: Lib/NativeXml/NativeXml.pas:1288
+#: Lib/NativeXML/NativeXml.pas:1288
 msgid "Incorrect close tag in element %s"
 msgstr ""
 
 #. Programmer's name for it: sxeIllegalCharInNodeName
-#: Lib/NativeXml/NativeXml.pas:1289
+#: Lib/NativeXML/NativeXml.pas:1289
 msgid "Illegal character in node name \"%s\""
 msgstr ""
 
 #. Programmer's name for it: sxeMoreThanOneRootElement
-#: Lib/NativeXml/NativeXml.pas:1290
+#: Lib/NativeXML/NativeXml.pas:1290
 msgid "More than one root element found in "
 "xml"
 msgstr ""
 
 #. Programmer's name for it: sxeMoreThanOneDeclaration
-#: Lib/NativeXml/NativeXml.pas:1291
+#: Lib/NativeXML/NativeXml.pas:1291
 msgid "More than one xml declaration found in "
 "xml"
 msgstr ""
 
 #. Programmer's name for it: sxeDeclarationMustBeFirstElem
-#: Lib/NativeXml/NativeXml.pas:1292
+#: Lib/NativeXML/NativeXml.pas:1292
 msgid "Xml declaration must be first element"
 msgstr ""
 
 #. Programmer's name for it: sxeMoreThanOneDoctype
-#: Lib/NativeXml/NativeXml.pas:1293
+#: Lib/NativeXML/NativeXml.pas:1293
 msgid "More than one doctype declaration found in "
 "root"
 msgstr ""
 
 #. Programmer's name for it: sxeDoctypeAfterRootElement
-#: Lib/NativeXml/NativeXml.pas:1294
+#: Lib/NativeXML/NativeXml.pas:1294
 msgid "Doctype declaration found after root "
 "element"
 msgstr ""
 
 #. Programmer's name for it: sxeNoRootElement
-#: Lib/NativeXml/NativeXml.pas:1295
+#: Lib/NativeXML/NativeXml.pas:1295
 msgid "No root element found in xml"
 msgstr ""
 
 #. Programmer's name for it: sxeIllegalElementType
-#: Lib/NativeXml/NativeXml.pas:1296
+#: Lib/NativeXML/NativeXml.pas:1296
 msgid "Illegal element type"
 msgstr ""
 
 #. Programmer's name for it: sxeCDATAInRoot
-#: Lib/NativeXml/NativeXml.pas:1297
+#: Lib/NativeXML/NativeXml.pas:1297
 msgid "No CDATA allowed in root"
 msgstr ""
 
 #. Programmer's name for it: sxeRootElementNotDefined
-#: Lib/NativeXml/NativeXml.pas:1298
+#: Lib/NativeXML/NativeXml.pas:1298
 msgid "XML root element not defined."
 msgstr ""
 
 #. Programmer's name for it: sxeCodecStreamNotAssigned
-#: Lib/NativeXml/NativeXml.pas:1299
+#: Lib/NativeXML/NativeXml.pas:1299
 msgid "Encoding stream unassigned"
 msgstr ""
 
 #. Programmer's name for it: sxeUnsupportedEncoding
-#: Lib/NativeXml/NativeXml.pas:1300
+#: Lib/NativeXML/NativeXml.pas:1300
 msgid "Unsupported string encoding"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotReadCodecForWriting
-#: Lib/NativeXml/NativeXml.pas:1301
+#: Lib/NativeXML/NativeXml.pas:1301
 msgid "Cannot read from a conversion stream opened for "
 "writing"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotWriteCodecForReading
-#: Lib/NativeXml/NativeXml.pas:1302
+#: Lib/NativeXML/NativeXml.pas:1302
 msgid "Cannot write to an UTF stream opened for "
 "reading"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotReadMultipeChar
-#: Lib/NativeXml/NativeXml.pas:1303
+#: Lib/NativeXML/NativeXml.pas:1303
 msgid "Cannot read multiple chars from conversion stream at "
 "once"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotPerformSeek
-#: Lib/NativeXml/NativeXml.pas:1304
+#: Lib/NativeXML/NativeXml.pas:1304
 msgid "Cannot perform seek on codec stream"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotSeekBeforeReadWrite
-#: Lib/NativeXml/NativeXml.pas:1305
+#: Lib/NativeXML/NativeXml.pas:1305
 msgid "Cannot seek before reading or writing in conversion "
 "stream"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotSeek
-#: Lib/NativeXml/NativeXml.pas:1306
+#: Lib/NativeXML/NativeXml.pas:1306
 msgid "Cannot perform seek in conversion stream"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotWriteToOutputStream
-#: Lib/NativeXml/NativeXml.pas:1307
+#: Lib/NativeXML/NativeXml.pas:1307
 msgid "Cannot write to output stream"
 msgstr ""
 
 #. Programmer's name for it: sxeXmlNodeNotAssigned
-#: Lib/NativeXml/NativeXml.pas:1308
+#: Lib/NativeXML/NativeXml.pas:1308
 msgid "XML Node is not assigned"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotConverToBool
-#: Lib/NativeXml/NativeXml.pas:1309
+#: Lib/NativeXML/NativeXml.pas:1309
 msgid "Cannot convert value to bool"
 msgstr ""
 
 #. Programmer's name for it: sxeCannotConvertToFloat
-#: Lib/NativeXml/NativeXml.pas:1310
+#: Lib/NativeXML/NativeXml.pas:1310
 msgid "Cannot convert value to float"
 msgstr ""
 
 #. Programmer's name for it: sxeSignificantDigitsOutOfRange
-#: Lib/NativeXml/NativeXml.pas:1311
+#: Lib/NativeXML/NativeXml.pas:1311
 msgid "Significant digits out of range"
 msgstr ""
 
 #. Programmer's name for it: sxwIllegalVarType
-#: Lib/NativeXml/NativeXmlObjectStorage.pas:227
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:227
 msgid "Illegal variant type"
 msgstr ""
 
 #. Programmer's name for it: sxrUnregisteredClassType
-#: Lib/NativeXml/NativeXmlObjectStorage.pas:228
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:228
 msgid "Unregistered classtype encountered in "
 msgstr ""
 
 #. Programmer's name for it: sxrInvalidPropertyValue
-#: Lib/NativeXml/NativeXmlObjectStorage.pas:229
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:229
 msgid "Invalid property value"
 msgstr ""
 
 #. Programmer's name for it: sxwInvalidMethodName
-#: Lib/NativeXml/NativeXmlObjectStorage.pas:230
+#: Lib/NativeXML/NativeXmlObjectStorage.pas:230
 msgid "Invalid method name"
 msgstr ""
 
