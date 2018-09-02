@@ -65,7 +65,7 @@ uses
 
 // http://www.metropol.cz/porady/prazeni/282/archiv/
 const
-  URLREGEXP_BEFORE_ID = 'metropol\.cz/';
+  URLREGEXP_BEFORE_ID = 'metropol\.cz/(?!zpravy/)';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 

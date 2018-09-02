@@ -1,11 +1,61 @@
 ______________________________________________________________________________
 
-YTD v1.00                                                    (c) 2009-12 Pepak
+YTD v1.02                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.02:
+
+    * A bug in Markiza.sk caused an exception on unknown URLs.
+
+
+
+  v1.01:
+
+    * New provider: LevelTV.Hrej.cz.
+      The provider is supposed to require a password, but in fact it doesn't.
+      When this is fixed, you'll need to provide the password in the settings
+      dialog.
+
+    * New provider: NHL.com.
+      Something gets downloaded, I just don't know if it is what I requested.
+
+    * More new providers:
+      - 3news.co.nz
+      - Ancensored.com
+      - Archive.org
+      - Casting.xxx (porn)
+      - Gavin.xxx (porn)
+      - LenkaFilipova.cz
+      - Online.Hokej.cz
+      - Zapiks.fr
+      - ZlutySnih.cz (porn)
+
+    * DailyMotion.com: The full version now downloads videos marked as adult.
+
+    * KeezMovies.com: Support for the embedded version.
+
+    * MetaCafe.com: HTTP-based streams work again. RTMP-based streams are not
+      supported at all yet.
+
+    * More updated providers:
+      - FreeCaster.tv
+      - JenProMuze.cz
+      - Metropol.cz
+
+    * The default configuration file now contains conversion settings for use
+      with FFmpeg (http://ffmpeg.org/) (thanks ffmpegmann). The easiest way
+      to get a new configuration file is to delete the old one, then will YTD
+      create a new default config.
+
+    * Removed the double file extension with some providers ("movie.flv.flv").
+
+    * GUI: The setting to disable subtitle conversion didn't work.
+
+
 
   v1.00:
 

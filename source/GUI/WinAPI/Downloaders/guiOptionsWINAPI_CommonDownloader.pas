@@ -54,6 +54,10 @@ type
       SubForm: TFrameDownloaderOptionsPage;
       LabelSecureToken: THandle;
       EditSecureToken: THandle;
+      LabelUserName: THandle;
+      EditUserName: THandle;
+      LabelPassword: THandle;
+      EditPassword: THandle;
     private
       fDownloaderClass: TDownloaderClass;
     private
@@ -89,6 +93,10 @@ const
   IDC_CHECKBOX_LIVESTREAM = 1004;
   IDC_LABEL_SECURETOKEN = 1005;
   IDC_EDIT_SECURETOKEN = 1006;
+  IDC_LABEL_USERNAME = 1007;
+  IDC_EDIT_USERNAME = 1008;
+  IDC_LABEL_PASSWORD = 1009;
+  IDC_EDIT_PASSWORD = 1010;
 
 { TFrameDownloaderOptionsPageCommon }
 
@@ -108,6 +116,10 @@ var
 begin
   EditSecureToken := GetDlgItem(Self.Handle, IDC_EDIT_SECURETOKEN);
   LabelSecureToken := GetDlgItem(Self.Handle, IDC_LABEL_SECURETOKEN);
+  EditUserName := GetDlgItem(Self.Handle, IDC_EDIT_USERNAME);
+  LabelUserName := GetDlgItem(Self.Handle, IDC_LABEL_USERNAME);
+  EditPassword := GetDlgItem(Self.Handle, IDC_EDIT_PASSWORD);
+  LabelPassword := GetDlgItem(Self.Handle, IDC_LABEL_PASSWORD);
   ShowWindow(GetDlgItem(Self.Handle, IDC_LABEL_EMPTYAREA), SW_HIDE);
   FillChar(ControlPlacement, Sizeof(ControlPlacement), 0);
   ControlPlacement.length := Sizeof(ControlPlacement);
@@ -140,6 +152,10 @@ procedure TFrameDownloaderOptionsPageCommon.DestroyObjects;
 begin
   EditSecureToken := 0;
   LabelSecureToken := 0;
+  EditUserName := 0;
+  LabelUserName := 0;
+  EditPassword := 0;
+  LabelPassword := 0;
   FreeAndNil(SubForm);
 end;
 
@@ -154,6 +170,8 @@ begin
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES), [akLeft, akTop, akRight]);
   SetControlAnchors(GetDlgItem(Self.Handle, IDC_CHECKBOX_LIVESTREAM), [akLeft, akTop, akRight]);
   SetControlAnchors(EditSecureToken, [akLeft, akTop, akRight]);
+  SetControlAnchors(EditUserName, [akLeft, akTop, akRight]);
+  SetControlAnchors(EditPassword, [akLeft, akTop, akRight]);
 end;
 
 function TFrameDownloaderOptionsPageCommon.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
@@ -227,6 +245,11 @@ begin
     CheckDlgButton(Self.Handle, IDC_CHECKBOX_LIVESTREAM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features)]);
   if Supports(dfRequireSecureToken, [IDC_LABEL_SECURETOKEN, IDC_EDIT_SECURETOKEN]) then
     SetWindowText(EditSecureToken, PChar(Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, '')));
+  if Supports(dfUserLogin, [IDC_LABEL_USERNAME, IDC_EDIT_USERNAME, IDC_LABEL_PASSWORD, IDC_EDIT_PASSWORD]) then
+    begin
+    SetWindowText(EditUserName, PChar(Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_USERNAME, '')));
+    SetWindowText(EditPassword, PChar(Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_PASSWORD, '')));
+    end;
   if SubForm <> nil then
     begin
     SubForm.Options := Options;
@@ -247,7 +270,7 @@ begin
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, False);
       end;
     if Supports(dfSubtitlesConvert) then
-      case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_SUBTITLESENABLED) of
+      case IsDlgButtonChecked(Self.Handle, IDC_CHECKBOX_CONVERTSUBTITLES) of
         BST_CHECKED:
           Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, True);
         BST_UNCHECKED:
@@ -264,6 +287,11 @@ begin
       end;
   if Supports(dfRequireSecureToken) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPSECURETOKEN, GetWindowTextAsString(EditSecureToken));
+  if Supports(dfUserLogin) then
+    begin
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_USERNAME, GetWindowTextAsString(EditUserName));
+    Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_PASSWORD, GetWindowTextAsString(EditPassword));
+    end;
   if SubForm <> nil then
     begin
     SubForm.Options := Options;

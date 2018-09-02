@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit down3NewsCoNz;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,15 +42,12 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_3NewsCoNz = class(THttpDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -63,72 +60,61 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-// http://torrentfreak.blip.tv/
+// http://www.3news.co.nz/Nearly-there-for-trans-Tasman-rowers-Team-Gallagher/tabid/309/articleID/239458/Default.aspx
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  URLREGEXP_BEFORE_ID = '3news\.co\.nz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URL =    '\bvar\s+video\s*=\s*"(?P<URL>.+?)"';
 
-{ TPlaylist_BlipTV }
+{ TDownloader_3NewsCoNz }
 
-class function TPlaylist_BlipTV.Provider: string;
+class function TDownloader_3NewsCoNz.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := '3news.co.nz';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_3NewsCoNz.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_3NewsCoNz.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_3NewsCoNz.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+function TDownloader_3NewsCoNz.GetMovieInfoUrl: string;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
-  inherited;
+  Result := 'http://www.3news.co.nz/' + MovieID;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TDownloader_3NewsCoNz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    MovieUrl := 'http://flash.mediaworks.co.nz/tv3/streams/_definst_/' + StringReplace(MovieUrl, '*', '/', [rfReplaceAll]) + '_700K.mp4';
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  RegisterDownloader(TDownloader_3NewsCoNz);
 
 end.

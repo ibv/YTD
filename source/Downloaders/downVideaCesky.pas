@@ -52,15 +52,9 @@ type
     private
     protected
       MovieUrlAreaRegExp: TRegExp;
-      {$IFDEF SUBTITLES}
-        {$IFDEF CONVERTSUBTITLES}
-        ConvertSubtitles: boolean;
-        {$ENDIF}
-      {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      procedure SetOptions(const Value: TYTDOptions); override;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; override;
     public
       class function Provider: string; override;
@@ -139,9 +133,6 @@ begin
   SetLength(fSubtitleUrlRegExps, Length(REGEXP_EXTRACT_SUBTITLE_URLS));
   for i := 0 to Pred(Length(REGEXP_EXTRACT_SUBTITLE_URLS)) do
     fSubtitleUrlRegExps[i] := RegExCreate(REGEXP_EXTRACT_SUBTITLE_URLS[i]);
-    {$IFDEF CONVERTSUBTITLES}
-    ConvertSubtitles := OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT;
-    {$ENDIF}
   {$ENDIF}
 end;
 
@@ -166,16 +157,6 @@ begin
   Result := 'http://www.videacesky.cz/' + MovieID;
 end;
 
-procedure TDownloader_VideaCesky.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  {$IFDEF SUBTITLES}
-    {$IFDEF CONVERTSUBTITLES}
-    ConvertSubtitles := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
-    {$ENDIF}
-  {$ENDIF}
-end;
-
 {$IFDEF SUBTITLES}
 function TDownloader_VideaCesky.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 {$IFDEF CONVERTSUBTITLES}
@@ -189,33 +170,34 @@ begin
   {$IFDEF CONVERTSUBTITLES}
   if Result then
     if fSubtitles <> '' then
-      if AnsiCompareText(Trim(fSubtitlesExt), '.xml') = 0 then
-        try
-          Xml := TXmlDoc.Create;
+      if ConvertSubtitles then
+        if AnsiCompareText(Trim(fSubtitlesExt), '.xml') = 0 then
           try
-            Xml.LoadFromBinaryString(fSubtitles);
-            if Xml.Root.Name = 'tt' then
-              if XmlNodeByPathAndAttr(Xml, 'body/div', 'xml:id', 'captions', Node) then
-                begin
-                NewSubs := '';
-                n := 0;
-                for i := 0 to Pred(Node.NodeCount) do
-                  if Node.Nodes[i].Name = 'p' then
-                    if GetXmlAttr(Node.Nodes[i], '', 'begin', SubStart) then
-                      if GetXmlAttr(Node.Nodes[i], '', 'end', SubEnd) then
-                        if GetXmlVar(Node.Nodes[i], '', Sub) then
-                          NewSubs := NewSubs + SubtitlesToSrt(n, StringReplace(SubStart, '.', ',', [rfReplaceAll]), StringReplace(SubEnd, '.', ',', [rfReplaceAll]), StringReplace(Sub, '<br />', #13#10, [rfIgnoreCase, rfReplaceAll]));
-                if NewSubs <> '' then
+            Xml := TXmlDoc.Create;
+            try
+              Xml.LoadFromBinaryString(fSubtitles);
+              if Xml.Root.Name = 'tt' then
+                if XmlNodeByPathAndAttr(Xml, 'body/div', 'xml:id', 'captions', Node) then
                   begin
-                  fSubtitles := AnsiString(NewSubs);
-                  fSubtitlesExt := '.srt';
+                  NewSubs := '';
+                  n := 0;
+                  for i := 0 to Pred(Node.NodeCount) do
+                    if Node.Nodes[i].Name = 'p' then
+                      if GetXmlAttr(Node.Nodes[i], '', 'begin', SubStart) then
+                        if GetXmlAttr(Node.Nodes[i], '', 'end', SubEnd) then
+                          if GetXmlVar(Node.Nodes[i], '', Sub) then
+                            NewSubs := NewSubs + SubtitlesToSrt(n, StringReplace(SubStart, '.', ',', [rfReplaceAll]), StringReplace(SubEnd, '.', ',', [rfReplaceAll]), StringReplace(Sub, '<br />', #13#10, [rfIgnoreCase, rfReplaceAll]));
+                  if NewSubs <> '' then
+                    begin
+                    fSubtitles := AnsiString(NewSubs);
+                    fSubtitlesExt := '.srt';
+                    end;
                   end;
-                end;
-          finally
-            Xml.Free;
+            finally
+              Xml.Free;
+              end;
+          except
             end;
-        except
-          end;
   {$ENDIF}
 end;
 {$ENDIF}

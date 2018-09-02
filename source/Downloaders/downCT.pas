@@ -402,10 +402,10 @@ end;
 function TDownloader_CT_old.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const REKLAMA = '-AD-';
       REKLAMA_LENGTH = Length(REKLAMA);
-var MovieObject, Url, ID, BaseUrl, BestStream, Stream, sBitrate: string;
+var MovieObject, Url, ID, BaseUrl, Stream: string;
     Xml: TXmlDoc;
     Body, Node: TXmlNode;
-    i, j, Bitrate, BestBitrate: integer;
+    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -430,30 +430,14 @@ begin
               if Pos(REKLAMA, ID) <= 0 then
                 if GetXmlAttr(Node, '', 'base', BaseUrl) then
                   begin
-                  BestStream := '';
-                  BestBitrate := -1;
-                  for j := 0 to Pred(Node.NodeCount) do
-                    if Node.Nodes[j].Name = 'video' then
-                      if GetXmlAttr(Node.Nodes[j], '', 'src', Stream) then
-                        begin
-                        if GetXmlAttr(Node.Nodes[j], '', 'system-bitrate', sBitrate) then
-                          Bitrate := StrToIntDef(sBitrate, 0)
-                        else
-                          Bitrate := 0;
-                        if Bitrate > BestBitrate then
-                          begin
-                          BestStream := Stream;
-                          BestBitrate := Bitrate;
-                          end;
-                        end;
-                  if BestStream = '' then
+                  if not Smil_FindBestVideo(Node, Stream) then
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else
                     begin
-                    SetRtmpOptions(BaseUrl, BestStream);
+                    SetRtmpOptions(BaseUrl, Stream);
                     {$IFDEF MULTIDOWNLOADS}
                     BaseUrls.Add(BaseUrl);
-                    Streams.Add(BestStream);
+                    Streams.Add(Stream);
                     {$ENDIF}
                     SetPrepared(True);
                     Result := True;

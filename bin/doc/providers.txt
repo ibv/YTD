@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.00                                                    (c) 2009-12 Pepak
+YTD v1.02                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -16,6 +16,7 @@ Provider            | Protocol | Notes | URL(s)
 ------------------------------------------------------------------------------
 123Video.nl         | HTTP     |       | http://www.123video.nl/playvideos.asp?MovieID=949808
 1hd.ro              | RTMP     |       | http://live.1hd.ro/playondemand.php?server=193.238.58.18&playfile=drumul_spre_succes_2.mp4&subtitrare=&categ=Emisiuni&subcateg=Drumul%20spre%20Succes
+3news.co.nz         | HTTP     |       | http://www.3news.co.nz/Nearly-there-for-trans-Tasman-rowers-Team-Gallagher/tabid/309/articleID/239458/Default.aspx
 4tv.cz              | HTTP     |       | http://4tv.cz/serialy/simpsonovi-1989/s01e01/8
 5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 AcademicEarth.org   | HTTP     |       | http://academicearth.org/lectures/measurements-space-and-time
@@ -23,7 +24,10 @@ Agresori.com        | HTTP     |       | http://www.agresori.com/13913-zkurvene-
 Aktualne.cz         | HTTP     |       | http://aktualne.centrum.cz/video/?id=316586
 AlternativaTV.cz    | HTTP     |       | http://alternativatv.cz/video/play/12225/
                     |          |       | http://alternativatv.cz/magazin/priloha/9319/12292
+Ancensored.com      | HTTP     |       | http://ancensored.com/clip/clip-victorias-secret-fashion-show-2009-herself-3
 AngryAlien.com      | HTTP     |       | http://www.angryalien.com/0605/freddyjasonbuns.asp
+Archive.org         | HTTP     | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16d1t01_vbr.mp3
+                    |          | 9     | http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16.sbd.vernon.9127.sbeok.shnf_vbr.m3u
 AutoSalonTV.cz      | MS       |       | http://autosalontv.cz/?year=2010&week=50
 AutoTube.cz         | HTTP     |       | http://www.autotube.cz/roadtube/612-jak-na-dopravni-zacpu.html
 Bahnorama.com       | HTTP     |       | http://cz.bahnorama.com/news/index.php/news,103,V_taktu...%3F
@@ -133,6 +137,8 @@ KanalTurk.com.tr    | HTTP     |       | http://www.kanalturk.com.tr/video/?vId=
 Kinobox.cz          | HTTP     |       | http://www.kinobox.cz/porady/video/6273-prednaska-henriho-monforta-21112011
 Kontraband.com      | HTTP     |       | http://www.kontraband.com/videos/23388/Failed-Slam-Dunks/
 Kukaj.sk            | HTTP     |       | http://www.kukaj.sk/videa/5860/
+LenkaFilipova.cz    | HTTP     |       | http://www.lenkafilipova.cz/lf/kytarova_skola18.html
+LevelTV.Hrej.cz     | HTTP     | 9,10  | http://leveltv.hrej.cz/include/2012/leden/3/213_rec_serioussam.mp4
 LibimSeTi.cz        | HTTP     |       | http://video.libimseti.cz/basket-trosku-jinak/f1ea1c7fcc03?uid=
 LiveLeak.com        | HTTP     |       | http://www.liveleak.com/view?i=6f4_1272904024
                     |          |       | http://www.liveleak.com/e/57d_1278546690
@@ -150,6 +156,7 @@ Metoo.cz            | MS       |       | http://www.metoo.cz/tvstream/play/532
 Metoo.sk            | MS       |       | http://pohoda.metoo.sk/pohoda2011-fibernet/?relacia=cluster
                     |          |       | http://www.metoo.sk/voicestv?relacia=vl26-sto-much-stratasoul-bene-sewologylab
 Metropol.cz         | HTTP     |       | http://www.metropol.cz/porady/prazeni/282/archiv/
+                    |          |       | http://www.metropol.cz/zpravy/z-prahy/tradicni-plavecky-zavod-otuzilcu-startuje-v-1100/
 MojeTelevize.cz     | HTTP     |       | http://mojetelevize.mojetelevize.cz/kanal/spoty-klientu/ski-areal-spicak/
                     |          |       | http://adra.mojetelevize.cz/kanal/projekty/sri-lanka/
 MojeVideo.cz        | HTTP     |       | http://mojevideo.cz/view.php?id=5332
@@ -171,6 +178,7 @@ NaStojaka.cz        | HTTP     |       | http://www.nastojaka.cz/321-risa-nedved
 NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=5766
 NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
 News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
+NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
 Nova.cz             | RTMP/MS  | 2,8   | http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
                     | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
@@ -179,6 +187,7 @@ NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
                     |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
 OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
+Online.hokej.cz     | RTMP     | 9     | http://online.hokej.cz/?date=2012-01-20&video=69421
 Osobnosti.cz        | HTTP     |       | http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
 OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
                     |          |       | http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
@@ -285,6 +294,7 @@ Youtube.com         | HTTP     |       | http://www.youtube.com/v/b5AWQ5aBjgE
                     | RTMP     |       | http://www.youtube.com/watch?v=KNalERXqSTE
 Youtube-nocookie.com| HTTP     |       | http://www.youtube-nocookie.com/v/LiVxKci9Uto?version=3&hl=en_US
 Z1TV.cz             | HTTP     |       | http://www.z1tv.cz/interview-z1/interview-z1-kobzanova-diana-1972.html?page=1
+Zapiks.fr           | HTTP     |       | http://www.zapiks.fr/open-air-episode-5-a-week-in.html
 ZDF.de              | MS       |       | http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/Ägypten---4-Geheimnis-des-ewigen-Lebens
 ZkoukniTo.cz        | HTTP     |       | http://www.zkouknito.cz/video_59813_holcicka-strasila-medveda
 Zmozek.cz           | HTTP     |       | http://www.zmozek.cz/textypisni.php?pisen=415
@@ -294,15 +304,18 @@ Zoznam.sk           | HTTP     |       | http://free.zoznam.sk/video/Splhajuci-b
 AdultLoop.com       | HTTP     | F     |
 Beeg.com            | HTTP     | F     |
 Brazzers.com        | HTTP     | F     |
+Casting.xxx         | HTTP     | F,9   |
 Dachix.com          | HTTP     | F     |
 EmpFlix.com         | HTTP     | F     |
 ExtremeTube.com     | HTTP     | F     |
 FreePornoZdarma.cz  | HTTP     | F     |
 FreeVideo.cz        | HTTP     | F     |
+Gavin.xxx           | HTTP     | F     |
 Grinvi.com          | HTTP     | F     |
 HardSexTube.com     | HTTP     | F     |
 JenProMuze.cz       | HTTP     | F     |
 KeezMovies.com      | HTTP     | F     |
+                    | HTTP     | F,9   | http://www.keezmovies.com/embed_player.php?vid=...
 MachoVideo.com      | HTTP     | F     |
 MegaPorn.com        | HTTP     | F     |
 MojePorno.sk        | HTTP     | F     |
@@ -332,6 +345,7 @@ YouJizz.com         | HTTP     | F     |
 YouPorn.com         | HTTP     | F     |
 Yuvutu.com          | HTTP     | F     |
 Zakulisi.cz         | HTTP     | F     |
+ZlutySnih.cz        | HTTP     | F     |
 ------------------------------------------------------------------------------
 
 F ... Funkèní pouze v plné (ne-lite) verzi YTD kvùli porno obsahu.
@@ -428,3 +442,11 @@ X ... Momentálnì nefunkèní.
 9 ... Název videa není detekován.
 
       Stream name is not detected.
+
+
+
+10 .. Server podporuje a/nebo vyžaduje pøihlášení. Pøihlašovací údaje mùžete
+      nastavit v konfiguraci poskytovatele.
+
+      The server supports and/or requires a login. You may set up the login
+      info in the provider's configuration.

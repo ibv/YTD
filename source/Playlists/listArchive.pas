@@ -34,25 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit listArchive;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uPCRE, HttpSend,
+  uDownloader, uCommonDownloader, uPlaylistDownloader, listTXT;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TPlaylist_Archive = class(TPlaylist_TXT)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,72 +59,45 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-// http://torrentfreak.blip.tv/
+// http://www.archive.org/download/gd66-09-16.sbd.vernon.9127.sbeok.shnf/gd66-09-16.sbd.vernon.9127.sbeok.shnf_vbr.m3u
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  URLREGEXP_BEFORE_ID = 'archive\.org/download/';
+  URLREGEXP_ID =        '.+\.m3u(?:\?.*)?';
+  URLREGEXP_AFTER_ID =  '$';
 
-const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+{ TPlaylist_Archive }
 
-{ TPlaylist_BlipTV }
-
-class function TPlaylist_BlipTV.Provider: string;
+class function TPlaylist_Archive.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'Archive.org';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TPlaylist_Archive.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TPlaylist_Archive.Create(const AMovieID: string);
 begin
-  inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peAnsi;
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+destructor TPlaylist_Archive.Destroy;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
   inherited;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TPlaylist_Archive.GetMovieInfoUrl: string;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  Result := 'http://www.archive.org/download/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  RegisterDownloader(TPlaylist_Archive);
 
 end.

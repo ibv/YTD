@@ -198,24 +198,25 @@ begin
           if (DC.Providers[i].Features <> []) and (DC.Providers[i].Features <> [dfDummy]) then
             FrameClass := TFrameDownloaderOptionsPageCommon;
         if FrameClass <> nil then
-          begin
-          Frame := FrameClass.Create(Self);
-          try
-            Frame.Name := Format('DownloadOptionsPage%d', [i]);
-            if Frame is TFrameDownloaderOptionsPageCommon then
-              TFrameDownloaderOptionsPageCommon(Frame).DownloaderClass := DC.Providers[i];
-            Frame.Provider := DC.Providers[i].Provider;
-            Frame.Options := Self.Options;
-            Frame.Visible := False;
-            Frame.Parent := PanelDownloaderOptions;
-            Frame.Align := alClient;
-            Frame.LoadFromOptions;
-            ListDownloaderOptions.Items.AddObject(DC.Providers[i].Provider, Frame);
-          except
-            FreeAndNil(Frame);
-            Raise;
+          if ListDownloaderOptions.Items.IndexOf(DC.Providers[i].Provider) < 0 then
+            begin
+            Frame := FrameClass.Create(Self);
+            try
+              Frame.Name := Format('DownloadOptionsPage%d', [i]);
+              if Frame is TFrameDownloaderOptionsPageCommon then
+                TFrameDownloaderOptionsPageCommon(Frame).DownloaderClass := DC.Providers[i];
+              Frame.Provider := DC.Providers[i].Provider;
+              Frame.Options := Self.Options;
+              Frame.Visible := False;
+              Frame.Parent := PanelDownloaderOptions;
+              Frame.Align := alClient;
+              Frame.LoadFromOptions;
+              ListDownloaderOptions.Items.AddObject(DC.Providers[i].Provider, Frame);
+            except
+              FreeAndNil(Frame);
+              Raise;
+              end;
             end;
-          end;
         end;
     if ListDownloaderOptions.Items.Count > 0 then
       begin

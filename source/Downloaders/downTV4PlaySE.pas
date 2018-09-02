@@ -107,8 +107,8 @@ end;
 function TDownloader_TV4PlaySE.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
     Node: TXmlNode;
-    Url, BaseUrl, BestUrl, sBitrate: string;
-    i, BitRate, BestBitRate: integer;
+    Url, BaseUrl, BestUrl: string;
+    i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -129,33 +129,16 @@ begin
         SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['base']))
       else
         begin
-        BestUrl := '';
-        BestBitrate := -1;
+        SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['video']));
         if Xml.NodeByPath('body/switch', Node) then
-          for i := 0 to Pred(Node.NodeCount) do
-            if Node.Nodes[i].Name = 'video' then
-              if GetXmlAttr(Node.Nodes[i], '', 'src', Url) then
-                begin
-                if not GetXmlAttr(Node.Nodes[i], '', 'system-bitrate', sBitrate) then
-                  if BestBitrate = -1 then
-                    sBitrate := '0';
-                Bitrate := StrToIntDef(sBitrate, 0);
-                if Bitrate > BestBitrate then
-                  begin
-                  BestBitrate := Bitrate;
-                  BestUrl := Url;
-                  end;
-                end;
-        if BestUrl = '' then
-          SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['video']))
-        else
-          begin
-          MovieUrl := BaseUrl + '/' + BestUrl;
-          Self.RtmpUrl := BaseUrl;
-          Self.Playpath := BestUrl;
-          SetPrepared(True);
-          Result := True;
-          end;
+          if Smil_FindBestVideo(Node, BestUrl) then
+            begin
+            MovieUrl := BaseUrl + '/' + BestUrl;
+            Self.RtmpUrl := BaseUrl;
+            Self.Playpath := BestUrl;
+            SetPrepared(True);
+            Result := True;
+            end;
         end;
     finally
       Xml.Free;

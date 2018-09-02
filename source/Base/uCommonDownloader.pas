@@ -50,6 +50,8 @@ type
       fMovieURL: string;
       fInfoPageEncoding: TPageEncoding;
       fInfoPageIsXml: boolean;
+      fUserName: string;
+      fPassword: string;
     protected
       function GetMovieInfoUrl: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF} abstract;
     protected
@@ -61,6 +63,8 @@ type
       property MovieUrl: string read fMovieUrl write SetMovieUrl;
       property InfoPageEncoding: TPageEncoding read fInfoPageEncoding write fInfoPageEncoding;
       property InfoPageIsXml: boolean read fInfoPageIsXml write fInfoPageIsXml;
+      property UserName: string read fUserName;
+      property Password: string read fPassword;
     protected
       function GetFileNameExt: string; override;
       function GetContentUrl: string; override;
@@ -75,10 +79,12 @@ type
       fSubtitlesEnabled: boolean;
       fSubtitles: AnsiString;
       fSubtitlesExt: string;
+      fConvertSubtitles: boolean;
     public
       property SubtitlesEnabled: boolean read fSubtitlesEnabled {write fSubtitlesEnabled};
       property Subtitles: AnsiString read fSubtitles {write fSubtitles};
       property SubtitlesExt: string read fSubtitlesExt {write fSubtitlesExt};
+      property ConvertSubtitles: boolean read fConvertSubtitles {write fConvertSubtitles};
       function GetSubtitlesFileName: string; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function WriteSubtitles: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
@@ -92,6 +98,8 @@ type
 
 const
   OPTION_COMMONDOWNLOADER_SUBTITLESENABLED {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'subtitles_enabled';
+  OPTION_COMMONDOWNLOADER_USERNAME {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'username';
+  OPTION_COMMONDOWNLOADER_PASSWORD {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'password';
   {$IFDEF SUBTITLES}
     OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'convert_subtitles';
     OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT = True;
@@ -116,6 +124,7 @@ begin
   SetLength(fSubtitleUrlRegExps, 0);
   SetLength(fSubtitleRegExps, 0);
   fSubtitlesEnabled := True;
+  fConvertSubtitles := (dfSubtitlesConvert in Features) and OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT;
   {$ENDIF}
 end;
 
@@ -331,7 +340,13 @@ begin
   inherited;
   {$IFDEF SUBTITLES}
   fSubtitlesEnabled := Value.SubtitlesEnabled and Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SUBTITLESENABLED, True);
+  fConvertSubtitles := (dfSubtitlesConvert in Features) and Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
   {$ENDIF}
+  if dfUserLogin in Features then
+    begin
+    fUserName := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_USERNAME, '');
+    fPassword := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_PASSWORD, '');
+    end;
 end;
 
 end.

@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes, Windows,
   {$IFNDEF GUI_WINAPI} Dialogs, {$ENDIF}
-  uOptions, uLanguages, uMessages;
+  uOptions, uLanguages, uMessages, uXml;
 
 type
   TYTDOptionsGUI = class(TYTDOptions)
@@ -61,6 +61,7 @@ type
       procedure SetDownloadListColumnWidth(Index: integer; const Value: integer);
     protected
       function Load(IgnoreErrors: boolean = True): boolean; override;
+      procedure BuildDefaultConfig;
     public
       procedure Init; override;
     public
@@ -74,37 +75,6 @@ type
 implementation
 
 { TYTDOptionsGUI }
-
-{$IFDEF CONVERTERS}
-const
-  DEFAULT_OPTIONS_XML
-    = '<?xml version="1.0" encoding="windows-1250"?>' +
-      '<ytd>' +
-        '<converters>' +
-          {$IFDEF CONVERTERSMUSTBEACTIVATED}
-          '<activated>0</activated>' +
-          {$ENDIF}
-          '<converter id="to-avi">' +
-            '<title>%s</title>' +
-            '<exe_path>mencoder.exe</exe_path>' +
-            '<command_line>-oac copy -ovc copy -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>' +
-            '<visibility>minimized</visibility>' +
-          '</converter>' +
-          '<converter id="convert-to-xvid">' +
-            '<title>%s</title>' +
-            '<exe_path>mencoder.exe</exe_path>' +
-            '<command_line>-oac mp3lame -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200 -ffourcc xvid -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>' +
-            '<visibility>minimized</visibility>' +
-          '</converter>' +
-          '<converter id="convert-to-h264">' +
-            '<title>%s</title>' +
-            '<exe_path>mencoder.exe</exe_path>' +
-            '<command_line>-oac mp3lame -ovc x264 -x264encopts bitrate=1200 -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"</command_line>' +
-            '<visibility>minimized</visibility>' +
-          '</converter>' +
-        '</converters>' +
-      '</ytd>';
-{$ENDIF}
 
 {gnugettext: scan-all}
 const
@@ -174,9 +144,10 @@ begin
     {$ELSE}
     MessageDlg(_(INITIALRUN_WELCOMEMSG), mtWarning, [mbOK], 0);
     {$ENDIF}
-    {$IFDEF CONVERTERS}
-    Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
-    {$ENDIF}
+    BuildDefaultConfig;
+//    {$IFDEF CONVERTERS}
+//    Xml.LoadFromBinaryString(AnsiString(Format(DEFAULT_OPTIONS_XML, [_(DEFAULT_CONVERTER_TO_AVI), _(DEFAULT_CONVERTER_TO_XVID), _(DEFAULT_CONVERTER_TO_H264)])));
+//    {$ENDIF}
     {$IFDEF GUI_WINAPI}
     PortableMode := MessageBox(0, PChar(_(INITIALRUN_WANTPORTABLE)), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes;
     {$ELSE}
@@ -188,6 +159,47 @@ begin
     CheckForNewVersionOnStartup := MessageDlg(_(INITIALRUN_WANTNEWVERSIONCHECK), mtConfirmation, [mbYes, mbNo], 0) = idYes;
     {$ENDIF}
     end;
+end;
+
+procedure TYTDOptionsGUI.BuildDefaultConfig;
+  {$IFDEF CONVERTERS}
+    procedure InitConverter(const ID, Title, ExePath, CommandLine: string; Visibility: TConverterVisibility);
+      var C: TConverter;
+      begin
+        C.ID := ID;
+        C.Title := Title;
+        C.ExePath := ExePath;
+        C.CommandLine := CommandLine;
+        C.Visibility := Visibility;
+        WriteConverter(C);
+      end;
+
+    const
+      CONVERTER_ID_MENCODER    {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'mencoder';
+      CONVERTER_ID_FFMPEG      {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'ffmpeg';
+      CONVERTER_ID_TO_AVI      {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-to-avi';
+      CONVERTER_ID_TO_XVID     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-xvid';
+      CONVERTER_ID_TO_H264     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-h264';
+      CONVERTER_TITLE_MENCODER {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'Mencoder - ';
+      CONVERTER_TITLE_FFMPEG   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'FFmpeg - ';
+      CONVERTER_TITLE_TO_AVI   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_AVI;
+      CONVERTER_TITLE_TO_XVID  {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_XVID;
+      CONVERTER_TITLE_TO_H264  {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_H264;
+      CONVERTER_EXE_MENCODER   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'mencoder.exe';
+      CONVERTER_EXE_FFMPEG     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'ffmpeg.exe';
+  {$ENDIF}
+begin
+  {$IFDEF CONVERTERS}
+    {$IFDEF CONVERTERSMUSTBEACTIVATED}
+      ConvertersActivated := False;
+    {$ENDIF}
+    InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_AVI,  CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_AVI),  CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -acodec copy -vcodec copy -y "{$FULLPATH}.avi"', cvMinimized);
+    InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_XVID, CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_XVID), CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -acodec libmp3lame -vcodec mpeg4 -b 1200k -vtag DX50 -y "{$FULLPATH}.avi"', cvMinimized);
+    InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_H264, CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_H264), CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -vcodec libx264 -preset fast -tune film -profile main -crf 22 -threads 0  -acodec aac -strict experimental -y "{$FULLPATH}.avi"', cvMinimized);
+    InitConverter(CONVERTER_ID_MENCODER + CONVERTER_ID_TO_AVI,  CONVERTER_TITLE_MENCODER + _(CONVERTER_TITLE_TO_AVI),  CONVERTER_EXE_MENCODER, '-oac copy -ovc copy -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"', cvMinimized);
+    InitConverter(CONVERTER_ID_MENCODER + CONVERTER_ID_TO_XVID, CONVERTER_TITLE_MENCODER + _(CONVERTER_TITLE_TO_XVID), CONVERTER_EXE_MENCODER, '-oac mp3lame -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200 -ffourcc xvid -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"', cvMinimized);
+    InitConverter(CONVERTER_ID_MENCODER + CONVERTER_ID_TO_H264, CONVERTER_TITLE_MENCODER + _(CONVERTER_TITLE_TO_H264), CONVERTER_EXE_MENCODER, '-oac mp3lame -ovc x264 -x264encopts bitrate=1200 -of avi -o "{$FULLPATH}.avi" "{$FULLPATH}"', cvMinimized);
+  {$ENDIF}
 end;
 
 function TYTDOptionsGUI.Load(IgnoreErrors: boolean): boolean;

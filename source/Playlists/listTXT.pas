@@ -34,79 +34,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxJenProMuze;
+unit listTXT;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uPCRE, HttpSend,
+  uDownloader, uCommonDownloader, uPlaylistDownloader,
+  uDownloadClassifier;
 
 type
-  TDownloader_JenProMuze = class(THttpDownloader)
+  TPlaylist_TXT = class(TPlaylistDownloader)
     private
+      fClassifier: TDownloadClassifier;
     protected
-      function GetMovieInfoUrl: string; override;
+      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
+      property Classifier: TDownloadClassifier read fClassifier;
     public
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
 
 implementation
 
-uses
-  uStringConsts,
-  uDownloadClassifier,
-  uMessages;
-
 const
-  URLREGEXP_BEFORE_ID = 'jenpromuze\.cz/video/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
-  URLREGEXP_AFTER_ID =  '';
+  REGEXP_URL = '(?P<URL>[^\r\n]+)';
 
-const
-  REGEXP_MOVIE_TITLE =  '<h1><span>(?P<TITLE>.*?)</span></h1>';
-  REGEXP_MOVIE_URL =    '"file"\s*:\s*"(?P<URL>https?://(?:[a-z0-9-]+\.)*jenpromuze\.cz/.+?)"';
+{ TPlaylist_TXT }
 
-{ TDownloader_JenProMuze }
-
-class function TDownloader_JenProMuze.Provider: string;
+constructor TPlaylist_TXT.Create(const AMovieID: string);
 begin
-  Result := 'JenProMuze.cz';
+  inherited;
+  PlaylistItemRegExp := RegExCreate(REGEXP_URL);
+  fClassifier := TDownloadClassifier.Create;
 end;
 
-class function TDownloader_JenProMuze.UrlRegExp: string;
+destructor TPlaylist_TXT.Destroy;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
-end;
-
-constructor TDownloader_JenProMuze.Create(const AMovieID: string);
-begin
-  inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-end;
-
-destructor TDownloader_JenProMuze.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(PlaylistItemRegExp);
+  FreeAndNil(fClassifier);
   inherited;
 end;
 
-function TDownloader_JenProMuze.GetMovieInfoUrl: string;
+function TPlaylist_TXT.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
 begin
-  Result := 'http://www.jenpromuze.cz/video/' + MovieID;
+  Result := inherited GetPlayListItemURL(Match, Index);
+  Result := HtmlDecode(Result);
+  Classifier.Url := Result;
+  if Classifier.Downloader = nil then
+    Result := '';
 end;
-
-initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_JenProMuze);
-  {$ENDIF}
 
 end.

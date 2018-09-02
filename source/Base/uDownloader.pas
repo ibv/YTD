@@ -63,7 +63,7 @@ type
   TPageEncoding = (peNone, peUnknown, peANSI, peUTF8, peUTF16);
 
 type
-  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} , dfRtmpLiveStream, dfPreferRtmpLiveStream, dfRequireSecureToken );
+  TDownloaderFeature = (dfDummy {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF} , dfRtmpLiveStream, dfPreferRtmpLiveStream, dfRequireSecureToken, dfUserLogin );
   TDownloaderFeatures = set of TDownloaderFeature;
 
 const
@@ -156,6 +156,8 @@ type
       procedure Log(const Text: string; Overwrite: boolean = False); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
       procedure NotPreparedError; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+    protected
+      function Smil_FindBestVideo(Container: TXmlNode; out Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     public
       class function Provider: string; virtual; abstract;
       class function Features: TDownloaderFeatures; virtual;
@@ -278,6 +280,8 @@ var MaxLength, i, n: integer;
 begin
   Result := StrTr(Trim(Name), '\/:*?"<>|', '--;..''--!');
   Ext := GetFileNameExt;
+  if AnsiCompareText(ExtractFileExt(Result), Ext) = 0 then
+    Ext := '';
   {$IFDEF MAXFILENAMELENGTH}
   MaxLength := MAX_PATH - 5 - Length(Ext);
   if Options.DestinationPath <> '' then
@@ -1125,6 +1129,31 @@ begin
       Result := ContentTypes[i].Extension;
       Break;
       end;
+end;
+
+function TDownloader.Smil_FindBestVideo(Container: TXmlNode; out Url: string): boolean;
+var
+  sUrl, sBitrate: string;
+  i, Bitrate, BestBitrate: integer;
+begin
+  Result := False;
+  Url := '';
+  BestBitrate := -1;
+  for i := 0 to Pred(Container.NodeCount) do
+    if Container.Nodes[i].Name = 'video' then
+      if GetXmlAttr(Container.Nodes[i], '', 'src', sUrl) then
+        begin
+        if GetXmlAttr(Container.Nodes[i], '', 'system-bitrate', sBitrate) then
+          Bitrate := StrToIntDef(sBitrate, 0)
+        else
+          Bitrate := 0;
+        if Bitrate > BestBitrate then
+          begin
+          BestBitrate := Bitrate;
+          Url := sUrl;
+          Result := True;
+          end;
+        end;
 end;
 
 end.

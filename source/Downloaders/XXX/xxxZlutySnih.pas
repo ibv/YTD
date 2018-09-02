@@ -34,25 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit xxxZlutySnih;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uPCRE, uXml, HttpSend, 
+  uDownloader, uCommonDownloader, uNestedDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_ZlutySnih = class(TNestedDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,72 +59,54 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
-
-// http://torrentfreak.blip.tv/
-const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
 const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+  URLREGEXP_BEFORE_ID = 'zlutysnih\.cz/video/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
-{ TPlaylist_BlipTV }
+const
+  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
+  REGEXP_EXTRACT_URL = REGEXP_URL_PARAM_FLASHVARS_OPTIONS;
 
-class function TPlaylist_BlipTV.Provider: string;
+{ TDownloader_ZlutySnih }
+
+class function TDownloader_ZlutySnih.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'ZlutySnih.cz';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_ZlutySnih.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_ZlutySnih.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
+  NestedUrlRegExp := RegExCreate(REGEXP_EXTRACT_URL);
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+destructor TDownloader_ZlutySnih.Destroy;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TDownloader_ZlutySnih.GetMovieInfoUrl: string;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  Result := 'http://zlutysnih.cz/video/' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_ZlutySnih);
+  {$ENDIF}
 
 end.

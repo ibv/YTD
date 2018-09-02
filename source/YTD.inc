@@ -98,10 +98,10 @@
 {.DEFINE RELEASE} 
   // Remove unnecessary debug information
 
-{.DEFINE NO_GUI}  
+{.DEFINE NO_GUI}
   // Don't compile the GUI version
 
-{.DEFINE NO_CLI}  
+{.DEFINE NO_CLI}
   // Don't compile the command-line version
 
 {.DEFINE NO_SETUP}

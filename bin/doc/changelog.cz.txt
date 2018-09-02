@@ -1,11 +1,61 @@
 ______________________________________________________________________________
 
-YTD v1.00                                                    (c) 2009-12 Pepak
+YTD v1.02                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.02:
+
+    * Chyba v Markiza.sk zpùsobovala vıjimku na neznámıch URL.
+
+
+
+  v1.01:
+
+    * Novı poskytovatel: LevelTV.Hrej.cz.
+      Poskytovatel teoreticky vyaduje znalost hesla, které mùete v grafickém
+      rozhraní zadat do konfigurace. Prakticky zatím heslo není potøeba, server
+      ho nijak nekontroluje.
+
+    * Novı poskytovatel: NHL.com.
+      Nejsem si tak docela jistı, co vlastnì bylo vyádáno a co stahuji.
+
+    * Další noví poskytovatelé:
+      - 3news.co.nz
+      - Ancensored.com
+      - Archive.org
+      - Casting.xxx (porno)
+      - Gavin.xxx (porno)
+      - LenkaFilipova.cz
+      - Online.Hokej.cz
+      - Zapiks.fr
+      - ZlutySnih.cz (porno)
+
+    * DailyMotion.com: V plné verzi stahuje i videa oznaèená jako pro dospìlé.
+
+    * KeezMovies.com: Podpora pro embedded verzi.
+
+    * MetaCafe.com: Aktualizována podpora streamù pøes HTTP. Ještì existují
+      streamy bìící na RTMP, ty zatím podporovány nejsou.
+
+    * Další aktualizovaní poskytovatelé:
+      - FreeCaster.tv
+      - JenProMuze.cz
+      - Metropol.cz
+
+    * Do vıchozího konfiguraèního souboru byla pøidána nastavení pro konverzi
+      videí pomocí programu FFmpeg (http://ffmpeg.org/) (díky ffmpegmann).
+      Do konfigurace je dostanete nejlépe tak, e starou konfiguraci smaete
+      a necháte YTD, a si vytvoøí novou.
+
+    * Odstranìna zdvojená pøípona souboru u nìkterıch poskytovatelù.
+
+    * GUI: V konfiguraci nešlo vypnout konvertování titulkù do .srt formátu.
+
+
 
   v1.00:
 

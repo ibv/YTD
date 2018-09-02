@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit xxxCastingXXX;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,15 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_CastingXXX = class(THttpDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
+      MovieInfoRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,72 +61,51 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
-
-// http://torrentfreak.blip.tv/
-const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
 const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+  URLREGEXP_BEFORE_ID = 'casting\.xxx/.*[?&]vidId=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_AFTER_ID =  '';
 
-{ TPlaylist_BlipTV }
+const
+  REGEXP_MOVIE_URL = '\burl\s*:\s*''(?P<URL>https?://.+?)''';
 
-class function TPlaylist_BlipTV.Provider: string;
+{ TDownloader_CastingXXX }
+
+class function TDownloader_CastingXXX.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'Casting.xxx';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_CastingXXX.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_CastingXXX.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_CastingXXX.Destroy;
+begin
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+function TDownloader_CastingXXX.GetMovieInfoUrl: string;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
-  inherited;
-end;
-
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
-begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  Result := 'http://casting.xxx/index.php?page=Video&VidId=' + MovieID;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_CastingXXX);
+  {$ENDIF}
 
 end.

@@ -34,23 +34,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit xxxKeezMovies_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uPCRE, uXml, HttpSend, 
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_KeezMovies_Embed = class(THttpDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -63,72 +60,63 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
-
-// http://torrentfreak.blip.tv/
-const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
 const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+  URLREGEXP_BEFORE_ID = 'keezmovies\.com/embed_player\.php\?';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
-{ TPlaylist_BlipTV }
+{ TDownloader_KeezMovies_Embed }
 
-class function TPlaylist_BlipTV.Provider: string;
+class function TDownloader_KeezMovies_Embed.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'KeezMovies.com';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_KeezMovies_Embed.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_KeezMovies_Embed.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
+  InfoPageEncoding := peXml;
+  InfoPageIsXml := True;
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+destructor TDownloader_KeezMovies_Embed.Destroy;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
   inherited;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TDownloader_KeezMovies_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
+  Result := 'http://www.keezmovies.com/embed_player.php?' + MovieID;
 end;
 
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
+function TDownloader_KeezMovies_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Url: string;
 begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetXmlVar(PageXml, 'flv_url', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  {$IFDEF XXX}
+  RegisterDownloader(TDownloader_KeezMovies_Embed);
+  {$ENDIF}
 
 end.

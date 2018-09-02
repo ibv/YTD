@@ -3,7 +3,7 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
     Left = 0
     Top = 0
     Width = 320
-    Height = 81
+    Height = 137
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
@@ -14,6 +14,22 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
       Height = 13
       Caption = 'Secure &Token:'
       FocusControl = EditSecureToken
+    end
+    object LabelUserName: TLabel
+      Left = 8
+      Top = 82
+      Width = 54
+      Height = 13
+      Caption = '&User name:'
+      FocusControl = EditUserName
+    end
+    object LabelPassword: TLabel
+      Left = 8
+      Top = 106
+      Width = 49
+      Height = 13
+      Caption = '&Password:'
+      FocusControl = EditPassword
     end
     object CheckDownloadSubtitles: TCheckBox
       Left = 8
@@ -49,12 +65,28 @@ inherited FrameDownloaderOptionsPageCommon: TFrameDownloaderOptionsPageCommon
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 3
     end
+    object EditUserName: TEdit
+      Left = 112
+      Top = 80
+      Width = 193
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 4
+    end
+    object EditPassword: TEdit
+      Left = 112
+      Top = 104
+      Width = 193
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 5
+    end
   end
   object PanelSpecificOptions: TPanel
     Left = 0
-    Top = 81
+    Top = 137
     Width = 320
-    Height = 159
+    Height = 103
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1

@@ -79,7 +79,8 @@ uses
 // http://video.markiza.sk/archiv-tv-markiza/112/8723
 // http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!particka\.)markiza\.sk/archiv-(?:[^/]*)/[^/]+/';
+  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!voyo\.)(?<!particka\.)markiza\.sk/archiv-(?:[^/]*)/[^/]+/';
+    // Pozn.: Musi tam byt dva look-behindy, protoze look-behind musi mit pevnou delku
   URLREGEXP_ID =        '[0-9]+';
   URLREGEXP_AFTER_ID =  '';
 

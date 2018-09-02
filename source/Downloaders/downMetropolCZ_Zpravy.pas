@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit downMetropolCZ_Zpravy;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,15 +42,12 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_MetropolCZ_Zpravy = class(THttpDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -63,72 +60,61 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-// http://torrentfreak.blip.tv/
+// http://www.metropol.cz/zpravy/z-prahy/tradicni-plavecky-zavod-otuzilcu-startuje-v-1100/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  URLREGEXP_BEFORE_ID = 'metropol\.cz/zpravy/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+  REGEXP_MOVIE_TITLE =  '<div\s+id="art-full">\s*<h1>(?:VIDEO\s*:\s*)?(?P<TITLE>.*?)</h1>';
+  REGEXP_MOVIE_URL =    '\bfile\s*:\s*BreezyCMS_URL\s*\+\s*"(?P<URL>.+?)"';
 
-{ TPlaylist_BlipTV }
+{ TDownloader_MetropolCZ_Zpravy }
 
-class function TPlaylist_BlipTV.Provider: string;
+class function TDownloader_MetropolCZ_Zpravy.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'Metropol.cz';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_MetropolCZ_Zpravy.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_MetropolCZ_Zpravy.Create(const AMovieID: string);
 begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_MetropolCZ_Zpravy.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+function TDownloader_MetropolCZ_Zpravy.GetMovieInfoUrl: string;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
-  inherited;
+  Result := 'http://www.metropol.cz/zpravy/' + MovieID;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TDownloader_MetropolCZ_Zpravy.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := Prepared;
+  if Result then
+    MovieUrl := 'http://www.metropol.cz/' + MovieUrl;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  RegisterDownloader(TDownloader_MetropolCZ_Zpravy);
 
 end.

@@ -51,20 +51,8 @@ uses
   FastMM4,
   {$ENDIF}
   uLanguages in 'Common\uLanguages.pas',
-  SysUtils,
-  Windows,
-  CommCtrl,
-  {$IFDEF SETUP}
-  ShlObj,
-  FileCtrl,
-  {$ENDIF}
-  {$IFDEF GUI}
-    {$IFNDEF GUI_WINAPI}
-      Forms,
-    {$ENDIF}
-  {$ENDIF}
-  uCompatibility,
   // Base objects and units
+  uMain in 'Common\uMain.pas',
   uFunctions in 'Common\uFunctions.pas',
   uMessages in 'Common\uMessages.pas',
   uOptions in 'Common\uOptions.pas',
@@ -92,7 +80,6 @@ uses
   // Command Line Version
   {$IFDEF CLI}
     uYTD in 'CLI\uYTD.pas',
-    uConsoleApp,
   {$ENDIF}
   // GUI version
   {$IFDEF GUI}
@@ -144,13 +131,16 @@ uses
   // Downloaders
   down123VideoNL in 'Downloaders\down123VideoNL.pas',
   down1hdRo in 'Downloaders\down1hdRo.pas',
+  down3NewsCoNz in 'Downloaders\down3NewsCoNz.pas',
   down4TV in 'Downloaders\down4TV.pas',
   down5min in 'Downloaders\down5min.pas',
   downAcademicEarth in 'Downloaders\downAcademicEarth.pas',
   downAgresori in 'Downloaders\downAgresori.pas',
   downAktualne in 'Downloaders\downAktualne.pas',
   downAlternativaTV in 'Downloaders\downAlternativaTV.pas',
+  downAncensored in 'Downloaders\downAncensored.pas',
   downAngryAlien in 'Downloaders\downAngryAlien.pas',
+  downArchive in 'Downloaders\downArchive.pas',
   downAutoSalonTV in 'Downloaders\downAutoSalonTV.pas',
   downAutoTube in 'Downloaders\downAutoTube.pas',
   downBahnorama in 'Downloaders\downBahnorama.pas',
@@ -221,6 +211,7 @@ uses
   downHasici150 in 'Downloaders\downHasici150.pas',
   downHejbejSe in 'Downloaders\downHejbejSe.pas',
   downHellTV in 'Downloaders\downHellTV.pas',
+  downHokejCz in 'Downloaders\downHokejCz.pas',
   downHrej in 'Downloaders\downHrej.pas',
   downHudebniVideoKlipy in 'Downloaders\downHudebniVideoKlipy.pas',
   downHuste in 'Downloaders\downHuste.pas',
@@ -238,6 +229,8 @@ uses
   downKinobox in 'Downloaders\downKinobox.pas',
   downKontraband in 'Downloaders\downKontraband.pas',
   downKukaj in 'Downloaders\downKukaj.pas',
+  downLenkaFilipova in 'Downloaders\downLenkaFilipova.pas',
+  downLevelTV in 'Downloaders\downLevelTV.pas',
   downLibimSeTi in 'Downloaders\downLibimSeTi.pas',
   downLiveLeak in 'Downloaders\downLiveLeak.pas',
   downLiveLeakEmbedded in 'Downloaders\downLiveLeakEmbedded.pas',
@@ -253,6 +246,7 @@ uses
   downMetooCz in 'Downloaders\downMetooCz.pas',
   downMetooSk in 'Downloaders\downMetooSk.pas',
   downMetropolCZ in 'Downloaders\downMetropolCZ.pas',
+  downMetropolCZ_Zpravy in 'Downloaders\downMetropolCZ_Zpravy.pas',
   downMetropolTV in 'Downloaders\downMetropolTV.pas',
   downMojeTelevize in 'Downloaders\downMojeTelevize.pas',
   downMojeVideo in 'Downloaders\downMojeVideo.pas',
@@ -270,6 +264,7 @@ uses
   downNaStojaka in 'Downloaders\downNaStojaka.pas',
   downNBC in 'Downloaders\downNBC.pas',
   downNavratDoReality in 'Downloaders\downNavratDoReality.pas',
+  downNHL in 'Downloaders\downNHL.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
   downNova in 'Downloaders\downNova.pas',
@@ -364,6 +359,7 @@ uses
   downYouTu_Be in 'Downloaders\downYouTu_Be.pas',
   downYouTubeNoCookie in 'Downloaders\downYouTubeNoCookie.pas',
   downZ1TV in 'Downloaders\downZ1TV.pas',
+  downZapiksFr in 'Downloaders\downZapiksFr.pas',
   downZDF in 'Downloaders\downZDF.pas',
   downZkoukniTo in 'Downloaders\downZkoukniTo.pas',
   downZkoukniToEmbed in 'Downloaders\downZkoukniToEmbed.pas',
@@ -373,16 +369,19 @@ uses
     xxxAdultLoop in 'Downloaders\XXX\xxxAdultLoop.pas',
     xxxBeeg in 'Downloaders\XXX\xxxBeeg.pas',
     xxxBrazzers in 'Downloaders\XXX\xxxBrazzers.pas',
+    xxxCastingXXX in 'Downloaders\XXX\xxxCastingXXX.pas',
     xxxDachix in 'Downloaders\XXX\xxxDachix.pas',
     xxxDancingBear in 'Downloaders\XXX\xxxDancingBear.pas',
     xxxEmpFlix in 'Downloaders\XXX\xxxEmpFlix.pas',
     xxxExtremeTube in 'Downloaders\XXX\xxxExtremeTube.pas',
     xxxFreePornoZdarma in 'Downloaders\XXX\xxxFreePornoZdarma.pas',
     xxxFreeVideoCz in 'Downloaders\XXX\xxxFreeVideoCz.pas',
+    xxxGavinXXX in 'Downloaders\XXX\xxxGavinXXX.pas',
     xxxGrinvi in 'Downloaders\XXX\xxxGrinvi.pas',
     xxxHardSexTube in 'Downloaders\XXX\xxxHardSexTube.pas',
     xxxJenProMuze in 'Downloaders\XXX\xxxJenProMuze.pas',
     xxxKeezMovies in 'Downloaders\XXX\xxxKeezMovies.pas',
+    xxxKeezMovies_Embed in 'Downloaders\XXX\xxxKeezMovies_Embed.pas',
     xxxMachoVideo in 'Downloaders\XXX\xxxMachoVideo.pas',
     xxxMegaPorn in 'Downloaders\XXX\xxxMegaPorn.pas',
     xxxMojePornoSK in 'Downloaders\XXX\xxxMojePornoSK.pas',
@@ -414,6 +413,7 @@ uses
     xxxYouPorn in 'Downloaders\XXX\xxxYouPorn.pas',
     xxxYuvutu in 'Downloaders\XXX\xxxYuvutu.pas',
     xxxZakulisi in 'Downloaders\XXX\xxxZakulisi.pas',
+    xxxZlutySnih in 'Downloaders\XXX\xxxZlutySnih.pas',
   {$ENDIF}
   {$IFDEF NONWORKING}
     // No idea why it doesn't work
@@ -430,283 +430,16 @@ uses
     downWat in 'Downloaders\Non-working\downWat.pas',
   {$ENDIF}
   // Playlist handlers
-  listBlipTV in 'Playlists\listBlipTV.pas',
-  listGameAnyone in 'Playlists\listGameAnyone.pas',
   listHTML in 'Playlists\listHTML.pas',
   listHTMLfile in 'Playlists\listHTMLfile.pas',
+  listTXT in 'Playlists\listTXT.pas',
+  listArchive in 'Playlists\listArchive.pas',
   listBing in 'Playlists\listBing.pas',
+  listBlipTV in 'Playlists\listBlipTV.pas',
+  listGameAnyone in 'Playlists\listGameAnyone.pas',
   listYouTube in 'Playlists\listYouTube.pas',
   listYouTubePage in 'Playlists\listYouTubePage.pas';
 
-type
-  TStartupType = ( {$IFDEF CLI} stCLI, {$ENDIF} {$IFDEF GUI} stGUI, stGUIexplicit, {$ENDIF} {$IFDEF SETUP} stInstall, {$ENDIF} stNone);
-
-var
-  StartedFromIDE: boolean;
-  {$IFDEF GUI}
-    {$IFDEF CLI}
-    RunExternal: boolean;
-    {$ENDIF}
-  {$ENDIF}
-  ErrorMsg: string;
-  {$IFDEF SETUP}
-  InstallDir: string;
-  DesktopShortcut, StartMenuShortcut, RestartYTD: boolean;
-  {$ENDIF}
-
-function FindStartupType( {$IFDEF SETUP} var InstallDir: string; var DesktopShortcut, StartMenuShortcut, RestartYTD: boolean {$ENDIF} ): TStartupType;
-{$IFDEF SETUP}
-var
-  i: integer;
-  Param: string;
-  {$IFDEF SETUP_GUI}
-  F: TFormSetup;
-  {$ENDIF}
-{$ENDIF}
 begin
-  Result := Low(TStartupType);
-  // No parameters runs GUI if available, otherwise CLI
-  if ParamCount = 0 then
-    Result := {$IFDEF GUI} stGUI {$ENDIF}
-  // Otherwise check for startup-type parameters
-  {$IFDEF SETUP}
-  else for i := 1 to ParamCount do
-    begin
-    Param := ParamStr(i);
-    if False then
-      begin
-      end
-    {$IFDEF GUI}
-    else if Param = SETUP_PARAM_GUI then
-      begin
-      Result := stGUIexplicit;
-      Break;
-      end
-    {$ENDIF}
-    {$IFDEF SETUP_GUI}
-    else if Param = SETUP_PARAM_SETUP then
-      begin
-      {$IFNDEF DEBUG}
-        {$IFNDEF FPC}
-          FreeConsole;
-          IsConsole := False;
-        {$ENDIF}
-      {$ENDIF}
-      F := TFormSetup.Create(nil);
-      try
-        case F.ShowModal of
-          idOK:
-            begin
-            Result := stInstall;
-            InstallDir := F.DestinationDir;
-            DesktopShortcut := F.DesktopShortcut;
-            StartMenuShortcut := F.StartMenuShortcut;
-            RestartYTD := True;
-            end;
-          idIgnore:
-            Result := {$IFDEF GUI} stGUI {$ELSE} {$IFDEF CLI} stCli {$ELSE} stNone {$ENDIF} {$ENDIF} ;
-          else
-            Result := stNone;
-          end;
-      finally
-        FreeAndNil(F);
-        end;
-      Break;
-      end
-    {$ENDIF}
-    else if (Param = SETUP_PARAM_UPGRADE) or (Param = SETUP_PARAM_UPGRADE_GUI) or (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI) then
-      begin
-      if i < ParamCount then
-        begin
-        Result := stInstall;
-        InstallDir := ParamStr(Succ(i));
-        DesktopShortcut := (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI);
-        StartMenuShortcut := (Param = SETUP_PARAM_INSTALL) or (Param = SETUP_PARAM_INSTALL_GUI);
-        RestartYTD := (Param = SETUP_PARAM_UPGRADE_GUI) or (Param = SETUP_PARAM_INSTALL_GUI);
-        Sleep(500); // to give some time for the caller to quit
-        Break;
-        end;
-      end;
-    end;
-  {$ELSE}
-    ;
-  {$ENDIF}
-end;
-
-{$IFDEF CLI}
-procedure RunCLI;
-begin
-  ExitCode := ExecuteConsoleApp(TYTD);
-  if StartedFromIDE then
-    begin
-    Writeln;
-    Write(MSG_PRESS_ANY_KEY_TO_QUIT);
-    Readln;
-    end;
-end;
-{$ENDIF}
-
-{$IFDEF GUI}
-procedure RunGUI;
-begin
-  {$IFNDEF DEBUG}
-    {$IFNDEF FPC}
-      FreeConsole;
-      IsConsole := False;
-    {$ENDIF}
-  {$ENDIF}
-  {$IFDEF GUI_WINAPI}
-    with TFormMain.Create do
-      try
-        ShowModal;
-      finally
-        Free;
-        end;
-  {$ELSE}
-    Application.Initialize;
-    Application.Title := 'YTD';
-    Application.CreateForm(TFormYTD, FormYTD);
-    Application.Run;
-  {$ENDIF}
-end;
-{$ENDIF}
-
-{$IFDEF SETUP}
-procedure RunInstall(const InstallDir: string; DesktopShortcut, StartMenuShortcut, RestartYTD: boolean);
-
-  function CopyFiles(const SourceDir, DestinationDir: string): boolean;
-    var SR: TSearchRec;
-    begin
-      Result := True;
-      ForceDirectories(ExpandFileName(DestinationDir));
-      if FindFirst(SourceDir + '*.*', faAnyFile, SR) = 0 then
-        try
-          repeat
-            if Longbool(SR.Attr and faDirectory) then
-              begin
-              if (SR.Name <> '.') and (SR.Name <> '..') then
-                if not CopyFiles(SourceDir + SR.Name + '\', DestinationDir + SR.Name + '\') then
-                  Result := False;
-              end
-            else
-              begin
-              if not CopyFile(PChar(SourceDir + SR.Name), PChar(DestinationDir + SR.Name), False) then
-                Result := False;
-              end;
-          until FindNext(SR) <> 0;
-        finally
-          SysUtils.FindClose(SR);
-          end;
-    end;
-
-var OK: boolean;
-    InstDir, InstExe: string;
-begin
-  OK := False;
-  InstDir := IncludeTrailingPathDelimiter(InstallDir);
-  InstExe := InstDir + ExtractFileName(ParamStr(0));
-  if InstallDir <> '' then
-    begin
-    OK := CopyFiles(ExtractFilePath(ParamStr(0)), InstDir);
-    if OK then
-      begin
-      if DesktopShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe);
-      if StartMenuShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe);
-      end;
-    end;
-  if not OK then
-    begin
-    {$IFDEF FPC}
-      Writeln(ERR_INSTALL_FAILED);
-    {$ELSE}
-      {$IFDEF CLI}
-      if TConsoleApp.HasConsole = csOwnConsole then
-        Writeln(ERR_INSTALL_FAILED)
-      else
-      {$ENDIF}
-        MessageBox(0, PChar(ERR_INSTALL_FAILED), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
-    {$ENDIF}
-    ExitCode := 253;
-    end
-  else
-    begin
-    ExitCode := 0;
-    if RestartYTD then
-      Run(InstExe, '', ExcludeTrailingPathDelimiter(InstDir));
-    end;
-end;
-{$ENDIF}
-
-begin
-  try
-    ExitCode := 0;
-    InitCommonControls; // Needed because of the manifest file
-    // Test for IDE
-    StartedFromIDE := False;
-    {$IFNDEF FPC}
-      {$IFDEF DELPHI2009_UP}
-        {$WARN SYMBOL_PLATFORM OFF}
-      {$ENDIF}
-      if DebugHook <> 0 then
-        StartedFromIDE := True;
-      {$IFDEF DELPHI2009_UP}
-        {$WARN SYMBOL_PLATFORM ON}
-      {$ENDIF}
-    {$ENDIF}
-    // Determine the startup type and parameters
-    {$IFDEF SETUP}
-    InstallDir := '';
-    DesktopShortcut := False;
-    StartMenuShortcut := False;
-    RestartYTD := False;
-    {$ENDIF}
-    case FindStartupType( {$IFDEF SETUP} InstallDir, DesktopShortcut, StartMenuShortcut, RestartYTD {$ENDIF} ) of
-      {$IFDEF CLI}
-      stCLI:
-        RunCLI;
-      {$ENDIF}
-      {$IFDEF GUI}
-      stGUIexplicit:
-        RunGUI;
-      stGUI:
-        begin
-        {$IFDEF CLI}
-          RunExternal := (not StartedFromIDE);
-          {$IFNDEF FPC}
-            if RunExternal then
-              begin
-              FreeConsole;
-              if not TConsoleApp.ParentHasConsole then
-                RunExternal := False;
-              end;
-          {$ENDIF}
-          if (not RunExternal) or (not Run(ParamStr(0), SETUP_PARAM_GUI)) then
-        {$ENDIF}
-          RunGUI;
-        end;
-      {$ENDIF}
-      {$IFDEF SETUP}
-      stInstall:
-        RunInstall(InstallDir, DesktopShortcut, StartMenuShortcut, RestartYTD);
-      {$ENDIF}
-      end;
-  except
-    on E: Exception do
-      begin
-      ErrorMsg := Format(ERR_EXCEPTION_MESSAGE, [E.ClassName, E.Message]);
-      {$IFDEF FPC}
-        Writeln(ErrorMsg);
-      {$ELSE}
-        {$IFDEF CLI}
-        if TConsoleApp.HasConsole = csOwnConsole then
-          Writeln(ErrorMsg)
-        else
-        {$ENDIF}
-          MessageBox(0, PChar(ErrorMsg), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
-      {$ENDIF}
-      ExitCode := 255;
-      end;
-    end;
+  Main;
 end.

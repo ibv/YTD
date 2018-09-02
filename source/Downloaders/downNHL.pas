@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit downNHL;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,15 +42,12 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_NHL = class(THttpDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -63,72 +60,90 @@ type
 implementation
 
 uses
-  uDownloadClassifier;
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-// http://torrentfreak.blip.tv/
+// http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  URLREGEXP_BEFORE_ID = 'video\.nhl\.com/videocenter/.*[?&]hlp=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+{ TDownloader_NHL }
 
-{ TPlaylist_BlipTV }
-
-class function TPlaylist_BlipTV.Provider: string;
+class function TDownloader_NHL.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'NHL.com';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_NHL.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_NHL.Create(const AMovieID: string);
 begin
-  inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peXml;
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+destructor TDownloader_NHL.Destroy;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TDownloader_NHL.GetMovieInfoUrl: string;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
+  Result := 'http://video.nhl.com/videocenter/console?hlp=' + MovieID;
 end;
 
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
+function TDownloader_NHL.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Xml: TXmlDoc;
+  Node: TXmlNode;
+  NodeName, Url: string;
+  i: integer;
 begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not DownloadXml(Http, 'http://video.nhl.com/videocenter/highlights', 'xml=2&id=' + MovieID + '&ps=9&pn=1&pm=0&ptrs=3', HTTP_FORM_URLENCODING, Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else
+    try
+      Node := nil;
+      NodeName := '';
+      if Xml.Root.Name = 'games' then
+        begin
+        Node := Xml.Root;
+        NodeName := 'game';
+        end
+      else if (Xml.Root.Name = 'player') and (XmlNodeByPath(Xml, 'goals', Node)) then
+        NodeName := 'goal';
+      if Node <> nil then
+        for i := 0 to Pred(Node.NodeCount) do
+          if (NodeName = '') or (Node.Nodes[i].Name = NodeName) then
+            if GetXmlVar(Node.Nodes[i], 'alt-video-clip', Url) then
+              // Je tam i 'video-clip', ktery bezi na RTMP
+              begin
+              MovieUrl := Url;
+              SetPrepared(True);
+              Result := True;
+              {$IFDEF MULTIDOWNLOADS}
+              UrlList.Add(Url);
+              NameList.Add('');
+              {$ELSE}
+              Break;
+              {$ENDIF}
+              end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  RegisterDownloader(TDownloader_NHL);
 
 end.

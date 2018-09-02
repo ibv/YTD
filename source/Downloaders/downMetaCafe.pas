@@ -41,13 +41,15 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_MetaCafe = class(THttpDownloader)
     private
     protected
+      FlashVarsRegExp: TRegExp;
+      FlashVarsParserRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -67,13 +69,14 @@ uses
 
 // http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*metacafe\.com/watch/';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = 'metacafe\.com/watch/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<h2>(?P<TITLE>.*?)</h2>';
-  REGEXP_MOVIE_URL = '<param\s+id="flashVars"\s+name="flashvars"\s+value="[^"]*%22mediaURL%22%3A%22(?P<URL>[^"]+?)%22';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
+  REGEXP_FLASHVARS = '<param\s+id="flashVars"\s+name="flashvars"\s+value=(?P<QUOTES>["''])(?P<FLASHVARS>.*?)(?P=QUOTES)';
+  REGEXP_FLASHVARS_PARSER = '(?:^|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
 
 { TDownloader_MetaCafe }
 
@@ -84,7 +87,7 @@ end;
 
 class function TDownloader_MetaCafe.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_MetaCafe.Create(const AMovieID: string);
@@ -92,13 +95,15 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
 end;
 
 destructor TDownloader_MetaCafe.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarsParserRegExp);
   inherited;
 end;
 
@@ -108,10 +113,24 @@ begin
 end;
 
 function TDownloader_MetaCafe.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  FlashVars, Url, Key: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
-  MovieURL := StripSlashes(UrlDecode(MovieURL));
-  Result := True;
+  Result := False;
+  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
+  else if not GetRegExpVarPairs(FlashVarsParserRegExp, FlashVars, ['mediaURL', 'gdaKey'], [@Url, @Key]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else if (Url = '') or (Key = '') then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    MovieUrl :=  UrlDecode(Url) + '?__gda__=' + UrlDecode(Key);
+    Writeln(MovieURL);
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization

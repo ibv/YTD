@@ -8,3 +8,7 @@
 #define IDC_CHECKBOX_LIVESTREAM                 1004
 #define IDC_LABEL_SECURETOKEN                   1005
 #define IDC_EDIT_SECURETOKEN                    1006
+#define IDC_LABEL_USERNAME                      1007
+#define IDC_EDIT_USERNAME                       1008
+#define IDC_LABEL_PASSWORD                      1009
+#define IDC_EDIT_PASSWORD                       1010

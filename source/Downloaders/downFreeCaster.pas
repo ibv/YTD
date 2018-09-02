@@ -42,17 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uNestedDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_FreeCaster = class(TNestedDownloader)
+  TDownloader_FreeCaster = class(THttpDownloader)
     private
     protected
       StreamIdRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function GetMediaInfoFromPage(const Page: string; Http: THttpSend; out Title: string; out SmilUrl: string): boolean;
-      function GetMediaUrlFromSmil(Http: THttpSend; const SmilUrl: string; out Url: string; out Downloader: TDownloader): boolean;
+      function GetMediaInfoFromPage(const Page: string; Http: THttpSend; out Title: string; out Url: string): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -113,8 +112,8 @@ begin
   Result := 'http://freecaster.tv/' + MovieID;
 end;
 
-function TDownloader_FreeCaster.GetMediaInfoFromPage(const Page: string; Http: THttpSend; out Title, SmilUrl: string): boolean;
-var StreamID, BestUrl, Url, sBitrate, sQuality: string;
+function TDownloader_FreeCaster.GetMediaInfoFromPage(const Page: string; Http: THttpSend; out Title, Url: string): boolean;
+var StreamID, BaseUrl, BestUrl, sUrl, sBitrate, sQuality: string;
     BestBitrate, Bitrate, i: integer;
     Xml: TXmlDoc;
     Node: TXmlNode;
@@ -128,6 +127,8 @@ begin
     try
       if not Xml.NodeByPath('streams', Node) then
         SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+      else if not GetXmlAttr(Node, '', 'server', BaseUrl) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
       else if not GetXmlVar(Xml, 'video/title', Title) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
       else
@@ -136,100 +137,48 @@ begin
         BestBitrate := -1;
         for i := 0 to Pred(Node.NodeCount) do
           if Node.Nodes[i].Name = 'stream' then
-            if GetXmlVar(Node.Nodes[i], '', Url) then
+            if GetXmlVar(Node.Nodes[i], '', sUrl) then
               begin
               Bitrate := 0;
               if GetXmlAttr(Node.Nodes[i], '', 'bitrate', sBitrate) then
                 Bitrate := StrToIntDef(sBitrate, 0)
               else if GetXmlAttr(Node.Nodes[i], '', 'quality', sQuality) then
-                if sQuality = 'SD' then
+                if sQuality = 'LD' then
                   Bitrate := 1
+                else if sQuality = 'SD' then
+                  Bitrate := 10
                 else if sQuality = 'HD' then
                   Bitrate := 1200;
               if BestBitrate < Bitrate then
                 begin
                 BestBitrate := Bitrate;
-                BestUrl := Url;
+                BestUrl := sUrl;
                 end;
               end;
         if BestUrl = '' then
-          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
         else
           begin
-          SmilUrl := BestUrl;
+          Url := BaseUrl + BestUrl;
           Result := True;
           end;
         end;
-    finally
-      Xml.Free;
-      end;
-end;
-
-function TDownloader_FreeCaster.GetMediaUrlFromSmil(Http: THttpSend; const SmilUrl: string; out Url: string; out Downloader: TDownloader): boolean;
-var Xml: TXmlDoc;
-    Node: TXmlNode;
-    BaseUrl, Path, BestUrl, sBitrate: string;
-    i, Bitrate, BestBitrate: integer; 
-begin
-  Result := False;
-  Downloader := nil;
-  if DownloadXml(Http, SmilUrl, Xml) then
-    try
-      if GetXmlAttr(Xml, 'head/meta', 'base', BaseUrl) then
-        if GetXmlAttr(Xml, 'body/video', 'src', Path) then
-          begin
-          Url := BaseUrl + '/' + Path;
-          Downloader := TDownloader_FreeCaster_RTMP.Create(Url);
-          Result := True;
-          Exit;
-          end;
-      if Xml.NodeByPathAndAttr('head/meta', 'name', 'httpBase', Node) then
-        if GetXmlAttr(Node, '', 'content', BaseUrl) then
-          if Xml.NodeByPath('body/switch', Node) then
-            begin
-            BestUrl := '';
-            BestBitrate := -1;
-            for i := 0 to Pred(Node.NodeCount) do
-              if Node.Nodes[i].Name = 'video' then
-                if GetXmlAttr(Node.Nodes[i], '', 'src', Path) then
-                  begin
-                  Bitrate := 0;
-                  if GetXmlAttr(Node.Nodes[i], '', 'system-bitrate', sBitrate) then
-                    Bitrate := StrToIntDef(sBitrate, 0);
-                  if Bitrate > BestBitrate then
-                    begin
-                    BestUrl := Path;
-                    BestBitrate := Bitrate;
-                    end;
-                  end;
-            if BestUrl <> '' then
-              begin
-              Url := BaseUrl + BestUrl;
-              Downloader := TDownloader_FreeCaster_HTTP.Create(Url);
-              Result := True;
-              end;
-            end;
     finally
       Xml.Free;
       end;
 end;
 
 function TDownloader_FreeCaster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Title, SmilUrl, Url: string;
-    Downloader: TDownloader;
+var Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if GetMediaInfoFromPage(Page, Http, Title, SmilUrl) then
-    if GetMediaUrlFromSmil(Http, SmilUrl, Url, Downloader) then
+  if GetMediaInfoFromPage(Page, Http, Title, Url) then
       begin
       SetName(Title);
       MovieUrl := Url;
-      if CreateNestedDownloaderFromDownloader(Downloader) then
-        begin
-        SetPrepared(True);
-        Result := True;
-        end;
+      SetPrepared(True);
+      Result := True;
       end;
 end;
 

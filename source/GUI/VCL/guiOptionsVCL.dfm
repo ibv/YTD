@@ -44,7 +44,7 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 543
     Height = 389
-    ActivePage = TabDownloadOptions
+    ActivePage = TabDownloaderOptions
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet

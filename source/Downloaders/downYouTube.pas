@@ -69,9 +69,6 @@ type
       AvoidWebM: boolean;
       {$IFDEF SUBTITLES}
         PreferredLanguages: string;
-        {$IFDEF CONVERTSUBTITLES}
-        ConvertSubtitles: boolean;
-        {$ENDIF}
       {$ENDIF}
     protected
       function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
@@ -193,9 +190,6 @@ begin
   MaxHeight := OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT;
   {$IFDEF SUBTITLES}
     PreferredLanguages := OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT;
-    {$IFDEF CONVERTSUBTITLES}
-    ConvertSubtitles := OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT;
-    {$ENDIF}
   {$ENDIF}
 end;
 
@@ -490,9 +484,6 @@ begin
   AvoidWebM := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT);
   {$IFDEF SUBTITLES}
     PreferredLanguages := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_PREFERREDLANGUAGES, OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT);
-    {$IFDEF CONVERTSUBTITLES}
-    ConvertSubtitles := Value.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES, OPTION_COMMONDOWNLOADER_CONVERTSUBTITLES_DEFAULT);
-    {$ENDIF}
   {$ENDIF}
 end;
 

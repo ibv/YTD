@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.00                                                    (c) 2009-12 Pepak
+YTD v1.02                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -177,6 +177,11 @@ What you need to do to start using the conversions:
       icon (a movie strip with a green arrow). The conversion will be started
       for all selected files, no matter how many there are, and no matter
       whether their download finished successfully, failed or was aborted.
+
+Since version 1.01 the default configuration also supports software FFmpeg
+(http://ffmpeg.org/) (thanks ffmpegmann), with the three conversion scenarios
+listed above. The installation is basically the same, except that you need to
+substitute ffmpeg.exe in place of mencoder.exe.
 
 The advanced users may, through editing the configuration files, change the
 parameters of conversion tasks or even create a completely new converters.
@@ -428,21 +433,6 @@ except in file/directory names. Logical values (true-false) are stored as
 <modules>
   - Child of <ytd>. This section stores provider-specific options.
 
-  <Barrandov_tv>
-    - Child of <modules>; contains settings for TV Barrandov.
-
-    <secure_token>
-      - Child of <Barrandov_tv>; defines the SecureToken used by Barrandov's
-        servers to identify valid clients. In order to request movies from
-        the server, you need this token. I will not disclose how to get this
-        token, for legal reasons; try Google or other search engines.
-      - Any value is possible here.
-      - Default value is an empty string (which won't work).
-
-  <CeskaTelevize_cz>
-    - Child of <modules>; contains settings used by Czech television and
-      related providers (Port, CT24 etc.).
-
   <Nova_cz>
     - Child of <modules>; contains settings used by Nova.cz.
 
@@ -461,15 +451,6 @@ except in file/directory names. Logical values (true-false) are stored as
         reasons; try Google or other search engines.
       - Any value is possible here.
       - Default value is an empty string (which won't work).
-
-  <VideaCesky_cz>
-    - Child of <modules>; contains settings specific to YouTube.
-
-    <convert_subtitles>
-      - Child of <VideaCesky_cz>; let's you specify whether you want to convert
-        the subtitles from VideaCesky.cz format to .srt format.
-      - Possible values are "1" (enable conversion) and "0" (disable).
-      - Default value is "1" (enable conversion).
 
   <YouTube_com>
     - Child of <modules>; contains settings specific to YouTube.
@@ -503,12 +484,6 @@ except in file/directory names. Logical values (true-false) are stored as
         followed this rule. An example value would be "en,cs".
       - Default value is "en" - download english subtitles first.
 
-    <convert_subtitles>
-      - Child of <YouTube_com>; let's you specify whether you want to convert
-        the subtitles from YouTube format to .srt format.
-      - Possible values are "1" (enable conversion) and "0" (disable).
-      - Default value is "1" (enable conversion).
-
     <avoid_webm>
       - Child of <YouTube_com>; determines whether movies in the .webm format 
         (container) will be downloaded.
@@ -517,21 +492,51 @@ except in file/directory names. Logical values (true-false) are stored as
 
   - All providers have these settings:
 
-  <subtitles_enabled>
-    - Child of a provider; gives you with the ability to turn subtitle support
-      on or off for that provider.
-    - Possible values are "1" (enable subtitle support) and "0" (disable).
-    - Default value is "1" (enable subtitle support).
+    <subtitles_enabled>
+      - Child of a provider; gives you with the ability to turn subtitle
+        support on or off for that provider.
+      - Possible values are "1" (enable subtitle support) and "0" (disable).
+      - Default value is "1" (enable subtitle support).
 
-  <live_stream>
-    - Child of a provider; gives you an option to choose, whether you want 
-      to download videos as files (faster download, but with sensitive to
-      client-server synchronization; can lead to damaged video or audio in the
-      downloaded file) or as live streams (slower, but more compatible).
-    - Note: This setting only applies to RTMP-based providers.
-    - Possible values are "0" (download as file) and "1" (download as
-      live stream).
-    - Default value is "1" (download as live stream).
+    <convert_subtitles>
+      - Child of a provider; let's you specify whether you want to convert
+        the subtitles from the native format to .srt format.
+      - Possible values are "1" (enable conversion) and "0" (disable).
+      - Default value is "1" (enable conversion).
+
+    <live_stream>
+      - Child of a provider; gives you an option to choose, whether you want 
+        to download videos as files (faster download, but with sensitive to
+        client-server synchronization; can lead to damaged video or audio in 
+        the downloaded file) or as live streams (slower, but more compatible).
+      - Note: This setting only applies to RTMP-based providers.
+      - Possible values are "0" (download as file) and "1" (download as
+        live stream).
+      - Default value is "1" (download as live stream).
+
+    <secure_token>
+      - Child of a provider; defines the SecureToken used by the provider's
+        servers to identify valid clients. In order to request movies from
+        the server, you need this token. I will not disclose how to get this
+        token, for legal reasons; try Google or other search engines.
+      - Note: This setting only applies to providers which use a secure token.
+      - Any value is possible here.
+      - Default value is an empty string (which won't work).
+
+    <username>
+      - The username you use to log into the provider's server.
+      - Note: This setting only applies to providers which support/require 
+        a login.
+      - Any value is possible here.
+      - Default value is an empty string.
+
+    <password>
+      - The password you use to log into the provider's server.
+      - Note: This setting only applies to providers which support/require 
+        a login.
+      - Any value is possible here.
+      - Default value is an empty string.
+
 
 <converters>
   - Child of <ytd>. This section defines a list of converters (applications

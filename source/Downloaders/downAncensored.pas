@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downVideoBB;
+unit downAncensored;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,14 +45,17 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_VideoBB = class(THttpDownloader)
+  TDownloader_Ancensored = class(THttpDownloader)
     private
     protected
-      MovieParamsRegExp: TRegExp;
+      Extension: string;
+      MovieIDRegExp: TRegExp;
+      HashRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function GetHash(Http: THttpSend; out Hash: string): boolean;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -64,85 +67,108 @@ implementation
 
 uses
   uStringConsts,
-  uJSON, uLkJSON,
   uDownloadClassifier,
   uMessages;
 
-// http://www.videobb.com/video/oh53koNnCV5S
-// http://videobb.com/watch_video.php?v=vxDeVeCYyzx5
+// http://ancensored.com/clip/clip-victorias-secret-fashion-show-2009-herself-3
 const
-  URLREGEXP_BEFORE_ID = 'videobb\.com/';
+  URLREGEXP_BEFORE_ID = 'ancensored\.com/clip/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  '<meta\s+content="(?:videobb\s*-\s*)?(?P<TITLE>[^"]*)"\s*name="title"';
-  REGEXP_MOVIE_PARAMS = '<param\s+value="setting=(?P<PARAM>[^"]*)"\s+name="FlashVars"';
+  REGEXP_MOVIE_TITLE =  '<title>(?P<TITLE>.*?)(?:\s*(?:Video\s*Clip\s*)?&lt;.*?)?</title>';
+  REGEXP_MOVIE_ID =     '"video"\s*:\s"(?P<ID>.+?)"';
+  REGEXP_HASH =         '"hash1"\s*:\s*"(?P<HASH1>[^"]*)"\s*,\s*"hash2"\s*:\s*"(?P<HASH2>.*?)"';
 
-{ TDownloader_VideoBB }
+{ TDownloader_Ancensored }
 
-class function TDownloader_VideoBB.Provider: string;
+class function TDownloader_Ancensored.Provider: string;
 begin
-  Result := 'VideoBB.com';
+  Result := 'Ancensored.com';
 end;
 
-class function TDownloader_VideoBB.UrlRegExp: string;
+class function TDownloader_Ancensored.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_VideoBB.Create(const AMovieID: string);
+constructor TDownloader_Ancensored.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
+  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
+  HashRegExp := RegExCreate(REGEXP_HASH);
 end;
 
-destructor TDownloader_VideoBB.Destroy;
+destructor TDownloader_Ancensored.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieParamsRegExp);
+  RegExFreeAndNil(MovieIDRegExp);
+  RegExFreeAndNil(HashRegExp);
   inherited;
 end;
 
-function TDownloader_VideoBB.GetMovieInfoUrl: string;
+function TDownloader_Ancensored.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.videobb.com/' + MovieID;
+  Result := 'http://ancensored.com/clip/' + MovieID;
 end;
 
-function TDownloader_VideoBB.GetFileNameExt: string;
+function TDownloader_Ancensored.GetFileNameExt: string;
 begin
-  Result := '.flv';
+  Result := Extension;
 end;
 
-function TDownloader_VideoBB.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Ancensored.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Param: string;
-  Settings: TJSON;
-  JsonUrl: TJSONNode;
+  ID, Hash: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAM', Param) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, Base64Decode(Param), Page) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetHash(Http, Hash) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['hash']))
   else
     begin
-    Settings := JSONCreate(Page);
-    if not JSONNodeByPath(Settings, 'settings/res/0/u', JsonUrl) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieUrl := Base64Decode(JsonUrl.Value);
-      SetPrepared(True);
-      Result := True;
-      end;
+    Extension := ExtractFileExt(ID);
+    MovieUrl := 'http://ancensored.com/video.php?file=' + ID + '&hash=' + Hash;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
+function TDownloader_Ancensored.GetHash(Http: THttpSend; out Hash: string): boolean;
+var
+  Page, Hash1, Hash2: string;
+  i: integer;
+begin
+  Result := False;
+  Hash := '';
+  if DownloadPage(Http, 'http://ancensored.com/player/hash/js', Page) then
+    if GetRegExpVars(HashRegExp, Page, ['HASH1', 'HASH2'], [@Hash1, @Hash2]) then
+      begin
+      Hash1 := StringReplace(Hash1, ' ', '', [rfReplaceAll]);
+      Hash2 := StringReplace(Hash2, ' ', '', [rfReplaceAll]);
+      if Length(Hash1) >= 16 then
+        if Length(Hash2) >= 16 then
+          begin
+          for i := 1 to 8 do
+            Hash := Hash + Hash1[2*i-1] + Hash1[2*i] + Hash2[2*i-1] + Hash2[2*i];
+          Result := True;
+          end;
+      end;
+  {$IFDEF DIRTYHACKS}
+  if not Result then
+    begin
+    Hash := '9d5e564d74a3059297d19f3aaa85cbc4';
+    Result := True;
+    end;
+  {$ENDIF}
+end;
+
 initialization
-  RegisterDownloader(TDownloader_VideoBB);
+  RegisterDownloader(TDownloader_Ancensored);
 
 end.

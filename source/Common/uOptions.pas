@@ -144,6 +144,7 @@ type
       {$IFDEF CONVERTERS}
       procedure ReadConverterIDList(List: TStrings); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ReadConverter(const ID: string; out Converter: TConverter): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function WriteConverter(const Converter: TConverter): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$ENDIF}
       function GetNewestVersion(out Version, Url: string): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF THREADEDVERSION}
@@ -202,6 +203,7 @@ const
 const
   ConverterVisibilityStrings: array[TConverterVisibility] of string
     = ('visible', 'minimized', 'hidden');
+
 {$ENDIF}
 
 const
@@ -721,6 +723,28 @@ begin
     Converter.ExePath := '';
     Converter.CommandLine := '';
     Converter.Visibility := XML_DEFAULT_CONVERTERVISIBILITY;
+    end;
+end;
+
+function TYTDOptions.WriteConverter(const Converter: TConverter): boolean;
+var
+  Node: TXmlNode;
+begin
+  if Converter.ID = '' then
+    Result := False
+  else
+    begin
+    if not Xml.NodeByPathAndAttr(XML_PATH_CONVERTERLIST + '/' + XML_CONVERTERLIST_ITEM, XML_CONVERTERLIST_ITEM_ID, Converter.ID, Node) then
+      begin
+      Node := XmlNodeByPathCreate(Xml, XML_PATH_CONVERTERLIST);
+      Node := Node.NodeNew(XML_CONVERTERLIST_ITEM);
+      Node.AttributeByNameWide[XML_CONVERTERLIST_ITEM_ID] := Converter.ID;
+      end;
+    XmlNodeByPathCreate(Node, XML_CONVERTERLIST_ITEM_TITLE).ValueAsUnicodeString := Converter.Title;
+    XmlNodeByPathCreate(Node, XML_CONVERTERLIST_ITEM_EXEPATH).ValueAsUnicodeString := Converter.ExePath;
+    XmlNodeByPathCreate(Node, XML_CONVERTERLIST_ITEM_COMMANDLINE).ValueAsUnicodeString := Converter.CommandLine;
+    XmlNodeByPathCreate(Node, XML_CONVERTERLIST_ITEM_VISIBILITY).ValueAsUnicodeString := ConverterVisibilityStrings[Converter.Visibility];
+    Result := True;
     end;
 end;
 

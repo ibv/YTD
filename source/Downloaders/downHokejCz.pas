@@ -34,23 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit listBlipTV;
+unit downHokejCz;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uOptions,
+  uDownloader, uCommonDownloader, uRtmpDownloader;
 
 type
-  TPlaylist_BlipTV = class(TPlaylistDownloader)
+  TDownloader_HokejCz = class(TRtmpDownloader)
     private
     protected
-      NextPageRegExp: TRegExp;
-      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
-      function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
@@ -63,72 +61,79 @@ type
 implementation
 
 uses
+  uStringConsts,
+  uMessages,
   uDownloadClassifier;
 
-// http://torrentfreak.blip.tv/
+// http://online.hokej.cz/?date=2012-01-20&video=69421
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*';
-  URLREGEXP_ID =        '[a-z0-9-]+';
-  URLREGEXP_AFTER_ID =  '\.blip\.tv/?';
+  URLREGEXP_BEFORE_ID = 'online\.hokej\.cz/.*[?&]video=';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_PLAYLIST_ITEM = '<a\s+href="(?P<PATH>/file/[^"]+)"[^>]*>\s*(?P<NAME>[^<]*)\s*</a>';
-  REGEXP_NEXT_PAGE = '<div\s+class="view_pages_page">\s*<a\s+href="(?P<PATH>/[^"]+)">Next</a>';
+{ TDownloader_HokejCz }
 
-{ TPlaylist_BlipTV }
-
-class function TPlaylist_BlipTV.Provider: string;
+class function TDownloader_HokejCz.Provider: string;
 begin
-  Result := 'Blip.tv';
+  Result := 'Online.Hokej.cz';
 end;
 
-class function TPlaylist_BlipTV.UrlRegExp: string;
+class function TDownloader_HokejCz.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TPlaylist_BlipTV.Create(const AMovieID: string);
+constructor TDownloader_HokejCz.Create(const AMovieID: string);
 begin
   inherited;
-  PlayListItemRegExp := RegExCreate(REGEXP_PLAYLIST_ITEM);
-  NextPageRegExp := RegExCreate(REGEXP_NEXT_PAGE);
+  InfoPageEncoding := peUtf8;
 end;
 
-destructor TPlaylist_BlipTV.Destroy;
+destructor TDownloader_HokejCz.Destroy;
 begin
-  RegExFreeAndNil(PlayListItemRegExp);
-  RegExFreeAndNil(NextPageRegExp);
   inherited;
 end;
 
-function TPlaylist_BlipTV.GetMovieInfoUrl: string;
+function TDownloader_HokejCz.GetMovieInfoUrl: string;
 begin
-  Result := 'http://' + MovieID + '.blip.tv/posts?view=archive&nsfw=dc';
+  Result := 'http://online.hokej.cz/?video=' + MovieID;
 end;
 
-function TPlaylist_BlipTV.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
+function TDownloader_HokejCz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Timestamp, Signature, BaseUrl, Stream: string;
+  Xml: TXmlDoc;
+  Node: TXmlNode;
 begin
-  Result := Trim(Match.SubexpressionByName('NAME'));
-end;
-
-function TPlaylist_BlipTV.GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string;
-begin
-  Result := 'http://blip.tv' + Match.SubexpressionByName('PATH');
-end;
-
-function TPlaylist_BlipTV.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var Url: string;
-begin
-  repeat
-    Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
-    if not GetRegExpVar(NextPageRegExp, Page, 'PATH', Url) then
-      Break
-    else if not DownloadPage(Http, 'http://blip.tv' + Url, Page) then
-      Break;
-  until False;
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  Timestamp := FormatDateTime('yyyymmddhhnnss', Now);
+  if not DownloadPage(Http, 'http://online.hokej.cz/archive_token.php?match=' + MovieID + '&time=' + Timestamp, Signature) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['archive_token']))
+  else if not DownloadXml(Http, 'http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?c=Tipsport-VOD|' + MovieID + '&t=' + Timestamp + '&s=' + Signature + '&h=1&tm=smil', Xml) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else
+    try
+      if not XmlNodeByPath(Xml, 'smilRoot/body/switchItem', Node) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else if not GetXMlAttr(Node, '', 'base', BaseUrl) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+      else if not Smil_FindBestVideo(Node, Stream) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+      else
+        begin
+        MovieUrl := {BaseUrl + '/' + } Stream;
+        Self.RtmpUrl := BaseUrl;
+        Self.Playpath := Stream;
+        SetPrepared(True);
+        Result := True;
+        end;
+    finally
+      FreeAndNil(Xml);
+      end;
 end;
 
 initialization
-  RegisterDownloader(TPlaylist_BlipTV);
+  RegisterDownloader(TDownloader_HokejCz);
 
 end.
