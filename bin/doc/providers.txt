@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.51+                                                   (c) 2009-15 Pepak
+YTD v1.52+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -223,6 +223,7 @@ PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/ja
 PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
 PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
 Play.fm             | HTTP     |       | http://www.play.fm/recording/bbcradio1essentialremixbymarkronson2007010772264
+Playtvak.cz         | HTTP     |       | http://www.playtvak.cz/nejvetsi-omyly-vedy-lobotomie-dzj-/omyly-vedy.aspx?c=A150818_110238_omylyvedy_kuko
 PlayWire.com        | RTMP     |       | http://cdn.playwire.com/343/embed/28047.html
 PlayZone.cz         | RTMP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
 Polar.cz            | HTTP     |       | http://www.polar.cz/archiv/video/regionalni-zpravy-polar-18-01-2013-09-00
@@ -273,6 +274,7 @@ SoundCloud.com      | HTTP     |       | http://soundcloud.com/ubi_irina/1-campa
 Spike.com           | HTTP     |       | http://www.spike.com/video/prince-of-persia/3355664
 Sport.cz            | HTTP     |       | http://fotbal.sport.cz/clanek/183261-video-wenger-si-oddechl-rosicky-mel-jen-slaby-otres-mozku.html
 SportStream.cz      | RTMP     |       | http://www.sportstream.cz/rooney-uz-zase-strili-dulezite-goly
+SputnikNews.com     | HTTP     |       | http://cz.sputniknews.com/videoklub/20151016/1416426/su24m-syrie-rusko-zakladna-hmeimim-video.html#ixzz3oiQuzbT4
 Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
 SteamPowered.com    | HTTP     |       | http://store.steampowered.com/video/220

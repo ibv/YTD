@@ -1,11 +1,31 @@
 ﻿______________________________________________________________________________
 
-YTD v1.51                                                    (c) 2009-15 Pepak
+YTD v1.52                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.52:
+
+    * New providers:
+      - Playtvak.cz
+      - SputnikNews.com
+
+    * Updated providers:
+      - Heavy-R.com
+      - ItsAllGay.eu
+      - RTVS.sk
+
+    * In the last version I accidentally removed the program's icon. Now
+      it is back.
+
+    * The generic HTML parser was updated; It now supports URLs containing
+      anchors; also, if it can't find any better name, it will use the name
+      of the HTML page.
+
+
 
   v1.51:
 
@@ -13,7 +33,7 @@ CHANGELOG
 
     * New providers:
       - iConcerts.com
-      - ItsAllGay.com
+      - ItsAllGay.eu
       - RandyBlue.com (porn)
       - Streamin.to
 
@@ -24,6 +44,8 @@ CHANGELOG
       - RedTube.com (porno)
       - TVNoe.cz
       - YouTube.com
+
+    * The scripting language now has a <pause> command.
 
 
 

@@ -112,8 +112,13 @@ begin
 end;
 
 function TPlaylistDownloader.GetMovieInfoUrl: string;
+var
+  ix: integer;
 begin
   Result := MovieID;
+  ix := Pos('#', Result);
+  if ix > 0 then
+    SetLength(Result, ix-1);
 end;
 
 function TPlaylistDownloader.GetItemCount: integer;

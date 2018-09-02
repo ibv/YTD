@@ -97,7 +97,7 @@ type
       {$ENDIF}
     protected
       function GetName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      procedure SetName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetName(const Value: string); virtual;
       procedure SetPrepared(Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetLastErrorMsg: string; virtual;
       procedure SetLastErrorMsg(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}

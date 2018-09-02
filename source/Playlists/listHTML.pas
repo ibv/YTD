@@ -52,6 +52,7 @@ type
     protected
       function GetUrlRegExp: string; virtual;
       function GetPlayListItemURL(Match: TRegExpMatch; Index: integer): string; override;
+      function GetPlayListItemName(Match: TRegExpMatch; Index: integer): string; override;
       property Classifier: TDownloadClassifier read fClassifier;
     public
       constructor Create(const AMovieID: string); override;
@@ -60,11 +61,15 @@ type
 
 implementation
 
+uses
+  uStringConsts;
+
 const
   REGEXP_URL = '(?:\bhref'
              + '|\bsrc'
              + '|<param\s+name=(?P<Q1>["''])movie(?P=Q1)\s+value=)\s*=\s*(?P<Q>["''])(?P<URL>(?:https?|mmsh?|rtmpt?e?)://.+?)(?P=Q)'
              ;
+  REGEXP_TITLE = REGEXP_TITLE_TITLE;
 
 { TPlaylist_HTML }
 
@@ -72,12 +77,14 @@ constructor TPlaylist_HTML.Create(const AMovieID: string);
 begin
   inherited;
   PlaylistItemRegExp := RegExCreate(GetUrlRegExp);
+  MovieTitleRegExp := RegExCreate(REGEXP_TITLE);
   fClassifier := TDownloadClassifier.Create;
 end;
 
 destructor TPlaylist_HTML.Destroy;
 begin
   RegExFreeAndNil(PlaylistItemRegExp);
+  RegExFreeAndNil(MovieTitleRegExp);
   FreeAndNil(fClassifier);
   inherited;
 end;
@@ -94,6 +101,18 @@ begin
   Classifier.Url := Result;
   if Classifier.Downloader = nil then
     Result := '';
+end;
+
+function TPlaylist_HTML.GetPlayListItemName(Match: TRegExpMatch; Index: integer): string;
+var
+  ItemName: string;
+begin
+  if Match.SubexpressionByName('NAME', ItemName) then
+    Result := ItemName
+  else if UnpreparedName <> '' then
+    Result := UnpreparedName
+  else
+    Result := inherited GetPlayListItemName(Match, Index);
 end;
 
 end.

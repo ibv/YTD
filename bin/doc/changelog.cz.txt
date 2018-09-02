@@ -1,11 +1,31 @@
 ﻿______________________________________________________________________________
 
-YTD v1.51                                                    (c) 2009-15 Pepak
+YTD v1.52                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.52:
+
+    * Noví poskytovatelé:
+      - Playtvak.cz
+      - SputnikNews.com
+
+    * Aktualizovaní poskytovatelé:
+      - Heavy-R.com
+      - ItsAllGay.eu
+      - RTVS.sk
+
+    * Z minulé verze jsem omylem při úpravě sestavovacího skriptu odstranil
+      ikonku. Už je zase zpátky.
+
+    * Upraven generický stahovač videí z HTML stránek: Poradí si s URL
+      obsahujícími kotvu a pokud nedokáže najít lepší název, použije název
+      HTML stránky.
+
+
 
   v1.51:
 
@@ -13,7 +33,7 @@ CHANGELOG
 
     * Noví poskytovatelé:
       - iConcerts.com
-      - ItsAllGay.com
+      - ItsAllGay.eu
       - RandyBlue.com (porno)
       - Streamin.to
 
@@ -24,6 +44,8 @@ CHANGELOG
       - RedTube.com (porno)
       - TVNoe.cz
       - YouTube.com
+
+    * Do skriptovacího jazyka přibyl příkaz <pause>.
 
 
 

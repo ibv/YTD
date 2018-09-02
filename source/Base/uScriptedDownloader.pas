@@ -57,6 +57,7 @@ type
       function GetDownloaderCount: integer;
       function GetDownloader(Index: integer): TDownloader;
     protected
+      procedure SetName(const Value: string); override;
       function GetContentUrl: string; override;
       function GetFileName: string; override;
       function GetFileNameExt: string; override;
@@ -1264,6 +1265,16 @@ begin
     if Base <> '' then
       Result := GetRelativeUrl(Base, Result);
     end;
+end;
+
+procedure TScriptedDownloader.SetName(const Value: string);
+var
+  i: integer;
+begin
+  inherited;
+  if Value <> '' then
+    for i := 0 to Pred(DownloaderCount) do
+      Downloaders[i].Name := Format('%s [%d]', [Value, i+1]);
 end;
 
 initialization
