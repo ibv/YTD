@@ -1,11 +1,24 @@
 ﻿______________________________________________________________________________
 
-YTD v1.27                                                    (c) 2009-13 Pepak
+YTD v1.28                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.28:
+
+    * New providers:
+      - NaHnoji.cz
+      - RTVS.sk
+      - TV.HNOnline.sk
+
+    * Updated providers:
+      - Beeg.com
+      - CeskaTelevize.cz
+
+
 
   v1.27:
 

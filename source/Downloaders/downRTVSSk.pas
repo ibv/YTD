@@ -34,23 +34,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxBeeg;
+unit downRTVSSk;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, 
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uPCRE, uXml, HttpSend,
+  uOptions,
+  uDownloader, uCommonDownloader, downSTV;
 
 type
-  TDownloader_Beeg = class(THttpDownloader)
+  TDownloader_RTVSSk = class(TDownloader_STV)
     private
     protected
       function GetMovieInfoUrl: string; override;
     public
-      class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -63,50 +63,35 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://www.rtvs.sk/televizia/program/detail/4686/milujem-slovensko/archiv?date=17.05.2013
 const
-  URLREGEXP_BEFORE_ID = 'beeg\.com/';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_BEFORE_ID = 'rtvs\.sk/televizia/program/detail/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_URL =   REGEXP_URL_FILE_COLON_VALUE;
+{ TDownloader_RTVSSk }
 
-{ TDownloader_Beeg }
-
-class function TDownloader_Beeg.Provider: string;
-begin
-  Result := 'Beeg.com';
-end;
-
-class function TDownloader_Beeg.UrlRegExp: string;
+class function TDownloader_RTVSSk.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Beeg.Create(const AMovieID: string);
+constructor TDownloader_RTVSSk.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
-end;
-
-destructor TDownloader_Beeg.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Beeg.GetMovieInfoUrl: string;
+destructor TDownloader_RTVSSk.Destroy;
 begin
-  Result := 'http://www.beeg.com/' + MovieID + '/';
+  inherited;
+end;
+
+function TDownloader_RTVSSk.GetMovieInfoUrl: string;
+begin
+  Result := 'http://www.rtvs.sk/televizia/program/detail/' + MovieID;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_Beeg);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_RTVSSk);
 
 end.

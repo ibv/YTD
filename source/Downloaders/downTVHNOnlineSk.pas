@@ -34,21 +34,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxBeeg;
+unit downTVHNOnlineSk;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, 
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Beeg = class(THttpDownloader)
+  TDownloader_TVHNOnlineSk = class(THttpDownloader)
     private
     protected
+      StreamRegExp: TRegExp;
+      StreamRootRegExp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,50 +67,70 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://www.TVHNOnlineSk.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
 const
-  URLREGEXP_BEFORE_ID = 'beeg\.com/';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_BEFORE_ID = 'tv\.hnonline\.sk/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_URL =   REGEXP_URL_FILE_COLON_VALUE;
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_STREAM = '\bvar\s+myString\s*=\s*"(?P<STREAM>[^,"]+)';
+  REGEXP_MOVIE_ROOT =   '\bzdroj\s*=\*s"(?P<URL>https?://.+?)"';
 
-{ TDownloader_Beeg }
+{ TDownloader_TVHNOnlineSk }
 
-class function TDownloader_Beeg.Provider: string;
+class function TDownloader_TVHNOnlineSk.Provider: string;
 begin
-  Result := 'Beeg.com';
+  Result := 'TV.HNOnline.sk';
 end;
 
-class function TDownloader_Beeg.UrlRegExp: string;
+class function TDownloader_TVHNOnlineSk.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Beeg.Create(const AMovieID: string);
+constructor TDownloader_TVHNOnlineSk.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peAnsi;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  StreamRegExp := RegExCreate(REGEXP_MOVIE_STREAM);
+  StreamRootRegExp := RegExCreate(REGEXP_MOVIE_ROOT);
 end;
 
-destructor TDownloader_Beeg.Destroy;
+destructor TDownloader_TVHNOnlineSk.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(StreamRegExp);
+  RegExFreeAndNil(StreamRootRegExp);
   inherited;
 end;
 
-function TDownloader_Beeg.GetMovieInfoUrl: string;
+function TDownloader_TVHNOnlineSk.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.beeg.com/' + MovieID + '/';
+  Result := 'http://tv.hnonline.sk/' + MovieID;
+end;
+
+function TDownloader_TVHNOnlineSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Stream, Url: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(StreamRegExp, Page, 'STREAM', Stream) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+  else
+    begin
+    if (not GetRegExpVar(StreamRootRegExp, Page, 'URL', Url)) or (Url = '') then
+      Url := 'http://data.hnonline.sk/video/flv/';
+    MovieUrl := Url + Stream;
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_Beeg);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_TVHNOnlineSk);
 
 end.

@@ -45,11 +45,11 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=lib\pepak\delphi5;lib\pepak;lib\pepak\apiform;lib\synapse\source\lib;lib\perlregex;lib\rtmpdump;lib\msdl\src;lib\dxgettext\delphi5;lib\NativeXml;lib\lkJSON;Units
 Packages=Vcl50;Vclx50;VclSmp50;Vcldb50;vclado50;ibevnt50;Vclbde50;vcldbx50;Qrpt50;TeeUI50;TeeDB50;Tee50;Dss50;TeeQR50;VCLIB50;Vclmid50;vclie50;Inetdb50;Inet50;NMFast50;webmid50;dclocx50;dclaxserver50;MojePW;cxLibraryVCLD5;dxThemeD5;cxEditorsVCLD5;cxDataD5;cxExtEditorsVCLD5;cxPageControlD5;cxGridVCLD5;RxDB5;PenWinPackage;RxCtl5;CPortLib5;PenWinPackageHardware
-Conditionals=PEPAK;PEPAK_YTD;XXX;DEBUG
+Conditionals=PEPAK;PEPAK_YTD;XXX;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www1.stv.sk/online/archiv/spravy-stv?date=2013-05-19&id=53418&playerType=
+RunParams=http://tv.hnonline.sk/c1-59663880-nemali-v-com-fakturovat-tak-sa-stali-jednotkou-video
 HostApplication=
 [Language]
 ActiveLang=
@@ -61,7 +61,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=27
 Release=0
-Build=1006
+Build=1011
 Debug=0
 PreRelease=0
 Special=0
@@ -72,18 +72,18 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.27.0.1006
+FileVersion=1.27.0.1011
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YTD
-ProductVersion=1.27.0.1005
+ProductVersion=1.27.0.1010
 Comments=http://www.pepak.net/ytd
 [HistoryLists\hlConditionals]
 Count=3
-Item0=PEPAK;PEPAK_YTD;XXX;DEBUG
-Item1=PEPAK;PEPAK_YTD;XXX;
+Item0=PEPAK;PEPAK_YTD;XXX;
+Item1=PEPAK;PEPAK_YTD;XXX;DEBUG
 Item2=PEPAK;PEPAK_YTD;XXX;DEBUG;
 [HistoryLists\hlUnitAliases]
 Count=1

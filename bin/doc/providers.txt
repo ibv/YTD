@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.27                                                    (c) 2009-13 Pepak
+YTD v1.28                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -187,6 +187,8 @@ N-joy.cz            | HTTP     |       | http://n-joy.cz/video/shank-5-minut-hra
                     |          |       | http://n-joy.cz/right-now/video/honza-b/psvfmt8b61ghlgg4
                     |          |       | http://n-joy.cz/right-now/audio/vera-spinarova/2zpSLkXoR5IteMyC
                     |          |       | http://n-joy.cz/audio/vera-spinarova/2zpSLkXoR5IteMyC
+NaHnoji.cz          | HTTP     |       | http://nahnoji.cz/watch_video.php?v=UBMX421YR7ON
+                    |          |       | http://nahnoji.cz/player/embed_player.php?vid=7103
 NaStojaka.cz        | HTTP     |       | http://www.nastojaka.cz/321-risa-nedved-kouzelnik-i.aspx?aut=R%C3%AD%C5%A1a+Nedv%C4%9Bd
 NavratDoReality.cz  | HTTP     |       | http://navratdoreality.cz/?p=view&id=5766
 NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vice/video/pilot/213020/
@@ -239,6 +241,7 @@ RTA.cz              | MS       |       | http://www.rta.cz/?article=140331
                     |          |       | http://www.rta.cz/rta_stream_wmv/tvframe1.html?id_item=10046739
 Rtl.nl              | MS       |       | http://www.rtl.nl/xl/#/u/e6820785-1c71-381e-a3fa-37c6acc343b9/
                     |          |       | http://www.rtl.nl/system/s4m/xldata/uuid/e6820785-1c71-381e-a3fa-37c6acc343b9.xml
+RTVS.sk             | RTMP     |       | http://www.rtvs.sk/televizia/program/detail/4686/milujem-slovensko/archiv?date=17.05.2013
 RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d309ef371dff690eb3/
                     |          |       | http://bl.rutube.ru/c327d57926a628644fad3bc36d81ad08
                     |          |       | http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
@@ -283,6 +286,7 @@ TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/0
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
 TopRecepty.cz       | HTTP     |       | http://www.toprecepty.cz/recept/18507-bramborak-+-videorecept/
 TotallyCrap.com     | RTMP     |       | http://www.totallycrap.com/videos/videos_man_tries_to_commit_suicide_by_laying_under_a_truck/
+TV.HNOnline.sk      | HTTP     |       | http://tv.hnonline.sk/c1-59663880-nemali-v-com-fakturovat-tak-sa-stali-jednotkou-video
 TV2Nord.dk          | RTMP     |       | http://www.tv2nord.dk/arkiv/2011/11/10?video_id=30106&autoplay=1
 TV4Play.se          | HTTP     |       | http://www.tv4play.se/sport/alpint?title=inga_svenska_skidskyttemedaljer&videoid=1295009
 TV7.cz              | HTTP     |       | http://www.tv7.cz/?vid=1062

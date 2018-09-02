@@ -34,18 +34,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxBeeg;
+unit downNaHnoji;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, 
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_Beeg = class(THttpDownloader)
+  TDownloader_NaHnoji = class(THttpDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
@@ -63,50 +63,52 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://nahnoji.cz/watch_video.php?v=UBMX421YR7ON
+// http://nahnoji.cz/player/embed_player.php?vid=7103
+
 const
-  URLREGEXP_BEFORE_ID = 'beeg\.com/';
-  URLREGEXP_ID =        REGEXP_NUMBERS;
+  URLREGEXP_BEFORE_ID = 'nahnoji\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_MOVIE_URL =   REGEXP_URL_FILE_COLON_VALUE;
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_TITLE;
+  REGEXP_MOVIE_URL =    '\bvar\s+(hq|normal)_video_file\s*=\s*''(?P<URL>.+?)''';
 
-{ TDownloader_Beeg }
+{ TDownloader_NaHnoji }
 
-class function TDownloader_Beeg.Provider: string;
+class function TDownloader_NaHnoji.Provider: string;
 begin
-  Result := 'Beeg.com';
+  Result := 'NaHnoji.cz';
 end;
 
-class function TDownloader_Beeg.UrlRegExp: string;
+class function TDownloader_NaHnoji.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_Beeg.Create(const AMovieID: string);
+constructor TDownloader_NaHnoji.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUTF8;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  UrlIsRelative := True;
 end;
 
-destructor TDownloader_Beeg.Destroy;
+destructor TDownloader_NaHnoji.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_Beeg.GetMovieInfoUrl: string;
+function TDownloader_NaHnoji.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.beeg.com/' + MovieID + '/';
+  Result := 'http://www.nahnoji.cz/' + MovieID;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_Beeg);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_NaHnoji);
 
 end.
