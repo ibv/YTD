@@ -59,6 +59,7 @@ type
       EmbeddedFrameRegExp: TRegExp;
       LiveStream: boolean;
     protected
+      procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
       function GetMovieInfoUrl: string; override;
       function GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
       function ConvertMovieObject(var Data: string): boolean;
@@ -242,7 +243,6 @@ var MovieObject, Url, ID, BaseUrl, BestStream, Stream, sBitrate: string;
     Xml: TXmlDoc;
     Body, Node: TXmlNode;
     i, j, Bitrate, BestBitrate: integer;
-    Protocol, User, Password, Host, Port, Path, Para: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -287,18 +287,7 @@ begin
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else
                     begin
-                    MovieURL := BaseUrl + '/' + BestStream;
-                    ParseUrl(BaseUrl, Protocol, User, Password, Host, Port, Path, Para);
-                    SetRtmpDumpOption('z', '');
-                    SetRtmpDumpOption('r', BaseUrl);
-                    SetRtmpDumpOption('a', Copy(Path, 2, MaxInt) + '?' + Para);
-                    SetRtmpDumpOption('y', BestStream);
-                    //SetRtmpDumpOption('f', 'WIN 10,1,102,64');
-                    //SetRtmpDumpOption('s', 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23');
-                    //SetRtmpDumpOption('t', BaseUrl);
-                    //SetRtmpDumpOption('p', MovieID);
-                    if LiveStream then
-                      SetRtmpDumpOption('v', '');
+                    SetRtmpOptions(BaseUrl, BestStream);
                     {$IFDEF MULTIDOWNLOADS}
                     BaseUrls.Add(BaseUrl);
                     Streams.Add(BestStream);
@@ -350,16 +339,28 @@ begin
       begin
       SetName(Format('%s (%d)', [BaseName, Succ(DownloadIndex)]));
       SetFileName('');
-      MovieURL := Streams[DownloadIndex];
-      SetRtmpDumpOption('r', BaseUrls[DownloadIndex]);
-      SetRtmpDumpOption('y', Streams[DownloadIndex]);
-      if LiveStream then
-        SetRtmpDumpOption('v', '');
+      SetRtmpOptions(BaseUrls[DownloadIndex], Streams[DownloadIndex]);
       Result := True;
       end;
     end;
 end;
 {$ENDIF}
+
+procedure TDownloader_CT.SetRtmpOptions(const BaseUrl, Stream: string);
+var Protocol, User, Password, Host, Port, Path, Para: string;
+begin
+  MovieURL := BaseUrl + '/' + Stream;
+  ParseUrl(BaseUrl, Protocol, User, Password, Host, Port, Path, Para);
+  SetRtmpDumpOption('r', BaseUrl);
+  SetRtmpDumpOption('a', Copy(Path, 2, MaxInt) + '?' + Para);
+  SetRtmpDumpOption('y', Stream);
+  //SetRtmpDumpOption('f', 'WIN 10,1,102,64');
+  //SetRtmpDumpOption('s', 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23');
+  //SetRtmpDumpOption('t', BaseUrl);
+  //SetRtmpDumpOption('p', MovieID);
+  if LiveStream then
+    SetRtmpDumpOption('v', '');
+end;
 
 initialization
   RegisterDownloader(TDownloader_CT);

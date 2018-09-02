@@ -1,11 +1,19 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.85                                     (c) 2009-11 Pepak
+YouTube Downloader v0.86                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.86:
+
+    * CeskaTelevize.cz: Forgot to remove the detailed log file, which grew
+      several times larger than the video itself. Also fixed the multipart
+      movies to work with the new player.
+
+
 
   v0.85:
 

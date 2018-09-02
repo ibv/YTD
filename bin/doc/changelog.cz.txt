@@ -1,11 +1,19 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.85                                     (c) 2009-11 Pepak
+YouTube Downloader v0.86                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.86:
+
+    * CeskaTelevize.cz: Z pøedchozí verze jsem zapomnìl odstranit podrobnı 
+      log soubor (kterı snadno narùstal do velikosti nìkolikanásobnì vìtší
+      ne je velikost celého videa). Také nefungovala víceèásová videa.
+
+
 
   v0.85:
 
