@@ -104,7 +104,7 @@ end;
 
 class function TDownloader_Movtex.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRequireSecureToken, dfUserLogin];
+  Result := inherited Features + [dfAcceptSecureToken, dfRequireSecureToken, dfUserLogin];
 end;
 
 class function TDownloader_Movtex.UrlRegExp: string;

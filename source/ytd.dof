@@ -49,15 +49,15 @@ Conditionals=PEPAK;PEPAK_YTD;
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=http://www.joj.sk/15-min-kuchar/15-min-kuchar-archiv/2014-11-02-15-min-kuchar-premiera.html
+RunParams=http://www.xtube.com/watch.php?v=nx2pz-S470-
 HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=1
-MinorVer=40
+MinorVer=45
 Release=0
-Build=1115
+Build=1126
 Debug=0
 PreRelease=0
 Special=0
@@ -68,13 +68,13 @@ CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
 FileDescription=YTD
-FileVersion=1.40.0.1115
+FileVersion=1.45.0.1126
 InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
 ProductName=YTD
-ProductVersion=1.40.0.1074
+ProductVersion=1.45.0.1122
 Comments=http://www.pepak.net/ytd
 [Excluded Packages]
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment

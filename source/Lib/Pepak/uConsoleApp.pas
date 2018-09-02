@@ -278,7 +278,8 @@ end;
 
 procedure TConsoleApp.Writeln(const Msg: string);
 begin
-  Write(Msg);
+  if Msg <> '' then
+    Write(Msg);
   Write(LineSeparator);
 end;
 

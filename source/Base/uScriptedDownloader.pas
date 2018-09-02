@@ -1014,20 +1014,26 @@ end;
 
 procedure TScriptedDownloader.ProcessDebug(Node: TXmlNode; Vars: TScriptVariables);
 var
-  Content: string;
+  FileName, Content: string;
   FirstDebug: boolean;
   T: TextFile;
 begin
   Content := ProcessNodeContent(Node, Vars);
+  FileName := XmlAttribute(Node, 'filename');
   if DebugFileName = '' then
     begin
     FirstDebug := True;
-    DebugFileName := ExtractFilePath(ParamStr(0)) + 'ytd-debug.log';
+    if FileName <> '' then
+      DebugFileName := FileName
+    else
+      DebugFileName := ExtractFilePath(ParamStr(0)) + 'ytd-debug.log';
     end
   else
     FirstDebug := False;
-  AssignFile(T, DebugFileName);
-  if (not FirstDebug) and FileExists(DebugFileName) then
+  if FileName = '' then
+    FileName := DebugFileName;
+  AssignFile(T, FileName);
+  if (not FirstDebug) and FileExists(FileName) then
     Append(T)
   else
     Rewrite(T);

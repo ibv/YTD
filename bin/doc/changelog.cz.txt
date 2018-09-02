@@ -1,11 +1,40 @@
 ﻿______________________________________________________________________________
 
-YTD v1.45                                                    (c) 2009-14 Pepak
+YTD v1.46                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.46:
+
+    * Noví poskytovatelé:
+      - SultanCesky.cz
+
+    * Aktualizovaní poskytovatelé:
+      - CeskaTelevize.cz
+      - Facebook.com
+      - PornHub.com
+      - XNXX.com
+      - XTube.com
+
+    * Česká televize byla kompletně přepracována. Neměl jsem čas a chuť
+      dělat titulky, to snad někdy příště, ale už funguje stahování videí,
+      a to včetně částečných pořadů (např. jen část Událostí) a výběru
+      kvality (stáhne se ta kvalita, kterou zvolíte). 
+      
+      Pozor, v některých případech nelze video stáhnout přímo z jeho stránky,
+      musíte najít URL přehrávacího IFRAME - tato URL vypadá přibližně takto:
+      http://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?hash=f0a72181ab9628a6ee67fc5d5babbde8f720befb&IDEC=210%20522%2016142&width=598&flash&noShow=false
+      Viděl jsem to v případech, kdy na stránce pořadu je jen náhled a teprve
+      po rozkliknutí se dostanete k celému pořadu.
+
+    * YouTube.com jsem přehodil na SSL, uvidíme, jestli to pomůže s nalezením
+      "Stránky informací o médiu". Mě to bohužel funguje vždy, takže se mi
+      to obtížně ladí.
+
+
 
   v1.45:
 

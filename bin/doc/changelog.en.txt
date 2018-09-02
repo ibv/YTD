@@ -1,11 +1,42 @@
 ﻿______________________________________________________________________________
 
-YTD v1.45                                                    (c) 2009-14 Pepak
+YTD v1.46                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.46:
+
+    * New providers:
+      - SultanCesky.cz
+
+    * Updated providers:
+      - CeskaTelevize.cz
+      - Facebook.com
+      - PornHub.com
+      - XNXX.com
+      - XTube.com
+
+    * CeskaTelevize.cz was completely rewritten. I didn't have the time to
+      handle the subtitles, that may follow sometime in the future, but the
+      video downloads work fine. Supported are partial videos (e.g. just
+      a single part of Udalosti) and the quality selection (which URL you
+      choose, that's the quality you get).
+
+      Note that in some cases a video may not be downloadable directly from
+      its page, but if you find the embedded IFRAME's URL, it will work OK.
+      The IFRAME's URL should look like this:
+      http://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?hash=f0a72181ab9628a6ee67fc5d5babbde8f720befb&IDEC=210%20522%2016142&width=598&flash&noShow=false
+      I noticed this is often the case if a video's page only contains a
+      preview and only after clicking you get to the full video.
+
+    * YouTube.com download was switched to SSL. We shall see if it helps with
+      "Failed to download media info page". Unfortunately, it works perfectly
+      for me so I can't properly debug the cause.
+
+
 
   v1.45:
 

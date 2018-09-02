@@ -99,7 +99,7 @@ end;
 
 class function TDownloader_MojeVideoSk.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [{dfRequireSecureToken}];
+  Result := inherited Features + [{dfAcceptSecureToken, dfRequireSecureToken}];
 end;
 
 constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);

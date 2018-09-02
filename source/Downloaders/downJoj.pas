@@ -111,7 +111,7 @@ end;
 
 class function TDownloader_Joj.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRequireSecureToken];
+  Result := inherited Features + [dfAcceptSecureToken];
 end;
 
 {$IFDEF GUI}

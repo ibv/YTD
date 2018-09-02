@@ -49,6 +49,7 @@ type
     private
     protected
       FlashVarsRegExp: TRegExp;
+      FlashVarRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGET): boolean; override;
@@ -74,7 +75,8 @@ const
 
 const
   REGEXP_MOVIE_TITLE = '<div\s+class="content_d">\s*<div[^>]*>\s*(?P<TITLE>.*?)</div>';
-  REGEXP_FLASHVARS = '\.addVariable\s*\(\s*"(?P<VARNAME>[^"]+)"\s*,\s*"(?P<VARVALUE>[^"]+)"';
+  REGEXP_FLASH_VARS = REGEXP_FLASHVARS;
+  REGEXP_FLASH_VAR = REGEXP_PARSER_HTMLVARS;
 
 { TDownloader_XTube }
 
@@ -93,13 +95,15 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  FlashVarsRegExp := RegExCreate(REGEXP_FLASHVARS);
+  FlashVarsRegExp := RegExCreate(REGEXP_FLASH_VARS);
+  FlashVarRegExp := RegExCreate(REGEXP_FLASH_VAR);
 end;
 
 destructor TDownloader_XTube.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(FlashVarsRegExp);
+  RegExFreeAndNil(FlashVarRegExp);
   inherited;
 end;
 
@@ -119,22 +123,27 @@ const
   PREFIX_FILENAME = '&filename=';
   PREFIX_FILENAME_LENGTH = Length(PREFIX_FILENAME);
 var
-  SwfUrl, UserID, VideoID, ClipID: string;
+  SwfUrl, UserID, VideoID, ClipID, FlashVars: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  GetRegExpVarPairs(FlashVarsRegExp, Page, ['swfURL', 'user_id', 'video_id', 'clip_id'], [@SwfUrl, @UserID, @VideoID, @ClipID]);
-  if VideoID = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['video_id']))
-  else if not DownloadPage(Http, 'http://www.xtube.com/find_video.php', AnsiString('user_id=' + UrlEncode(UserID) + '&clip_id=' + UrlEncode(ClipID) + '&video_id=' + UrlEncode(VideoID)), HTTP_FORM_URLENCODING, Page) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['flashvars']))
   else
     begin
-    MovieUrl := SwfUrl + UrlDecode(Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt));
-    SetPrepared(True);
-    Result := True;
+    GetRegExpVarPairs(FlashVarRegExp, FlashVars, ['swfURL', 'user_id', 'video_id', 'clip_id'], [@SwfUrl, @UserID, @VideoID, @ClipID]);
+    if VideoID = '' then
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['video_id']))
+    else if not DownloadPage(Http, 'http://www.xtube.com/find_video.php', AnsiString('user_id=' + UrlEncode(UserID) + '&clip_id=' + UrlEncode(ClipID) + '&video_id=' + UrlEncode(VideoID)), HTTP_FORM_URLENCODING, Page) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else
+      begin
+      MovieUrl := SwfUrl + UrlDecode(Copy(Page, Succ(PREFIX_FILENAME_LENGTH), MaxInt));
+      SetPrepared(True);
+      Result := True;
+      end;
     end;
 end;
 

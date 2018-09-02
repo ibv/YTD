@@ -386,7 +386,7 @@ begin
   Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
   Self.RealTime := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in Features);
   Result := inherited Prepare;
-  if dfRequireSecureToken in Features then
+  if ([dfAcceptSecureToken, dfRequireSecureToken] * Features) <> [] then
     if Self.Token <> '' then
       if UseTokenAsRtmpToken then
         Self.SecureToken := Self.Token;

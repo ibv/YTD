@@ -135,7 +135,7 @@ end;
 
 class function TDownloader_AnimacekTv.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRequireSecureToken];
+  Result := inherited Features + [dfAcceptSecureToken, dfRequireSecureToken];
 end;
 
 initialization

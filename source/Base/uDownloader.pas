@@ -67,7 +67,7 @@ type
     dfDummy
     {$IFDEF SUBTITLES} , dfSubtitles, dfSubtitlesConvert {$ENDIF}
     , dfRtmpLiveStream, dfPreferRtmpLiveStream, dfRtmpRealTime, dfPreferRtmpRealTime
-    , dfRequireSecureToken, dfUserLogin
+    , dfAcceptSecureToken, dfRequireSecureToken, dfUserLogin
     );
   TDownloaderFeatures = set of TDownloaderFeature;
 

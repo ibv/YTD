@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.44+                                                   (c) 2009-14 Pepak
+YTD v1.44+                                                   (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -56,10 +56,7 @@ Cas.sk              | HTTP     |       | http://www.cas.sk/clanok/172890/testova
 CD.cz               | HTTP     |       | http://www.cd.cz/tv/aktuality/300_rekonstrukce-nadrazi-v-ceskem-brode
 CekniTo.cz          | HTTP     |       | http://www.ceknito.cz/video/446074
 CekniTo.sk          | HTTP     |       | http://www.ceknito.sk/video/446074
-CeskaTelevize.cz    | RTMP     | 2,8   | http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
-                    |          | 2,8   | http://www.ceskatelevize.cz/program/port/541-elektronicke-knihy/
-                    |          | 2,8   | http://www.ceskatelevize.cz/program/10252893246-07.08.2010-08:32-24-prizma.html
-                    |          | 2,8   | http://www.ceskatelevize.cz/porady/873537-hledani-ztraceneho-casu/207522161510013-filmy-z-vaclavaku/
+CeskaTelevize.cz    | HLS      |       | http://www.ceskatelevize.cz/ivysilani/309292320520025-den-d-ii-rada/
 Cesnet.cz           | MS       | 4     | http://server3.streaming.cesnet.cz/others/av/tydenvedy/2009/amazonie.wmv
 CestyKSobe.cz       | HTTP     |       | http://www.cestyksobe.cz/novinky/nejnovejsi-a-nejzajimavejsi-porady/642.html
 CKKlic.cz           | HTTP     |       | http://www.ckklic.cz/zajezdy/rafting/dlouhe-a-expedicni-rafting-akce-na-raftech-nebo-na-dvoumistnych-yukonech/albanie-rafting-na-panenskych-rekach-vodacka-expedice-zajezd-na-yukonech.56.151.html
@@ -73,9 +70,6 @@ CollegeHumor.com    | HTTP     |       | http://www.collegehumor.com/video:19349
 CriticalPast.com    | RTMP     |       | http://www.criticalpast.com/video/65675022388_Nazi-dignitary-at-harvest-festival_Sudeten-German-Party_Nazi
 CrunchyRoll.com     | RTMP     | X     | http://www.crunchyroll.com/library/Naruto_Shippuden
 CSFD.cz             | HTTP     |       | http://www.csfd.cz/film/241720-lidice/videa/
-CT24.cz             | HTTP     | 3     | http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/video/1/
-                    |          | 3     | http://www.ct24.cz/regionalni/87267-vrchlabsky-zamek-ma-vlastni-miniaturu/
-                    |          | 3     | http://www.ct24.cz/vysilani/2010/02/10/10159875412-210411058030210-11:35-milenium/
 Current.com         | HTTP     |       | http://current.com/shows/the-rotten-tomatoes-show/92561962_angelina-jolies-top-5-hottest-parts.htm
 DailyHaha.com       | HTTP     |       | http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
 DailyMail.co.uk     | HTTP     |       | http://www.dailymail.co.uk/news/article-2472674/World-View-Enterprises-plans-luxury-balloon-flights-edge-space.html

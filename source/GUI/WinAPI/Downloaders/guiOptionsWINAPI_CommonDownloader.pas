@@ -246,7 +246,7 @@ begin
     CheckDlgButton(Self.Handle, IDC_CHECKBOX_LIVESTREAM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in DownloaderClass.Features)]);
   if Supports(dfRtmpRealTime, [IDC_CHECKBOX_REALTIME]) then
     CheckDlgButton(Self.Handle, IDC_CHECKBOX_REALTIME, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in DownloaderClass.Features)]);
-  if Supports(dfRequireSecureToken, [IDC_LABEL_SECURETOKEN, IDC_EDIT_SECURETOKEN]) then
+  if Supports(dfRequireSecureToken, [IDC_LABEL_SECURETOKEN, IDC_EDIT_SECURETOKEN]) or Supports(dfAcceptSecureToken, [IDC_LABEL_SECURETOKEN, IDC_EDIT_SECURETOKEN]) then
     SetWindowText(EditSecureToken, PChar(Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, '')));
   if Supports(dfUserLogin, [IDC_LABEL_USERNAME, IDC_EDIT_USERNAME, IDC_LABEL_PASSWORD, IDC_EDIT_PASSWORD]) then
     begin
@@ -295,7 +295,7 @@ begin
       BST_UNCHECKED:
         Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, False);
       end;
-  if Supports(dfRequireSecureToken) then
+  if Supports(dfRequireSecureToken) or Supports(dfAcceptSecureToken) then
     Options.WriteProviderOption(Provider, OPTION_COMMONDOWNLOADER_SECURETOKEN, GetWindowTextAsString(EditSecureToken));
   if Supports(dfUserLogin) then
     begin

@@ -76,7 +76,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_FLASHVARS = REGEXP_FLASHVARS_JS;
+  REGEXP_FLASHVARS = '''flashvars''\s*:\s*\{(?P<FLASHVARS>.+?)\}\s*,';
   REGEXP_FLASHVARS_ITEMS = REGEXP_PARSER_FLASHVARS_JS;
   REGEXP_FLASHVARS_ITEMS_QUALITY = '"quality_(?P<QUALITY>\d+)[^"]*"\s*:\s*"(?P<URL>.+?)"';
 

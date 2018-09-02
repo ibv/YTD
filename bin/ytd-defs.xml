@@ -1,5 +1,5 @@
 ﻿<ytd-defs>
-	<version>1.45.20141102.0</version>
+	<version>1.46.20150315.0</version>
 	<scripts>
 
 		<script id="1tv.ru" provider="1tv.ru">
@@ -122,15 +122,19 @@
 			<regexps>
 				<regexp id="item" match="CONTENT"><![CDATA[swf\s*=\s*new\s+SWFObject\s*\((?P<CONTENT>.+?)\breturn\s+swf\s*;]]></regexp>
 				<regexp id="params" match="CONTENT"><![CDATA[\[\s*\[\s*"params"\s*,\s*"(?P<CONTENT>.+?)"]]></regexp>
-				<regexp id="url" match="URL"><![CDATA["hd_src"\s*:\s*"(?P<URL>https?:.+?)"]]></regexp>
-				<regexp id="title" match="TITLE"><![CDATA[<h2\s+class="uiHeaderTitle">(?P<TITLE>.+?)</h2>]]></regexp>
+				<regexp id="url" match="URL"><![CDATA["(?P<QUALITY>\w+)_src"\s*:\s*"(?P<URL>https?:.+?)"]]></regexp>
 			</regexps>
 			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
 			<set_var id="item"><regexp id="item" content="page"/></set_var>
 			<set_var id="params"><decode_url><decode_js><regexp id="params" content="item"/></decode_js></decode_url></set_var>
+			<multi_regexp id="url" content="params" var_prefix="vid_" match="URL,QUALITY">
+				<best_var id="vid_QUALITY" type="enumeration" order="hd,sd">
+					<set_var id="url"><decode_js><get_var id="vid_URL"/></decode_js></set_var>
+				</best_var>
+			</multi_regexp>
 			<http_download>
-				<title><regexp id="title" content="page"/></title>
-				<url><decode_js><regexp id="url" content="params"/></decode_js></url>
+				<title><decode_html><regexp id="title" content="page"/></decode_html></title>
+				<url><get_var id="url"/></url>
 			</http_download>
 		</script>
 
@@ -252,6 +256,22 @@
 				<playpath><get_var id="stream_id"/>?auth=<get_var id="auth"/></playpath>
 				<extension>.flv</extension>
 			</rtmp_download>
+		</script>
+
+		<script id="sultancesky.cz" provider="SultanCesky.cz">
+			<regexps>
+				<regexp id="list" match="CONTENT"><![CDATA[\bsources\s*:\s*\[\s*(?P<CONTENT>.*?)\s*\]]]></regexp>
+				<regexp id="item" match="URL"><![CDATA[\{\s*file\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="list"><regexp id="list" content="page"/></set_var>
+			<multi_regexp id="item" content="list" var_prefix="item_" match="URL">
+				<set_var id="url"><get_var id="item_URL"/></set_var>
+			</multi_regexp>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><get_var id="url"/></url>
+			</http_download>
 		</script>
 
 		<script id="super.cz" provider="Super.cz">
@@ -410,13 +430,25 @@
 			</http_download>
 		</script>
 
+		<script id="xnxx.com" provider="XNXX.com">
+			<regexps>
+				<regexp id="video" match="URL"><![CDATA[<embed\b[^>]*\sflashvars="(?:[^"]*?&amp;amp;)*flv_url=(?P<URL>https?.+?)(?:&amp;|")]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="ansi"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><decode_url><regexp id="video" content="page"/></decode_url></url>
+			</http_download>
+		</script>
+
 		</adult>
 	</scripts>
 	<regexps>
-		<regexp id="title" match="NAME"><![CDATA[<title>\s*(?P<NAME>.*?)\s*</title>]]></regexp>
+		<regexp id="title" match="NAME"><![CDATA[<title\b[^>]*>\s*(?P<NAME>.*?)\s*</title>]]></regexp>
 		<regexp id="h1" match="NAME"><![CDATA[<h1[^>]*>\s*(?P<NAME>.*?)\s*</h1>]]></regexp>
 		<regexp id="h2" match="NAME"><![CDATA[<h2[^>]*>\s*(?P<NAME>.*?)\s*</h2>]]></regexp>
 		<regexp id="meta_ogtitle" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:title(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
+		<regexp id="meta_description" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])description(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="div_title" match="NAME"><![CDATA[<div\s+[^>]*\bid="title"[^>]*>\s*(?P<NAME>.*?)\s*</div>]]></regexp>
 		<regexp id="meta_ogvideo" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])og:video(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
 		<regexp id="meta_articletag" match="NAME"><![CDATA[<meta\s+(name|property)=(?P<QUOTE1>['"])article:tag(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>['"])(?P<NAME>.*?)(?P=QUOTE2)]]></regexp>
@@ -444,6 +476,7 @@
 		<url script="optobone.cz"><![CDATA[optobone\.cz/.+$]]></url>
 		<url script="rtl.be"><![CDATA[rtl\.be/.+$]]></url>
 		<url script="rtvs.sk"><![CDATA[rtvs\.sk/.+$]]></url>
+		<url script="sultancesky.cz"><![CDATA[sultancesky\.cz/.+$]]></url>
 		<url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
 		<url script="tv7.cz"><![CDATA[tv7\.cz/.+$]]></url>
 		<url script="tvcom.cz"><![CDATA[tvcom\.cz/.+$]]></url>
@@ -459,6 +492,7 @@
 		<url script="redtube.com"><![CDATA[redtube\.com/.+$]]></url>
 		<url script="sextubespot.com"><![CDATA[sextubespot\.com/videos/.+$]]></url>
 		<url script="xhamster.com"><![CDATA[xhamster\.com/.+$]]></url>
+		<url script="xnxx.com"><![CDATA[xnxx\.com/.+$]]></url>
 		</adult>
 	</urls>
 </ytd-defs>

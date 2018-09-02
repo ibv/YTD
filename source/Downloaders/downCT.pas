@@ -36,13 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downCT;
 {$INCLUDE 'ytd.inc'}
-{$DEFINE VER_OLD}
-{.$DEFINE VER_20111217}
 {$DEFINE CONVERTSUBTITLES}
   // Convert subtitles to .srt format
-
-
-{$DEFINE DEBUG_ERRORSOAP}
 
 
 interface
@@ -50,169 +45,61 @@ interface
 uses
   SysUtils, Classes, Windows,
   {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, SynaUtil,
   uOptions,
   {$IFDEF GUI}
-    guiDownloaderOptions,
+//    guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
-      guiOptionsWINAPI_CT,
+//      guiOptionsWINAPI_CT,
     {$ELSE}
-      guiOptionsVCL_CT,
+//      guiOptionsVCL_CT,
     {$ENDIF}
   {$ENDIF}
-  uDownloader, uCommonDownloader, uNestedDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uHLSDownloader;
 
 type
-  TDownloader_CT = class(TNestedDownloader)
+  TDownloader_CT = class(THLSDownloader)
     private
     protected
-      {$IFDEF VER_20111217}
-      NewFlashVarsRegExp: TRegExp;
-      NewFlashVarsItemsRegExp: TRegExp;
-      {$ENDIF}
+      PlaylistInfoRegExp: TRegExp;
+      PlaylistUrlRegExp: TRegExp;
+      StreamUrlRegExp: TRegExp;
+      StreamTitleRegExp: TRegExp;
+      StreamTitle2RegExp: TRegExp;
+      IFrameUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
-      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
-      function PrepareToken: boolean; override;
-    public
-      class function Features: TDownloaderFeatures; override;
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
-      {$IFDEF GUI}
-      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
-      {$ENDIF}
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
-    end;
-
-  {$IFDEF VER_20111217}
-  TDownloader_CT_20111217 = class(TRtmpDownloader)
-    private
-    protected
-      FlashVarsRegExp: TRegExp;
-      FlashVarsItemsRegExp: TRegExp;
-    protected
-      function GetMovieInfoUrl: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-    public
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
-      class function Features: TDownloaderFeatures; override;
-      constructor Create(const AMovieID: string); override;
-      destructor Destroy; override;
-    end;
-  {$ENDIF}
-
-  {$IFDEF VER_OLD}
-  TDownloader_CT_old = class(TRtmpDownloader)
-    private
-      {$IFDEF MULTIDOWNLOADS}
-      fBaseUrls: TStringList;
-      fStreams: TStringList;
-      fDownloadIndex: integer;
-      fBaseName: string;
-      {$ENDIF}
-    protected
-      MovieObjectRegExp: TRegExp;
-      EmbeddedFrameRegExp: TRegExp;
-      JavascriptPlayerRegExp: TRegExp;
-      VideoPlayerUrlRegExp: TRegExp;
-      GetAjaxPlaylistRegExp: TRegExp;
-      GetVideoUrlRegExp: TRegExp;
-      GetPlaylistUrlRegExp: TRegExp;
-      GetPlaylistUrlFromJSONRegExp: TRegExp;
-      {$IFDEF SUBTITLES}
-      HasSubtitles: boolean;
-      {$IFDEF CONVERTSUBTITLES}
-      SubtitleItemRegExp: TRegExp;
-      {$ENDIF}
-      {$ENDIF}
-      Extension: string;
-      MaxBitrate: integer;
-    protected
-      procedure SetRtmpOptions(const BaseUrl, Stream: string); virtual;
       function GetFileNameExt: string; override;
-      function BeforeGetMovieInfoUrl(Http: THttpSend): boolean; override;
-      function GetMovieInfoUrl: string; override;
-      function GetBaseMovieInfoUrl: string;
-      function UrlWithSubtitles: string;
-      function GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
-      function ConvertMovieObject(var Data: string): boolean;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      {$IFDEF MULTIDOWNLOADS}
-      property BaseUrls: TStringList read fBaseUrls;
-      property Streams: TStringList read fStreams;
-      property DownloadIndex: integer read fDownloadIndex write fDownloadIndex;
-      property BaseName: string read fBaseName write fBaseName;
-      {$ENDIF}
-      procedure SetOptions(const Value: TYTDOptions); override;
+      function GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      {$IFDEF MULTIDOWNLOADS}
-      function First: boolean; override;
-      function Next: boolean; override;
-      {$ENDIF}
-      {$IFDEF SUBTITLES}
-      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      {$ENDIF}
     end;
-  {$ENDIF}
-
-const
-  OPTION_CT_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
-  OPTION_CT_MAXBITRATE_DEFAULT = 0;
 
 implementation
 
 uses
   uStringConsts,
-  {$IFDEF VER_OLD}
   uStrings,
-  uJSON, uLkJSON,
-  SynaUtil,
-  {$ENDIF}
-  {$IFDEF SUBTITLES}
-  uSubtitles,
-  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*&mdash;\s*iVysílání)?(?:\s*&mdash;\s*Ceská televize)?\s*</title>';
-  {$IFDEF VER_20111217}
-  REGEXP_NEW_FLASHVARS = REGEXP_FLASHVARS;
-  REGEXP_NEW_FLASHVARS_ITEMS = REGEXP_PARSER_HTMLVARS;
-  VARNAME_NEW_SERVER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'streamer';
-  VARNAME_NEW_STREAM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'file';
-  {$ENDIF}
-  {$IFDEF VER_OLD}
-  REGEXP_MOVIE_OBJECT = '\bcallSOAP\s*\(\s*(?P<OBJECT>\{.*?\})\s*\)\s*;';
-  REGEXP_MOVIE_FRAME = '<iframe\s+[^>]*\bsrc="(?P<HOST>https?://[^"/]+)?(?P<PATH>/(?:ivysilani|embed)/.+?)"';
-  REGEXP_JS_PLAYER = '<a\s+(?:\w+="[^"]*"\s+)*\bhref="javascript:void\s*\(\s*q\s*=\s*''(?P<PARAM>[^'']+)''\s*\)"\s+(?:id|target)="videoPlayer_';
-  REGEXP_VIDEOPLAYERURL = '"videoPlayerUrl"\s*:\s*"(?P<URL>(?:https?:|\\?/).+?)"';
-  REGEXP_AJAXPLAYLIST = '<script\b[^>]*\ssrc="(?P<URL>https?://[^/]*\.ceskatelevize\.cz/libraries/player/ajaxPlaylist[^"]*)"';
-  REGEXP_VIDEOURL = '\burl\s*:\s*"(?P<URL>.+?)"';
-  REGEXP_GETPLAYLISTURL = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYPE>[^"]*)"\s*,\s*"id"\s*:\s*"(?P<ID>[^"]+)"';
-  REGEXP_GETPLAYLISTURLFROMJSON = '"url"\s*:\s*"(?P<URL>https?:\\?/\\?/.+?)"';
-  {$IFDEF SUBTITLES}
-  REGEXP_SUBTITLES = '<(?:ul|div)\s+id="subtitle[^>]+>(?P<SUBTITLES>.*?)</ul>';
-  {$IFDEF CONVERTSUBTITLES}
-  REGEXP_SUBTITLE_ITEM = '<li>\s*<a\b[^>]*>(?P<HOUR>\d+):(?P<MINUTE>\d{2}):(?P<SECOND>\d{2})</a>\s*(?P<TEXT>.*?)</li>';
-  {$ENDIF}
-  {$ENDIF}
-  CUSTOM_HEADERS: array[0..0] of string = (
-    'X-addr: 127.0.0.1'
-    );
-  {$ENDIF}
+  REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
+  REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_STREAM_URL = '"streamUrls"\s*:\s*\{\s*"main"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(https?://[^/]+)?/ivysilani/.+?)"';
 
 class function TDownloader_CT.Provider: string;
 begin
@@ -221,558 +108,100 @@ end;
 
 class function TDownloader_CT.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 class function TDownloader_CT.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features
-    {$IFDEF VER_OLD} + TDownloader_CT_old.Features {$ENDIF}
-    {$IFDEF VER_20111217} + TDownloader_CT_20111217.Features {$ENDIF}
-    ;
+  Result := inherited Features;
 end;
 
 constructor TDownloader_CT.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  {$IFDEF VER_20111217}
-  NewFlashVarsRegExp := RegExCreate(REGEXP_NEW_FLASHVARS);
-  NewFlashVarsItemsRegExp := RegExCreate(REGEXP_NEW_FLASHVARS_ITEMS);
-  {$ENDIF}
+  PlaylistInfoRegExp := RegExCreate(REGEXP_PLAYLIST_INFO);
+  PlaylistUrlRegExp := RegExCreate(REGEXP_PLAYLIST_URL);
+  StreamUrlRegExp := RegExCreate(REGEXP_STREAM_URL);
+  StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE);
+  StreamTitle2RegExp := RegExCreate(REGEXP_STREAM_TITLE_BETTER);
+  IFrameUrlRegExp := RegExCreate(REGEXP_IFRAME_URL);
+  Referer := GetMovieInfoUrl;
 end;
 
 destructor TDownloader_CT.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  {$IFDEF VER_20111217}
-  RegExFreeAndNil(NewFlashVarsRegExp);
-  RegExFreeAndNil(NewFlashVarsItemsRegExp);
-  {$ENDIF}
+  RegExFreeAndNil(PlaylistInfoRegExp);
+  RegExFreeAndNil(PlaylistUrlRegExp);
+  RegExFreeAndNil(StreamUrlRegExp);
+  RegExFreeAndNil(StreamTitleRegExp);
+  RegExFreeAndNil(StreamTitle2RegExp);
+  RegExFreeAndNil(IFrameUrlRegExp);
   inherited;
 end;
-
-{$IFDEF GUI}
-class function TDownloader_CT.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
-begin
-  Result := TFrameDownloaderOptionsPage_CT;
-end;
-{$ENDIF}
 
 function TDownloader_CT.GetMovieInfoUrl: string;
 begin
   Result := MovieID;
 end;
 
-function TDownloader_CT.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
-{$IFDEF VER_20111217}
+function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  FlashVars, Server, Stream: string;
-{$ENDIF}
-begin
-  inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
-  Result := False;
-  {$IFDEF VER_20111217}
-  if not Result then
-    if GetRegExpVar(NewFlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-      if GetRegExpVarPairs(NewFlashVarsItemsRegExp, FlashVars, [VARNAME_NEW_SERVER, VARNAME_NEW_STREAM], [@Server, @Stream]) then
-        if (Server <> '') and (Stream <> '') then
-          begin
-          Downloader := TDownloader_CT_20111217.Create(MovieID);
-          Result := True;
-          end;
-  {$ENDIF}
-  {$IFDEF VER_OLD}
-  if not Result then
-    begin
-    Downloader := TDownloader_CT_old.Create(MovieID);
-    Result := True;
-    end;
-  {$ENDIF}
-end;
-
-function TDownloader_CT.PrepareToken: boolean;
-begin
-  inherited PrepareToken;
-  Result := True;
-end;
-
-{$IFDEF VER_OLD}
-
-class function TDownloader_CT_old.Provider: string;
-begin
-  Result := TDownloader_CT.Provider;
-end;
-
-class function TDownloader_CT_old.UrlRegExp: string;
-begin
-  Result := TDownloader_CT.UrlRegExp;
-end;
-
-class function TDownloader_CT_old.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features + [
-    {$IFDEF SUBTITLES} dfSubtitles, {$IFDEF CONVERTSUBTITLES} dfSubtitlesConvert, {$ENDIF} {$ENDIF}
-    dfPreferRtmpLiveStream
-    ];
-end;
-
-constructor TDownloader_CT_old.Create(const AMovieID: string);
-begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieObjectRegExp := RegExCreate(REGEXP_MOVIE_OBJECT);
-  EmbeddedFrameRegExp := RegExCreate(REGEXP_MOVIE_FRAME);
-  JavascriptPlayerRegExp := RegExCreate(REGEXP_JS_PLAYER);
-  VideoPlayerUrlRegExp := RegExCreate(REGEXP_VIDEOPLAYERURL);
-  GetAjaxPlaylistRegExp := RegExCreate(REGEXP_AJAXPLAYLIST);
-  GetVideoUrlRegExp := RegExCreate(REGEXP_VIDEOURL);
-  GetPlaylistUrlRegExp := RegExCreate(REGEXP_GETPLAYLISTURL);
-  GetPlaylistUrlFromJSONRegExp := RegExCreate(REGEXP_GETPLAYLISTURLFROMJSON);
-  {$IFDEF SUBTITLES}
-  {$IFDEF CONVERTSUBTITLES}
-  SubtitleItemRegExp := RegExCreate(REGEXP_SUBTITLE_ITEM);
-  {$ENDIF}
-  SetLength(fSubtitleRegExps, 1);
-  fSubtitleRegExps[0] := RegExCreate(REGEXP_SUBTITLES);
-  {$ENDIF}
-  {$IFDEF MULTIDOWNLOADS}
-  fStreams := TStringList.Create;
-  fBaseUrls := TStringList.Create;
-  {$ENDIF}
-end;
-
-destructor TDownloader_CT_old.Destroy;
-begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieObjectRegExp);
-  RegExFreeAndNil(EmbeddedFrameRegExp);
-  RegExFreeAndNil(JavascriptPlayerRegExp);
-  RegExFreeAndNil(VideoPlayerUrlRegExp);
-  RegExFreeAndNil(GetAjaxPlaylistRegExp);
-  RegExFreeAndNil(GetVideoUrlRegExp);
-  RegExFreeAndNil(GetPlaylistUrlRegExp);
-  RegExFreeAndNil(GetPlaylistUrlFromJSONRegExp);
-  {$IFDEF SUBTITLES}
-  {$IFDEF CONVERTSUBTITLES}
-  RegExFreeAndNil(SubtitleItemRegExp);
-  {$ENDIF}
-  RegExFreeAndNil(fSubtitleRegExps[0]);
-  SetLength(fSubtitleRegExps, 0);
-  {$ENDIF}
-  {$IFDEF MULTIDOWNLOADS}
-  FreeAndNil(fStreams);
-  FreeAndNil(fBaseUrls);
-  {$ENDIF}
-  inherited;
-end;
-
-function TDownloader_CT_old.GetFileNameExt: string;
-begin
-  Result := Extension;
-end;
-
-function TDownloader_CT_old.BeforeGetMovieInfoUrl(Http: THttpSend): boolean;
-{$IFDEF SUBTITLES}
-var
-  Page{, MovieObject}: string;
-{$ENDIF}
-begin
-  Result := inherited BeforeGetMovieInfoUrl(Http);
-  {$IFDEF SUBTITLES}
-  HasSubtitles := False;
-  if SubtitlesEnabled then
-    if DownloadPage(Http, UrlWithSubtitles, Page) then
-      //if GetMovieObject(Http, Page, MovieObject) then
-        HasSubtitles := True;
-  {$ENDIF}
-end;
-
-function TDownloader_CT_old.GetBaseMovieInfoUrl: string;
-begin
-  Result := MovieID;
-end;
-
-function TDownloader_CT_old.GetMovieInfoUrl: string;
-begin
-  Result := GetBaseMovieInfoUrl;
-  {$IFDEF SUBTITLES}
-  if Result <> '' then
-    if SubtitlesEnabled and HasSubtitles then
-      Result := UrlWithSubtitles;
-  {$ENDIF}
-end;
-
-function TDownloader_CT_old.UrlWithSubtitles: string;
-begin
-  Result := GetBaseMovieInfoUrl + 'titulky/';
-end;
-
-function TDownloader_CT_old.GetMovieObject(Http: THttpSend; var Page: string; out MovieObject: string): boolean;
-var Host, Path, Url, NewPage, Param: string;
-begin
-  Result := GetRegExpVar(MovieObjectRegExp, Page, 'OBJECT', MovieObject);
-  if not Result then
-    begin
-    Url := '';
-    if GetRegExpVars(EmbeddedFrameRegExp, Page, ['HOST', 'PATH'], [@Host, @Path]) then
-      begin
-      if Host = '' then
-        Host := ExtractUrlRoot(MovieID);
-      Path := HtmlDecode(Path);
-      Path := StringReplace(Path, '&autoStart=false', '', [rfReplaceAll]);
-      Path := StringReplace(Path, ' ', '%20', [rfReplaceAll]);
-      Url := Host + Path;
-        // Nepouzivat UrlEncode, cesty uz jsou obvykle UrlEncoded
-      end
-    else if GetRegExpVar(JavascriptPlayerRegExp, Page, 'PARAM', Param) then
-      if DownloadPage(Http, 'http://www.ceskatelevize.cz/ct24/ajax/', 'cmd=getVideoPlayerUrl&q=' + {$IFDEF UNICODE} AnsiString {$ENDIF} (UrlEncode(PARAM)), HTTP_FORM_URLENCODING, CUSTOM_HEADERS, NewPage) then
-        if GetRegExpVar(VideoPlayerUrlRegExp, NewPage, 'URL', Url) then
-          Url := StripSlashes(Url);
-    if Url <> '' then
-      begin
-      if Url[1] = '/' then
-        Url := 'http://www.ceskatelevize.cz' + Url;
-      if DownloadPage(Http, Url, NewPage, InfoPageEncoding) then
-        if GetRegExpVar(MovieObjectRegExp, NewPage, 'OBJECT', MovieObject) then
-          begin
-          Page := NewPage;
-          Result := True;
-          end;
-      end;
-    end;
-end;
-
-function TDownloader_CT_old.ConvertMovieObject(var Data: string): boolean;
-
-  function SaveJSON(JSON: TJSON; var Res: string; const Path: string): boolean;
-    var
-      Value, NewPath, s: string;
-      i: integer;
-    begin
-      if JSON = nil then
-        Result := False
-      else
-        begin
-        Result := True;
-        if JSON is TlkJSONobject then
-          begin
-          for i := 0 to Pred(JSON.Count) do
-            if not SaveJSON(JSON.Child[i], Res, Path) then
-              begin
-              Result := False;
-              Break;
-              end;
-          end
-        else if JSON is TlkJSONobjectmethod then
-          begin
-          if Path = '' then
-            NewPath := TlkJSONobjectmethod(JSON).Name
-          else
-            NewPath := Format('%s[%s]', [Path, TlkJSONobjectmethod(JSON).Name]);
-          Result := SaveJSON(TlkJSONobjectmethod(JSON).ObjValue, Res, NewPath);
-          end
-        else if JSON is TlkJSONcustomlist then
-          begin
-          for i := 0 to Pred(JSON.Count) do
-            if not SaveJSON(JSON.Child[i], Res, Format('%s[%d]', [Path, i])) then
-              begin
-              Result := False;
-              Break;
-              end;
-          end
-        else
-          begin
-          if JSON.Value = null then
-            Value := ''
-          else
-            Value := {$IFDEF UNICODE} string {$ENDIF} (StringToUtf8(JSON.Value));
-          s := Format('%s=%s', [UrlEncode(Path), UrlEncode(Value)]);
-          if Res = '' then
-            Res := s
-          else
-            Res := Format('%s&%s', [Res, s]);
-          end;
-        end;
-    end;
-
-var JSON: TJSON;
-    Res: string;
-begin
-  Result := False;
-  JSON := JSONCreate(Data);
-  if JSON <> nil then
-    begin
-    Res := '';
-    Result := SaveJSON(JSON, Res, '');
-    if Result then
-      Data := Res;
-    end;
-end;
-
-function TDownloader_CT_old.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  REKLAMA = '-AD-';
-  REKLAMA_LENGTH = Length(REKLAMA);
-var
-  {MovieObject, AjaxPlaylist,} Url, {InfoUrl,} ID, BaseUrl, Stream: string;
-  MediaType, MediaID, PlaylistData: string;
   Prot, User, Pass, Host, Port, Part, Para: string;
-  Xml: TXmlDoc;
-  Body, Node: TXmlNode;
-  i, RealMaxBitrate: integer;
+  PlaylistType, PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Url, Title: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  {$IFDEF MULTIDOWNLOADS}
-  BaseUrls.Clear;
-  Streams.Clear;
-  {$ENDIF}
-  if MaxBitrate = 0 then
-    RealMaxBitrate := 4999 // mene kvalitni videa se stopou pro neslysici jsou oznacena bitrate 5000
-  else
-    RealMaxBitrate := MaxBitrate;
-  {
-  if not GetMovieObject(Http, Page, MovieObject) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
-  else if not ConvertMovieObject(MovieObject) then
-    SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(GetAjaxPlaylistRegExp, Page, 'URL', Url) then
+  ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
+  if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), AjaxPlaylist) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(GetVideoUrlRegExp, AjaxPlaylist, 'URL', InfoUrl) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, InfoUrl), AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, CUSTOM_HEADERS, Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if Copy(Url, 1, 4) <> 'http' then
-    SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
-  else if not DownloadXml(Http, StringReplace(UrlDecode(Url), 'ClientLinks?', 'ClientLink?', [rfReplaceAll]), Xml) then
+  else if not DownloadPage(Http,
+                           'http://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist',
+                           {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=flash'),
+                           HTTP_FORM_URLENCODING_UTF8,
+                           ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
+                           PlaylistUrlPage,
+                           peUtf8
+                          )
+  then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-}
-  Referer := GetMovieInfoUrl;
-  ParseUrl(Referer, Prot, User, Pass, Host, Port, Part, Para);
-  if not GetRegExpVars(GetPlaylistUrlRegExp, Page, ['TYPE', 'ID'], [@MediaType, @MediaID]) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ivysilani/ajax/get-playlist-url', {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + MediaType + '&playlist%5B0%5D%5Bid%5D=' + MediaID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani'), HTTP_FORM_URLENCODING_UTF8, ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'], PlaylistData) then
+  else if not GetRegExpVar(PlaylistUrlRegExp, PlaylistUrlPage, 'URL', PlaylistUrl) then
+    if PlaylistUrlPage <> '' then
+      SetLastErrorMsg(Format(ERR_SERVER_ERROR, [PlaylistUrlPage]))
+    else
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, JSDecode(PlaylistUrl), Playlist) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(GetPlaylistUrlFromJSONRegExp, PlaylistData, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(StreamUrlRegExp, Playlist, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else if not GetRegExpVar(StreamTitleRegExp, Playlist, 'TITLE', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
-    Referer := 'http://imgct.ceskatelevize.cz/global/swf/player/player.swf?version=1.45.15a';
-    if not DownloadXml(Http, UrlDecode(JSDecode(Url)), Xml) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-    else
-      try
-        if Xml.NodeByPath('smilRoot/body', Body) then
-          for i := 0 to Pred(Body.NodeCount) do
-            if Body.Nodes[i].Name = 'switchItem' then
-              begin
-              Node := Body.Nodes[i];
-              if GetXmlAttr(Node, '', 'id', ID) then
-                if Pos(REKLAMA, ID) <= 0 then
-                  if GetXmlAttr(Node, '', 'base', BaseUrl) then
-                    begin
-                    // Pro stahovani jen casti reportaze - atributy duration="139" clipBegin="2675"
-                    if not Smil_FindBestVideo(Node, Stream, RealMaxBitrate) then
-                      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-                    else
-                      begin
-                      SetRtmpOptions(BaseUrl, Stream);
-                      {$IFDEF MULTIDOWNLOADS}
-                      BaseUrls.Add(BaseUrl);
-                      Streams.Add(Stream);
-                      {$ENDIF}
-                      SetPrepared(True);
-                      Result := True;
-                      end;
-                    {$IFNDEF MULTIDOWNLOADS}
-                    Break;
-                    {$ENDIF}
-                    end;
-              end;
-      finally
-        Xml.Free;
-        end;
-    end;
-end;
-
-procedure TDownloader_CT_old.SetOptions(const Value: TYTDOptions);
-begin
-  inherited;
-  MaxBitrate := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT);
-end;
-
-{$IFDEF MULTIDOWNLOADS}
-function TDownloader_CT_old.First: boolean;
-begin
-  if ValidatePrepare then
-    if BaseUrls.Count <= 0 then
-      Result := MovieURL <> ''
-    else
-      begin
-      DownloadIndex := -1;
-      BaseName := Name;
-      Result := Next;
-      end
-  else
-    Result := False;
-end;
-
-function TDownloader_CT_old.Next: boolean;
-begin
-  Result := False;
-  if ValidatePrepare then
-    begin
-    DownloadIndex := Succ(DownloadIndex);
-    if (DownloadIndex >= 0) and (DownloadIndex < BaseUrls.Count) and (DownloadIndex < Streams.Count) then
-      begin
-      SetName(Format('%s (%d)', [BaseName, Succ(DownloadIndex)]));
-      SetFileName('');
-      SetRtmpOptions(BaseUrls[DownloadIndex], Streams[DownloadIndex]);
-      Result := True;
-      end;
-    end;
-end;
-{$ENDIF}
-
-procedure TDownloader_CT_old.SetRtmpOptions(const BaseUrl, Stream: string);
-var Protocol, User, Password, Host, Port, Path, Para: string;
-begin
-  MovieURL := BaseUrl + '/' + Stream;
-  Extension := ExtractUrlExt(Stream);
-  ParseUrl(BaseUrl, Protocol, User, Password, Host, Port, Path, Para);
-  Self.RtmpUrl := BaseUrl;
-  Self.RtmpApp := Copy(Path, 2, MaxInt) + '?' + Para;
-  Self.Playpath := Stream;
-  //Self.FlashVer := FLASH_DEFAULT_VERSION;
-  //Self.SwfUrl := 'http://img9.ceskatelevize.cz/libraries/JWPlayer/player.swf';
-  //Self.TcUrl := BaseUrl;
-  //Self.PageUrl := MovieID;
-end;
-
-{$IFDEF SUBTITLES}
-function TDownloader_CT_old.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-{$IFDEF CONVERTSUBTITLES}
-const
-  SubtitleVarNames: array[0..3] of string = ('HOUR', 'MINUTE', 'SECOND', 'TEXT');
-var
-  Srt, Hour, Minute, Second, Text: string;
-  Index: integer;
-//  REGEXP_SUBTITLE_ITEM = '<li>\s*<a\b[^>]*>(?P<HOUR>\d+):(?P<MINUTE>\d{2}):(?P<SECOND>\d{2})</a>\s*(?P<TEXT>.*?)</li>';
-{$ENDIF}
-begin
-  Result := inherited ReadSubtitles(Page, PageXml, Http);
-  fSubtitlesExt := '.htm';
-  {$IFDEF CONVERTSUBTITLES}
-  if Result then
-    if fSubtitles <> '' then
-      if ConvertSubtitles then
-        if GetRegExpVars(SubtitleItemRegExp, Page, SubtitleVarNames, [@Hour, @Minute, @Second, @Text]) then
-          begin
-          Srt := '';
-          Index := 0;
-          repeat
-            {
-            Text := StringReplace(Text, #13#10, ' ', [rfReplaceAll]);
-            Text := StringReplace(Text, #13, ' ', [rfReplaceAll]);
-            Text := StringReplace(Text, #10, ' ', [rfReplaceAll]);
-            Text := StringReplace(Text, '<br>', #13#10, [rfReplaceAll]);
-            Text := StringReplace(Text, '<br/>', #13#10, [rfReplaceAll]);
-            Text := StringReplace(Text, '<br />', #13#10, [rfReplaceAll]);
-            Text := StringReplace(Text, #13#10' ', #13#10, [rfReplaceAll]);
-            }
-            Srt := Srt + SubtitlesToSrt(Index, EncodeTime(StrToInt(Hour), StrToInt(Minute), StrToInt(Second), 0), Text);
-          until not GetRegExpVarsAgain(SubtitleItemRegExp, SubtitleVarNames, [@Hour, @Minute, @Second, @Text]);
-          fSubtitles := {$IFDEF UNICODE} AnsiString({StringToUtf8}(Srt)) {$ELSE} Srt {$ENDIF} ;
-          fSubtitlesExt := '.srt';
-          end;
-  {$ENDIF}
-end;
-{$ENDIF}
-
-{$ENDIF}
-
-{$IFDEF VER_20111217}
-
-{ TDownloader_CT_20111217 }
-
-class function TDownloader_CT_20111217.Provider: string;
-begin
-  Result := TDownloader_CT.Provider;
-end;
-
-class function TDownloader_CT_20111217.UrlRegExp: string;
-begin
-  Result := TDownloader_CT.UrlRegExp;
-end;
-
-class function TDownloader_CT_20111217.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features + [dfPreferRtmpLiveStream, dfRequireSecureToken];
-end;
-
-constructor TDownloader_CT_20111217.Create(const AMovieID: string);
-begin
-  inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  FlashVarsRegExp := RegExCreate(REGEXP_NEW_FLASHVARS);
-  FlashVarsItemsRegExp := RegExCreate(REGEXP_NEW_FLASHVARS_ITEMS);
-end;
-
-destructor TDownloader_CT_20111217.Destroy;
-begin
-  inherited;
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(FlashVarsRegExp);
-  RegExFreeAndNil(FlashVarsItemsRegExp);
-end;
-
-function TDownloader_CT_20111217.GetMovieInfoUrl: string;
-begin
-  Result := MovieID;
-end;
-
-function TDownloader_CT_20111217.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var
-  FlashVars, Server, Stream: string;
-begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if not GetRegExpVar(FlashVarsRegExp, Page, 'FLASHVARS', FlashVars) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
-  else if not GetRegExpVarPairs(FlashVarsItemsRegExp, FlashVars, [VARNAME_NEW_SERVER, VARNAME_NEW_STREAM], [@Server, @Stream]) then
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-  else if Server = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, [VARNAME_NEW_SERVER]))
-  else if Stream = '' then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, [VARNAME_NEW_STREAM]))
-  else
-    begin
-    {$IFDEF DIRTYHACKS}
-    // Due to a bug in HTTP implementation of RTMPDUMP, the HTTP tunnel does
-    // not work. Details are here:
-    // http://lists.mplayerhq.hu/pipermail/rtmpdump/2011-December/001783.html
-    if UpperCase(Copy(Server, 1, 5)) = 'RTMPT' then
-      System.Delete(Server, 5, 1);
-    {$ENDIF}
-    Self.RtmpUrl := Server;
-    Self.PlayPath := 'mp4:' + Stream;
-    //Self.FlashVer := FLASH_DEFAULT_VERSION;
-    //Self.SwfUrl := 'http://img9.ceskatelevize.cz/libraries/JWPlayer/player.swf';
-    //Self.SwfVfy := Self.SwfUrl;
-    //Self.TcUrl := Server;
-    //Self.PageUrl := GetMovieInfoUrl;
-    MovieUrl := Self.RtmpUrl + '/' + Self.PlayPath;
+    SetName(AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title))));
+    if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title) then
+      SetName(Title);
+    MovieURL := JSDecode(Url);
     SetPrepared(True);
     Result := True;
     end;
 end;
-{$ENDIF}
+
+function TDownloader_CT.GetFileNameExt: string;
+begin
+  Result := '.ts';
+end;
+
+function TDownloader_CT.GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;
+var
+  Url, Page2: string;
+begin
+  Result := GetRegExpVars(PlaylistInfoRegExp, Page, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
+  if not Result then
+    if GetRegExpVar(IFrameUrlRegExp, Page, 'URL', Url) then
+      if DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), Page2, peUtf8) then
+        Result := GetRegExpVars(PlaylistInfoRegExp, Page2, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
+end;
 
 initialization
   RegisterDownloader(TDownloader_CT);

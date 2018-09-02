@@ -84,7 +84,7 @@ const
   REGEXP_FLASHVARS = '<param\s+name="flashvars"\s+value="(?P<FLASHVARS>.*?)"';
   REGEXP_FLASHVARS_JS = '\bvar\s+flashvars\s*=\s*\{(?P<FLASHVARS>.+?)\}\s*;';
   REGEXP_PARSER_FLASHVARS_JS = '(?P<QUOTE1>[''"]?)(?P<VARNAME>\w+)(?P=QUOTE1)\s*:\s*(?P<QUOTE2>[''"]?)(?P<VARVALUE>.*?)(?P=QUOTE2)\s*(?:,|$)';
-  REGEXP_PARSER_HTMLVARS = '(?:^|&amp;)(?P<VARNAME>[^=]+?)(?:=(?P<VARVALUE>.*?))?(?=$|&amp;)';
+  REGEXP_PARSER_HTMLVARS = '(?:^|&amp;|&)(?P<VARNAME>[^=]+?)(?:=(?P<VARVALUE>.*?))?(?=$|&amp;|&)';
 
   HTTP_FORM_URLENCODING = 'application/x-www-form-urlencoded';
   HTTP_FORM_URLENCODING_UTF8 = HTTP_FORM_URLENCODING + '; charset=UTF-8';

@@ -94,7 +94,10 @@ end;
 
 function OemToAnsi(const Value: AnsiString): AnsiString;
 begin
-  Result := OemToAnsi(@(Value[1]), Length(Value));
+  if Value = '' then
+    Result := ''
+  else
+    Result := OemToAnsi(@(Value[1]), Length(Value));
 end;
 
 function AnsiToOem(Value: Pointer; Length: integer): AnsiString;
@@ -111,7 +114,10 @@ end;
 
 function AnsiToOem(const Value: AnsiString): AnsiString;
 begin
-  Result := AnsiToOem(@(Value[1]), Length(Value));
+  if Value = '' then
+    Result := ''
+  else
+    Result := AnsiToOem(@(Value[1]), Length(Value));
 end;
 
 function AnythingToWide(CodePage: integer; Value: Pointer; Length: integer): WideString;
@@ -138,7 +144,10 @@ end;
 
 function AnsiToWide(const Value: AnsiString): WideString;
 begin
-  Result := AnsiToWide(@(Value[1]), Length(Value));
+  if Value = '' then
+    Result := ''
+  else
+    Result := AnsiToWide(@(Value[1]), Length(Value));
 end;
 
 function AnsiToWide(const Value: AnsiChar): WideChar; overload;
@@ -170,7 +179,10 @@ end;
 
 function WideToAnsi(const Value: WideString): AnsiString;
 begin
-  Result := WideToAnsi(@(Value[1]), Length(Value));
+  if Value = '' then
+    Result := ''
+  else
+    Result := WideToAnsi(@(Value[1]), Length(Value));
 end;
 
 function WideToAnsi(const Value: WideChar): AnsiChar; overload;
