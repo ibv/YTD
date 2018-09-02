@@ -34,72 +34,78 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit guiSetupVCL;
+unit downMyvi;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ShellApi, ShlObj,
-  uLanguages, uMessages, uFunctions, uDialogs, uCompatibility,
-  guiFunctions;
+  SysUtils, Classes,
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uNestedDownloader, downMyvi_Embed;
 
 type
-  TFormSetup = class(TForm)
-    LabelDestinationDir: TLabel;
-    EditDestinationDir: TEdit;
-    BtnDestinationDir: TButton;
-    CheckDesktopShortcut: TCheckBox;
-    CheckStartMenuShortcut: TCheckBox;
-    ButtonInstall: TButton;
-    ButtonRun: TButton;
-    procedure BtnDestinationDirClick(Sender: TObject);
-  private
-    function GetDestinationDir: string;
-    function GetDesktopShortcut: boolean;
-    function GetStartMenuShortcut: boolean;
-  public
-    constructor Create(AOwner: TComponent); override;
-    property DestinationDir: string read GetDestinationDir;
-    property DesktopShortcut: boolean read GetDesktopShortcut;
-    property StartMenuShortcut: boolean read GetStartMenuShortcut;
-  end;
+  TDownloader_Myvi = class(TNestedDownloader)
+    private
+    protected
+      function GetMovieInfoUrl: string; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
+    end;
 
 implementation
 
-{$R *.DFM}
+uses
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-{ TFormSetup }
+// http://www.myvi.ru/watch/Zombi-v-Nu-Jorke_OHf1cAW_qEa_zOS60X7LRw2
+const
+  URLREGEXP_BEFORE_ID = 'myvi\.ru/watch/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
-constructor TFormSetup.Create(AOwner: TComponent);
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    '<meta\s+property="og:video"\s+content="(?P<URL>https?://.+?)"';
+
+{ TDownloader_Myvi }
+
+class function TDownloader_Myvi.Provider: string;
 begin
+  Result := TDownloader_Myvi_Embed.Provider;
+end;
+
+class function TDownloader_Myvi.UrlRegExp: string;
+begin
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+end;
+
+constructor TDownloader_Myvi.Create(const AMovieID: string);
+begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  NestedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_Myvi.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(NestedUrlRegExp);
   inherited;
-  TranslateProperties(self);
-  EditDestinationDir.Text := GetSpecialFolder(CSIDL_PROGRAM_FILES) + '\' + APPLICATION_TITLE;
 end;
 
-procedure TFormSetup.BtnDestinationDirClick(Sender: TObject);
-var Dir: string;
+function TDownloader_Myvi.GetMovieInfoUrl: string;
 begin
-  Dir := EditDestinationDir.Text;
-  if SelectDirectory(Dir, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
-    EditDestinationDir.Text := Dir;
+  Result := 'http://www.myvi.ru/watch/' + MovieID;
 end;
 
-function TFormSetup.GetDestinationDir: string;
-begin
-  Result := EditDestinationDir.Text;
-end;
-
-function TFormSetup.GetDesktopShortcut: boolean;
-begin
-  Result := CheckDesktopShortcut.Checked;
-end;
-
-function TFormSetup.GetStartMenuShortcut: boolean;
-begin
-  Result := CheckStartMenuShortcut.Checked;
-end;
+initialization
+  RegisterDownloader(TDownloader_Myvi);
 
 end.

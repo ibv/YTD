@@ -132,6 +132,9 @@ type
     actOptions: TAction;
     actPlay: TAction;
     ActExploreFolder: TAction;
+    N5: TMenuItem;
+    mnuPlay: TMenuItem;
+    mnuExplore: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -589,7 +592,9 @@ procedure TFormYTD.actReportBugExecute(Sender: TObject);
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_(MAINFORM_REPORT_BUG), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if DownloadList[Downloads.Selected.Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
+    MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
+  else if MessageDlg(_(MAINFORM_REPORT_BUG), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   ReportBug(DownloadList, Downloads.Selected.Index);  
 end;

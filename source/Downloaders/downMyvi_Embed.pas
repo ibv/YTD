@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxXHamster;
+unit downMyvi_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,12 +45,8 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_XHamster = class(THttpDownloader)
+  TDownloader_Myvi_Embed = class(THttpDownloader)
     private
-    protected
-      MovieServerRegExp: TRegExp;
-      MovieFileNameRegExp: TRegExp;
-      MovieModeRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -68,80 +64,77 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://myvi.ru/ru/flash/player/pre/oQ_uJCGiADipN8mzgriJzJrAJsecK5PYnBZErn47vhimBnv5c3zTqNrrV3chb6TFH0
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*xhamster\.com/movies/';
-  URLREGEXP_ID =        '[0-9]+/.*';
+  URLREGEXP_BEFORE_ID = 'myvi\.ru/ru/flash/player/(?:pre/)?';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
+const                                                           
+  REGEXP_MOVIE_URL =    '(?P<URL>http:\/\/fs\d{0,2}\.myvi\.ru\/.+?\.((?>flv|mp4)).+)"\stitle=';
+
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
-  REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[^'']+)';
-  REGEXP_MOVIE_URLMODE = '''url_mode''\s*:\s*''(?P<MODE>[0-9]+)''';
+  MYVI_GET_VIDEO_XML = 'http://api.myvi.ru/public/player/getvideoinfo?globalization=&video=';
+  MYVI_GET_VIDEO_API = 'http://www.myvi.ru/watch/GetVideoEmbedCodes';  //http://myvi.ru/ru/flash/player/oxB8JtpmyxUUbNVPSNqe1utpI-eGhy9NUxeDaKOLuARPSOr8j7oXbONcfcOiMIJgI0
 
-{ TDownloader_XHamster }
+{ TDownloader_Myvi_Embed }
 
-class function TDownloader_XHamster.Provider: string;
+class function TDownloader_Myvi_Embed.Provider: string;
 begin
-  Result := 'XHamster.com';
+  Result := 'Myvi.ru';
 end;
 
-class function TDownloader_XHamster.UrlRegExp: string;
+class function TDownloader_Myvi_Embed.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_XHamster.Create(const AMovieID: string);
+constructor TDownloader_Myvi_Embed.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUnknown;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
-  MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME);
-  MovieModeRegExp := RegExCreate(REGEXP_MOVIE_URLMODE);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
+  InfoPageIsXml := True;
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_XHamster.Destroy;
+destructor TDownloader_Myvi_Embed.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieServerRegExp);
-  RegExFreeAndNil(MovieFileNameRegExp);
-  RegExFreeAndNil(MovieModeRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_XHamster.GetMovieInfoUrl: string;
+function TDownloader_Myvi_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.xhamster.com/movies/' + MovieID;
+  Result := MYVI_GET_VIDEO_XML + MovieID;
 end;
 
-function TDownloader_XHamster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Myvi_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Server, FileName, Mode, Url: string;
+  VideoID, Title, Url, Info: string;
+  PostData: AnsiString;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['file']))
-  else if not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
-  else if not GetRegExpVar(MovieModeRegExp, Page, 'MODE', Mode) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mode']))
+  if not GetXmlVar(PageXml, 'Video/Info/Logical/Detail/public_video_id', VideoID) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else if not GetXmlVar(PageXml, 'Video/Info/Logical/Detail/title', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
-    if Mode = '1' then
-      Url := Server + '/key=' + FileName
-    else if Mode = '2' then
-      Url := Server + '/flv2/' + FileName
-    else if Mode = '3' then
-      Url := UrlDecode(FileName)
-    else
-      Url := '';
-    if Url = '' then
+    Insert('-', VideoID, 21);
+    Insert('-', VideoID, 17);
+    Insert('-', VideoID, 13);
+    Insert('-', VideoID,  9);
+    PostData := {$IFDEF UNICODE} AnsiString {$ENDIF} (Format('public_video_or_ticket_id=%s&rnd=%d.%d', [VideoID, 500000 + Random(500000), 1000000000 + Random(1000000000)]));
+    if not DownloadPage(Http, MYVI_GET_VIDEO_API, PostData, HTTP_FORM_URLENCODING_UTF8, Info) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+    else if not GetRegExpVar(MovieUrlRegExp, Info, 'URL', Url) then
       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
     else
       begin
-      MovieUrl := Url;
+      Cookies.Assign(Http.Cookies);
+      SetName(HtmlDecode(UrlDecode(Title)));
+      MovieUrl := HtmlDecode(Url);
       SetPrepared(True);
       Result := True;
       end;
@@ -149,8 +142,6 @@ begin
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_XHamster);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Myvi_Embed);
 
 end.

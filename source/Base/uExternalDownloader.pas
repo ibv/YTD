@@ -52,6 +52,7 @@ type
       fDownloadedBytes: int64;
       fTotalBytes: int64;
     protected
+      function GetAnsiCompatibleFileName(const FileName: string): string;
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
       property DownloadedBytes: int64 read fDownloadedBytes write fDownloadedBytes;
@@ -67,6 +68,8 @@ type
 implementation
 
 uses
+  SynaCode,
+  uStringConsts,
   uCompatibility;
 
 constructor TExternalDownloader.Create(const AMovieID: string);
@@ -93,6 +96,37 @@ end;
 function TExternalDownloader.GetTotalSize: int64;
 begin
   Result := TotalBytes;
+end;
+
+function TExternalDownloader.GetAnsiCompatibleFileName(const FileName: string): string;
+{$IFDEF UNICODE}
+var
+  FN: AnsiString;
+  Dir: string;
+  i, n: integer;
+{$ENDIF}
+begin
+  Result := FileName;
+  {$IFDEF UNICODE}
+  FN := AnsiString(ExtractFileName(Result));
+  for i := 1 to Length(FN) do
+    if Pos(Char(FN[i]), INVALID_FILENAME_CHARS) > 0 then
+      begin
+      FN := EncodeBase64(MD5(FN));
+      if Options.DestinationPath = '' then
+        Dir := ''
+      else
+        Dir := IncludeTrailingPathDelimiter(Options.DestinationPath);
+      n := 0;
+      while FileExists(Dir + string(FN)) do
+        begin
+        Inc(n);
+        FN := EncodeBase64(MD5(AnsiString(Result + IntToStr(n))));
+        end;
+      Result := Dir + string(FN);
+      Break;
+      end;
+  {$ENDIF}
 end;
 
 function TExternalDownloader.Prepare: boolean;

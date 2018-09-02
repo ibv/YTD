@@ -56,7 +56,7 @@ const
   REGEXP_TITLE_DIV_CLASS = '<div\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</div>';
   REGEXP_TITLE_SPAN_CLASS = '<span\s+[^>]*\bclass="%s">\s*(?P<TITLE>.*?)\s*</span>';
   REGEXP_TITLE_META_TITLE = '<meta\s+name="title"\s+content="\s*(?P<TITLE>.*?)\s*"';
-  REGEXP_TITLE_META_OGTITLE = '<meta\s+property="og:title"\s+content="\s*(?P<TITLE>.*?)\s*"';
+  REGEXP_TITLE_META_OGTITLE = '<meta\s+(?:property|name)="og:title"\s+content="\s*(?P<TITLE>.*?)\s*"';
   REGEXP_TITLE_META_DESCRIPTION = '<meta\s+name="description"\s+content="\s*(?P<TITLE>.*?)\s*"';
   REGEXP_TITLE_H1 = '<h1[^>]*>\s*(?P<TITLE>.*?)\s*</h1>';
   REGEXP_TITLE_H1_CLASS = '<h1\s+class="%s">\s*(?P<TITLE>.*?)\s*</h1>';
@@ -69,6 +69,7 @@ const
   REGEXP_URL_EMBED_SRC = '<embed\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_IFRAME_SRC = '<iframe\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
   REGEXP_URL_VIDEO_SRC = '<video\s[^>]*\bsrc="(?P<URL>https?://.+?)"';
+  REGEXP_URL_META_OGVIDEO = '<meta\s+(?:property|name)="og:video"\s+content="(?P<URL>.+?)"';
   REGEXP_URL_PARAM_MOVIE = '<param\s+name\s*=\s*"movie"[^>]*\s+value="(?P<URL>.+?)"';
   REGEXP_URL_PARAM_FLASHVARS_OPTIONS = '<param\s+name="FlashVars"\s+value="options=(?P<URL>https?://.+?)"';
   REGEXP_URL_PARAM_FLASHVARS_FILE = '<param\s+name="FlashVars"\s+value="(?:[^"]*?&(?:amp;)?)*?file=(?P<URL>https?://.+?)(?:"|&amp;|&)';
@@ -88,6 +89,9 @@ const
   URL_QUERY_VARS = '[?&](?P<VARNAME>[^=]+)=(?P<VARVALUE>[^&]*)';
 
   FLASH_DEFAULT_VERSION = 'WIN 10,1,82,76';
+
+  INVALID_FILENAME_CHARS = '\/:*?"<>|';
+  INVALID_FILENAME_CHARS_REPLACEMENTS = '--;..''--!';
 
 implementation
 

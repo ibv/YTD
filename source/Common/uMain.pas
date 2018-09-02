@@ -47,7 +47,9 @@ uses
   SysUtils, Classes, Windows, Messages, CommCtrl,
   {$IFDEF SETUP}
     ShlObj,
+    {$IFNDEF DELPHIXE2_UP}
     FileCtrl,
+    {$ENDIF}
     uSetup,
     uCompatibility,
     {$IFDEF SETUP_GUI}
@@ -285,9 +287,9 @@ begin
     if OK then
       begin
       if DesktopShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe, StandardShortcutParams);
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe, SETUP_PARAM_GUI);
       if StartMenuShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe, StandardShortcutParams);
+        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, InstExe, SETUP_PARAM_GUI);
       end;
     end;
   if not OK then

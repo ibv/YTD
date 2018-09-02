@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uJSON;
+{$INCLUDE 'pepak.inc'}
 
 interface
 

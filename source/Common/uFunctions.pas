@@ -48,11 +48,6 @@ uses
   {$ENDIF}
   uMessages, uCompatibility, uFiles, uStrings;
 
-{$IFDEF WINE_SUPPORT}
-type
-  TWineDesktopFileLocation = (wdflDesktop, wdflPrograms);
-{$ENDIF}
-
 function PrettySize(Size: int64): string;
 function IsNewerVersion(OnlineVersion: string): boolean;
 function GetSpecialFolder(FolderID: integer): string;
@@ -61,13 +56,7 @@ function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle 
 function Run(const FileName, CommandLine: string; OwnerHandle: THandle = 0): boolean; overload;
 function Run(const FileName: string; OwnerHandle: THandle = 0): boolean; overload;
 function GetTempDir: string;
-function GetEnvironmentString(const Name: string): string;
 function CheckRedirect(Http: THttpSend; var Url: string): boolean;
-function StandardShortcutParams: string;
-function RunningUnderWINE: boolean;
-{$IFDEF WINE_SUPPORT}
-function WINEModifyDesktopFile(const Location: TWineDesktopFileLocation; const ShortcutFileName, ExeFileName, Params: string): boolean;
-{$ENDIF}
 
 implementation
 
@@ -178,8 +167,8 @@ begin
           FN := FileName;
         with IObject as IShellLink do
           begin
-          SetPath(PChar(FileName));
-          SetWorkingDirectory(PChar(ExtractFilePath(FileName)));
+          SetPath(PChar(FN));
+          SetWorkingDirectory(PChar(ExtractFilePath(FN)));
           if Parameters <> '' then
             SetArguments(PChar(Parameters));
           end;
@@ -194,17 +183,6 @@ begin
         with IObject as IPersistFile do
           Save(PWideChar(WideString(ShortcutFile)), False);
         Result := True;
-        {$IFDEF WINE_SUPPORT}
-        if {$IFDEF DEBUG} True {$ELSE} RunningUnderWINE {$ENDIF} then
-          case WhereCSIDL of
-            //CSIDL_DESKTOPDIRECTORY:
-            CSIDL_PROGRAMS:
-              WINEModifyDesktopFile(wdflPrograms, ShortcutName, FileName, Parameters);
-            CSIDL_DESKTOPDIRECTORY:
-              WINEModifyDesktopFile(wdflDesktop, ShortcutName, FileName, Parameters);
-            //CSIDL_COMMON_PROGRAMS:
-            end;
-        {$ENDIF}
       finally
         IObject := nil;
         end;
@@ -285,152 +263,6 @@ begin
         Result := Url <> OldUrl;
         Break;
         end;
-end;
-
-function RunningUnderWINE: boolean;
-{$IFDEF WINE_SUPPORT}
-var
-  Handle: THandle;
-{$ENDIF}
-begin
-  {$IFDEF WINE_SUPPORT}
-    {$IFDEF DEBUG}
-      Result := True;
-    {$ELSE}
-      Result := False;
-      Handle := GetModuleHandle('ntdll.dll');
-      if Handle <> 0 then
-        if GetProcAddress(Handle, 'wine_get_version') <> nil then
-          Result := True;
-    {$ENDIF}
-  {$ELSE}
-    Result := False;
-  {$ENDIF}
-end;
-
-{$IFDEF WINE_SUPPORT}
-function WINEModifyDesktopFile(const Location: TWineDesktopFileLocation; const ShortcutFileName, ExeFileName, Params: string): boolean;
-const
-  DesktopLocations: array[TWineDesktopFileLocation] of string = (
-    {$IFDEF DEBUG} 'Desktop-%s.%s' {$ELSE} 'Z:\home\%s\Plocha\%s' {$ENDIF} ,
-    {$IFDEF DEBUG} 'Start-%s.%s' {$ELSE} 'Z:\home\%s\.local\share\applications\wine\Programs\%s' {$ENDIF}
-  );
-var
-  FN: string;
-  DesktopFile, NewDesktopFile: WideString;
-  DesktopFilePtr: PWideChar;
-  DesktopFileChars: integer;
-  Lines: array of WideString;
-  i, j, n: integer;
-  DesktopEntryLine, DesktopEntryEndLine: integer;
-  ws, ExtraLines: WideString;
-
-  function FindEntry(const EntryName: WideString; out Index: integer; out Value: WideString): boolean;
-    var
-      EntryStart, ws: WideString;
-      i, n: integer;
-    begin
-      Result := False;
-      EntryStart := EntryName + '=';
-      n := Length(EntryStart);
-      for i := DesktopEntryLine to DesktopEntryEndLine do
-        begin
-        ws := Lines[i];
-        if Copy(ws, 1, n) = EntryStart then
-          begin
-          Index := i;
-          Value := Copy(ws, Succ(n), MaxInt);
-          Result := True;
-          Break;
-          end;
-        end;
-    end;
-
-begin
-  Result := False;
-  FN := Format(DesktopLocations[Location], [GetEnvironmentString('USERNAME'), ChangeFileExt(ExtractFileName(ShortcutFileName), '.desktop')]);
-  if FileExists(FN) then
-    begin
-    // Read the whole file into Lines array
-    DesktopFile := LoadFileIntoStringW(FN, feAuto);
-    DesktopFileChars := Length(DesktopFile);
-    DesktopFilePtr := PWideChar(DesktopFile);
-    n := 0;
-    SetLength(Lines, 128);
-    while ReadlnWide(DesktopFilePtr, DesktopFileChars, ws) do
-      begin
-      if n >= Length(Lines) then
-        SetLength(Lines, n + 128);
-      Lines[n] := ws;
-      Inc(n);
-      end;
-    SetLength(Lines, n);
-    // Let's find the desktop entry
-    DesktopEntryLine := 0;
-    DesktopEntryEndLine := -1;
-    for i := 0 to Pred(Length(Lines)) do
-      if Lines[i] = '[Desktop Entry]' then
-        begin
-        DesktopEntryLine := Succ(i);
-        // Find the end of desktop entry
-        for j := DesktopEntryLine to Pred(Length(Lines)) do
-          if Lines[j] <> '' then
-            if (Lines[j])[1] = '[' then
-              Break
-            else
-              DesktopEntryEndLine := j;
-        Break;
-        end;
-    if DesktopEntryEndLine >= DesktopEntryLine then
-      begin
-      ExtraLines := '';
-      // Generate new lines
-      if not FindEntry('Categories', i, ws) then
-        ExtraLines := ExtraLines + 'Categories=Network;'#10;
-      if not FindEntry('MimeType', i, ws) then
-        ExtraLines := ExtraLines + 'MimeType=text/html;text/xml;application/xhtml_xml;x-scheme-handler/http;x-scheme-handler/https;'#10;
-      // Generate the new file
-      NewDesktopFile := '';
-      for i := 0 to DesktopEntryEndLine do
-        NewDesktopFile := NewDesktopFile + Lines[i] + #10;
-      NewDesktopFile := NewDesktopFile + ExtraLines;
-      for i := Succ(DesktopEntryEndLine) to Pred(Length(Lines)) do
-        NewDesktopFile := NewDesktopFile + Lines[i] + #10;
-      if NewDesktopFile <> DesktopFile then
-        SaveStringToFileW(FN, NewDesktopFile, feUtf8);
-      end;
-    FN := ChangeFileExt(FN, '.lnk');
-    if FileExists(FN) then
-      DeleteFile(PChar(FN));
-    end;
-end;
-{$ENDIF}
-
-function GetEnvironmentString(const Name: string): string;
-var
-  BufSize: DWORD;
-begin
-  BufSize := GetEnvironmentVariable(PChar(Name), nil, 0);
-  if BufSize = 0 then
-    Result := ''
-  else
-    begin
-    SetLength(Result, BufSize);
-    SetLength(Result, GetEnvironmentVariable(PChar(Name), @(Result[1]), BufSize));
-    end;
-end;
-
-function StandardShortcutParams: string;
-begin
-  {$IFDEF SETUP}
-    Result := SETUP_PARAM_GUI;
-    {$IFDEF WINE_SUPPORT}
-      if RunningUnderWINE then
-        Result := Result {$IFDEF WINE_SUPPORT} + ' %U' {$ENDIF} ;
-    {$ENDIF}
-  {$ELSE}
-    Result := '';
-  {$ENDIF}
 end;
 
 end.

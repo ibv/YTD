@@ -104,6 +104,12 @@ resourcestring
     'Do you really want to stop selected transfer(s)?';
   MAINFORM_REPORT_BUG =
     'Do you really want to report a bug for this transfer?';
+  MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED =
+    'Bugreport is not available for this video.'#10 +
+    'After the download has successfully started,'#10 +
+    'its completion is dependent on the goowill'#10 +
+    'of the server and the quality of your network'#10 +
+    'connection. The program can''t influence it.';
   MAINFORM_CONVERT_WITH =
     'Convert selected files with';
   MAINFORM_AUTOCONVERT_WITH =
@@ -133,6 +139,9 @@ const
 const
   COPYDATA_URL = 12345;
 {$ENDIF}
+
+const
+  MAX_DOWNLOAD_SIZE_FOR_BUGREPORT = 128*1024;
 
 implementation
 

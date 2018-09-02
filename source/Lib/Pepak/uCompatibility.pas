@@ -48,9 +48,6 @@ type
 
 function IncludeTrailingPathDelimiter(const Path: string): string;
 function ExcludeTrailingPathDelimiter(const Path: string): string;
-
-const
-  MB_ERR_INVALID_CHARS = 8;
 {$ENDIF}
 
 {$IFNDEF DELPHI2009_UP}
@@ -72,12 +69,17 @@ const
 const
   FILE_ATTRIBUTE_REPARSE_POINT = $400;
 
+const
   LVS_EX_DOUBLEBUFFER     = $00010000;
   LVS_EX_LABELTIP         = $00004000; { listview unfolds partly hidden labels if it does not have infotip text }
 
+const
   TBSTYLE_EX_MIXEDBUTTONS       = $00000008;
   TBSTYLE_EX_HIDECLIPPEDBUTTONS = $00000010;
   TBSTYLE_EX_DOUBLEBUFFER       = $00000080;
+
+const
+  MB_ERR_INVALID_CHARS = 8;
 
 const
   HoursPerDay = 24;

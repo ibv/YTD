@@ -29,9 +29,6 @@
 {$DEFINE SUBTITLES}
   // Global support for subtitles
 
-{$DEFINE MAXFILENAMELENGTH}
-  // Limit filename length
-
 {.DEFINE FASTMM}
   // Use the FastMM memory manager. By default it is only used in debug mode.
 
@@ -87,11 +84,6 @@
 {$DEFINE SINGLEINSTANCE}
   // Support for running the GUI version as single instance. A new instance can
   // be spawned by using the --newinstance argument.
-
-{.$DEFINE WINE_SUPPORT}
-  // Special support for WINE (Windows emulation layer for Linux). While Linux
-  // itself is not supported in YTD, the program runs fine under WINE.
-  // Not recommended - seems to be very much dependent on user's settings.
 
 {$STACKFRAMES OFF}
 {$BOOLEVAL OFF}
@@ -182,6 +174,7 @@
 
 
 // Setup functions may provide a GUI
+
 {$IFDEF SETUP}
   {$IFDEF GUI}
     {$DEFINE SETUP_GUI}

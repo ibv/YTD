@@ -1,11 +1,70 @@
 ______________________________________________________________________________
 
-YTD v1.12                                                    (c) 2009-12 Pepak
+YTD v1.13                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.13:
+
+    * Novì je ke stažení experimentální verze s podporou Unicode. Bude se 
+      hodit zejména u webù v exotických jazycích, napøíklad v ruštinì nebo 
+      japonštinì. Uvítal bych, kdybyste si ji mohli stáhnout a dát mi vìdìt, 
+      jestli s ní jsou nìjaké problémy, protože bych ji rád èasem nechal jako 
+      hlavní. Zatím nechávám jako výchozí ANSI verzi, protože ta funguje i s 
+      Windows 98, Unicode bude chtít aspoò Windows 2000.
+
+    * Noví poskytovatelé:
+      - Kiwi.kz
+      - Myvi.ru
+      - Nova.cz (pouze free videa; vyžadována je znalost tokenu)
+      - ProstoPleer.com
+      - RuTube.ru
+      - Sibnet.ru
+
+    * Aktualizovaní poskytovatelé:
+      - CestyKSobe.cz
+      - XHamster.com
+
+    * Doplnìn ruský pøeklad z projektu rStread 
+      (https://bitbucket.org/litew/rstread).
+
+    * Doplnìno èasové omezení na videa v jednom playlistu, po jehož uplynutí
+      se vynutí nové stáhnutí a zpracování informaèní stránky. V dùsledku toho
+      už by vícedílná videa napø. na stránkách Èeské televize (http://www.ceskatelevize.cz/porady/10120914283-buly-hokej-zive/211471290130045-hc-vitkovice-steel-hc-eaton-pardubice/
+      a podobné) mìla jít stáhnout kompletní, ne jen první díl nebo dva, podle
+      toho, jak rychle se podaøilo stáhnout pøedchozí díly. Pevnì doufám, že
+      to nerozhodilo dosud fungující vícedílná videa.
+
+    * Ve VCL verzi chybìly v menu funkce "pøehrát" a "otevøít složku", i když
+      naprogramované byly. (Toto se ovšem týká jen toho, kdo si YTD kompiloval
+      ze zdrojových kódù, ve kterých si vynutil použití VCL).
+
+    * V Unicode verzi byl zaveden speciální režim pro stahování videí pøes
+      RTMP a RTSP, pøi kterém se v pøípadì nutnosti použije doèasné jméno
+      souboru a to se následnì pøejmenuje na finální. Typické použití je
+      u RuTube.ru, kde se název v azbuce pøeloží na samé otazníky a to není
+      platné jméno souboru. Obdobné to bude v budoucnu s èínskými, japonskými
+      apod. servery.
+
+    * Pøi stahování souborù delších než 2 GB se správnì zobrazuje prùbìh
+      downloadu.
+
+    * Funkce pro nahlášení chyby funguje pouze pro videa, u kterých se 
+      nepodaøilo zahájit stahování. Jakmile je totiž stahování jednou zahájeno,
+      tak už YTD jeho prùbìh nemùže ovlivnit - úspìšné dokonèení je èistì vìcí
+      vašeho internetového pøipojení a stability serveru.
+
+    * Ještì jednou pøepracován kompilaèní skript, aby se dal snadno použít
+      na libovolnou verzi Delphi, vèetnì pøípadných budoucích. Ovìøena možnost
+      zkompilovat YTD na Delphi 5, 7, 2007, 2009, XE2 a na FreePascalu 2.6.0.
+      64bitová verze jde zkompilovat pomocí Delphi XE2, ale pak nejde spustit
+      kvùli nìkterým chybìjícím exportùm v DLL, ke kterým nemohu dohledat, kde
+      se v YTD berou.
+
+
 
   v1.12:
 

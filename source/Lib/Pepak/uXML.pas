@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uXml;
-{$INCLUDE 'ytd.inc'}
+{$INCLUDE 'pepak.inc'}
 
 interface
 

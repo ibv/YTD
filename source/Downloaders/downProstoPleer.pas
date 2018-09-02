@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxXHamster;
+unit downProstoPleer;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHTTPDownloader;
 
 type
-  TDownloader_XHamster = class(THttpDownloader)
+  TDownloader_ProstoPleer = class(THTTPDownloader)
     private
     protected
-      MovieServerRegExp: TRegExp;
-      MovieFileNameRegExp: TRegExp;
-      MovieModeRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -68,89 +65,75 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://prostopleer.com/tracks/503102372y2
+// http://prostopleer.com/#/tracks/503102372y2
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*xhamster\.com/movies/';
-  URLREGEXP_ID =        '[0-9]+/.*';
+  URLREGEXP_BEFORE_ID = 'prostopleer\.com/(?:#/)?tracks/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
-  REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[^'']+)';
-  REGEXP_MOVIE_URLMODE = '''url_mode''\s*:\s*''(?P<MODE>[0-9]+)''';
+  REGEXP_MOVIE_TITLE =  '<div\s+class="results">\s*' + REGEXP_TITLE_H1;
+  REGEXP_MOVIE_URL =    '"track_link"\s*:\s*"(?P<URL>https?://.+?)"';
 
-{ TDownloader_XHamster }
+{ TDownloader_ProstoPleer }
 
-class function TDownloader_XHamster.Provider: string;
+class function TDownloader_ProstoPleer.Provider: string;
 begin
-  Result := 'XHamster.com';
+  Result := 'ProstoPleer.com';
 end;
 
-class function TDownloader_XHamster.UrlRegExp: string;
+class function TDownloader_ProstoPleer.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_XHamster.Create(const AMovieID: string);
+constructor TDownloader_ProstoPleer.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUnknown;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
-  MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME);
-  MovieModeRegExp := RegExCreate(REGEXP_MOVIE_URLMODE);
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, [MovieID]));
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_XHamster.Destroy;
+destructor TDownloader_ProstoPleer.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieServerRegExp);
-  RegExFreeAndNil(MovieFileNameRegExp);
-  RegExFreeAndNil(MovieModeRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_XHamster.GetMovieInfoUrl: string;
+function TDownloader_ProstoPleer.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.xhamster.com/movies/' + MovieID;
+  Result := 'http://prostopleer.com/tracks/' + MovieID;
 end;
 
-function TDownloader_XHamster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_ProstoPleer.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const
+  PROSTOPLEER_POST_DATA_URL = 'http://prostopleer.com/site_api/files/get_url';
 var
-  Server, FileName, Mode, Url: string;
+  Info, Url: String;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['file']))
-  else if not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
-  else if not GetRegExpVar(MovieModeRegExp, Page, 'MODE', Mode) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mode']))
+  if not DownloadPage(Http, PROSTOPLEER_POST_DATA_URL, {$IFDEF UNICODE} AnsiString {$ENDIF} ('action=download&id=' + MovieID), HTTP_FORM_URLENCODING_UTF8, Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(MovieUrlRegExp, Info, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    if Mode = '1' then
-      Url := Server + '/key=' + FileName
-    else if Mode = '2' then
-      Url := Server + '/flv2/' + FileName
-    else if Mode = '3' then
-      Url := UrlDecode(FileName)
-    else
-      Url := '';
-    if Url = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieUrl := Url;
-      SetPrepared(True);
-      Result := True;
-      end;
+    MovieUrl := Url;
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
+function TDownloader_ProstoPleer.GetFileNameExt: string;
+begin
+  Result := '.mp3';
+end;
+
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_XHamster);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_ProstoPleer);
 
 end.

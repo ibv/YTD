@@ -42,7 +42,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ActnList, ComCtrls, ShlObj,
-  uLanguages, uMessages, uOptions, uDialogs, uFunctions, guiConsts, guiFunctions,
+  uLanguages, uMessages, uOptions, uDialogs, uFunctions, guiFunctions,
   uDownloadClassifier, uDownloader,
   guiDownloaderOptions, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader;
   
@@ -322,12 +322,12 @@ end;
 
 procedure TFormOptions.actDesktopShortcutExecute(Sender: TObject);
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), StandardShortcutParams);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ParamStr(0), SETUP_PARAM_GUI);
 end;
 
 procedure TFormOptions.actStartMenuShortcutExecute(Sender: TObject);
 begin
-  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), StandardShortcutParams);
+  CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_PROGRAMS, ParamStr(0), SETUP_PARAM_GUI);
 end;
 
 procedure TFormOptions.ShowDownloaderOptionsPage(Index: integer);

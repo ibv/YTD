@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uStrings;
+{$INCLUDE 'pepak.inc'}
 
 interface
 

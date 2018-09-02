@@ -1366,9 +1366,11 @@ const
     (Start: '<';                Close: '>';   Style: xeNormal) );
     // direct tags are derived from Normal tags by checking for the />
 
+  {$IFNDEF PEPAK}
   // These constant are used when generating hexchars from buffer data
   cHexChar:       array[0..15] of AnsiChar = '0123456789ABCDEF';
   cHexCharLoCase: array[0..15] of AnsiChar = '0123456789abcdef';
+  {$ENDIF}
 
   // These AnsiCharacters are used when generating BASE64 AnsiChars from buffer data
   cBase64Char: array[0..63] of AnsiChar =
@@ -2583,7 +2585,7 @@ begin
     for j := 2 downto 0 do
     begin
       // Check overshoot
-      if integer(D) - integer(@Buffer) >= Count then
+      if {$IFDEF PEPAK} NativeInt {$ELSE} integer {$ENDIF} (D) - {$IFDEF PEPAK} NativeInt {$ELSE} integer {$ENDIF} (@Buffer) >= Count then
         exit;
       D^ := LongVal shr (j * 8) and $FF;
       inc(D);

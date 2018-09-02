@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.12                                                    (c) 2009-12 Pepak
+YTD v1.13                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -651,6 +651,10 @@ a "0" (ne).
                     spouštìt, aby mìl pøíležitost pøepsat svùj .exe soubor
                     novou verzí.
     -ah[-] ........ (Ne-) pokusit se použít HTML parser na neznámá URL.
+    -nd ........... Jen vypíše parametry potøebné pro stáhnutí videa, vlastní
+                    download pøeskoèí. Hodí se v pøípadech, kdy chcete pøidat
+                    nìjaké vlastní parametry.
+
 
   Pro grafickou verzi:
 

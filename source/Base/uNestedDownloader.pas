@@ -88,6 +88,7 @@ type
       {$IFDEF MULTIDOWNLOADS}
       function First: boolean; override;
       function Next: boolean; override;
+      function ValidatePrepare: boolean; override;
       {$ENDIF}
     end;
 
@@ -303,6 +304,14 @@ begin
   else
     Result := False;
   FirstItem := False;
+end;
+
+function TNestedDownloader.ValidatePrepare: boolean;
+begin
+  if NestedDownloader <> nil then
+    Result := NestedDownloader.ValidatePrepare
+  else
+    Result := False;
 end;
 {$ENDIF}
 

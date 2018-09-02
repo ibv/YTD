@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uCreateProcessAsync;
+{$INCLUDE 'pepak.inc'}
 {
   Usage:
 
@@ -58,7 +59,6 @@ unit uCreateProcessAsync;
        called process to finish.
 }
 
-{$INCLUDE 'pepak.inc'}
 {$DEFINE REGISTERWAITFORSINGLEOBJECT}
   // Use RegisterWaitForSingleObject rather than a dedicated thread. It is more
   // efficient and seems to be more stable, too, but is only available with

@@ -34,72 +34,79 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit guiSetupVCL;
+unit downSibnet;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ShellApi, ShlObj,
-  uLanguages, uMessages, uFunctions, uDialogs, uCompatibility,
-  guiFunctions;
+  SysUtils, Classes,
+  uPCRE, uXml, HttpSend,
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TFormSetup = class(TForm)
-    LabelDestinationDir: TLabel;
-    EditDestinationDir: TEdit;
-    BtnDestinationDir: TButton;
-    CheckDesktopShortcut: TCheckBox;
-    CheckStartMenuShortcut: TCheckBox;
-    ButtonInstall: TButton;
-    ButtonRun: TButton;
-    procedure BtnDestinationDirClick(Sender: TObject);
-  private
-    function GetDestinationDir: string;
-    function GetDesktopShortcut: boolean;
-    function GetStartMenuShortcut: boolean;
-  public
-    constructor Create(AOwner: TComponent); override;
-    property DestinationDir: string read GetDestinationDir;
-    property DesktopShortcut: boolean read GetDesktopShortcut;
-    property StartMenuShortcut: boolean read GetStartMenuShortcut;
-  end;
+  TDownloader_Sibnet = class(THttpDownloader)
+    private
+    protected
+      function GetMovieInfoUrl: string; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
+    end;
 
 implementation
 
-{$R *.DFM}
+uses
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
 
-{ TFormSetup }
+// http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
+// http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+const
+  URLREGEXP_BEFORE_ID = 'video\.sibnet\.ru/(?:[^/?]+/)*video';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_AFTER_ID =  '';
 
-constructor TFormSetup.Create(AOwner: TComponent);
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_URL =    REGEXP_URL_META_OGVIDEO;
+
+{ TDownloader_Sibnet }
+
+class function TDownloader_Sibnet.Provider: string;
 begin
+  Result := 'Video.Sibnet.ru';
+end;
+
+class function TDownloader_Sibnet.UrlRegExp: string;
+begin
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+end;
+
+constructor TDownloader_Sibnet.Create(const AMovieID: string);
+begin
+  inherited Create(AMovieID);
+  InfoPageEncoding := peANSI;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+end;
+
+destructor TDownloader_Sibnet.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
-  TranslateProperties(self);
-  EditDestinationDir.Text := GetSpecialFolder(CSIDL_PROGRAM_FILES) + '\' + APPLICATION_TITLE;
 end;
 
-procedure TFormSetup.BtnDestinationDirClick(Sender: TObject);
-var Dir: string;
+function TDownloader_Sibnet.GetMovieInfoUrl: string;
 begin
-  Dir := EditDestinationDir.Text;
-  if SelectDirectory(Dir, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
-    EditDestinationDir.Text := Dir;
+  Result := 'http://video.sibnet.ru/video' + MovieID;
 end;
 
-function TFormSetup.GetDestinationDir: string;
-begin
-  Result := EditDestinationDir.Text;
-end;
-
-function TFormSetup.GetDesktopShortcut: boolean;
-begin
-  Result := CheckDesktopShortcut.Checked;
-end;
-
-function TFormSetup.GetStartMenuShortcut: boolean;
-begin
-  Result := CheckStartMenuShortcut.Checked;
-end;
+initialization
+  RegisterDownloader(TDownloader_Sibnet);
 
 end.

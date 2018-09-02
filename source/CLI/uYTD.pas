@@ -40,8 +40,7 @@ unit uYTD;
 interface
 
 uses
-  SysUtils, Classes, Windows, {$IFNDEF FPC} FileCtrl, {$ENDIF}
-  PCRE,
+  SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
   uConsoleApp, uOptions, uLanguages, uMessages, uFunctions,
   uDownloader, uCommonDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
@@ -466,25 +465,25 @@ begin
         {$IFDEF MULTIDOWNLOADS}
         repeat
         {$ENDIF}
-        Write(_('  Media title: ')); WriteColored(ccWhite, Downloader.Name); Writeln; // CLI: Title shown before media title. Pad to the same length as "File name:'
-        Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln; // CLI: Title shown before media file name. Pad to the same length as "Media title:'
-        Write(_('  Content URL: ')); WriteColored(ccWhite, Downloader.ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
-        if fPrepareOnly then
-          Result := True
-        else
-          begin
-          Result := Downloader.ValidateFileName and Downloader.Download;
-          if fNextProgressUpdate <> 0 then
-            Writeln;
-          if Result then
-            begin
-            WriteColored(ccWhite, _('  SUCCESS.')); // CLI: Media downloaded successfully
-            Writeln;
-            Writeln;
-            end
+          Write(_('  Media title: ')); WriteColored(ccWhite, Downloader.Name); Writeln; // CLI: Title shown before media title. Pad to the same length as "File name:'
+          Write(_('    File name: ')); WriteColored(ccWhite, Downloader.FileName); Writeln; // CLI: Title shown before media file name. Pad to the same length as "Media title:'
+          Write(_('  Content URL: ')); WriteColored(ccWhite, Downloader.ContentUrl); Writeln; // CLI: Title shown before media URL. Pad to the same length as "Media title:'
+          if fPrepareOnly then
+            Result := True
           else
-            ShowDownloadError(Url, Downloader.LastErrorMsg);
-          end;
+            begin
+            Result := Downloader.ValidateFileName and Downloader.Download;
+            if fNextProgressUpdate <> 0 then
+              Writeln;
+            if Result then
+              begin
+              WriteColored(ccWhite, _('  SUCCESS.')); // CLI: Media downloaded successfully
+              Writeln;
+              Writeln;
+              end
+            else
+              ShowDownloadError(Url, Downloader.LastErrorMsg);
+            end;
         {$IFDEF MULTIDOWNLOADS}
         until (not Result) or (not Downloader.Next);
         {$ENDIF}

@@ -153,6 +153,7 @@ var
   i: integer;
 begin
   SetProxyUrl;
+  s := '';
   for i := 0 to Pred(Length(RtmpDumpOptions)) do
     if RtmpDumpOptions[i].Argument = '' then
       s := Format('%s -%s', [s, RtmpDumpOptions[i].ShortOption])
@@ -165,7 +166,7 @@ function TRtmpDownloader.GetFileNameExt: string;
 begin
   Result := '';
   if Playpath <> '' then
-    Result := ExtractFileExt(Playpath);
+    Result := ExtractUrlExt(Playpath);
   if Result = '' then
     Result := inherited GetFileNameExt;
 end;
@@ -370,7 +371,7 @@ end;
 function TRtmpDownloader.Download: boolean;
 var LogFileName, ErrorMsg: string;
     RetCode: integer;
-    FN, FinalFN: string;
+    FN, FinalFN, TempFN: string;
 begin
   inherited Download;
   DownloadedBytes := 0;
@@ -382,12 +383,13 @@ begin
   {$ENDIF}
   SetProxyUrl;
   FinalFN := FileName;
+  TempFN := GetAnsiCompatibleFileName(FinalFN);
   if Options.DownloadToTempFiles then
-    FN := FinalFN + '.part'
+    FN := TempFN + '.part'
   else
-    FN := FinalFN;
+    FN := TempFN;
   SetRtmpDumpOption('o', FN);
-  LogFileName := GetTempDir + ExtractFileName(FileName) + '.log';
+  LogFileName := GetTempDir + ExtractFileName(TempFN) + '.log';
   if FileExists(LogFileName) then
     DeleteFile(PChar(LogFileName));
   if not RtmpDump_Init then

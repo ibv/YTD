@@ -3,7 +3,7 @@
   All parts of the translation system are kept in this unit.
 
   @author Lars B. Dybdahl and others
-  @version $LastChangedRevision$
+  @version $LastChangedRevision: 220 $
   @see http://dybdahl.dk/dxgettext/
 -------------------------------------------------------------------------------}
 unit gnugettext;
@@ -22,9 +22,9 @@ unit gnugettext;
 (**************************************************************)
 
 // Information about this file:
-// $LastChangedDate$
-// $LastChangedRevision$
-// $HeadURL$
+// $LastChangedDate: 2010-08-25 15:40:17 +0200 (mer., 25 aout 2010) $
+// $LastChangedRevision: 220 $
+// $HeadURL: http://svn.berlios.de/svnroot/repos/dxgettext/trunk/dxgettext/sample/gnugettext.pas $
 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -78,6 +78,39 @@ interface
 {$endif}
 {$ifdef VER200}
   // Delphi 2009 with Unicode
+  {$DEFINE DELPHI2009OROLDER}
+{$endif}
+{$ifdef VER220}
+  // Delphi 2011 with Unicode
+  {$DEFINE DELPHI2011OROLDER}
+{$endif}
+{$ifdef VER230}
+  // Delphi 2012 with Unicode
+  {$DEFINE DELPHI2012OROLDER}
+{$endif}
+
+{$ifdef DELPHI2012OROLDER}
+  {$DEFINE DELPHI2011OROLDER}
+{$endif}
+
+{$ifdef DELPHI2011OROLDER}
+  {$DEFINE DELPHI2010OROLDER}
+{$endif}
+
+{$ifdef DELPHI2010OROLDER}
+  {$DEFINE DELPHI2009OROLDER}
+{$endif}
+
+{$ifdef DELPHI2009OROLDER}
+  {$DEFINE DELPHI2007OROLDER}
+{$endif}
+
+{$ifdef DELPHI2007OROLDER}
+  {$DEFINE DELPHI7OROLDER}
+{$endif}
+
+{$ifdef DELPHI7OROLDER}
+  {$DEFINE DELPHI6OROLDER}
 {$endif}
 
 uses
@@ -152,6 +185,13 @@ procedure RetranslateComponent(AnObject: TComponent; const TextDomain:DomainStri
 procedure AddDomainForResourceString (const domain:DomainString);
 procedure RemoveDomainForResourceString (const domain:DomainString);
 
+// Add more domains that component strings can be extracted from. If a translation
+// is not found in the default domain, this domain will be searched, too.
+// This is useful when an application inherits components from a 3rd
+// party component libraries
+procedure AddDomainForComponent (const domain:DomainString);
+procedure RemoveDomainForComponent (const domain:DomainString);
+
 // Unicode-enabled way to get resourcestrings, automatically translated
 // Use like this: ws:=LoadResStringW(@NameOfResourceString);
 function LoadResString(ResStringRec: PResStringRec): widestring;
@@ -180,7 +220,7 @@ const
 
 const
   // Subversion source code version control version information
-  VCSVersion='$LastChangedRevision$';
+  VCSVersion='$LastChangedRevision: 220 $';
 
 type
   EGnuGettext=class(Exception);
@@ -285,6 +325,13 @@ type
     class
       procedure Execute; virtual; abstract;
     end;
+
+{*------------------------------------------------------------------------------
+  Interface to implement if you want to register as a language change listener
+-------------------------------------------------------------------------------}
+  IGnuGettextInstanceWhenNewLanguageListener = interface
+    procedure WhenNewLanguage (const LanguageID:LanguageString);
+  end;
     
 {*------------------------------------------------------------------------------
   The main translation engine.
@@ -354,6 +401,9 @@ type
       // Conversion according to design-time character set
       function ansi2wideDTCP (const s:AnsiString):MsgIdString;  // Convert using Design Time Code Page
       {$endif}
+
+      procedure RegisterWhenNewLanguageListener(Listener: IGnuGettextInstanceWhenNewLanguageListener);
+      procedure UnregisterWhenNewLanguageListener(Listener: IGnuGettextInstanceWhenNewLanguageListener);
     protected
       procedure TranslateStrings (sl:TStrings;const TextDomain:DomainString);
 
@@ -376,6 +426,7 @@ type
       TP_ClassHandling:TList;      /// Items are TClassMode. If a is derived from b, a comes first
       TP_GlobalClassHandling:TList;      /// Items are TClassMode. If a is derived from b, a comes first
       TP_Retranslator:TExecutable; /// Cast this to TTP_Retranslator
+      fWhenNewLanguageListeners: TInterfaceList;  /// List of all registered WhenNewLanguage listeners
       {$ifdef DXGETTEXTDEBUG}
       DebugLogCS:TMultiReadExclusiveWriteSynchronizer;
       DebugLog:TStream;
@@ -504,6 +555,8 @@ var
   // Hooks into runtime library functions
   ResourceStringDomainListCS:TMultiReadExclusiveWriteSynchronizer;
   ResourceStringDomainList:TStringList;
+  ComponentDomainListCS:TMultiReadExclusiveWriteSynchronizer;
+  ComponentDomainList:TStringList;
   HookLoadResString:THook;
   HookLoadStr:THook;
   HookFmtLoadStr:THook;
@@ -577,6 +630,31 @@ begin
     end;
   finally
     ResourceStringDomainListCS.EndRead;
+  end;
+end;
+
+function ComponentGettext(MsgId: MsgIdString; Instance: TGnuGettextInstance = nil): TranslatedUnicodeString;
+var
+  i:integer;
+begin
+  if (MsgID='') or (ComponentDomainListCS=nil) then begin
+    // This only happens during very complicated program startups that fail,
+    // or when Msgid=''
+    Result:=MsgId;
+    exit;
+  end;
+  ComponentDomainListCS.BeginRead;
+  try
+    for i:=0 to ComponentDomainList.Count-1 do begin
+      if Assigned(Instance) then
+        Result:=Instance.dgettext(ComponentDomainList.Strings[i], MsgId)
+      else
+        Result:=dgettext(ComponentDomainList.Strings[i], MsgId);
+      if Result<>MsgId then
+        break;
+    end;
+  finally
+    ComponentDomainListCS.EndRead;
   end;
 end;
 
@@ -1125,6 +1203,37 @@ begin
   end;
 end;
 
+procedure AddDomainForComponent (const domain:DomainString);
+begin
+  {$ifdef DXGETTEXTDEBUG}
+  DefaultInstance.DebugWriteln ('Extra domain for component: '+domain);
+  {$endif}
+  ComponentDomainListCS.BeginWrite;
+  try
+    if ComponentDomainList.IndexOf(domain)=-1 then
+      ComponentDomainList.Add (domain);
+  finally
+    ComponentDomainListCS.EndWrite;
+  end;
+end;
+
+procedure RemoveDomainForComponent (const domain:DomainString);
+var
+  i:integer;
+begin
+  {$ifdef DXGETTEXTDEBUG}
+  DefaultInstance.DebugWriteln ('Remove domain for component: '+domain);
+  {$endif}
+  ComponentDomainListCS.BeginWrite;
+  try
+    i:=ComponentDomainList.IndexOf(domain);
+    if i<>-1 then
+      ComponentDomainList.Delete (i);
+  finally
+    ComponentDomainListCS.EndWrite;
+  end;
+end;
+
 procedure TDomain.SetLanguageCode(const langcode: LanguageString);
 begin
   CloseMoFile;
@@ -1362,6 +1471,7 @@ begin
   TP_IgnoreList.Sorted:=True;
   TP_GlobalClassHandling:=TList.Create;
   TP_ClassHandling:=TList.Create;
+  fWhenNewLanguageListeners := TInterfaceList.Create;
 
   // Set some settings
   DefaultDomainDirectory := IncludeTrailingPathDelimiter(extractfilepath(ExecutableFilename))+'locale';
@@ -1401,6 +1511,7 @@ begin
     domainlist.Delete(0);
   end;
   FreeAndNil(domainlist);
+  FreeAndNil(fWhenNewLanguageListeners);
   {$ifdef DXGETTEXTDEBUG}
   FreeAndNil (DebugLog);
   FreeAndNil (DebugLogCS);
@@ -1707,7 +1818,10 @@ begin
           if (old <> '') and (IsWriteProp(PropInfo)) then begin
             if TP_Retranslator<>nil then
               (TP_Retranslator as TTP_Retranslator).Remember(AnObject, PropName, old);
-            ws := dgettext(textdomain,old);
+            if textdomain = '' then
+              ws := ComponentGettext(old)
+            else
+              ws := dgettext(textdomain,old);
             if ws <> old then begin
               ppi:=GetPropInfo(AnObject, Propname);
               if ppi<>nil then begin
@@ -1765,7 +1879,10 @@ begin
   if textdomain='' then
     textdomain:=curmsgdomain;
   if TP_Retranslator<>nil then
-    (TP_Retranslator as TTP_Retranslator).TextDomain:=textdomain;
+    if textdomain = '' then
+      (TP_Retranslator as TTP_Retranslator).TextDomain:=curmsgdomain
+    else
+      (TP_Retranslator as TTP_Retranslator).TextDomain:=textdomain;
   {$ifdef FPC}
   DoneList:=TCSStringList.Create;
   TodoList:=TCSStringList.Create;
@@ -1790,8 +1907,8 @@ begin
       TodoList.Delete(0);
       if (AnObject<>nil) and (AnObject is TPersistent) then begin
         // Make sure each object is only translated once
-        Assert (sizeof(integer)=sizeof(TObject));
-        objid:=IntToHex(integer(AnObject),8);
+        Assert (sizeof({$IFDEF CPUx64}NativeInt{$ELSE}Integer{$ENDIF CPUx64})=sizeof(TObject));
+        objid:=IntToHex({$IFDEF CPUx64}NativeInt{$ELSE}Integer{$ENDIF CPUx64}(AnObject),8);
         if DoneList.Find(objid,i) then begin
           continue;
         end else begin
@@ -1908,6 +2025,12 @@ begin
   {$endif}
 end;
 
+procedure TGnuGettextInstance.UnregisterWhenNewLanguageListener(
+  Listener: IGnuGettextInstanceWhenNewLanguageListener);
+begin
+  fWhenNewLanguageListeners.Remove(Listener);
+end;
+
 procedure TGnuGettextInstance.UseLanguage(LanguageCode: LanguageString);
 var
   i,p:integer;
@@ -1974,19 +2097,58 @@ var
   line: string;
   i: integer;
   s:TStringList;
+  {$ifdef DELPHI2009OROLDER}
+  slAsTStringList:TStringList;
+  originalOwnsObjects: Boolean;
+  {$endif}
 begin
   if sl.Count > 0 then begin
+    // From D2009 onward, the TStringList class has a OwnsObjects property, just like
+    // TObjectList has. This means that when we will be calling Clear on the given
+    // list in the sl parameter, we could destroy the objects it contains.
+    // To avoid this we must disable OwnsObjects while we replace the strings, but
+    // only if sl is a TStringList instance and if using Delphi 2009 or upper.
+    {$ifdef DELPHI2009OROLDER}
+    originalOwnsObjects := False; // avoid warning
+    if sl is TStringList then
+      slAsTStringList := TStringList(sl)
+    else
+      slAsTStringList := nil;
+    {$endif}
+
     sl.BeginUpdate;
     try
       s:=TStringList.Create;
       try
-        s.Assign (sl);
+        // don't use Assign here as it will propagate the Sorted property (among others)
+        // in versions of Delphi from Delphi XE ownard
+        s.AddStrings(sl);
+
         for i:=0 to s.Count-1 do begin
           line:=s.Strings[i];
           if line<>'' then
-            s.Strings[i]:=dgettext(TextDomain,line);
+            if TextDomain = '' then
+              s.Strings[i]:=ComponentGettext(line)
+            else
+              s.Strings[i]:=dgettext(TextDomain,line);
         end;
-        sl.Assign(s);
+
+        {$ifdef DELPHI2009OROLDER}
+        if Assigned(slAsTStringList) then begin
+          originalOwnsObjects := slAsTStringList.OwnsObjects;
+          slAsTStringList.OwnsObjects := False;
+        end;
+        {$endif}
+        try
+          // same here, we don't want to modify the properties of the orignal string list
+          sl.Clear;
+          sl.AddStrings(s);
+        finally
+          {$ifdef DELPHI2009OROLDER}
+          if Assigned(slAsTStringList) then
+            slAsTStringList.OwnsObjects := originalOwnsObjects;
+          {$endif}
+        end;
       finally
         FreeAndNil (s);
       end;
@@ -2090,8 +2252,11 @@ begin
 end;
 
 procedure TGnuGettextInstance.WhenNewLanguage(const LanguageID: LanguageString);
+var
+  I: Integer;
 begin
-  // This is meant to be empty.
+  for I := 0 to fWhenNewLanguageListeners.Count - 1 do
+    IGnuGettextInstanceWhenNewLanguageListener(fWhenNewLanguageListeners[I]).WhenNewLanguage(LanguageID);
 end;
 
 procedure TGnuGettextInstance.WhenNewDomainDirectory(const TextDomain:DomainString; const Directory: FilenameString);
@@ -2144,8 +2309,11 @@ begin
   end;
 
   // Copy the memorystream contents to the file
-  DebugLog.Seek(0,soFromBeginning);
-  fs.CopyFrom(DebugLog,0);
+  if DebugLog <> nil then
+  begin
+    DebugLog.Seek(0,soFromBeginning);
+    fs.CopyFrom(DebugLog,0);
+  end;
 
   // Make DebugLog point to the filestream
   FreeAndNil (DebugLog);
@@ -2291,6 +2459,12 @@ begin
   end else
     Result:=ResourceStringGettext(Result);
   {$ENDIF}
+end;
+
+procedure TGnuGettextInstance.RegisterWhenNewLanguageListener(
+  Listener: IGnuGettextInstanceWhenNewLanguageListener);
+begin
+  fWhenNewLanguageListeners.Add(Listener);
 end;
 
 procedure TGnuGettextInstance.RetranslateComponent(AnObject: TComponent;
@@ -2791,7 +2965,10 @@ begin
         FreeAndNil (sl);
       end;
     end else begin
-      newValue:=instance.dgettext(textdomain,item.OldValue);
+      if (textdomain = '') or (textdomain = DefaultTextDomain) then
+        newValue := ComponentGettext(item.OldValue, instance)
+      else
+        newValue := instance.dgettext(textdomain,item.OldValue);
       ppi:=GetPropInfo(item.obj, item.Propname);
       if ppi<>nil then begin
         SetWideStrProp(item.obj, ppi, newValue);
@@ -2831,7 +3008,9 @@ constructor THook.Create(OldProcedure, NewProcedure: pointer; FollowJump:boolean
 { Modified by Jacques Garcia Vazquez and Lars Dybdahl }
 begin
   {$ifndef CPU386}
-  raise Exception.Create ('This procedure only works on Intel i386 compatible processors.');
+  {$ifndef CPUx64}
+  raise Exception.Create ('This procedure only works on Intel i386 or x64 compatible processors.');
+  {$endif}
   {$endif}
 
   oldproc:=OldProcedure;
@@ -2884,7 +3063,7 @@ begin
   if FollowJump and (Word(OldProc^) = $25FF) then begin
     // This finds the correct procedure if a virtual jump has been inserted
     // at the procedure address
-    Inc(Integer(patchPosition), 2); // skip the jump
+    Inc(patchPosition, 2); // skip the jump
     patchPosition := pansiChar(Pointer(pointer(patchPosition)^)^);
   end;
   offset:=integer(NewProc)-integer(pointer(patchPosition))-5;
@@ -3139,21 +3318,29 @@ initialization
       SetCWidestringManager;
     {$endif LINUX}
   {$endif FPC}
-  if IsLibrary then begin
-    // Get DLL/shared object filename
-    SetLength (ExecutableFilename,300);
-    {$ifdef MSWINDOWS}
-    SetLength (ExecutableFilename,GetModuleFileName(FindClassHInstance(TGnuGettextInstance), PChar(ExecutableFilename), length(ExecutableFilename)));
-    {$else}
-    SetLength (ExecutableFilename,GetModuleFileName(0, PAnsiChar(ExecutableFilename), length(ExecutableFilename)));
-    {$endif}
+  // Get DLL/shared object filename
+  SetLength(ExecutableFilename, 300); // MAX_PATH ?
+  {$ifdef MSWINDOWS}
+  SetLength(ExecutableFilename, GetModuleFileName(HInstance,
+    PChar(ExecutableFilename), Length(ExecutableFilename)));
+  {$endif}
+  {$ifdef LINUX}
+  if ModuleIsLib or ModuleIsPackage then
+  begin
+    // This line has not been tested on Linux, yet, but should work.
+    SetLength(ExecutableFilename, GetModuleFileName(0, PChar(ExecutableFilename),
+      Length(ExecutableFilename)));
   end else
     ExecutableFilename:=Paramstr(0);
+  {$endif}
   FileLocator:=TFileLocator.Create;
   FileLocator.Analyze;
   ResourceStringDomainList:=TStringList.Create;
   ResourceStringDomainList.Add(DefaultTextDomain);
   ResourceStringDomainListCS:=TMultiReadExclusiveWriteSynchronizer.Create;
+  ComponentDomainList:=TStringList.Create;
+  ComponentDomainList.Add(DefaultTextDomain);
+  ComponentDomainListCS:=TMultiReadExclusiveWriteSynchronizer.Create;
   DefaultInstance:=TGnuGettextInstance.Create;
   {$ifdef MSWINDOWS}
   Win32PlatformIsUnicode := (Win32Platform = VER_PLATFORM_WIN32_NT);
@@ -3176,6 +3363,8 @@ finalization
   FreeAndNil (DefaultInstance);
   FreeAndNil (ResourceStringDomainListCS);
   FreeAndNil (ResourceStringDomainList);
+  FreeAndNil (ComponentDomainListCS);
+  FreeAndNil (ComponentDomainList);
   FreeAndNil (HookFmtLoadStr);
   FreeAndNil (HookLoadStr);
   FreeAndNil (HookLoadResString);

@@ -97,6 +97,7 @@ uses
       guiOptionsWINAPI_CommonDownloader in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CommonDownloader.pas',
       guiOptionsWINAPI_Barrandov in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Barrandov.pas',
       guiOptionsWINAPI_CT in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CT.pas',
+      guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
       guiOptionsWINAPI_YouTube in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_YouTube.pas',
       {$IFDEF CONVERTERS}
       guiConverterWINAPI in 'GUI\WinAPI\guiConverterWINAPI.pas',
@@ -112,6 +113,7 @@ uses
       guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
       guiOptionsVCL_Barrandov in 'GUI\VCL\Downloaders\guiOptionsVCL_Barrandov.pas' {FrameDownloaderOptionsPage_Barrandov: TFrame},
       guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
+      guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
       guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       {$IFDEF CONVERTERS}
       guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
@@ -224,6 +226,7 @@ uses
   downJoj_Porady in 'Downloaders\downJoj_Porady.pas',
   downKanalTurk in 'Downloaders\downKanalTurk.pas',
   downKinobox in 'Downloaders\downKinobox.pas',
+  downKiwi in 'Downloaders\downKiwi.pas',
   downKontraband in 'Downloaders\downKontraband.pas',
   downKukaj in 'Downloaders\downKukaj.pas',
   downLaola1 in 'Downloaders\downLaola1.pas',
@@ -260,6 +263,8 @@ uses
   downMuzu in 'Downloaders\downMuzu.pas',
   downMySpace in 'Downloaders\downMySpace.pas',
   downMyUbo in 'Downloaders\downMyUbo.pas',
+  downMyvi in 'Downloaders\downMyvi.pas',
+  downMyvi_Embed in 'Downloaders\downMyvi_Embed.pas',
   downNaStojaka in 'Downloaders\downNaStojaka.pas',
   downNBC in 'Downloaders\downNBC.pas',
   downNavratDoReality in 'Downloaders\downNavratDoReality.pas',
@@ -267,6 +272,7 @@ uses
   downNHL in 'Downloaders\downNHL.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
+  downNova in 'Downloaders\downNova.pas',
   {$IFDEF DIRTYHACKS}
   downNovaTN in 'Downloaders\downNovaTN.pas',
   {$ENDIF}
@@ -285,6 +291,7 @@ uses
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
   downPrimaCool in 'Downloaders\downPrimaCool.pas',
   downProglas in 'Downloaders\downProglas.pas',
+  downProstoPleer in 'Downloaders\downProstoPleer.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downQipRu_Embed in 'Downloaders\downQipRu_Embed.pas',
   downR1ZAK in 'Downloaders\downR1ZAK.pas',
@@ -297,11 +304,13 @@ uses
   downRTA in 'Downloaders\downRTA.pas',
   downRTA_Embed in 'Downloaders\downRTA_Embed.pas',
   downRtlNl in 'Downloaders\downRtlNl.pas',
+  downRuTube in 'Downloaders\downRuTube.pas',
   downSefka in 'Downloaders\downSefka.pas',
   downSerialOnline in 'Downloaders\downSerialOnline.pas',
   downSerialyCZ in 'Downloaders\downSerialyCZ.pas',
   downSevenLoad in 'Downloaders\downSevenLoad.pas',
   downShackNews in 'Downloaders\downShackNews.pas',
+  downSibnet in 'Downloaders\downSibnet.pas',
   downSmeSK in 'Downloaders\downSmeSK.pas',
   downSmotri in 'Downloaders\downSmotri.pas',
   downSnotr in 'Downloaders\downSnotr.pas',
@@ -432,15 +441,6 @@ uses
       // Requires FTP support
     downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
       // Download only works for logged-in users
-    downNova in 'Downloaders\Non-working\downNova.pas',
-      // Free service no longer available
-      {$IFDEF GUI}
-        {$IFDEF GUI_WINAPI}
-          guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
-        {$ELSE}
-          guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
-        {$ENDIF}
-      {$ENDIF}
     downTipovani in 'Downloaders\Non-working\downTipovani.pas',
       // Some transformation of movie ID is needed
     downWat in 'Downloaders\Non-working\downWat.pas',

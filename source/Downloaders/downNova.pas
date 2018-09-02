@@ -45,18 +45,6 @@ unit downNova;
   zejmena jde o metody getHashString a onGetTimeStamp).
 }
 
-{$DEFINE DEBUG_SIGNATURE}
-  {
-    Mam tu zasadni problem, ze pro
-      Timestamp := '20120729145706';
-      Media_ID := 1202109;
-    mi to ma vratit MD5 hash (po Base64Encode)
-      'mo7+w5o3kj2aQ2+1kk0KEA=='
-    Jenze muj vypocitany hash je
-      'Uo22PwkGbvTIluswmr2s8w=='
-    a ja nemuzu prijit na to, proc.
-  }
-
 interface
 
 uses
@@ -294,29 +282,16 @@ begin
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['media_id']))
   else if Secret = '' then
     SetLastErrorMsg(ERR_SECURE_TOKEN_NOT_SET)
-  {$IFNDEF DEBUG_SIGNATURE}
   else if not DownloadPage(Http, NOVA_TIMESTAMP_URL, Timestamp) then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
-  {$ENDIF}
   else
     begin
-    {$IFNDEF DEBUG_SIGNATURE}
     Timestamp := Copy(Timestamp, 1, 14);
-    {$ELSE}
-    Timestamp := '20120729145706';
-    Media_ID := '1202109';
-    {$ENDIF}
     ID := UrlEncode(NOVA_APP_ID + '|' + Media_ID);
     SignatureBytes := {$IFDEF UNICODE} AnsiString {$ENDIF} (NOVA_APP_ID + '|' + Media_ID + '|' + Timestamp + '|' + Secret);
     SignatureBytes := MD5(SignatureBytes);
     SignatureBytes := EncodeBase64(SignatureBytes);
-    {$IFDEF DEBUG_SIGNATURE}
-    Writeln(SignatureBytes);
-    Writeln('mo7+w5o3kj2aQ2+1kk0KEA==');
-    Readln(Quality);
-    {$ENDIF}
     Signature := UrlEncode( {$IFDEF UNICODE} string {$ENDIF} (SignatureBytes));
-    //Url := Format(NOVA_SERVICE_URL + '?t=%s&d=1&tm=nova&c=%s&h=0&tm=nova&s=%s&d=1', [Timestamp, ID, Signature]);
     Url := Format(NOVA_SERVICE_URL + '?c=%s&h=0&t=%s&s=%s&tm=nova&d=1', [ID, Timestamp, Signature]);
     if not DownloadXml(Http, Url, InfoXml) then
       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)

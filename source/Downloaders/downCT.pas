@@ -476,7 +476,7 @@ end;
 {$IFDEF MULTIDOWNLOADS}
 function TDownloader_CT_old.First: boolean;
 begin
-  if Prepared then
+  if ValidatePrepare then
     if BaseUrls.Count <= 0 then
       Result := MovieURL <> ''
     else
@@ -492,7 +492,7 @@ end;
 function TDownloader_CT_old.Next: boolean;
 begin
   Result := False;
-  if Prepared then
+  if ValidatePrepare then
     begin
     DownloadIndex := Succ(DownloadIndex);
     if (DownloadIndex >= 0) and (DownloadIndex < BaseUrls.Count) and (DownloadIndex < Streams.Count) then

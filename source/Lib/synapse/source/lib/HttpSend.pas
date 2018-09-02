@@ -101,13 +101,13 @@ type
     FResultString: string;
     FUserAgent: string;
     FCookies: TStringList;
-    FDownloadSize: integer;
-    FUploadSize: integer;
-    FRangeStart: integer;
-    FRangeEnd: integer;
+    FDownloadSize: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
+    FUploadSize: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
+    FRangeStart: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
+    FRangeEnd: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
     FAddPortNumberToHost: Boolean;
     function ReadUnknown: Boolean;
-    function ReadIdentity(Size: Integer): Boolean;
+    function ReadIdentity(Size: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ): Boolean;
     function ReadChunked: Boolean;
     procedure ParseCookies;
     function PrepareHeaders: AnsiString;
@@ -157,13 +157,13 @@ type
 
     {:If you need download only part of requested document, here specify
      possition of subpart begin. If here 0, then is requested full document.}
-    property RangeStart: integer read FRangeStart Write FRangeStart;
+    property RangeStart: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FRangeStart Write FRangeStart;
 
     {:If you need download only part of requested document, here specify
      possition of subpart end. If here 0, then is requested document from
      rangeStart to end of document. (for broken download restoration,
      for example.)}
-    property RangeEnd: integer read FRangeEnd Write FRangeEnd;
+    property RangeEnd: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FRangeEnd Write FRangeEnd;
 
     {:Mime type of sending data. Default is: 'text/html'.}
     property MimeType: string read FMimeType Write FMimeType;
@@ -211,12 +211,12 @@ type
     {:if this value is not 0, then data download pending. In this case you have
      here total sice of downloaded data. It is good for draw download
      progressbar from OnStatus event.}
-    property DownloadSize: integer read FDownloadSize;
+    property DownloadSize: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FDownloadSize;
 
     {:if this value is not 0, then data upload pending. In this case you have
      here total sice of uploaded data. It is good for draw upload progressbar
      from OnStatus event.}
-    property UploadSize: integer read FUploadSize;
+    property UploadSize: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FUploadSize;
     {:Socket object used for TCP/IP operation. Good for seting OnStatus hook, etc.}
     property Sock: TTCPBlockSocket read FSock;
 
@@ -418,7 +418,7 @@ var
   status100: Boolean;
   status100error: string;
   ToClose: Boolean;
-  Size: Integer;
+  Size: {$IFDEF PEPAK} int64 {$ELSE} Integer {$ENDIF} ;
   Prot, User, Pass, Host, Port, Path, Para, URI: string;
   s, su: AnsiString;
   HttpTunnel: Boolean;
@@ -662,7 +662,7 @@ begin
         su := UpperCase(s);
         if Pos('CONTENT-LENGTH:', su) = 1 then
         begin
-          Size := StrToIntDef(Trim(SeparateRight(s, ' ')), -1);
+          Size := {$IFDEF PEPAK} StrToInt64Def {$ELSE} StrToIntDef {$ENDIF} (Trim(SeparateRight(s, ' ')), -1);
           if (Size <> -1) and (FTransferEncoding = TE_UNKNOWN) then
             FTransferEncoding := TE_IDENTITY;
         end;
@@ -737,7 +737,7 @@ begin
   end;
 end;
 
-function THTTPSend.ReadIdentity(Size: Integer): Boolean;
+function THTTPSend.ReadIdentity(Size: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ): Boolean;
 begin
   if Size > 0 then
   begin
@@ -753,7 +753,7 @@ end;
 function THTTPSend.ReadChunked: Boolean;
 var
   s: ansistring;
-  Size: Integer;
+  Size: {$IFDEF PEPAK} int64 {$ELSE} Integer {$ENDIF} ;
 begin
   repeat
     repeat
@@ -763,7 +763,7 @@ begin
       Break;
     s := Trim(SeparateLeft(s, ' '));
     s := Trim(SeparateLeft(s, ';'));
-    Size := StrToIntDef('$' + s, 0);
+    Size := {$IFDEF PEPAK} StrToInt64Def {$ELSE} StrToIntDef {$ENDIF} ('$' + s, 0);
     if Size = 0 then
       Break;
     if not ReadIdentity(Size) then

@@ -154,13 +154,13 @@ begin
             {$IFDEF MULTIDOWNLOADS}
             repeat
             {$ENDIF}
-            if (not Downloader.ValidateFileName) or (not Downloader.Download) then
+              if (not Downloader.ValidateFileName) or (not Downloader.Download) then
+                if Terminated then
+                  Break
+                else
+                  Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
               if Terminated then
-                Break
-              else
-                Raise EDownloadThreadError.Create(Downloader.LastErrorMsg);
-            if Terminated then
-              Break;
+                Break;
             {$IFDEF MULTIDOWNLOADS}
             until not Downloader.Next;
             {$ENDIF}

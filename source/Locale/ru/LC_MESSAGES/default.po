@@ -5,22 +5,21 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: YouTube Downloader 1.13\n"
+"Project-Id-Version: YTD 1.13\n"
 "POT-Creation-Date: 2012-08-05 05:18\n"
-"PO-Revision-Date: 2012-08-05 05:20+0100\n"
-"Last-Translator: Pepak <pepak@pepak.net>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2012-08-05 12:44+0400\n"
+"Last-Translator: Litew <litew9@gmail.com>\n"
+"Language-Team: Litew <litew9@gmail.com>\n"
+"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: dxgettext 1.2.2\n"
-"X-Poedit-Language: Czech\n"
-"X-Poedit-Country: CZECH REPUBLIC\n"
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
 msgid "About YTD"
-msgstr "O aplikaci YTD"
+msgstr "О программе YTD"
 
 #. FormAbout..Font.Name
 #. FormAbout..LabelYTD..Font.Name
@@ -31,50 +30,44 @@ msgstr "O aplikaci YTD"
 #. FormYTD..Font.Name
 #. FormOptions..Font.Name
 #. FormSetup..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:11
-#: GUI/VCL/guiAboutVCL.dfm:27
-#: GUI/VCL/guiAboutVCL.dfm:48
-#: GUI/VCL/guiAboutVCL.dfm:69
-#: GUI/VCL/guiAboutVCL.dfm:91
-#: GUI/VCL/guiConverterVCL.dfm:12
-#: GUI/VCL/guiMainVCL.dfm:11
-#: GUI/VCL/guiOptionsVCL.dfm:11
+#: GUI/VCL/guiAboutVCL.dfm:11 GUI/VCL/guiAboutVCL.dfm:27
+#: GUI/VCL/guiAboutVCL.dfm:48 GUI/VCL/guiAboutVCL.dfm:69
+#: GUI/VCL/guiAboutVCL.dfm:91 GUI/VCL/guiConverterVCL.dfm:12
+#: GUI/VCL/guiMainVCL.dfm:11 GUI/VCL/guiOptionsVCL.dfm:11
 #: GUI/VCL/guiSetupVCL.dfm:11
 msgid "MS Sans Serif"
-msgstr "MS Sans Serif"
+msgstr ""
 
 #. FormAbout..LabelYTD..Caption
 #. FormYTD..Caption
-#: GUI/VCL/guiAboutVCL.dfm:23
-#: GUI/VCL/guiMainVCL.dfm:6
+#: GUI/VCL/guiAboutVCL.dfm:23 GUI/VCL/guiMainVCL.dfm:6
 msgid "YTD"
 msgstr "YTD"
 
 #. FormAbout..LabelVersionLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:36
 msgid "Version:"
-msgstr "Verze:"
+msgstr "Версия:"
 
 #. FormAbout..LabelVersion..Caption
 #: GUI/VCL/guiAboutVCL.dfm:44
 msgid "LabelVersion"
-msgstr "LabelVersion"
+msgstr ""
 
 #. FormAbout..LabelNewestVersionLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:57
 msgid "Newest version:"
-msgstr "Nejnovější verze:"
+msgstr "Последняя:"
 
 #. FormAbout..LabelNewestVersion..Caption
-#: GUI/VCL/guiAboutVCL.dfm:65
-#: GUI/VCL/guiAboutVCL.pas:129
+#: GUI/VCL/guiAboutVCL.dfm:65 GUI/VCL/guiAboutVCL.pas:129
 msgid "not found"
-msgstr "nenalezena"
+msgstr "не найдена"
 
 #. FormAbout..LabelHomepageLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:79
 msgid "Homepage:"
-msgstr "Domovská stránka:"
+msgstr "Дом. страница:"
 
 #. FormAbout..LabelHomepage..Caption
 #: GUI/VCL/guiAboutVCL.dfm:87
@@ -84,307 +77,287 @@ msgstr "http://www.pepak.net/ytd"
 #. FormAbout..LabelMediaProviders..Caption
 #: GUI/VCL/guiAboutVCL.dfm:101
 msgid "Media providers:"
-msgstr "Poskytovatelé médií:"
+msgstr "Медиасервисы:"
 
 #. FormAbout..ListProviders......Caption
 #. FormYTD..Downloads......Caption
 #. Create columns
-#: GUI/VCL/guiAboutVCL.dfm:111
-#: GUI/VCL/guiMainVCL.dfm:171
-#: GUI/WinAPI/guiAboutWINAPI.pas:366
-#: GUI/WinAPI/guiMainWINAPI.pas:376
+#: GUI/VCL/guiAboutVCL.dfm:111 GUI/VCL/guiMainVCL.dfm:171
+#: GUI/WinAPI/guiAboutWINAPI.pas:366 GUI/WinAPI/guiMainWINAPI.pas:376
 msgid "Provider"
-msgstr "Poskytovatel"
+msgstr "Медиасервис"
 
 #. FormAbout..ListProviders......Caption
-#: GUI/VCL/guiAboutVCL.dfm:115
-#: GUI/WinAPI/guiAboutWINAPI.pas:367
+#: GUI/VCL/guiAboutVCL.dfm:115 GUI/WinAPI/guiAboutWINAPI.pas:367
 msgid "Components"
-msgstr "Komponenty"
+msgstr "Обработчик"
 
 #. FormSelectConverter..Caption
 #: GUI/VCL/guiConverterVCL.dfm:5
 msgid "Select converter"
-msgstr "Vyberte si konvertor"
+msgstr "Выберите конвертер"
 
 #. FormSelectConverter..LabelConverter..Caption
 #. FormOptions..PageOptions..TabDownloadOptions..LabelConverter..Caption
-#: GUI/VCL/guiConverterVCL.dfm:24
-#: GUI/VCL/guiOptionsVCL.dfm:137
+#: GUI/VCL/guiConverterVCL.dfm:24 GUI/VCL/guiOptionsVCL.dfm:137
 msgid "&Converter:"
-msgstr "&Konvertor:"
+msgstr "&Конвертер:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
 #. FormOptions..ActionList..actOK..Caption
-#: GUI/VCL/guiConverterVCL.dfm:60
-#: GUI/VCL/guiOptionsVCL.dfm:331
+#: GUI/VCL/guiConverterVCL.dfm:60 GUI/VCL/guiOptionsVCL.dfm:331
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
 #. FormOptions..ActionList..actCancel..Caption
-#: GUI/VCL/guiConverterVCL.dfm:64
-#: GUI/VCL/guiOptionsVCL.dfm:336
+#: GUI/VCL/guiConverterVCL.dfm:64 GUI/VCL/guiOptionsVCL.dfm:336
 msgid "&Cancel"
-msgstr "&Storno"
+msgstr "&Отмена"
 
 #. FormYTD..Downloads......Caption
 #. Download list
-#: GUI/VCL/guiMainVCL.dfm:167
-#: GUI/WinAPI/guiMainWINAPI.pas:375
+#: GUI/VCL/guiMainVCL.dfm:167 GUI/WinAPI/guiMainWINAPI.pas:375
 msgid "URL"
 msgstr "URL"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:176
-#: GUI/WinAPI/guiMainWINAPI.pas:377
+#: GUI/VCL/guiMainVCL.dfm:176 GUI/WinAPI/guiMainWINAPI.pas:377
 msgid "Status"
-msgstr "Status"
+msgstr "Состояние"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:180
-#: GUI/WinAPI/guiMainWINAPI.pas:378
+#: GUI/VCL/guiMainVCL.dfm:180 GUI/WinAPI/guiMainWINAPI.pas:378
 msgid "Title"
-msgstr "Název"
+msgstr "Имя файла"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:185
-#: GUI/WinAPI/guiMainWINAPI.pas:379
+#: GUI/VCL/guiMainVCL.dfm:185 GUI/WinAPI/guiMainWINAPI.pas:379
 msgid "Size"
-msgstr "Velikost"
+msgstr "Размер"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:190
-#: GUI/WinAPI/guiMainWINAPI.pas:380
+#: GUI/VCL/guiMainVCL.dfm:190 GUI/WinAPI/guiMainWINAPI.pas:380
 msgid "Progress"
-msgstr "Průběh stahování"
+msgstr "Информация"
 
 #. FormYTD..YTDActions..actAddNewUrl..Caption
 #: GUI/VCL/guiMainVCL.dfm:219
 msgid "Add new URL"
-msgstr "Přidat URL"
+msgstr "Добавить URL"
 
 #. FormYTD..YTDActions..actAddNewUrl..Hint
 #: GUI/VCL/guiMainVCL.dfm:220
 msgid "Add new URL to the list"
-msgstr "Přidat nové URL do seznamu"
+msgstr "Добавить новый URL в список"
 
 #. FormYTD..YTDActions..actDeleteURL..Caption
 #: GUI/VCL/guiMainVCL.dfm:226
 msgid "Delete URL"
-msgstr "Smazat URL"
+msgstr "Удалить URL"
 
 #. FormYTD..YTDActions..actDeleteURL..Hint
 #: GUI/VCL/guiMainVCL.dfm:227
 msgid "Delete selected URL(s)"
-msgstr "Smazat vybrané URL"
+msgstr "Удалить выбранный URL"
 
 #. FormYTD..YTDActions..actStart..Caption
 #: GUI/VCL/guiMainVCL.dfm:233
 msgid "Start/Pause/Resume"
-msgstr "Start/Pauza/Pokračovat"
+msgstr "Начать/Приостановить/Возобновить закачку"
 
 #. FormYTD..YTDActions..actStart..Hint
 #: GUI/VCL/guiMainVCL.dfm:234
 msgid "Start downloading selected  URL(s)"
-msgstr "Spustit stahování vybraných URL"
+msgstr "Скачать выделенный URL"
 
 #. FormYTD..YTDActions..actStop..Caption
 #: GUI/VCL/guiMainVCL.dfm:240
 msgid "Stop"
-msgstr "Zastavit"
+msgstr "Остановить закачку"
 
 #. FormYTD..YTDActions..actStop..Hint
 #: GUI/VCL/guiMainVCL.dfm:241
 msgid "Stop downloading selected  URL(s)"
-msgstr "Přerušit stahování vybraných URL"
+msgstr "Остановить закачку выбранных URL"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
-#: GUI/VCL/guiMainVCL.dfm:247
-#: GUI/VCL/guiMainVCL.dfm:254
+#: GUI/VCL/guiMainVCL.dfm:247 GUI/VCL/guiMainVCL.dfm:254
 msgid "Add URLs from Clipboard"
-msgstr "Přidat URL ze schránky"
+msgstr "Добавить URL из буфера обмена"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
-#: GUI/VCL/guiMainVCL.dfm:248
-#: GUI/VCL/guiMainVCL.dfm:255
+#: GUI/VCL/guiMainVCL.dfm:248 GUI/VCL/guiMainVCL.dfm:255
 msgid "Add URLs from Clipboard to the list"
-msgstr "Přidat nové URL ze schránky do seznamu"
+msgstr "Добавить в список URL из буфера обмена"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
-#: GUI/VCL/guiMainVCL.dfm:261
-#: GUI/VCL/guiMainVCL.dfm:268
+#: GUI/VCL/guiMainVCL.dfm:261 GUI/VCL/guiMainVCL.dfm:268
 msgid "Copy URLs to Clipboard"
-msgstr "Zkopírovat URL do schránky"
+msgstr "Скопировать URL в буфер обмена"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
-#: GUI/VCL/guiMainVCL.dfm:262
-#: GUI/VCL/guiMainVCL.dfm:269
+#: GUI/VCL/guiMainVCL.dfm:262 GUI/VCL/guiMainVCL.dfm:269
 msgid "Copy URLs from the list to Clipboard"
-msgstr "Zkopírovat URL ze seznamu do schránky"
+msgstr "Скопировать выбранные URL в буфер обмена"
 
 #. FormYTD..YTDActions..actSelectAll..Caption
 #: GUI/VCL/guiMainVCL.dfm:275
 msgid "Select all"
-msgstr "Vybrat vše"
+msgstr "Выбрать все"
 
 #. FormYTD..YTDActions..actSelectAll..Hint
 #: GUI/VCL/guiMainVCL.dfm:276
 msgid "Select all URLs"
-msgstr "Vybrat všechny URL"
+msgstr "Выбрать все URL"
 
 #. FormYTD..YTDActions..actRefresh..Caption
 #: GUI/VCL/guiMainVCL.dfm:281
 msgid "Refresh"
-msgstr "Obnovit"
+msgstr "Обновить"
 
 #. FormYTD..YTDActions..actRefresh..Hint
 #: GUI/VCL/guiMainVCL.dfm:282
 msgid "Refresh display"
-msgstr "Překreslit formulář"
+msgstr "Обновить список"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTML..Caption
 #: GUI/VCL/guiMainVCL.dfm:288
 msgid "Add URLs from HTML page"
-msgstr "Přidat URL z HTML stránky"
+msgstr "Получить URL из страницы"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTML..Hint
 #: GUI/VCL/guiMainVCL.dfm:289
 msgid "Get a list of URLs from HTML page"
-msgstr "Načíst seznam URL z HTML stránky"
+msgstr "Получить список URL из HTML страницы"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Caption
 #: GUI/VCL/guiMainVCL.dfm:295
 msgid "Add URLs from HTML file"
-msgstr "Přidat URL z HTML souboru"
+msgstr "Добавить URL из HTML файла"
 
 #. FormYTD..YTDActions..actAddUrlsFromHTMLfile..Hint
 #: GUI/VCL/guiMainVCL.dfm:296
 msgid "Get a list of URLs from HTML file"
-msgstr "Načíst seznam URL z HTML souboru"
+msgstr "Добавить список URL из HTML файла"
 
 #. FormYTD..YTDActions..actAddUrlsFromFile..Caption
 #: GUI/VCL/guiMainVCL.dfm:302
 msgid "Add URLs from file"
-msgstr "Přidat URL ze souboru"
+msgstr "Добавить URL из файла"
 
 #. FormYTD..YTDActions..actAddUrlsFromFile..Hint
 #: GUI/VCL/guiMainVCL.dfm:303
 msgid "Get a list of URLs from file"
-msgstr "Načíst seznam URL ze souboru"
+msgstr "Добавить список URL из файла"
 
 #. FormYTD..YTDActions..actSaveUrlList..Caption
 #: GUI/VCL/guiMainVCL.dfm:309
 msgid "Save URL list"
-msgstr "Uložit seznam URL"
+msgstr "Сохранить список URL"
 
 #. FormYTD..YTDActions..actSaveUrlList..Hint
 #: GUI/VCL/guiMainVCL.dfm:310
 msgid "Save list of unfinished URLs to a list file"
-msgstr "Uložit seznam nedokončených URL do souboru"
+msgstr "Сохранить в файл список незавершённых закачек"
 
 #. FormYTD..YTDActions..actAbout..Caption
 #: GUI/VCL/guiMainVCL.dfm:316
 msgid "About"
-msgstr "O aplikaci"
+msgstr "О программе"
 
 #. FormYTD..YTDActions..actAbout..Hint
 #: GUI/VCL/guiMainVCL.dfm:317
 msgid "About this program"
-msgstr "O programu YTD"
+msgstr "Информация о программе"
 
 #. FormYTD..YTDActions..actConvert..Caption
 #: GUI/VCL/guiMainVCL.dfm:323
 msgid "Convert"
-msgstr "Zkonvertovat"
+msgstr "Конвертировать"
 
 #. FormYTD..YTDActions..actConvert..Hint
 #: GUI/VCL/guiMainVCL.dfm:324
 msgid "Convert the selected file"
-msgstr "Zkonvertovat zvolený soubor"
+msgstr "Конвертировать выбранный файл"
 
 #. FormYTD..YTDActions..actReportBug..Caption
 #: GUI/VCL/guiMainVCL.dfm:330
 msgid "Report a bug"
-msgstr "Nahlásit chybu"
+msgstr "Сообщить об ошибке"
 
 #. FormYTD..YTDActions..actReportBug..Hint
 #: GUI/VCL/guiMainVCL.dfm:331
 msgid "Report a bug for selected URL."
-msgstr "Nahlásit chybu ve stahování vybrané URL."
+msgstr "Сообщить о проблеме со скачиванием выбранного URL"
 
 #. FormYTD..YTDActions..actDonate..Caption
 #: GUI/VCL/guiMainVCL.dfm:337
 msgid "Donate"
-msgstr "Přispět"
+msgstr "Пожертвование"
 
 #. FormYTD..YTDActions..actDonate..Hint
 #: GUI/VCL/guiMainVCL.dfm:338
 msgid "Donate some money to further YTD's development."
-msgstr "Poslat finanční dar na další rozvoj YTD."
+msgstr "Пожертвовать средства на дальнейшую разработку программы"
 
 #. FormYTD..YTDActions..actEditConfigFile..Caption
 #: GUI/VCL/guiMainVCL.dfm:344
 msgid "Edit config file"
-msgstr "Upravit konfigurační soubor"
+msgstr "Редактировать файл настроек"
 
 #. FormYTD..YTDActions..actEditConfigFile..Hint
 #: GUI/VCL/guiMainVCL.dfm:345
 msgid "Open the active configuration file in the editor"
-msgstr "Otevřít aktivní konfigurační soubor v editoru"
+msgstr "Открыть файл настроек в редакторе"
 
 #. FormYTD..YTDActions..actOptions..Caption
 #. FormOptions..Caption
-#: GUI/VCL/guiMainVCL.dfm:351
-#: GUI/VCL/guiOptionsVCL.dfm:6
+#: GUI/VCL/guiMainVCL.dfm:351 GUI/VCL/guiOptionsVCL.dfm:6
 msgid "Options"
-msgstr "Nastavení"
+msgstr "Настройки"
 
 #. FormYTD..YTDActions..actOptions..Hint
 #: GUI/VCL/guiMainVCL.dfm:352
 msgid "Change program's options"
-msgstr "Změnit základní nastavení programu"
+msgstr "Изменить настройки программы"
 
 #. FormYTD..YTDActions..actPlay..Caption
 #: GUI/VCL/guiMainVCL.dfm:358
 msgid "Play"
-msgstr "Přehrát"
+msgstr "Открыть"
 
 #. FormYTD..YTDActions..ActExploreFolder..Caption
 #: GUI/VCL/guiMainVCL.dfm:363
 msgid "Explore folder"
-msgstr "Otevřít složku"
+msgstr "Открыть директорию с файлом"
 
 #. FormYTD..DownloadsPopup..N5..Caption
 #. FormYTD..DownloadsPopup..N4..Caption
 #. FormYTD..DownloadsPopup..N2..Caption
 #. FormYTD..DownloadsPopup..N3..Caption
 #. FormYTD..DownloadsPopup..N1..Caption
-#: GUI/VCL/guiMainVCL.dfm:1466
-#: GUI/VCL/guiMainVCL.dfm:1475
-#: GUI/VCL/guiMainVCL.dfm:1493
-#: GUI/VCL/guiMainVCL.dfm:1502
+#: GUI/VCL/guiMainVCL.dfm:1466 GUI/VCL/guiMainVCL.dfm:1475
+#: GUI/VCL/guiMainVCL.dfm:1493 GUI/VCL/guiMainVCL.dfm:1502
 #: GUI/VCL/guiMainVCL.dfm:1508
 msgid "-"
 msgstr "-"
 
 #. FormYTD..OpenHtmlFile..Filter
-#: GUI/VCL/guiMainVCL.dfm:1527
-#: GUI/WinAPI/guiMainWINAPI.pas:680
+#: GUI/VCL/guiMainVCL.dfm:1527 GUI/WinAPI/guiMainWINAPI.pas:680
 msgid "HTML files|*.htm;*.html|All files|*.*"
-msgstr "HTML soubory|*.htm;*.html|Všechny soubory|*.*"
+msgstr "HTML файлы|*.htm;*.html|Все файлы|*.*"
 
 #. FormYTD..OpenUrlList..Filter
 #. FormYTD..SaveUrlList..Filter
-#: GUI/VCL/guiMainVCL.dfm:1533
-#: GUI/VCL/guiMainVCL.dfm:1540
+#: GUI/VCL/guiMainVCL.dfm:1533 GUI/VCL/guiMainVCL.dfm:1540
 #: GUI/WinAPI/guiMainWINAPI.pas:657
 msgid "List files (*.lst)|*.lst|All files|*.*"
-msgstr "Seznamy adres (*.lst)|*.lst|Všechny soubory|*.*"
+msgstr "Файлы списка (*.lst)|*.lst|Все файлы|*.*"
 
 #. FormYTD..SaveUrlList..DefaultExt
 #: GUI/VCL/guiMainVCL.dfm:1539
@@ -392,533 +365,531 @@ msgid "lst"
 msgstr "lst"
 
 #. FormOptions..PageOptions..TabMain..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:51
-#: GUI/WinAPI/guiOptionsWINAPI.pas:128
+#: GUI/VCL/guiOptionsVCL.dfm:51 GUI/WinAPI/guiOptionsWINAPI.pas:128
 msgid "Main settings"
-msgstr "Základní"
+msgstr "Главное"
 
 #. FormOptions..PageOptions..TabMain..LabelLanguage..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:57
 msgid "&Language:"
-msgstr "&Jazyk"
+msgstr "&Язык интерфейса:"
 
 #. FormOptions..PageOptions..TabMain..CheckPortableMode..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:66
 msgid "&Portable mode"
-msgstr "Přenositelný &režim"
+msgstr "&Портативный режим"
 
 #. FormOptions..PageOptions..TabMain..CheckCheckNewVersions..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:75
 msgid "&Check for new versions on startup"
-msgstr "&Zjišťovat při startu nové verze"
+msgstr "&Проверять наличие новой версии при запуске"
 
 #. FormOptions..PageOptions..TabMain..CheckMonitorClipboard..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:109
 msgid "&Monitor clipboard for downloadable URLs"
-msgstr "Sledovat s&chránku na podporovaná URL"
+msgstr "&Отслеживать ссылки в буфере обмена"
 
 #. FormOptions..PageOptions..TabDownloadOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:114
-#: GUI/WinAPI/guiOptionsWINAPI.pas:129
+#: GUI/VCL/guiOptionsVCL.dfm:114 GUI/WinAPI/guiOptionsWINAPI.pas:129
 msgid "Download settings"
-msgstr "Stahování"
+msgstr "Закачка"
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelOverwriteMode..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:121
 msgid "&Existing files:"
-msgstr "&Existující soubory:"
+msgstr "&Если файл уже есть:"
 
 #. FormOptions..PageOptions..TabDownloadOptions..LabelDownloadDir..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:129
 msgid "&Download directory:"
-msgstr "Adresář pro &downloady"
+msgstr "&Сохранять в:"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoDownload..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:146
 msgid "&Automatically start downloads"
-msgstr "&Automaticky spouštět downloady"
+msgstr "&Начинать закачку автоматически после добавления ссылки"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #. Overwrite mode
 #: GUI/VCL/guiOptionsVCL.dfm:159
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:228
 msgid "Ask user"
-msgstr "Zeptat se uživatele"
+msgstr "вывести диалог сохранения файла"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:160
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:229
 msgid "Overwrite"
-msgstr "Přepisovat"
+msgstr "перезаписать новым файлом"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:161
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:230
 msgid "Skip"
-msgstr "Přeskočit"
+msgstr "отменить закачку"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
 #: GUI/VCL/guiOptionsVCL.dfm:162
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:231
 msgid "Rename automatically"
-msgstr "Automaticky přejmenovat"
+msgstr "автоматически переименовать"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:198
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:40
 msgid "Download &subtitles if available"
-msgstr "Pokud jsou k dispozici, stahovat &titulky"
+msgstr "По возможности скачивать &субтитры"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckAutoTryHtmlParser..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:207
 msgid "Automatically try &HTML parser"
-msgstr "Automaticky používat &HTML parser"
+msgstr "Запускать &HTML парсер для нераспознанных адресов"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToTempFiles..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:216
 msgid "Append a .part e&xtension while downloading"
-msgstr "V průběhu stahování přidat k názvu &příponu .part"
+msgstr "Добавлять \".part\" в &имя файла на время закачки"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:225
 msgid "Store media into su&bdirectories according to their providers"
-msgstr "Ukládat &média do podadresářů podle názvu poskytovatele"
+msgstr "Создавать &директорию для соответствующего медиасервиса"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:230
-#: GUI/WinAPI/guiOptionsWINAPI.pas:130
+#: GUI/VCL/guiOptionsVCL.dfm:230 GUI/WinAPI/guiOptionsWINAPI.pas:130
 msgid "Network settings"
-msgstr "Síť"
+msgstr "Сеть"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyHost..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:237
 msgid "Proxy &host:"
-msgstr "Proxy &server:"
+msgstr "&Хост:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPort..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:245
 msgid "Proxy &port:"
-msgstr "Proxy &port:"
+msgstr "&Порт:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyUser..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:253
 msgid "Proxy &username:"
-msgstr "Proxy &uživatel:"
+msgstr "&Имя пользователя:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..LabelProxyPass..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:261
 msgid "Proxy pass&word:"
-msgstr "Proxy &heslo:"
+msgstr "&Пароль:"
 
 #. FormOptions..PageOptions..TabNetworkOptions..CheckUseProxy..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:270
 msgid "U&se proxy server"
-msgstr "Použít prox&y server"
+msgstr "&Использовать прокси"
 
 #. FormOptions..PageOptions..TabDownloaderOptions..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:303
-#: GUI/WinAPI/guiOptionsWINAPI.pas:131
+#: GUI/VCL/guiOptionsVCL.dfm:303 GUI/WinAPI/guiOptionsWINAPI.pas:131
 msgid "Downloader settings"
-msgstr "Nastavení stahovačů"
+msgstr "Обработчики"
 
 #. FormOptions..ActionList..actDownloadDir..Caption
 #. FormSetup..BtnDestinationDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:340
-#: GUI/VCL/guiSetupVCL.dfm:38
+#: GUI/VCL/guiOptionsVCL.dfm:340 GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr "..."
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
 #. FormSetup..CheckDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:345
-#: GUI/VCL/guiSetupVCL.dfm:48
+#: GUI/VCL/guiOptionsVCL.dfm:345 GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
-msgstr "Vytvořit odkaz na &Ploše"
+msgstr "Создать ярлык на &Рабочем столе"
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
 #. FormSetup..CheckStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:349
-#: GUI/VCL/guiSetupVCL.dfm:59
+#: GUI/VCL/guiOptionsVCL.dfm:349 GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
-msgstr "Vytvořit odkaz ve &Start menu"
+msgstr "Создать ярлык в меню &Пуск"
 
 #. FormSetup..Caption
 #: GUI/VCL/guiSetupVCL.dfm:6
 msgid "Setup"
-msgstr "Setup"
+msgstr "Установка"
 
 #. FormSetup..LabelDestinationDir..Caption
 #: GUI/VCL/guiSetupVCL.dfm:21
 msgid "Install &folder:"
-msgstr "&Adresář pro instalaci:"
+msgstr "Установить &в:"
 
 #. FormSetup..ButtonInstall..Caption
 #: GUI/VCL/guiSetupVCL.dfm:70
 msgid "&Install"
-msgstr "Na&instalovat"
+msgstr "&Установка"
 
 #. FormSetup..ButtonRun..Caption
 #: GUI/VCL/guiSetupVCL.dfm:81
 msgid "&Run from current location without installing"
-msgstr "Sp&ustit z aktuálního umístění bez instalace"
+msgstr "&Запуск из текущей директории, без установки"
 
 #. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..CheckAvoidHD..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:9
 msgid "&Avoid HD content"
-msgstr "Nepokoušet se hledat &HD videa"
+msgstr "&Игнорировать HD качество"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:15
 msgid "Secure &Token:"
-msgstr "Secure &Token:"
+msgstr "Ключ &авторизации:"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelUserName..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:23
 msgid "&User name:"
-msgstr "Přihlašovací &jméno:"
+msgstr "&Имя пользователя:"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelPassword..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:31
 msgid "&Password:"
-msgstr "Přihlašovací &heslo:"
+msgstr "&Пароль:"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckConvertSubtitles..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:49
 msgid "&Convert subtitles to .SRT format"
-msgstr "&Konvertovat titulky do formátu .SRT"
+msgstr "&Преобразовывать субтитры в формат .SRT"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:57
 msgid "&Live stream mode (much slower, but more stable)"
-msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
+msgstr "&Live-поток (загрузка медленнее, но стабильнее)"
 
 #. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..LabelMaximumVideoBitrate..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:8
 msgid "Maximum video &bitrate:"
-msgstr "Maximální &bitrate videa:"
+msgstr "Макс. &битрейт видео:"
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:10
 msgid "Secret &password:"
-msgstr "Tajné &heslo:"
+msgstr "&Пароль:"
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..CheckLowQuality..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_Nova.dfm:19
 msgid "Download in &low quality"
-msgstr "Download ve &snížené kvalitě"
+msgstr "Скачивать в &низком качестве"
 
 #. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelPreferredLanguages..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:10
 msgid "&Preferred subtitle languages:"
-msgstr "&Preferované jazyky titulků:"
+msgstr "&Язык субтитров:"
 
 #. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelMaximumVideoWidth..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:18
 msgid "Maximum video &width:"
-msgstr "&Maximální šířka videa:"
+msgstr "Макс. &ширина видео:"
 
 #. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelMaximumVideoHeight..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:26
 msgid "Maximum video &height:"
-msgstr "Maximální &výška videa:"
+msgstr "Макс. &высота видео:"
 
 #. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..CheckAvoidWebM..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:59
 msgid "&Avoid .webm format"
-msgstr "Nestahovat formát .&webm"
+msgstr "&Игнорировать формат .webm"
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
 #: Base/uHttpDownloader.pas:97
 msgid "Resolving began"
-msgstr "Zahájeno zjišťování adresy"
+msgstr "Резолвинг начат"
 
 #. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
 #: Base/uHttpDownloader.pas:98
 msgid "Resolving ended"
-msgstr "Dokončeno zjišťování adresy"
+msgstr "Резолвинг завершён"
 
 #. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
 #: Base/uHttpDownloader.pas:99
 msgid "Socket created"
-msgstr "Vytvořen socket"
+msgstr "Сокет создан"
 
 #. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
 #: Base/uHttpDownloader.pas:100
 msgid "Socket closed"
-msgstr "Uzavřen socket"
+msgstr "Сокет закрыт"
 
 #. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
 #: Base/uHttpDownloader.pas:101
 msgid "Bound to IP/port"
-msgstr "Napojeno na IP/port"
+msgstr "Привязка к IP/порту"
 
 #. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
 #: Base/uHttpDownloader.pas:102
 msgid "Connected"
-msgstr "Spojeno"
+msgstr "Соединено"
 
 #. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
 #: Base/uHttpDownloader.pas:103
 msgid "Can read data"
-msgstr "Možno číst data"
+msgstr "Можно принимать данные"
 
 #. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
 #: Base/uHttpDownloader.pas:104
 msgid "Can write data"
-msgstr "Možno psát data"
+msgstr "Можно отправлять данные"
 
 #. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
 #: Base/uHttpDownloader.pas:105
 msgid "Listening"
-msgstr "Čeká se na požadavek"
+msgstr "Ожидание соединения"
 
 #. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
 #: Base/uHttpDownloader.pas:106
 msgid "Accepted connection"
-msgstr "Požadavek přijat"
+msgstr "Соединение установлено"
 
 #. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
 #: Base/uHttpDownloader.pas:107
 msgid "Read data"
-msgstr "Data přečtena"
+msgstr "Чтение данных"
 
 #. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
 #: Base/uHttpDownloader.pas:108
 msgid "Wrote data"
-msgstr "Data zapsána"
+msgstr "Отправка данных"
 
 #. HTTP socket status: data is waiting
 #. Programmer's name for it: SOCKSTATUS_WAITING
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
-#: Base/uHttpDownloader.pas:109
-#: GUI/guiConsts.pas:46
+#: Base/uHttpDownloader.pas:109 GUI/guiConsts.pas:46
 msgid "Waiting"
-msgstr "Čeká se"
+msgstr "Пауза"
 
 #. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
 #: Base/uHttpDownloader.pas:110
 msgid "Socket error"
-msgstr "Chyba socketu"
+msgstr "Ошибка сокета"
 
 #. Intentionally no _(...) - this should not be translated
 #: CLI/uYTD.pas:135
 msgid "Command-line version options:"
-msgstr "Parametry pro command-line verzi:"
+msgstr "Опции для консольной версии программы:"
 
 #. CLI: Help for -h/-? command line argument
 #: CLI/uYTD.pas:136
 msgid " ...... Show this help screen."
-msgstr " ...... Zobrazit tuto napovedu"
+msgstr " ...... Отобразить эту справку."
 
 #. CLI: Help for -i command line argument
 #: CLI/uYTD.pas:137
 msgid " ... Load URL list from <file> (one URL per line)."
-msgstr " ... Nacist seznam URL ze souboru <file> (jeden radek=jedna URL)."
+msgstr " ... Загрузить список URL из <файла> (по URL на строку)."
 
 #. CLI: Help for -o command line argument
 #: CLI/uYTD.pas:138
 msgid " ... Store files to <path> (default is current directory)."
-msgstr " ... Ukladat soubory do adresare <path> (vychozi je aktualni adresar)."
+msgstr ""
+" ... Сохранять файлы в <директорию> (по умолчанию - текущая директория)."
 
 #. CLI: Help for -e command line argument
 #: CLI/uYTD.pas:139
 msgid " ... Save failed URLs to <file>."
-msgstr " ... Zapsat chybne stahnuta URL do souboru <file>."
+msgstr " ... Сохранить список неудачных закачек в <файл>."
 
 #. CLI: Help for -s command line argument
 #: CLI/uYTD.pas:140
 msgid " .... Load links from a HTML source. <src> can be a file or an URL."
-msgstr " .... Nacist odkazy z HTML zdroje. <src> muze byt soubor nebo URL."
+msgstr ""
+" .... Загрузить URL по указанному адресу. <src> может быть файлом или "
+"ссылкой."
 
 #. CLI: Help for -n command line argument
 #: CLI/uYTD.pas:141
 msgid " .......... Never overwrite existing files."
-msgstr " .......... Nikdy neprepisovat existujici soubory."
+msgstr " .......... Никогда не перезаписывать существующие файлы."
 
 #. CLI: Help for -a command line argument
 #: CLI/uYTD.pas:142
 msgid " .......... Always overwrite existing files."
-msgstr " .......... Vzdy prepisovat existujici soubory"
+msgstr " .......... Всегда перезаписывать существующие файлы."
 
 #. CLI: Help for -r command line argument
 #: CLI/uYTD.pas:143
 msgid " .......... Rename files to a new name if they already exist."
-msgstr " .......... Pro existujici soubory vygenerovat nove jmeno."
+msgstr " .......... Переименовать файл если имя занято."
 
 #. CLI: Help for -k command line argument
 #: CLI/uYTD.pas:144
 msgid " .......... Ask what to do with existing files (default)."
-msgstr " .......... Zeptat se, co delat s existujicimi soubory (vychozi)."
+msgstr ""
+" .......... Запросить действие с уже существующим файлом (по умолчанию)."
 
 #. CLI: Help for -l command line argument
 #: CLI/uYTD.pas:145
 msgid " .......... List all available providers."
-msgstr " .......... Vypsat seznam podporovanych poskytovatelu."
+msgstr " .......... Вывести список всех поддерживаемых медиасервисов."
 
 #. CLI: Help for -v command line argument
 #: CLI/uYTD.pas:146
 msgid " .......... Test for updated version of YTD."
-msgstr " .......... Overit existenci novejsi verze."
+msgstr " .......... Проверить наличие новой версии YTD."
 
 #. CLI: Help for -u command line argument
 #: CLI/uYTD.pas:148
 msgid " .......... Test for a new version and upgrade if possible."
-msgstr " .......... Zjistit novou verzi a aktualizovat, pokud je co."
+msgstr " .......... Проверить наличие новой версии и обновить до последней."
 
 #. CLI: Help for -ah command line argument
 #: CLI/uYTD.pas:150
 msgid " ...... [Don't] Automatically try HTML parser for unknown URLs."
-msgstr " ...... [Ne-] Pokusit se pouzit HTML parser na neznama URL."
+msgstr " ...... [Не] запускать HTML парсер для нераспознанных адресов."
 
 #. CLI: Help for -nd command line argument
 #: CLI/uYTD.pas:151
 msgid " ......... Don't actually download, just show the parameters."
-msgstr " ......... Nestahovat, jen zobrazit parametry downloadu."
+msgstr " ......... Не скачивать файл, отобразить параметры закачки и выйти."
 
 #: CLI/uYTD.pas:155
 msgid "Graphical version options:"
-msgstr "Parametry pro grafickou verzi:"
+msgstr "Опции для графической версии программы:"
 
 #: CLI/uYTD.pas:156
 msgid " ....... Must be used if there are GUI arguments."
-msgstr " ....... Musi by pouzito, pokud jsou parametry pro GUI verzi."
+msgstr ""
+" ....... Опция должна присутствовать в случае использования аргументов для "
+"запуска графической версии."
 
 #: CLI/uYTD.pas:157
 msgid " ........ Run a new instance of YTD."
-msgstr " ........ Spustit novou instanci YTD."
+msgstr " ........ Запустить новую копию YTD."
 
 #: CLI/uYTD.pas:161
 msgid "Common options:"
-msgstr "Spolecne parametry:"
+msgstr "Общие опции:"
 
 #. CLI: Help for <url> command line argument
 #: CLI/uYTD.pas:162
 msgid " ....... URL to download."
-msgstr " ....... URL ke stazeni."
+msgstr " ....... URL для закачки."
 
 #. CLI: Title for the list of providers (-l command line argument)
 #: CLI/uYTD.pas:172
 msgid "Available providers:"
-msgstr "Dostupni poskytovatele:"
+msgstr "Доступные медиасервисы:"
 
 #. CLI: The "Total: " part of "Total: 123 providers." Note the ending space
 #: CLI/uYTD.pas:179
 msgid "Total: "
-msgstr "Celkem: "
+msgstr "Всего:"
 
 #. CLI: The " providers" part of "Total: 123 providers." Note the starting space
 #: CLI/uYTD.pas:181
 msgid " providers."
-msgstr " poskytovatelu."
+msgstr " медиасервисов."
 
 #. CLI: Note: pad with spaces to the same length as "Newest version:"
 #: CLI/uYTD.pas:191
 msgid "Current version: "
-msgstr "Aktualni verze:   "
+msgstr "Текущая версия:"
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
 #: CLI/uYTD.pas:192
 msgid "Newest version:  "
-msgstr "Nejnovejsi verze: "
+msgstr "Последняя версия:"
 
 #. CLI: Couldn't check for a newer version
 #: CLI/uYTD.pas:195
 msgid "check failed"
-msgstr "nenalezena"
+msgstr "ошибка"
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
 #: CLI/uYTD.pas:220
 msgid "Download URL:    "
-msgstr "URL ke stahnuti:  "
+msgstr "Скачать URL:"
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:297
 msgid "With -e a filename must be provided."
-msgstr "K parametru -e musi byt uvedeno jmeno souboru."
+msgstr "Опция -e требует имя файла в качестве аргумента."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:311
 msgid "HTML source \"%s\" doesn't contain any useful links."
-msgstr "HTML zdroj \"%s\" neobsahuje zadne pouzitelne odkazy."
+msgstr "HTML страница \"%s\" не содержит распознаваемых ссылок.."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:316
 msgid "HTML source \"%s\" not found."
-msgstr "HTML zdroj \"%s\" nebyl nalezen."
+msgstr "HTML страница \"%s\" не найдена."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:326
 msgid "With -s a filename or an URL must be provided."
-msgstr "K parametru -s musi byt uvedena URL nebo jmeno souboru."
+msgstr "Опция -s требует имя файла или URL в качестве аргумента."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:342
 msgid "URL list-file \"%s\" not found."
-msgstr "Soubor \"%s\" se seznamem URL nenalezen."
+msgstr "Не найден файл со списком URL, \"%s\"."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:348
 msgid "With -i a filename must be provided."
-msgstr "K parametru -i musi byt uvedeno jmeno souboru."
+msgstr "Опция -i требует имя файла в качестве аргумента."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:358
 msgid "Destination directory \"%s\" not found."
-msgstr "Cilovy adresar \"%s\" nenalezen."
+msgstr "Не найдена целевая директория для сохранения, \"%s\"."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:364
 msgid "With -o a directory name must be provided."
-msgstr "K parametru -o musi byt uvedeno jmeno adresare."
+msgstr "Опция -o требует путь к директории в качестве аргумента."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:370
 msgid "Unknown parameter \"%s\"."
-msgstr "Neznamy parametr \"%s\"."
+msgstr "Неизвестная опция \"%s\"."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:384
 msgid "No valid URLs found."
-msgstr "Nenalezeny zadne zname URL."
+msgstr "URL не найдены."
 
 #. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
 #: CLI/uYTD.pas:410
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
-msgstr "  Stahuje se: <%s> %d.%d%% (%s/%s)"
+msgstr "   Загрузка: <%s>  %d.%d%% (%s/%s)"
 
 #. CLI progress bar. %: Downloaded size
 #: CLI/uYTD.pas:414
 msgid "  Downloading: %s"
-msgstr "Stahuje se: %s"
+msgstr "   Загрузка: %s"
 
 #: CLI/uYTD.pas:424
 msgid "  ERROR: "
-msgstr "  CHYBA: "
+msgstr "  ОШИБКА: "
 
 #. CLI: Error message to be written to the log file. %: URL, message
 #: CLI/uYTD.pas:426
 msgid "FAILED \"%s\": %s"
-msgstr "CHYBA \"%s\": %s"
+msgstr " НЕУДАЧА: \"%s\": %s"
 
 #. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
 #: CLI/uYTD.pas:444
 msgid "  Playlist item: "
-msgstr "  Polozka seznamu:"
+msgstr "  Элемент плейлиста:"
 
 #. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
 #: CLI/uYTD.pas:449
@@ -928,81 +899,80 @@ msgstr "            URL: "
 #. CLI: Title shown before media title. Pad to the same length as "File name:'
 #: CLI/uYTD.pas:468
 msgid "  Media title: "
-msgstr "  Nazev média: "
+msgstr "  Название видео: "
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:469
-#: CLI/uYTD.pas:606
+#: CLI/uYTD.pas:469 CLI/uYTD.pas:606
 msgid "    File name: "
-msgstr "Nazev souboru: "
+msgstr "    Имя файла: "
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
 #: CLI/uYTD.pas:470
 msgid "  Content URL: "
-msgstr "   URL obsahu: "
+msgstr "  Команда: "
 
 #. CLI: Media downloaded successfully
 #: CLI/uYTD.pas:480
 msgid "  SUCCESS."
-msgstr "  V PORADKU."
+msgstr "  Загрузка успешно завершена."
 
 #. CLI: User aborted the download
 #: CLI/uYTD.pas:497
 msgid "  ABORTED BY USER"
-msgstr "  PRERUSENO UZIVATELEM"
+msgstr "  Загрузка отменена пользователем."
 
 #. CLI: Error. %: Exception type, Exception message
 #: CLI/uYTD.pas:502
 msgid "ERROR %s: %s"
-msgstr "CHYBA %s: %s"
+msgstr "Ошибка %s: %s"
 
 #. CLI: URL couldn't be assigned to any available downloader
 #: CLI/uYTD.pas:517
 msgid "Unknown URL."
-msgstr "Neznama URL."
+msgstr "Неизвестный URL."
 
 #: CLI/uYTD.pas:535
 msgid "Trying to parse as HTML page..."
-msgstr "Zpracovavam URL jako HTML stranku..."
+msgstr "Попытка разбора в качестве HTML-страницы."
 
 #. CLI: "File ... already exists. What do you want me to do?"
 #: CLI/uYTD.pas:612
 msgid "  File "
-msgstr "  Soubor "
+msgstr "  Файл "
 
 #: CLI/uYTD.pas:614
 msgid " already exists."
-msgstr " uz existuje."
+msgstr " уже существует."
 
 #: CLI/uYTD.pas:615
 msgid "  Do you want to: "
-msgstr "Chcete ho:"
+msgstr "   Действие:  "
 
 #. CLI: File already exists. [S]kip it
 #: CLI/uYTD.pas:616
 msgid "kip it, "
-msgstr " preskocit, "
+msgstr "отменить "
 
 #. CLI: File already exists. [O]verwrite it
 #: CLI/uYTD.pas:617
 msgid "verwrite it, or "
-msgstr " prepsat, nebo "
+msgstr "перезаписать "
 
 #. CLI: File already exists. [R]ename it
 #: CLI/uYTD.pas:618
 msgid "ename it? "
-msgstr " prejmenovat?"
+msgstr "переименовать? "
 
 #. CLI: File already exists. Asking user to provide a new filename.
 #: CLI/uYTD.pas:634
 msgid "  New filename: "
-msgstr "  Novy nazev: "
+msgstr "  Новое имя файла:"
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
 #: CLI/uYTD.pas:645
 msgid "Incorrect answer."
-msgstr "Nespravna odpoved."
+msgstr "Неверный ответ."
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
@@ -1012,7 +982,7 @@ msgid ""
 "Exception %s with message:\n"
 "%s"
 msgstr ""
-"Výjimka %s se zprávou:\n"
+"Исключение: \"%s\". Сообщение:\n"
 "%s"
 
 #. Shown when installation failed
@@ -1020,21 +990,21 @@ msgstr ""
 #. Programmer's name for it: ERR_INSTALL_FAILED
 #: Common/uMessages.pas:58
 msgid "Installation failed."
-msgstr "Instalace selhala"
+msgstr "Ошибка при установке."
 
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
 #: Common/uMessages.pas:59
 msgid "Press any key to quit."
-msgstr "Stiskněte klávesu pro ukončení programu."
+msgstr "Нажмите любую клавишу для выхода."
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
 #: Common/uMessages.pas:60
 msgid "Playlist item %d"
-msgstr "%d. položka seznamu"
+msgstr "Элемент плейлиста %d"
 
 #. What to do with the newest version
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
@@ -1046,272 +1016,272 @@ msgid ""
 "\n"
 "Note: Upgrade will stop all transfers."
 msgstr ""
-"Chcete provést automatickou aktualizaci (ANO)\n"
-"nebo jen stáhnout nejnovější verzi (NE)?\n"
+"Обновить программу? (Да)\n"
+"или просто скачать новую версию (Нет)?\n"
 "\n"
-"Pozn.: Aktualizace zastaví všechny přenosy."
+"Внимание: обновление остановит все активные закачки."
 
 #. Downloading the upgrade data
 #. Programmer's name for it: MSG_UPGRADING
 #. Programmer's name for it: MSG_UPGRADING
 #: Common/uMessages.pas:62
 msgid "Upgrading..."
-msgstr "Probíhá aktualizace..."
+msgstr "Обновление..."
 
 #. Failed to execute the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
 #: Common/uMessages.pas:63
 msgid "Failed to upgrade. Upgrade file: %s"
-msgstr "Nepodařilo se spustit aktualizaci. Soubor: %s"
+msgstr "Не удалось обновить программу. Файл обновления: %s"
 
 #. Failed to download the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
 #: Common/uMessages.pas:64
 msgid "Failed to download upgrade data: "
-msgstr "Nepodařilo se stáhnout aktualizaci."
+msgstr "Не удалось загрузить информацию об обновлении."
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
 #: Common/uMessages.pas:67
 msgid "Downloader is not prepared!"
-msgstr "Downloader není připraven!"
+msgstr "Обработчик не готов."
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
 #: Common/uMessages.pas:68
 msgid "Download of this content is not implemented."
-msgstr "Stahování tohoto obsahu není podporováno."
+msgstr "Закачка подобного контента не поддерживается."
 
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #: Common/uMessages.pas:69
 msgid "Download URL was not set."
-msgstr "Nebyla nastavena URL."
+msgstr "Не указан URL для загрузки."
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
 #: Common/uMessages.pas:70
 msgid "Failed to initialize the download structures."
-msgstr "Nepodařilo se inicializovat download."
+msgstr "Ошибка инициализации загрузчика."
 
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
 #: Common/uMessages.pas:71
 msgid "Download failed."
-msgstr "Download selhal."
+msgstr "Ошибка закачки."
 
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
 #: Common/uMessages.pas:72
 msgid "RTMPDUMP error: %s"
-msgstr "Chyba RTMPDUMPu: %s"
+msgstr "Ошибка rtmpdump: %s"
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
 #: Common/uMessages.pas:73
 msgid "Download to file \"%s\" was not allowed."
-msgstr "Stahování do souboru \"%s\" nebylo povoleno."
+msgstr "Запись в файл \"%s\" не разрешена."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
 #: Common/uMessages.pas:75
 msgid "Failed to locate embedded object."
-msgstr "Nepodařilo se nalézt vložený objekt."
+msgstr "Не удалось найти встраиваемый объект."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:76
 msgid "Failed to locate media info page."
-msgstr "Nepodařilo se najít stránku informací o médiu."
+msgstr "Не удалось найти страницу с данными о видео."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:77
 msgid "Failed to download media info page."
-msgstr "Nepodařilo se stáhnout stránku informací o médiu."
+msgstr "Не удалось скачать страницу с данными о видео."
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:78
 msgid "Failed to prepare media info page."
-msgstr "Nepodařilo se připravit stránku informací o médiu."
+msgstr "Не удалось обработать страницу с данными о видео."
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:79
 msgid "Invalid media info page."
-msgstr "Chybná stránka informací o médiu."
+msgstr "Неверные данные о видео."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
 #: Common/uMessages.pas:80
 msgid "Failed to download server list."
-msgstr "Nepodařilo se stáhnout seznam serverů."
+msgstr "Не удалось загрузить список серверов."
 
 #. Programmer's name for it: ERR_UNKNOWN_URL
 #. Programmer's name for it: ERR_UNKNOWN_URL
 #: Common/uMessages.pas:81
 msgid "Unknown URL: %s"
-msgstr "Neznámá URL: %s"
+msgstr "Неизвестный URL: \"%s\""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
 #: Common/uMessages.pas:83
 msgid "Failed to locate media info."
-msgstr "Nepodařilo se najít informace o médiu."
+msgstr "Не удалось получить данные о видео."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
 #: Common/uMessages.pas:84
 msgid "Failed to find media title."
-msgstr "Nepodařilo se najít název média."
+msgstr "Не удалось получить название файла."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
 #: Common/uMessages.pas:85
 msgid "Failed to find media URL."
-msgstr "Nepodařilo se najít adresu média."
+msgstr "Не удалось определить URL видео."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
 #: Common/uMessages.pas:86
 msgid "Failed to find media server."
-msgstr "Nepodařilo se najít server média."
+msgstr "Не удалось найти сервер, на котором размещается видео."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
 #: Common/uMessages.pas:87
 msgid "Failed to find media stream."
-msgstr "Nepodařilo se najít stream média."
+msgstr "Не удалось найти медиапоток."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
 #: Common/uMessages.pas:89
 msgid "HTTP request failed with error code %d."
-msgstr "HTTP požadavek selhal s chybou %d."
+msgstr "HTTP запрос завершился с ошибкой, код: %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
 #: Common/uMessages.pas:90
 msgid "No data read from the connection."
-msgstr "Nepodařilo se přečíst žádná data."
+msgstr "Нет данных для загрузки."
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
 #: Common/uMessages.pas:92
 msgid "Variable \"%s\" not found."
-msgstr "Proměnná \"%s\" nebyla nalezena."
+msgstr "Переменная \"%s\" не найдена."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
 #. Programmer's name for it: ERR_SEE_LOGFILE
 #: Common/uMessages.pas:93
 msgid "Error message listed in file \"%s\"."
-msgstr "Chybové hlášení je uloženo v souboru \"%s\"."
+msgstr "Лог ошибок записан в файл \"%s\"."
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
 #. Programmer's name for it: ERR_MEDIA_REMOVED
 #: Common/uMessages.pas:94
 msgid "Media file was removed from the server."
-msgstr "Soubor byl ze serveru smazán."
+msgstr "Ресурс был удалён с сервера."
 
 #. Programmer's name for it: ERR_SERVER_ERROR
 #. Programmer's name for it: ERR_SERVER_ERROR
 #: Common/uMessages.pas:95
 msgid "Server returned an error: %s"
-msgstr "Server hlásí chybu: %s"
+msgstr "Сервер вернул ошибку: %s"
 
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
 #: Common/uMessages.pas:96
 msgid "Invalid configuration: Secure token not set."
-msgstr "Chybné nastavení: SecureToken není nastaven."
+msgstr "Ошибка: не указан ключ авторизации."
 
 #. Programmer's name for it: ERR_LOGIN_FAILED
 #. Programmer's name for it: ERR_LOGIN_FAILED
 #: Common/uMessages.pas:97
 msgid "Login failed."
-msgstr "Přihlášení se nezdařilo."
+msgstr "Ошибка авторизации."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #: Common/uMessages.pas:99
 msgid "Failed to load library \"%s\" or its prerequisites."
-msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
+msgstr "Ошибка загрузки библиотеки \"%s\"."
 
 #. GUI: Download thread state: Preparing download (getting title, URL...)
 #. Programmer's name for it: THREADSTATE_PREPARING
 #: GUI/guiConsts.pas:47
 msgid "Preparing"
-msgstr "Připravuje se download"
+msgstr "Подготовка"
 
 #. GUI: Download thread state: Downloading
 #. Programmer's name for it: THREADSTATE_DOWNLOADING
 #: GUI/guiConsts.pas:48
 msgid "Downloading"
-msgstr "Stahuje se"
+msgstr "Закачка"
 
 #. GUI: Download thread state: Download finished successfully
 #. Programmer's name for it: THREADSTATE_FINISHED
 #: GUI/guiConsts.pas:49
 msgid "Finished"
-msgstr "Dokončeno"
+msgstr "Завершено"
 
 #. GUI: Download thread state: Download failed
 #. Programmer's name for it: THREADSTATE_FAILED
 #: GUI/guiConsts.pas:50
 msgid "Failed"
-msgstr "Chyba"
+msgstr "Ошибка"
 
 #. GUI: Download thread state: Download was aborted by user
 #. Programmer's name for it: THREADSTATE_ABORTED
 #: GUI/guiConsts.pas:51
 msgid "Aborted"
-msgstr "Přerušeno"
+msgstr "Отменено"
 
 #. GUI: Download thread state: Download was paused by user
 #. Programmer's name for it: THREADSTATE_PAUSED
 #: GUI/guiConsts.pas:52
 msgid "Paused"
-msgstr "Pozastaveno"
+msgstr "Пауза"
 
 #. GUI: Convert thread state: Waiting for its turn
 #. Programmer's name for it: CONVERTTHREADSTATE_WAITING
 #: GUI/guiConsts.pas:56
 msgid "Awaiting conversion"
-msgstr "Čeká se konverzi"
+msgstr "Ожидание конвертирования"
 
 #. GUI: Convert thread state: Converting
 #. Programmer's name for it: CONVERTTHREADSTATE_CONVERTING
 #: GUI/guiConsts.pas:57
 msgid "Converting"
-msgstr "Konvertuje se"
+msgstr "Конвертирование"
 
 #. GUI: Convert thread state: Conversion finishes successfully
 #. Programmer's name for it: CONVERTTHREADSTATE_FINISHED
 #: GUI/guiConsts.pas:58
 msgid "Converted"
-msgstr "Konverze dokončena"
+msgstr "Сконвертировано"
 
 #. GUI: Convert thread state: Conversion failed
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILED
 #: GUI/guiConsts.pas:59
 msgid "Conversion failed"
-msgstr "Konverze selhala"
+msgstr "Ошибка конвертирования"
 
 #. GUI: Convert thread state: Failed to start the converter
 #. Programmer's name for it: CONVERTTHREADSTATE_FAILEDRUN
 #: GUI/guiConsts.pas:60
 msgid "Converter not found"
-msgstr "Konvertor nebyl nalezen"
+msgstr "Конвертер не найден"
 
 #. GUI: description of a "no converter"
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:63
 msgid "** None **"
-msgstr "** Žádný **"
+msgstr "** Не выбрано **"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:75
@@ -1327,16 +1297,16 @@ msgid ""
 "but too many people failed to read the documentation\n"
 "and instead complained that converters don't work."
 msgstr ""
-"Konvertory nejsou aktivovány.\n"
+"Функция конвертирования отключена.\n"
 "\n"
-"Musíte je aktivovat ručně v konfiguračním\n"
-"souboru. Popis kroků potřebných pro aktivaci\n"
-"je uveden v dokumentaci.\n"
+"Вам нужно включить её вручную путём редактирования\n"
+"файла настроек.\n"
 "\n"
-"Důvod pro aktivaci je ten, že konvertory MUSÍ\n"
-"být správně nastaveny podle dokumentace, ale\n"
-"mnoho lidí tu dokumentaci vůbec nečetlo a hned\n"
-"si stěžovalo, že konvertování nefunguje."
+"Причина такого поведения в том, что конвертеры\n"
+"должны быть соответствующе настроены самим\n"
+"пользователем согласно документации, но никто\n"
+"документацию читать не желает, из-за чего и появляются\n"
+"жалобы о якобы неработающем конвертировании."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:84
@@ -1346,12 +1316,10 @@ msgid ""
 "it quits, so any changes made would be lost.\n"
 "First quit YTD and only then start editing the file."
 msgstr ""
-"Nyní se otevře konfigurační soubor, ale prosím\n"
-"nezapisujte do něj zatím: YTD před svým ukončením\n"
-"tento soubor přepíše, takže by se všechny vaše\n"
-"ruční změny ztratily.\n"
-"Napřed ukončete YTD a teprve potom začněte konfigurační\n"
-"soubor upravovat."
+"Сейчас будет открыт файл настроек.\n"
+"Закройте программу и только потом редактируйте файл,\n"
+"иначе все ваши изменения будут перезаписаны при\n"
+"выходе из программы."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:87
@@ -1359,8 +1327,8 @@ msgid ""
 "There are downloads in progress\n"
 "Do you really want to quit?"
 msgstr ""
-"Jsou aktivní downloady.\n"
-"Opravdu chcete program ukončit?"
+"Некоторые закачки всё ещё активны\n"
+"Выйти?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:90
@@ -1368,18 +1336,18 @@ msgid ""
 "A newer version (%s) is available.\n"
 "Do you want to download it?"
 msgstr ""
-"K dispozici je nová verze (%s).\n"
-"Chcete ji stáhnout?"
+"Доступна новая версия программы: %s.\n"
+"Скачать?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:92
 msgid "Enter video URL:"
-msgstr "Zadejte URL videa:"
+msgstr "Введите URL:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:94
 msgid "Enter page URL:"
-msgstr "Zadejte URL stránky:"
+msgstr "Укажите адрес страницы:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:97
@@ -1387,32 +1355,30 @@ msgid ""
 "This URL is not supported.\n"
 "See the documenation for supported URLs."
 msgstr ""
-"Tato URL není podporována.\n"
-"Seznam podporovaných URL je uveden v dokumentaci."
+"Закачка по данному URL не поддерживается.\n"
+"Поддерживаемые медиасервисы перечислены в окне \"О программе\"."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:100
 msgid ""
 "No supported URLs found.\n"
 "See the documenation for supported URLs."
-msgstr ""
-"Nebyla nalezena žádná podporovaná URL.\n"
-"Seznam podporovaných URL je uveden v dokumentaci."
+msgstr "Не найдены поддерживаемые URL."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:102
 msgid "Do you really want to delete selected transfer(s)?"
-msgstr "Opravdu chcete smazat vybrané přenosy?"
+msgstr "Удалить выбранные закачки?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:104
 msgid "Do you really want to stop selected transfer(s)?"
-msgstr "Opravdu chcete zastavit vybrané přenosy?"
+msgstr "Остановить выбранные закачки?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:106
 msgid "Do you really want to report a bug for this transfer?"
-msgstr "Opravdu chcete pro tento odkaz nahlásit chybu?"
+msgstr "Передать отчёт об ошибке для выбранной закачки?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:112
@@ -1423,35 +1389,34 @@ msgid ""
 "of the server and the quality of your network\n"
 "connection. The program can't influence it."
 msgstr ""
-"Hlášení chyby není pro toto video dostupné.\n"
-"Jakmile stahování úspěšně začne, je jeho\n"
-"dokončení čistě věcí serveru a všeho připojení.\n"
-"Program to nemůže ovlivnit."
+"Отправка отчёта об ошибке отключена\n"
+"для этой закачки. После успешного старта,\n"
+"результат загрузки полностью зависит от\n"
+"состояния удалённого сервера и качества\n"
+"Интернет-соединения -- независимых\n"
+"от программы факторов."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:114
 msgid "Convert selected files with"
-msgstr "Zkonvertovat zvolené soubory pomocí"
+msgstr "Конвертировать выбранные файлы"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:116
 msgid "Automatically convert with"
-msgstr "Automaticky konvertovat pomocí"
+msgstr "Автоматически конвертировать"
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:87
-#: GUI/guiOptions.pas:144
-#: GUI/guiOptions.pas:146
+#: GUI/guiOptions.pas:87 GUI/guiOptions.pas:144 GUI/guiOptions.pas:146
 msgid ""
 "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
 "To protect your privacy, the program will now ask you\n"
 "about some default values which may influence it."
 msgstr ""
-"Právě poprvé spouštíte grafickou verzi programu\n"
-"YTD, nebo jste smazal dosavadní konfigurační soubor.\n"
-"Aby nedošlo k narušení vašeho soukromí, zeptá se nyní\n"
-"YTD na některá nastavení, která mají na soukromí vliv."
+"Это первый запуск графической (GUI) версии программы YTD\n"
+"либо файл конфигурации недоступен для чтения.\n"
+"Вам будет задан ряд вопросов для начальной настройки программы."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:95
@@ -1465,16 +1430,14 @@ msgid ""
 "\n"
 "YES = portable mode, NO = normal mode"
 msgstr ""
-"Chcete spustit YTD v přenositelném\n"
-"(portable) režimu?\n"
+"Запустить YTD в портативном режиме?\n"
 "\n"
-"V přenositelném režimu jsou nastavení YTD ukládána do\n"
-"souboru \"ytd.xml\" v adresáři aplikace (který tím pádem\n"
-"musí být zapisovatelný). V normálním (ne-portable) režimu\n"
-"se nastavení ukládají do souboru v profilu přihlášeného\n"
-"uživatele.\n"
+"В таком режиме программа хранит все настройки в файле \"ytd.xml\"\n"
+"в директории, из которой она была запущена.\n"
+"В обычном режиме настройки хранятся в директории\n"
+"пользовательского профиля.\n"
 "\n"
-"ANO = přenositelný režim, NE = normální režim"
+"[Да] = портативный режим, [Нет] = обычный."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:107
@@ -1492,61 +1455,51 @@ msgid ""
 "\n"
 "Should YTD automatically check for new versions?"
 msgstr ""
-"Chcete, aby YTD při startu grafické verze testoval\n"
-"existenci nových verzí programu?\n"
+"Проверять наличие новой версии YTD при запуске?\n"
 "\n"
-"Aby šlo nové verze zjistit, musí YTD kontaktovat svůj\n"
-"server, což znamená, že se autor programu dozví vaši\n"
-"IP adresu. Pro většinu uživatelů by to nemělo představovat\n"
-"žádnou hrozbu, ale zrovna vy můžete být tou výjimkou.\n"
-"I když vypnete automatický test na nové verze, můžete\n"
-"si ho ručně vyžádat otevřením okna \"O aplikaci\" nebo\n"
-"návštěvoudomácí stránky programu.\n"
-"\n"
-"Má YTD automaticky zjišťovat nové verze?"
+"Для проверки программа должна периодически подключаться к\n"
+"серверу обновлений -- это значит, что ему станет известен\n"
+"ваш IP-адрес. Для большинства пользователей это не имеет\n"
+"никакого значения, но, возможно, имеет для вас."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:110
 msgid "Change container to .AVI"
-msgstr "Změnit kontejner na .AVI"
+msgstr "Изменить контейнер на .AVI"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:113
 msgid "Convert movie to AVI/XVID"
-msgstr "Zkonvertovat film do AVI/XVID"
+msgstr "Конвертировать видео в AVI/XVID"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:116
 msgid "Convert movie to AVI/H264"
-msgstr "Zkonvertovat film do AVI/H264"
+msgstr "Конвертировать видео в AVI/H264"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #. {$ENDIF}
-#: GUI/guiOptions.pas:120
-#: GUI/guiOptions.pas:153
-#: GUI/guiOptions.pas:155
+#: GUI/guiOptions.pas:120 GUI/guiOptions.pas:153 GUI/guiOptions.pas:155
 msgid ""
 "Error loading configuration file. Error %s:\n"
 "%s\n"
 "Default config file will be created."
 msgstr ""
-"Chyba %s při načítání konfiguračního souboru:\n"
+"Ошибка при загрузке файла с настройками. Текст ошибки %s:\n"
 "%s\n"
-"Bude vytvořen nový konfigurační soubor."
+"Будет создан файл с настройками по умолчанию."
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:289
-#: GUI/uDownloadList.pas:299
+#: GUI/uDownloadList.pas:289 GUI/uDownloadList.pas:299
 msgid "File already exists."
-msgstr "Soubor už existuje."
+msgstr "Файл уже существует."
 
 #. GUI: Check for a new version wasn't made yet - or failed.
 #. Label "Newest version:"
-#: GUI/VCL/guiAboutVCL.pas:129
-#: GUI/WinAPI/guiAboutWINAPI.pas:223
+#: GUI/VCL/guiAboutVCL.pas:129 GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
-msgstr "zjišťuji..."
+msgstr "проверка..."
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
@@ -1555,254 +1508,16 @@ msgid ""
 "Windows error %u = %08.8x\n"
 "%s"
 msgstr ""
-"Windows chyba %u = %08.8x\n"
+"Ошибка Windows %u = %08.8x\n"
 "%s"
 
 #. error code, error code
 #. Programmer's name for it: WINDOWS_ERROR_UNKNOWN
 #: Lib/Pepak/ApiForm/uApiFunctions.pas:81
 msgid "Unknown error %u = %08.8x."
-msgstr "Neznámá chyba %u = %08.8x."
+msgstr "Неизвестная ошибка %u = %08.8x."
 
 #. Programmer's name for it: SSelectDirectory
 #: Lib/Pepak/ApiForm/uDialogs.pas:149
 msgid "Select a directory"
-msgstr "Zvolte adresář pro downloady"
-
-#~ msgid "^-{10}[- ]+$"
-#~ msgstr "^-{10}[- ]+$"
-
-#~ msgid ""
-#~ "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([."
-#~ "DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
-#~ msgstr ""
-#~ "^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2}) ([."
-#~ "DSHRA]{5}) +([0-9]+) +([0-9]+ +)?(.+)$"
-
-#~ msgid "Error while calculating streamlength"
-#~ msgstr "Error while calculating streamlength"
-
-#~ msgid "Missing data in binary stream"
-#~ msgstr "Missing data in binary stream"
-
-#~ msgid "Missing element name"
-#~ msgstr "Missing element name"
-
-#~ msgid "Missing close tag in element %s"
-#~ msgstr "Missing close tag in element %s"
-
-#~ msgid "Missing data after \"<\" in element %s"
-#~ msgstr "Missing data after \"<\" in element %s"
-
-#~ msgid "Missing \">\" in close tag of element %s"
-#~ msgstr "Missing \">\" in close tag of element %s"
-
-#~ msgid "Incorrect close tag in element %s"
-#~ msgstr "Incorrect close tag in element %s"
-
-#~ msgid "Illegal character in node name \"%s\""
-#~ msgstr "Illegal character in node name \"%s\""
-
-#~ msgid "More than one root element found in xml"
-#~ msgstr "More than one root element found in xml"
-
-#~ msgid "More than one xml declaration found in xml"
-#~ msgstr "More than one xml declaration found in xml"
-
-#~ msgid "Xml declaration must be first element"
-#~ msgstr "Xml declaration must be first element"
-
-#~ msgid "More than one doctype declaration found in root"
-#~ msgstr "More than one doctype declaration found in root"
-
-#~ msgid "Doctype declaration found after root element"
-#~ msgstr "Doctype declaration found after root element"
-
-#~ msgid "No root element found in xml"
-#~ msgstr "No root element found in xml"
-
-#~ msgid "Illegal element type"
-#~ msgstr "Illegal element type"
-
-#~ msgid "No CDATA allowed in root"
-#~ msgstr "No CDATA allowed in root"
-
-#~ msgid "XML root element not defined."
-#~ msgstr "XML root element not defined."
-
-#~ msgid "Encoding stream unassigned"
-#~ msgstr "Encoding stream unassigned"
-
-#~ msgid "Unsupported string encoding"
-#~ msgstr "Unsupported string encoding"
-
-#~ msgid "Cannot read from a conversion stream opened for writing"
-#~ msgstr "Cannot read from a conversion stream opened for writing"
-
-#~ msgid "Cannot write to an UTF stream opened for reading"
-#~ msgstr "Cannot write to an UTF stream opened for reading"
-
-#~ msgid "Cannot read multiple chars from conversion stream at once"
-#~ msgstr "Cannot read multiple chars from conversion stream at once"
-
-#~ msgid "Cannot perform seek on codec stream"
-#~ msgstr "Cannot perform seek on codec stream"
-
-#~ msgid "Cannot seek before reading or writing in conversion stream"
-#~ msgstr "Cannot seek before reading or writing in conversion stream"
-
-#~ msgid "Cannot perform seek in conversion stream"
-#~ msgstr "Cannot perform seek in conversion stream"
-
-#~ msgid "Cannot write to output stream"
-#~ msgstr "Cannot write to output stream"
-
-#~ msgid "XML Node is not assigned"
-#~ msgstr "XML Node is not assigned"
-
-#~ msgid "Cannot convert value to bool"
-#~ msgstr "Cannot convert value to bool"
-
-#~ msgid "Cannot convert value to float"
-#~ msgstr "Cannot convert value to float"
-
-#~ msgid "Significant digits out of range"
-#~ msgstr "Significant digits out of range"
-
-#~ msgid "Illegal variant type"
-#~ msgstr "Illegal variant type"
-
-#~ msgid "Unregistered classtype encountered in "
-#~ msgstr "Unregistered classtype encountered in "
-
-#~ msgid "Invalid property value"
-#~ msgstr "Invalid property value"
-
-#~ msgid "Invalid method name"
-#~ msgstr "Invalid method name"
-
-#~ msgid "Main"
-#~ msgstr "Základní"
-
-#, fuzzy
-#~ msgid "Downloads"
-#~ msgstr "Stahuje se"
-
-#~ msgid "Ms Shell Dlg"
-#~ msgstr "Ms Shell Dlg"
-
-#~ msgid "0.60"
-#~ msgstr "0.60"
-
-#, fuzzy
-#~ msgid "Add new URL\tIns"
-#~ msgstr "Přidat URL"
-
-#, fuzzy
-#~ msgid "Add URLs from Clipboard\tCTRL+V"
-#~ msgstr "Přidat URL ze schránky"
-
-#, fuzzy
-#~ msgid "Add URLs from file\tCtrl+O"
-#~ msgstr "Přidat URL ze souboru"
-
-#, fuzzy
-#~ msgid "Add URLs from HTML file\tCtrl+H"
-#~ msgstr "Přidat URL z HTML souboru"
-
-#, fuzzy
-#~ msgid "Add URLs from HTML page\tCtrl+P"
-#~ msgstr "Přidat URL z HTML stránky"
-
-#, fuzzy
-#~ msgid "Save URL list to file\tCtrl+S"
-#~ msgstr "Uložit seznam URL"
-
-#, fuzzy
-#~ msgid "Start/Pause/Resume\tSpace"
-#~ msgstr "Start/Pauza/Pokračovat"
-
-#, fuzzy
-#~ msgid "Stop\tEsc"
-#~ msgstr "Zastavit"
-
-#, fuzzy
-#~ msgid "Convert\tCtrl+N"
-#~ msgstr "Konvertor:"
-
-#, fuzzy
-#~ msgid "Delete URL\tDel"
-#~ msgstr "Smazat URL"
-
-#, fuzzy
-#~ msgid "Copy URLs to Clipboard\tCtrl+C"
-#~ msgstr "Zkopírovat URL do schránky"
-
-#, fuzzy
-#~ msgid "Select All\tCtrl+A"
-#~ msgstr "Vybrat vše"
-
-#, fuzzy
-#~ msgid "Refresh\tF5"
-#~ msgstr "Obnovit"
-
-#, fuzzy
-#~ msgid "Report a bug\tCtrl+Alt+B"
-#~ msgstr "Nahlásit chybu"
-
-#, fuzzy
-#~ msgid "About\tF1"
-#~ msgstr "O aplikaci"
-
-#, fuzzy
-#~ msgid "LabelPrompt"
-#~ msgstr "LabelVersion"
-
-#, fuzzy
-#~ msgid "OK"
-#~ msgstr "&OK"
-
-#, fuzzy
-#~ msgid "Cancel"
-#~ msgstr "&Storno"
-
-#~ msgid "FormYTD"
-#~ msgstr "FormYTD"
-
-#~ msgid "Autodownload"
-#~ msgstr "Autodownload"
-
-#~ msgid "Choose download directory"
-#~ msgstr "Vyberte cílový adresář pro downloady"
-
-#~ msgid "Automatically overwrite existing files"
-#~ msgstr "Automaticky přepisovat existující soubory"
-
-#~ msgid "Choose a converter"
-#~ msgstr "Vybrat konvertor"
-
-#~ msgid ""
-#~ "Choose a converter which will be automatically applied to all downloaded "
-#~ "movies."
-#~ msgstr ""
-#~ "Vybrat konvertor, který bude automaticky použit na všechny stáhnuté "
-#~ "soubory."
-
-#~ msgid "ToolButton2"
-#~ msgstr "ToolButton2"
-
-#~ msgid "Failed to find embedded object."
-#~ msgstr "Nepodařilo se najít vložený objekt."
-
-#~ msgid "Embedded object is invalid."
-#~ msgstr "Vložený objekt je neplatný."
-
-#~ msgid ""
-#~ "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) "
-#~ "Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
-#~ msgstr ""
-#~ "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) "
-#~ "Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)"
-
-#~ msgid "<arg> [<arg>] ..."
-#~ msgstr "<arg> [<arg>] ..."
+msgstr "Выберите директорию:"

@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uSystem;
-{$INCLUDE 'jedi.inc'}
+{$INCLUDE 'pepak.inc'}
 
 {.$DEFINE USYSTEM_7Z}
 {$DEFINE USYSTEM_CONSOLE}

@@ -1,12 +1,71 @@
 ______________________________________________________________________________
 
-YTD v1.12                                                    (c) 2009-12 Pepak
+YTD v1.13                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v1.13:
+
+    * Experimental cversion with Unicode support available. It should be 
+      particularly useful for providers who use exotic languages, such as
+      russian or japanese. I would appreciate it if you could download the
+      version and let me know whether it behaves correctly, because I would
+      like to switch to it sometime soon. For now the ANSI version remains
+      the main one, because it is compatible even with Windows 98 while the
+      Unicode version will require at least Windows 2000.
+
+    * New providers:
+      - Kiwi.kz
+      - Myvi.ru
+      - Nova.cz (free movies only; token is required)
+      - ProstoPleer.com
+      - RuTube.ru
+      - Sibnet.ru
+
+    * Updated providers:
+      - CestyKSobe.cz
+      - XHamster.com
+
+    * Added a russian translation from project rStread
+      (https://bitbucket.org/litew/rstread).
+
+    * Added a time limitation on playlist-based videos, after which YTD is
+      forced to re-download and re-parse the info page. This should make it
+      possible to download all parts of multi-part videos with a time-limited
+      token, such as this one:
+      http://www.ceskatelevize.cz/porady/10120914283-buly-hokej-zive/211471290130045-hc-vitkovice-steel-hc-eaton-pardubice/
+      I hope this feature didn't break "normal" multipart videos.
+
+    * The VCL-based GUI version didn't have Play and Explore functions in its
+      menu, even though they were programmed in. (This is only interesting to
+      those who compile their own YTD, because the official release is using
+      WinAPI-based GUI.)
+
+    * The Unicode version now has a special download mode for RTMP- and RTSP-
+      based streams, in which a temporary ANSI-compatible filename is used for
+      the duration of the download and then gets renamed. The typical usage
+      scenario is for Rutube.ru which needs Unicode to get reasonable filenames
+      (except if you are running russian version of Windows).
+
+    * If a downloaded file is longer than 2 GB, the total size and percentual
+      progress are now correctly displayed.
+
+    * The bugreport function only works for videos whose download couldn't get
+      started. Once a download starts, the ability of YTD to influence it is
+      zero - it depends solely on stuff like server stability or your network 
+      bandwidth.
+
+    * Once again updated the build script to make it easy to update to any
+      version of Delphi. Tested on Delphi 5, 7, 2007, 2009, XE2 and FreePascal
+      2.6.0. It is possible to build a x64 version with XE2, but it won't run
+      due to some missing library imports which I have no idea where they came
+      from.
+
+
+  
   v1.12:
 
     * New providers:

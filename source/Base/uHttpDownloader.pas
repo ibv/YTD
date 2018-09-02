@@ -246,7 +246,7 @@ end;
 {$IFDEF MULTIDOWNLOADS}
 function THttpDownloader.First: boolean;
 begin
-  if Prepared then
+  if ValidatePrepare then
     if UrlList.Count <= 0 then
       Result := MovieURL <> ''
     else
@@ -261,7 +261,7 @@ end;
 function THttpDownloader.Next: boolean;
 begin
   Result := False;
-  if Prepared then
+  if ValidatePrepare then
     begin
     DownloadIndex := Succ(DownloadIndex);
     if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then

@@ -40,7 +40,7 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows, FileCtrl,
+  SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
   HttpSend, SynaUtil, SynaCode,
   uOptions, uPCRE, uXML, uAMF, uFunctions,
   {$IFDEF GUI}
@@ -86,6 +86,10 @@ type
       fOnFileNameValidate: TDownloaderFileNameValidateEvent;
       fOptions: TYTDOptions;
       fReferer: string;
+      {$IFDEF MULTIDOWNLOADS}
+      fLastPrepareTime: TDateTime;
+      fPrepareLifetime: Integer;
+      {$ENDIF}
     protected
       function GetName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetName(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -183,6 +187,9 @@ type
       {$IFDEF MULTIDOWNLOADS}
       function First: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
       function Next: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      function ValidatePrepare: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
+      property LastPrepareTime: TDateTime read fLastPrepareTime write fLastPrepareTime;
+      property PrepareLifetime: Integer read fPrepareLifetime write fPrepareLifetime; // seconds
       {$ENDIF}
     public
       property Prepared: boolean read fPrepared;
@@ -206,7 +213,8 @@ implementation
 uses
   uStringConsts,
   uStrings,
-  uMessages;
+  uMessages,
+  uExternalDownloader;
 
 const
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
@@ -235,6 +243,7 @@ begin
   inherited Create;
   SetLastErrorMsg('');
   SetPrepared(False);
+  PrepareLifetime := 60; // 60 seconds
   fHttp := THttpSend.Create;
   fHttp.UserAgent := DEFAULT_USER_AGENT;
   MovieID := AMovieID;
@@ -255,6 +264,7 @@ end;
 procedure TDownloader.SetPrepared(Value: boolean);
 begin
   fPrepared := Value;
+  fLastPrepareTime := Now;
 end;
 
 function TDownloader.GetLastErrorMsg: string;
@@ -281,16 +291,16 @@ begin
 end;
 
 function TDownloader.GetDefaultFileName: string;
-var Ext: string;
-{$IFDEF MAXFILENAMELENGTH}
-var MaxLength, i, n: integer;
-{$ENDIF}
+var
+  Ext: string;
+  MaxLength, i, n: integer;
 begin
-  Result := StrTr(Trim(Name), '\/:*?"<>|', '--;..''--!');
+  Result := Trim(Name);
+  Result := StrTr(Result, INVALID_FILENAME_CHARS, INVALID_FILENAME_CHARS_REPLACEMENTS);
   Ext := GetFileNameExt;
   if AnsiCompareText(ExtractFileExt(Result), Ext) = 0 then
     Ext := '';
-  {$IFDEF MAXFILENAMELENGTH}
+  // Limit the filename's length
   MaxLength := MAX_PATH - 5 - Length(Ext);
   if Options.DestinationPath <> '' then
     MaxLength := MaxLength - Length(ExpandFileName(Options.DestinationPath));
@@ -306,12 +316,12 @@ begin
       System.Insert('...', Result, i);
       end;
     end;
-  {$ENDIF}
-  Result := {AnsiToOem}(Result + Ext);
+  // Finalize the filename
+  Result := Result + Ext;
   if Options.DownloadToProviderSubdirs then
     Result := IncludeTrailingPathDelimiter(Provider) + Result;
   if Options.DestinationPath <> '' then
-    Result := Options.DestinationPath + Result;
+    Result := IncludeTrailingPathDelimiter(Options.DestinationPath) + Result;
 end;
 
 function TDownloader.GetFileName: string;
@@ -627,6 +637,16 @@ end;
 function TDownloader.Next: boolean;
 begin
   Result := False;
+end;
+
+function TDownloader.ValidatePrepare: boolean;
+begin
+  Result := False;
+  if Prepared then
+    if Trunc((Now - LastPrepareTime)*60*60*24) < PrepareLifeTime then
+      Result := True
+    else
+      Result := Prepare;
 end;
 {$ENDIF}
 
@@ -1029,7 +1049,7 @@ end;
 
 function TDownloader.GetRegExpVars(RegExp: TRegExp; const Text: string; const VarNames: array of string; const VarValues: array of PString; InitValues: boolean): boolean;
 begin
-  RegExp.Subject := Text;
+  RegExp.Subject := {$IFDEF UNICODE} PCREString {$ENDIF} (Text);
   Result := GetRegExpVarsAgain(RegExp, VarNames, VarValues, InitValues);
 end;
 

@@ -184,7 +184,7 @@ end;
 function TDownloader_ShowJanaKrause.First: boolean;
 begin
   Result := False;
-  if Prepared then
+  if ValidatePrepare then
     if Self.RtmpUrl <> '' then
       if IDList.Count > 0 then
         begin
@@ -196,7 +196,7 @@ end;
 function TDownloader_ShowJanaKrause.Next: boolean;
 begin
   Result := False;
-  if Prepared then
+  if ValidatePrepare then
     if Self.RtmpUrl <> '' then
       begin
       DownloadIndex := Succ(DownloadIndex);

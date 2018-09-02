@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit xxxXHamster;
+unit downKiwi;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,17 +42,14 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  uDownloader, uCommonDownloader, uHTTPDownloader;
 
 type
-  TDownloader_XHamster = class(THttpDownloader)
+  TDownloader_Kiwi = class(THTTPDownloader)
     private
     protected
-      MovieServerRegExp: TRegExp;
-      MovieFileNameRegExp: TRegExp;
-      MovieModeRegExp: TRegExp;
-    protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -68,89 +65,72 @@ uses
   uDownloadClassifier,
   uMessages;
 
+// http://kiwi.kz/watch/jiaon54nfybz/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*xhamster\.com/movies/';
-  URLREGEXP_ID =        '[0-9]+/.*';
+  URLREGEXP_BEFORE_ID = 'kiwi\.kz/watch/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)</title>';
-  REGEXP_MOVIE_SERVER = '''srv''\s*:\s*''(?P<SERVER>https?://[^'']+)''';
-  REGEXP_MOVIE_FILENAME = '''file''\s*:\s*''(?P<FILENAME>[^'']+)';
-  REGEXP_MOVIE_URLMODE = '''url_mode''\s*:\s*''(?P<MODE>[0-9]+)''';
+  REGEXP_MOVIE_TITLE =  '<h1\s+class="page-h1">[^<]*</h1>\s*<div>[^<]*<b>(?P<TITLE>.*?)</b>';
+  REGEXP_MOVIE_URL =    '"resources"\s*:\s*\{\s*"url"\s*:\s*"(?P<URL>https?:.+?)"';
 
-{ TDownloader_XHamster }
+{ TDownloader_Kiwi }
 
-class function TDownloader_XHamster.Provider: string;
+class function TDownloader_Kiwi.Provider: string;
 begin
-  Result := 'XHamster.com';
+  Result := 'Kiwi.kz';
 end;
 
-class function TDownloader_XHamster.UrlRegExp: string;
+class function TDownloader_Kiwi.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_XHamster.Create(const AMovieID: string);
+constructor TDownloader_Kiwi.Create(const AMovieID: string);
 begin
-  inherited;
-  InfoPageEncoding := peUnknown;
+  inherited Create(AMovieID);
+  InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieServerRegExp := RegExCreate(REGEXP_MOVIE_SERVER);
-  MovieFileNameRegExp := RegExCreate(REGEXP_MOVIE_FILENAME);
-  MovieModeRegExp := RegExCreate(REGEXP_MOVIE_URLMODE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
-destructor TDownloader_XHamster.Destroy;
+destructor TDownloader_Kiwi.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieServerRegExp);
-  RegExFreeAndNil(MovieFileNameRegExp);
-  RegExFreeAndNil(MovieModeRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
   inherited;
 end;
 
-function TDownloader_XHamster.GetMovieInfoUrl: string;
+function TDownloader_Kiwi.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.xhamster.com/movies/' + MovieID;
+  Result := 'http://kiwi.kz/watch/' + MovieID + '/download/';
 end;
 
-function TDownloader_XHamster.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Kiwi.GetFileNameExt: string;
+begin
+  Result := '.mp4';
+end;
+
+function TDownloader_Kiwi.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Server, FileName, Mode, Url: string;
+  Info, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieFileNameRegExp, Page, 'FILENAME', FileName) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['file']))
-  else if not GetRegExpVar(MovieServerRegExp, Page, 'SERVER', Server) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['srv']))
-  else if not GetRegExpVar(MovieModeRegExp, Page, 'MODE', Mode) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['mode']))
+  if not DownloadPage(Http, 'http://kiwi.kz/services/watch/download', {$IFDEF UNICODE} AnsiString {$ENDIF} ('hash=' + MovieID + '&download-btn=%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%20%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D1%83%20%D0%BD%D0%B0%20%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5'), HTTP_FORM_URLENCODING, Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(MovieUrlRegExp, Info, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    if Mode = '1' then
-      Url := Server + '/key=' + FileName
-    else if Mode = '2' then
-      Url := Server + '/flv2/' + FileName
-    else if Mode = '3' then
-      Url := UrlDecode(FileName)
-    else
-      Url := '';
-    if Url = '' then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      MovieUrl := Url;
-      SetPrepared(True);
-      Result := True;
-      end;
+    MovieUrl := StripSlashes(Url);
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 
 initialization
-  {$IFDEF XXX}
-  RegisterDownloader(TDownloader_XHamster);
-  {$ENDIF}
+  RegisterDownloader(TDownloader_Kiwi);
 
 end.

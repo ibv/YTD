@@ -1,0 +1,191 @@
+(******************************************************************************
+
+______________________________________________________________________________
+
+YTD v1.00                                                    (c) 2009-12 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
+______________________________________________________________________________
+
+
+Copyright (c) 2009-12 Pepak (http://www.pepak.net)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Pepak nor the
+      names of his contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL PEPAK BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+******************************************************************************)
+
+unit downRuTube;
+{$INCLUDE 'ytd.inc'}
+
+interface
+
+uses
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  uPCRE, uXml, HttpSend, SynaUtil,
+  uOptions,
+  uDownloader, uCommonDownloader, uRtmpDownloader;
+
+type
+  TDownloader_RuTube = class(TRtmpDownloader)
+    private
+    protected
+      MovieInfoRegExp: TRegExp;
+    protected
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
+    end;
+
+implementation
+
+uses
+  uStringConsts,
+  uDownloadClassifier,
+  uMessages;
+
+// http://rutube.ru/video/54477e8b005020d309ef371dff690eb3/
+// http://bl.rutube.ru/c327d57926a628644fad3bc36d81ad08
+// http://video.rutube.ru/c327d57926a628644fad3bc36d81ad08
+// http://rutube.ru/trackinfo/c327d57926a628644fad3bc36d81ad08.html
+const
+  URLREGEXP_BEFORE_ID = 'rutube\.ru/(?:video/|trackinfo/)?';
+  URLREGEXP_ID =        '[0-9a-f]{32}';
+  URLREGEXP_AFTER_ID =  '(?:[.?/]|$)';
+
+const
+  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_INFO =   '<param\s+name=\\"movie\\"\s+value=\\"(?P<URL>https?://.+?)\\"';
+
+{ TDownloader_RuTube }
+
+class function TDownloader_RuTube.Provider: string;
+begin
+  Result := 'RuTube.ru';
+end;
+
+class function TDownloader_RuTube.UrlRegExp: string;
+begin
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+end;
+
+constructor TDownloader_RuTube.Create(const AMovieID: string);
+begin
+  inherited;
+  InfoPageEncoding := peUtf8;
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+end;
+
+destructor TDownloader_RuTube.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieInfoRegExp);
+  inherited;
+end;
+
+function TDownloader_RuTube.GetMovieInfoUrl: string;
+begin
+  Result := 'http://rutube.ru/video/' + MovieID + '/';
+end;
+
+function TDownloader_RuTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Info, Url, Response, ResponseStr, Server: string;
+  BestStream, Stream, Bitrate: string;
+  Protocol, User, Password, Host, Port, Path, Para: string;
+  i, BestQuality, Quality: integer;
+  Xml: TXmlDoc;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not DownloadPage(Http, 'http://rutube.ru/api/video/' + MovieID, Info) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVar(MovieInfoRegExp, Info, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
+  else
+    begin
+    Xml := nil;
+    Url := Url + '.f4m?referer=' + UrlEncode(GetMovieInfoUrl);
+    if not DownloadXml(Http, StringReplace(Url, 'http://video.', 'http://bl.', []), Xml) then
+      if not DownloadXml(Http, Url, Xml) then
+        FreeAndNil(Xml);
+    if Xml = nil then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_SERVER_LIST)
+    else
+      try
+        if not GetXmlVar(Xml, 'responseCode', Response) then
+          SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+        else if StrToIntDef(Response, 0) <> 200 then
+          begin
+          if GetXmlVar(Xml, 'responseDsc', ResponseStr) then
+            Response := ResponseStr;
+          SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Response]));
+          end
+        else if not GetXmlVar(Xml, 'baseURL', Server) then
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_SERVER)
+        else
+          begin
+          BestStream := '';
+          BestQuality := -1;
+          for i := 0 to Pred(Xml.Root.NodeCount) do
+            if Xml.Root.Nodes[i].Name = 'media' then
+              if GetXmlAttr(Xml.Root.Nodes[i], '','url', Stream) then
+                begin
+                if GetXmlAttr(Xml.Root.Nodes[i], '', 'bitrate', Bitrate) then
+                  Quality := StrToIntDef(Bitrate, 0)
+                else
+                  Quality := 0;
+                if Quality > BestQuality then
+                  begin
+                  BestStream := Stream;
+                  BestQuality := Quality;
+                  end;
+                end;
+          if BestStream = '' then
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
+          else
+            begin
+            MovieUrl := Server + BestStream;
+            Self.RtmpUrl := MovieUrl;
+            Self.Playpath := Copy(BestStream, 2, MaxInt);
+            ParseUrl(Server, Protocol, User, Password, Host, Port, Path, Para);
+            if Path = '/vod' then
+              Self.Live := True;
+            SetPrepared(True);
+            Result := True;
+            end;
+          end;
+      finally
+        FreeAndNil(Xml);
+        end;
+    end;
+end;
+
+initialization
+  RegisterDownloader(TDownloader_RuTube);
+
+end.

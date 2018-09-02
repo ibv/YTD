@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit FileCtrl;
 { Minimal FileCtrl }
+{$INCLUDE 'pepak.inc'}
 
 interface
 

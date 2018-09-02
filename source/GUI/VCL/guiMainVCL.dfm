@@ -22,9 +22,10 @@ object FormYTD: TFormYTD
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 711
+    Width = 719
     Height = 29
     ButtonHeight = 23
+    EdgeBorders = []
     Images = ActionImages
     TabOrder = 0
     object ToolAddNew: TToolButton
@@ -158,8 +159,8 @@ object FormYTD: TFormYTD
   object Downloads: TListView
     Left = 0
     Top = 29
-    Width = 711
-    Height = 317
+    Width = 719
+    Height = 328
     Align = alClient
     Columns = <
       item
@@ -204,8 +205,8 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 346
-    Width = 711
+    Top = 357
+    Width = 719
     Height = 19
     AutoHint = True
     Panels = <>
@@ -1449,9 +1450,6 @@ object FormYTD: TFormYTD
     object mnuAddNewUrl: TMenuItem
       Action = actAddNewUrl
     end
-    object mnuAddUrlFromClipboard: TMenuItem
-      Action = actAddUrlsFromClipboard
-    end
     object mnuAddUrlFromFile: TMenuItem
       Action = actAddUrlsFromFile
     end
@@ -1460,6 +1458,15 @@ object FormYTD: TFormYTD
     end
     object mnuAddUrlFromHtmlPage: TMenuItem
       Action = actAddUrlsFromHTML
+    end
+    object mnuAddUrlFromClipboard: TMenuItem
+      Action = actAddUrlsFromClipboard
+    end
+    object N5: TMenuItem
+      Caption = '-'
+    end
+    object mnuCopyUrls: TMenuItem
+      Action = actCopyUrlsToClipboard
     end
     object mnuSaveUrlList: TMenuItem
       Action = actSaveUrlList
@@ -1476,14 +1483,17 @@ object FormYTD: TFormYTD
     object mnuConvert: TMenuItem
       Action = actConvert
     end
+    object mnuPlay: TMenuItem
+      Action = actPlay
+    end
+    object mnuExplore: TMenuItem
+      Action = ActExploreFolder
+    end
     object N2: TMenuItem
       Caption = '-'
     end
     object mnuDelete: TMenuItem
       Action = actDeleteURL
-    end
-    object mnuCopyUrls: TMenuItem
-      Action = actCopyUrlsToClipboard
     end
     object mnuSelectAll: TMenuItem
       Action = actSelectAll

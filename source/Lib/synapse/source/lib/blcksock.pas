@@ -308,8 +308,8 @@ type
     {$IFNDEF CIL}
     FFDSet: TFDSet;
     {$ENDIF}
-    FRecvCounter: Integer;
-    FSendCounter: Integer;
+    FRecvCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
+    FSendCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
     FSendMaxChunk: Integer;
     FStopFlag: Boolean;
     FNonblockSendTimeout: Integer;
@@ -540,7 +540,7 @@ type
      occured.)}
     procedure RecvStreamRaw(const Stream: TStream; Timeout: Integer); virtual;
     {:Read requested count of bytes from socket to stream.}
-    procedure RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: Integer);
+    procedure RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} );
 
     {:Receive data to stream. It using @link(RecvBlock) method.}
     procedure RecvStream(const Stream: TStream; Timeout: Integer); virtual;
@@ -759,11 +759,11 @@ type
 
     {:Return count of received bytes on this socket from begin of current
      connection.}
-    property RecvCounter: Integer read FRecvCounter;
+    property RecvCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FRecvCounter;
 
     {:Return count of sended bytes on this socket from begin of current
      connection.}
-    property SendCounter: Integer read FSendCounter;
+    property SendCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FSendCounter;
   published
     {:Return descriptive string for given error code. This is class function.
      You may call it without created object!}
@@ -2484,15 +2484,24 @@ begin
   until FLastError <> 0;
 end;
 
-procedure TBlockSocket.RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: Integer);
+procedure TBlockSocket.RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} );
 var
   s: AnsiString;
+  {$IFDEF PEPAK}
+  n: int64;
+  {$ELSE}
   n: integer;
+  {$ENDIF}
 {$IFDEF CIL}
   buf: TMemory;
 {$ENDIF}
 begin
+  {$IFDEF PEPAK}
+  n := Size div int64(FSendMaxChunk);
+  while n > 0 do
+  {$ELSE}
   for n := 1 to (Size div FSendMaxChunk) do
+  {$ENDIF}
   begin
     {$IFDEF CIL}
     SetLength(buf, FSendMaxChunk);
@@ -2506,8 +2515,11 @@ begin
       Exit;
     WriteStrToStream(Stream, s);
     {$ENDIF}
+    {$IFDEF PEPAK}
+    Dec(n);
+    {$ENDIF}
   end;
-  n := Size mod FSendMaxChunk;
+  n := Size mod {$IFDEF PEPAK} int64(FSendMaxChunk) {$ELSE} FSendMaxChunk {$ENDIF} ;
   if n > 0 then
   begin
     {$IFDEF CIL}

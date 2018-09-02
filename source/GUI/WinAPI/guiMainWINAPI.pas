@@ -269,29 +269,29 @@ const ToolbarButtonHints: array[0..16] of string
           );
 const ToolbarButtons: array[0..22] of TTBButton
         = (
-            (iBitmap:  0; idCommand: ACTION_ADDNEWURL;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  0),
-            (iBitmap:  1; idCommand: ACTION_ADDFROMFILE;          fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  1),
-            (iBitmap:  2; idCommand: ACTION_ADDFROMHTML;          fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  2),
-            (iBitmap:  3; idCommand: ACTION_ADDFROMWEBPAGE;       fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  3),
-            (iBitmap:  4; idCommand: ACTION_ADDFROMCLIPBOARD1;    fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  4),
-            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
-            (iBitmap:  5; idCommand: ACTION_COPYTOCLIPBOARD1;     fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  5),
-            (iBitmap:  6; idCommand: ACTION_SAVETOFILE;           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  6),
-            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
-            (iBitmap:  7; idCommand: ACTION_START;                fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  7),
-            (iBitmap:  8; idCommand: ACTION_STOP;                 fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  8),
-            (iBitmap:  9; idCommand: ACTION_CONVERT;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString:  9),
-            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
-            (iBitmap: 10; idCommand: ACTION_DELETEURL;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 10),
-            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
-            (iBitmap: 11; idCommand: ACTION_OPTIONS;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 11),
-            (iBitmap: 12; idCommand: ACTION_EDITCONFIG;           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 12),
-            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
-            (iBitmap: 13; idCommand: ACTION_REFRESH;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 13),
-            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    dwData: 0; iString: -1),
-            (iBitmap: 14; idCommand: ACTION_BUGREPORT;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 14),
-            (iBitmap: 15; idCommand: ACTION_DONATE;               fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 15),
-            (iBitmap: 16; idCommand: ACTION_ABOUT;                fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; dwData: 0; iString: 16)
+            (iBitmap:  0; idCommand: ACTION_ADDNEWURL;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  0),
+            (iBitmap:  1; idCommand: ACTION_ADDFROMFILE;          fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  1),
+            (iBitmap:  2; idCommand: ACTION_ADDFROMHTML;          fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  2),
+            (iBitmap:  3; idCommand: ACTION_ADDFROMWEBPAGE;       fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  3),
+            (iBitmap:  4; idCommand: ACTION_ADDFROMCLIPBOARD1;    fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  4),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: -1),
+            (iBitmap:  5; idCommand: ACTION_COPYTOCLIPBOARD1;     fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  5),
+            (iBitmap:  6; idCommand: ACTION_SAVETOFILE;           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  6),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: -1),
+            (iBitmap:  7; idCommand: ACTION_START;                fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  7),
+            (iBitmap:  8; idCommand: ACTION_STOP;                 fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  8),
+            (iBitmap:  9; idCommand: ACTION_CONVERT;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString:  9),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: -1),
+            (iBitmap: 10; idCommand: ACTION_DELETEURL;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 10),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: -1),
+            (iBitmap: 11; idCommand: ACTION_OPTIONS;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 11),
+            (iBitmap: 12; idCommand: ACTION_EDITCONFIG;           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 12),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: -1),
+            (iBitmap: 13; idCommand: ACTION_REFRESH;              fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 13),
+            (iBitmap: -1; idCommand: 0;                           fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_SEP;    bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: -1),
+            (iBitmap: 14; idCommand: ACTION_BUGREPORT;            fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 14),
+            (iBitmap: 15; idCommand: ACTION_DONATE;               fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 15),
+            (iBitmap: 16; idCommand: ACTION_ABOUT;                fsState: TBSTATE_ENABLED; fsStyle: TBSTYLE_BUTTON; bReserved: (0, 0 {$IFDEF WIN64} , 0, 0, 0, 0 {$ENDIF} ); dwData: 0; iString: 16)
           );
 var i: integer;
     Hints: string;
@@ -706,7 +706,9 @@ begin
   Result := True;
   Index := ListViewGetSelectedItem(DownloadListHandle);
   if Index >= 0 then
-    if MessageBox(0, PChar(_(MAINFORM_REPORT_BUG)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+    if DownloadList[Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
+      MessageBox(0, PChar(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED)), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL)
+    else if MessageBox(0, PChar(_(MAINFORM_REPORT_BUG)), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONWARNING or MB_TASKMODAL) = idYes then
       ReportBug(DownloadList, Index);
 end;
 

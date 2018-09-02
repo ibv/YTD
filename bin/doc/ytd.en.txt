@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.12                                                    (c) 2009-12 Pepak
+YTD v1.13                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -670,6 +670,10 @@ except in file/directory names. Logical values (true-false) are stored as
                     0.5 second after it returns from an upgrade, otherwise its
                     .exe file may not be overwritten correctly.
     -ah[-] ........ [Don't] try to use HTML parser on unknown URLs.
+    -nd ........... Just display command-line which would download the video,
+                    but skip the download itself. This may be useful in cases
+                    where you want to add your own custom arguments.
+
 
   For the graphical version:
 

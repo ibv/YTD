@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uFiles;
+{$INCLUDE 'pepak.inc'}
 
 interface
 {$DEFINE TEXTSTREAMS}
@@ -458,11 +459,11 @@ begin
 end;
 
 function FileGetDateTime(const FileName: string): TDateTime;
-{$IFNDEF UNICODE}
+{$IFNDEF DELPHI2007_UP}
 var DosTime: integer;
 {$ENDIF}
 begin
-  {$IFDEF UNICODE}
+  {$IFDEF DELPHI2007_UP}
   if not FileAge(FileName, Result) then
     Result := 0;
   {$ELSE}

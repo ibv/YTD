@@ -35,12 +35,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uAMF;
+{$INCLUDE 'pepak.inc'}
+
 {.DEFINE DEBUG}
 {.DEFINE NONSEEKABLESTREAMS}
 {$DEFINE MINIMIZESIZE}
 {.DEFINE VARIANTS}
-
-{$INCLUDE 'pepak.inc'}
 
 interface
 
