@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.54+                                                   (c) 2009-16 Pepak
+YTD v1.55+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -145,6 +145,7 @@ Joj.sk              | RTMP     |       | http://www.joj.sk/anosefe/anosefe-epizo
                     |          |       | http://www.joj.sk/sudna-sien/sudna-sien-archiv/2011-05-03-sudna-sien.html
                     | HTTP     |       | http://anosefe.joj.sk/anosefe-epizody/2011-05-16-ano-sefe-.html
 KanalTurk.com.tr    | HTTP     |       | http://www.kanalturk.com.tr/video/?vId=13409
+Kaotic.com          | HTTP     |       | http://www.kaotic.com/video/hkXFzUEO_2016212144456_t
 Kinobox.cz          | HTTP     |       | http://www.kinobox.cz/porady/video/6273-prednaska-henriho-monforta-21112011
 Kiwi.kz             | HTTP     |       | http://kiwi.kz/watch/jiaon54nfybz/
 Kontraband.com      | HTTP     |       | http://www.kontraband.com/videos/23388/Failed-Slam-Dunks/
@@ -285,6 +286,7 @@ Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
 SteamPowered.com    | HTTP     |       | http://store.steampowered.com/video/220
 Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
+Stream.cz           | HTTP     | 8     | https://www.stream.cz/chlapidarium/10008864-zeny-ktere-byste-mit-doma-nechteli
 Streamin.to         | RTMP     |       | http://streamin.to/wpgpkcf4d3f1
 StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270

@@ -95,7 +95,7 @@ resourcestring
 
   ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT = 'Failed to locate embedded object.';
   ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE = 'Failed to locate media info page.';
-  ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE = 'Failed to download media info page.';
+  ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE = 'Failed to download media info page. Check your firewall!';
   ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE = 'Failed to prepare media info page.';
   ERR_INVALID_MEDIA_INFO_PAGE = 'Invalid media info page.';
   ERR_FAILED_TO_DOWNLOAD_SERVER_LIST = 'Failed to download server list.';
@@ -143,7 +143,8 @@ resourcestring
   ERR_SCRIPTS_IF_NOT_SATISFIED = 'No satisfied condition found.';
   ERR_SCRIPTS_UNKNOWN_CONDITION = 'Unknown condition.';
   ERR_SCRIPTS_INVALID_PAUSE = 'Invalid <pause> settings.';
-  ERR_XML_ELEMENT_NOT_FOUND = 'XML element not found.';
+  ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND = 'XML element not found.';
+  ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND = 'JSON element not found.';
 
 {gnugettext: reset}
 

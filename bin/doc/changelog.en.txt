@@ -1,11 +1,34 @@
 ﻿______________________________________________________________________________
 
-YTD v1.54                                                    (c) 2009-16 Pepak
+YTD v1.55                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.55:
+
+    * New providers:
+      - Kaotic.com
+      - Stream.cz (needs a token, so called "api key")
+
+    * Updated providers:
+      - Ceknito.cz
+      - Ceknito.sk
+
+    * Modified the versioning of the scripts so that the information about
+      updated providers works correctly even if multiple changes occur
+      within a single day.
+
+    * New scripting language commands:
+      <multi_json> ..... details in the documentation, chapter 3.16.
+      <get_json_var> ... details in the documentation, chapter 4.17.
+
+    * New conditions for the scripting language's command <if>:
+      json_var_exists ... details in the documentation, chapter 3.13.4.
+
+
 
   v1.54:
 

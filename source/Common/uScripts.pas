@@ -41,7 +41,7 @@ interface
 
 uses
   SysUtils, Classes, Windows, NativeXml,
-  uPCRE, uXML, HttpSend, blcksock,
+  uPCRE, uXML, uJSON, HttpSend, blcksock,
   uDownloader, uOptions;
 
 type
@@ -57,8 +57,10 @@ type
       fName: string;
       fValue: string;
       fXml: TXmlDoc;
+      fJson: TJSON;
       procedure SetValue(const AValue: string);
       function GetXml: TXmlDoc;
+      function GetJson: TJson;
     protected
     public
       constructor Create(const AName: string);
@@ -66,6 +68,7 @@ type
       property Name: string read fName;
       property Value: string read fValue write SetValue;
       property Xml: TXmlDoc read GetXml;
+      property Json: TJson read GetJson;
     end;
 
   TScriptVariables = class
@@ -77,6 +80,7 @@ type
       procedure SetValue(const Name, Value: string);
       function GetExists(const Name: string): boolean;
       function GetXml(const Name: string): TXmlDoc;
+      function GetJson(const Name: string): TJson;
     protected
     public
       constructor Create;
@@ -87,6 +91,7 @@ type
       property Variables[Index: integer]: TScriptVariable read GetVariable;
       property Values[const Name: string]: string read GetValue write SetValue; default;
       property Xml[const Name: string]: TXmlDoc read GetXml;
+      property Json[const Name: string]: TJson read GetJson;
       property Exists[const Name: string]: boolean read GetExists;
     end;
 
@@ -104,11 +109,10 @@ type
     fVersion: string;
     fUpgradeUrl: string;
     fRegExpCache: TRegExpCache;
-    function GetLastUpgrade: TDateTime;
   protected
     procedure InitData;
     function InternalGetScriptForUrl(const Url: string; Urls: TXmlNode; out Node: TXmlNode; out MovieID: string): boolean;
-    function GetUpgradedScripts(LastUpgradeDate: TDateTime; out CurrentUpgradeDate: TDateTime; ProviderList: TStrings): boolean;
+    function GetUpgradedScripts(LastUpgradeDate: TDateTime; LastUpgradeVersion: integer; out CurrentUpgradeDate: TDateTime; out CurrentUpgradeVersion: integer; ProviderList: TStrings): boolean;
     property Xml: TXmlDoc read fXml;
     property FileName: string read fFileName;
     property Scripts: TXmlNode read fScriptsNode;
@@ -130,9 +134,9 @@ type
     function GetScriptForUrl(const Url: string; out Node: TXmlNode; out MovieID: string): boolean;
     function GetScript(const ID: string; out Node: TXmlNode): boolean;
     function GetRegExp(const ID: string; out Node: TXmlNode): boolean;
-    function GetUpgradedScriptsSince(Since: TDateTime; ProviderList: TStrings): boolean;
+    function GetUpgradedScriptsSince(Since: TDateTime; SinceVer: integer; ProviderList: TStrings): boolean;
+    function GetUpgradedScriptVersion(out Date: TDateTime; out Version: integer): boolean;
     property Version: string read fVersion;
-    property LastUpgrade: TDateTime read GetLastUpgrade;
   end;
 
 procedure ScriptError(const Msg: string; Node: TXmlNode);
@@ -181,12 +185,26 @@ begin
   fName := AName;
   fValue := '';
   fXml := nil;
+  fJson := nil;
 end;
 
 destructor TScriptVariable.Destroy;
 begin
   FreeAndNil(fXml);
+  JSONFreeAndNil(fJson);
   inherited;
+end;
+
+function TScriptVariable.GetJson: TJson;
+begin
+  if fJson = nil then
+    try
+      fJson := JSONCreate(Value);
+    except
+      FreeAndNil(fJson);
+      Raise;
+      end;
+  Result := fJson;
 end;
 
 function TScriptVariable.GetXml: TXmlDoc;
@@ -210,6 +228,7 @@ begin
     begin
     fValue := AValue;
     FreeAndNil(fXml);
+    JSONFreeAndNil(fJson);
     end;
 end;
 
@@ -291,6 +310,16 @@ var
 begin
   if Find(Name, Index) then
     Result := Variables[Index].Xml
+  else
+    Raise EScriptedDownloaderScriptError.CreateFmt(ERR_SCRIPTS_VARIABLE_NOT_FOUND, [Name]);
+end;
+
+function TScriptVariables.GetJson(const Name: string): TJson;
+var
+  Index: integer;
+begin
+  if Find(Name, Index) then
+    Result := Variables[Index].Json
   else
     Raise EScriptedDownloaderScriptError.CreateFmt(ERR_SCRIPTS_VARIABLE_NOT_FOUND, [Name]);
 end;
@@ -487,13 +516,7 @@ begin
   Xml.SaveToStream(Stream);
 end;
 
-function TScriptEngine.GetLastUpgrade: TDateTime;
-begin
-  if not GetUpgradedScripts(0, Result, nil) then
-    Result := 0;
-end;
-
-function TScriptEngine.GetUpgradedScripts(LastUpgradeDate: TDateTime; out CurrentUpgradeDate: TDateTime; ProviderList: TStrings): boolean;
+function TScriptEngine.GetUpgradedScripts(LastUpgradeDate: TDateTime; LastUpgradeVersion: integer; out CurrentUpgradeDate: TDateTime; out CurrentUpgradeVersion: integer; ProviderList: TStrings): boolean;
 
   function StrToDate(const Str: string; out Date: TDateTime): boolean;
     var
@@ -514,12 +537,27 @@ function TScriptEngine.GetUpgradedScripts(LastUpgradeDate: TDateTime; out Curren
       end;
     end;
 
+  function CompareDateTimeAndVersion(CurrentDateTime: TDateTime; CurrentVersion: integer; BestDateTime: TDateTime; BestVersion: integer): integer;
+    begin
+      if CurrentDateTime > BestDateTime then
+        Result := 1
+      else if CurrentDateTime < BestDateTime then
+        Result := -1
+      else if CurrentVersion > BestVersion then
+        Result := 1
+      else if CurrentVersion < BestVersion then
+        Result := -1
+      else
+        Result := 0;
+    end; 
+
   procedure ProcessNode(ContainerNode: TXmlNode);
     var
-      i: integer;
+      i, ix: integer;
       Node: TXmlNode;
-      sChanged, Provider: string;
+      sChanged, sChangedDate, Provider: string;
       Changed: TDateTime;
+      ChangedVersion: integer;
     begin
       if ContainerNode <> nil then
         for i := 0 to Pred(ContainerNode.NodeCount) do
@@ -529,21 +567,38 @@ function TScriptEngine.GetUpgradedScripts(LastUpgradeDate: TDateTime; out Curren
             if Node.Name = 'script' then
               if XmlAttribute(Node, 'changed', sChanged) then
                 if sChanged <> '' then
+                  begin
+                  ix := Pos('.', sChanged);
+                  if ix > 0 then
+                    begin
+                    sChangedDate := Copy(sChanged, 1, Pred(ix));
+                    ChangedVersion := StrToIntDef(Copy(sChanged, Succ(ix), MaxInt), 0);
+                    end
+                  else
+                    begin
+                    sChangedDate := sChanged;
+                    ChangedVersion := 0;
+                    end;
                   if StrToDate(sChanged, Changed) then
                     begin
-                    if Changed > CurrentUpgradeDate then
+                    if CompareDateTimeAndVersion(Changed, ChangedVersion, CurrentUpgradeDate, CurrentUpgradeVersion) > 0 then
+                      begin
                       CurrentUpgradeDate := Changed;
-                    if Changed > LastUpgradeDate then
+                      CurrentUpgradeVersion := ChangedVersion;
+                      end;
+                    if CompareDateTimeAndVersion(Changed, ChangedVersion, LastUpgradeDate, LastUpgradeVersion) > 0 then
                       if ProviderList <> nil then
                         if XmlAttribute(Node, 'provider', Provider) then
                           if ProviderList.IndexOf(Provider) < 0 then
                             ProviderList.Add(Provider);
                     end;
+                  end;
           end;
     end;
 
 begin
   CurrentUpgradeDate := 0;
+  CurrentUpgradeVersion := 0;
   if ProviderList <> nil then
     ProviderList.Clear;
   ProcessNode(Scripts);
@@ -553,11 +608,17 @@ begin
   Result := True;
 end;
 
-function TScriptEngine.GetUpgradedScriptsSince(Since: TDateTime; ProviderList: TStrings): boolean;
+function TScriptEngine.GetUpgradedScriptsSince(Since: TDateTime; SinceVer: integer; ProviderList: TStrings): boolean;
 var
   DummyDate: TDateTime;
+  DummyVer: integer;
 begin
-  Result := GetUpgradedScripts(Since, DummyDate, ProviderList);
+  Result := GetUpgradedScripts(Since, SinceVer, DummyDate, DummyVer, ProviderList);
+end;
+
+function TScriptEngine.GetUpgradedScriptVersion(out Date: TDateTime; out Version: integer): boolean;
+begin
+  Result := GetUpgradedScripts(0, 0, Date, Version, nil);
 end;
 
 end.

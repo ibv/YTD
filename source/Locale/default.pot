@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: YTD 1.54\n"
-"POT-Creation-Date: 2016-01-10 17:57\n"
-"PO-Revision-Date: 2016-01-10 17:57\n"
+"Project-Id-Version: YTD 1.55\n"
+"POT-Creation-Date: 2016-01-24 17:16\n"
+"PO-Revision-Date: 2016-01-24 17:16\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -682,18 +682,18 @@ msgstr ""
 msgid "[%*.*d of %d]"
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:182
+#: Base/uScriptedDownloader.pas:186
 msgid "TScriptedDownloader.UrlRegExp may not be "
 "called."
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:216
+#: Base/uScriptedDownloader.pas:220
 msgid "Invalid MovieID - must define script and "
 "ID"
 msgstr ""
 
 #. Downloader: TMSDirectDownloader;
-#: Base/uScriptedDownloader.pas:524
+#: Base/uScriptedDownloader.pas:530
 msgid "SmoothStream is not supported, because I don't know how to "
 "programmatically mux MP4 streams. Can you "
 "help?"
@@ -822,202 +822,202 @@ msgstr ""
 msgid " providers."
 msgstr ""
 
-#: CLI/uYTD.pas:203
+#: CLI/uYTD.pas:204
 msgid "Current version: "
 msgstr ""
 
-#: CLI/uYTD.pas:206
-#: CLI/uYTD.pas:246
+#: CLI/uYTD.pas:207
+#: CLI/uYTD.pas:247
 msgid ", definitions "
 msgstr ""
 
-#: CLI/uYTD.pas:209
+#: CLI/uYTD.pas:210
 msgid "Newest version:  "
 msgstr ""
 
 #. CLI: Couldn't check for a newer version
-#: CLI/uYTD.pas:214
+#: CLI/uYTD.pas:215
 msgid "check failed"
 msgstr ""
 
 #. CLI: Note: pad with spaces to the same length as "Current version:"
-#: CLI/uYTD.pas:237
+#: CLI/uYTD.pas:238
 msgid "Download URL:    "
 msgstr ""
 
-#: CLI/uYTD.pas:257
+#: CLI/uYTD.pas:258
 msgid ", upgraded to "
 msgstr ""
 
-#: CLI/uYTD.pas:266
+#: CLI/uYTD.pas:267
 msgid "Upgraded providers:"
 msgstr ""
 
-#: CLI/uYTD.pas:272
+#: CLI/uYTD.pas:273
 msgid "... and %d others..."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:391
+#: CLI/uYTD.pas:392
 msgid "With -e a filename must be provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:405
+#: CLI/uYTD.pas:406
 msgid "HTML source \"%s\" doesn't contain any useful "
 "links."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:410
+#: CLI/uYTD.pas:411
 msgid "HTML source \"%s\" not found."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:420
+#: CLI/uYTD.pas:421
 msgid "With -s a filename or an URL must be "
 "provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:436
+#: CLI/uYTD.pas:437
 msgid "URL list-file \"%s\" not found."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:442
+#: CLI/uYTD.pas:443
 msgid "With -i a filename must be provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:452
+#: CLI/uYTD.pas:453
 msgid "Destination directory \"%s\" not found."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:458
+#: CLI/uYTD.pas:459
 msgid "With -o a directory name must be provided."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:464
+#: CLI/uYTD.pas:465
 msgid "Unknown parameter \"%s\"."
 msgstr ""
 
 #. CLI: Error message for invalid command line argument
-#: CLI/uYTD.pas:478
+#: CLI/uYTD.pas:479
 msgid "No valid URLs found."
 msgstr ""
 
 #. CLI progress bar. %: Progress bar "graphics", Percent done (integer part), Percent done (fractional part), Downloaded size, Total size
-#: CLI/uYTD.pas:508
+#: CLI/uYTD.pas:509
 msgid "  Downloading: <%s> %d.%d%% (%s/%s)"
 msgstr ""
 
 #. CLI progress bar. %: Downloaded size
-#: CLI/uYTD.pas:513
+#: CLI/uYTD.pas:514
 msgid "  Downloading: %s"
 msgstr ""
 
-#: CLI/uYTD.pas:524
+#: CLI/uYTD.pas:525
 msgid "  ERROR: "
 msgstr ""
 
 #. CLI: Error message to be written to the log file. %: URL, message
-#: CLI/uYTD.pas:526
+#: CLI/uYTD.pas:527
 msgid "FAILED \"%s\": %s"
 msgstr ""
 
 #. CLI: Title shown before playlist item's name. Pad with spaces to the same length as "URL:"
-#: CLI/uYTD.pas:545
+#: CLI/uYTD.pas:546
 msgid "  Playlist item: "
 msgstr ""
 
 #. CLI: Title shown before playlist item's URL. Pad with spaces to the same length as "Playlist item:"
-#: CLI/uYTD.pas:550
+#: CLI/uYTD.pas:551
 msgid "            URL: "
 msgstr ""
 
 #. CLI: Title shown before media title. Pad to the same length as "File name:'
-#: CLI/uYTD.pas:571
+#: CLI/uYTD.pas:572
 msgid "  Media title: "
 msgstr ""
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:572
+#: CLI/uYTD.pas:573
 #. CLI: File already exists, renaming it to a new filename
-#: CLI/uYTD.pas:733
+#: CLI/uYTD.pas:734
 msgid "    File name: "
 msgstr ""
 
 #. CLI: Title shown before media URL. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:573
+#: CLI/uYTD.pas:574
 msgid "  Content URL: "
 msgstr ""
 
-#: CLI/uYTD.pas:579
+#: CLI/uYTD.pas:580
 msgid "Download skipped."
 msgstr ""
 
 #. CLI: Media downloaded successfully
-#: CLI/uYTD.pas:588
+#: CLI/uYTD.pas:589
 msgid "  SUCCESS."
 msgstr ""
 
 #. CLI: User aborted the download
-#: CLI/uYTD.pas:605
+#: CLI/uYTD.pas:606
 msgid "  ABORTED BY USER"
 msgstr ""
 
 #. CLI: Error. %: Exception type, Exception message
-#: CLI/uYTD.pas:610
+#: CLI/uYTD.pas:611
 msgid "ERROR %s: %s"
 msgstr ""
 
 #. CLI: URL couldn't be assigned to any available downloader
-#: CLI/uYTD.pas:625
+#: CLI/uYTD.pas:626
 msgid "Unknown URL."
 msgstr ""
 
-#: CLI/uYTD.pas:645
+#: CLI/uYTD.pas:646
 msgid "Trying to parse as HTML page..."
 msgstr ""
 
 #. CLI: "File ... already exists. What do you want me to do?"
-#: CLI/uYTD.pas:739
+#: CLI/uYTD.pas:740
 msgid "  File "
 msgstr ""
 
-#: CLI/uYTD.pas:741
+#: CLI/uYTD.pas:742
 msgid " already exists."
 msgstr ""
 
-#: CLI/uYTD.pas:742
+#: CLI/uYTD.pas:743
 msgid "  Do you want to: "
 msgstr ""
 
 #. CLI: File already exists. [S]kip it
-#: CLI/uYTD.pas:743
+#: CLI/uYTD.pas:744
 msgid "kip it, "
 msgstr ""
 
 #. CLI: File already exists. [O]verwrite it
-#: CLI/uYTD.pas:744
+#: CLI/uYTD.pas:745
 msgid "verwrite it, or "
 msgstr ""
 
 #. CLI: File already exists. [R]ename it
-#: CLI/uYTD.pas:745
+#: CLI/uYTD.pas:746
 msgid "ename it? "
 msgstr ""
 
 #. CLI: File already exists. Asking user to provide a new filename.
-#: CLI/uYTD.pas:762
+#: CLI/uYTD.pas:763
 msgid "  New filename: "
 msgstr ""
 
 #. CLI: File already exists. User answered something else than [S]kip, [O]verwrite or [R]ename
-#: CLI/uYTD.pas:773
+#: CLI/uYTD.pas:774
 msgid "Incorrect answer."
 msgstr ""
 
@@ -1348,7 +1348,8 @@ msgstr ""
 #: Common/uMessages.pas:98
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:98
-msgid "Failed to download media info page."
+msgid "Failed to download media info page. Check your "
+"firewall!"
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
@@ -1644,11 +1645,18 @@ msgstr ""
 msgid "Invalid <pause> settings."
 msgstr ""
 
-#. Programmer's name for it: ERR_XML_ELEMENT_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND
 #: Common/uMessages.pas:146
-#. Programmer's name for it: ERR_XML_ELEMENT_NOT_FOUND
+#. Programmer's name for it: ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND
 #: Common/uMessages.pas:146
 msgid "XML element not found."
+msgstr ""
+
+#. Programmer's name for it: ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND
+#: Common/uMessages.pas:147
+#. Programmer's name for it: ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND
+#: Common/uMessages.pas:147
+msgid "JSON element not found."
 msgstr ""
 
 #. Programmer's name for it: MSG_CANT_OVERWRITE_FILE
@@ -1891,7 +1899,7 @@ msgstr ""
 msgid "Automatically convert with"
 msgstr ""
 
-#: GUI/guiFunctions.pas:184
+#: GUI/guiFunctions.pas:185
 msgid "... and %d others"
 msgstr ""
 

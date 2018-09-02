@@ -638,9 +638,13 @@ begin
 end;
 
 // author of this routine is IVO GELOV
+// and it doesn't work well for Unicode Delphi
 
-function code2utf(iNumber: Integer): UTF8String;
+function code2utf(iNumber: Integer): string;
 begin
+  {$IFDEF USE_D2009}
+  Result := Char(iNumber)
+  {$ELSE}
   if iNumber < 128 then Result := chr(iNumber)
   else if iNumber < 2048 then
     Result := chr((iNumber shr 6) + 192) + chr((iNumber and 63) + 128)
@@ -651,6 +655,7 @@ begin
     Result := chr((iNumber shr 18) + 240) + chr(((iNumber shr 12) and
       63) + 128) + chr(((iNumber shr 6) and 63) + 128) +
       chr((iNumber and 63) + 128);
+  {$ENDIF}
 end;
 
 { TlkJSONbase }
@@ -1938,7 +1943,8 @@ var
 
     js := TlkJSONstring.Create;
 {$ifdef USE_D2009}
-    js.FValue := UTF8ToString(ws);
+    //js.FValue := UTF8ToString(ws);
+    js.FValue := ws;
 {$else}
     js.FValue := UTF8Decode(ws);
 {$endif}

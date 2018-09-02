@@ -152,6 +152,7 @@ const
   MAX_PROVIDERS_TO_SHOW = 10;
 var
   LastUpgrade: TDateTime;
+  LastUpgradeVersion: integer;
   Providers: TStringList;
   i, n: integer;
 begin
@@ -164,7 +165,7 @@ begin
       if Upgrade.OnlineDefs.Size > 0 then
         if TScriptedDownloader.MainScriptEngine <> nil then
           begin
-          LastUpgrade := TScriptedDownloader.MainScriptEngine.LastUpgrade;
+          TScriptedDownloader.MainScriptEngine.GetUpgradedScriptVersion(LastUpgrade, LastUpgradeVersion);
           TScriptedDownloader.MainScriptEngine.LoadFromStream(Upgrade.OnlineDefs);
           TScriptedDownloader.MainScriptEngine.SaveToFile;
           Result := True;
@@ -172,7 +173,7 @@ begin
             begin
             Providers := TStringList.Create;
               try
-                if TScriptedDownloader.MainScriptEngine.GetUpgradedScriptsSince(LastUpgrade, Providers) then
+                if TScriptedDownloader.MainScriptEngine.GetUpgradedScriptsSince(LastUpgrade, LastUpgradeVersion, Providers) then
                   begin
                   n := Providers.Count;
                   if n > 0 then

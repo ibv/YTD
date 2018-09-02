@@ -40,8 +40,8 @@ unit uScriptedDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
-  uPCRE, uXML, HttpSend, blcksock,
+  SysUtils, Classes, Windows, 
+  uPCRE, uXML, uJSON, uLkJSON, HttpSend, blcksock,
   uDownloader, uOptions, uScripts;
 
 type
@@ -84,6 +84,7 @@ type
       procedure ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiXml(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessMultiJson(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessIf(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessPause(Node: TXmlNode; Vars: TScriptVariables);
       function TestCondition(Node: TXmlNode; Vars: TScriptVariables): boolean;
@@ -100,6 +101,8 @@ type
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
       function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType; out Value: string): boolean; overload;
       function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType): string; overload;
+      function ProcessGetJsonVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
+      function ProcessGetJsonVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string; overload;
@@ -115,6 +118,7 @@ type
       function ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRelativeUrl(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
+      procedure MultiJsonEnum(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
     public
       class function MainScriptEngine: TScriptEngine;
       class procedure InitMainScriptEngine(const FileName: string);
@@ -409,6 +413,8 @@ begin
         ProcessMultiRegExp(ChildNode, Vars)
       else if ChildNode.Name = 'multi_xml' then
         ProcessMultiXml(ChildNode, Vars)
+      else if ChildNode.Name = 'multi_json' then
+        ProcessMultiJson(ChildNode, Vars)
       else if ChildNode.Name = 'if' then
         ProcessIf(ChildNode, Vars)
       else if ChildNode.Name = 'pause' then
@@ -703,6 +709,8 @@ begin
             Result := Result + ProcessGetXmlVar(ChildNode, Vars, xrtValue)
           else if ChildNode.Name = 'get_xml_node' then
             Result := Result + ProcessGetXmlVar(ChildNode, Vars, xrtXml)
+          else if ChildNode.Name = 'get_json_var' then
+            Result := Result + ProcessGetJsonVar(ChildNode, Vars)
           else if ChildNode.Name = 'download_page' then
             Result := Result + ProcessDownloadPage(ChildNode, Vars)
           else if ChildNode.Name = 'regexp' then
@@ -903,7 +911,7 @@ begin
   if VarName = '' then
     ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
   else if not XmlNodeByPathAndAttr(Vars.Xml[VarName], XmlAttribute(Node, 'path'), XmlAttribute(Node, 'attr'), XmlAttribute(Node, 'attr_value'), DataNode) then
-    ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node)
+    ScriptError(ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND, Node)
   else if XmlResultType = xrtXml then
     Result := Utf8ToString(DataNode.WriteToString)
   else
@@ -912,8 +920,33 @@ begin
     if ResultAttribute = '' then
       Result := XmlValueIncludingCData(DataNode)
     else if not XmlAttribute(DataNode, ResultAttribute, Result) then
-      ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node);
+      ScriptError(ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND, Node);
     end;
+end;
+
+function TScriptedDownloader.ProcessGetJsonVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
+begin
+  // This way because multiple error conditions exist
+  try
+    Value := ProcessGetJsonVar(Node, Vars);
+    Result := True;
+  except
+    Result := False;
+    end;
+end;
+
+function TScriptedDownloader.ProcessGetJsonVar(Node: TXmlNode; Vars: TScriptVariables): string;
+var
+  VarName: string;
+  DataNode: TJson;
+begin
+  VarName := XmlAttribute(Node, 'id');
+  if VarName = '' then
+    ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
+  else if not JSONNodeByPath(Vars.Json[VarName], XmlAttribute(Node, 'path'), DataNode) then
+    ScriptError(ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND, Node)
+  else
+    Result := JSONValue(DataNode);
 end;
 
 function TScriptedDownloader.CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
@@ -1075,7 +1108,58 @@ begin
           end;
       end;
     if not Found then
-      ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node)
+      ScriptError(ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND, Node)
+    end;
+end;
+
+type
+  PProcessMultiJsonEnumInfo = ^TProcessMultiJsonEnumInfo;
+  TProcessMultiJsonEnumInfo = record
+    Node: TXmlNode;
+    Vars: TScriptVariables;
+    NameVarName: string;
+    DestVarName: string;
+    NodeName: string;
+    Found: boolean;
+  end;
+
+procedure TScriptedDownloader.MultiJsonEnum(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+var
+  Info: PProcessMultiJsonEnumInfo;
+begin
+  Info := data;
+  if (Info.NodeName = '') or (ElName = Info.NodeName) then
+    begin
+    Info.Found := True;
+    if Info.NameVarName <> '' then
+      Info.Vars[Info.NameVarName] := ElName;
+    Info.Vars[Info.DestVarName] := JSONValue(Elem);
+    ProcessScript(Info.Node, Info.Vars);
+    end;
+end;
+
+procedure TScriptedDownloader.ProcessMultiJson(Node: TXmlNode; Vars: TScriptVariables);
+var
+  EnumInfo: TProcessMultiJsonEnumInfo;
+  SrcVarName: string;
+  OwnerNode: TJsonNode;
+begin
+  SrcVarName := XmlAttribute(Node, 'id');
+  EnumInfo.DestVarName := XmlAttribute(Node, 'var');
+  if (SrcVarName = '') or (EnumInfo.DestVarName = '') then
+    ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
+  else
+    begin
+    OwnerNode := Vars.Json[SrcVarName];
+    EnumInfo.Node := Node;
+    EnumInfo.Vars := Vars;
+    EnumInfo.NameVarName := XmlAttribute(Node, 'namevar');
+    EnumInfo.NodeName := XmlAttribute(Node, 'node');
+    EnumInfo.Found := False;
+    if OwnerNode is TlkJSONcustomlist then
+      TlkJSONcustomlist(OwnerNode).ForEach(MultiJsonEnum, @EnumInfo);
+    if not EnumInfo.Found then
+      ScriptError(ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND, Node)
     end;
 end;
 
@@ -1127,6 +1211,8 @@ begin
     Result := ProcessGetVar(Node, Vars, Dummy)
   else if ConditionType = 'xml_var_exists' then
     Result := ProcessGetXmlVar(Node, Vars, xrtValue, Dummy)
+  else if ConditionType = 'json_var_exists' then
+    Result := ProcessGetJsonVar(Node, Vars, Dummy)
   else
     ScriptError(ERR_SCRIPTS_UNKNOWN_CONDITION, Node);
 end;

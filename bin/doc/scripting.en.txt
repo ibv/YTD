@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.54+                                                   (c) 2009-16 Pepak
+YTD v1.55+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -451,6 +451,18 @@ error.
               <debug>Node &lt;video&gt;/&lt;url&gt; exists</debug>
             </condition>
 
+    3.13.4 "json_var_exists"
+
+        The condition tag gets processed as if it were a <get_json_var> tag
+        (see section 4.17 below). If successful, that is, if a JSON content
+        identified by the path exist, the condition is satisfied.
+
+        Example:
+
+            <condition type="json_var_exists" id="json" path="video/url">
+              <debug>Node "video":{"url":...}} exists</debug>
+            </condition>
+
 
 
 3.14 <pause>
@@ -501,6 +513,45 @@ error.
         <multi_xml id="src" var="x" node="item">
           <debug><get_xml_var id="x" path="content"/></debug>
         </multi_xml>
+
+        will output two lines, first "1" and then "2".
+
+3.16 <multi_json>
+-------------------
+
+    This command lets you loop over all elements of a JSON document, 
+    processing each separately (possibly with the help of <best_var> command).
+
+    The <multi_json> tag's contents can be anything that could appear within
+    a <script> tag, particularly a <best_var> or a sequence of <set_var>.
+
+    The attributes are:
+
+      - "id" (mandatory) - the name of the variable which provides 
+        a XML document which gets looped.
+      - "var" (mandatory) - the name of the variable into which each found
+        node will be stored. In the inner script, you can refer to this
+        variable and process it using e.g. <get_var> or <get_json_var> 
+        function.
+      - "namevar" (optional) - if non-empty, defined the name of the variable
+        into which the name of the found node will be stored.
+      - "node" (optional) - if non-empty, defines the name of the nodes
+        that you want to process. All others will be skipped automatically.
+
+    Example:
+
+        Assume the following JSON document stored in variable "src":
+
+        {
+          "item" : { "content": 1 },
+          "item" : { "content": 2 }
+        }
+
+        Then the following script:
+
+        <multi_json id="src" var="x" node="item">
+          <debug><get_json_var id="x" path="content"/></debug>
+        </multi_json>
 
         will output two lines, first "1" and then "2".
 
@@ -889,3 +940,20 @@ Example:
       - "path" (optional) - see <get_xml_var> (4.2) for description.
       - "attr", "attr_value" (optional) - see <get_xml_var> (4.2) for 
         description.
+
+
+4.17 <get_json_var>
+-------------------
+
+    This function will read a value from a JSON document. It uses a 
+    drastically simplified query language to identify which value to read.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - the name of the variable which stores the JSON.
+      - "path" (optional) - if provided and non-empty, it will split the
+        value by slashes ("/") and search for a node identified by that
+        path. If not provided or empty, it will work with the root element.
+        E.g., if "path" is "some/tag", it will search for an element "tag"
+        which must lie inside element "some" which lies inside the root
+        of the JSON document: "{ 'some': { 'tag': 'data' } }"

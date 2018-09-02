@@ -40,7 +40,7 @@ unit uJSON;
 interface
 
 uses
-  SysUtils, uLkJSON;
+  SysUtils, uLkJSON {$IFDEF DELPHI6_UP} , Variants {$ENDIF} ;
 
 type
   TJSON = TlkJSONbase;
@@ -53,6 +53,9 @@ procedure JSONFreeAndNil(var JSON: TJSON);
 
 function JSONNodeByPath(JSON: TJSONNode; Path: string; out FoundNode: TJSONNode): boolean;
   // Note: numeric indexes are not supported for objects
+function JSONValue(JSON: TJSON): string; overload;
+function JSONValue(JSON: TJSON; const Path: string): string; overload;
+function JSONValue(JSON: TJSON; const Path: string; out Value: string): boolean; overload;
 
 implementation
 
@@ -107,6 +110,38 @@ begin
           Result := JSONNodeByPath(JSON.Child[i], Path, FoundNode);
         end;
       end;
+end;
+
+function JSONValue(JSON: TJSON): string;
+begin
+  if JSON is TlkJSONnumber then
+    Result := FloatToStr(TlkJSONnumber(JSON).Value)
+  else if JSON is TlkJSONstring then
+    Result := VarToStr(JSON.Value)
+  else if JSON is TlkJSONboolean then
+    if JSON.Value = True then
+      Result := '1'
+    else
+      Result := '0'
+  else if JSON is TlkJSONnull then
+    Result := ''
+  else
+    Result := TlkJSON.GenerateText(JSON);
+end;
+
+function JSONValue(JSON: TJSON; const Path: string; out Value: string): boolean;
+var
+  Node: TJSONNode;
+begin
+  Result := JSONNodeByPath(JSON, Path, Node);
+  if Result then
+    Value := JSONValue(Node);
+end;
+
+function JSONValue(JSON: TJSON; const Path: string): string;
+begin
+  if not JSONValue(JSON, Path, Result) then
+    Result := '';
 end;
 
 end.

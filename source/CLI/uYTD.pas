@@ -196,6 +196,7 @@ function TYTD.ShowVersion(DoUpgrade: boolean): boolean;
 var
   Upgrade: TYTDUpgrade;
   LastUpgrade: TDateTime;
+  LastUpgradeVersion: integer;
   Providers: TStringList;
   i: integer;
 begin
@@ -251,14 +252,14 @@ begin
               Upgrade.DownloadDefsUpgrade(False, False);
            if Upgrade.OnlineDefs <> nil then
               try
-                LastUpgrade := TScriptedDownloader.MainScriptEngine.LastUpgrade;
+                TScriptedDownloader.MainScriptEngine.GetUpgradedScriptVersion(LastUpgrade, LastUpgradeVersion);
                 TScriptedDownloader.MainScriptEngine.LoadFromStream(Upgrade.OnlineDefs);
                 TScriptedDownloader.MainScriptEngine.SaveToFile;
                 Write(_(', upgraded to '));
                 WriteColored(ccLightCyan, TScriptedDownloader.MainScriptEngine.Version);
                 Providers := TStringList.Create;
                 try
-                  if TScriptedDownloader.MainScriptEngine.GetUpgradedScriptsSince(LastUpgrade, Providers) then
+                  if TScriptedDownloader.MainScriptEngine.GetUpgradedScriptsSince(LastUpgrade, LastUpgradeVersion, Providers) then
                     if Providers.Count > 0 then
                       begin
                       Providers.Sort;

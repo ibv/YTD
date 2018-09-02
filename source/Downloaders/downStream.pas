@@ -36,27 +36,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downStream;
 {$INCLUDE 'ytd.inc'}
-{.DEFINE XMLINFO}
+
+// Token se da ziskat debugovanim stranky prehravace v Chrome,
+// dat breakpoint na funkci MD5 v /static/js/stream.all.js?751835d
+// a podivat se, co je pred lomitkem.
 
 interface
 
 uses
   SysUtils, Classes, Windows,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, uJSON, uLkJSON, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader, uHttpDirectDownloader;
 
 type
   TDownloader_Stream = class(THttpDownloader)
     private
     protected
-      StreamsRegexp: TRegExp;
-    protected
-      function GetMovieInfoUrlForID(const ID: string): string; virtual;
-    protected
+      function GetApiPath: string;
+      function GetApiPassword: string;
       function GetMovieInfoUrl: string; override;
+      function GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean; override;
+      procedure ProcessMediaList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+      procedure ProcessMediaFormatList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
+      class function Features: TDownloaderFeatures; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -65,31 +70,32 @@ type
 implementation
 
 uses
+  uCompatibility,
+  uStrings,
   uStringConsts,
-  {$IFDEF XMLINFO}
-  uXML,
-  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
-// http://www.stream.cz/reklamozrouti/410282-reklamozrouti-medvedi-reklama
-// http://www.stream.cz/video/410282-reklamozrouti-medvedi-reklama
-// http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
-// http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
+// https://www.stream.cz/chlapidarium/10008864-zeny-ktere-byste-mit-doma-nechteli
 const
-  URLREGEXP_BEFORE_ID = '(?<!old\.)stream\.cz/';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = 'stream\.cz/[^/]+/';
+  URLREGEXP_ID =        REGEXP_NUMBERS;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_STREAMS = '\{\s*"source"\s*:\s*"(?P<URL>https?://[^"]+)"\s*,\s*"type"\s*:\s*"[^"]*"\s*,\s*"quality_label"\s*:\s*"[^"]*"\s*,\s*"quality"\s*:\s*"(?P<QUALITY>\d+)[^"]*"\s*\}';
+  STREAM_API_URL = 'https://www.stream.cz/API';
+  STREAM_TOKEN = 'fb5f58a820353bd7095de526253c14fd';
 
 { TDownloader_Stream }
 
 class function TDownloader_Stream.Provider: string;
 begin
   Result := 'Stream.cz';
+end;
+
+class function TDownloader_Stream.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRequireSecureToken];
 end;
 
 class function TDownloader_Stream.UrlRegExp: string;
@@ -101,51 +107,119 @@ constructor TDownloader_Stream.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  StreamsRegexp := RegExCreate(REGEXP_MOVIE_STREAMS);
 end;
 
 destructor TDownloader_Stream.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(StreamsRegexp);
   inherited;
+end;
+
+function TDownloader_Stream.GetApiPath: string;
+begin
+  Result := '/episode/' + MovieID;
+end;
+
+function TDownloader_Stream.GetApiPassword: string;
+var
+  Data: AnsiString;
+begin
+  Data := {$IFDEF UNICODE} AnsiString {$ENDIF} (STREAM_TOKEN + GetApiPath + IntToStr(UnixTimestamp div (3600*24)));
+  Result := HexEncode(MD5(Data));
 end;
 
 function TDownloader_Stream.GetMovieInfoUrl: string;
 begin
-  Result := GetMovieInfoUrlForID(MovieID);
+  Result := STREAM_API_URL + GetApiPath;
 end;
 
-function TDownloader_Stream.GetMovieInfoUrlForID(const ID: string): string;
+function TDownloader_Stream.GetMovieInfoContent(Http: THttpSend; Url: string; out Page: string; out Xml: TXmlDoc): boolean;
 begin
-  Result := 'http://www.stream.cz/' + ID;
+  ClearHttp(Http);
+  Http.Headers.Add('Api-Password: '+ GetApiPassword);
+  Result := DownloadPage(Http, Url, Page, InfoPageEncoding, hmGET, False);
+  Xml := nil;
+end;
+
+type
+  PBestUrlInfo = ^TBestUrlInfo;
+  TBestUrlInfo = record
+    Url: string;
+    Quality: integer;
+    Found: boolean;
+  end;
+
+procedure TDownloader_Stream.ProcessMediaFormatList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+var
+  BestUrl: PBestUrlInfo;
+  Url, sQuality: string;
+  i, Quality: integer;
+begin
+  BestUrl := data;
+  //Writeln(TlkJSON.GenerateText(Elem));
+  if JSONValue(Elem, 'source', Url) then
+    begin
+    sQuality := JSONValue(Elem, 'quality');
+    Quality := 0;
+    for i := 1 to Length(sQuality) do
+      if CharInSet(sQuality[i], ['0'..'9']) then
+        Quality := 10 * Quality + Ord(sQuality[i]) - Ord('0')
+      else
+        Break;
+    if Quality > BestUrl.Quality then
+      begin
+      BestUrl.Url := Url;
+      BestUrl.Quality := Quality;
+      BestUrl.Found := True;
+      end;
+    end;
+end;
+
+procedure TDownloader_Stream.ProcessMediaList(ElName: string; Elem: TlkJSONbase; data: pointer; var Continue: Boolean);
+var
+  Items: TJSONnode;
+begin
+  //Writeln(TlkJSON.GenerateText(Elem));
+  if JSONNodeByPath(Elem, 'formats', Items) then
+    if Items is TlkJSONcustomlist then
+      TlkJSONcustomlist(Items).ForEach(ProcessMediaFormatList, data);
 end;
 
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  BestUrl, Url, sQuality: string;
-  BestQuality, Quality: integer;
+  Info, UrlList: TJSON;
+  BestUrl: TBestUrlInfo;
+  ErrorMsg, Title: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  BestUrl := '';
-  BestQuality := -1;
-  if GetRegExpVars(StreamsRegexp, Page, ['URL', 'QUALITY'], [@Url, @sQuality]) then
-    repeat
-      Quality := StrToIntDef(sQuality, 0);
-      if Quality > BestQuality then
+  Info := JSONCreate(Page);
+  try
+    if JSONValue(Info, 'hint', ErrorMsg) then
+      SetLastErrorMsg(Format(ERR_SERVER_ERROR, [ErrorMsg]))
+    else if not JSONValue(Info, 'name', Title) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+    else if not JSONNodeByPath(Info, 'video_qualities', UrlList) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    else if not (UrlList is TlkJSONcustomlist) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+    else
+      begin
+      BestUrl.Url := '';
+      BestUrl.Quality := -1;
+      BestUrl.Found := False;
+      TlkJSONcustomlist(UrlList).ForEach(ProcessMediaList, @BestUrl);
+      if not BestUrl.Found then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+      else
         begin
-        BestUrl := Url;
-        BestQuality := Quality;
+        MovieUrl := BestUrl.Url;
+        Name := {$IFNDEF UNICODE} AnsiEncodedUtf8ToString {$ENDIF} (Title);
+        SetPrepared(True);
+        Result := True;
         end;
-    until not GetRegExpVarsAgain(StreamsRegexp, ['URL', 'QUALITY'], [@Url, @sQuality]);
-  if BestUrl <> '' then
-    begin
-    MovieUrl := JSDecode(BestUrl);
-    Name := UrlDecode(UnpreparedName);
-    SetPrepared(True);
-    Result := True;
+      end;
+  finally
+    JSONFreeAndNil(Info);
     end;
 end;
 

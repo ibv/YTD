@@ -336,7 +336,7 @@ uses
   downStastneVdovy in 'Downloaders\downStastneVdovy.pas',
   downSteamPowered in 'Downloaders\downSteamPowered.pas',
   downStickam in 'Downloaders\downStickam.pas',
-  //downStream in 'Downloaders\downStream.pas',
+  downStream in 'Downloaders\downStream.pas',
   downStreetFire in 'Downloaders\downStreetFire.pas',
   downStudioPlus in 'Downloaders\downStudioPlus.pas',
   downStupidVideos in 'Downloaders\downStupidVideos.pas',
