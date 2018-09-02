@@ -60,6 +60,7 @@ type
     private
     protected
       YouTubeConfigRegExp: TRegExp;
+      YouTubeConfigJSRegExp: TRegExp;
       FormatListRegExp: TRegExp;
       FlashVarsParserRegExp: TRegExp;
       HttpFmtUrlMapRegExp: TRegExp;
@@ -130,6 +131,7 @@ const
 
 const
   REGEXP_EXTRACT_CONFIG = '<embed\b[^>]*\sflashvars="(?P<FLASHVARS>[^"]+)"';
+  REGEXP_EXTRACT_CONFIG_JS = '\bflashvars\s*=(?P<QUOTE>\\?["''])(?P<FLASHVARS>.+?)(?P=QUOTE)';
   REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
@@ -181,6 +183,7 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   YouTubeConfigRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG);
+  YouTubeConfigJSRegExp := RegExCreate(REGEXP_EXTRACT_CONFIG_JS);
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
   FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST);
@@ -196,6 +199,7 @@ end;
 destructor TDownloader_YouTube.Destroy;
 begin
   RegExFreeAndNil(YouTubeConfigRegExp);
+  RegExFreeAndNil(YouTubeConfigJSRegExp);
   RegExFreeAndNil(MovieTitleRegExp);
   RegExFreeAndNil(FlashVarsParserRegExp);
   RegExFreeAndNil(FormatListRegExp);
@@ -462,11 +466,14 @@ begin
   if DownloadPage(Http, 'http://www.youtube.com/get_video_info?video_id=' + MovieID, FlashVars) then
     InfoFound := ProcessFlashVars(Http, FlashVars, Title, Url);
   if not InfoFound then
-    if not GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-    else
+    if GetRegExpVar(YouTubeConfigRegExp, Page, 'FLASHVARS', FlashVars) then
       InfoFound := ProcessFlashVars(Http, FlashVars, Title, Url);
-  if InfoFound then
+  if not InfoFound then
+    if GetRegExpVar(YouTubeConfigJSRegExp, Page, 'FLASHVARS', FlashVars) then
+      InfoFound := ProcessFlashVars(Http, JSDecode(FlashVars), Title, Url);
+  if not InfoFound then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else
     begin
     if Title <> '' then
       SetName(Title);

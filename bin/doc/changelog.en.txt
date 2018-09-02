@@ -1,11 +1,22 @@
 ______________________________________________________________________________
 
-YTD v1.02                                                    (c) 2009-12 Pepak
+YTD v1.03                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.03:
+
+    * Nova.cz: Support for another embedding style.
+
+    * YouTube.com: Support for third-party videos which use a javascript-based
+      player setup.
+
+    * Updated the language file.
+
+
 
   v1.02:
 

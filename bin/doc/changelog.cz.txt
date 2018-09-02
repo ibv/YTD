@@ -1,11 +1,22 @@
 ______________________________________________________________________________
 
-YTD v1.02                                                    (c) 2009-12 Pepak
+YTD v1.03                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.03:
+
+    * Nova.cz: Podpora pro další typy vkládaných videí (napø. poker.nova.cz).
+
+    * YouTube.com: Podpora pro videa nìkterých tøetích stran, která používají
+      speciální zápis pøehrávaèe.
+
+    * Aktualizován jazykový soubor.
+
+
 
   v1.02:
 

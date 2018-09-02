@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.62\n"
-"POT-Creation-Date: 2011-12-19 18:32\n"
-"PO-Revision-Date: 2011-12-31 07:26+0100\n"
+"POT-Creation-Date: 2012-01-29 15:46\n"
+"PO-Revision-Date: 2012-01-29 15:48+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -464,7 +464,7 @@ msgstr "Automaticky přejmenovat"
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:198
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:24
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:40
 msgid "Download &subtitles if available"
 msgstr "Pokud jsou k dispozici, stahovat &titulky"
 
@@ -566,13 +566,23 @@ msgstr "Sp&ustit z aktuálního umístění bez instalace"
 msgid "Secure &Token:"
 msgstr "Secure &Token:"
 
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelUserName..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:23
+msgid "&User name:"
+msgstr "Přihlašovací &jméno:"
+
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelPassword..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:31
+msgid "&Password:"
+msgstr "Přihlašovací &heslo:"
+
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckConvertSubtitles..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:49
 msgid "&Convert subtitles to .SRT format"
 msgstr "&Konvertovat titulky do formátu .SRT"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:57
 msgid "&Live stream mode (much slower, but more stable)"
 msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
 
@@ -1181,9 +1191,15 @@ msgstr "Server hlásí chybu: %s"
 msgid "Invalid configuration: Secure token not set."
 msgstr "Chybné nastavení: SecureToken není nastaven."
 
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#. Programmer's name for it: ERR_LOGIN_FAILED
+#: Common/uMessages.pas:97
+msgid "Login failed."
+msgstr "Přihlášení se nezdařilo."
+
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:98
+#: Common/uMessages.pas:99
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Nepodařilo se načíst knihovnu \"%s\" nebo její závislosti."
 
@@ -1371,9 +1387,9 @@ msgid "Automatically convert with"
 msgstr "Automaticky konvertovat pomocí"
 
 #. Programmer's name for it: INITIALRUN_WELCOMEMSG
-#: GUI/guiOptions.pas:116
-#: GUI/guiOptions.pas:173
-#: GUI/guiOptions.pas:175
+#: GUI/guiOptions.pas:86
+#: GUI/guiOptions.pas:143
+#: GUI/guiOptions.pas:145
 msgid ""
 "This is the first time you are running the GUI version\n"
 "of YTD, or the configuration file isn't available.\n"
@@ -1386,7 +1402,7 @@ msgstr ""
 "YTD na některá nastavení, která mají na soukromí vliv."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:124
+#: GUI/guiOptions.pas:94
 msgid ""
 "Would you like to run YTD in portable mode?\n"
 "\n"
@@ -1409,7 +1425,7 @@ msgstr ""
 "ANO = přenositelný režim, NE = normální režim"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:136
+#: GUI/guiOptions.pas:106
 msgid ""
 "Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
@@ -1438,24 +1454,25 @@ msgstr ""
 "Má YTD automaticky zjišťovat nové verze?"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:139
+#: GUI/guiOptions.pas:109
 msgid "Change container to .AVI"
 msgstr "Změnit kontejner na .AVI"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:142
+#: GUI/guiOptions.pas:112
 msgid "Convert movie to AVI/XVID"
 msgstr "Zkonvertovat film do AVI/XVID"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:145
+#: GUI/guiOptions.pas:115
 msgid "Convert movie to AVI/H264"
 msgstr "Zkonvertovat film do AVI/H264"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
-#: GUI/guiOptions.pas:149
-#: GUI/guiOptions.pas:181
-#: GUI/guiOptions.pas:183
+#. {$ENDIF}
+#: GUI/guiOptions.pas:119
+#: GUI/guiOptions.pas:152
+#: GUI/guiOptions.pas:154
 msgid ""
 "Error loading configuration file. Error %s:\n"
 "%s\n"
