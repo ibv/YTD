@@ -330,6 +330,12 @@ var
   PlayerHttp: THttpSend;
   EmbedPlayer, Auth, HQStream, LQStream, ZoneGEO, Geo, Stream, Url: string;
 begin
+  // Poznamka: Balutbj zjistil, ze krome LQ a HQ existuje jeste vyssi kvalita "HD".
+  // Problem je v tom, ze se do ni neda dostat primo ze stranek, je potreba hacknout
+  // HQStream - pokud normalni HQStream je 'Prima-1210210000-21275_1000.mp4', tak
+  // odpovidajici HD stream je 'hq/Prima-1210210000-21275_1500.mp4' (tzn. prefix
+  // 'hq/' a z 1000 je 1500. Jenze to funguje jen u nekterych videi a neda se to
+  // zjistit jinak nez tak, ze to zkusim stahnout...
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   PlayerHttp := CreateHttp;

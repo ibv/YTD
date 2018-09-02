@@ -34,33 +34,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downMojeVideoSk;
+unit downViiSk;
 {$INCLUDE 'ytd.inc'}
-
-{
-  MojeVideo.sk pouziva heslo, ktere se najde ve funkci buildSecureURL ve vpx.swf.
-}
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend, SynaCode,
+  uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_MojeVideoSk = class(THttpDownloader)
+  TDownloader_ViiSk = class(THttpDownloader)
     private
-    protected
-      VideoIdRegExp: TRegExp;
-      TimestampRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -72,80 +64,64 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.mojevideo.sk/video/6227/krasa_nasej_planety_v_hq.html
+// http://www.vii.sk/video/35sfxgmr0l/simpsonovi-23x13-fiesta-s-lizou/
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*mojevideo\.sk/video/';
-  URLREGEXP_ID =        '.+';
+  URLREGEXP_BEFORE_ID = 'vii\.sk/video/';
+  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
   URLREGEXP_AFTER_ID =  '';
 
-const
-  REGEXP_EXTRACT_TITLE = REGEXP_TITLE_TITLE;
-  REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
-  REGEXP_EXTRACT_TIMESTAMP = '\bplv\s*\(.*?,\s*(?P<TS>[0-9]+)\s*\)\s*;';
+{ TDownloader_ViiSk }
 
-{ TDownloader_MojeVideoSk }
-
-class function TDownloader_MojeVideoSk.Provider: string;
+class function TDownloader_ViiSk.Provider: string;
 begin
-  Result := 'MojeVideoSk.com';
+  Result := 'Vii.sk';
 end;
 
-class function TDownloader_MojeVideoSk.UrlRegExp: string;
+class function TDownloader_ViiSk.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-class function TDownloader_MojeVideoSk.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features + [dfRequireSecureToken];
-end;
-
-constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
+constructor TDownloader_ViiSk.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(REGEXP_EXTRACT_TITLE);
-  VideoIdRegExp := RegExCreate(REGEXP_EXTRACT_ID);
-  TimestampRegExp := RegExCreate(REGEXP_EXTRACT_TIMESTAMP);
+  InfoPageEncoding := peXml;
+  InfoPageIsXml := True;
 end;
 
-destructor TDownloader_MojeVideoSk.Destroy;
+destructor TDownloader_ViiSk.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(VideoIdRegExp);
-  RegExFreeAndNil(TimestampRegExp);
   inherited;
 end;
 
-function TDownloader_MojeVideoSk.GetMovieInfoUrl: string;
+function TDownloader_ViiSk.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.mojevideo.sk/video/' + MovieID;
+  Result := 'http://www.vii.sk/xml/' + MovieID + '/xml/';
 end;
 
-function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  Server {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://fs5.mojevideo.sk';
+function TDownloader_ViiSk.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  ID, Signature, Timestamp, Stream: string;
+  Node: TXmlNode;
+  Title, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
+  if not XmlNodeByPath(PageXml, 'trackList/track', Node) then
+    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+  else if not GetXmlVar(Node, 'location', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  else if not GetRegExpVar(TimestampRegExp, Page, 'TS', Timestamp) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
+  else if not GetXmlVar(Node, 'title', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
-    Stream := Format('/%s.mp4', [ID]);
-    Timestamp := LowerCase(IntToHex({UnixTimestamp} StrToInt(Timestamp), 8));
-    Signature := HexEncode(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (Self.Token + Stream + Timestamp)));
-    MovieUrl := Format('%s/dll/%s/%s%s', [Server, Signature, Timestamp, Stream]);
+    SetName(Title);
+    MovieUrl := Url;
     SetPrepared(True);
     Result := True;
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_MojeVideoSk);
+  RegisterDownloader(TDownloader_ViiSk);
 
 end.

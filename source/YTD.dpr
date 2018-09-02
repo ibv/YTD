@@ -370,6 +370,7 @@ uses
   downVideoPortalSK in 'Downloaders\downVideoPortalSK.pas',
   downVideoTiscaliCZ in 'Downloaders\downVideoTiscaliCZ.pas',
   downVideu in 'Downloaders\downVideu.pas',
+  downViiSk in 'Downloaders\downViiSk.pas',
   downViki in 'Downloaders\downViki.pas',
   downVimeo in 'Downloaders\downVimeo.pas',
   downVimeo_Embed in 'Downloaders\downVimeo_Embed.pas',

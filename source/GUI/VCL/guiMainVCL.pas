@@ -232,7 +232,7 @@ begin
     {$IFDEF SINGLEINSTANCE}
     RegisterMainInstance(Self.Handle);
     {$ENDIF}
-    Caption := APPLICATION_CAPTION;
+    Caption := APPLICATION_CAPTION {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ;
     Options := TYTDOptionsGUI.Create;
     UseLanguage(Options.Language);
     {$IFDEF GETTEXT}

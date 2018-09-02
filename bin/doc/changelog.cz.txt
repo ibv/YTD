@@ -1,11 +1,37 @@
 ﻿______________________________________________________________________________
 
-YTD v1.16                                                    (c) 2009-12 Pepak
+YTD v1.17                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.17:
+
+    * Noví poskytovatelé:
+      - Vii.sk
+
+    * Česká televize.cz
+      - Opravena příležitostná chyba errorSOAP.
+      - Podpora pro stahování jen častí pořadů v dohledné době nebude,
+          přestože k nim existují speciální URL.
+
+    * MojeVideo.sk
+      - Aktualizován přehrávač. Stále vyžaduje znalost tokenu.
+
+    * Nova.cz (Voyo.Nova.cz)
+      - Podpora pro Silverlightovou verzi.
+      - Nejsem si jistý, do jaké míry to je stoprocentní: nepřišel jsem na to,
+        jak se rozhoduje o výběru CDN.
+
+    * VideaCesky.cz
+      - Podpora pro další způsob embedování videa.
+
+    * V titulku hlavního okna se nyní zobrazuje informace o tom, jestli je YTD
+      v Unicode nebo v ANSI verzi.
+
+
 
   v1.16:
 

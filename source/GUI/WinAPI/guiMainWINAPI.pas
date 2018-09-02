@@ -362,7 +362,7 @@ begin
   // Application
   SetClassLong(Self.Handle, GCL_HICON, Icon);
   // Caption
-  SetWindowText(Self.Handle, PChar(APPLICATION_CAPTION));
+  SetWindowText(Self.Handle, PChar(APPLICATION_CAPTION {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ));
   // Accelerators
   Accelerators := LoadAccelerators(hInstance, 'MAIN_ACTIONS');
   // Toolbar

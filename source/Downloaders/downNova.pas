@@ -67,7 +67,7 @@ type
     private
     protected
       LowQuality: boolean;
-      SilverlightParamsRegExp: TRegExp;
+      IsSilverlightRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
@@ -107,8 +107,10 @@ type
     private
     protected
       LowQuality: boolean;
-      SilverlightParamsRegExp: TRegExp;
-      SilverlightVarsRegExp: TRegExp;
+      PlayerParamsRegExp: TRegExp;
+      PlayerParamsItemRegExp: TRegExp;
+      MediaDataRegExp: TRegExp;
+      MovieIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -140,6 +142,7 @@ uses
 // http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
 // http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
 // http://voyo.nova.cz/home/plus-video/321-kriminalka-andel-podraz
+// http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
 const
   URLREGEXP_BEFORE_ID = '';
   URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?<!tn\.)nova\.cz/.+$';
@@ -147,13 +150,17 @@ const
 
 const
   REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
+
   REGEXP_RTMP_MOVIE_TITLE = REGEXP_TITLE_H1_CLASS;
   REGEXP_RTMP_MEDIAID = '(?:\bvar\s|\b)media_id\s*=\s*(?P<QUOTE>["'']?)(?P<ID>[0-9]+)(?P=QUOTE)';
   REGEXP_RTMP_MEDIADATA = '\bmediadata\s*\(\s*[0-9]+\s*,\s*[0-9]+\s*,\s*(?P<ID>[0-9]+)';
+
   REGEXP_MS_TITLE = REGEXP_MOVIE_TITLE;
-  REGEXP_MS_INFO {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '<object\s[^>]*\btype="application/x-silverlight-2"(?:(?!</object\b).)*?<param\s+name=''initparams''\s+value=''(?P<INFO>identifier=.+?)''';
-  REGEXP_MS_INFO_NAME {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'INFO';
-  REGEXP_MS_VARIABLES = '\s*(?P<VARNAME>[^=&]+)=(?P<VARVALUE>[^,]*)';
+  REGEXP_MS_IDENTIFIER = '(?P<ID>Silverlight)';
+  REGEXP_MS_PLAYERPARAMS = 'voyoPlayer\.params\s*=\s*\{(?P<PARAMS>.*?)\}\s*;';
+  REGEXP_MS_PLAYERPARAMS_ITEM = '\b(?P<VARNAME>[a-z0-9_]+)\s*:\s*(?P<QUOTE>["'']?)(?P<VARVALUE>.*?)(?P=QUOTE)\s*(?:,|$)';
+  REGEXP_MS_MEDIADATA = '\bnew\s+mediaData\s*\(\s*(?P<PROD_ID>\d+)\s*,\s*(?P<UNIT_ID>\d+)\s*,\s*(?P<MEDIA_ID>\d+)';
+  REGEXP_MS_STREAMID = '<param\s+value=\\"(?:[^,]*,)*identifier=(?P<ID>(?P<YEAR>\d{4})-(?P<MONTH>\d{2})-[^",]+)';
 
 const
   NOVA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Nova.cz';
@@ -187,13 +194,13 @@ constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  SilverlightParamsRegExp := RegExCreate(REGEXP_MS_INFO);
+  IsSilverlightRegexp := RegExCreate(REGEXP_MS_IDENTIFIER);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
 end;
 
 destructor TDownloader_Nova.Destroy;
 begin
-  RegExFreeAndNil(SilverlightParamsRegExp);
+  RegExFreeAndNil(IsSilverlightRegexp);
   inherited;
 end;
 
@@ -207,7 +214,7 @@ var
   Silverlight: string;
 begin
   inherited IdentifyDownloader(Page, PageXml, Http, Downloader);
-  if GetRegExpVar(SilverlightParamsRegExp, Page, REGEXP_MS_INFO_NAME, Silverlight) then
+  if GetRegExpVar(IsSilverlightRegexp, Page, 'ID', Silverlight) then
     Downloader := TDownloader_Nova_MS.Create(MovieID)
   else
     Downloader := TDownloader_Nova_RTMP.Create(MovieID);
@@ -346,16 +353,20 @@ begin
   inherited;
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MS_TITLE);
-  SilverlightParamsRegExp := RegExCreate(REGEXP_MS_INFO);
-  SilverlightVarsRegExp := RegExCreate(REGEXP_MS_VARIABLES);
+  PlayerParamsRegExp := RegExCreate(REGEXP_MS_PLAYERPARAMS);
+  PlayerParamsItemRegExp := RegExCreate(REGEXP_MS_PLAYERPARAMS_ITEM);
+  MediaDataRegExp := RegExCreate(REGEXP_MS_MEDIADATA);
+  MovieIDRegExp := RegExCreate(REGEXP_MS_STREAMID);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
 end;
 
 destructor TDownloader_Nova_MS.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(SilverlightParamsRegExp);
-  RegExFreeAndNil(SilverlightVarsRegExp);
+  RegExFreeAndNil(PlayerParamsRegExp);
+  RegExFreeAndNil(PlayerParamsItemRegExp);
+  RegExFreeAndNil(MediaDataRegExp);
+  RegExFreeAndNil(MediaDataRegExp);
   inherited;
 end;
 
@@ -366,52 +377,29 @@ end;
 
 function TDownloader_Nova_MS.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 const
-  NAMESPACE {$IFDEF MINIMIZESIZE} : Utf8String {$ENDIF} = 'http://streaming.kitd.cz/cdn/nova';
-  SOAP_ACTION = '"http://streaming.kitd.cz/cdn/nova/GetContentUrl"';
-  QUALITY_STR: array[boolean] of WideString = ('LQ', 'HQ');
+  QualitySuffix: array[boolean] of string = ('-LQ', '-HQ');
 var
-  Silverlight, ID, Token, Url: string;
-  Request, Response: TXmlDoc;
-  ResponseHeader, ResponseBody: TXmlNode;
+  Params, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, StreamInfo, Year, Month, ID: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(SilverlightParamsRegExp, Page, REGEXP_MS_INFO_NAME, Silverlight) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-  else if not GetRegExpVarPairs(SilverlightVarsRegExp, Silverlight, ['identifier', 'token'], [@ID, @Token]) then
+  if not GetRegExpVar(PlayerParamsRegExp, Page, 'PARAMS', Params) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not GetRegExpVarPairs(PlayerParamsItemRegExp, Params, ['siteId', 'sectionId', 'subsite'], [@SiteID, @SectionID, @Subsite]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if (SiteID = '') or (SectionID = '') or (Subsite = '') then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not GetRegExpVars(MediaDataRegExp, Page, ['PROD_ID', 'UNIT_ID', 'MEDIA_ID'], [@ProductID, @UnitID, @MediaID]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, Format('http://voyo.nova.cz/bin/eshop/ws/plusPlayer.php?x=playerFlash&prod=%s&unit=%s&media=%s&site=%s&section=%s&subsite=%s&embed=0&mute=0&size=&realSite=%s&width=704&height=441&hdEnabled=%d', [ProductID, UnitID, MediaID, SiteID, SectionID, Subsite, SiteID, Integer(LowQuality)]), StreamInfo) then
+    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  else if not GetRegExpVars(MovieIDRegExp, StreamInfo, ['YEAR', 'MONTH', 'ID'], [@Year, @Month, @ID]) then
+    SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
   else
     begin
-    Request := TXmlDoc.CreateName('GetContentUrl');
-    try
-      Request.Root.AttributeByName['xmlns'] := NAMESPACE;
-      Request.Root.AttributeByName['xmlns:i'] := 'http://www.w3.org/2001/XMLSchema-instance';
-      Request.Root.NodeNew('token').ValueAsUnicodeString := WideString(Token);
-      Request.Root.NodeNew('id').ValueAsUnicodeString := WideString(ID);
-      Request.Root.NodeNew('type').ValueAsUnicodeString := 'Archive';
-      Request.Root.NodeNew('format').ValueAsUnicodeString := QUALITY_STR[not LowQuality];
-      if not DownloadSoap(Http, 'http://fcdn-upload.visual.cz/Services.Test/Player.asmx', SOAP_ACTION, nil, Request.Root, Response, ResponseHeader, ResponseBody) then
-        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-      else
-        try
-          if ResponseBody.NodeCount <= 0 then
-            SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-          else if not GetXmlVar(ResponseBody, 'GetContentUrlResponse/GetContentUrlResult', Url) then
-            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-          else
-            begin
-            MovieUrl := Url;
-            SetPrepared(True);
-            Result := True;
-            end;
-        finally
-          FreeAndNil(Response);
-          ResponseHeader := nil;
-          ResponseBody := nil;
-          end;
-    finally
-      Request.Free;
-      end;
+    MovieUrl := Format('http://cdn1003.nacevi.cz/nova-vod-wmv/%s/%s/%s%s.wmv', [Year, Month, ID, QualitySuffix[not LowQuality]]);
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

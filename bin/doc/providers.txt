@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.16                                                    (c) 2009-12 Pepak
+YTD v1.17                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -192,6 +192,7 @@ NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/consol
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
 Nova.cz             | RTMP     | 8     | http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
                     |          |       | http://vikend.nova.cz/clanek/novinky/vikend-20-3-sedmimilove-boty.html
+                    | MS       |       | http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
@@ -298,6 +299,7 @@ VideoClipsDump.com  | HTTP     |       | http://www.videoclipsdump.com/media/195
 VideoPortal.sf.tv   | RTMP     |       | http://www.videoportal.sf.tv/video?id=b78196ea-a1b2-42e2-a554-a9b0ffa4a4bc
 VideoPortal.sk      | HTTP     |       | http://www.videoportal.sk/cetelemania/martin-kittner.html
 Videu.de            | HTTP     |       | http://www.videu.de/video/4etN3FlaaY
+Vii.sk              | HTTP     |       | http://www.vii.sk/video/35sfxgmr0l/simpsonovi-23x13-fiesta-s-lizou/
 Viki.com            | HTTP     |       | http://a1.vikiassets.com/channels/1565-secret-garden/videos/32690
                     |          |       | http://www.viki.com/channels/1565-secret-garden/videos/32690
 Vimeo.com           | HTTP     |       | http://www.vimeo.com/10777111

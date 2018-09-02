@@ -295,7 +295,7 @@ begin
   Attr := TextAttribute;
   try
     TextColor := ccWhite;
-    Write(Format('%-42.42s (c) 2012 Pepak, ', [AppTitle + ' v' + AppVersion]));
+    Write(Format('%-42.42s (c) 2012 Pepak, ', [AppTitle + ' v' + AppVersion  {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ]));
     WriteColored(ccLightCyan, 'http://www.pepak.net');
     Writeln;
     Writeln(StringOfChar('-', 79));

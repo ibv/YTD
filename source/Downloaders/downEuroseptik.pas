@@ -193,7 +193,7 @@ begin
           s := StringReplace(s, '&#8211;', '---', [rfReplaceAll]);
           s := StripTags(s);
           s := HtmlDecode(s);
-          fSubtitles := s;
+          fSubtitles := {$IFDEF UNICODE} AnsiString {$ENDIF} (s);
           fSubtitlesExt := '.srt';
           Result := True;
           Break;

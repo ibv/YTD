@@ -39,6 +39,10 @@ unit downCT;
 {$DEFINE VER_OLD}
 {$DEFINE VER_20111217}
 
+
+{$DEFINE DEBUG_ERRORSOAP}
+
+
 interface
 
 uses
@@ -147,8 +151,9 @@ const
 implementation
 
 uses
-  {$IFDEF VER_OLD}
   uStringConsts,
+  {$IFDEF VER_OLD}
+  uStrings,
   uJSON, uLkJSON,
   SynaUtil,
   {$ENDIF}
@@ -351,7 +356,7 @@ function TDownloader_CT_old.ConvertMovieObject(var Data: string): boolean;
 
   function SaveJSON(JSON: TJSON; var Res: string; const Path: string): boolean;
     var
-      Value, NewPath: string;
+      Value, NewPath, s: string;
       i: integer;
     begin
       if JSON = nil then
@@ -390,12 +395,12 @@ function TDownloader_CT_old.ConvertMovieObject(var Data: string): boolean;
           if JSON.Value = null then
             Value := ''
           else
-            Value := JSON.Value;
-          Value := UrlEncode(Path) + '=' + UrlEncode(Value);
+            Value := {$IFDEF UNICODE} string {$ENDIF} (StringToUtf8(JSON.Value));
+          s := Format('%s=%s', [UrlEncode(Path), UrlEncode(Value)]);
           if Res = '' then
-            Res := Value
+            Res := s
           else
-            Res := Res + '&' + Value;
+            Res := Format('%s&%s', [Res, s]);
           end;
         end;
     end;
@@ -449,6 +454,7 @@ begin
               if Pos(REKLAMA, ID) <= 0 then
                 if GetXmlAttr(Node, '', 'base', BaseUrl) then
                   begin
+                  // Pro stahovani jen casti reportaze - atributy duration="139" clipBegin="2675"
                   if not Smil_FindBestVideo(Node, Stream, MaxBitrate) then
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else

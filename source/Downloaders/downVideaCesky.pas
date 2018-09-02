@@ -87,12 +87,14 @@ const
 const
   REGEXP_EXTRACT_TITLE = '<title>(?P<TITLE>[^<]*?)\s*-\s*Videa\s*Èesky';
   REGEXP_MOVIE_AREA = '(?P<AREA><div\s[^>]*\bid="contentArea".*)';
-  REGEXP_EXTRACT_NESTED_URLS: array[0..4] of string
+  REGEXP_EXTRACT_NESTED_URLS: array[0..5] of string
     = ('\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="flashvars"\s+value="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
        '<param\s+name="movie"\s+value="\s*(?P<URL>https?://.+?)"',
        '<embed\s+[^>]*\sflashvars="(?:[^"]*&amp;)?file=\s*(?P<URL>https?[^"]+?)(?:&amp;|")',
-       '<embed\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"');
+       '<embed\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"',
+       '<iframe\s+[^>]*\ssrc="\s*(?P<URL>https?[^"]+?)"'
+       );
   {$IFDEF SUBTITLES}
   REGEXP_EXTRACT_SUBTITLE_URLS: array[0..2] of string
     = ('\sflashvars="(?:[^"]*&amp;)?captions\.file=\s*(?P<SUBTITLES>https?://[^&"]+)',
