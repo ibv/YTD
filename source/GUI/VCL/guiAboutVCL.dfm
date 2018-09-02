@@ -3,7 +3,7 @@ object FormAbout: TFormAbout
   Top = 104
   Width = 430
   Height = 300
-  Caption = 'About YouTube Downloader'
+  Caption = 'About YTD'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object FormAbout: TFormAbout
     Top = 8
     Width = 205
     Height = 24
-    Caption = 'YouTube Downloader'
+    Caption = 'YTD'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -19
@@ -84,7 +84,7 @@ object FormAbout: TFormAbout
     Width = 307
     Height = 13
     Anchors = [akTop, akRight]
-    Caption = 'http://www.pepak.net/download/youtube-downloader'
+    Caption = 'http://www.pepak.net/ytd'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11

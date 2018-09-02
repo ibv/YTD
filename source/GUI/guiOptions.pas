@@ -2,12 +2,12 @@
 
 ______________________________________________________________________________
 
-YouTube Downloader                                           (c) 2009-11 Pepak
-http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+YTD v1.00                                                    (c) 2009-12 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 
-Copyright (c) 2011, Pepak (http://www.pepak.net)
+Copyright (c) 2009-12 Pepak (http://www.pepak.net)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -110,12 +110,12 @@ const
 const
   INITIALRUN_WELCOMEMSG = '' +
       'This is the first time you are running the GUI version'#10 +
-      'of YouTube Downloader, or the configuration file isn''t'#10 +
-      'available. To protect your privacy, the program will now'#10 +
-      'ask you about some default values which may influence it.'
+      'of YTD, or the configuration file isn''t available.'#10 +
+      'To protect your privacy, the program will now ask you'#10 +
+      'about some default values which may influence it.'
       ;
   INITIALRUN_WANTPORTABLE = '' +
-      'Would you like to run YouTube Downloader in portable mode?'#10#10 +
+      'Would you like to run YTD in portable mode?'#10#10 +
       'In portable mode, YTD stores its settings in file "ytd.xml"'#10 +
       'in its application directory (which must be writable in order'#10 +
       'for the settings to be stored). In normal (non-portable) mode'#10 +
@@ -123,15 +123,15 @@ const
       'YES = portable mode, NO = normal mode'
       ;
   INITIALRUN_WANTNEWVERSIONCHECK =
-      'Would you like YouTube Downloader to check for new versions'#10 +
+      'Would you like YTD to check for new versions'#10 +
       'on GUI startup?'#10#10 +
-      'In order to perform the check, YouTube Downloader''s server'#10 +
-      'must be contacted, and that means your IP address will be'#10 +
-      'known to it. While this is not a privacy issue for most users,'#10 +
-      'it might be significant for you.'#10 +
-      'If you turn the automatic check off, you can still check for'#10 +
-      'new versions manually by either visiting the program''s website'#10 +
-      'or by entering the About window.'#10#10 +
+      'In order to perform the check, YTD''s server must'#10 +
+      'be contacted, and that means your IP address will be'#10 +
+      'known to it. While this is not a privacy issue for'#10 +
+      'most users, it might be significant for you.'#10 +
+      'If you turn the automatic check off, you can still'#10 +
+      'check for new versions manually by either visiting'#10 +
+      'the program''s websiteor by entering the About window.'#10#10 +
       'Should YTD automatically check for new versions?'
       ;
   DEFAULT_CONVERTER_TO_AVI = 

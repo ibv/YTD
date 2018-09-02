@@ -2,51 +2,51 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-#, fuzzy
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-10-18 18:11\n"
-"PO-Revision-Date: 2011-10-18 18:11\n"
-"Last-Translator: Vladimír Kubala <kubala.v@gmail.com>\n"
+"Project-Id-Version: YTD 1.00\n"
+"POT-Creation-Date: 2011-12-19 18:32\n"
+"PO-Revision-Date: 2011-12-31 07:27+0100\n"
+"Last-Translator: Pepak <pepak@pepak.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: dxgettext 1.2.2\n"
+"Language-Team: \n"
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
-msgid "About YouTube Downloader"
-msgstr "O aplikácii YouTube Downloader"
+msgid "About YTD"
+msgstr "O aplikácii YTD"
 
 #. FormAbout..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:11
 #. FormAbout..LabelYTD..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:27
 #. FormAbout..LabelVersion..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:48
 #. FormAbout..LabelNewestVersion..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:69
 #. FormAbout..LabelHomepage..Font.Name
-#: GUI/VCL/guiAboutVCL.dfm:91
 #. FormSelectConverter..Font.Name
-#: GUI/VCL/guiConverterVCL.dfm:12
 #. FormYTD..Font.Name
-#: GUI/VCL/guiMainVCL.dfm:11
 #. FormOptions..Font.Name
-#: GUI/VCL/guiOptionsVCL.dfm:11
 #. FormSetup..Font.Name
+#: GUI/VCL/guiAboutVCL.dfm:11
+#: GUI/VCL/guiAboutVCL.dfm:27
+#: GUI/VCL/guiAboutVCL.dfm:48
+#: GUI/VCL/guiAboutVCL.dfm:69
+#: GUI/VCL/guiAboutVCL.dfm:91
+#: GUI/VCL/guiConverterVCL.dfm:12
+#: GUI/VCL/guiMainVCL.dfm:11
+#: GUI/VCL/guiOptionsVCL.dfm:11
 #: GUI/VCL/guiSetupVCL.dfm:11
 msgid "MS Sans Serif"
 msgstr "MS Sans Serif"
 
 #. FormAbout..LabelYTD..Caption
-#: GUI/VCL/guiAboutVCL.dfm:23
 #. FormYTD..Caption
+#: GUI/VCL/guiAboutVCL.dfm:23
 #: GUI/VCL/guiMainVCL.dfm:6
-msgid "YouTube Downloader"
-msgstr "YouTube Downloader"
+msgid "YTD"
+msgstr "YTD"
 
 #. FormAbout..LabelVersionLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:36
@@ -76,8 +76,8 @@ msgstr "Domovská stránka:"
 
 #. FormAbout..LabelHomepage..Caption
 #: GUI/VCL/guiAboutVCL.dfm:87
-msgid "http://www.pepak.net/download/youtube-downloader"
-msgstr "http://www.pepak.net/download/youtube-downloader"
+msgid "http://www.pepak.net/ytd"
+msgstr "http://www.pepak.net/ytd"
 
 #. FormAbout..LabelMediaProviders..Caption
 #: GUI/VCL/guiAboutVCL.dfm:101
@@ -85,10 +85,10 @@ msgid "Media providers:"
 msgstr "Servery:"
 
 #. FormAbout..ListProviders......Caption
-#: GUI/VCL/guiAboutVCL.dfm:111
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:170
 #. Create columns
+#: GUI/VCL/guiAboutVCL.dfm:111
+#: GUI/VCL/guiMainVCL.dfm:170
 #: GUI/WinAPI/guiAboutWINAPI.pas:366
 #: GUI/WinAPI/guiMainWINAPI.pas:363
 msgid "Provider"
@@ -106,29 +106,29 @@ msgid "Select converter"
 msgstr "Výber konvertora"
 
 #. FormSelectConverter..LabelConverter..Caption
-#: GUI/VCL/guiConverterVCL.dfm:24
 #. FormOptions..PageOptions..TabDownloadOptions..LabelConverter..Caption
+#: GUI/VCL/guiConverterVCL.dfm:24
 #: GUI/VCL/guiOptionsVCL.dfm:137
 msgid "&Converter:"
 msgstr "Konvertor:"
 
 #. FormSelectConverter..ActionList..actOK..Caption
-#: GUI/VCL/guiConverterVCL.dfm:60
 #. FormOptions..ActionList..actOK..Caption
+#: GUI/VCL/guiConverterVCL.dfm:60
 #: GUI/VCL/guiOptionsVCL.dfm:331
 msgid "&OK"
 msgstr "&OK"
 
 #. FormSelectConverter..ActionList..actCancel..Caption
-#: GUI/VCL/guiConverterVCL.dfm:64
 #. FormOptions..ActionList..actCancel..Caption
+#: GUI/VCL/guiConverterVCL.dfm:64
 #: GUI/VCL/guiOptionsVCL.dfm:336
 msgid "&Cancel"
 msgstr "&Zrušiť"
 
 #. FormYTD..Downloads......Caption
-#: GUI/VCL/guiMainVCL.dfm:166
 #. Download list
+#: GUI/VCL/guiMainVCL.dfm:166
 #: GUI/WinAPI/guiMainWINAPI.pas:362
 msgid "URL"
 msgstr "URL"
@@ -198,29 +198,29 @@ msgid "Stop downloading selected  URL(s)"
 msgstr "Zastaviť sťahovanie vybraných URL"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Caption
-#: GUI/VCL/guiMainVCL.dfm:246
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Caption
+#: GUI/VCL/guiMainVCL.dfm:246
 #: GUI/VCL/guiMainVCL.dfm:253
 msgid "Add URLs from Clipboard"
 msgstr "Pridať URL zo schránky"
 
 #. FormYTD..YTDActions..actAddUrlsFromClipboard..Hint
-#: GUI/VCL/guiMainVCL.dfm:247
 #. FormYTD..YTDActions..actAddUrlsFromClipboard2..Hint
+#: GUI/VCL/guiMainVCL.dfm:247
 #: GUI/VCL/guiMainVCL.dfm:254
 msgid "Add URLs from Clipboard to the list"
 msgstr "Pridať URL zo schránky do zoznamu"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Caption
-#: GUI/VCL/guiMainVCL.dfm:260
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Caption
+#: GUI/VCL/guiMainVCL.dfm:260
 #: GUI/VCL/guiMainVCL.dfm:267
 msgid "Copy URLs to Clipboard"
 msgstr "Kopírovať URL do schránky"
 
 #. FormYTD..YTDActions..actCopyUrlsToClipboard..Hint
-#: GUI/VCL/guiMainVCL.dfm:261
 #. FormYTD..YTDActions..actCopyUrlsToClipboard2..Hint
+#: GUI/VCL/guiMainVCL.dfm:261
 #: GUI/VCL/guiMainVCL.dfm:268
 msgid "Copy URLs from the list to Clipboard"
 msgstr "Kopírovať URL zo zoznamu do schránky"
@@ -282,8 +282,7 @@ msgstr "Uložiť zoznam URL"
 
 #. FormYTD..YTDActions..actSaveUrlList..Hint
 #: GUI/VCL/guiMainVCL.dfm:309
-msgid "Save list of unfinished URLs to a list "
-"file"
+msgid "Save list of unfinished URLs to a list file"
 msgstr "Uložiť zoznam nestiahnutých URL do súboru"
 
 #. FormYTD..YTDActions..actAbout..Caption
@@ -333,13 +332,12 @@ msgstr "Upraviť konfiguračný súbor"
 
 #. FormYTD..YTDActions..actEditConfigFile..Hint
 #: GUI/VCL/guiMainVCL.dfm:344
-msgid "Open the active configuration file in the "
-"editor"
+msgid "Open the active configuration file in the editor"
 msgstr "Otvoriť aktívny konfiguračný súbor v editore"
 
 #. FormYTD..YTDActions..actOptions..Caption
-#: GUI/VCL/guiMainVCL.dfm:350
 #. FormOptions..Caption
+#: GUI/VCL/guiMainVCL.dfm:350
 #: GUI/VCL/guiOptionsVCL.dfm:6
 msgid "Options"
 msgstr "Možnosti"
@@ -360,12 +358,12 @@ msgid "Explore folder"
 msgstr "Otvoriť priečinok"
 
 #. FormYTD..DownloadsPopup..N4..Caption
-#: GUI/VCL/guiMainVCL.dfm:1468
 #. FormYTD..DownloadsPopup..N2..Caption
-#: GUI/VCL/guiMainVCL.dfm:1480
 #. FormYTD..DownloadsPopup..N3..Caption
-#: GUI/VCL/guiMainVCL.dfm:1492
 #. FormYTD..DownloadsPopup..N1..Caption
+#: GUI/VCL/guiMainVCL.dfm:1468
+#: GUI/VCL/guiMainVCL.dfm:1480
+#: GUI/VCL/guiMainVCL.dfm:1492
 #: GUI/VCL/guiMainVCL.dfm:1498
 msgid "-"
 msgstr "-"
@@ -377,8 +375,8 @@ msgid "HTML files|*.htm;*.html|All files|*.*"
 msgstr "HTML súbory|*.htm;*.html|Všetky súbory|*.*"
 
 #. FormYTD..OpenUrlList..Filter
-#: GUI/VCL/guiMainVCL.dfm:1523
 #. FormYTD..SaveUrlList..Filter
+#: GUI/VCL/guiMainVCL.dfm:1523
 #: GUI/VCL/guiMainVCL.dfm:1530
 #: GUI/WinAPI/guiMainWINAPI.pas:631
 msgid "List files (*.lst)|*.lst|All files|*.*"
@@ -412,8 +410,7 @@ msgstr "&Skontrolovať novú verziu pri spustení"
 
 #. FormOptions..PageOptions..TabMain..CheckMonitorClipboard..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:109
-msgid "&Monitor clipboard for downloadable "
-"URLs"
+msgid "&Monitor clipboard for downloadable URLs"
 msgstr "&Sledovať schránku pre podporované URL"
 
 #. FormOptions..PageOptions..TabDownloadOptions..Caption
@@ -438,8 +435,8 @@ msgid "&Automatically start downloads"
 msgstr "Automaticky spustiť nové sťahovanie"
 
 #. FormOptions..PageOptions..TabDownloadOptions..ComboOverwriteMode....Items.Strings
-#: GUI/VCL/guiOptionsVCL.dfm:159
 #. Overwrite mode
+#: GUI/VCL/guiOptionsVCL.dfm:159
 #: GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas:228
 msgid "Ask user"
 msgstr "Opýtať sa používateľa"
@@ -463,9 +460,9 @@ msgid "Rename automatically"
 msgstr "Premenovať automaticky"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:198
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:16
+#: GUI/VCL/guiOptionsVCL.dfm:198
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:24
 msgid "Download &subtitles if available"
 msgstr "Stiahnuť &titulky, ak sú dostupné"
 
@@ -481,8 +478,7 @@ msgstr "Pridať príponu .part počas sťahovania"
 
 #. FormOptions..PageOptions..TabDownloadOptions..CheckDownloadToProviderSubdirs..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:225
-msgid "Store media into su&bdirectories according to their "
-"providers"
+msgid "Store media into su&bdirectories according to their providers"
 msgstr "Uložiť súbory do podpriečinkov podľa poskytovateľov"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
@@ -523,22 +519,22 @@ msgid "Downloader settings"
 msgstr "Nastavenie sťahovačov"
 
 #. FormOptions..ActionList..actDownloadDir..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:340
 #. FormSetup..BtnDestinationDir..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:340
 #: GUI/VCL/guiSetupVCL.dfm:38
 msgid "..."
 msgstr "..."
 
 #. FormOptions..ActionList..actDesktopShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:345
 #. FormSetup..CheckDesktopShortcut..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:345
 #: GUI/VCL/guiSetupVCL.dfm:48
 msgid "Create shortcut on &desktop"
 msgstr "Vytvoriť o&dkaz na ploche"
 
 #. FormOptions..ActionList..actStartMenuShortcut..Caption
-#: GUI/VCL/guiOptionsVCL.dfm:349
 #. FormSetup..CheckStartMenuShortcut..Caption
+#: GUI/VCL/guiOptionsVCL.dfm:349
 #: GUI/VCL/guiSetupVCL.dfm:59
 msgid "Create shortcut in &Start menu"
 msgstr "Vytvoriť odkaz v menu Štart"
@@ -563,20 +559,19 @@ msgstr "&Inštalovať"
 msgid "&Run from current location without installing"
 msgstr "&Spustiť z aktuálneho umiestnenia bez inštalácie"
 
-#. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..LabelSecureToken..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:10
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:15
 msgid "Secure &Token:"
 msgstr "Secure &Token:"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckConvertSubtitles..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:25
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
 msgid "&Convert subtitles to .SRT format"
 msgstr "&Konvertovať titulky do formátu SRT"
 
-#. FrameDownloaderOptionsPage_CT..PanelSpecificOptions..CheckLiveStream..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CT.dfm:11
-msgid "&Live stream mode (much slower, but more "
-"stable)"
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
+msgid "&Live stream mode (much slower, but more stable)"
 msgstr "&Mód živého vysielania (pomalšie, ale stabilnejšie)"
 
 #. FrameDownloaderOptionsPage_Nova..PanelSpecificOptions..LabelSecretPassword..Caption
@@ -611,88 +606,88 @@ msgstr "&Nesťahovať .webm formát"
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:100
+#: Base/uHttpDownloader.pas:101
 msgid "Resolving began"
 msgstr "Zisťovanie adresy začalo"
 
 #. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:101
+#: Base/uHttpDownloader.pas:102
 msgid "Resolving ended"
 msgstr "Zisťovanie adresy skončilo"
 
 #. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:102
+#: Base/uHttpDownloader.pas:103
 msgid "Socket created"
 msgstr "Soket vytvorený"
 
 #. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:103
+#: Base/uHttpDownloader.pas:104
 msgid "Socket closed"
 msgstr "Soket uzatvorený"
 
 #. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:104
+#: Base/uHttpDownloader.pas:105
 msgid "Bound to IP/port"
 msgstr "Napojený na IP/port"
 
 #. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:105
+#: Base/uHttpDownloader.pas:106
 msgid "Connected"
 msgstr "Pripojené"
 
 #. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:106
+#: Base/uHttpDownloader.pas:107
 msgid "Can read data"
 msgstr "Dáta sa dajú čítať"
 
 #. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:107
+#: Base/uHttpDownloader.pas:108
 msgid "Can write data"
 msgstr "Dáta sa dajú zapisovať"
 
 #. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:108
+#: Base/uHttpDownloader.pas:109
 msgid "Listening"
 msgstr "Odpočúvanie"
 
 #. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:109
+#: Base/uHttpDownloader.pas:110
 msgid "Accepted connection"
 msgstr "Pripojenie akceptované"
 
 #. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:110
+#: Base/uHttpDownloader.pas:111
 msgid "Read data"
 msgstr "Čítanie dát"
 
 #. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:111
+#: Base/uHttpDownloader.pas:112
 msgid "Wrote data"
 msgstr "Zapisovanie dát"
 
 #. HTTP socket status: data is waiting
 #. Programmer's name for it: SOCKSTATUS_WAITING
-#: Base/uHttpDownloader.pas:112
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
+#: Base/uHttpDownloader.pas:113
 #: GUI/guiConsts.pas:46
 msgid "Waiting"
 msgstr "Čaká sa"
 
 #. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:113
+#: Base/uHttpDownloader.pas:114
 msgid "Socket error"
 msgstr "Chyba soketu"
 
@@ -703,14 +698,12 @@ msgstr " ...... Zobraziť túto nápovedu."
 
 #. CLI: Help for -i command line argument
 #: CLI/uYTD.pas:136
-msgid " ... Load URL list from <file> (one URL per "
-"line)."
+msgid " ... Load URL list from <file> (one URL per line)."
 msgstr " ... Načítať zoznam URL z <file> (1 URL= 1 riadok)."
 
 #. CLI: Help for -o command line argument
 #: CLI/uYTD.pas:137
-msgid " ... Store files to <path> (default is current "
-"directory)."
+msgid " ... Store files to <path> (default is current directory)."
 msgstr " ... Ukladať súbory do <path> (predvolený je aktuálny adresár)."
 
 #. CLI: Help for -e command line argument
@@ -720,32 +713,27 @@ msgstr " ... Uložiť chybne stiahnuté URL do súboru <file>."
 
 #. CLI: Help for -s command line argument
 #: CLI/uYTD.pas:139
-msgid " .... Load links from a HTML source. <src> can be a file or an "
-"URL."
+msgid " .... Load links from a HTML source. <src> can be a file or an URL."
 msgstr " .... Načítať linky z HTML zdroja. <src> môže byť súbor alebo URL."
 
 #. CLI: Help for -n command line argument
 #: CLI/uYTD.pas:140
-msgid " .......... Never overwrite existing "
-"files."
+msgid " .......... Never overwrite existing files."
 msgstr " .......... Nikdy neprepisovať existujúce súbory."
 
 #. CLI: Help for -a command line argument
 #: CLI/uYTD.pas:141
-msgid " .......... Always overwrite existing "
-"files."
+msgid " .......... Always overwrite existing files."
 msgstr " .......... Vždy prepisovať existujúce súbory."
 
 #. CLI: Help for -r command line argument
 #: CLI/uYTD.pas:142
-msgid " .......... Rename files to a new name if they already "
-"exist."
+msgid " .......... Rename files to a new name if they already exist."
 msgstr " .......... Ak súbory existujú, premenovať ich s novým názvom."
 
 #. CLI: Help for -k command line argument
 #: CLI/uYTD.pas:143
-msgid " .......... Ask what to do with existing files "
-"(default)."
+msgid " .......... Ask what to do with existing files (default)."
 msgstr " .......... Opýtať sa čo urobiť s existujúcimi súbormi (predvolené)."
 
 #. CLI: Help for -l command line argument
@@ -755,20 +743,17 @@ msgstr " .......... Zoznam všetkých podporovaných serverov."
 
 #. CLI: Help for -v command line argument
 #: CLI/uYTD.pas:145
-msgid " .......... Test for updated version of "
-"YTD."
+msgid " .......... Test for updated version of YTD."
 msgstr " .......... Test pre aktualizovanú verziu YTD."
 
 #. CLI: Help for -u command line argument
 #: CLI/uYTD.pas:147
-msgid " .......... Test for a new version and upgrade if "
-"possible."
+msgid " .......... Test for a new version and upgrade if possible."
 msgstr " .......... Vyhľadať aktualizáciu a aktualizovať, ak sa dá."
 
 #. CLI: Help for -ah command line argument
 #: CLI/uYTD.pas:149
-msgid " ...... [Don't] Automatically try HTML parser for unknown "
-"URLs."
+msgid " ...... [Don't] Automatically try HTML parser for unknown URLs."
 msgstr " ...... [Ne-] pokúšať sa automaticky používať HTML analyzátor pre neznáme URL."
 
 #. CLI: Help for <url> command line argument
@@ -818,8 +803,7 @@ msgstr "K parametru -e musí byť uvedený názov súboru."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:297
-msgid "HTML source \"%s\" doesn't contain any useful "
-"links."
+msgid "HTML source \"%s\" doesn't contain any useful links."
 msgstr "HTML zdroj \"%s\" neobsahuje podporované linky."
 
 #. CLI: Error message for invalid command line argument
@@ -829,8 +813,7 @@ msgstr "HTML zdroj \"%s\" sa nenašiel."
 
 #. CLI: Error message for invalid command line argument
 #: CLI/uYTD.pas:312
-msgid "With -s a filename or an URL must be "
-"provided."
+msgid "With -s a filename or an URL must be provided."
 msgstr "K parametru -s musí byť uvedený názov súboru alebo URL."
 
 #. CLI: Error message for invalid command line argument
@@ -898,8 +881,8 @@ msgid "  Media title: "
 msgstr "  Názov média: "
 
 #. CLI: Title shown before media file name. Pad to the same length as "Media title:'
-#: CLI/uYTD.pas:455
 #. CLI: File already exists, renaming it to a new filename
+#: CLI/uYTD.pas:455
 #: CLI/uYTD.pas:587
 msgid "    File name: "
 msgstr "    Názov súboru: "
@@ -973,16 +956,17 @@ msgstr "Nesprávna odpoveď."
 
 #. Message shown when an exception occurs. First %s is an exception type, second %s an exception message
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
-#: Common/uMessages.pas:57
 #. Programmer's name for it: ERR_EXCEPTION_MESSAGE
 #: Common/uMessages.pas:57
-msgid "Exception %s with message:\n"
+msgid ""
+"Exception %s with message:\n"
 "%s"
-msgstr "Výnimka %s s chybovou správou:\n%s"
+msgstr ""
+"Výnimka %s s chybovou správou:\n"
+"%s"
 
 #. Shown when installation failed
 #. Programmer's name for it: ERR_INSTALL_FAILED
-#: Common/uMessages.pas:58
 #. Programmer's name for it: ERR_INSTALL_FAILED
 #: Common/uMessages.pas:58
 msgid "Installation failed."
@@ -990,7 +974,6 @@ msgstr "Inštalácia zlyhala."
 
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:59
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
 #: Common/uMessages.pas:59
 msgid "Press any key to quit."
@@ -998,7 +981,6 @@ msgstr "Pre skončenie stlačte ľubovoľný kláves."
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:60
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
 #: Common/uMessages.pas:60
 msgid "Playlist item %d"
@@ -1006,18 +988,21 @@ msgstr "Položka zoznamu %d"
 
 #. What to do with the newest version
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
-#: Common/uMessages.pas:61
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
 #: Common/uMessages.pas:61
-msgid "Do you want to upgrade (YES)\n"
+msgid ""
+"Do you want to upgrade (YES)\n"
 "or just download the newest version (NO)?\n"
 "\n"
 "Note: Upgrade will stop all transfers."
-msgstr "Chcete program automaticky aktualizovať (ÁNO)\nalebo iba stiahnuť najnovšiu verziu (NIE)?\n\nPoznámka: Aktualizácia zastaví všetky prenosy."
+msgstr ""
+"Chcete program automaticky aktualizovať (ÁNO)\n"
+"alebo iba stiahnuť najnovšiu verziu (NIE)?\n"
+"\n"
+"Poznámka: Aktualizácia zastaví všetky prenosy."
 
 #. Downloading the upgrade data
 #. Programmer's name for it: MSG_UPGRADING
-#: Common/uMessages.pas:62
 #. Programmer's name for it: MSG_UPGRADING
 #: Common/uMessages.pas:62
 msgid "Upgrading..."
@@ -1025,7 +1010,6 @@ msgstr "Prebieha aktualizácia..."
 
 #. Failed to execute the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
-#: Common/uMessages.pas:63
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
 #: Common/uMessages.pas:63
 msgid "Failed to upgrade. Upgrade file: %s"
@@ -1033,7 +1017,6 @@ msgstr "Aktualizácia zlyhala. Súbor: %s"
 
 #. Failed to download the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
-#: Common/uMessages.pas:64
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
 #: Common/uMessages.pas:64
 msgid "Failed to download upgrade data: "
@@ -1041,186 +1024,164 @@ msgstr "Nepodarilo sa stiahnuť aktualizáciu: "
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:67
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
 #: Common/uMessages.pas:67
 msgid "Downloader is not prepared!"
 msgstr "Downloader nie je pripravený!"
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:68
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
 #: Common/uMessages.pas:68
 msgid "Download of this content is not implemented."
 msgstr "Sťahovanie tohto obsahu nie je implementované."
 
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
-#: Common/uMessages.pas:69
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
 #: Common/uMessages.pas:69
 msgid "Download URL was not set."
 msgstr "URL nebola nastavená."
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
-#: Common/uMessages.pas:70
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
 #: Common/uMessages.pas:70
 msgid "Failed to initialize the download structures."
 msgstr "Zlyhala inicializácia sťahovania."
 
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
-#: Common/uMessages.pas:71
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
 #: Common/uMessages.pas:71
 msgid "Download failed."
 msgstr "Sťahovanie zlyhalo."
 
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
-#: Common/uMessages.pas:72
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
 #: Common/uMessages.pas:72
 msgid "RTMPDUMP error: %s"
 msgstr "Chyba RTMPDUMPu: %s"
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:73
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
 #: Common/uMessages.pas:73
 msgid "Download to file \"%s\" was not allowed."
 msgstr "Sťahovanie do súboru \"%s\" nebolo povolené."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:75
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
 #: Common/uMessages.pas:75
 msgid "Failed to locate embedded object."
 msgstr "Nepodarilo sa nájsť vložený objekt."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:76
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:76
 msgid "Failed to locate media info page."
 msgstr "Nepodarilo sa nájsť stránku s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:77
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:77
 msgid "Failed to download media info page."
 msgstr "Nepodarilo sa stiahnuť stránky s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:78
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:78
 msgid "Failed to prepare media info page."
 msgstr "Nepodarilo sa pripraviť stránku s informáciami o médiu."
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:79
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
 #: Common/uMessages.pas:79
 msgid "Invalid media info page."
 msgstr "Neplatná stránka s informáciami o médiu."
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:80
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
 #: Common/uMessages.pas:80
 msgid "Failed to download server list."
 msgstr "Nepodarilo sa stiahnuť zoznam serverov."
 
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#. Programmer's name for it: ERR_UNKNOWN_URL
+#: Common/uMessages.pas:81
+msgid "Unknown URL: %s"
+msgstr "Neznáma URL: %s"
+
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:82
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:83
 msgid "Failed to locate media info."
 msgstr "Nepodarilo sa nájsť adresu média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:83
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:84
 msgid "Failed to find media title."
 msgstr "Nepodarilo sa nájsť názov média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:84
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:85
 msgid "Failed to find media URL."
 msgstr "Nepodarilo sa nájsť URL média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:85
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:86
 msgid "Failed to find media server."
 msgstr "Nepodarilo sa nájsť stream média."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:86
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:86
+#: Common/uMessages.pas:87
 msgid "Failed to find media stream."
 msgstr "Nepodarilo sa nájsť ."
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:88
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:88
-msgid "HTTP request failed with error code "
-"%d."
+#: Common/uMessages.pas:89
+msgid "HTTP request failed with error code %d."
 msgstr "HTTP požiadavka zlyhala s kódom chyby %d."
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:89
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:90
 msgid "No data read from the connection."
 msgstr "Nepodarilo sa prečítať žiadne dáta."
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:91
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:92
 msgid "Variable \"%s\" not found."
 msgstr "Premenná \"%s\" sa nenašla."
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:92
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:93
 msgid "Error message listed in file \"%s\"."
 msgstr "Chybová správa uvedená v súbore \"%s\"."
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:93
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:93
+#: Common/uMessages.pas:94
 msgid "Media file was removed from the server."
 msgstr "Súbor bol zo servera vymazaný."
 
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:94
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:94
+#: Common/uMessages.pas:95
 msgid "Server returned an error: %s"
 msgstr "Server hlási chybu: %s"
 
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:95
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:95
-msgid "Invalid configuration: Secure token not "
-"set."
+#: Common/uMessages.pas:96
+msgid "Invalid configuration: Secure token not set."
 msgstr "Nesprávna konfigurácia: Nie je zadaný SecureToken."
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:97
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:98
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr "Zlyhalo načítanie knižnice \"%s\" alebo jej závislosti."
 
@@ -1298,85 +1259,110 @@ msgstr "** Žiadny **"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
 #: GUI/guiConsts.pas:75
-msgid "Converters are not activated.\n"
-"\nYou must activate them through manually editing\n"
+msgid ""
+"Converters are not activated.\n"
+"\n"
+"You must activate them through manually editing\n"
 "the configuration file. You can find the steps\n"
 "needed in the documenation.\n"
-"\nThe reason why this is necessary is, converters\n"
+"\n"
+"The reason why this is necessary is, converters\n"
 "NEED to be configured properly, as documented,\n"
 "but too many people failed to read the documentation\n"
-"and instead complained that converters don't "
-"work."
-msgstr "Konvertory nie sú aktivované.\n\nMusíte ich ručne aktivovať editovaním konfiguračného\nsúboru. Potrebné kroky nájdete v dokumentácii.\n\nDôvod pre aktiváciu je ten, že konvertory\nMUSIA byť správne nastavené podľa dokumentácie,\nale mnoho ľudí si ju neprečítalo a teraz si sťažujú,\nže konvertovanie nefunguje."
+"and instead complained that converters don't work."
+msgstr ""
+"Konvertory nie sú aktivované.\n"
+"\n"
+"Musíte ich ručne aktivovať editovaním konfiguračného\n"
+"súboru. Potrebné kroky nájdete v dokumentácii.\n"
+"\n"
+"Dôvod pre aktiváciu je ten, že konvertory\n"
+"MUSIA byť správne nastavené podľa dokumentácie,\n"
+"ale mnoho ľudí si ju neprečítalo a teraz si sťažujú,\n"
+"že konvertovanie nefunguje."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:85
-msgid "Config file will open now, but please do not edit\n"
-"it right away: YouTube Downloader will overwrite\n"
-"the file before it quits, so any changes made would\n"
-"be lost. First quit YTD and only then start editing\n"
-"the file."
-msgstr "Teraz sa otvorí konfiguračný súbor, ale prosím\nneupravujte ho zatiaľ: YouTube Downloader ho prepíše\npred svojim ukončením, takže všetky vaše zmeny by sa\nstratili. Najprv ukončite YTD a až potom začnite editovať\nkonfiguračný súbor."
+#: GUI/guiConsts.pas:84
+msgid ""
+"Config file will open now, but please do not edit\n"
+"it right away: YTD will overwrite the file before\n"
+"it quits, so any changes made would be lost.\n"
+"First quit YTD and only then start editing the file."
+msgstr ""
+"Teraz sa otvorí konfiguračný súbor, ale prosím\n"
+"neupravujte ho zatiaľ: YTD ho prepíše\n"
+"pred svojim ukončením, takže všetky vaše zmeny by sa\n"
+"stratili. Najprv ukončite YTD a až potom začnite editovať\n"
+"konfiguračný súbor."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:88
-msgid "There are downloads in progress\n"
+#: GUI/guiConsts.pas:87
+msgid ""
+"There are downloads in progress\n"
 "Do you really want to quit?"
-msgstr "Práve prebieha sťahovanie.\nNaozaj chcete program ukončiť?"
+msgstr ""
+"Práve prebieha sťahovanie.\n"
+"Naozaj chcete program ukončiť?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:91
-msgid "A newer version (%s) is available.\n"
+#: GUI/guiConsts.pas:90
+msgid ""
+"A newer version (%s) is available.\n"
 "Do you want to download it?"
-msgstr "Je dostupná novšia verzia (%s)\nChcete ju teraz stiahnuť?"
+msgstr ""
+"Je dostupná novšia verzia (%s)\n"
+"Chcete ju teraz stiahnuť?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:93
+#: GUI/guiConsts.pas:92
 msgid "Enter video URL:"
 msgstr "Vložte URL videa:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:95
+#: GUI/guiConsts.pas:94
 msgid "Enter page URL:"
 msgstr "Zadajte URL:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:98
-msgid "This URL is not supported.\n"
+#: GUI/guiConsts.pas:97
+msgid ""
+"This URL is not supported.\n"
 "See the documenation for supported URLs."
-msgstr "Táto URL nie je podporovaná\nPodporované URL nájdete v priloženej dokumentácii."
+msgstr ""
+"Táto URL nie je podporovaná\n"
+"Podporované URL nájdete v priloženej dokumentácii."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:101
-msgid "No supported URLs found.\n"
+#: GUI/guiConsts.pas:100
+msgid ""
+"No supported URLs found.\n"
 "See the documenation for supported URLs."
-msgstr "Žiadna podporovaná URL nebola nájdená\nPodporované URL nájdete v priloženej dokumentácii."
+msgstr ""
+"Žiadna podporovaná URL nebola nájdená\n"
+"Podporované URL nájdete v priloženej dokumentácii."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:103
-msgid "Do you really want to delete selected "
-"transfer(s)?"
+#: GUI/guiConsts.pas:102
+msgid "Do you really want to delete selected transfer(s)?"
 msgstr "Naozaj chcete vymazať označené prenos(y)?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:105
-msgid "Do you really want to stop selected "
-"transfer(s)?"
+#: GUI/guiConsts.pas:104
+msgid "Do you really want to stop selected transfer(s)?"
 msgstr "Naozaj chcete zastaviť vybrané prenosy?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:107
-msgid "Do you really want to report a bug for this "
-"transfer?"
+#: GUI/guiConsts.pas:106
+msgid "Do you really want to report a bug for this transfer?"
 msgstr "Naozaj chcete nahlásiť chybu pre tento prenos?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:109
+#: GUI/guiConsts.pas:108
 msgid "Convert selected files with"
 msgstr "Konvertovať vybrané súbory s"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:111
+#: GUI/guiConsts.pas:110
 msgid "Automatically convert with"
 msgstr "Automaticky konvertovať s"
 
@@ -1384,39 +1370,65 @@ msgstr "Automaticky konvertovať s"
 #: GUI/guiOptions.pas:116
 #: GUI/guiOptions.pas:173
 #: GUI/guiOptions.pas:175
-msgid "This is the first time you are running the GUI version\n"
-"of YouTube Downloader, or the configuration file isn't\n"
-"available. To protect your privacy, the program will now\n"
-"ask you about some default values which may influence "
-"it."
-msgstr "Toto je prvýkrát, čo ste spustili GUI verziu\nYouTube Downloaderu alebo konfiguračný súbor nie je\ndostupný. Na ochranu Vášho súkromia sa Vás teraz program\nspýta na predvolené hodnoty, ktoré ho môžu ovplyvniť."
+msgid ""
+"This is the first time you are running the GUI version\n"
+"of YTD, or the configuration file isn't available.\n"
+"To protect your privacy, the program will now ask you\n"
+"about some default values which may influence it."
+msgstr ""
+"Toto je prvýkrát, čo ste spustili GUI verziu\n"
+"YTD alebo konfiguračný súbor nie je\n"
+"dostupný. Na ochranu Vášho súkromia sa Vás teraz program\n"
+"spýta na predvolené hodnoty, ktoré ho môžu ovplyvniť."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:124
-msgid "Would you like to run YouTube Downloader in portable mode?\n"
-"\nIn portable mode, YTD stores its settings in file \"ytd.xml\"\n"
+msgid ""
+"Would you like to run YTD in portable mode?\n"
+"\n"
+"In portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
 "for the settings to be stored). In normal (non-portable) mode\n"
 "the settings are stored in the current user's profile.\n"
 "\n"
 "YES = portable mode, NO = normal mode"
-msgstr "Chcete spustiť YouTube Downloader v portable móde?\n\nV portable mde, YTD ukladá nastavenia v súbore \"ytd.xml\"\nv adresári s programom (do ktorého sa dá zapisovať,\naby sa nastavenia dali uložiť). V normálnom (nie portable) móde\nsú nastavenia uložené v aktuálnom profile používateľa.\n\nÁNO = portable mód, NIE = normály mód"
+msgstr ""
+"Chcete spustiť YTD v portable móde?\n"
+"\n"
+"V portable móde YTD ukladá nastavenia v súbore \"ytd.xml\"\n"
+"v adresári s programom (do ktorého sa dá zapisovať,\n"
+"aby sa nastavenia dali uložiť). V normálnom (nie portable) móde\n"
+"sú nastavenia uložené v aktuálnom profile používateľa.\n"
+"\n"
+"ÁNO = portable mód, NIE = normály mód"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:136
-msgid "Would you like YouTube Downloader to check for new versions\n"
+msgid ""
+"Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
-"\nIn order to perform the check, YouTube Downloader's server\n"
-"must be contacted, and that means your IP address will be\n"
-"known to it. While this is not a privacy issue for most users,\n"
-"it might be significant for you.\n"
-"If you turn the automatic check off, you can still check for\n"
-"new versions manually by either visiting the program's website\n"
-"or by entering the About window.\n"
 "\n"
-"Should YTD automatically check for new "
-"versions?"
-msgstr "Chcete zistiť, či je k dispozícii nová verzia programu YouTube Downloader\npri spustení GUI verzie?\n\nAby sa kontorla mohla vykonať, server YouTube Downloaderu\nmusí byť kontaktovaný, a to zanamená, že Vaša IP adresa bude\nzverejnená autorovi programu. Pre väčšinu používateľov to neznamená\nnarušenie súkromia, ale práve Vy môžete byť výnimkou.\nAj keď vypnete automatickú kontrolu, stále môžete zistiť\nnovú verziu manuálne navštívením webstránky programu\nalebo zobrazením okna O aplikácii.\n\nChcete, aby YTD automaticky kontroloval nové verzie?"
+"In order to perform the check, YTD's server must\n"
+"be contacted, and that means your IP address will be\n"
+"known to it. While this is not a privacy issue for\n"
+"most users, it might be significant for you.\n"
+"If you turn the automatic check off, you can still\n"
+"check for new versions manually by either visiting\n"
+"the program's websiteor by entering the About window.\n"
+"\n"
+"Should YTD automatically check for new versions?"
+msgstr ""
+"Chcete zistiť, či je k dispozícii nová verzia programu YTD pri spustení GUI verzie?\n"
+"\n"
+"Aby sa kontrola mohla vykonať, server YTD\n"
+"musí byť kontaktovaný, a to znamená že Vaša IP adresa bude\n"
+"zverejnená autorovi programu. Pre väčšinu používateľov to neznamená\n"
+"narušenie súkromia, ale práve Vy môžete byť výnimkou.\n"
+"Aj keď vypnete automatickú kontrolu, stále môžete zistiť\n"
+"novú verziu manuálne navštívením webstránky programu\n"
+"alebo zobrazením okna O aplikácii.\n"
+"\n"
+"Chcete, aby YTD automaticky kontroloval nové verzie?"
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:139
@@ -1437,21 +1449,25 @@ msgstr "Konvertovať video do AVI/H264"
 #: GUI/guiOptions.pas:149
 #: GUI/guiOptions.pas:181
 #: GUI/guiOptions.pas:183
-msgid "Error loading configuration file. Error %s:\n"
+msgid ""
+"Error loading configuration file. Error %s:\n"
 "%s\n"
 "Default config file will be created."
-msgstr "Chyba pri načítaní konfiguračného súboru. Chyba %s:\n%s\nBude vytvorený nový konfiguračný súbor."
+msgstr ""
+"Chyba pri načítaní konfiguračného súboru. Chyba %s:\n"
+"%s\n"
+"Bude vytvorený nový konfiguračný súbor."
 
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
-#: GUI/uDownloadList.pas:289
 #. GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+#: GUI/uDownloadList.pas:289
 #: GUI/uDownloadList.pas:299
 msgid "File already exists."
 msgstr "Súbor už existuje."
 
 #. GUI: Check for a new version wasn't made yet - or failed.
-#: GUI/VCL/guiAboutVCL.pas:129
 #. Label "Newest version:"
+#: GUI/VCL/guiAboutVCL.pas:129
 #: GUI/WinAPI/guiAboutWINAPI.pas:223
 msgid "checking..."
 msgstr "zisťuje sa..."
@@ -1459,9 +1475,12 @@ msgstr "zisťuje sa..."
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
 #: Lib/Pepak/ApiForm/uApiFunctions.pas:80
-msgid "Windows error %u = %08.8x\n"
+msgid ""
+"Windows error %u = %08.8x\n"
 "%s"
-msgstr "Chyba systému %u = %08.8x\n%s"
+msgstr ""
+"Chyba systému %u = %08.8x\n"
+"%s"
 
 #. error code, error code
 #. Programmer's name for it: WINDOWS_ERROR_UNKNOWN

@@ -54,10 +54,10 @@ HostApplication=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
-MajorVer=0
-MinorVer=86
+MajorVer=1
+MinorVer=0
 Release=0
-Build=749
+Build=755
 Debug=0
 PreRelease=0
 Special=0
@@ -67,15 +67,15 @@ Locale=1029
 CodePage=0
 [Version Info Keys]
 CompanyName=Pepak
-FileDescription=YouTube Downloader
-FileVersion=0.86.0.749
-InternalName=YouTube Downloader
+FileDescription=YTD
+FileVersion=1.0.0.755
+InternalName=YTD
 LegalCopyright=(c) 2009-11 Pepak
 LegalTrademarks=
 OriginalFilename=ytd.exe
-ProductName=YouTube Downloader
-ProductVersion=0.86.0.745
-Comments=http://www.pepak.net/download/youtube-downloader/
+ProductName=YTD
+ProductVersion=1.0.0.754
+Comments=http://www.pepak.net/ytd
 [HistoryLists\hlConditionals]
 Count=2
 Item0=PEPAK;PEPAK_YTD;XXX;

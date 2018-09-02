@@ -2,12 +2,12 @@
 
 ______________________________________________________________________________
 
-YouTube Downloader                                           (c) 2009-11 Pepak
-http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+YTD v1.00                                                    (c) 2009-12 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 
-Copyright (c) 2011, Pepak (http://www.pepak.net)
+Copyright (c) 2009-12 Pepak (http://www.pepak.net)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -41,11 +41,11 @@ interface
 
 const
   EOLN = #13#10;
-  APPLICATION_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YouTube Downloader' {$IFNDEF XXX} + ' Lite' {$ENDIF} ;
+  APPLICATION_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} ;
   APPLICATION_VERSION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = {$INCLUDE 'ytd.version'};
-  APPLICATION_CAPTION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YouTube Downloader' {$IFNDEF XXX} + ' Lite' {$ENDIF} + ' v' + {$INCLUDE 'ytd.version'};
-  APPLICATION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.pepak.net/download/youtube-downloader/';
-  APPLICATION_SHORTCUT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YouTube Downloader.lnk';
+  APPLICATION_CAPTION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} + ' v' + {$INCLUDE 'ytd.version'};
+  APPLICATION_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://www.pepak.net/ytd';
+  APPLICATION_SHORTCUT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD.lnk';
 
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';

@@ -42,20 +42,20 @@ xcopy locale\*.mo ..\bin\locale /s /i
 del /q ..\bin\ytd.xml >nul 2>&1
 call clean.bat
 call build.bat release noxxx %build% %2 %3 %4 %5 %6 %7 %8 %9
-call sign "YouTube Downloader v%version% Lite" http://www.pepak.net/download/youtube-downloader/ ..\bin\ytd.exe
+call sign "YTD v%version% Lite" http://www.pepak.net/ytd ..\bin\ytd.exe
 call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%-lite.%packext% 
-if "%packext%"=="exe" call sign "YouTube Downloader v%version% Lite - Installer" http://www.pepak.net/download/youtube-downloader/ ..\ytd-%version%-lite.%packext% 
+if "%packext%"=="exe" call sign "YTD v%version% Lite - Installer" http://www.pepak.net/ytd ..\ytd-%version%-lite.%packext% 
 if not "%packext%"=="zip" call :pack-zip ..\ytd-%version%-lite.zip
 popd
 call clean.bat
 call build.bat release %build% %2 %3 %4 %5 %6 %7 %8 %9
-call sign "YouTube Downloader v%version%" http://www.pepak.net/download/youtube-downloader/ ..\bin\ytd.exe
+call sign "YTD v%version%" http://www.pepak.net/ytd ..\bin\ytd.exe
 call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%.%packext%
-if "%packext%"=="exe" call sign "YouTube Downloader v%version% - Installer" http://www.pepak.net/download/youtube-downloader/ ..\ytd-%version%.%packext%
+if "%packext%"=="exe" call sign "YTD v%version% - Installer" http://www.pepak.net/ytd ..\ytd-%version%.%packext%
 if not "%packext%"=="zip" call :pack-zip ..\ytd-%version%.zip
 popd
 pushd ..

@@ -2,12 +2,12 @@
 
 ______________________________________________________________________________
 
-YouTube Downloader                                           (c) 2009-11 Pepak
-http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+YTD v1.00                                                    (c) 2009-12 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 
-Copyright (c) 2011, Pepak (http://www.pepak.net)
+Copyright (c) 2009-12 Pepak (http://www.pepak.net)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -564,7 +564,7 @@ begin
         end;
   {$ELSE}
     Application.Initialize;
-    Application.Title := 'YouTube Downloader';
+    Application.Title := 'YTD';
     Application.CreateForm(TFormYTD, FormYTD);
     Application.Run;
   {$ENDIF}

@@ -2,12 +2,12 @@
 
 ______________________________________________________________________________
 
-YouTube Downloader                                           (c) 2009-11 Pepak
-http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+YTD v1.00                                                    (c) 2009-12 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 
-Copyright (c) 2011, Pepak (http://www.pepak.net)
+Copyright (c) 2009-12 Pepak (http://www.pepak.net)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -79,10 +79,9 @@ resourcestring
 resourcestring
   MAINFORM_EDIT_CONFIG =
     'Config file will open now, but please do not edit'#10 +
-    'it right away: YouTube Downloader will overwrite'#10 +
-    'the file before it quits, so any changes made would'#10 +
-    'be lost. First quit YTD and only then start editing'#10 +
-    'the file.';
+    'it right away: YTD will overwrite the file before'#10 +
+    'it quits, so any changes made would be lost.'#10 +
+    'First quit YTD and only then start editing the file.';
   MAINFORM_CAN_CLOSE =
     'There are downloads in progress'#10 +
     'Do you really want to quit?';

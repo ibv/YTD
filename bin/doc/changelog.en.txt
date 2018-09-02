@@ -1,11 +1,21 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.99                                     (c) 2009-11 Pepak
-http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
+YTD v1.00                                                    (c) 2009-12 Pepak
+http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.00:
+
+    * Program name changed to YTD to avoid confusion with about 1000 other
+      YouTube Downloaders out there.
+
+    * A number of changes in the source code, but these changes only affect
+      comments (due to name and year change), not compiled code.
+
+
 
   v0.99:
 

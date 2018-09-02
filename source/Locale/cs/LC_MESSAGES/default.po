@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.62\n"
-"POT-Creation-Date: 2011-11-14 19:46\n"
-"PO-Revision-Date: 2011-11-14 19:48+0100\n"
+"POT-Creation-Date: 2011-12-19 18:32\n"
+"PO-Revision-Date: 2011-12-31 07:26+0100\n"
 "Last-Translator: Pepak <pepak@pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
-msgid "About YouTube Downloader"
-msgstr "O aplikaci YouTube Downloader"
+msgid "About YTD"
+msgstr "O aplikaci YTD"
 
 #. FormAbout..Font.Name
 #. FormAbout..LabelYTD..Font.Name
@@ -47,8 +47,8 @@ msgstr "MS Sans Serif"
 #. FormYTD..Caption
 #: GUI/VCL/guiAboutVCL.dfm:23
 #: GUI/VCL/guiMainVCL.dfm:6
-msgid "YouTube Downloader"
-msgstr "YouTube Downloader"
+msgid "YTD"
+msgstr "YTD"
 
 #. FormAbout..LabelVersionLabel..Caption
 #: GUI/VCL/guiAboutVCL.dfm:36
@@ -78,8 +78,8 @@ msgstr "Domovská stránka:"
 
 #. FormAbout..LabelHomepage..Caption
 #: GUI/VCL/guiAboutVCL.dfm:87
-msgid "http://www.pepak.net/download/youtube-downloader"
-msgstr "http://www.pepak.net/download/youtube-downloader"
+msgid "http://www.pepak.net/ytd"
+msgstr "http://www.pepak.net/ytd"
 
 #. FormAbout..LabelMediaProviders..Caption
 #: GUI/VCL/guiAboutVCL.dfm:101
@@ -295,7 +295,7 @@ msgstr "O aplikaci"
 #. FormYTD..YTDActions..actAbout..Hint
 #: GUI/VCL/guiMainVCL.dfm:316
 msgid "About this program"
-msgstr "O programu YouTube Downloader"
+msgstr "O programu YTD"
 
 #. FormYTD..YTDActions..actConvert..Caption
 #: GUI/VCL/guiMainVCL.dfm:322
@@ -464,7 +464,7 @@ msgstr "Automaticky přejmenovat"
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:198
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:16
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:24
 msgid "Download &subtitles if available"
 msgstr "Pokud jsou k dispozici, stahovat &titulky"
 
@@ -561,18 +561,18 @@ msgstr "Na&instalovat"
 msgid "&Run from current location without installing"
 msgstr "Sp&ustit z aktuálního umístění bez instalace"
 
-#. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..LabelSecureToken..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:10
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:15
 msgid "Secure &Token:"
 msgstr "Secure &Token:"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckConvertSubtitles..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:25
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
 msgid "&Convert subtitles to .SRT format"
 msgstr "&Konvertovat titulky do formátu .SRT"
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
 msgid "&Live stream mode (much slower, but more stable)"
 msgstr "&Režim živého stahování (mnohem pomalejší, ale stabilnější)"
 
@@ -608,73 +608,73 @@ msgstr "Nestahovat formát .&webm"
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
-#: Base/uHttpDownloader.pas:100
+#: Base/uHttpDownloader.pas:101
 msgid "Resolving began"
 msgstr "Zahájeno zjišťování adresy"
 
 #. HTTP socket status: resolving ended
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_ENDED
-#: Base/uHttpDownloader.pas:101
+#: Base/uHttpDownloader.pas:102
 msgid "Resolving ended"
 msgstr "Dokončeno zjišťování adresy"
 
 #. HTTP socket status: socket created
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CREATED
-#: Base/uHttpDownloader.pas:102
+#: Base/uHttpDownloader.pas:103
 msgid "Socket created"
 msgstr "Vytvořen socket"
 
 #. HTTP socket status: socket closed
 #. Programmer's name for it: SOCKSTATUS_SOCKET_CLOSED
-#: Base/uHttpDownloader.pas:103
+#: Base/uHttpDownloader.pas:104
 msgid "Socket closed"
 msgstr "Uzavřen socket"
 
 #. HTTP socket status: bound to IP address and port
 #. Programmer's name for it: SOCKSTATUS_BOUND_TO_IP_PORT
-#: Base/uHttpDownloader.pas:104
+#: Base/uHttpDownloader.pas:105
 msgid "Bound to IP/port"
 msgstr "Napojeno na IP/port"
 
 #. HTTP socket status: connected
 #. Programmer's name for it: SOCKSTATUS_CONNECTED
-#: Base/uHttpDownloader.pas:105
+#: Base/uHttpDownloader.pas:106
 msgid "Connected"
 msgstr "Spojeno"
 
 #. HTTP socket status: can read data
 #. Programmer's name for it: SOCKSTATUS_CAN_READ_DATA
-#: Base/uHttpDownloader.pas:106
+#: Base/uHttpDownloader.pas:107
 msgid "Can read data"
 msgstr "Možno číst data"
 
 #. HTTP socket status: can write data
 #. Programmer's name for it: SOCKSTATUS_CAN_WRITE_DATA
-#: Base/uHttpDownloader.pas:107
+#: Base/uHttpDownloader.pas:108
 msgid "Can write data"
 msgstr "Možno psát data"
 
 #. HTTP socket status: listening for connections
 #. Programmer's name for it: SOCKSTATUS_LISTENING
-#: Base/uHttpDownloader.pas:108
+#: Base/uHttpDownloader.pas:109
 msgid "Listening"
 msgstr "Čeká se na požadavek"
 
 #. HTTP socket status: connection accepted
 #. Programmer's name for it: SOCKSTATUS_ACCEPTED_CONNECTION
-#: Base/uHttpDownloader.pas:109
+#: Base/uHttpDownloader.pas:110
 msgid "Accepted connection"
 msgstr "Požadavek přijat"
 
 #. HTTP socket status: data was read
 #. Programmer's name for it: SOCKSTATUS_READ_DATA
-#: Base/uHttpDownloader.pas:110
+#: Base/uHttpDownloader.pas:111
 msgid "Read data"
 msgstr "Data přečtena"
 
 #. HTTP socket status: data was written
 #. Programmer's name for it: SOCKSTATUS_WROTE_DATA
-#: Base/uHttpDownloader.pas:111
+#: Base/uHttpDownloader.pas:112
 msgid "Wrote data"
 msgstr "Data zapsána"
 
@@ -682,14 +682,14 @@ msgstr "Data zapsána"
 #. Programmer's name for it: SOCKSTATUS_WAITING
 #. GUI: Download thread state: Waiting for its turn
 #. Programmer's name for it: THREADSTATE_WAITING
-#: Base/uHttpDownloader.pas:112
+#: Base/uHttpDownloader.pas:113
 #: GUI/guiConsts.pas:46
 msgid "Waiting"
 msgstr "Čeká se"
 
 #. HTTP socket status: socket error
 #. Programmer's name for it: SOCKSTATUS_SOCKET_ERROR
-#: Base/uHttpDownloader.pas:113
+#: Base/uHttpDownloader.pas:114
 msgid "Socket error"
 msgstr "Chyba socketu"
 
@@ -1285,23 +1285,22 @@ msgstr ""
 "si stěžovalo, že konvertování nefunguje."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:85
+#: GUI/guiConsts.pas:84
 msgid ""
 "Config file will open now, but please do not edit\n"
-"it right away: YouTube Downloader will overwrite\n"
-"the file before it quits, so any changes made would\n"
-"be lost. First quit YTD and only then start editing\n"
-"the file."
+"it right away: YTD will overwrite the file before\n"
+"it quits, so any changes made would be lost.\n"
+"First quit YTD and only then start editing the file."
 msgstr ""
 "Nyní se otevře konfigurační soubor, ale prosím\n"
-"nezapisujte do něj zatím: YouTube Downloader\n"
-"před svým ukončením tento soubor přepíše, takže\n"
-"by se všechny vaše ruční změny ztratily. Napřed\n"
-"ukončete YTD a teprve potom začněte konfigurační\n"
+"nezapisujte do něj zatím: YTD před svým ukončením\n"
+"tento soubor přepíše, takže by se všechny vaše\n"
+"ruční změny ztratily.\n"
+"Napřed ukončete YTD a teprve potom začněte konfigurační\n"
 "soubor upravovat."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:88
+#: GUI/guiConsts.pas:87
 msgid ""
 "There are downloads in progress\n"
 "Do you really want to quit?"
@@ -1310,7 +1309,7 @@ msgstr ""
 "Opravdu chcete program ukončit?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:91
+#: GUI/guiConsts.pas:90
 msgid ""
 "A newer version (%s) is available.\n"
 "Do you want to download it?"
@@ -1319,17 +1318,17 @@ msgstr ""
 "Chcete ji stáhnout?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:93
+#: GUI/guiConsts.pas:92
 msgid "Enter video URL:"
 msgstr "Zadejte URL videa:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:95
+#: GUI/guiConsts.pas:94
 msgid "Enter page URL:"
 msgstr "Zadejte URL stránky:"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:98
+#: GUI/guiConsts.pas:97
 msgid ""
 "This URL is not supported.\n"
 "See the documenation for supported URLs."
@@ -1338,7 +1337,7 @@ msgstr ""
 "Seznam podporovaných URL je uveden v dokumentaci."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:101
+#: GUI/guiConsts.pas:100
 msgid ""
 "No supported URLs found.\n"
 "See the documenation for supported URLs."
@@ -1347,27 +1346,27 @@ msgstr ""
 "Seznam podporovaných URL je uveden v dokumentaci."
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:103
+#: GUI/guiConsts.pas:102
 msgid "Do you really want to delete selected transfer(s)?"
 msgstr "Opravdu chcete smazat vybrané přenosy?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:105
+#: GUI/guiConsts.pas:104
 msgid "Do you really want to stop selected transfer(s)?"
 msgstr "Opravdu chcete zastavit vybrané přenosy?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:107
+#: GUI/guiConsts.pas:106
 msgid "Do you really want to report a bug for this transfer?"
 msgstr "Opravdu chcete pro tento odkaz nahlásit chybu?"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:109
+#: GUI/guiConsts.pas:108
 msgid "Convert selected files with"
 msgstr "Zkonvertovat zvolené soubory pomocí"
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:111
+#: GUI/guiConsts.pas:110
 msgid "Automatically convert with"
 msgstr "Automaticky konvertovat pomocí"
 
@@ -1377,20 +1376,19 @@ msgstr "Automaticky konvertovat pomocí"
 #: GUI/guiOptions.pas:175
 msgid ""
 "This is the first time you are running the GUI version\n"
-"of YouTube Downloader, or the configuration file isn't\n"
-"available. To protect your privacy, the program will now\n"
-"ask you about some default values which may influence it."
+"of YTD, or the configuration file isn't available.\n"
+"To protect your privacy, the program will now ask you\n"
+"about some default values which may influence it."
 msgstr ""
 "Právě poprvé spouštíte grafickou verzi programu\n"
-"YouTube Downloader, nebo jste smazal dosavadní\n"
-"konfigurační soubor. Aby nedošlo k narušení vašeho\n"
-"soukromí, zeptá se nyní program na některá nastavení,\n"
-"která mají na soukromí vliv."
+"YTD, nebo jste smazal dosavadní konfigurační soubor.\n"
+"Aby nedošlo k narušení vašeho soukromí, zeptá se nyní\n"
+"YTD na některá nastavení, která mají na soukromí vliv."
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:124
 msgid ""
-"Would you like to run YouTube Downloader in portable mode?\n"
+"Would you like to run YTD in portable mode?\n"
 "\n"
 "In portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
@@ -1399,7 +1397,7 @@ msgid ""
 "\n"
 "YES = portable mode, NO = normal mode"
 msgstr ""
-"Chcete spustit YouTube Downloader v přenositelném\n"
+"Chcete spustit YTD v přenositelném\n"
 "(portable) režimu?\n"
 "\n"
 "V přenositelném režimu jsou nastavení YTD ukládána do\n"
@@ -1413,29 +1411,29 @@ msgstr ""
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:136
 msgid ""
-"Would you like YouTube Downloader to check for new versions\n"
+"Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
 "\n"
-"In order to perform the check, YouTube Downloader's server\n"
-"must be contacted, and that means your IP address will be\n"
-"known to it. While this is not a privacy issue for most users,\n"
-"it might be significant for you.\n"
-"If you turn the automatic check off, you can still check for\n"
-"new versions manually by either visiting the program's website\n"
-"or by entering the About window.\n"
+"In order to perform the check, YTD's server must\n"
+"be contacted, and that means your IP address will be\n"
+"known to it. While this is not a privacy issue for\n"
+"most users, it might be significant for you.\n"
+"If you turn the automatic check off, you can still\n"
+"check for new versions manually by either visiting\n"
+"the program's websiteor by entering the About window.\n"
 "\n"
 "Should YTD automatically check for new versions?"
 msgstr ""
-"Chcete, aby YouTube Downloader při startu grafické verze\n"
-"testoval existenci nových verzí programu?\n"
+"Chcete, aby YTD při startu grafické verze testoval\n"
+"existenci nových verzí programu?\n"
 "\n"
-"Aby šlo nové verze zjistit, musí YTD kontaktovat svůj server,\n"
-"což znamená, že se autor programu dozví vaši IP adresu. Pro\n"
-"většinu uživatelů by to nemělo představovat žádnou hrozbu,\n"
-"ale zrovna vy můžete být tou výjimkou.\n"
-"I když vypnete automatický test na nové verze, můžete si ho\n"
-"ručně vyžádat otevřením okna \"O aplikaci\" nebo návštěvou\n"
-"domácí stránky programu.\n"
+"Aby šlo nové verze zjistit, musí YTD kontaktovat svůj\n"
+"server, což znamená, že se autor programu dozví vaši\n"
+"IP adresu. Pro většinu uživatelů by to nemělo představovat\n"
+"žádnou hrozbu, ale zrovna vy můžete být tou výjimkou.\n"
+"I když vypnete automatický test na nové verze, můžete\n"
+"si ho ručně vyžádat otevřením okna \"O aplikaci\" nebo\n"
+"návštěvoudomácí stránky programu.\n"
 "\n"
 "Má YTD automaticky zjišťovat nové verze?"
 

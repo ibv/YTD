@@ -83,7 +83,7 @@ if "%map%"=="1" if "%compiler%"=="delphi" set params=%params% -GD
 rem --- Delete compiled units -------------------------------------------------
 del /q "%srcdir%Units\*.*"
 
-rem --- Build YouTube Downloader ----------------------------------------------
+rem --- Build YTD -------------------------------------------------------------
 ren "%srcdir%ytd.cfg" ytd.cfg._
 ren "%srcdir%ytd.dof" ytd.dof._
 

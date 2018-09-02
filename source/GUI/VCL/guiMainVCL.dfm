@@ -3,7 +3,7 @@ object FormYTD: TFormYTD
   Top = 139
   Width = 727
   Height = 403
-  Caption = 'YouTube Downloader'
+  Caption = 'YTD'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

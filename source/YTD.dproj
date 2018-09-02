@@ -341,15 +341,15 @@
 					</VersionInfo>
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName">Pepak</VersionInfoKeys>
-						<VersionInfoKeys Name="FileDescription">YouTube Downloader</VersionInfoKeys>
+						<VersionInfoKeys Name="FileDescription">YTD</VersionInfoKeys>
 						<VersionInfoKeys Name="FileVersion">0.86.0.706</VersionInfoKeys>
-						<VersionInfoKeys Name="InternalName">YouTube Downloader</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName">YTD</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalCopyright">(c) 2009-11 Pepak</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalTrademarks"/>
 						<VersionInfoKeys Name="OriginalFilename">ytd.exe</VersionInfoKeys>
-						<VersionInfoKeys Name="ProductName">YouTube Downloader</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductName">YTD</VersionInfoKeys>
 						<VersionInfoKeys Name="ProductVersion">0.82.0.614</VersionInfoKeys>
-						<VersionInfoKeys Name="Comments">http://www.pepak.net/download/youtube-downloader/</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments">http://www.pepak.net/ytd</VersionInfoKeys>
 					</VersionInfoKeys>
 				</Delphi.Personality>
 			</BorlandProject>

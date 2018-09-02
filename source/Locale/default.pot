@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-11-27 17:10\n"
-"PO-Revision-Date: 2011-11-27 17:10\n"
+"POT-Creation-Date: 2011-12-19 18:32\n"
+"PO-Revision-Date: 2011-12-19 18:32\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #. FormAbout..Caption
 #: GUI/VCL/guiAboutVCL.dfm:6
-msgid "About YouTube Downloader"
+msgid "About YTD"
 msgstr ""
 
 #. FormAbout..Font.Name
@@ -45,7 +45,7 @@ msgstr ""
 #: GUI/VCL/guiAboutVCL.dfm:23
 #. FormYTD..Caption
 #: GUI/VCL/guiMainVCL.dfm:6
-msgid "YouTube Downloader"
+msgid "YTD"
 msgstr ""
 
 #. FormAbout..LabelVersionLabel..Caption
@@ -76,7 +76,7 @@ msgstr ""
 
 #. FormAbout..LabelHomepage..Caption
 #: GUI/VCL/guiAboutVCL.dfm:87
-msgid "http://www.pepak.net/download/youtube-downloader"
+msgid "http://www.pepak.net/ytd"
 msgstr ""
 
 #. FormAbout..LabelMediaProviders..Caption
@@ -465,7 +465,7 @@ msgstr ""
 #. FormOptions..PageOptions..TabDownloadOptions..CheckSubtitlesEnabled..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:198
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckDownloadSubtitles..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:16
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:24
 msgid "Download &subtitles if available"
 msgstr ""
 
@@ -563,18 +563,18 @@ msgstr ""
 msgid "&Run from current location without installing"
 msgstr ""
 
-#. FrameDownloaderOptionsPage_Barrandov..PanelSpecificOptions..LabelSecureToken..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_Barrandov.dfm:10
+#. FrameDownloaderOptionsPageCommon..PanelCommonOptions..LabelSecureToken..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:15
 msgid "Secure &Token:"
 msgstr ""
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckConvertSubtitles..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:25
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
 msgid "&Convert subtitles to .SRT format"
 msgstr ""
 
 #. FrameDownloaderOptionsPageCommon..PanelCommonOptions..CheckLiveStream..Caption
-#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:33
+#: GUI/VCL/Downloaders/guiOptionsVCL_CommonDownloader.dfm:41
 msgid "&Live stream mode (much slower, but more "
 "stable)"
 msgstr ""
@@ -1317,73 +1317,73 @@ msgid "Converters are not activated.\n"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:85
+#: GUI/guiConsts.pas:84
 msgid "Config file will open now, but please do not edit\n"
-"it right away: YouTube Downloader will overwrite\n"
-"the file before it quits, so any changes made would\n"
-"be lost. First quit YTD and only then start editing\n"
-"the file."
+"it right away: YTD will overwrite the file before\n"
+"it quits, so any changes made would be lost.\n"
+"First quit YTD and only then start editing the "
+"file."
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:88
+#: GUI/guiConsts.pas:87
 msgid "There are downloads in progress\n"
 "Do you really want to quit?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:91
+#: GUI/guiConsts.pas:90
 msgid "A newer version (%s) is available.\n"
 "Do you want to download it?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:93
+#: GUI/guiConsts.pas:92
 msgid "Enter video URL:"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:95
+#: GUI/guiConsts.pas:94
 msgid "Enter page URL:"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:98
+#: GUI/guiConsts.pas:97
 msgid "This URL is not supported.\n"
 "See the documenation for supported URLs."
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:101
+#: GUI/guiConsts.pas:100
 msgid "No supported URLs found.\n"
 "See the documenation for supported URLs."
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:103
+#: GUI/guiConsts.pas:102
 msgid "Do you really want to delete selected "
 "transfer(s)?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:105
+#: GUI/guiConsts.pas:104
 msgid "Do you really want to stop selected "
 "transfer(s)?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:107
+#: GUI/guiConsts.pas:106
 msgid "Do you really want to report a bug for this "
 "transfer?"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:109
+#: GUI/guiConsts.pas:108
 msgid "Convert selected files with"
 msgstr ""
 
 #. Programmer's name for it: CONVERTERS_NOCONVERTER
-#: GUI/guiConsts.pas:111
+#: GUI/guiConsts.pas:110
 msgid "Automatically convert with"
 msgstr ""
 
@@ -1392,15 +1392,15 @@ msgstr ""
 #: GUI/guiOptions.pas:173
 #: GUI/guiOptions.pas:175
 msgid "This is the first time you are running the GUI version\n"
-"of YouTube Downloader, or the configuration file isn't\n"
-"available. To protect your privacy, the program will now\n"
-"ask you about some default values which may influence "
+"of YTD, or the configuration file isn't available.\n"
+"To protect your privacy, the program will now ask you\n"
+"about some default values which may influence "
 "it."
 msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:124
-msgid "Would you like to run YouTube Downloader in portable mode?\n"
+msgid "Would you like to run YTD in portable mode?\n"
 "\nIn portable mode, YTD stores its settings in file \"ytd.xml\"\n"
 "in its application directory (which must be writable in order\n"
 "for the settings to be stored). In normal (non-portable) mode\n"
@@ -1411,15 +1411,15 @@ msgstr ""
 
 #. Programmer's name for it: INITIALRUN_WANTPORTABLE
 #: GUI/guiOptions.pas:136
-msgid "Would you like YouTube Downloader to check for new versions\n"
+msgid "Would you like YTD to check for new versions\n"
 "on GUI startup?\n"
-"\nIn order to perform the check, YouTube Downloader's server\n"
-"must be contacted, and that means your IP address will be\n"
-"known to it. While this is not a privacy issue for most users,\n"
-"it might be significant for you.\n"
-"If you turn the automatic check off, you can still check for\n"
-"new versions manually by either visiting the program's website\n"
-"or by entering the About window.\n"
+"\nIn order to perform the check, YTD's server must\n"
+"be contacted, and that means your IP address will be\n"
+"known to it. While this is not a privacy issue for\n"
+"most users, it might be significant for you.\n"
+"If you turn the automatic check off, you can still\n"
+"check for new versions manually by either visiting\n"
+"the program's websiteor by entering the About window.\n"
 "\n"
 "Should YTD automatically check for new "
 "versions?"
@@ -1463,7 +1463,6 @@ msgstr ""
 msgid "checking..."
 msgstr ""
 
-#. Programmer's name for it: sxeErrorCalcStreamLength
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
 #: Lib/Pepak/ApiForm/uApiFunctions.pas:80
