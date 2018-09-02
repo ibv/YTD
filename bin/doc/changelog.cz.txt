@@ -1,11 +1,25 @@
 ______________________________________________________________________________
 
-YTD v1.06                                                    (c) 2009-12 Pepak
+YTD v1.07                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.07:
+
+    * Vlastnì jsem chtìl verzi dìlat, až do ní budu mít víc novinek (a zejména
+      až budu mít èas podívat se na novou Novu, ale èlánek publikovaný na
+      iDnes mì donutil...).
+
+    * iPrima.cz: Uvolnìn formát URL (Prima fungovala i v minulé verzi, ale
+      musela se ruènì upravit adresa).
+
+    * Nova.cz: Vyøazena z programu. Pravdìpodobnì navždy, protože free obsah
+      byl zrušen a k placenému nemám pøístup.
+
+
 
   v1.06:
 

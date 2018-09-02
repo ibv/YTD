@@ -110,10 +110,11 @@ uses
   uDownloadClassifier,
   uMessages;
 
-// http://www.iprima.cz/videoarchiv/44524/all/all
+// http://play.iprima.cz/all/233409
+// http://play.iprima.cz/iprima/233409
 const
   URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*iprima\.cz/';
-  URLREGEXP_ID =        '(?:videoarchiv|videoplayer|iprima)/.+';
+  URLREGEXP_ID =        '(?!showjanakrause/).+';
   URLREGEXP_AFTER_ID =  '';
 
 const

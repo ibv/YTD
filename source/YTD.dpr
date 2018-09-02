@@ -98,7 +98,6 @@ uses
       guiOptionsWINAPI_CommonDownloader in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CommonDownloader.pas',
       guiOptionsWINAPI_Barrandov in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Barrandov.pas',
       guiOptionsWINAPI_CT in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_CT.pas',
-      guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
       guiOptionsWINAPI_YouTube in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_YouTube.pas',
       {$IFDEF CONVERTERS}
       guiConverterWINAPI in 'GUI\WinAPI\guiConverterWINAPI.pas',
@@ -114,7 +113,6 @@ uses
       guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
       guiOptionsVCL_Barrandov in 'GUI\VCL\Downloaders\guiOptionsVCL_Barrandov.pas' {FrameDownloaderOptionsPage_Barrandov: TFrame},
       guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
-      guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
       guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       {$IFDEF CONVERTERS}
       guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
@@ -267,7 +265,6 @@ uses
   downNHL in 'Downloaders\downNHL.pas',
   downNJoy in 'Downloaders\downNJoy.pas',
   downNothingToxic in 'Downloaders\downNothingToxic.pas',
-  downNova in 'Downloaders\downNova.pas',
   {$IFDEF DIRTYHACKS}
   downNovaTN in 'Downloaders\downNovaTN.pas',
   {$ENDIF}
@@ -418,20 +415,24 @@ uses
     xxxZlutySnih in 'Downloaders\XXX\xxxZlutySnih.pas',
   {$ENDIF}
   {$IFDEF NONWORKING}
-    // No idea why it doesn't work
     downArchivioLuce in 'Downloaders\Non-working\downArchivioLuce.pas',
-    // Removed support because it now uses Silverlight streaming and downloads in thousands little chunks
+      // No idea why it doesn't work
     downAutoSalonTV in 'Downloaders\Non-working\downAutoSalonTV.pas',
-    // Needs some improved RTMP handling
+      // Removed support because it now uses Silverlight streaming and downloads in thousands little chunks
     downCrunchyRoll in 'Downloaders\Non-working\downCrunchyRoll.pas',
-    // Requires FTP support
+      // Needs some improved RTMP handling
     downDosGamesArchive in 'Downloaders\Non-working\downDosGamesArchive.pas',
-    // Download only works for logged-in users
+      // Requires FTP support
     downGameTrailers in 'Downloaders\Non-working\downGameTrailers.pas',
-    // Some transformation of movie ID is needed
+      // Download only works for logged-in users
+    downNova in 'Downloaders\Non-working\downNova.pas',
+      // Free service no longer available
+      guiOptionsWINAPI_Nova in 'GUI\WinAPI\Downloaders\guiOptionsWINAPI_Nova.pas',
+      guiOptionsVCL_Nova in 'GUI\VCL\Downloaders\guiOptionsVCL_Nova.pas' {FrameDownloaderOptionsPage_Nova: TFrame},
     downTipovani in 'Downloaders\Non-working\downTipovani.pas',
-    // Download from http://www.wat.tv/get/web/ doesn't work
+      // Some transformation of movie ID is needed
     downWat in 'Downloaders\Non-working\downWat.pas',
+      // Download from http://www.wat.tv/get/web/ doesn't work
   {$ENDIF}
   // Playlist handlers
   listHTML in 'Playlists\listHTML.pas',

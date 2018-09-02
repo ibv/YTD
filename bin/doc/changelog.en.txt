@@ -1,11 +1,24 @@
 ______________________________________________________________________________
 
-YTD v1.06                                                    (c) 2009-12 Pepak
+YTD v1.07                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.07:
+
+    * I didn't actually plan to release this version so soon, as I would have
+      preferred to add more new features and fix Nova for good, but an article
+      on idnes.cz forced my hand...
+
+    * iPrima.cz: Allowed just about every possible URL now.
+
+    * Nova.cz: Support removed, as Nova stopped their free service and I don't
+      have an access to the paid one.
+
+
 
   v1.06:
 

@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.06                                                    (c) 2009-12 Pepak
+YTD v1.07                                                    (c) 2009-12 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -125,9 +125,8 @@ iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842
 iHned.cz            | RTMP     |       | http://video.ihned.cz/c1-44411910-sef-narodniho-muzea-kdyz-zafouka-vitr-vypadne-nam-za-noc-az-deset-oken
 ILikeBike.cz        | MS       | 4     | http://www.ilikebike.cz/?year=2011&week=11
 ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
-iPrima.cz           | HTTP     |       | http://www.iprima.cz/videoarchiv/44524/all/all
-                    |          |       | http://www.iprima.cz/videoplayer/85680
-                    |          |       | http://www.iprima.cz/showjanakrause
+iPrima.cz           | RTMP     |       | http://play.iprima.cz/iprima/233409
+                    | RTMP     |       | http://play.iprima.cz/all/233409
                     | RTMP     | 4,9   | http://www.iprima.cz/showjanakrause/videoarchiv-brezen-2011/
                     | RTMP     |       | http://www.iprima.cz/videoarchiv/164106
 iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/beastie-boys-make-some-noise-(official-music-video) 
@@ -181,8 +180,6 @@ NBC.com             | RTMP     |       | http://www.nbc.com/classic-tv/miami-vic
 News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
 NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
-Nova.cz             | RTMP/MS  | 2,8   | http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
-                    | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
@@ -248,6 +245,7 @@ Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewke
 TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
 Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html
 ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/penguins_dont_like_water
+TN.Nova.cz          | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
 TotallyCrap.com     | RTMP     |       | http://www.totallycrap.com/videos/videos_man_tries_to_commit_suicide_by_laying_under_a_truck/
