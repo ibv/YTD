@@ -65,6 +65,8 @@ function ListViewSelectItem(ListView: THandle; Index: integer; Selected: boolean
 function ListViewGetSelectedItems(ListView: THandle; out Indexes: TList; MaxCount: integer = 0): boolean;
 function ListViewGetSelectedItem(ListView: THandle): integer;
 function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
+function ListViewGetColumnWidth(ListView: THandle; Index: integer): integer;
+function ListViewSetColumnWidth(ListView: THandle; Index: integer; Width: integer): boolean;
 
 //----- Toolbar ----------------------------------------------------------------
 procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);
@@ -267,6 +269,19 @@ begin
     ListViewTextBufferIndex := Succ(ListViewTextBufferIndex) mod LISTVIEW_TEXT_BUFFER_SIZE;
     end;
   StrPLCopy(DispInfo^.item.pszText, Text, DispInfo^.item.cchTextMax-1);
+end;
+
+function ListViewGetColumnWidth(ListView: THandle; Index: integer): integer;
+begin
+  Result := SendMessage(ListView, LVM_GETCOLUMNWIDTH, Index, 0);
+end;
+
+function ListViewSetColumnWidth(ListView: THandle; Index: integer; Width: integer): boolean;
+begin
+  if Width > 0 then
+    Result := SendMessage(ListView, LVM_SETCOLUMNWIDTH, Index, Width) <> 0
+  else
+    Result := False;
 end;
 
 procedure ToolbarButtonSetEnabled(Toolbar: THandle; Button: WPARAM; Enabled: boolean);

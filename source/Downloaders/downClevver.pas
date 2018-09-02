@@ -115,7 +115,7 @@ var Xml: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not DownloadXml(Http, 'http://clevver.com/api/get_fp_path', UrlEncode(Format(API_REQUEST, [MovieID])), HTTP_FORM_URLENCODING, Xml) then
+  if not DownloadXml(Http, 'http://clevver.com/api/get_fp_path', AnsiString(UrlEncode(Format(API_REQUEST, [MovieID]))), HTTP_FORM_URLENCODING, Xml) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else
     try

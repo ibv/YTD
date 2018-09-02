@@ -96,8 +96,9 @@ if "%compver%"=="fpc" (
 call :%compiler% "%srcdir%lib\PerlRegEx\*.pas"
 call :%compiler% "%srcdir%lib\lkJSON\uLkJSON.pas"
 call :%compiler% "%srcdir%lib\Pepak\*.pas"
+call :%compiler% "%srcdir%lib\Pepak\ApiForm\*.pas"
 if "%compver%"=="d5" call :%compiler% "%srcdir%lib\Pepak\delphi5\*.pas"
-copy "%srcdir%lib\Pepak\*.res" "%srcdir%Units" >nul
+copy "%srcdir%lib\Pepak\ApiForm\*.res" "%srcdir%Units" >nul
 call :%compiler% "%srcdir%lib\Synapse\source\lib\SSL_OpenSSL.pas"
 call :%compiler% "%srcdir%lib\Synapse\source\lib\httpsend.pas"
 call :%compiler% "%srcdir%lib\NativeXml\NativeXml.pas"

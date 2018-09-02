@@ -1,11 +1,20 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.84                                     (c) 2009-11 Pepak
+YouTube Downloader v0.85                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.85:
+
+    * CeskaTelevize.cz: Opìt funkèní.
+
+    * Grafická verze programu si pamatuje svou velikost a umístìní a také
+      šíøku sloupcù.
+
+
 
   v0.84:
 
@@ -15,7 +24,7 @@ CHANGELOG
 
     * Nový poskytovatel: G4TV.com.
 
-    * NoVý poskytovatel: iViewTube.com.
+    * Nový poskytovatel: iViewTube.com.
 
     * Nový poskytovatel: SoundCloud.com.
 

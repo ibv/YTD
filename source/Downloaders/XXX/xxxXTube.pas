@@ -126,7 +126,7 @@ begin
   GetRegExpVarPairs(FlashVarsRegExp, Page, ['swfURL', 'user_id', 'video_id', 'clip_id'], [@SwfUrl, @UserID, @VideoID, @ClipID]);
   if VideoID = '' then
     SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['video_id']))
-  else if not DownloadPage(Http, 'http://www.xtube.com/find_video.php', 'user_id=' + UrlEncode(UserID) + '&clip_id=' + UrlEncode(ClipID) + '&video_id=' + UrlEncode(VideoID), HTTP_FORM_URLENCODING, Page) then
+  else if not DownloadPage(Http, 'http://www.xtube.com/find_video.php', AnsiString('user_id=' + UrlEncode(UserID) + '&clip_id=' + UrlEncode(ClipID) + '&video_id=' + UrlEncode(VideoID)), HTTP_FORM_URLENCODING, Page) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if Copy(Page, 1, PREFIX_FILENAME_LENGTH) <> PREFIX_FILENAME then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)

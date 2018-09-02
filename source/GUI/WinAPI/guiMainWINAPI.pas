@@ -78,7 +78,7 @@ type
       fBugReportDisabled: boolean;
     protected
       // Moje properties a pomocne funkce
-      Options: TYTDOptions;
+      Options: TYTDOptionsGUI;
       DownloadList: TDownloadList;
       DownloadListHandle: THandle;
       NextProgressUpdate: DWORD;
@@ -339,6 +339,9 @@ end;
 
 function TFormMain.DoInitDialog: boolean;
 const DownloadListStyle = LVS_EX_FULLROWSELECT or LVS_EX_GRIDLINES or LVS_EX_DOUBLEBUFFER or LVS_EX_LABELTIP;
+var Current: TRect;
+    DesiredLeft, DesiredTop, DesiredWidth, DesiredHeight: integer;
+    i: integer;
 begin
   Result := inherited DoInitDialog;
   CreateObjects;
@@ -379,16 +382,47 @@ begin
   {$ENDIF}
   // Facilitate resizing
   SetControlAnchors(DownloadListHandle, [akTop, akLeft, akRight, akBottom]);
+  // Resize the main form
+  DesiredLeft := Options.MainFormLeft;
+  DesiredTop := Options.MainFormTop;
+  DesiredWidth := Options.MainFormWidth;
+  DesiredHeight := Options.MainFormHeight;
+  if GetWindowRect(Handle, Current) then
+    begin
+    if DesiredLeft <= -32768 then
+      DesiredLeft := Current.Left;
+    if DesiredTop <= -32768 then
+      DesiredTop := Current.Top;
+    if DesiredWidth <= 0 then
+      DesiredWidth := Current.Right - Current.Left + 1;
+    if DesiredHeight <= 0 then
+      DesiredHeight := Current.Bottom - Current.Top + 1;
+    MoveWindow(Handle, DesiredLeft, DesiredTop, DesiredWidth, DesiredHeight, True);
+    end;
+  // Resize downloadlist columns
+  for i := 0 to 5 do
+    ListViewSetColumnWidth(DownloadListHandle, i, Options.DownloadListColumnWidth[i]);
   // Redraw screen
   ActionRefresh;
 end;
 
 function TFormMain.DoClose: boolean;
+var Current: TRect;
+    i: integer;
 begin
   Result := inherited DoClose;
   if Result then
     begin
     DownloadList.StopAll;
+    if GetWindowRect(Handle, Current) then
+      begin
+      Options.MainFormLeft := Current.Left;
+      Options.MainFormTop := Current.Top;
+      Options.MainFormWidth := Current.Right - Current.Left + 1;
+      Options.MainFormHeight := Current.Bottom - Current.Top + 1;
+      end;
+    for i := 0 to 5 do
+      Options.DownloadListColumnWidth[i] := ListViewGetColumnWidth(DownloadListHandle, i);
     SaveSettings;
     StopClipboardMonitor;
     {$IFDEF SYSTRAY}

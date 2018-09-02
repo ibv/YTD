@@ -49,9 +49,26 @@ type
     private
       fLoadSuccessful: boolean;
     protected
+      function GetMainFormLeft: integer;
+      procedure SetMainFormLeft(const Value: integer);
+      function GetMainFormTop: integer;
+      procedure SetMainFormTop(const Value: integer);
+      function GetMainFormWidth: integer;
+      procedure SetMainFormWidth(const Value: integer);
+      function GetMainFormHeight: integer;
+      procedure SetMainFormHeight(const Value: integer);
+      function GetDownloadListColumnWidth(Index: integer): integer;
+      procedure SetDownloadListColumnWidth(Index: integer; const Value: integer);
+    protected
       function Load(IgnoreErrors: boolean = True): boolean; override;
     public
       procedure Init; override;
+    public
+      property MainFormLeft: integer read GetMainFormLeft write SetMainFormLeft;
+      property MainFormTop: integer read GetMainFormTop write SetMainFormTop;
+      property MainFormWidth: integer read GetMainFormWidth write SetMainFormWidth;
+      property MainFormHeight: integer read GetMainFormHeight write SetMainFormHeight;
+      property DownloadListColumnWidth[Index: integer]: integer read GetDownloadListColumnWidth write SetDownloadListColumnWidth;
     end;
 
 implementation
@@ -133,6 +150,19 @@ const
 
 {gnugettext: reset}
 
+const
+  XML_PATH_MAINFORMLEFT = 'gui/main_form/left';
+  XML_PATH_MAINFORMTOP = 'gui/main_form/top';
+  XML_PATH_MAINFORMWIDTH = 'gui/main_form/width';
+  XML_PATH_MAINFORMHEIGHT = 'gui/main_form/height';
+  XML_PATH_DOWNLOADLISTCOLUMNWIDTH = 'gui/download_list/column_%d_width';
+
+const
+  XML_DEFAULT_MAINFORMLEFT = -32768;
+  XML_DEFAULT_MAINFORMTOP = -32768;
+  XML_DEFAULT_MAINFORMWIDTH = -32768;
+  XML_DEFAULT_MAINFORMHEIGHT = -32768;
+
 procedure TYTDOptionsGUI.Init;
 begin
   fLoadSuccessful := False;
@@ -170,6 +200,56 @@ begin
     on E: Exception do
       Result := (MessageBox(0, PChar(Format(_(ERROR_LOADING_CONFIG), [E.ClassName, E.Message])), APPLICATION_TITLE, MB_OK or MB_ICONSTOP or MB_TASKMODAL) = idYes);
     end;
+end;
+
+function TYTDOptionsGUI.GetMainFormLeft: integer;
+begin
+  Result := StrToIntDef(GetOption(XML_PATH_MAINFORMLEFT), XML_DEFAULT_MAINFORMLEFT);
+end;
+
+procedure TYTDOptionsGUI.SetMainFormLeft(const Value: integer);
+begin
+  SetOption(XML_PATH_MAINFORMLEFT, IntToStr(Value));
+end;
+
+function TYTDOptionsGUI.GetMainFormTop: integer;
+begin
+  Result := StrToIntDef(GetOption(XML_PATH_MAINFORMTOP), XML_DEFAULT_MAINFORMTOP);
+end;
+
+procedure TYTDOptionsGUI.SetMainFormTop(const Value: integer);
+begin
+  SetOption(XML_PATH_MAINFORMTOP, IntToStr(Value));
+end;
+
+function TYTDOptionsGUI.GetMainFormWidth: integer;
+begin
+  Result := StrToIntDef(GetOption(XML_PATH_MAINFORMWIDTH), XML_DEFAULT_MAINFORMWIDTH);
+end;
+
+procedure TYTDOptionsGUI.SetMainFormWidth(const Value: integer);
+begin
+  SetOption(XML_PATH_MAINFORMWIDTH, IntToStr(Value));
+end;
+
+function TYTDOptionsGUI.GetMainFormHeight: integer;
+begin
+  Result := StrToIntDef(GetOption(XML_PATH_MAINFORMHEIGHT), XML_DEFAULT_MAINFORMHEIGHT);
+end;
+
+procedure TYTDOptionsGUI.SetMainFormHeight(const Value: integer);
+begin
+  SetOption(XML_PATH_MAINFORMHEIGHT, IntToStr(Value));
+end;
+
+function TYTDOptionsGUI.GetDownloadListColumnWidth(Index: integer): integer;
+begin
+  Result := StrToIntDef(GetOption(Format(XML_PATH_DOWNLOADLISTCOLUMNWIDTH, [Index])), -1);
+end;
+
+procedure TYTDOptionsGUI.SetDownloadListColumnWidth(Index: integer; const Value: integer);
+begin
+  SetOption(Format(XML_PATH_DOWNLOADLISTCOLUMNWIDTH, [Index]), IntToStr(Value));
 end;
 
 end.

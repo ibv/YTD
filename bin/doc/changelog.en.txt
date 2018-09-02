@@ -1,11 +1,20 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.84                                     (c) 2009-11 Pepak
+YouTube Downloader v0.85                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.85:
+
+    * CeskaTelevize.cz: Works again.
+
+    * The GUI version of the application remembers its window position and
+      size and the column widths, too.
+
+
 
   v0.84:
 

@@ -40,7 +40,7 @@ unit downCT;
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, {$ENDIF}
+  SysUtils, Classes, {$IFDEF DELPHI2009_UP} Windows, Variants, {$ENDIF}
   uPCRE, uXml, HttpSend,
   uOptions,
   uDownloader, uCommonDownloader, uRtmpDownloader;
@@ -242,6 +242,7 @@ var MovieObject, Url, ID, BaseUrl, BestStream, Stream, sBitrate: string;
     Xml: TXmlDoc;
     Body, Node: TXmlNode;
     i, j, Bitrate, BestBitrate: integer;
+    Protocol, User, Password, Host, Port, Path, Para: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -249,7 +250,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/playlistURL.php', MovieObject, HTTP_FORM_URLENCODING_UTF8, Url) then
+  else if not DownloadPage(Http, 'http://www.ceskatelevize.cz/ajax/playlistURL.php', AnsiString(MovieObject), HTTP_FORM_URLENCODING_UTF8, Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if Copy(Url, 1, 4) <> 'http' then
     SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Url]))
@@ -286,9 +287,16 @@ begin
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else
                     begin
-                    MovieURL := BestStream;
+                    MovieURL := BaseUrl + '/' + BestStream;
+                    ParseUrl(BaseUrl, Protocol, User, Password, Host, Port, Path, Para);
+                    SetRtmpDumpOption('z', '');
                     SetRtmpDumpOption('r', BaseUrl);
+                    SetRtmpDumpOption('a', Copy(Path, 2, MaxInt) + '?' + Para);
                     SetRtmpDumpOption('y', BestStream);
+                    //SetRtmpDumpOption('f', 'WIN 10,1,102,64');
+                    //SetRtmpDumpOption('s', 'http://img2.ceskatelevize.cz/libraries/player/flashPlayer.swf?version=1.4.23');
+                    //SetRtmpDumpOption('t', BaseUrl);
+                    //SetRtmpDumpOption('p', MovieID);
                     if LiveStream then
                       SetRtmpDumpOption('v', '');
                     {$IFDEF MULTIDOWNLOADS}

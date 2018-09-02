@@ -177,7 +177,7 @@ type
   protected
     DownloadList: TDownloadList;
     NextProgressUpdate: DWORD;
-    Options: TYTDOptions;
+    Options: TYTDOptionsGUI;
     NextClipboardViewer: integer;
     LastClipboardText: string;
     {$IFDEF CONVERTERS}
@@ -215,6 +215,8 @@ uses
 { TFormYTD }
 
 procedure TFormYTD.FormCreate(Sender: TObject);
+var
+  i: integer;
 begin
   fLoading := True;
   try
@@ -254,6 +256,19 @@ begin
     {$ENDIF}
     // Use double-buffered listview (removes flickering)
     SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
+    // Window size
+    if Options.MainFormLeft > -32768 then
+      Self.Left := Options.MainFormLeft;
+    if Options.MainFormTop > -32768 then
+      Self.Top := Options.MainFormTop;
+    if Options.MainFormWidth > 0 then
+      Self.Width := Options.MainFormWidth;
+    if Options.MainFormHeight > 0 then
+      Self.Height := Options.MainFormHeight;
+    // Column widths
+    for i := 0 to Pred(Downloads.Columns.Count) do
+      if Options.DownloadListColumnWidth[i] > 0 then
+      Downloads.Columns[i].Width := Options.DownloadListColumnWidth[i];
   finally
     fLoading := False;
     end;
@@ -283,8 +298,16 @@ begin
 end;
 
 procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  i: integer;
 begin
   DownloadList.StopAll;
+  Options.MainFormLeft := Self.Left;
+  Options.MainFormTop := Self.Top;
+  Options.MainFormWidth := Self.Width;
+  Options.MainFormHeight := Self.Height;
+  for i := 0 to Pred(Downloads.Columns.Count) do
+    Options.DownloadListColumnWidth[i] := Downloads.Columns[i].Width;
   SaveSettings;
 end;
 

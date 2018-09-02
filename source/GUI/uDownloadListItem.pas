@@ -372,7 +372,7 @@ begin
     FN := Downloader.Options.DestinationPath + Downloader.FileName;
     if FileExists(FN) then
       begin
-      FN := ExcludeTrailingBackslash(ExtractFilePath(ExpandFileName(FN)));
+      FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(FN)));
       ShellExecute(0, 'open', PChar(FN), nil, nil, SW_SHOWNORMAL);
       end;
     end;
