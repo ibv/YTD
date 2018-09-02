@@ -8,3 +8,4 @@
 #define IDC_EDIT_MAXWIDTH                       1004
 #define IDC_LABEL_MAXHEIGHT                     1005
 #define IDC_EDIT_MAXHEIGHT                      1006
+#define IDC_CHECK_AVOIDWEBM                     1007

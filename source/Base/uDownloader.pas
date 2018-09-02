@@ -114,11 +114,13 @@ type
       function DownloadXml(Http: THttpSend; const Url: string; out Page: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; out Xml: TXmlDoc; Method: THttpMethod = hmGet; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadXml(Http: THttpSend; const Url: string; const PostData: AnsiString; const PostMimeType: string; out Xml: TXmlDoc; Clear: boolean = True): boolean; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function DownloadSOAP(Http: THttpSend; const Url, SoapAction: string; const SoapHeader, SoapBody: TXmlNode; out Response: TXmlDoc; out ResponseHeader, ResponseBody: TXmlNode; Clear: boolean = True): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function HtmlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -182,6 +184,7 @@ type
 implementation
 
 uses
+  uStringConsts,
   uStringUtils,
   uMessages;
 
@@ -460,6 +463,57 @@ begin
       end;
 end;
 
+function TDownloader.DownloadSOAP(Http: THttpSend; const Url,
+  SoapAction: string; const SoapHeader, SoapBody: TXmlNode; out Response: TXmlDoc;
+  out ResponseHeader, ResponseBody: TXmlNode; Clear: boolean): boolean;
+var
+  Request: TXmlDoc;
+  Node: TXmlNode;
+  RequestStr: AnsiString;
+  Namespace: Utf8String;
+begin
+  Response := nil;
+  ResponseHeader := nil;
+  ResponseBody := nil;
+  Request := TXmlDoc.CreateName('soap:Envelope');
+  try
+    Request.Root.AttributeByNameWide['xmlns:soap'] := 'http://schemas.xmlsoap.org/soap/envelope/';
+    if SoapHeader <> nil then
+      begin
+      Node := Request.Root.NodeNew('soap:Header').NodeNew('');
+      Node.Assign(SoapHeader);
+      end;
+    Node := Request.Root.NodeNew('soap:Body').NodeNew('');
+    if SoapBody <> nil then
+      Node.Assign(SoapBody);
+    RequestStr := Request.SaveToBinaryString;
+    if Clear then
+      Http.Clear;
+    Http.Headers.Add('SOAPAction: ' + SoapAction);
+    Result := DownloadXml(Http, Url, RequestStr, HTTP_SOAP_ENCODING, Response, False);
+    try
+      if Result then
+        begin
+        Namespace := XmlGetNamespace(Response);
+        if XmlNodeByPath(Response, Namespace + 'Fault', Node) then
+          EDownloaderError.CreateFmt(ERR_SERVER_ERROR, [XmlValueByPath(Node, 'faultstring')])
+        else
+          begin
+          if XmlNodeByPath(Response, Namespace + 'Header', Node) then
+            ResponseHeader := Node;
+          if XmlNodeByPath(Response, Namespace + 'Body', Node) then
+            ResponseBody := Node;
+          end;
+        end;
+    except
+      FreeAndNil(Response);
+      Raise;
+      end;
+  finally
+    FreeAndNil(Request);
+    end;
+end;
+
 function TDownloader.DownloadAMF(Http: THttpSend; Url: string; Request: TAMFPacket; out Response: TAMFPacket): boolean;
 var RequestStr: AnsiString;
 begin
@@ -573,21 +627,23 @@ begin
 end;
 {$ENDIF}
 
-function TDownloader.HtmlDecode(const Text: string): string;
 type
   THtmlDecodeItem = record
     Html, Txt: string;
+    DecodeOnly: boolean;
     end;
 const
   HtmlDecodeItems: array[0..5] of THtmlDecodeItem
     = (
-        (Html: '&lt;'   ; Txt: '<'),
-        (Html: '&gt;'   ; Txt: '>'),
-        (Html: '&quot;' ; Txt: '"'),
-        (Html: '&apos;' ; Txt: ''''),
-        (Html: '&mdash;'; Txt: '--'),
-        (Html: '&amp;'  ; Txt: '&')
+        (Html: '&mdash;'; Txt: '--'; DecodeOnly: true),
+        (Html: '&lt;'   ; Txt: '<' ; DecodeOnly: false),
+        (Html: '&gt;'   ; Txt: '>' ; DecodeOnly: false),
+        (Html: '&quot;' ; Txt: '"' ; DecodeOnly: false),
+        (Html: '&apos;' ; Txt: ''''; DecodeOnly: false),
+        (Html: '&amp;'  ; Txt: '&' ; DecodeOnly: false)
       );
+
+function TDownloader.HtmlDecode(const Text: string): string;
 var
   i, Start, Code: integer;
 begin
@@ -620,6 +676,16 @@ begin
         end;
     Inc(i);
     end;
+end;
+
+function TDownloader.HtmlEncode(const Text: string): string;
+var
+  i: integer;
+begin
+  Result := Text;
+  for i := Pred(Length(HtmlDecodeItems)) downto 0 do
+    if not HtmlDecodeItems[i].DecodeOnly then
+      Result := StringReplace(Result, HtmlDecodeItems[i].Txt, HtmlDecodeItems[i].Html, [rfReplaceAll]);
 end;
 
 function TDownloader.UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string;

@@ -231,6 +231,7 @@ begin
   {$IFDEF DEBUG}
   AddRtmpDumpOption('z');
   {$ENDIF}
+  AddRtmpDumpOption('z');
   if Options.ProxyActive and (Options.ProxyHost <> '') then
     AddRtmpDumpOption('S', Options.ProxyHost + ':' + Options.ProxyPort);
   AddRtmpDumpOption('o', FileName);

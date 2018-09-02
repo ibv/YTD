@@ -69,6 +69,8 @@ function XmlNodeByPathCreate(Node: TXmlNode; const Path: string): TXmlNode; over
 function XmlNodeByPathCreate(Node: TXmlDoc; const Path: string): TXmlNode; overload;
 function XmlValueByPath(Node: TXmlNode; const Path: string; const Default: string = ''): string; overload;
 function XmlValueByPath(Node: TXmlDoc; const Path: string; const Default: string = ''): string; overload;
+function XmlGetNamespace(Node: TXmlNode): string; overload;
+function XmlGetNamespace(Node: TXmlDoc): string; overload;
 
 implementation
 
@@ -206,6 +208,24 @@ end;
 function XmlValueByPath(Node: TXmlDoc; const Path: string; const Default: string): string;
 begin
   Result := XmlValueByPath(Node.Root, Path, Default);
+end;
+
+function XmlGetNamespace(Node: TXmlNode): string;
+var
+  Name: string;
+  ix: integer;
+begin
+  Name := Node.Name;
+  ix := Pos(':', Name);
+  if ix > 0 then
+    Result := Copy(Name, 1, ix)
+  else
+    Result := '';
+end;
+
+function XmlGetNamespace(Node: TXmlDoc): string;
+begin
+  Result := XmlGetNamespace(Node.Root);
 end;
 
 { TXmlDoc }

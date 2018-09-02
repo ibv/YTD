@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.87                                     (c) 2009-11 Pepak
+YouTube Downloader v0.88                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -462,6 +462,12 @@ a "0" (ne).
         konvertovat z formátu YouTube do formátu .srt.
       - Možné hodnoty jsou "1" (povolit konverzi) nebo "0" (zakázat).
       - Výchozí hodnota je "1" (povolit konverzi).
+
+    <avoid_webm>
+      - Potomek <YouTube_com>; urèuje, jestli se mají stahovat videa i ve
+        formátu (kontejneru) .webm.
+      - Možné hodnoty jsou "1" (nestahovat WebM) nebo "0" (stahovat).
+      - Výchozí hodnota je "0" (stahovat).
 
   - Všichni poskytovatelé mají následující nastavení:
 

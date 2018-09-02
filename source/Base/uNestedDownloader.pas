@@ -227,8 +227,13 @@ begin
       begin
       Result := NestedDownloader.Prepare;
       if Result then
+        begin
         if Name = '' then
           SetName(NestedDownloader.Name);
+        if MovieUrl = '' then
+          if NestedDownloader is TCommonDownloader then
+            MovieUrl := TCommonDownloader(NestedDownloader).ContentUrl;
+        end;
       end;
 end;
 

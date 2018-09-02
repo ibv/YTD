@@ -52,6 +52,7 @@ type
     EditMaximumVideoWidth: TEdit;
     LabelMaximumVideoHeight: TLabel;
     EditMaximumVideoHeight: TEdit;
+    CheckAvoidWebM: TCheckBox;
   private
   protected
   public
@@ -93,6 +94,7 @@ begin
   {$ENDIF}
   EditMaximumVideoWidth.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT));
   EditMaximumVideoHeight.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT));
+  CheckAvoidWebM := Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT);
 end;
 
 procedure TFrameDownloaderOptionsPage_YouTube.SaveToOptions;
@@ -104,6 +106,7 @@ begin
   {$ENDIF}
   Options.WriteProviderOption(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, StrToIntDef(EditMaximumVideoWidth.Text, 0));
   Options.WriteProviderOption(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, StrToIntDef(EditMaximumVideoHeight.Text, 0));
+  Options.WriteProviderOption(Provider, OPTION_YOUTUBE_AVOIDWEBM, CheckAvoidWebM.Checked);
 end;
 
 end.

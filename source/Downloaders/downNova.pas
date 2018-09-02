@@ -51,17 +51,16 @@ uses
       guiOptionsVCL_Nova,
     {$ENDIF}
   {$ENDIF}
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  uRtmpDownloader, uMSDownloader;
 
 type
-  TDownloader_Nova = class(TRtmpDownloader)
+  TDownloader_Nova = class(TNestedDownloader)
     private
     protected
-      MovieVariablesRegExp: TRegExp;
       LowQuality: boolean;
-      FlvStream: string;
+      SilverlightParamsRegExp: TRegExp;
     protected
-      function GetFileNameExt: string; override;
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
@@ -73,7 +72,44 @@ type
       {$ENDIF}
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+    end;
+
+  TDownloader_Nova_RTMP = class(TRtmpDownloader)
+    private
+    protected
+      MovieVariablesRegExp: TRegExp;
+      LowQuality: boolean;
+      FlvStream: string;
+    protected
+      function GetFileNameExt: string; override;
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
+    protected
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
       function Download: boolean; override;
+    end;
+
+  TDownloader_Nova_MS = class(TMSDownloader)
+    private
+    protected
+      LowQuality: boolean;
+      SilverlightParamsRegExp: TRegExp;
+      SilverlightVarsRegExp: TRegExp;
+    protected
+      function GetMovieInfoUrl: string; override;
+      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      procedure SetOptions(const Value: TYTDOptions); override;
+    protected
+    public
+      class function Provider: string; override;
+      class function UrlRegExp: string; override;
+      constructor Create(const AMovieID: string); override;
+      destructor Destroy; override;
     end;
 
 const
@@ -98,18 +134,27 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_H2_CLASS; // 'video_title'
+  REGEXP_MS_INFO {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '<object\s[^>]*\btype="application/x-silverlight-2"(?:(?!</object\b).)*?<param\s+name=''initparams''\s+value=''(?P<INFO>identifier=.+?)''';
+  REGEXP_MS_INFO_NAME {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'INFO';
+  REGEXP_RTMP_VARIABLES = '\svar\s(?P<VARNAME>[a-z_][a-z0-9_]*)\s*=\s*(["'']?)(?P<VARVALUE>.*?)\2\s*;';
+  REGEXP_MS_VARIABLES = '\s*(?P<VARNAME>[^=&]+)=(?P<VARVALUE>[^,]*)';
+
+const
+  NOVA_PROVIDER {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Nova.cz';
+  NOVA_URLREGEXP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID;
+  NOVA_MOVIE_INFO_URL {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://voyo.nova.cz/%s';
 
 { TDownloader_Nova }
 
 class function TDownloader_Nova.Provider: string;
 begin
-  Result := 'Nova.cz';
+  Result := NOVA_PROVIDER;
 end;
 
 class function TDownloader_Nova.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(NOVA_URLREGEXP, [MovieIDParamName]);
 end;
 
 {$IFDEF GUI}
@@ -123,17 +168,75 @@ constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
   InfoPageEncoding := peUTF8;
-  MovieVariablesRegExp := RegExCreate(REGEXP_MOVIE_VARIABLES);
+  SilverlightParamsRegExp := RegExCreate(REGEXP_MS_INFO);
   LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
 end;
 
 destructor TDownloader_Nova.Destroy;
 begin
+  RegExFreeAndNil(SilverlightParamsRegExp);
+  inherited;
+end;
+
+function TDownloader_Nova.GetMovieInfoUrl: string;
+begin
+  Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
+end;
+
+function TDownloader_Nova.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Downloader: TDownloader;
+  Silverlight: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if GetRegExpVar(SilverlightParamsRegExp, Page, REGEXP_MS_INFO_NAME, Silverlight) then
+    Downloader := TDownloader_Nova_MS.Create(MovieID)
+  else
+    Downloader := TDownloader_Nova_RTMP.Create(MovieID);
+  if Downloader <> nil then
+    if CreateNestedDownloaderFromDownloader(Downloader) then
+      begin
+      SetPrepared(True);
+      Result := True;
+      end
+    else
+      Downloader.Free;
+end;
+
+procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
+end;
+
+{ TDownloader_Nova_RTMP }
+
+class function TDownloader_Nova_RTMP.Provider: string;
+begin
+  Result := NOVA_PROVIDER;
+end;
+
+class function TDownloader_Nova_RTMP.UrlRegExp: string;
+begin
+  Result := Format(NOVA_URLREGEXP, [MovieIDParamName]);
+end;
+
+constructor TDownloader_Nova_RTMP.Create(const AMovieID: string);
+begin
+  inherited;
+  InfoPageEncoding := peUTF8;
+  MovieVariablesRegExp := RegExCreate(REGEXP_RTMP_VARIABLES);
+  LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
+end;
+
+destructor TDownloader_Nova_RTMP.Destroy;
+begin
   RegExFreeAndNil(MovieVariablesRegExp);
   inherited;
 end;
 
-function TDownloader_Nova.GetFileNameExt: string;
+function TDownloader_Nova_RTMP.GetFileNameExt: string;
 begin
   if LowQuality then
     Result := '.flv'
@@ -141,17 +244,17 @@ begin
     Result := '.mp4';
 end;
 
-function TDownloader_Nova.GetMovieInfoUrl: string;
+function TDownloader_Nova_RTMP.GetMovieInfoUrl: string;
 begin
-  Result := 'http://voyo.nova.cz/' + MovieID;
+  Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
 end;
 
-function TDownloader_Nova.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_Nova_RTMP.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var i: integer;
     Name, Value: string;
     MediaID, SiteID, SectionID, SessionID, UserAdID: string;
     ServersUrl, VideosUrl: string;
-    FlvServer, PlayPath, FlvName: string;
+    FlvServer, FlvName: string;
     Servers, Videos: TXmlDoc;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
@@ -217,12 +320,11 @@ begin
                 begin
                 SetName(FlvName);
                 if LowQuality then
-                  PlayPath := 'flv:' + FlvStream
+                  Self.PlayPath := 'flv:' + FlvStream
                 else
-                  PlayPath := 'mp4:' + FlvStream;
+                  Self.PlayPath := 'mp4:' + FlvStream;
                 MovieUrl := FlvServer + '/' + PlayPath;
-                Self.RtmpUrl := MovieURL;
-                Self.Playpath := PlayPath;
+                Self.RtmpUrl := FlvServer;
                 //AddRtmpDumpOption('f', FLASH_DEFAULT_VERSION);
                 //AddRtmpDumpOption('W', 'http://voyo.nova.cz/static/shared/app/flowplayer/13-flowplayer.commercial-3.1.5-17-002.swf');
                 //AddRtmpDumpOption('t', FlvServer);
@@ -239,23 +341,126 @@ begin
     end;
 end;
 
-function TDownloader_Nova.Download: boolean;
+function TDownloader_Nova_RTMP.Download: boolean;
+{$IFDEF DIRTYHACKS}
+var
+  TryLowQuality: boolean;
+{$ENDIF}
 begin
   Result := inherited Download;
   {$IFDEF DIRTYHACKS}
-  if Result then
-    if not LowQuality then
+  TryLowQuality := False;
+  if not LowQuality then
+    begin
+    if Result then
       if FileExists(FileName) then
-        if FileGetSize(FileName) = 0 then
-          begin
-          SysUtils.DeleteFile(FileName);
-          Self.Playpath := 'flv:' + FlvStream;
-          Result := inherited Download;
-          end;
+        if FileGetSize(Filename) = 0 then
+          TryLowQuality := True;
+    if not Result then
+      TryLowQuality := True;
+    end;
+  if TryLowQuality then
+    begin
+    SysUtils.DeleteFile(FileName);
+    Self.Playpath := 'flv:' + FlvStream;
+    Result := inherited Download;
+    end;
   {$ENDIF}
 end;
 
-procedure TDownloader_Nova.SetOptions(const Value: TYTDOptions);
+procedure TDownloader_Nova_RTMP.SetOptions(const Value: TYTDOptions);
+begin
+  inherited;
+  LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
+end;
+
+{ TDownloader_Nova_MS }
+
+class function TDownloader_Nova_MS.Provider: string;
+begin
+  Result := NOVA_PROVIDER;
+end;
+
+class function TDownloader_Nova_MS.UrlRegExp: string;
+begin
+  Result := Format(NOVA_URLREGEXP, [MovieIDParamName]);
+end;
+
+constructor TDownloader_Nova_MS.Create(const AMovieID: string);
+begin
+  inherited;
+  InfoPageEncoding := peUTF8;
+  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['video_title']));
+  SilverlightParamsRegExp := RegExCreate(REGEXP_MS_INFO);
+  SilverlightVarsRegExp := RegExCreate(REGEXP_MS_VARIABLES);
+  LowQuality := OPTION_NOVA_LOWQUALITY_DEFAULT;
+end;
+
+destructor TDownloader_Nova_MS.Destroy;
+begin
+  RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(SilverlightParamsRegExp);
+  RegExFreeAndNil(SilverlightVarsRegExp);
+  inherited;
+end;
+
+function TDownloader_Nova_MS.GetMovieInfoUrl: string;
+begin
+  Result := Format(NOVA_MOVIE_INFO_URL, [MovieID]);
+end;
+
+function TDownloader_Nova_MS.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+const
+  NAMESPACE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://streaming.kitd.cz/cdn/nova';
+  SOAP_ACTION = '"http://streaming.kitd.cz/cdn/nova/GetContentUrl"';
+  QUALITY_STR: array[boolean] of WideString = ('LQ', 'HQ');
+var
+  Silverlight, ID, Token, Url: string;
+  Request, Response: TXmlDoc;
+  ResponseHeader, ResponseBody: TXmlNode;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(SilverlightParamsRegExp, Page, REGEXP_MS_INFO_NAME, Silverlight) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not GetRegExpVarPairs(SilverlightVarsRegExp, Silverlight, ['identifier', 'token'], [@ID, @Token]) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else
+    begin
+    Request := TXmlDoc.CreateName('GetContentUrl');
+    try
+      Request.Root.AttributeByName['xmlns'] := NAMESPACE;
+      Request.Root.AttributeByName['xmlns:i'] := 'http://www.w3.org/2001/XMLSchema-instance';
+      Request.Root.NodeNew('token').ValueAsUnicodeString := WideString(Token);
+      Request.Root.NodeNew('id').ValueAsUnicodeString := WideString(ID);
+      Request.Root.NodeNew('type').ValueAsUnicodeString := 'Archive';
+      Request.Root.NodeNew('format').ValueAsUnicodeString := QUALITY_STR[not LowQuality];
+      if not DownloadSoap(Http, 'http://fcdn-upload.visual.cz/Services.Test/Player.asmx', SOAP_ACTION, nil, Request.Root, Response, ResponseHeader, ResponseBody) then
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+      else
+        try
+          if ResponseBody.NodeCount <= 0 then
+            SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+          else if not GetXmlVar(ResponseBody, 'GetContentUrlResponse/GetContentUrlResult', Url) then
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+          else
+            begin
+            MovieUrl := Url;
+            SetPrepared(True);
+            Result := True;
+            end;
+        finally
+          FreeAndNil(Response);
+          ResponseHeader := nil;
+          ResponseBody := nil;
+          end;
+    finally
+      Request.Free;
+      end;
+    end;
+end;
+
+procedure TDownloader_Nova_MS.SetOptions(const Value: TYTDOptions);
 begin
   inherited;
   LowQuality := Value.ReadProviderOptionDef(Provider, OPTION_NOVA_LOWQUALITY, OPTION_NOVA_LOWQUALITY_DEFAULT);
@@ -263,5 +468,7 @@ end;
 
 initialization
   RegisterDownloader(TDownloader_Nova);
+  //RegisterDownloader(TDownloader_Nova_RTMP);
+  //RegisterDownloader(TDownloader_Nova_MS);
 
 end.

@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-07-23 12:44\n"
-"PO-Revision-Date: 2011-07-23 12:44\n"
+"POT-Creation-Date: 2011-07-31 18:03\n"
+"PO-Revision-Date: 2011-07-31 18:03\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -586,6 +586,11 @@ msgstr ""
 #. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..LabelMaximumVideoHeight..Caption
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:26
 msgid "Maximum video &height:"
+msgstr ""
+
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..CheckAvoidWebM..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:59
+msgid "&Avoid .webm format"
 msgstr ""
 
 #. HTTP socket status: resolving began
@@ -1401,14 +1406,14 @@ msgstr ""
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
-#: Lib/Pepak/ApiForm/uApiFunctions.pas:79
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
 msgid "Windows error %u = %08.8x\n"
 "%s"
 msgstr ""
 
 #. error code, error code
 #. Programmer's name for it: WINDOWS_ERROR_UNKNOWN
-#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:81
 msgid "Unknown error %u = %08.8x."
 msgstr ""
 

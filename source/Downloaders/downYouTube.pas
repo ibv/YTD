@@ -65,6 +65,7 @@ type
       FmtUrlMapRegExp: TRegExp;
       Extension: string;
       MaxWidth, MaxHeight: integer;
+      AvoidWebM: boolean;
       {$IFDEF SUBTITLES}
         PreferredLanguages: string;
         {$IFDEF CONVERTSUBTITLES}
@@ -98,6 +99,8 @@ const
   OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT = 0;
   OPTION_YOUTUBE_MAXVIDEOHEIGHT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_video_height';
   OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT = 0;
+  OPTION_YOUTUBE_AVOIDWEBM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'avoid_webm';
+  OPTION_YOUTUBE_AVOIDWEBM_DEFAULT = False;
   {$IFDEF SUBTITLES}
     OPTION_YOUTUBE_PREFERREDLANGUAGES {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'preferred_languages';
     OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'en';
@@ -356,6 +359,7 @@ end;
 function TDownloader_YouTube.GetBestVideoFormat(const FormatList: string): string;
 var MaxVideoQuality, MaxAudioQuality, Width, Height: integer;
     VideoQuality, AudioQuality: integer;
+    VideoFormat: string;
 begin
   Result := '';
   MaxVideoQuality := 0;
@@ -366,14 +370,16 @@ begin
       AudioQuality := StrToIntDef(FormatListRegExp.SubexpressionByName('AUDIOQUALITY'), 0);
       Width := StrToIntDef(FormatListRegExp.SubexpressionByName('WIDTH'), 0);
       Height := StrToIntDef(FormatListRegExp.SubexpressionByName('HEIGHT'), 0);
+      VideoFormat := FormatListRegExp.SubexpressionByName('FORMAT');
       if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
         if (Width <= MaxWidth) or (MaxWidth <= 0) then
           if (Height <= MaxHeight) or (MaxHeight <= 0) then
-            begin
-            Result := FormatListRegExp.SubexpressionByName('FORMAT');
-            MaxVideoQuality := VideoQuality;
-            MaxAudioQuality := AudioQuality;
-            end;
+            if (not AvoidWebM) or (not ((VideoFormat = '43') or (VideoFormat = '45'))) then
+              begin
+              MaxVideoQuality := VideoQuality;
+              MaxAudioQuality := AudioQuality;
+              Result := VideoFormat;
+              end;
     until not FormatListRegExp.MatchAgain;
 end;
 
@@ -406,6 +412,7 @@ begin
   inherited;
   MaxWidth := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT);
   MaxHeight := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT);
+  AvoidWebM := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT);
   {$IFDEF SUBTITLES}
     PreferredLanguages := Value.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_PREFERREDLANGUAGES, OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT);
     {$IFDEF CONVERTSUBTITLES}

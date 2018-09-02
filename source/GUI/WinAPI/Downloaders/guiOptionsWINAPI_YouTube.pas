@@ -60,6 +60,7 @@ type
       EditPreferredLanguages: THandle;
       EditMaxWidth: THandle;
       EditMaxHeight: THandle;
+      CheckAvoidWebM: THandle;
       procedure CreateObjects; override;
       procedure DestroyObjects; override;
       procedure LabelPreferredLanguagesClick;
@@ -86,6 +87,7 @@ const
   IDC_EDIT_MAXWIDTH = 1004;
   IDC_LABEL_MAXHEIGHT = 1005;
   IDC_EDIT_MAXHEIGHT = 1006;
+  IDC_CHECK_AVOIDWEBM = 1007;
 
 { TFrameDownloaderOptionsPage_YouTube }
 
@@ -117,6 +119,7 @@ begin
   EditPreferredLanguages := GetDlgItem(Self.Handle, IDC_EDIT_PREFERREDLANGUAGES);
   EditMaxWidth := GetDlgItem(Self.Handle, IDC_EDIT_MAXWIDTH);
   EditMaxHeight := GetDlgItem(Self.Handle, IDC_EDIT_MAXHEIGHT);
+  CheckAvoidWebM := GetDlgItem(Self.Handle, IDC_CHECK_AVOIDWEBM);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_YouTube.DestroyObjects;
@@ -124,6 +127,7 @@ begin
   EditPreferredLanguages := 0;
   EditMaxWidth := 0;
   EditMaxHeight := 0;
+  CheckAvoidWebM := 0;
   inherited;
 end;
 
@@ -135,6 +139,7 @@ begin
   EnableWindow(GetDlgItem(Self.Handle, IDC_EDIT_PREFERREDLANGUAGES), False);
   {$ENDIF}
   SetControlAnchors(EditPreferredLanguages, [akLeft, akTop, akRight]);
+  SetControlAnchors(CheckAvoidWebM, [akLeft, akTop, akRight]);
 end;
 
 function TFrameDownloaderOptionsPageSpec_YouTube.DoCommand(NotificationCode, Identifier: word; WindowHandle: THandle): boolean;
@@ -167,6 +172,7 @@ begin
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_YouTube.LoadFromOptions;
+const CheckboxConsts: array[boolean] of DWORD = (BST_UNCHECKED, BST_CHECKED);
 begin
   inherited;
   {$IFDEF SUBTITLES}
@@ -176,6 +182,7 @@ begin
   {$ENDIF}
   SetWindowText(EditMaxWidth, PChar(IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT))));
   SetWindowText(EditMaxHeight, PChar(IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT))));
+  CheckDlgButton(Self.Handle, IDC_CHECK_AVOIDWEBM, CheckboxConsts[Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT)]);
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_YouTube.SaveToOptions;
@@ -187,6 +194,12 @@ begin
   {$ENDIF}
   Options.WriteProviderOption(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, StrToIntDef(GetWindowTextAsString(EditMaxWidth), 0));
   Options.WriteProviderOption(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, StrToIntDef(GetWindowTextAsString(EditMaxHeight), 0));
+  case IsDlgButtonChecked(Self.Handle, IDC_CHECK_AVOIDWEBM) of
+    BST_CHECKED:
+      Options.WriteProviderOption(Provider, OPTION_YOUTUBE_AVOIDWEBM, True);
+    BST_UNCHECKED:
+      Options.WriteProviderOption(Provider, OPTION_YOUTUBE_AVOIDWEBM, False);
+    end;
 end;
 
 procedure TFrameDownloaderOptionsPageSpec_YouTube.LabelPreferredLanguagesClick;

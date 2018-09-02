@@ -1,11 +1,22 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.87                                     (c) 2009-11 Pepak
+YouTube Downloader v0.88                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.88:
+
+    * Nova.cz: Support for the new experimental Silverlight-based media player.
+      The old player is still supported (I hope), because some movies still
+      use it.
+
+    * YouTube.com: In the downloader options you can now disable support for
+      container .webm (YouTube's new default container).
+
+
 
   v0.87:
 

@@ -1,7 +1,7 @@
 inherited FrameDownloaderOptionsPage_YouTube: TFrameDownloaderOptionsPage_YouTube
-  Height = 135
+  Height = 156
   inherited PanelSpecificOptions: TPanel
-    Height = 78
+    Height = 99
     object LabelPreferredLanguages: TLabel
       Left = 8
       Top = 0
@@ -49,6 +49,15 @@ inherited FrameDownloaderOptionsPage_YouTube: TFrameDownloaderOptionsPage_YouTub
       Height = 21
       TabOrder = 1
       Text = '0'
+    end
+    object CheckAvoidWebM: TCheckBox
+      Left = 8
+      Top = 72
+      Width = 305
+      Height = 17
+      Anchors = [akLeft, akTop, akRight]
+      Caption = '&Avoid .webm format'
+      TabOrder = 3
     end
   end
 end

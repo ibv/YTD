@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: YouTube Downloader 0.62\n"
-"POT-Creation-Date: 2011-07-23 12:44\n"
-"PO-Revision-Date: 2011-07-23 14:05+0100\n"
+"POT-Creation-Date: 2011-07-31 18:03\n"
+"PO-Revision-Date: 2011-07-31 18:04+0100\n"
 "Last-Translator: pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -585,6 +585,11 @@ msgstr "&Maximální šířka videa:"
 #: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:26
 msgid "Maximum video &height:"
 msgstr "Maximální &výška videa:"
+
+#. FrameDownloaderOptionsPage_YouTube..PanelSpecificOptions..CheckAvoidWebM..Caption
+#: GUI/VCL/Downloaders/guiOptionsVCL_YouTube.dfm:59
+msgid "&Avoid .webm format"
+msgstr "Nestahovat formát .&webm"
 
 #. HTTP socket status: resolving began
 #. Programmer's name for it: SOCKSTATUS_RESOLVING_BEGAN
@@ -1427,7 +1432,7 @@ msgstr "zjišťuji..."
 
 #. error code, error code, error message
 #. Programmer's name for it: WINDOWS_ERROR
-#: Lib/Pepak/ApiForm/uApiFunctions.pas:79
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
 msgid ""
 "Windows error %u = %08.8x\n"
 "%s"
@@ -1437,7 +1442,7 @@ msgstr ""
 
 #. error code, error code
 #. Programmer's name for it: WINDOWS_ERROR_UNKNOWN
-#: Lib/Pepak/ApiForm/uApiFunctions.pas:80
+#: Lib/Pepak/ApiForm/uApiFunctions.pas:81
 msgid "Unknown error %u = %08.8x."
 msgstr "Neznámá chyba %u = %08.8x."
 

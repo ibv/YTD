@@ -1,11 +1,22 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.87                                     (c) 2009-11 Pepak
+YouTube Downloader v0.88                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.88:
+
+    * Nova.cz: Podpora pro nový experimentální pøehrávaè na bázi Silverlight.
+      Podpora pro pùvodní pøehrávaè zùstala (snad) zachována, protože rùzná
+      videa používají rùzné pøehrávaèe.
+
+    * YouTube.com: V nastavení stahovaèe lze zakázat formát (kontejner) .webm
+      (nový výchozí kontejner pro YouTube videa).
+
+
 
   v0.87:
 

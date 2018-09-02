@@ -32,7 +32,9 @@ set version=%1
 
 updver.exe -v %version% "%srcdir%YTD.res"
 if exist ..\ytd-%version%.%packext% del ..\ytd-%version%.%packext%
+if exist ..\ytd-%version%.zip del ..\ytd-%version%.zip
 if exist ..\ytd-%version%-lite.%packext% del ..\ytd-%version%-lite.%packext%
+if exist ..\ytd-%version%-lite.zip del ..\ytd-%version%-lite.zip
 if exist ..\ytd-%version%-source.zip del ..\ytd-%version%-source.zip
 rd /s /q ..\bin\locale
 md ..\bin\locale
@@ -45,6 +47,7 @@ call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%-lite.%packext% 
 if "%packext%"=="exe" call sign "YouTube Downloader v%version% Lite - Installer" http://www.pepak.net/download/youtube-downloader/ ..\ytd-%version%-lite.%packext% 
+if not "%packext%"=="zip" call :pack-zip ..\ytd-%version%-lite.zip
 popd
 call clean.bat
 call build.bat release %build% %2 %3 %4 %5 %6 %7 %8 %9
@@ -53,6 +56,7 @@ call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%.%packext%
 if "%packext%"=="exe" call sign "YouTube Downloader v%version% - Installer" http://www.pepak.net/download/youtube-downloader/ ..\ytd-%version%.%packext%
+if not "%packext%"=="zip" call :pack-zip ..\ytd-%version%.zip
 popd
 pushd ..
 call :pack-zip ytd-%version%-source.zip bin\* source\*

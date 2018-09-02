@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.87                                     (c) 2009-11 Pepak
+YouTube Downloader v0.88                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -474,6 +474,12 @@ except in file/directory names. Logical values (true-false) are stored as
         the subtitles from YouTube format to .srt format.
       - Possible values are "1" (enable conversion) and "0" (disable).
       - Default value is "1" (enable conversion).
+
+    <avoid_webm>
+      - Child of <YouTube_com>; determines whether movies in the .webm format 
+        (container) will be downloaded.
+      - Possible values are "1" (disable WebM) and "0" (enable).
+      - Default value is "0" (enable WebM).
 
   - All providers have these settings:
 
