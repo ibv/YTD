@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.53+                                                   (c) 2009-15 Pepak
+YTD v1.54+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -447,8 +447,8 @@ error.
 
         Example:
 
-            <condition type="var_exists" id="xmlinfo" path="video/url">
-              <debug>Node &lt;video&gt;&lt;url&gt; exists</debug>
+            <condition type="xml_var_exists" id="xmlinfo" path="video/url">
+              <debug>Node &lt;video&gt;/&lt;url&gt; exists</debug>
             </condition>
 
 
@@ -465,6 +465,44 @@ error.
       - Random delay: <pause from="100" to "200"/>
 
     In either case, the values are in milliseconds.
+
+
+3.15 <multi_xml>
+-------------------
+
+    This command lets you loop over all elements of a XML document, processing
+    each separately (possibly with the help of <best_var> command).
+
+    The <multi_xml> tag's contents can be anything that could appear within
+    a <script> tag, particularly a <best_var> or a sequence of <set_var>.
+
+    The attributes are:
+
+      - "id" (mandatory) - the name of the variable which provides 
+        a XML document which gets looped.
+      - "var" (mandatory) - the name of the variable into which each found
+        node will be stored. In the inner script, you can refer to this
+        variable and process it using e.g. <get_xml_var> function.
+      - "node" (optional) - if non-empty, defines the name of the nodes
+        that you want to process. All others will be skipped automatically.
+
+    Example:
+
+        Assume the following XML document stored in variable "src":
+
+        <items>
+          <item><content>1</content></item>
+          <item><content>2</content></item>
+          <something><content>3</content></something>
+        </items>
+
+        Then the following script:
+
+        <multi_xml id="src" var="x" node="item">
+          <debug><get_xml_var id="x" path="content"/></debug>
+        </multi_xml>
+
+        will output two lines, first "1" and then "2".
 
 
 
@@ -610,9 +648,9 @@ Example:
       - <xml_path> (optional) - if provided, the page's content will be
         evaluated as a XML document and only the element identified by
         the path (which is the content of this tag) will be returned.
-        For the path evaluation, see <get_xml_attr path="..."/>
+        For the path evaluation, see <get_xml_var path="..."/>
       - <xml_attr> (optional) - similar to <xml_path>, except that the
-        result will be formed as with <get_xml_attr result_attr="..."/>.
+        result will be formed as with <get_xml_var result_attr="..."/>.
 
     Example:
 
@@ -836,3 +874,18 @@ Example:
 
         Variable "url" will contain "http://www.server.com/abcd/some/path/movie.mp4".
 
+
+4.16 <get_xml_node>
+-------------------
+
+    This function will read the whole content of a XML element as XML (i.e.
+    it will return all tags, attributes etc.). The actual operation is very
+    much similar to <get_xml_var> (4.2), except that a different result 
+    format is used.
+
+    No content is expected. The attributes are:
+
+      - "id" (mandatory) - see <get_xml_var> (4.2) for description.
+      - "path" (optional) - see <get_xml_var> (4.2) for description.
+      - "attr", "attr_value" (optional) - see <get_xml_var> (4.2) for 
+        description.

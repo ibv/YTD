@@ -1,11 +1,36 @@
 ﻿______________________________________________________________________________
 
-YTD v1.53                                                    (c) 2009-15 Pepak
+YTD v1.54                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.54:
+
+    * New providers:
+      - PerfectGirls.net (porn)
+      - Slashdot.org
+
+    * Updated providers:
+      - DailyMotion.com
+      - iDNES.cz
+      - Koukni.cz
+      - PlayWire.com
+      - RTVS.sk
+
+    * Updated the Synapse library.
+
+    * After you update script definitions, a list of modifications will
+      be displayed, so that you get some information as to which providers
+      were updated.
+
+    * New scripting language commands:
+      <multi_xml> ...... details in language documentation, chapter 3.15
+      <get_xml_node> ... details in language documentation, chapter 4.16.
+
+
 
   v1.53:
 

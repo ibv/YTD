@@ -51,13 +51,13 @@ uses
     {$ENDIF}
   {$ENDIF}
   SynaCode, SynaUtil,
-  uFunctions, uDownloadList, uMessages, uStrings, uOptions, uUpgrade;
+  uFunctions, uLanguages, uDownloadList, uMessages, uStrings, uOptions, uUpgrade;
 
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 function IsHttpProtocol(const Url: string): boolean;
 procedure UpgradeYTD(Upgrade: TYTDUpgrade; OwnerHandle: THandle);
-function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle): boolean;
+function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle; ReportUpgradedProviders: boolean): boolean;
 function DownloadAndInstallExternalLibrary(const Url: string; OwnerHandle: THandle; Options: TYTDOptions): boolean;
 procedure CheckForExternalLibraries(OwnerHandle: THandle; Options: TYTDOptions);
 
@@ -147,7 +147,13 @@ begin
     end;
 end;
 
-function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle): boolean;
+function UpgradeDefs(Upgrade: TYTDUpgrade; OwnerHandle: THandle; ReportUpgradedProviders: boolean): boolean;
+const
+  MAX_PROVIDERS_TO_SHOW = 10;
+var
+  LastUpgrade: TDateTime;
+  Providers: TStringList;
+  i, n: integer;
 begin
   Result := False;
   if Upgrade <> nil then
@@ -158,9 +164,36 @@ begin
       if Upgrade.OnlineDefs.Size > 0 then
         if TScriptedDownloader.MainScriptEngine <> nil then
           begin
+          LastUpgrade := TScriptedDownloader.MainScriptEngine.LastUpgrade;
           TScriptedDownloader.MainScriptEngine.LoadFromStream(Upgrade.OnlineDefs);
           TScriptedDownloader.MainScriptEngine.SaveToFile;
           Result := True;
+          if ReportUpgradedProviders then
+            begin
+            Providers := TStringList.Create;
+              try
+                if TScriptedDownloader.MainScriptEngine.GetUpgradedScriptsSince(LastUpgrade, Providers) then
+                  begin
+                  n := Providers.Count;
+                  if n > 0 then
+                    begin
+                    if n > MAX_PROVIDERS_TO_SHOW then
+                      begin
+                      for i := Pred(n) downto MAX_PROVIDERS_TO_SHOW do
+                        Providers.Delete(i);
+                      Providers.Add(Format(_('... and %d others'), [n-MAX_PROVIDERS_TO_SHOW]));
+                      end;
+                    end;
+                  {$IFDEF GUI_WINAPI}
+                  MessageBox(0, PChar(_(MSG_PROVIDER_DEFINITIONS_UPGRADED) + EOLN + EOLN + Providers.Text), PChar(APPLICATION_TITLE), MB_OK or MB_TASKMODAL);
+                  {$ELSE}
+                  MessageDlg(_(MSG_PROVIDER_DEFINITIONS_UPGRADED) + EOLN + EOLN + Providers.Text, mtInformation, [mbOK], 0);
+                  {$ENDIF}
+                  end;
+              finally
+                FreeAndNil(Providers);
+                end;
+              end;
           end;
     end;
 end;

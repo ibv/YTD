@@ -90,7 +90,7 @@ function XmlValueIncludingCData(Node: TXmlNode): string;
 
   function UnicodeStringOrMalformedUtf8(Node: TXmlNode): string;
     begin
-      Result := Node.ValueAsUnicodeString;
+      Result := {$IFDEF FPC} string {$ENDIF} (Node.ValueAsUnicodeString);
       if (Result = '') and (Node.ValueAsString <> '') then
         Result := string(Node.ValueAsString);
     end;
@@ -113,7 +113,7 @@ function XmlAttribute(Node: TXmlNode; const Attribute: string; out Value: string
 begin
   Result := Node.HasAttribute( {$IFDEF UNICODE} TXmlString {$ENDIF} (Attribute));
   if Result then
-    Value := Node.AttributeByNameWide[ {$IFDEF UNICODE} TXmlString {$ENDIF} (Attribute)];
+    Value := {$IFDEF FPC} string {$ENDIF} (Node.AttributeByNameWide[ {$IFDEF UNICODE} TXmlString {$ENDIF} (Attribute)]);
 end;
 
 function XmlAttribute(Node: TXmlNode; const Attribute: string): string;
@@ -131,7 +131,7 @@ begin
   if Node <> nil then
     begin
     if Node.HasAttribute('id') then
-      if Node.AttributeByNameWide['id'] = ID then
+      if {$IFDEF FPC} string {$ENDIF} (Node.AttributeByNameWide['id']) = ID then
         begin
         FoundNode := Node;
         Result := True;

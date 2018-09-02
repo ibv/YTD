@@ -175,6 +175,7 @@ type
       {$ENDIF}
       procedure NotPreparedError; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
     protected
+      function RegExp_FindBestVideo(const List: string; InfoRegExp: TRegExp; const UrlID, QualityID: string; out BestUrl: string): boolean;
       function Smil_FindBestVideo(Container: TXmlNode; out Url: string; const MaxBitrate: integer = 0): boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UnixTimestamp(DT: TDateTime = 0): integer;
     public
@@ -222,8 +223,7 @@ implementation
 uses
   uStringConsts,
   uStrings,
-  uMessages,
-  uExternalDownloader;
+  uMessages;
 
 const
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
@@ -448,6 +448,7 @@ function TDownloader.DownloadPage(Http: THttpSend; Url: string; Method: THttpMet
 var MethodStr: string;
 begin
   repeat
+    Url := Trim(Url);
     SetLastUrl(Url);
     if Clear then
       ClearHttp(Http);
@@ -910,7 +911,7 @@ begin
       case Result[i+1] of
         'u':
           begin
-            System.Insert(WideChar(StrToInt('$' + Copy(Result, i+2, 4))), Result, i);
+            System.Insert( {$IFDEF FPC} string {$ENDIF} (WideChar(StrToInt('$' + Copy(Result, i+2, 4)))), Result, i);
             System.Delete(Result, i+1, 6);
           end;
         'r':
@@ -1394,6 +1395,28 @@ begin
   if DT = 0 then
     DT := Now;
   Result := Trunc((DT - 25569) * 24*60*60);
+end;
+
+function TDownloader.RegExp_FindBestVideo(const List: string; InfoRegExp: TRegExp; const UrlID, QualityID: string; out BestUrl: string): boolean;
+var
+  BestQuality, Quality: integer;
+  Url, sQuality: string;
+begin
+  Result := False;
+  BestQuality := -1;
+  if GetRegExpVars(InfoRegExp, List, [UrlID, QualityID], [@Url, @sQuality]) then
+    repeat
+      if Url <> '' then
+        begin
+        Quality := StrToIntDef(sQuality, 0);
+        if Quality > BestQuality then
+          begin
+          BestUrl := Url;
+          BestQuality := Quality;
+          Result := True;
+          end;
+        end;
+    until not GetRegExpVarsAgain(InfoRegExp, [UrlID, QualityID], [@Url, @sQuality]);
 end;
 
 initialization

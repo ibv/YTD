@@ -45,6 +45,8 @@ uses
   uDownloader, uOptions, uScripts;
 
 type
+  TXmlResultType = (xrtValue, xrtXml);
+  
   TScriptedDownloader = class(TDownloader)
     private
       fScriptEngine: TScriptEngine;
@@ -81,6 +83,7 @@ type
       procedure ProcessSetVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessBestVar(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessMultiRegExp(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessMultiXml(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessIf(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessPause(Node: TXmlNode; Vars: TScriptVariables);
       function TestCondition(Node: TXmlNode; Vars: TScriptVariables): boolean;
@@ -95,8 +98,8 @@ type
       function ProcessNodeContent(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
-      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
-      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
+      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType; out Value: string): boolean; overload;
+      function ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType): string; overload;
       function ProcessDownloadPage(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessRegExp(Node: TXmlNode; Vars: TScriptVariables): string; overload;
@@ -404,6 +407,8 @@ begin
         ProcessNestedDownload(ChildNode, Vars)
       else if ChildNode.Name = 'multi_regexp' then
         ProcessMultiRegExp(ChildNode, Vars)
+      else if ChildNode.Name = 'multi_xml' then
+        ProcessMultiXml(ChildNode, Vars)
       else if ChildNode.Name = 'if' then
         ProcessIf(ChildNode, Vars)
       else if ChildNode.Name = 'pause' then
@@ -695,7 +700,9 @@ begin
           if ChildNode.Name = 'get_var' then
             Result := Result + ProcessGetVar(ChildNode, Vars)
           else if ChildNode.Name = 'get_xml_var' then
-            Result := Result + ProcessGetXmlVar(ChildNode, Vars)
+            Result := Result + ProcessGetXmlVar(ChildNode, Vars, xrtValue)
+          else if ChildNode.Name = 'get_xml_node' then
+            Result := Result + ProcessGetXmlVar(ChildNode, Vars, xrtXml)
           else if ChildNode.Name = 'download_page' then
             Result := Result + ProcessDownloadPage(ChildNode, Vars)
           else if ChildNode.Name = 'regexp' then
@@ -876,18 +883,18 @@ begin
     Result := Vars[VarName];
 end;
 
-function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean;
+function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType; out Value: string): boolean;
 begin
   // This way because multiple error conditions exist
   try
-    Value := ProcessGetVar(Node, Vars);
+    Value := ProcessGetXmlVar(Node, Vars, XmlResultType);
     Result := True;
   except
     Result := False;
     end;
 end;
 
-function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables): string;
+function TScriptedDownloader.ProcessGetXmlVar(Node: TXmlNode; Vars: TScriptVariables; XmlResultType: TXmlResultType): string;
 var
   VarName, ResultAttribute: string;
   DataNode: TXmlNode;
@@ -897,6 +904,8 @@ begin
     ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
   else if not XmlNodeByPathAndAttr(Vars.Xml[VarName], XmlAttribute(Node, 'path'), XmlAttribute(Node, 'attr'), XmlAttribute(Node, 'attr_value'), DataNode) then
     ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node)
+  else if XmlResultType = xrtXml then
+    Result := Utf8ToString(DataNode.WriteToString)
   else
     begin
     ResultAttribute := XmlAttribute(Node, 'result_attr');
@@ -1038,6 +1047,38 @@ begin
     end;
 end;
 
+procedure TScriptedDownloader.ProcessMultiXml(Node: TXmlNode; Vars: TScriptVariables);
+var
+  SrcVarName, DestVarName, NodeName: string;
+  OwnerNode, ChildNode: TXmlNode;
+  Found: boolean;
+  i: integer;
+begin
+  SrcVarName := XmlAttribute(Node, 'id');
+  DestVarName := XmlAttribute(Node, 'var');
+  if (SrcVarName = '') or (DestVarName = '') then
+    ScriptError(ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY, Node)
+  else
+    begin
+    Found := False;
+    NodeName := XmlAttribute(Node, 'node');
+    OwnerNode := Vars.Xml[SrcVarName].Root;
+    for i := 0 to Pred(OwnerNode.NodeCount) do
+      begin
+      ChildNode := OwnerNode.Nodes[i];
+      if ChildNode.ElementType = xeNormal then
+        if (NodeName = '') or ( {$IFDEF UNICODE} string {$ENDIF} (ChildNode.Name) = NodeName) then
+          begin
+          Found := True;
+          Vars[DestVarName] := Utf8ToString(ChildNode.WriteToString);
+          ProcessScript(Node, Vars);
+          end;
+      end;
+    if not Found then
+      ScriptError(ERR_XML_ELEMENT_NOT_FOUND, Node)
+    end;
+end;
+
 procedure TScriptedDownloader.ProcessIf(Node: TXmlNode; Vars: TScriptVariables);
 var
   SomeConditionSatisfied: boolean;
@@ -1085,7 +1126,7 @@ begin
   else if ConditionType = 'var_exists' then
     Result := ProcessGetVar(Node, Vars, Dummy)
   else if ConditionType = 'xml_var_exists' then
-    Result := ProcessGetXmlVar(Node, Vars, Dummy)
+    Result := ProcessGetXmlVar(Node, Vars, xrtValue, Dummy)
   else
     ScriptError(ERR_SCRIPTS_UNKNOWN_CONDITION, Node);
 end;

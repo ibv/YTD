@@ -1,5 +1,5 @@
 <ytd-defs>
-	<version>1.53.20160103.0</version>
+	<version>1.54.20160110.0</version>
 	<scripts>
 
 		<script id="1tv.ru" provider="1tv.ru">
@@ -136,6 +136,24 @@
 			</http_download>
 		</script>
 
+		<script id="dailymotion.com" provider="DailyMotion.com" changed="20160110">
+			<regexps>
+				<regexp id="info" match="INFO"><![CDATA["qualities"\s*:\s*\{(?P<INFO>.*?)</script>]]></regexp>
+				<regexp id="url" match="URL"><![CDATA["(?P<QUALITY>\d+)"\s*:\s*\[\s*\{\s*"type"\s*:\s*"video\\?/[^"]*"\s*,\s*"url"\s*:\s*"(?P<URL>https?:.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url>http://www.dailymotion.com/video/<get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="info"><regexp id="info" content="page"/></set_var>
+			<multi_regexp id="url" content="info" var_prefix="vid_" match="URL,QUALITY">
+				<best_var id="vid_QUALITY" type="numeric_ascending">
+					<set_var id="url"><get_var id="vid_URL"/></set_var>
+				</best_var>
+			</multi_regexp>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><decode_js><get_var id="url"/></decode_js></url>
+			</http_download>
+		</script>
+
 		<script id="drsnysvet.cz" provider="DrsnySvet.cz">
 			<regexps>
 				<regexp id="redtube" match="ID"><![CDATA[<embed\s+src="https?://embed\.redtube\.com/player/?\?id=(?P<ID>\d+)]]></regexp>
@@ -247,6 +265,66 @@
 			</http_download>
 		</script>
 
+		<script id="idnes.cz-embed" provider="iDNES.cz" changed="20160110">
+			<regexps>
+				<regexp id="url" match="URL"><![CDATA[\{\s*"file"\s*:\s*"(?P<URL>https?:[^"]+)"\s*,\s*"label"\s*:\s*"(?P<QUALITY>\d+)p"]]></regexp>
+				<regexp id="valid_types" match="TYPE"><![CDATA[^(?P<TYPE>video|livevideo)$]]></regexp>
+				<regexp id="http_proto" match="PROTO"><![CDATA[^(?P<PROTO>https?)://]]></regexp>
+				<regexp id="live" match="TYPE"><![CDATA[^(?P<TYPE>livevideo)$]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="items"><get_xml_node id="page" path="items"/></set_var>
+			<multi_xml id="items" var="item" node="item">
+				<if>
+					<condition type="xml_var_exists" id="item" path="type">
+						<set_var id="itemtype"><get_xml_var id="item" path="type"/></set_var>
+						<if>
+							<condition type="regexp_match" id="valid_types" content="itemtype">
+								<set_var id="title"><get_xml_var id="item" path="title"/></set_var>
+								<set_var id="iteminfo"><get_xml_node id="item" path="linkvideo"/></set_var>
+								<set_var id="server"><get_xml_var id="iteminfo" path="server"/></set_var>
+								<set_var id="path"><get_xml_var id="iteminfo" path="path"/></set_var>
+								<multi_xml id="iteminfo" var="fileinfo" node="file">
+									<set_var id="filename"><get_xml_var id="fileinfo"/></set_var>
+									<set_var id="quality"><get_xml_var id="fileinfo" result_attr="quality"/></set_var>
+									<best_var id="quality" type="enumeration" order="high,middle">
+										<set_var id="file"><get_var id="filename"/></set_var>
+									</best_var>
+								</multi_xml>
+								<if>
+									<condition type="regexp_match" id="http_proto" content="server">
+										<http_download>
+											<title><get_var id="title"/></title>
+											<url><get_var id="server"/><get_var id="path"/><get_var id="file"/></url>
+										</http_download>
+									</condition>
+									<else>
+										<set_var id="stream">mp4:<get_var id="path"/><get_var id="file"/></set_var>
+										<if>
+											<condition type="regexp_match" id="live" content="itemtype">
+												<set_var id="live">1</set_var>
+											</condition>
+											<else>
+												<set_var id="live">0</set_var>
+											</else>
+										</if>
+										<rtmp_download>
+											<url>rtmpt://<get_var id="server"/></url>
+											<playpath><get_var id="stream"/></playpath>
+											<page_url><get_var id="_movie_id"/></page_url>
+											<live><get_var id="live"/></live>
+										</rtmp_download>
+									</else>
+								</if>
+							</condition>
+							<else/>
+						</if>
+					</condition>
+					<else/>
+				</if>
+			</multi_xml>
+		</script>
+
 		<script id="livestream.com" provider="LiveStream.com">
 			<regexps>
 				<regexp id="info" match="INFO"><![CDATA[(?P<INFO>\{\s*"type"\s*:\s*"video".*?)(?:(?=</script>)|(?=\{\s*"type"\s*:\s*"video"))]]></regexp>
@@ -329,6 +407,28 @@
 			</nested_download>
 		</script>
 
+		<script id="playwire.com-embed" provider="Playwire.com" changed="20160110">
+			<regexps>
+				<regexp id="title" match="TITLE"><![CDATA["title"\s*:\s*"(?P<TITLE>.*?)"]]></regexp>
+				<regexp id="info" match="URL"><![CDATA["f4m"\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="info"><regexp id="info" content="page"/></set_var>
+			<set_var id="xml"><download_page encoding="xml"><url><get_var id="info"/></url></download_page></set_var>
+			<set_var id="baseurl"><get_xml_var id="xml" path="baseURL"/></set_var>
+			<multi_xml id="xml" var="item" node="media">
+				<set_var id="url"><get_xml_var id="item" path="" result_attr="url"/></set_var>
+				<set_var id="quality"><get_xml_var id="item" path="" result_attr="bitrate"/></set_var>
+				<best_var id="quality" type="numeric_ascending">
+					<set_var id="besturl"><get_var id="url"/></set_var>
+				</best_var>
+			</multi_xml>
+			<http_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
+			</http_download>
+		</script>
+
 		<script id="rt.com" provider="RT.com">
 			<regexps>
 				<regexp id="url" match="URL"><![CDATA[\bfile\s*:\s*"(?P<URL>https?://[^"]+\.mp4)"]]></regexp>
@@ -364,46 +464,52 @@
 			</http_download>
 		</script>
 
-		<script id="rtvs.sk" provider="RTVS.sk">
+		<script id="rtvs.sk" provider="RTVS.sk" changed="20150110">
 			<regexps>
 				<regexp id="info_url" match="URL"><![CDATA[\$\.getJSON\s*\(\s*'(?P<URL>.+?)']]></regexp>
 				<regexp id="playlist" match="INFO"><![CDATA["playlist"\s*:\s*\[\s*\{\s*(?P<INFO>.+?)\s*\}\s*\]]]></regexp>
 				<regexp id="title" match="INFO"><![CDATA["name"\s*:\s*"(?P<INFO>.*?)"]]></regexp>
-				<regexp id="url_base" match="URL"><![CDATA["baseUrl"\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
-				<regexp id="path" match="URL"><![CDATA["url"\s*:\s*"(?P<URL>.+?)"]]></regexp>
+				<regexp id="url_base" match="URL"><![CDATA["baseUrl"\s*:\s*"(?P<URL>https?://(?P<NOPROTO>.+?))"]]></regexp>
+				<regexp id="hds" match="URL"><![CDATA["url"\s*:\s*"(?P<URL>smil:.+?)"]]></regexp>
 				<regexp id="rtmp" match="URL"><![CDATA[(?P<URL>https?://(?P<RTMP>[^/]+/stv-tv-arch)/_definst_/smil:(?P<PLAYPATH>.+?)\.smil/manifest\.f4m(?P<AUTH>\?.+))]]></regexp>
 				<regexp id="http" match="URL"><![CDATA["details"\s*:\s*\{\s*"name"\s*:\s*"(?P<NAME>[^"]+)"[^}]*\}\s*,\s*"url"\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
 			</regexps>
 			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
 			<set_var id="info"><download_page encoding="utf8"><url><relative_url><url><regexp id="info_url" content="page"/></url></relative_url></url></download_page></set_var>
 			<set_var id="playlist"><regexp id="playlist" content="info"/></set_var>
+			<set_var id="title"><regexp id="title" content="playlist"/></set_var>
 			<if>
 				<condition type="regexp_match" id="http" content="playlist">
-					<set_var id="url"><regexp id="http" content="playlist"/></set_var>
-					<set_var id="title"><regexp id="http" match="NAME" content="playlist"/></set_var>
 					<http_download>
 						<title><get_var id="title"/></title>
-						<url><get_var id="url"/></url>
+						<url><set_var id="url"><regexp id="http" content="playlist"/></set_var></url>
 					</http_download>
 				</condition>
-				<condition type="regexp_match" id="rtmp" content="url">
-					<set_var id="url"><regexp id="url_base" content="playlist"/>/<regexp id="path" content="playlist"/></set_var>
-					<set_var id="title"><regexp id="title" content="playlist"/></set_var>
+				<condition type="regexp_match" id="rtmp" content="playlist">
 					<rtmp_download>
 						<title><get_var id="title"/></title>
-						<url>rtmp://<regexp id="rtmp" match="RTMP" content="url"/><regexp id="rtmp" match="AUTH" content="url"/></url>
-						<playpath>mp4:<regexp id="rtmp" match="PLAYPATH" content="url"/>-1.mp4</playpath>
+						<url>rtmp://<regexp id="url_base" content="playlist" match="NOPROTO"/><regexp id="rtmp" content="playlist" match="AUTH"/></url>
+						<playpath><regexp id="rtmp" content="playlist"/></playpath>
 					</rtmp_download>
 				</condition>
 				<else>
-					<set_var id="url"><regexp id="url_base" content="playlist"/>/<regexp id="path" content="playlist"/></set_var>
-					<set_var id="title"><regexp id="title" content="playlist"/></set_var>
 					<hds_download>
 						<title><get_var id="title"/></title>
-						<url><get_var id="url"/></url>
+						<url><regexp id="url_base" content="playlist"/>/<regexp id="hds" content="playlist"/></url>
 					</hds_download>
 				</else>
 			</if>
+		</script>
+
+		<script id="slashdot.org" provider="Slashdot.org" changed="20160110">
+			<regexps>
+				<regexp id="url" match="URL"><![CDATA[<script\b[^>]*\sdata-config="(?P<URL>(?:https?:)?//.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<nested_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><relative_url><url><decode_html><regexp id="url" content="page"/></decode_html></url></relative_url></url>
+			</nested_download>
 		</script>
 
 		<script id="sputniknews.com" provider="SputnikNews.com">
@@ -700,6 +806,22 @@
 			</http_download>
 		</script>
 
+		<script id="perfectgirls.net" provider="PerfectGirls.net" changed="20160109">
+			<regexps>
+				<regexp id="url" match="URL"><![CDATA[\$\.get\s*\(\s*"(?P<URL>/get/.+?)"]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="utf8"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="url"><trim><download_page encoding="utf8"><url><regexp id="url" content="page"/></url></download_page></trim></set_var>
+			<http_download>
+				<title><regexp id="h1" content="page"/></title>
+				<url><get_var id="url"/></url>
+				<headers>
+					<header>Accept: */*</header>
+					<header>Accept-Encoding: identity</header>
+				</headers>
+			</http_download>
+		</script>
+
 		<script id="pornhub.com" provider="PornHub.com">
 			<regexps>
 				<regexp id="url" match="URL"><![CDATA[\bvar\s+player_quality_(?P<QUALITY>\d+)p\s*=\s*'(?P<URL>https?://.+?)']]></regexp>
@@ -852,22 +974,26 @@
 		<url script="cloudzilla.to"><![CDATA[cloudzilla.to/embed/.+$]]></url>
 		<url script="csfd.cz"><![CDATA[csfd\.cz/.+$]]></url>
 		<url script="dailymail.co.uk"><![CDATA[dailymail\.co\.uk/.+$]]></url>
+		<url script="dailymotion.com" subexpression="ID"><![CDATA[dailymotion\.com/(?:embed/)?video/(?P<ID>[a-z0-9]+)]]></url>
 		<url script="drsnysvet.cz"><![CDATA[drsnysvet\.cz/.+$]]></url>
 		<url script="facebook.com"><![CDATA[facebook\.com/.+$]]></url>
 		<url script="film.seznam.cz"><![CDATA[film\.seznam\.cz(?:/.+)?$]]></url>
 		<url script="gamespot.com-embed" subexpression="ID"><![CDATA[gamespot\.com/videos/embed/(?P<ID>\d+)]]></url>
 		<url script="gazeta.tv"><![CDATA[gazeta\.tv/plej/.+$]]></url>
 		<url script="iconcerts.com"><![CDATA[iconcerts\.com/.+$]]></url>
+		<url script="idnes.cz-embed"><![CDATA[servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+$]]></url>
 		<url script="livestream.com"><![CDATA[livestream\.com/.+$]]></url>
 		<url script="mc2.sk"><![CDATA[mc2\.sk/.+$]]></url>
 		<url script="natabanu.com"><![CDATA[natabanu\.com/.+$]]></url>
 		<url script="novaplus.nova.cz"><![CDATA[novaplus\.nova\.cz/.+$]]></url>
 		<url script="optobone.cz"><![CDATA[optobone\.cz/.+$]]></url>
 		<url script="playtvak.cz"><![CDATA[playtvak\.cz/.+$]]></url>
+		<url script="playwire.com-embed"><![CDATA[config\.playwire\.com/.+\.json$]]></url>
 		<url script="rt.com"><![CDATA[rt\.com/.+$]]></url>
 		<url script="rtl.be"><![CDATA[rtl\.be/.+$]]></url>
 		<url script="rtvs.sk"><![CDATA[rtvs\.sk/.+$]]></url>
 		<url script="rvp.cz"><![CDATA[rvp\.cz/.+$]]></url>
+		<url script="slashdot.org"><![CDATA[slashdot\.org/.+$]]></url>
 		<url script="sputniknews.com"><![CDATA[sputniknews\.com/.+$]]></url>
 		<url script="streamin.to"><![CDATA[streamin\.to/.+$]]></url>
 		<url script="sultancesky.cz"><![CDATA[sultancesky\.cz/.+$]]></url>
@@ -892,6 +1018,7 @@
 		<url script="itsallgay.eu"><![CDATA[itsallgay\.eu/video/.+$]]></url>
 		<url script="jenpromuze.cz"><![CDATA[jenpromuze\.cz/video/.+$]]></url>
 		<url script="navratdoreality.cz"><![CDATA[navratdoreality\.cz/.+$]]></url>
+		<url script="perfectgirls.net"><![CDATA[perfectgirls\.net/.+$]]></url>
 		<url script="pornhub.com"><![CDATA[pornhub\.com/.+$]]></url>
 		<url script="randyblue.com"><![CDATA[randyblue\.com/.+$]]></url>
 		<url script="redtube.com"><![CDATA[redtube\.com/.+$]]></url>

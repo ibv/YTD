@@ -40,7 +40,7 @@ unit uExternalDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes, 
   uDownloader, uCommonDownloader;
 
 type

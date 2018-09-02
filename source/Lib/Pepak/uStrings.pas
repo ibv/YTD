@@ -232,7 +232,7 @@ end;
 
 function AnsiEncodedUtf8ToString(const Value: AnsiString): string;
 begin
-  Result := AnythingToWide(CP_UTF8, @Value[1], Length(Value));
+  Result := {$IFDEF FPC} string {$ENDIF} (AnythingToWide(CP_UTF8, @Value[1], Length(Value)));
 end;
 
 function StringToAnsiEncodedUtf8(const Value: string; BOM: boolean = False): AnsiString;

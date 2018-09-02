@@ -40,9 +40,8 @@ unit guiOptionsWINAPI_Downloader;
 interface
 
 uses
-  SysUtils, Classes, Windows, Messages,
-  uApiCommon, uApiFunctions, uApiForm, uApiGraphics, uApiTabControl,
-  uOptions;
+  SysUtils, Classes, Windows, 
+  uApiForm, uOptions;
 
 type
   TFrameDownloaderOptionsPage = class(TApiForm)

@@ -221,3 +221,11 @@
   {$UNDEF DELPHITHREADS}
 {$ENDIF}
 
+
+
+{$IFDEF DEBUG}
+  {$IFDEF RELEASE}
+    'Cannot have DEBUG and RELEASE at the same time'
+  {$ENDIF}
+{$ENDIF}
+

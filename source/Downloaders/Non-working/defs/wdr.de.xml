@@ -1,0 +1,14 @@
+		<script id="wdr.de-embed" provider="WDR.de">
+			<regexps>
+				<regexp id="title" match="TITLE"><![CDATA[</h2>\s*<p>\s*(?P<TITLE>.*?)\s*<]]></regexp>
+				<regexp id="url" match="URL"><![CDATA[(?:^|&amp;)dslSrc=(?P<URL>https?[^&]+)]]></regexp>
+			</regexps>
+			<set_var id="page"><download_page encoding="ansi"><url><get_var id="_movie_id"/></url></download_page></set_var>
+			<set_var id="flashvars"><regexp id="param_name_flashvars" content="page"/></set_var>
+			<hds_download>
+				<title><regexp id="title" content="page"/></title>
+				<url><decode_url><regexp id="url" content="flashvars"/></decode_url></url>
+			</hds_download>
+		</script>
+
+		<url script="wdr.de-embed"><![CDATA[wdr\.de/fernsehen/[^?&]*-videoplayer\.html.*?$]]></url>

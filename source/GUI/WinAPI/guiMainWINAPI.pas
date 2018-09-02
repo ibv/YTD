@@ -1009,6 +1009,8 @@ begin
 end;
 
 procedure TFormMain.NewDefsEvent(Sender: TYTDUpgrade);
+const
+  EnableStates: array[boolean] of DWORD = (MF_GRAYED, MF_ENABLED);
 begin
   if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) >= 0 then
     if TScriptedDownloader.MainScriptEngine <> nil then
@@ -1017,10 +1019,10 @@ begin
           begin
           fBugReportDisabled := True;
           if MessageBox(0, PChar(Format(_(MAINFORM_NEW_DEFS_VERSION_AVAILABLE), [Sender.OnlineDefsVersion])), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
-            if guiFunctions.UpgradeDefs(Sender, Handle) then
+            if guiFunctions.UpgradeDefs(Sender, Handle, True) then
               fBugReportDisabled := False;
-          EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or MF_GRAYED);
-          ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, False);
+          EnableMenuItem(PopupMenu, ACTION_BUGREPORT, MF_BYCOMMAND or EnableStates[not fBugReportDisabled]);
+          ToolbarButtonSetEnabled(MainToolbar, ACTION_BUGREPORT, not fBugReportDisabled);
           end;
 end;
 {$ENDIF}

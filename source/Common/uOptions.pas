@@ -760,7 +760,7 @@ begin
     for i := 0 to Pred(Node.NodeCount) do
       if Node.Nodes[i].Name = XML_CONVERTERLIST_ITEM then
         if Node.Nodes[i].HasAttribute(XML_CONVERTERLIST_ITEM_ID) then
-          List.Add(Node.Nodes[i].AttributeByNameWide[XML_CONVERTERLIST_ITEM_ID]);
+          List.Add({$IFDEF FPC} string {$ENDIF} (Node.Nodes[i].AttributeByNameWide[XML_CONVERTERLIST_ITEM_ID]));
 end;
 
 function TYTDOptions.ReadConverter(const ID: string; out Converter: TConverter): boolean;
@@ -774,7 +774,7 @@ begin
     Result := False
   else
     begin
-    Converter.ID :=  Node.AttributeByNameWide[XML_CONVERTERLIST_ITEM_ID];
+    Converter.ID := {$IFDEF FPC} string {$ENDIF} (Node.AttributeByNameWide[XML_CONVERTERLIST_ITEM_ID]);
     Converter.Title := XmlValueByPath(Node, XML_CONVERTERLIST_ITEM_TITLE);
     Converter.ExePath := XmlValueByPath(Node, XML_CONVERTERLIST_ITEM_EXEPATH);
     Converter.CommandLine := XmlValueByPath(Node, XML_CONVERTERLIST_ITEM_COMMANDLINE);

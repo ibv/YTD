@@ -62,7 +62,7 @@ begin
   {$IFDEF GETTEXT}
   Result := gnugettext._(Msg);
   {$ELSE}
-  Result := Msg;
+  Result := {$IFDEF FPC} string {$ENDIF} (Msg);
   {$ENDIF}
 end;
 

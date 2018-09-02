@@ -195,6 +195,9 @@ end;
 function TYTD.ShowVersion(DoUpgrade: boolean): boolean;
 var
   Upgrade: TYTDUpgrade;
+  LastUpgrade: TDateTime;
+  Providers: TStringList;
+  i: integer;
 begin
   Result := True;
   Write(_('Current version: ')); WriteColored(ccWhite, AppVersion);
@@ -246,12 +249,36 @@ begin
             WriteColored(ccLightCyan, Upgrade.OnlineDefsVersion);
             if Upgrade.OnlineDefs = nil then
               Upgrade.DownloadDefsUpgrade(False, False);
-            if Upgrade.OnlineDefs <> nil then
+           if Upgrade.OnlineDefs <> nil then
               try
+                LastUpgrade := TScriptedDownloader.MainScriptEngine.LastUpgrade;
                 TScriptedDownloader.MainScriptEngine.LoadFromStream(Upgrade.OnlineDefs);
                 TScriptedDownloader.MainScriptEngine.SaveToFile;
                 Write(_(', upgraded to '));
                 WriteColored(ccLightCyan, TScriptedDownloader.MainScriptEngine.Version);
+                Providers := TStringList.Create;
+                try
+                  if TScriptedDownloader.MainScriptEngine.GetUpgradedScriptsSince(LastUpgrade, Providers) then
+                    if Providers.Count > 0 then
+                      begin
+                      Providers.Sort;
+                      Writeln;
+                      Write(_('Upgraded providers:'));
+                      for i := 0 to Pred(Providers.Count) do
+                        begin
+                        Writeln;
+                        if i >= 10 then
+                          begin
+                          Write('  ' + Format(_('... and %d others...'), [Providers.Count - i]));
+                          Break;
+                          end
+                        else
+                          WriteColored(ccWhite, '  ' + Providers[i]);
+                        end;
+                      end;
+                finally
+                  FreeAndNil(Providers);
+                  end;
               except
                 WriteColored(ccLightRed, MSG_FAILED_TO_UPGRADE_DEFINITIONS);
                 Raise;

@@ -68,6 +68,7 @@ resourcestring
   MSG_PLAYLIST_ITEM = 'Playlist item %d'; // Default playlist item name, %d is count
   MSG_DOWNLOAD_OR_UPGRADE = 'Do you want to upgrade (YES)'#10'or just download the newest version (NO)?'#10#10'Note: Upgrade will stop all transfers.'; // What to do with the newest version
   MSG_UPGRADING = 'Upgrading...'; // Downloading the upgrade data
+  MSG_PROVIDER_DEFINITIONS_UPGRADED = 'Provider definitions were upgraded:';
   MSG_FAILED_TO_UPGRADE = 'Failed to execute the upgrade file.'; // Failed to execute the upgrade file
   MSG_FAILED_TO_DOWNLOAD_UPGRADE = 'Failed to download upgrade data: '; // Failed to download the upgrade file
   MSG_FAILED_TO_UPGRADE_DEFINITIONS = 'Failed to upgrade the script definitions.';

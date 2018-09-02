@@ -254,7 +254,6 @@ end;
 
 function CheckRedirect(Http: THttpSend; var Url: string): boolean;
 const
-  Location {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'Location:';
   Localhost {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'localhost';
 var
   Redirect: string;

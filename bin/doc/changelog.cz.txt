@@ -1,11 +1,36 @@
 ﻿______________________________________________________________________________
 
-YTD v1.53                                                    (c) 2009-15 Pepak
+YTD v1.54                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.54:
+
+    * Noví poskytovatelé:
+      - PerfectGirls.net (porno)
+      - Slashdot.org
+
+    * Aktualizovaní poskytovatelé:
+      - DailyMotion.com
+      - iDNES.cz
+      - Koukni.cz
+      - PlayWire.com
+      - RTVS.sk
+
+    * Aktualizována knihovna Synapse.
+
+    * Po aktualizaci definic skriptů se zobrazí seznam změněných položek,
+      aby měl uživatel informaci o tom, které poskytovatele může opět
+      používat.
+
+    * Nové skriptovací příkazy:
+      <multi_xml> ...... detaily viz dokumentace jazyka, kapitola 3.15
+      <get_xml_node> ... detaily viz dokumentace jazyka, kapitola 4.16.
+
+
 
   v1.53:
 
@@ -13,7 +38,6 @@ CHANGELOG
       - Bewusst.tv
       - Gazeta.tv (používá se např. z wyborcza.pl)
       - LiveStream.com
-      - PerfectGirls.net (porno)
       - RT.com
       - TheGuardian.com
       - TVP.pl

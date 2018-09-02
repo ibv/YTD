@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.53+                                                   (c) 2009-15 Pepak
+YTD v1.54+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -75,6 +75,7 @@ Current.com         | HTTP     |       | http://current.com/shows/the-rotten-tom
 DailyHaha.com       | HTTP     |       | http://www.dailyhaha.com/_vids/dog-chasing-shadow.htm
 DailyMail.co.uk     | HTTP     |       | http://www.dailymail.co.uk/news/article-2472674/World-View-Enterprises-plans-luxury-balloon-flights-edge-space.html
 DailyMotion.com     | HTTP     |       | http://www.dailymotion.com/video/x8w3pf_condoms-are-bady_fun
+                    | HTTP     |       | http://www.dailymotion.com/embed/video/x8w3pf
 DeutscheBahn.com    | HTTP     |       | http://bewegtbild.deutschebahn.com/btvo/site/index.php?s=5600&ids=143306
 Denik.cz            | HTTP     |       | http://www.denik.cz/multimedia/video/2857495.html
                     |          |       | http://benesovsky.denik.cz/multimedia/video/1538221.html
@@ -227,7 +228,7 @@ PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-
 PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
 Play.fm             | HTTP     |       | http://www.play.fm/recording/bbcradio1essentialremixbymarkronson2007010772264
 Playtvak.cz         | HTTP     |       | http://www.playtvak.cz/nejvetsi-omyly-vedy-lobotomie-dzj-/omyly-vedy.aspx?c=A150818_110238_omylyvedy_kuko
-PlayWire.com        | RTMP     |       | http://cdn.playwire.com/343/embed/28047.html
+PlayWire.com        | HTTP     |       | http://config.playwire.com/1010178/videos/v2/4402593/zeus.json
 PlayZone.cz         | RTMP     |       | http://www.playzone.cz/tv/tankodrom/tankodrom-16
 Polar.cz            | HTTP     |       | http://www.polar.cz/archiv/video/regionalni-zpravy-polar-18-01-2013-09-00
 PracticalMethod.com | HTTP     |       | http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
@@ -270,6 +271,7 @@ SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drin
 ShackNews.com       |          |       | http://www.shacknews.com/file/29576/minecraft-xbox-live-trailer
 Sibnet.ru           | HTTP     |       | http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
                     |          |       | http://video.sibnet.ru/video654319-The_mp3_experiment_8/
+Slashdot.org        | HTTP     |       | http://tech.slashdot.org/story/15/05/26/206238/the-wrap---hacked-airplane-potus-on-twitter-wifi-by-balloon
 Sme.sk              | HTTP     |       | http://www.sme.sk/c/5796529/policia-mozno-bankomatovemu-gangu-zachranila-zivot.html
                     |          |       | http://tv.sme.sk/v/19916/spojenci-ostreluju-kaddafiho-tanky.html
 Smotri.com          | HTTP     |       | http://smotri.com/video/view/?id=v203531694dc#as

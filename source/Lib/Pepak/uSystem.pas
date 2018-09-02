@@ -1208,8 +1208,6 @@ end;
 {$IFDEF USYSTEM_FILES}
 var
   GetFileInformationByHandleEx: function(hFile: THandle; FileInformationClass: DWORD; lpFileInformation: Pointer; dwBufferSize: DWORD): BOOL; stdcall;
-  GetVolumePathNameA: function(FileName, VolumePathName: PAnsiChar; cchBufferLength: DWORD): BOOL; stdcall;
-  GetVolumePathNameW: function(FileName, VolumePathName: PWideChar; cchBufferLength: DWORD): BOOL; stdcall;
   GetVolumePathName: function(FileName, VolumePathName: PChar; cchBufferLength: DWORD): BOOL; stdcall;
 
 procedure Init_Files;
@@ -1217,24 +1215,18 @@ begin
   if Kernel32Dll = 0 then
     begin
     GetFileInformationByHandleEx := nil;
-    GetVolumePathNameA := nil;
-    GetVolumePathNameW := nil;
     GetVolumePathName := nil;
     end
   else
     begin
     GetFileInformationByHandleEx := GetProcAddress(Kernel32Dll, 'GetFileInformationByHandleEx');
-    GetVolumePathNameA := GetProcAddress(Kernel32Dll, 'GetVolumePathNameA');
-    GetVolumePathNameW := GetProcAddress(Kernel32Dll, 'GetVolumePathNameW');
-    GetVolumePathName := {$IFDEF UNICODE} GetVolumePathNameW {$ELSE} GetVolumePathNameA {$ENDIF} ;
+    GetVolumePathName := GetProcAddress(Kernel32Dll, {$IFDEF UNICODE} 'GetVolumePathNameW' {$ELSE} 'GetVolumePathNameA' {$ENDIF} );
     end;
 end;
 
 procedure Done_Files;
 begin
   GetFileInformationByHandleEx := nil;
-  GetVolumePathNameA := nil;
-  GetVolumePathNameW := nil;
   GetVolumePathName := nil;
 end;
 

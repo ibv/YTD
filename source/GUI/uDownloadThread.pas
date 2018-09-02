@@ -41,8 +41,7 @@ interface
 
 uses
   SysUtils, Classes,
-  uDownloader, uPlaylistDownloader,
-  uCompatibility;
+  uDownloader, uPlaylistDownloader;
 
 type
   TDownloadThread = class;

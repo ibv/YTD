@@ -415,7 +415,7 @@ end;
 procedure TFormAbout.LabelNewestDefsClick;
 begin
   if fUpgrade <> nil then
-    if guiFunctions.UpgradeDefs(fUpgrade, Handle) then
+    if guiFunctions.UpgradeDefs(fUpgrade, Handle, True) then
       begin
       fNewestDefsColor := clBlack;
       fNewestDefsUrl := '';

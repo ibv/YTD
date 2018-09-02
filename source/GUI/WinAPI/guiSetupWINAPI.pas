@@ -40,9 +40,9 @@ unit guiSetupWINAPI;
 interface
 
 uses
-  SysUtils, Classes, Windows, Messages, CommCtrl, ShlObj, ShellApi,
-  uApiCommon, uApiFunctions, uApiForm, uApiGraphics,
-  uLanguages, uMessages, uOptions, uFunctions, uCompatibility,
+  SysUtils, Classes, Windows, Messages, CommCtrl, ShlObj,
+  uApiCommon, uApiFunctions, uApiForm,
+  uMessages, uOptions, uFunctions, uCompatibility,
   guiConsts, uDialogs;
 
 type

@@ -389,8 +389,8 @@ end;
 function TRtmpDownloader.Prepare: boolean;
 begin
   ClearRtmpDumpOptions;
-  Self.Live := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
-  Self.RealTime := Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in Features);
+  Self.Live := Self.Live or Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPLIVESTREAM, dfPreferRtmpLiveStream in Features);
+  Self.RealTime := Self.RealTime or Options.ReadProviderOptionDef(Provider, OPTION_COMMONDOWNLOADER_RTMPREALTIME, dfPreferRtmpRealtime in Features);
   Result := inherited Prepare;
   if ([dfAcceptSecureToken, dfRequireSecureToken] * Features) <> [] then
     if Self.Token <> '' then

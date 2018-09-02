@@ -48,6 +48,7 @@ type
   TDownloader_Koukni = class(THttpDownloader)
     private
     protected
+      MovieListRegExp: TRegExp;
       MovieInfoRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
@@ -55,7 +56,6 @@ type
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
-      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -76,7 +76,8 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_META_OGTITLE;
-  REGEXP_MOVIE_INFO =   '(?P<INFO><video\b.*?</video>)';
+  REGEXP_MOVIE_LIST =   '\bresolutions\s*=\s*\{(?P<INFO>.+?)\}\s*;';
+  REGEXP_MOVIE_INFO =   '"(?P<QUALITY>\d+)p"\s*:\s*"(?P<URL>[^"]+)"';
 
 { TDownloader_Koukni }
 
@@ -90,26 +91,19 @@ begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-class function TDownloader_Koukni.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features
-    {$IFDEF SUBTITLES}
-    + [dfSubtitles]
-    {$ENDIF}
-    ;
-end;
-
 constructor TDownloader_Koukni.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
-  InfoPageEncoding := peAnsi;
+  InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieListRegExp := RegExCreate(REGEXP_MOVIE_LIST);
   MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
 end;
 
 destructor TDownloader_Koukni.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(MovieListRegExp);
   RegExFreeAndNil(MovieInfoRegExp);
   inherited;
 end;
@@ -121,36 +115,19 @@ end;
 
 function TDownloader_Koukni.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  InfoXml: TXmlDoc;
-  Node: TXmlNode;
-  Info, Stream, SubsUrl: string;
+  Info, Url: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieInfoRegExp, Page, 'INFO', Info) then
+  if not GetRegExpVar(MovieListRegExp, Page, 'INFO', Info) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
+  else if not RegExp_FindBestVideo(Info, MovieInfoRegExp, 'URL', 'QUALITY', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
-    InfoXml := TXmlDoc.Create;
-    try
-      InfoXml.LoadFromBinaryString( {$IFDEF UNICODE} AnsiString {$ENDIF} (Info));
-      if not XmlNodeByPathAndAttr(InfoXml, 'source', 'type', 'video/mp4', Node) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
-      else if not GetXmlAttr(Node, '', 'src', Stream) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_STREAM)
-      else
-        begin
-        MovieUrl := GetRelativeUrl(GetMovieInfoUrl, Stream);
-        {$IFDEF SUBTITLES}
-        if GetXmlAttr(InfoXml, 'track', 'src', SubsUrl) then
-          fSubtitleUrl := GetRelativeUrl(GetMovieInfoUrl, SubsUrl);
-        {$ENDIF}
-        SetPrepared(True);
-        Result := True;
-        end;
-    finally
-      FreeAndNil(InfoXml);
-      end;
+    MovieUrl := GetRelativeUrl(GetMovieInfoUrl, Url);
+    SetPrepared(True);
+    Result := True;
     end;
 end;
 

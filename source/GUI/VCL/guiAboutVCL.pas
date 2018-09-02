@@ -219,7 +219,7 @@ end;
 procedure TFormAbout.LabelNewestDefsVersionClick(Sender: TObject);
 begin
   if fUpgrade <> nil then
-    if guiFunctions.UpgradeDefs(fUpgrade, Handle) then
+    if guiFunctions.UpgradeDefs(fUpgrade, Handle, True) then
       begin
       LabelNewestDefsVersion.Font.Assign(LabelDefsVersion.Font);
       LabelNewestDefsVersion.Cursor := LabelDefsVersion.Cursor;

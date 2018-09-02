@@ -120,7 +120,7 @@ const
 implementation
 
 uses
-  uCompatibility, uMessages, uStrings, uFunctions;
+  uMessages, uStrings, uFunctions;
 
 { TCommonDownloader }
 

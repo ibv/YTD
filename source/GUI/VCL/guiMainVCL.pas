@@ -484,7 +484,7 @@ begin
           begin
           actReportBug.Enabled := False;
           if MessageDlg(Format(_(MAINFORM_NEW_DEFS_VERSION_AVAILABLE), [Sender.OnlineDefsVersion]), mtInformation, [mbYes, mbNo], 0) = mrYes then
-            if guiFunctions.UpgradeDefs(Sender, Handle) then
+            if guiFunctions.UpgradeDefs(Sender, Handle, True) then
               actReportBug.Enabled := True;
           end;
 end;
