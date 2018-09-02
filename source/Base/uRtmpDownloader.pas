@@ -84,6 +84,7 @@ type
       function ParseErrorLog(const LogFileName: string; out Error: string): boolean;
       property RtmpDumpOptions: TRtmpDumpOptions read fRtmpDumpOptions write fRtmpDumpOptions;
       procedure SetProxyUrl;
+      function UseTokenAsRtmpToken: boolean; {$IFDEF MINIMIZESIZE} dynamic; {$ELSE} virtual; {$ENDIF}
     protected
       function GetContentUrl: string; override;
       function GetFileNameExt: string; override;
@@ -387,7 +388,8 @@ begin
   Result := inherited Prepare;
   if dfRequireSecureToken in Features then
     if Self.Token <> '' then
-      Self.SecureToken := Self.Token;
+      if UseTokenAsRtmpToken then
+        Self.SecureToken := Self.Token;
 end;
 
 function TRtmpDownloader.Download: boolean;
@@ -486,6 +488,11 @@ begin
       FreeAndNil(L);
       end;
     end;
+end;
+
+function TRtmpDownloader.UseTokenAsRtmpToken: boolean;
+begin
+  Result := True;
 end;
 
 end.

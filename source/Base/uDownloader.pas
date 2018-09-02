@@ -1043,15 +1043,8 @@ begin
 end;
 
 function TDownloader.ExtractUrlExt(const Url: string): string;
-var
-  Path: string;
 begin
   Result := ExtractFileExt(ExtractUrlFileName(Url));
-  if Result = '' then
-    begin
-    Path := ExtractUrlPath(Url);
-    Result := ExtractFileExt(ExtractUrlFileName(Copy(Path, 1, Pred(Length(Path)))));
-    end;
 end;
 
 function TDownloader.ExtractUrlRoot(const Url: string): string;

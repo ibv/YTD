@@ -296,20 +296,20 @@ begin
 end;
 
 function FindHttpHeader(Http: THttpSend; Header: string; out Value: string): boolean;
-  var
-    i: integer;
-    HdrLen: integer;
-  begin
-    Result := False;
-    Header := Trim(Header) + ':';
-    HdrLen := Length(Header);
-    for i := 0 to Pred(Http.Headers.Count) do
-      if AnsiCompareText(Copy(Http.Headers[i], 1, HdrLen), Header) = 0 then
-        begin
-        Value := Trim(Copy(Http.Headers[i], Succ(HdrLen), MaxInt));
-        Result := True;
-        Break;
-        end;
-  end;
+var
+  i: integer;
+  HdrLen: integer;
+begin
+  Result := False;
+  Header := Trim(Header) + ':';
+  HdrLen := Length(Header);
+  for i := 0 to Pred(Http.Headers.Count) do
+    if AnsiCompareText(Copy(Http.Headers[i], 1, HdrLen), Header) = 0 then
+      begin
+      Value := Trim(Copy(Http.Headers[i], Succ(HdrLen), MaxInt));
+      Result := True;
+      Break;
+      end;
+end;
 
 end.

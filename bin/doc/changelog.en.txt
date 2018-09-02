@@ -1,11 +1,20 @@
 ﻿______________________________________________________________________________
 
-YTD v1.44                                                    (c) 2009-14 Pepak
+YTD v1.45                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.45:
+
+    * Fixed the incorrect .com extension with YouTube.com and probably others.
+
+    * Joj.sk doesn't work at the moment: You will need to find the token, and
+      I will need to figure out how to add the authentication support to YTD.
+      Given how Joj.sk uses it, that is not easy at all.
+
 
   v1.44:
 

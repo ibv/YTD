@@ -41,8 +41,8 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, uCompatibility, HttpSend,
-  uOptions, 
+  uPCRE, uXml, uCompatibility, HttpSend, SynaCode,
+  uOptions,
   {$IFDEF GUI}
     guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
@@ -62,10 +62,12 @@ type
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function UseTokenAsRtmpToken: boolean; override;
       procedure SetOptions(const Value: TYTDOptions); override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
       {$ENDIF}
@@ -107,6 +109,11 @@ begin
   Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
+class function TDownloader_Joj.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features + [dfRequireSecureToken];
+end;
+
 {$IFDEF GUI}
 class function TDownloader_Joj.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
 begin
@@ -138,7 +145,7 @@ end;
 function TDownloader_Joj.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Xml: TXmlDoc;
     Files: TXmlNode;
-    VideoID, PageID, BestPath, Path, sQuality: string;
+    VideoID, PageID, BestPath, Path, sQuality, Authentication: string;
     i, j, BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
@@ -180,8 +187,16 @@ begin
               end;
         if BestPath <> '' then
           begin
+          Authentication := ''; 
+            {$IFDEF DELPHI6_UP}
+            {$MESSAGE WARN 'TODO: Ziskat authentication'}
+            {$ENDIF}
+            // authentication prijde ze serveru jako soucast packetu, kterym
+            // server odpovida na RTMP Connect(). Otazka zni, jak se k tomu dostat,
+            // a kdyz uz se k tomu dostanu, jak pomoci toho modifikovat prikaz
+            // RTMP Play().
           Self.RtmpUrl := 'rtmp://' + Server;
-          Self.Playpath := BestPath;
+          Self.Playpath := BestPath + '?auth=' + HexEncode(MD5(Authentication + Self.Token));
           MovieUrl := RtmpUrl + BestPath;
           SetPrepared(True);
           Result := True;
@@ -200,6 +215,11 @@ begin
   s := Value.ReadProviderOptionDef(Provider, OPTION_JOJ_SERVER, OPTION_JOJ_SERVER_DEFAULT);
   if s <> '' then
     Server := s;
+end;
+
+function TDownloader_Joj.UseTokenAsRtmpToken: boolean;
+begin
+  Result := False;
 end;
 
 initialization

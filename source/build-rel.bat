@@ -40,8 +40,6 @@ if exist ..\ytd-%version%.zip del ..\ytd-%version%.zip
 if exist ..\ytd-%version%-lite.%packext% del ..\ytd-%version%-lite.%packext%
 if exist ..\ytd-%version%-lite.zip del ..\ytd-%version%-lite.zip
 if exist ..\ytd-%version%-source.zip del ..\ytd-%version%-source.zip
-if exist ytd.map del ytd.map
-if exist ytd-lite.map del ytd-lite.map
 rd /s /q ..\bin\locale
 md ..\bin\locale
 xcopy locale\*.mo ..\bin\locale /s /i
@@ -49,7 +47,6 @@ del /q ..\bin\ytd.xml >nul 2>&1
 call clean.bat
 call build.bat release noxxx map %build% %2 %3 %4 %5 %6 %7 %8 %9
 call sign "%project_title% v%version% Lite" "%project_url%" ..\bin\ytd.exe
-if exist ..\bin\ytd.map move ..\bin\ytd.map ytd-lite.map
 call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%-lite.%packext% 
@@ -59,7 +56,6 @@ popd
 call clean.bat
 call build.bat release map %build% %2 %3 %4 %5 %6 %7 %8 %9
 call sign "%project_title% v%version%" "%project_url%" ..\bin\ytd.exe
-if exist ..\bin\ytd.map move ..\bin\ytd.map ytd.map
 call clean.bat
 pushd ..\bin
 call :pack-%pack% ..\ytd-%version%.%packext%

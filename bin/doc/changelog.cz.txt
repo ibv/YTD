@@ -1,11 +1,21 @@
 ﻿______________________________________________________________________________
 
-YTD v1.44                                                    (c) 2009-14 Pepak
+YTD v1.45                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.45:
+
+    * Opravena nesprávná přípona .com u Youtube.com (a patrně dalších serverů).
+
+    * Joj.sk momentálně nelze stahovat, protože zavedl podporu pro tokeny.
+      V první řadě tedy musíte získat token, v druhé řadě já musím nějak
+      jeho podporu dostat do programu, což není jednoduché.
+
+
 
   v1.44:
 
