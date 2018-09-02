@@ -1,11 +1,35 @@
 ﻿______________________________________________________________________________
 
-YTD v1.42                                                    (c) 2009-14 Pepak
+YTD v1.43                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.43:
+
+    * New providers:
+      - ABC.net.au
+      - NovaPlus.Nova.cz
+      - OptoMedia.cz (OptoBone.cz)
+
+    * Updated providers:
+      - JenProMuze.cz
+      - RedTube.com
+      - Natabanu.com
+      - NavratDoReality.cz
+      - Video.Tiscali.cz
+
+    * TVcom.cz is currently out of service. It would be easy to download from
+      it, but to make it is pointless unless I can mux and join MP4 streams.
+      Which I can't, currently. If you can help by providing a description of
+      the MP4 format or a sample source code, it should be easy to implement.
+
+    * The scripting language was enhanced with the MS downloader. That makes
+      all downloaders supported by YTD scriptable.
+
+
 
   v1.42:
 

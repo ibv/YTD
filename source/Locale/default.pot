@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-07-20 17:06\n"
-"PO-Revision-Date: 2014-07-20 17:06\n"
+"POT-Creation-Date: 2014-08-14 19:01\n"
+"PO-Revision-Date: 2014-08-14 19:01\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -668,14 +668,21 @@ msgstr ""
 msgid "&Avoid .webm format"
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:160
+#: Base/uScriptedDownloader.pas:169
 msgid "TScriptedDownloader.UrlRegExp may not be "
 "called."
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:194
+#: Base/uScriptedDownloader.pas:203
 msgid "Invalid MovieID - must define script and "
 "ID"
+msgstr ""
+
+#. Downloader: TMSDirectDownloader;
+#: Base/uScriptedDownloader.pas:497
+msgid "SmoothStream is not supported, because I don't know how to "
+"programmatically mux MP4 streams. Can you "
+"help?"
 msgstr ""
 
 #. Intentionally no _(...) - this should not be translated

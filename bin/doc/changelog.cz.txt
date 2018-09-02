@@ -1,11 +1,35 @@
 ﻿______________________________________________________________________________
 
-YTD v1.42                                                    (c) 2009-14 Pepak
+YTD v1.43                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.43:
+
+    * Noví poskytovatelé:
+      - ABC.net.au
+      - NovaPlus.Nova.cz
+      - OptoMedia.cz (OptoBone.cz)
+
+    * Aktualizovaní poskytovatelé:
+      - JenProMuze.cz
+      - RedTube.com
+      - Natabanu.com
+      - NavratDoReality.cz
+      - Video.Tiscali.cz
+
+    * TVcom.cz je aktuálně nefunkční. Šel by stáhnout, ale aby to mělo smysl,
+      musel bych umět sloučit řadu samostatných video a audio streamů. To
+      neumím, ale pokud můžete poskytnout návod nebo ukázkový program, který
+      to umí, neměl by být problém to implementovat.
+
+    * Do skriptovacího jazyka byla přidána podpora pro MS downloader. Tím
+      jsou skriptovatelné všechny stahovače, které YTD umí.
+
+
 
   v1.42:
 

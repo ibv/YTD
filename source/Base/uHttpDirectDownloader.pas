@@ -56,6 +56,7 @@ type
       constructor CreateWithName(const AMovieID, AMovieName: string; ACookies: TStrings = nil); virtual;
       destructor Destroy; override;
       function Prepare: boolean; override;
+      property Referer;
     end;
 
 implementation

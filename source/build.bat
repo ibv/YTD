@@ -84,6 +84,9 @@ set is_delphixe=0
 set is_delphixe2=0
 set is_delphixe3=0
 set is_delphixe4=0
+set is_delphixe5=0
+set is_delphixe6=0
+set is_delphixe7=0
 set is_delphi5_up=0
 set is_delphi6_up=0
 set is_delphi7_up=0
@@ -97,6 +100,9 @@ set is_delphixe_up=0
 set is_delphixe2_up=0
 set is_delphixe3_up=0
 set is_delphixe4_up=0
+set is_delphixe5_up=0
+set is_delphixe6_up=0
+set is_delphixe7_up=0
 set has_unicode=0
 set has_namespaces=0
 
@@ -263,6 +269,69 @@ if not "%compiler%"=="delphi" (
       set is_delphixe2_up=1
       set is_delphixe3_up=1
       set is_delphixe4_up=1
+      set has_unicode=1
+      set has_namespaces=1
+    )
+    %compexe% | find /i "Version 26.0"
+    if not errorlevel 1 (
+      set is_delphixe5=1
+      set is_delphi5_up=1
+      set is_delphi6_up=1
+      set is_delphi7_up=1
+      set is_delphi8_up=1
+      set is_delphi2005_up=1
+      set is_delphi2006_up=1
+      set is_delphi2007_up=1
+      set is_delphi2009_up=1
+      set is_delphi2010_up=1
+      set is_delphixe_up=1
+      set is_delphixe2_up=1
+      set is_delphixe3_up=1
+      set is_delphixe4_up=1
+      set is_delphixe5_up=1
+      set has_unicode=1
+      set has_namespaces=1
+    )
+    %compexe% | find /i "Version 27.0"
+    if not errorlevel 1 (
+      set is_delphixe6=1
+      set is_delphi5_up=1
+      set is_delphi6_up=1
+      set is_delphi7_up=1
+      set is_delphi8_up=1
+      set is_delphi2005_up=1
+      set is_delphi2006_up=1
+      set is_delphi2007_up=1
+      set is_delphi2009_up=1
+      set is_delphi2010_up=1
+      set is_delphixe_up=1
+      set is_delphixe2_up=1
+      set is_delphixe3_up=1
+      set is_delphixe4_up=1
+      set is_delphixe5_up=1
+      set is_delphixe6_up=1
+      set has_unicode=1
+      set has_namespaces=1
+    )
+    %compexe% | find /i "Version 28.0"
+    if not errorlevel 1 (
+      set is_delphixe7=1
+      set is_delphi5_up=1
+      set is_delphi6_up=1
+      set is_delphi7_up=1
+      set is_delphi8_up=1
+      set is_delphi2005_up=1
+      set is_delphi2006_up=1
+      set is_delphi2007_up=1
+      set is_delphi2009_up=1
+      set is_delphi2010_up=1
+      set is_delphixe_up=1
+      set is_delphixe2_up=1
+      set is_delphixe3_up=1
+      set is_delphixe4_up=1
+      set is_delphixe5_up=1
+      set is_delphixe6_up=1
+      set is_delphixe7_up=1
       set has_unicode=1
       set has_namespaces=1
     )

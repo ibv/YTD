@@ -83,6 +83,8 @@ type
       procedure ProcessCommonDownload(Node: TXmlNode; Vars: TScriptVariables; out Url, Title, FileNameExt: string);
       procedure ProcessHttpDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessRtmpDownload(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessMSDownload(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessSmoothStreamDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessHDSDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessHLSDownload(Node: TXmlNode; Vars: TScriptVariables);
@@ -97,6 +99,7 @@ type
       function ProcessDecodeJS(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessDecodeBase64(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessStripTags(Node: TXmlNode; Vars: TScriptVariables): string;
+      function ProcessTrim(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;
       function CreateRegExpFromNode(Node: TXmlNode; Vars: TScriptVariables; out RegExpNode: TXmlNode): TRegExp;
     public
@@ -128,6 +131,7 @@ uses
   uDownloadClassifier,
   uHttpDirectDownloader,
   uRtmpDirectDownloader,
+  uMSDirectDownloader,
   uNestedDirectDownloader,
   uHDSDirectDownloader,
   uHLSDirectDownloader,
@@ -374,6 +378,10 @@ begin
         ProcessHttpDownload(ChildNode, Vars)
       else if ChildNode.Name = 'rtmp_download' then
         ProcessRtmpDownload(ChildNode, Vars)
+      else if ChildNode.Name = 'ms_download' then
+        ProcessMSDownload(ChildNode, Vars)
+      else if ChildNode.Name = 'smoothstream_download' then
+        ProcessSmoothStreamDownload(ChildNode, Vars)
       else if ChildNode.Name = 'hds_download' then
         ProcessHDSDownload(ChildNode, Vars)
       else if ChildNode.Name = 'hls_download' then
@@ -404,12 +412,16 @@ end;
 procedure TScriptedDownloader.ProcessHttpDownload(Node: TXmlNode; Vars: TScriptVariables);
 var
   Downloader: THttpDirectDownloader;
-  Url, Title, Ext: string;
+  Url, Title, Ext, s: string;
 begin
   ProcessCommonDownload(Node, Vars, Url, Title, Ext);
   Downloader := THttpDirectDownloader.CreateWithName(Url, Title);
   try
     Downloader.SetFileNameExt(Ext);
+    if GetNodeContent(Node, 'referer', Vars, s) then
+      Downloader.Referer := s;
+    if GetNodeContent(Node, 'user_agent', Vars, s) then
+      Downloader.DefaultHttp.UserAgent := s;
     AddDownloader(Downloader);
   except
     FreeAndNil(Downloader);
@@ -458,6 +470,41 @@ begin
     FreeAndNil(Downloader);
     Raise;
     end;
+end;
+
+procedure TScriptedDownloader.ProcessMSDownload(Node: TXmlNode; Vars: TScriptVariables);
+var
+  Downloader: TMSDirectDownloader;
+  Url, Title, Ext: string;
+begin
+  ProcessCommonDownload(Node, Vars, Url, Title, Ext);
+  Downloader := TMSDirectDownloader.CreateWithName(Url, Title);
+  try
+    Downloader.SetFileNameExt(Ext);
+    AddDownloader(Downloader);
+  except
+    FreeAndNil(Downloader);
+    Raise;
+    end;
+end;
+
+procedure TScriptedDownloader.ProcessSmoothStreamDownload(Node: TXmlNode; Vars: TScriptVariables);
+var
+//  Downloader: TMSDirectDownloader;
+  Url, Title, Ext: string;
+begin
+  ProcessCommonDownload(Node, Vars, Url, Title, Ext);
+  Raise EDownloaderError.Create(_('SmoothStream is not supported, because I don''t know how to programmatically mux MP4 streams. Can you help?'));
+{
+  Downloader := TSmoothStreamDirectDownloader.CreateWithName(Url, Title);
+  try
+    Downloader.SetFileNameExt(Ext);
+    AddDownloader(Downloader);
+  except
+    FreeAndNil(Downloader);
+    Raise;
+    end;
+}
 end;
 
 procedure TScriptedDownloader.ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
@@ -643,6 +690,8 @@ begin
             Result := Result + ProcessDecodeBase64(ChildNode, Vars)
           else if ChildNode.Name = 'strip_tags' then
             Result := Result + ProcessStripTags(ChildNode, Vars)
+          else if ChildNode.Name = 'trim' then
+            Result := Result + ProcessTrim(ChildNode, Vars)
           else if ChildNode.Name = 'timestamp' then
             Result := Result + ProcessTimestamp(ChildNode, Vars)
           else
@@ -1000,6 +1049,11 @@ end;
 function TScriptedDownloader.ProcessStripTags(Node: TXmlNode; Vars: TScriptVariables): string;
 begin
   Result := StripTags(ProcessNodeContent(Node, Vars));
+end;
+
+function TScriptedDownloader.ProcessTrim(Node: TXmlNode; Vars: TScriptVariables): string;
+begin
+  Result := Trim(ProcessNodeContent(Node, Vars));
 end;
 
 function TScriptedDownloader.ProcessTimestamp(Node: TXmlNode; Vars: TScriptVariables): string;

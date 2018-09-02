@@ -147,8 +147,8 @@ begin
                 if Line <> '' then
                   if Line[1] <> '#' then
                     begin
-                    if IsHttpProtocol(Line) then
-                      BestPlaylistUrl := Line;
+                    BestPlaylistUrl := GetRelativeUrl(MovieUrl, Line);
+                    BestPlaylistQuality := Quality;
                     Break;
                     end;
             end;

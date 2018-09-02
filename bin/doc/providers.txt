@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.42                                                    (c) 2009-14 Pepak
+YTD v1.43                                                    (c) 2009-14 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -20,6 +20,7 @@ Provider            | Protocol | Notes | URL(s)
 3news.co.nz         | HTTP     |       | http://www.3news.co.nz/Nearly-there-for-trans-Tasman-rowers-Team-Gallagher/tabid/309/articleID/239458/Default.aspx
 4tv.cz              | HTTP     |       | http://4tv.cz/serialy/simpsonovi-1989/s01e01/8
 5min.com            | HTTP     |       | http://www.5min.com/Video/Customizable-Xbox-360-Controller-Brings-Gaming-to-the-Disabled-299179952
+ABC.net.au          | HTTP     |       | http://www.abc.net.au/tv/goodgame/video/default.htm?src=/tv/goodgame/video/xml/20140715_2030.xml&item=02
 AcademicEarth.org   | HTTP     |       | http://academicearth.org/lectures/measurements-space-and-time
 Agresori.com        | HTTP     |       | http://www.agresori.com/13913-zkurvene-naledi.html
 Aktualne.cz         | HTTP     |       | http://aktualne.centrum.cz/video/?id=316586
@@ -209,6 +210,7 @@ NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/12799
 Nova.cz             | RTMP     | 8     | http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
                     |          |       | http://vikend.nova.cz/clanek/novinky/vikend-20-3-sedmimilove-boty.html
                     | MS       | 8     | http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
+NovaPlus.Nova.cz    | HLS      |       | http://novaplus.nova.cz/porad/dokonaly-svet/video/1735-dokonaly-svet-1-dil-vanoce-v-karibiku
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
@@ -217,6 +219,7 @@ NRSR.sk             | RTMP     |       | http://mmserv2.nrsr.sk/NRSRInternet/Rok
 Ocko.tv             | HTTP     |       | http://ocko.tv/video/particka-hd-4457/
 OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
 Online.hokej.cz     | RTMP     | 9     | http://online.hokej.cz/?date=2012-01-20&video=69421
+OptoMedia.cz        | MS       |       | http://vox.optobone.cz/prazdniny/index.php?sekce=1&idw=2551&article
 Osobnosti.cz        | HTTP     |       | http://videoklip.osobnosti.cz/kristyna-leichtova--zpoved
 OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
                     |          |       | http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0

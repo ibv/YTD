@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: YTD 1.15\n"
-"POT-Creation-Date: 2014-07-20 17:06\n"
-"PO-Revision-Date: 2014-07-20 17:15+0100\n"
+"Project-Id-Version: YTD 1.43\n"
+"POT-Creation-Date: 2014-08-14 19:01\n"
+"PO-Revision-Date: 2014-08-14 19:02+0100\n"
 "Last-Translator: Pepak <http://www.pepak.net>\n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -626,13 +626,22 @@ msgstr "Maximální &výška videa:"
 msgid "&Avoid .webm format"
 msgstr "Nestahovat formát .&webm"
 
-#: Base/uScriptedDownloader.pas:160
+#: Base/uScriptedDownloader.pas:169
 msgid "TScriptedDownloader.UrlRegExp may not be called."
 msgstr "TScriptedDownloader.UrlRegExp nesmí být volána."
 
-#: Base/uScriptedDownloader.pas:194
+#: Base/uScriptedDownloader.pas:203
 msgid "Invalid MovieID - must define script and ID"
 msgstr "Chybné MovieID - musíte definovat script a ID"
+
+#. Downloader: TMSDirectDownloader;
+#: Base/uScriptedDownloader.pas:497
+msgid ""
+"SmoothStream is not supported, because I don't know how to programmatically "
+"mux MP4 streams. Can you help?"
+msgstr ""
+"SmoothStream není podporovaný, protože neumím programem muxovat MP4 streamy. "
+"Umíte s tím pomoci?"
 
 #. Intentionally no _(...) - this should not be translated
 #: CLI/uYTD.pas:141

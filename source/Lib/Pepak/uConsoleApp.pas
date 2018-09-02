@@ -92,6 +92,7 @@ type
       procedure WriteColored(Color: TConsoleColor; const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure WritelnColored(Color: TConsoleColor; const Msg: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure DoConsoleCtrl(const CtrlType: DWORD; var Handled: boolean); virtual;
+      function ReadPassword: string;
       property StdIn: THandle read fStdIn;
       property StdOut: THandle read fStdOut;
       property StdOutRedirected: boolean read fStdOutRedirected;
@@ -486,6 +487,21 @@ begin
       finally
         SysUtils.FindClose(SR);
         end;
+end;
+
+function TConsoleApp.ReadPassword: string;
+var
+  HaveMode: boolean;
+  OldConsoleMode: DWORD;
+begin
+  HaveMode := GetConsoleMode(StdIn, OldConsoleMode);
+  try
+    SetConsoleMode(StdIn, OldConsoleMode and (not ENABLE_ECHO_INPUT));
+    Readln(Result);
+  finally
+    if HaveMode then
+      SetConsoleMode(StdIn, OldConsoleMode);
+  end;
 end;
 
 class function TConsoleApp.ParentHasConsole: boolean;
