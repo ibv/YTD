@@ -78,6 +78,7 @@ type
         PreferredLanguages: string;
       {$ENDIF}
     protected
+      function CompareQuality(Quality: integer; const FileFormat: string; RefQuality: integer; const RefFileFormat: string): integer;
       function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
       function GetVideoFormatExt(const VideoFormat: string): string;
       function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live, Vevo: boolean; out Url: string; out Downloader: TDownloader): boolean;
@@ -466,43 +467,74 @@ begin
           end;
 end;
 
+function TDownloader_YouTube.CompareQuality(Quality: integer; const FileFormat: string; RefQuality: integer; const RefFileFormat: string): integer;
+
+  function FileFormatToInt(const FileFormat: string): integer;
+    var
+      Ext: string;
+    begin
+      Ext := GetVideoFormatExt(FileFormat);
+      if Ext = EXTENSION_MP4 then
+        Result := 1000
+      else if Ext = EXTENSION_WEBM then
+        if AvoidWebM then
+          Result := 1
+        else
+          Result := 900
+      else if Ext = EXTENSION_FLV then
+        Result := 800
+      else if Ext = EXTENSION_3GP then
+        Result := 400
+      else
+        Result := 100;
+    end;
+
+var
+  FF1, FF2: integer;
+begin
+  if Quality < RefQuality then
+    Result := -1
+  else if Quality > RefQuality then
+    Result := 1
+  else
+    begin
+    FF1 := FileFormatToInt(FileFormat);
+    FF2 := FileFormatToInt(RefFileFormat);
+    if FF1 = FF2 then
+      Result := 0
+    else if FF1 < FF2 then
+      Result := -1
+    else
+      Result := 1;
+    end;
+end;
+
 function TDownloader_YouTube.GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
 var
-  QualityIndex, MaxVideoQuality, MaxAudioQuality, Width, Height: integer;
+  QualityIndex, BestVideoQuality, BestAudioQuality, Width, Height: integer;
   VideoQuality, AudioQuality: integer;
-  sAudioQuality, sWidth, sHeight, VideoFormat, Ext: string;
+  sAudioQuality, sWidth, sHeight, VideoFormat, BestVideoFormat: string;
 begin
   Result := '';
-  MaxVideoQuality := 0;
-  MaxAudioQuality := 0;
+  BestVideoQuality := 0;
+  BestAudioQuality := 0;
+  BestVideoFormat := '';
   if GetRegExpVars(FormatListRegExp, FormatList, ['AUDIOQUALITY', 'WIDTH', 'HEIGHT', 'FORMAT'], [@sAudioQuality, @sWidth, @sHeight, @VideoFormat]) then
     repeat
       AudioQuality := StrToIntDef(sAudioQuality, 0);
       Width := StrToIntDef(sWidth, 0);
       Height := StrToIntDef(sHeight, 0);
-      // Now use these values to calculate quality
-      Ext := GetVideoFormatExt(VideoFormat);
-      if Ext = EXTENSION_MP4 then
-        QualityIndex := 1000
-      else if Ext = EXTENSION_WEBM then
-        if AvoidWebM then
-          QualityIndex := 1
-        else
-          QualityIndex := 900
-      else if Ext = EXTENSION_FLV then
-        QualityIndex := 800
-      else if Ext = EXTENSION_3GP then
-        QualityIndex := 400
-      else
-        QualityIndex := 100;
-      VideoQuality := Width * Height * QualityIndex;
-      AudioQuality := AudioQuality * QualityIndex;
-      if (VideoQuality > MaxVideoQuality) or ((VideoQuality = MaxVideoQuality) and (AudioQuality > MaxAudioQuality)) then
+      VideoQuality := Width * Height;
+      QualityIndex := CompareQuality(VideoQuality, VideoFormat, BestVideoQuality, BestVideoFormat);
+      if QualityIndex = 0 then
+        QualityIndex := CompareQuality(AudioQuality, VideoFormat, BestAudioQuality, BestVideoFormat);
+      if QualityIndex > 0 then
         if (Width <= MaxWidth) or (MaxWidth <= 0) then
           if (Height <= MaxHeight) or (MaxHeight <= 0) then
             begin
-            MaxVideoQuality := VideoQuality;
-            MaxAudioQuality := AudioQuality;
+            BestVideoQuality := VideoQuality;
+            BestAudioQuality := AudioQuality;
+            BestVideoFormat := VideoFormat;
             Result := VideoFormat;
             end;
     until not GetRegExpVarsAgain(FormatListRegExp, ['AUDIOQUALITY', 'WIDTH', 'HEIGHT', 'FORMAT'], [@sAudioQuality, @sWidth, @sHeight, @VideoFormat]);

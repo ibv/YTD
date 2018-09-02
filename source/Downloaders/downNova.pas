@@ -76,7 +76,7 @@ const
   URLREGEXP_AFTER_ID =  '$';
 
 const
-  REGEXP_CONFIG = 'var\s+voyoPlusConfig\d*\s*=\s*\\?"(?P<CONFIG>.+?)\\?"';
+  REGEXP_CONFIG = 'var\s+flowConf\d+\s*=\s*\\?["''](?P<CONFIG>.+?)\\?["'']';
 
 { TDownloader_Nova }
 

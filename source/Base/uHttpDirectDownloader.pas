@@ -57,6 +57,7 @@ type
       destructor Destroy; override;
       function Prepare: boolean; override;
       property Referer;
+      property Cookies;
     end;
 
 implementation

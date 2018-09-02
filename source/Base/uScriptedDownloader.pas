@@ -429,6 +429,10 @@ begin
       Downloader.Referer := s;
     if GetNodeContent(Node, 'user_agent', Vars, s) then
       Downloader.DefaultHttp.UserAgent := s;
+    if GetNodeContent(Node, 'cookies', Vars, s) then
+      Downloader.Cookies.Text := s
+    else
+      Downloader.Cookies.Text := Vars[SCRIPTVAR_LAST_COOKIES];
     AddDownloader(Downloader);
   except
     FreeAndNil(Downloader);

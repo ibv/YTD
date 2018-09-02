@@ -51,6 +51,7 @@ type
       QualitiesRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -75,7 +76,7 @@ const
 const
   REGEXP_EXTRACT_TITLE = REGEXP_TITLE_H1;
   REGEXP_EXTRACT_URL = REGEXP_URL_ADDVARIABLE_FILE_RELATIVE;
-  REGEXP_QUALITIES = '(?:^|;)(?P<URL>/.+?);@@;(?P<QUALITY>\d+)p;#@#';
+  REGEXP_QUALITIES = '(?:''|;)(?P<URL>/.+?);@@;(?P<QUALITY>\d+)p(?:''|;#@#)';
 
 { TDownloader_MediaSport }
 
@@ -136,6 +137,11 @@ begin
       until not QualitiesRegExp.MatchAgain;
     MovieUrl := 'http://www.mediasport.cz' + BestUrl;
     end;
+end;
+
+function TDownloader_MediaSport.GetFileNameExt: string;
+begin
+  Result := '.mp4';
 end;
 
 initialization

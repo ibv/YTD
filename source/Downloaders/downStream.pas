@@ -77,7 +77,7 @@ uses
 // http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
 // http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
 const
-  URLREGEXP_BEFORE_ID = '(?<!old\.)(?:music)?stream\.cz/';
+  URLREGEXP_BEFORE_ID = '(?<!old\.)stream\.cz/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 

@@ -69,7 +69,7 @@ uses
 
 // http://tvnoviny.sk/video/videospravy/televizne-noviny/2432970
 const
-  URLREGEXP_BEFORE_ID = 'tvnoviny\.sk/video/';
+  URLREGEXP_BEFORE_ID = 'tvnoviny\.sk/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 

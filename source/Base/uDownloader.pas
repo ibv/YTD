@@ -955,7 +955,7 @@ begin
     peANSI:
       Result := string(Text);
     peUTF8:
-      Result := Utf8ToString(Utf8String(Text));
+      Result := AnsiEncodedUtf8ToString(Text);
     peUTF16:
       begin
       n := Length(Text) shr 1;

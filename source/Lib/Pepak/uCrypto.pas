@@ -49,6 +49,9 @@ function AES_Encrypt_ECB(Input, Output, Key: PAnsiChar; Bits: integer): boolean;
 function AES_Decrypt_ECB(Input, Output, Key: PAnsiChar; Bits: integer): boolean;
 function AES_Decrypt_CTR(const Counter, Input: AnsiString; out Output: AnsiString; Key: PAnsiChar; Bits: integer): boolean;
 function AESCTR_Decrypt(const Data, Password: AnsiString; KeyBits: integer): AnsiString;
+function RC4_Encrypt(Input, Output, Key: PAnsiChar; KeyBytes, DataBytes: integer): boolean;
+function RC4_Decrypt(Input, Output, Key: PAnsiChar; KeyBytes, DataBytes: integer): boolean;
+
 
 implementation
 
@@ -64,11 +67,18 @@ type
     rounds: integer;
     end;
 
+  RC4_KEY = record
+    state: array[0..255] of Longint;
+    x, y: Longint;
+    end;
+
 type
   TAESEncryptFunction = procedure(Input, Output: PAnsiChar; var Key: AES_KEY); cdecl;
   TAESSetEncryptKeyFunction = function(UserKey: PAnsiChar; Bits: integer; var Key: AES_KEY): integer; cdecl;
   TAESDecryptFunction = procedure(Input, Output: PAnsiChar; var Key: AES_KEY); cdecl;
   TAESSetDecryptKeyFunction = function(UserKey: PAnsiChar; Bits: integer; var Key: AES_KEY): integer; cdecl;
+  TRC4Function = procedure(var Key: RC4_KEY; DataLength: Longint; Input, Output: PAnsiChar); cdecl;
+  TRC4SetKeyFunction = procedure(var Key: RC4_KEY; KeyBytes: Longint; KeyData: PAnsiChar); cdecl;
 
 var
   LibEay32Lock: TRtlCriticalSection;
@@ -77,6 +87,8 @@ var
   AES_set_encrypt_key: TAESSetEncryptKeyFunction = nil;
   AES_decrypt: TAESDecryptFunction = nil;
   AES_set_decrypt_key: TAESSetDecryptKeyFunction = nil;
+  RC4: TRC4Function = nil;
+  RC4_set_key: TRC4SetKeyFunction = nil;
 
 procedure Init;
 begin
@@ -93,6 +105,8 @@ begin
           AES_set_encrypt_key := GetProcAddress(LibEay32Handle, 'AES_set_encrypt_key');
           AES_decrypt := GetProcAddress(LibEay32Handle, 'AES_decrypt');
           AES_set_decrypt_key := GetProcAddress(LibEay32Handle, 'AES_set_decrypt_key');
+          RC4 := GetProcAddress(LibEay32Handle, 'RC4');
+          RC4_set_key := GetProcAddress(LibEay32Handle, 'RC4_set_key');
           end;
         end;
     finally
@@ -113,6 +127,8 @@ begin
       AES_set_encrypt_key := nil;
       AES_decrypt := nil;
       AES_set_decrypt_key := nil;
+      RC4 := nil;
+      RC4_set_key := nil;
       end;
   finally
     LeaveCriticalSection(LibEay32Lock);
@@ -126,11 +142,13 @@ begin
   Result := False;
   Init;
   if Assigned(AES_set_encrypt_key) and Assigned(AES_encrypt) then
-    begin
-    AES_set_encrypt_key(Key, Bits, AesKey);
-    AES_encrypt(Input, Output, AesKey);
-    Result := True;
-    end;
+    try
+      AES_set_encrypt_key(Key, Bits, AesKey);
+      AES_encrypt(Input, Output, AesKey);
+      Result := True;
+    finally
+      ZeroMemory(@AesKey, Sizeof(AesKey));
+      end;
 end;
 
 function AES_Decrypt_ECB(Input, Output, Key: PAnsiChar; Bits: integer): boolean;
@@ -140,11 +158,13 @@ begin
   Result := False;
   Init;
   if Assigned(AES_set_decrypt_key) and Assigned(AES_decrypt) then
-    begin
-    AES_set_decrypt_key(Key, Bits, AesKey);
-    AES_decrypt(Input, Output, AesKey);
-    Result := True;
-    end;
+    try
+      AES_set_decrypt_key(Key, Bits, AesKey);
+      AES_decrypt(Input, Output, AesKey);
+      Result := True;
+    finally
+      ZeroMemory(@AesKey, Sizeof(AesKey));
+      end;
 end;
 
 function AES_Decrypt_CTR(const Counter, Input: AnsiString; out Output: AnsiString; Key: PAnsiChar; Bits: integer): boolean;
@@ -159,38 +179,40 @@ begin
   Result := False;
   Init;
   if Assigned(AES_set_encrypt_key) and Assigned(AES_encrypt) then
-    begin
-    AES_set_encrypt_key(Key, Bits, AesKey);
-    CtrLength := Length(Counter);
-    for i := 0 to High(Ctr) do
-      if i >= CtrLength then
-        Ctr[i] := 0
-      else
-        Ctr[i] := Ord(Counter[Succ(i)]);
-    Output := Input;
-    InputLength := Length(Input);
-    Position := 0;
-    while Position < InputLength do
-      begin
-      Move(Ctr[0], Decrypted[0], Sizeof(TBlock));
-      AES_encrypt(@Decrypted[0], @Encrypted[0], AesKey);
-      for i := 0 to Pred(Sizeof(TBlock)) do
-        if Position < InputLength then
-          begin
-          Inc(Position);
-          Output[Position] := AnsiChar(Byte(Input[Position]) xor Encrypted[i]); 
-          end
+    try
+      AES_set_encrypt_key(Key, Bits, AesKey);
+      CtrLength := Length(Counter);
+      for i := 0 to High(Ctr) do
+        if i >= CtrLength then
+          Ctr[i] := 0
         else
-          Break;
-      for i := Pred(Length(Ctr)) downto 8 do
+          Ctr[i] := Ord(Counter[Succ(i)]);
+      Output := Input;
+      InputLength := Length(Input);
+      Position := 0;
+      while Position < InputLength do
         begin
-        Inc(Ctr[i]);
-        if Ctr[i] <> 0 then
-          Break;
+        Move(Ctr[0], Decrypted[0], Sizeof(TBlock));
+        AES_encrypt(@Decrypted[0], @Encrypted[0], AesKey);
+        for i := 0 to Pred(Sizeof(TBlock)) do
+          if Position < InputLength then
+            begin
+            Inc(Position);
+            Output[Position] := AnsiChar(Byte(Input[Position]) xor Encrypted[i]); 
+            end
+          else
+            Break;
+        for i := Pred(Length(Ctr)) downto 8 do
+          begin
+          Inc(Ctr[i]);
+          if Ctr[i] <> 0 then
+            Break;
+          end;
         end;
+      Result := True;
+    finally
+      ZeroMemory(@AesKey, Sizeof(AesKey));
       end;
-    Result := True;
-    end
 end;
 
 function AESCTR_Decrypt(const Data, Password: AnsiString; KeyBits: integer): AnsiString;
@@ -206,23 +228,50 @@ var
   i, pwLength, KeyBytes: integer;
 begin
   Result := '';
-  // 1. Get the actual encryption key from the password
-  KeyBytes := KeyBits shr 3;
-  SetLength(Key, KeyBytes);
-  pwLength := Length(Password);
-  for i := 0 to Pred(KeyBytes) do
-    if i >= pwLength then
-      Key[i] := 0
-    else
-      Key[i] := Ord(Password[Succ(i)]);
-  if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KeyBits) then
-    Exit;
-  for i := 0 to Pred(KeyBytes) do
-    Key[i] := EncBlock[i mod BLOCK_LENGTH_BYTES];
-  // 2. Decrypt URL in counter mode
-  if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KeyBits) then
-    Exit;
-  Result := Decrypted;
+  try
+    // 1. Get the actual encryption key from the password
+    KeyBytes := KeyBits shr 3;
+    SetLength(Key, KeyBytes);
+    pwLength := Length(Password);
+    for i := 0 to Pred(KeyBytes) do
+      if i >= pwLength then
+        Key[i] := 0
+      else
+        Key[i] := Ord(Password[Succ(i)]);
+    if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KeyBits) then
+      Exit;
+    for i := 0 to Pred(KeyBytes) do
+      Key[i] := EncBlock[i mod BLOCK_LENGTH_BYTES];
+    // 2. Decrypt URL in counter mode
+    if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KeyBits) then
+      Exit;
+    Result := Decrypted;
+  finally
+    ZeroMemory(@Key[0], Length(Key));
+    end;
+end;
+
+function RC4_Encrypt(Input, Output, Key: PAnsiChar; KeyBytes, DataBytes: integer): boolean;
+var
+  RC4Key: RC4_KEY;
+begin
+  //TRC4Function = procedure(var Key: RC4_KEY; DataLength: Longint; Input, Output: PAnsiChar); cdecl;
+  //TRC4SetKeyFunction = procedure(var Key: RC4_KEY; KeyBytes: Longint; KeyData: PAnsiChar); cdecl;
+  Result := False;
+  Init;
+  if Assigned(RC4) and Assigned(RC4_set_key) then
+    try
+      RC4_set_key(RC4Key, KeyBytes, Key);
+      RC4(RC4Key, DataBytes, Input, Output);
+      Result := True;
+    finally
+      ZeroMemory(@RC4Key, Sizeof(RC4Key));
+      end;
+end;
+
+function RC4_Decrypt(Input, Output, Key: PAnsiChar; KeyBytes, DataBytes: integer): boolean;
+begin
+  Result := RC4_Encrypt(Input, Output, Key, KeyBytes, DataBytes);
 end;
 
 initialization
@@ -230,7 +279,6 @@ initialization
 
 finalization
   Done;
-
   DeleteCriticalSection(LibEay32Lock);
 
 end.

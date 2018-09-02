@@ -259,7 +259,6 @@ RuTube.ru           | RTMP     |       | http://rutube.ru/video/54477e8b005020d3
                     |          |       | http://rutube.ru/player.swf?hash=5936573
 SchoolOfCare.ru     | HTTP     |       | http://schoolofcare.ru/masha/339/
 Serial-Online.cz    | HTTP     |       | http://www.serial-online.cz/afery/afery-7.aspx
-SerialyCZ.cz        | HTTP     |       | http://www.serialycz.cz/2011/01/chuck-04x12/
 SevenLoad.com       | HTTP     |       | http://en.sevenload.com/shows/Food-Drink/episodes/4YXLHBt-How-To-Make-Elegant-No-Bake-Cheesecake
 ShackNews.com       |          |       | http://www.shacknews.com/file/29576/minecraft-xbox-live-trailer
 Sibnet.ru           | HTTP     |       | http://video.sibnet.ru/day/20120803/video654319-The_mp3_experiment_8/
@@ -276,9 +275,6 @@ Stagevu.com         | HTTP     |       | http://stagevu.com/video/jomxdgbvxnip
 StastneVdovy.cz     | HTTP     |       | http://www.stastnevdovy.cz/videa/idioti-hlupaci-sasci/silnicari-z-ny.html
 SteamPowered.com    | HTTP     |       | http://store.steampowered.com/video/220
 Stickam.com         | HTTP     |       | http://www.stickam.com/viewMedia.do?mId=188284575
-Stream.cz           | HTTP     |       | http://www.stream.cz/video/437197-meziplyn-30
-                    |          |       | http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
-Music.Stream.cz     | HTTP     |       | http://music.stream.cz/klip/268709-avril-lavigne-what-the-hell
 StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
@@ -314,7 +310,6 @@ VeeHD.com           | HTTP     |       | http://veehd.com/video/4639434_Solar-Si
 VideaCesky.cz       | HTTP     |       | http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
 Video.Google.com    | HTTP     |       | http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
                     |          |       | http://video.google.com/videoplay?docid=-9077214414651731007&ei=y-8dS-n9JZ6q2wK7o-CRCA
-Video.Nur.kz        | HTTP     |       | http://video.nur.kz/view=8irrnc87
 Video.Tiscali.cz    | HTTP     |       | http://video.tiscali.cz/the-duty-calls-trailer-283 
 VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
 VideoBB.com         | HTTP     |       | http://www.videobb.com/video/oh53koNnCV5S

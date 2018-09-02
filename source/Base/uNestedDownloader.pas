@@ -68,6 +68,7 @@ type
       function CreateNestedDownloaderFromID(const MovieID: string): boolean; virtual;
       function CreateNestedDownloaderFromURL(var Url: string): boolean; virtual;
       function CreateNestedDownloaderFromDownloader(Downloader: TDownloader): boolean; virtual;
+      function FindNestedUrl(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean; virtual;
       function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; virtual;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
       procedure NestedFileNameValidate(Sender: TObject; var FileName: string; var Valid: boolean); virtual;
@@ -315,6 +316,11 @@ begin
 end;
 {$ENDIF}
 
+function TNestedDownloader.FindNestedUrl(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Url: string): boolean;
+begin
+  Result := (NestedUrlRegExp <> nil) and GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url);
+end;
+
 function TNestedDownloader.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
 begin
   Result := False;
@@ -342,7 +348,7 @@ begin
     SetPrepared(True);
     Result := True;
     end
-  else if (NestedUrlRegExp <> nil) and GetRegExpVar(NestedUrlRegExp, Page, 'URL', Url) and (Url <> '') and CreateNestedDownloaderFromURL(Url) then
+  else if FindNestedUrl(Page, PageXml, Http, Url) and (Url <> '') and CreateNestedDownloaderFromURL(Url) then
     begin
     MovieUrl := Url;
     SetPrepared(True);

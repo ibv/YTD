@@ -94,8 +94,8 @@ const
 
   FLASH_DEFAULT_VERSION = 'WIN 10,1,82,76';
 
-  INVALID_FILENAME_CHARS = '\/:*?"<>|';
-  INVALID_FILENAME_CHARS_REPLACEMENTS = '--;..''--!';
+  INVALID_FILENAME_CHARS = '\/:*?"<>|'#9#10#13;
+  INVALID_FILENAME_CHARS_REPLACEMENTS = '--;..''--!   ';
 
 implementation
 

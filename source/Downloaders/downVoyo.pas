@@ -259,9 +259,9 @@ begin
   // Ted postupne vyzkousim jednotlive downloadery
   else if TryHTTPDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, DecryptedConfig, Downloader) then
     Result := True
-  else if TryMSDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, DecryptedConfig, Downloader) then
-    Result := True
   else if TryRTMPDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, DecryptedConfig, Downloader) then
+    Result := True
+  else if TryMSDownloader(Http, SiteID, SectionID, Subsite, ProductID, UnitID, MediaID, DecryptedConfig, Downloader) then
     Result := True
   else
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO);

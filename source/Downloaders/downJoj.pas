@@ -196,7 +196,7 @@ begin
             // a kdyz uz se k tomu dostanu, jak pomoci toho modifikovat prikaz
             // RTMP Play().
           Self.RtmpUrl := 'rtmp://' + Server;
-          Self.Playpath := BestPath + '?auth=' + HexEncode(MD5(Authentication + Self.Token));
+          Self.Playpath := BestPath + '?auth=' + HexEncode(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (Authentication + Self.Token)));
           MovieUrl := RtmpUrl + BestPath;
           SetPrepared(True);
           Result := True;

@@ -41,18 +41,20 @@ interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
+  uPCRE, uXml, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
   TDownloader_VideoNurKz = class(THttpDownloader)
     private
     protected
+      EncryptedUrlRegExp: TRegExp;
       Extension: string;
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function Decrypt(var Str: string): boolean;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,6 +65,7 @@ type
 implementation
 
 uses
+  uCrypto,
   uStringConsts,
   uDownloadClassifier,
   uMessages;
@@ -75,7 +78,7 @@ const
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1;
-  REGEXP_MOVIE_URL =    REGEXP_URL_PARAM_FLASHVARS_FILE;
+  REGEXP_MOVIE_URL =    '[&"]file=(?P<URL>[0-9a-zA-Z/=\+]+)[&"]';
 
 { TDownloader_VideoNurKz }
 
@@ -94,13 +97,13 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  EncryptedUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
 end;
 
 destructor TDownloader_VideoNurKz.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(EncryptedUrlRegExp);
   inherited;
 end;
 
@@ -109,21 +112,50 @@ begin
   Result := 'http://video.nur.kz/view=' + MovieID;
 end;
 
+function TDownloader_VideoNurKz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Url: string;
+begin
+  inherited AfterPrepareFromPage(Page, PageXml, Http);
+  Result := False;
+  if not GetRegExpVar(EncryptedUrlRegExp, Page, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else if not Decrypt(Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  else
+    begin
+    MovieUrl := Url;
+    if DownloadPage(Http, Url, hmHead) then
+      Extension := ExtractUrlExt(LastUrl);
+    SetPrepared(True);
+    Result := True;
+    end;
+end;
+
 function TDownloader_VideoNurKz.GetFileNameExt: string;
 begin
   Result := Extension;
 end;
 
-function TDownloader_VideoNurKz.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+function TDownloader_VideoNurKz.Decrypt(var Str: string): boolean;
+const
+  Key: WideString = 'RA$7xPZR';
+var
+  Enc, Dec: AnsiString;
+  n: integer;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
-  Result := False;
-  if Prepared then
+  Enc := DecodeBase64(Str);
+  n := Length(Enc);
+  if n <= 0 then
     begin
-    Extension := '';
-    if DownloadPage(Http, MovieUrl, hmHead) then
-      Extension := ExtractUrlExt(LastUrl);
+    Dec := '';
     Result := True;
+    end
+  else
+    begin
+    SetLength(Dec, n);
+    Result := RC4_Decrypt(@Enc[1], @Dec[1], @Key[1], Length(Key)*Sizeof(Key[1]), n);
+    Str := EncodeBase64(Dec);
     end;
 end;
 

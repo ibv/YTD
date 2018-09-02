@@ -72,7 +72,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_ASSET_ID = '\bassetID\s*:\s*(?P<ID>\d+)';
+  REGEXP_ASSET_ID = '<div\s+id="playerContainer"\s+class="(?P<ID>\d+)"';
 
 { TDownloader_ZDF }
 

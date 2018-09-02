@@ -106,7 +106,7 @@ uses
 
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/.+';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -172,7 +172,7 @@ end;
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   Prot, User, Pass, Host, Port, Part, Para: string;
-  PlaylistType, PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Title: string;
+  PlaylistType, PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Title, Title2: string;
   {$IFDEF MULTIDOWNLOADS}
   Urls: TStringArray;
   i: integer;
@@ -214,6 +214,8 @@ begin
   else
     begin
     Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title)));
+    if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
+      Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
     {$IFDEF MULTIDOWNLOADS}
     for i := 0 to Pred(Length(Urls)) do
       begin
@@ -226,8 +228,6 @@ begin
     SetName(NameList[0]);
     {$ENDIF}
     SetName(Title);
-    if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title) then
-      SetName(Title);
     MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
     SetPrepared(True);
     Result := True;

@@ -1,11 +1,52 @@
 ﻿______________________________________________________________________________
 
-YTD v1.47                                                    (c) 2009-15 Pepak
+YTD v1.48                                                    (c) 2009-15 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.48:
+
+    * Noví poskytovatelé:
+      - DansMovies.com (porno)
+      - EroProfile.com (porno)
+
+    * Aktualizovaní poskytovatelé:
+      - CekniTo.sk, CekniTo.cz
+      - CeskaTelevize.cz
+      - DailyMail.co.uk
+      - DrsnySvet.cz
+      - MediaSport.cz
+      - NavratDoReality.cz
+      - RTVS.sk
+      - Vimeo.com
+      - YouTube.com
+      - ZDF.de
+
+    * Vyřazení provozovatelé:
+      - Prima.cz
+      - Serialy.cz (pravděpodobně půjde)
+      - Stream.cz (snad půjde, ale teď na něj nemám čas)
+      - Video.nur.kz (pravděpodobně půjde)
+
+    * Aktualizován slovenský překlad (Vladimír Kubala).
+
+    * YouTube.com: Upraven způsob hodnocení kvality videa, řeší chybnou
+      volbu streamu u http://www.youtube.com/watch?v=qToW_UtdF7o.
+      Upraveno zpracování jmen souborů u některých videí, např.
+      https://www.youtube.com/watch?v=iMIM1fjbkb0.
+
+    * CeskaTelevize.cz: Přidána podpora pro pořady odkazované javascriptem.
+
+      Díval jsem se na Déčko, ale zdá se mi, že to nejsou videa, ale jen
+      obyčejné Flashe. Pokud se někde dá doklikat k videu, tak mě prosím
+      upozorněte, jak.
+
+      Opraveno pojmenování videí (např. zprávy).
+
+
 
   v1.47:
 
