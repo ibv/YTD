@@ -64,6 +64,7 @@ const
 resourcestring
   ERR_EXCEPTION_MESSAGE = 'Exception %s with message:'#10'%s'; // Message shown when an exception occurs. First %s is an exception type, second %s an exception message
   ERR_INSTALL_FAILED = 'Installation failed.'; // Shown when installation failed
+  ERR_INSTALL_LIBRARY_FAILED = 'Installation of the following files failed: %s'; // Shown when tried to install the necessary libraries and it failed
   MSG_PRESS_ANY_KEY_TO_QUIT = 'Press any key to quit.'; // Shown when running YTD command-line from IDE, right before YTD is terminated
   MSG_PLAYLIST_ITEM = 'Playlist item %d'; // Default playlist item name, %d is count
   MSG_DOWNLOAD_OR_UPGRADE = 'Do you want to upgrade (YES)'#10'or just download the newest version (NO)?'#10#10'Note: Upgrade will stop all transfers.'; // What to do with the newest version

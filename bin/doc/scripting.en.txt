@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YTD v1.56+                                                   (c) 2009-16 Pepak
+YTD v1.57+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -414,7 +414,7 @@ error.
 
     Values permitted in the "type" attribute of <condition> are:
 
-    3.13.1 "regexp_match"
+    3.13.1 "regexp_match" or "regexp"
 
         The condition tag gets processed as if it were a <regexp> tag (see
         section 4.4 below). If successful, i.e. if a regular expression 
@@ -744,6 +744,10 @@ Example:
         First the script's <regexps> are checked for a given ID, and if not
         found, the global <regexps> are also checked. This follows the usual
         approach to the scope of local and global variables.
+      - "pattern" (semi-mandatory) - rather than referring to <regexps> using
+        the "id", the search pattern may be provided by the "pattern" attribute.
+        This may be useful in <condition> statements, but is not recommended 
+        because of restrictions on attribute contents in XML.
       - "options" (optional) - the regexp is by default called with "is"
         modifiers, but you may want to add or remove the modifiers. You
         would use a syntax such as "-i+x" to remove the "i" modifier and
@@ -763,20 +767,29 @@ Example:
           "N" ... "No auto capture"; I never used this.
       - "content" (mandatory) - identifies the variable whose content will 
         be matched against the regular expression.
-      - "match" (mandatory) - identifies the subexpression which will be
+      - "match" (optional) - identifies the subexpression which will be
         returned as the result of this function. If not present, the 
         subexpression identified by the regexp's "match" attribute will be
-        used.
+        used. If "match" is not present in either, then the matching part
+        of the expression will be returned. If "match" is a number, the
+        appropriate subexpression will be returned (0 for the whole
+        matching part, 1 for the first subexpression, 2 for the second
+        subexpression etc.).
 
     Example:
 
         <regexps>
-          <regexp id="title"><![CDATA[<title>(?P<NAME>.*?)</title>]]></regexp>
+          <regexp id="title" match="NAME"><![CDATA[<title>(?P<NAME>.*?)</title>]]></regexp>
         </regexp>
         <set_var id="data"><![CDATA[<head><title>Test</title></head><body>...</body>]]></set_var>
         <set_var id="title"><regexp id="title" content="data"/></set_var>
+        <set_var id="tag1"><regexp pattern="/\w+"/></set_var>
+        <set_var id="tag2"><regexp pattern="/(\w+)" match="1"/></set_var>
 
-        After running this script, variable "title" will contain "Test".
+        After running this script, variable contents will be as follows:
+          "title" -> "Test"
+          "tag1" -> "/title"
+          "tag2" -> "title"
         Of course, variable "data" is usually populated using the 
         <download_page> function, not by directly entering some string...
 

@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2016-02-21 13:37\n"
-"PO-Revision-Date: 2016-02-21 13:37\n"
+"POT-Creation-Date: 2016-08-06 16:24\n"
+"PO-Revision-Date: 2016-08-06 16:24\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -678,22 +678,22 @@ msgstr ""
 msgid "&Avoid .webm format"
 msgstr ""
 
-#: Base/uPlaylistDownloader.pas:211
+#: Base/uDownloader.pas:891
 msgid "[%*.*d of %d]"
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:186
+#: Base/uScriptedDownloader.pas:190
 msgid "TScriptedDownloader.UrlRegExp may not be "
 "called."
 msgstr ""
 
-#: Base/uScriptedDownloader.pas:220
+#: Base/uScriptedDownloader.pas:224
 msgid "Invalid MovieID - must define script and "
 "ID"
 msgstr ""
 
 #. Downloader: TMSDirectDownloader;
-#: Base/uScriptedDownloader.pas:530
+#: Base/uScriptedDownloader.pas:536
 msgid "SmoothStream is not supported, because I don't know how to "
 "programmatically mux MP4 streams. Can you "
 "help?"
@@ -1125,27 +1125,36 @@ msgstr ""
 msgid "Installation failed."
 msgstr ""
 
+#. Shown when tried to install the necessary libraries and it failed
+#. Programmer's name for it: ERR_INSTALL_LIBRARY_FAILED
+#: Common/uMessages.pas:67
+#. Programmer's name for it: ERR_INSTALL_LIBRARY_FAILED
+#: Common/uMessages.pas:67
+msgid "Installation of the following files failed: "
+"%s"
+msgstr ""
+
 #. Shown when running YTD command-line from IDE, right before YTD is terminated
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:67
+#: Common/uMessages.pas:68
 #. Programmer's name for it: MSG_PRESS_ANY_KEY_TO_QUIT
-#: Common/uMessages.pas:67
+#: Common/uMessages.pas:68
 msgid "Press any key to quit."
 msgstr ""
 
 #. Default playlist item name, %d is count
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:68
+#: Common/uMessages.pas:69
 #. Programmer's name for it: MSG_PLAYLIST_ITEM
-#: Common/uMessages.pas:68
+#: Common/uMessages.pas:69
 msgid "Playlist item %d"
 msgstr ""
 
 #. What to do with the newest version
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
-#: Common/uMessages.pas:69
+#: Common/uMessages.pas:70
 #. Programmer's name for it: MSG_DOWNLOAD_OR_UPGRADE
-#: Common/uMessages.pas:69
+#: Common/uMessages.pas:70
 msgid "Do you want to upgrade (YES)\n"
 "or just download the newest version (NO)?\n"
 "\n"
@@ -1154,53 +1163,53 @@ msgstr ""
 
 #. Downloading the upgrade data
 #. Programmer's name for it: MSG_UPGRADING
-#: Common/uMessages.pas:70
+#: Common/uMessages.pas:71
 #. Programmer's name for it: MSG_UPGRADING
-#: Common/uMessages.pas:70
+#: Common/uMessages.pas:71
 msgid "Upgrading..."
 msgstr ""
 
 #. Programmer's name for it: MSG_PROVIDER_DEFINITIONS_UPGRADED
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:72
 #. Programmer's name for it: MSG_PROVIDER_DEFINITIONS_UPGRADED
-#: Common/uMessages.pas:71
+#: Common/uMessages.pas:72
 msgid "Provider definitions were upgraded:"
 msgstr ""
 
 #. Failed to execute the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:73
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE
-#: Common/uMessages.pas:72
+#: Common/uMessages.pas:73
 msgid "Failed to execute the upgrade file."
 msgstr ""
 
 #. Failed to download the upgrade file
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:74
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_UPGRADE
-#: Common/uMessages.pas:73
+#: Common/uMessages.pas:74
 msgid "Failed to download upgrade data: "
 msgstr ""
 
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE_DEFINITIONS
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:75
 #. Programmer's name for it: MSG_FAILED_TO_UPGRADE_DEFINITIONS
-#: Common/uMessages.pas:74
+#: Common/uMessages.pas:75
 msgid "Failed to upgrade the script definitions."
 msgstr ""
 
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_DEFINITIONS
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:76
 #. Programmer's name for it: MSG_FAILED_TO_DOWNLOAD_DEFINITIONS
-#: Common/uMessages.pas:75
+#: Common/uMessages.pas:76
 msgid "Failed to download the script definitions."
 msgstr ""
 
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:77
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND
-#: Common/uMessages.pas:76
+#: Common/uMessages.pas:77
 msgid "You don't seem to have the OpenSSL library (32bit) installed.\n"
 "YTD uses OpenSSL to enable the SSL protocol.\n"
 "Without SSL, you won't be able to download\n"
@@ -1208,17 +1217,17 @@ msgid "You don't seem to have the OpenSSL library (32bit) installed.\n"
 msgstr ""
 
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
-#: Common/uMessages.pas:77
+#: Common/uMessages.pas:78
 #. Programmer's name for it: MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX
-#: Common/uMessages.pas:77
+#: Common/uMessages.pas:78
 msgid "Would you like to download and install "
 "OpenSSL?"
 msgstr ""
 
 #. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:79
 #. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND
-#: Common/uMessages.pas:78
+#: Common/uMessages.pas:79
 msgid "You don't seem to have the RtmpDump library installed.\n"
 "YTD uses RtmpDump to handle the RTMP protocol.\n"
 "Without RTMP, you won't be able to download\n"
@@ -1226,17 +1235,17 @@ msgid "You don't seem to have the RtmpDump library installed.\n"
 msgstr ""
 
 #. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:80
 #. Programmer's name for it: MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX
-#: Common/uMessages.pas:79
+#: Common/uMessages.pas:80
 msgid "Would you like to download and install "
 "RtmpDump?"
 msgstr ""
 
 #. Programmer's name for it: MSG_MSDL_NOT_FOUND
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:81
 #. Programmer's name for it: MSG_MSDL_NOT_FOUND
-#: Common/uMessages.pas:80
+#: Common/uMessages.pas:81
 msgid "You don't seem to have the MSDL library installed.\n"
 "YTD uses MSDL to handle various Microsoft protocols.\n"
 "Without them, you won't be able to download\n"
@@ -1244,418 +1253,418 @@ msgid "You don't seem to have the MSDL library installed.\n"
 msgstr ""
 
 #. Programmer's name for it: MSG_MSDL_NOT_FOUND_ACTION_SUFFIX
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:82
 #. Programmer's name for it: MSG_MSDL_NOT_FOUND_ACTION_SUFFIX
-#: Common/uMessages.pas:81
+#: Common/uMessages.pas:82
 msgid "Would you like to download and install "
 "MSDL?"
 msgstr ""
 
 #. Programmer's name for it: MSG_EXTERNAL_LIBS_DOWNLOAD
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:83
 #. Programmer's name for it: MSG_EXTERNAL_LIBS_DOWNLOAD
-#: Common/uMessages.pas:82
+#: Common/uMessages.pas:83
 msgid "Download URL:"
 msgstr ""
 
 #. Programmer's name for it: MSG_EXTERNAL_LIBS_WERE_DOWNLOADED
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:84
 #. Programmer's name for it: MSG_EXTERNAL_LIBS_WERE_DOWNLOADED
-#: Common/uMessages.pas:83
+#: Common/uMessages.pas:84
 msgid "External libraries have been downloaded and installed.\n"
 "Please restart YTD to activate them."
 msgstr ""
 
 #. Programmer's name for it: MSG_WANT_TO_UNINSTALL
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:85
 #. Programmer's name for it: MSG_WANT_TO_UNINSTALL
-#: Common/uMessages.pas:84
+#: Common/uMessages.pas:85
 msgid "Are you sure you want to uninstall YTD?"
 msgstr ""
 
 #. Programmer's name for it: MSG_UNINSTALL_COMPLETE
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:86
 #. Programmer's name for it: MSG_UNINSTALL_COMPLETE
-#: Common/uMessages.pas:85
+#: Common/uMessages.pas:86
 msgid "Uninstallation completed."
 msgstr ""
 
 #. Attempted to access data which depends Prepare without running Prepare
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:89
 #. Programmer's name for it: ERR_DOWNLOADER_IS_NOT_PREPARED
-#: Common/uMessages.pas:88
+#: Common/uMessages.pas:89
 msgid "Downloader is not prepared!"
 msgstr ""
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:90
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_IMPLEMENTED
-#: Common/uMessages.pas:89
+#: Common/uMessages.pas:90
 msgid "Download of this content is not implemented."
 msgstr ""
 
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
-#: Common/uMessages.pas:90
+#: Common/uMessages.pas:91
 #. Programmer's name for it: ERR_DOWNLOAD_EMPTY_URL
-#: Common/uMessages.pas:90
+#: Common/uMessages.pas:91
 msgid "Download URL was not set."
 msgstr ""
 
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:92
 #. Programmer's name for it: ERR_DOWNLOAD_NOT_INITIALIZED
-#: Common/uMessages.pas:91
+#: Common/uMessages.pas:92
 msgid "Failed to initialize the download structures."
 msgstr ""
 
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:93
 #. Programmer's name for it: ERR_DOWNLOAD_FAILED
-#: Common/uMessages.pas:92
+#: Common/uMessages.pas:93
 msgid "Download failed."
 msgstr ""
 
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
-#: Common/uMessages.pas:93
+#: Common/uMessages.pas:94
 #. Programmer's name for it: ERR_RTMPDUMP_ERROR
-#: Common/uMessages.pas:93
+#: Common/uMessages.pas:94
 msgid "RTMPDUMP error: %s"
 msgstr ""
 
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:94
+#: Common/uMessages.pas:95
 #. Programmer's name for it: ERR_VALIDATE_FILENAME_FAILED
-#: Common/uMessages.pas:94
+#: Common/uMessages.pas:95
 msgid "Download to file \"%s\" was not allowed."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:96
+#: Common/uMessages.pas:97
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT
-#: Common/uMessages.pas:96
+#: Common/uMessages.pas:97
 msgid "Failed to locate embedded object."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:98
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:97
+#: Common/uMessages.pas:98
 msgid "Failed to locate media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:98
+#: Common/uMessages.pas:99
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:98
+#: Common/uMessages.pas:99
 msgid "Failed to download media info page. Check your "
 "firewall!"
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:99
+#: Common/uMessages.pas:100
 #. Programmer's name for it: ERR_FAILED_TO_PREPARE_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:99
+#: Common/uMessages.pas:100
 msgid "Failed to prepare media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:100
+#: Common/uMessages.pas:101
 #. Programmer's name for it: ERR_INVALID_MEDIA_INFO_PAGE
-#: Common/uMessages.pas:100
+#: Common/uMessages.pas:101
 msgid "Invalid media info page."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:101
+#: Common/uMessages.pas:102
 #. Programmer's name for it: ERR_FAILED_TO_DOWNLOAD_SERVER_LIST
-#: Common/uMessages.pas:101
+#: Common/uMessages.pas:102
 msgid "Failed to download server list."
 msgstr ""
 
 #. Programmer's name for it: ERR_UNKNOWN_URL
-#: Common/uMessages.pas:102
+#: Common/uMessages.pas:103
 #. Programmer's name for it: ERR_UNKNOWN_URL
-#: Common/uMessages.pas:102
+#: Common/uMessages.pas:103
 msgid "Unknown URL: %s"
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:104
+#: Common/uMessages.pas:105
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_INFO
-#: Common/uMessages.pas:104
+#: Common/uMessages.pas:105
 msgid "Failed to locate media info."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:105
+#: Common/uMessages.pas:106
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_TITLE
-#: Common/uMessages.pas:105
+#: Common/uMessages.pas:106
 msgid "Failed to find media title."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:106
+#: Common/uMessages.pas:107
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_URL
-#: Common/uMessages.pas:106
+#: Common/uMessages.pas:107
 msgid "Failed to find media URL."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:107
+#: Common/uMessages.pas:108
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_SERVER
-#: Common/uMessages.pas:107
+#: Common/uMessages.pas:108
 msgid "Failed to find media server."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:108
+#: Common/uMessages.pas:109
 #. Programmer's name for it: ERR_FAILED_TO_LOCATE_MEDIA_STREAM
-#: Common/uMessages.pas:108
+#: Common/uMessages.pas:109
 msgid "Failed to find media stream."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:110
+#: Common/uMessages.pas:111
 #. Programmer's name for it: ERR_HTTP_RESULT_CODE
-#: Common/uMessages.pas:110
+#: Common/uMessages.pas:111
 msgid "HTTP request failed with error code "
 "%d."
 msgstr ""
 
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:111
+#: Common/uMessages.pas:112
 #. Programmer's name for it: ERR_HTTP_NO_DATA_READ
-#: Common/uMessages.pas:111
+#: Common/uMessages.pas:112
 msgid "No data read from the connection."
 msgstr ""
 
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:113
+#: Common/uMessages.pas:114
 #. Programmer's name for it: ERR_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:113
+#: Common/uMessages.pas:114
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:134
+#: Common/uMessages.pas:135
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NOT_FOUND
-#: Common/uMessages.pas:134
+#: Common/uMessages.pas:135
 msgid "Variable \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:114
+#: Common/uMessages.pas:115
 #. Programmer's name for it: ERR_SEE_LOGFILE
-#: Common/uMessages.pas:114
+#: Common/uMessages.pas:115
 msgid "Error message listed in file \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:115
+#: Common/uMessages.pas:116
 #. Programmer's name for it: ERR_MEDIA_REMOVED
-#: Common/uMessages.pas:115
+#: Common/uMessages.pas:116
 msgid "Media file was removed from the server."
 msgstr ""
 
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:116
+#: Common/uMessages.pas:117
 #. Programmer's name for it: ERR_SERVER_ERROR
-#: Common/uMessages.pas:116
+#: Common/uMessages.pas:117
 msgid "Server returned an error: %s"
 msgstr ""
 
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:117
+#: Common/uMessages.pas:118
 #. Programmer's name for it: ERR_SECURE_TOKEN_NOT_SET
-#: Common/uMessages.pas:117
+#: Common/uMessages.pas:118
 msgid "Invalid configuration: Secure token not "
 "set."
 msgstr ""
 
 #. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
-#: Common/uMessages.pas:118
+#: Common/uMessages.pas:119
 #. Programmer's name for it: ERR_ENCRYPTION_NOT_SUPPORTED
-#: Common/uMessages.pas:118
+#: Common/uMessages.pas:119
 msgid "Encryption not yet supported."
 msgstr ""
 
 #. Programmer's name for it: ERR_LOGIN_FAILED
-#: Common/uMessages.pas:119
+#: Common/uMessages.pas:120
 #. Programmer's name for it: ERR_LOGIN_FAILED
-#: Common/uMessages.pas:119
+#: Common/uMessages.pas:120
 msgid "Login failed."
 msgstr ""
 
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:121
+#: Common/uMessages.pas:122
 #. Programmer's name for it: ERR_FAILED_TO_LOAD_DLL
-#: Common/uMessages.pas:121
+#: Common/uMessages.pas:122
 msgid "Failed to load library \"%s\" or its prerequisites."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_ERROR
-#: Common/uMessages.pas:123
+#: Common/uMessages.pas:124
 #. Programmer's name for it: ERR_SCRIPTS_ERROR
-#: Common/uMessages.pas:123
+#: Common/uMessages.pas:124
 msgid "Script error: "
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_URL_NOT_FOUND
-#: Common/uMessages.pas:124
+#: Common/uMessages.pas:125
 #. Programmer's name for it: ERR_SCRIPTS_URL_NOT_FOUND
-#: Common/uMessages.pas:124
+#: Common/uMessages.pas:125
 msgid "URL not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED
-#: Common/uMessages.pas:125
+#: Common/uMessages.pas:126
 #. Programmer's name for it: ERR_SCRIPTS_EMPTY_URL_ENCOUNTERED
-#: Common/uMessages.pas:125
+#: Common/uMessages.pas:126
 msgid "Url pattern is empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_NOT_FOUND
-#: Common/uMessages.pas:126
+#: Common/uMessages.pas:127
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_NOT_FOUND
-#: Common/uMessages.pas:126
+#: Common/uMessages.pas:127
 msgid "Requested script \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:127
+#: Common/uMessages.pas:128
 #. Programmer's name for it: ERR_SCRIPTS_SCRIPT_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:127
+#: Common/uMessages.pas:128
 msgid "Script may not be empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:128
+#: Common/uMessages.pas:129
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:128
+#: Common/uMessages.pas:129
 msgid "Search pattern may not be empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:129
+#: Common/uMessages.pas:130
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:129
+#: Common/uMessages.pas:130
 msgid "Pattern ID may not be empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_NOT_FOUND
-#: Common/uMessages.pas:130
+#: Common/uMessages.pas:131
 #. Programmer's name for it: ERR_SCRIPTS_PATTERN_NOT_FOUND
-#: Common/uMessages.pas:130
+#: Common/uMessages.pas:131
 msgid "Requested regexp \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:131
+#: Common/uMessages.pas:132
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:131
+#: Common/uMessages.pas:132
 msgid "Subexpression name may not be empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND
-#: Common/uMessages.pas:132
+#: Common/uMessages.pas:133
 #. Programmer's name for it: ERR_SCRIPTS_SUBEXPRESSION_NOT_FOUND
-#: Common/uMessages.pas:132
+#: Common/uMessages.pas:133
 msgid "Subexpression \"%s\" not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP
-#: Common/uMessages.pas:133
+#: Common/uMessages.pas:134
 #. Programmer's name for it: ERR_SCRIPTS_FAILED_TO_MATCH_REGEXP
-#: Common/uMessages.pas:133
+#: Common/uMessages.pas:134
 msgid "Failed to match regular expression."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:135
+#: Common/uMessages.pas:136
 #. Programmer's name for it: ERR_SCRIPTS_VARIABLE_NAME_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:135
+#: Common/uMessages.pas:136
 msgid "Variable name may not be empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:136
+#: Common/uMessages.pas:137
 #. Programmer's name for it: ERR_SCRIPTS_ATTRIBUTE_MUST_BE_NONEMPTY
-#: Common/uMessages.pas:136
+#: Common/uMessages.pas:137
 msgid "Attribute \"%s\" may not be empty."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE
-#: Common/uMessages.pas:137
+#: Common/uMessages.pas:138
 #. Programmer's name for it: ERR_SCRIPTS_INVALID_ATTRIBUTE_VALUE
-#: Common/uMessages.pas:137
+#: Common/uMessages.pas:138
 msgid "Attribute \"%s\" has invalid value \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND
-#: Common/uMessages.pas:138
+#: Common/uMessages.pas:139
 #. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND
-#: Common/uMessages.pas:138
+#: Common/uMessages.pas:139
 msgid "Unknown command."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND_NAMED
-#: Common/uMessages.pas:139
+#: Common/uMessages.pas:140
 #. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_COMMAND_NAMED
-#: Common/uMessages.pas:139
+#: Common/uMessages.pas:140
 msgid "Unknown command \"%s\"."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_DOWNLOAD_FAILED
-#: Common/uMessages.pas:140
+#: Common/uMessages.pas:141
 #. Programmer's name for it: ERR_SCRIPTS_DOWNLOAD_FAILED
-#: Common/uMessages.pas:140
+#: Common/uMessages.pas:141
 msgid "Download failed: %s"
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_UNEXPECTED_NODE_TYPE
-#: Common/uMessages.pas:141
+#: Common/uMessages.pas:142
 #. Programmer's name for it: ERR_SCRIPTS_UNEXPECTED_NODE_TYPE
-#: Common/uMessages.pas:141
+#: Common/uMessages.pas:142
 msgid "Unexpected node type."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_MULTIPLE_ELSE
-#: Common/uMessages.pas:142
+#: Common/uMessages.pas:143
 #. Programmer's name for it: ERR_SCRIPTS_MULTIPLE_ELSE
-#: Common/uMessages.pas:142
+#: Common/uMessages.pas:143
 msgid "Multiple <else> tags encountered."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_IF_NOT_SATISFIED
-#: Common/uMessages.pas:143
+#: Common/uMessages.pas:144
 #. Programmer's name for it: ERR_SCRIPTS_IF_NOT_SATISFIED
-#: Common/uMessages.pas:143
+#: Common/uMessages.pas:144
 msgid "No satisfied condition found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_CONDITION
-#: Common/uMessages.pas:144
+#: Common/uMessages.pas:145
 #. Programmer's name for it: ERR_SCRIPTS_UNKNOWN_CONDITION
-#: Common/uMessages.pas:144
+#: Common/uMessages.pas:145
 msgid "Unknown condition."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_INVALID_PAUSE
-#: Common/uMessages.pas:145
+#: Common/uMessages.pas:146
 #. Programmer's name for it: ERR_SCRIPTS_INVALID_PAUSE
-#: Common/uMessages.pas:145
+#: Common/uMessages.pas:146
 msgid "Invalid <pause> settings."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND
-#: Common/uMessages.pas:146
+#: Common/uMessages.pas:147
 #. Programmer's name for it: ERR_SCRIPTS_XML_ELEMENT_NOT_FOUND
-#: Common/uMessages.pas:146
+#: Common/uMessages.pas:147
 msgid "XML element not found."
 msgstr ""
 
 #. Programmer's name for it: ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND
-#: Common/uMessages.pas:147
+#: Common/uMessages.pas:148
 #. Programmer's name for it: ERR_SCRIPTS_JSON_ELEMENT_NOT_FOUND
-#: Common/uMessages.pas:147
+#: Common/uMessages.pas:148
 msgid "JSON element not found."
 msgstr ""
 
@@ -1672,12 +1681,6 @@ msgstr ""
 #. Programmer's name for it: EUROSEPTIK_SUBTITLES_LANGUAGE
 #: Downloaders/downEuroseptik.pas:107
 msgid "Přepis, angličtina"
-msgstr ""
-
-#. Programmer's name for it: ERR_MISSING_CONFIG_PASSWORD
-#: Downloaders/downVoyo.pas:142
-msgid "Invalid configuration: Config password not "
-"set."
 msgstr ""
 
 #: Downloaders/downYouTube.pas:641

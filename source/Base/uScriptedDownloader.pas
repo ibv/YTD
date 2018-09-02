@@ -1007,7 +1007,9 @@ begin
         'N': if Plus then Options := Options + [rcoNoAutoCapture] else Options := Options - [rcoNoAutoCapture];
         end;
     end;
-  if not XmlAttribute(Node, 'id', PatternID) then
+  if XmlAttribute(Node, 'pattern', Pattern) then
+    PatternID := ''
+  else if not XmlAttribute(Node, 'id', PatternID) then
     ScriptError(ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY, Node)
   else if PatternID = '' then
     ScriptError(ERR_SCRIPTS_PATTERN_ID_MUST_BE_NONEMPTY, Node)
@@ -1044,7 +1046,7 @@ begin
       Text := ProcessNodeContent(Node, Vars);
     if not XmlAttribute(Node, 'match', VarName) then
       if not XmlAttribute(RegExpNode, 'match', VarName) then
-        ScriptError(ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY, Node);
+        VarName := ''; //ScriptError(ERR_SCRIPTS_SUBEXPRESSION_MUST_BE_NONEMPTY, Node);
     Result := GetRegExpVar(RE, Text, VarName, Value);
   finally
     RegExFreeAndNil(RE);
@@ -1243,7 +1245,7 @@ var
 begin
   Result := False;
   ConditionType := XmlAttribute(Node, 'type');
-  if ConditionType = 'regexp_match' then
+  if (ConditionType = 'regexp_match') or (ConditionType = 'regexp') then
     Result := ProcessRegExp(Node, Vars, Dummy)
   else if ConditionType = 'var_exists' then
     Result := ProcessGetVar(Node, Vars, Dummy)

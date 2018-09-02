@@ -47,7 +47,7 @@ uses
   SysUtils, Classes, Windows, Messages, CommCtrl,
   {$IFDEF SETUP}
     ShlObj,
-    {$IFNDEF DELPHIXE2_UP}
+    {$IFNDEF DELPHI7_UP}
     FileCtrl,
     {$ENDIF}
     uSetup,
@@ -77,7 +77,22 @@ uses
   uSystem, uFunctions, uMessages;
 
 type
-  TStartupType = ( {$IFDEF CLI} stCLI, {$ENDIF} {$IFDEF GUI} stGUI, stGUIexplicit, {$ENDIF} {$IFDEF SETUP} stInstall, stUninstallPhase1, stUninstallPhase2, {$ENDIF} stNone);
+  TStartupType = (
+    {$IFDEF CLI}
+      stCLI, // Running in command-line mode
+    {$ENDIF}
+    {$IFDEF GUI}
+      stGUI, // Automatical decision, running in GUI
+      stGUIexplicit, // Running in GUI, required by the user
+    {$ENDIF}
+    {$IFDEF SETUP}
+      stInstall, // Running from the installer, need to install YTD
+      stUninstallPhase1, // First phase of the uninstallation: Copy YTD to temp directory and continue uninstall
+      stUninstallPhase2, // Second phase of the uninstallation: Remove YTD files from the installation directory
+      stInstallLibrary, // Need to install
+    {$ENDIF}
+      stNone
+    );
 
 const
   RESCODE_OK = 0;
@@ -170,6 +185,12 @@ begin
       else
         Result := stUninstallPhase1;
       end
+    else if AnsiCompareText(Param, SETUP_PARAM_INSTALL_LIBRARY) = 0 then
+      begin
+      Result := stInstallLibrary;
+      InstallDir := ParamStr(Succ(i));
+      Break;
+      end
     else if (AnsiCompareText(Param, SETUP_PARAM_UPGRADE) = 0) or (AnsiCompareText(Param, SETUP_PARAM_UPGRADE_GUI) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL) = 0) or (AnsiCompareText(Param, SETUP_PARAM_INSTALL_GUI) = 0) then
       begin
       if i < ParamCount then
@@ -252,6 +273,21 @@ begin
         ShowModal;
       finally
         Free;
+        {$IFDEF DIRTYHACKS}
+        ExitProcess(ExitCode);
+          // Without ExitProcess(), YTD will crash with an access violation
+          // in one of the finalization sections (don't know which)
+          // Steps to reproduce:
+          //   - Run YTD in GUI mode
+          //   - Ask for download of https://www.youtube.com/watch?v=k7xkS_h8u0c
+          //   - The download fails due to an unsupported obfuscation scheme
+          //   - Exit YTD
+          // It seems that the AV occurs in a unit two removed after uSystem.pas
+          // (in version 1.56) and that it was caused by memory overwrite because
+          // when System.FinalizeUnits calls TProc(P)(), procedure System._IntfClear
+          // which has one argument is being called.
+          // This is dependent on GUI_WINAPI, it doesn't occur in VCL.
+        {$ENDIF}
         end;
   {$ELSE}
     Application.Initialize;
@@ -324,10 +360,45 @@ begin
     end
   else
     begin
-    ExitCode := 0;
+    ExitCode := RESCODE_OK;
     if RestartYTD then
       Run(InstExe, '', ExcludeTrailingPathDelimiter(InstDir));
     end;
+end;
+
+procedure RunInstallLibrary(const InstallSource: string);
+var
+  SrcDir, DestDir, FailedList: string;
+  SR: TSearchRec;
+begin
+  ExitCode := RESCODE_INSTALL_FAILED;
+  SrcDir := ExcludeTrailingPathDelimiter(InstallSource);
+  if DirectoryExists(SrcDir) then
+    if FindFirst(SrcDir + '\*.*', faAnyFile and (not faDirectory), SR) = 0 then
+      try
+        SrcDir := IncludeTrailingPathDelimiter(SrcDir);
+        DestDir := ExtractFilePath(ParamStr(0));
+        FailedList := '';
+        repeat
+          if not CopyFile(PChar(SrcDir + SR.Name), PChar(DestDir + SR.Name), False) then
+            FailedList := FailedList + #13#10 + SR.Name;
+        until FindNext(SR) <> 0;
+        if FailedList <> '' then
+          begin
+          {$IFDEF CLI}
+          if TConsoleApp.HasConsole = csOwnConsole then
+            Writeln(Format(ERR_INSTALL_LIBRARY_FAILED, [FailedList]))
+          else
+          {$ENDIF}
+            MessageBox(0, PChar(Format(ERR_INSTALL_LIBRARY_FAILED, [FailedList])), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
+          end
+        else
+          begin
+          ExitCode := RESCODE_OK;
+          end;
+      finally
+        SysUtils.FindClose(SR);
+      end;
 end;
 
 procedure RunUninstallPhase1;
@@ -342,6 +413,9 @@ begin
     FileName := Dir + ExtractFileName(ParamStr(0));
     if CopyFile(PChar(ParamStr(0)), PChar(FileName), False) then
       begin
+      {$IFDEF DELPHI6_UP}
+        {$MESSAGE HINT 'Rewrite to not use setup.exe anymore - run YTD elevated directly'}
+      {$ENDIF}
       FN := 'setup.exe';
       if FileExists(ExtractFilePath(ParamStr(0)) + FN) then
         if CopyFile(PChar(FN), PChar(Dir + FN), False) then
@@ -352,7 +426,7 @@ begin
           {$IFDEF DIRTYHACKS}
           Sleep(100); // Without this, the FileName doesn't actually execute. Might be necessary to use CreateProcess?
           {$ENDIF}
-          ExitCode := 0;
+          ExitCode := RESCODE_OK;
           end;
       end;
     end;
@@ -382,7 +456,7 @@ begin
           DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ExeFileName);
           DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, ExeFileName);
           UnregisterUninstallApplication(APPLICATION_UNINSTALL_ID);
-          ExitCode := 0;
+          ExitCode := RESCODE_OK;
           MessageBox(0, PChar(MSG_UNINSTALL_COMPLETE), PChar(APPLICATION_TITLE), MB_OK or MB_TASKMODAL);
           end;
         end;
@@ -392,7 +466,7 @@ end;
 procedure Main;
 begin
   try
-    ExitCode := 0;
+    ExitCode := RESCODE_OK;
     InitCommonControls; // Needed because of the manifest file
     // Test for IDE
     StartedFromIDE := False;
@@ -442,6 +516,8 @@ begin
       {$IFDEF SETUP}
       stInstall:
         RunInstall(InstallDir, DesktopShortcut, StartMenuShortcut, RestartYTD);
+      stInstallLibrary:
+        RunInstallLibrary(InstallDir);
       stUninstallPhase1:
         RunUninstallPhase1;
       stUninstallPhase2:

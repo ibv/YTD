@@ -40,7 +40,7 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
+  SysUtils, Classes, Windows, {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   HttpSend, SynaUtil, SynaCode,
   uOptions, uPCRE, uXML, uAMF, uFunctions, uLanguages,
   {$IFDEF GUI}
@@ -1169,7 +1169,7 @@ end;
 
 function TDownloader.GetRegExpVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: string): boolean;
 begin
-  Result := RegExp.Match(Text) and RegExp.SubexpressionByName(VarName, VarValue);
+  Result := RegExp.Match(Text) and RegExp.SubexpressionByNameEx(VarName, VarValue);
 end;
 
 function TDownloader.GetRegExpAllVar(RegExp: TRegExp; const Text, VarName: string; out VarValue: TStringArray): boolean;
@@ -1182,7 +1182,7 @@ begin
   b := RegExp.Match(Text);
   while b do
     begin
-    if RegExp.SubexpressionByName(VarName, Value) then
+    if RegExp.SubexpressionByNameEx(VarName, Value) then
       begin
       if Length(VarValue) <= n then
         SetLength(VarValue, Length(VarValue)+16);

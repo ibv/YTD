@@ -40,7 +40,8 @@ unit uExternalDownloader;
 interface
 
 uses
-  SysUtils, Classes, 
+  SysUtils, Classes, Windows,
+  uGUID, uFunctions, uSystem,
   uDownloader, uCommonDownloader;
 
 type
@@ -55,6 +56,8 @@ type
       function GetAnsiCompatibleFileName(const FileName: string): string;
       function GetTotalSize: int64; override;
       function GetDownloadedSize: int64; override;
+      procedure PrepareDownload(const FinalFileName: string; out DownloadFileName, LogFileName: string);
+      procedure FinalizeDownload(const FinalFileName: string; var DownloadFileName: string; DownloadSuccessful: boolean; MinimumSizeToKeep: int64 = 0);
       property DownloadedBytes: int64 read fDownloadedBytes write fDownloadedBytes;
       property TotalBytes: int64 read fTotalBytes write fTotalBytes;
       property Aborted: boolean read fAborted write fAborted;
@@ -82,6 +85,27 @@ begin
   inherited;
 end;
 
+procedure TExternalDownloader.FinalizeDownload(const FinalFileName: string; var DownloadFileName: string; DownloadSuccessful: boolean; MinimumSizeToKeep: int64);
+var
+  FN: string;
+begin
+  if not DownloadSuccessful then
+    if FileExists(DownloadFileName) and (GetFileSize(DownloadFileName) < MinimumSizeToKeep) then
+      SysUtils.DeleteFile(DownloadFileName);
+  if {DownloadSuccessful} FileExists(DownloadFileName) then
+    if (DownloadFileName <> FinalFileName) then
+      begin
+      FN := FinalFileName;
+      if InternalValidateFileName(FN) then
+        begin
+        if FileExists(FN) then
+          SysUtils.DeleteFile(FN);
+        if RenameFile(DownloadFileName, FN) then
+          DownloadFileName := FN;
+        end;
+      end;
+end;
+
 procedure TExternalDownloader.AbortTransfer;
 begin
   inherited;
@@ -100,27 +124,22 @@ end;
 
 function TExternalDownloader.GetAnsiCompatibleFileName(const FileName: string): string;
 var
-  FN: AnsiString;
-  Dir: string;
-  i, n: integer;
+  FN, Dir: string;
+  i: integer;
 begin
   Result := FileName;
-  FN := {$IFDEF UNICODE} AnsiString {$ENDIF} (ExtractFileName(Result));
+  FN := ExtractFileName(Result);
   for i := 1 to Length(FN) do
     if (Ord(Char(FN[i])) < 32) or (Ord(Char(FN[i])) >= 128) or (Pos(Char(FN[i]), INVALID_FILENAME_CHARS) > 0) then
       begin
-      FN := EncodeBase64mod(MD5(FN)) + {$IFDEF UNICODE} AnsiString {$ENDIF} (ExtractFileExt(FileName));
       if Options.DestinationPath = '' then
         Dir := ''
       else
         Dir := IncludeTrailingPathDelimiter(Options.DestinationPath);
-      n := 0;
-      while FileExists(Dir + string(FN)) do
-        begin
-        Inc(n);
-        FN := EncodeBase64mod(MD5({$IFDEF UNICODE} AnsiString {$ENDIF} (Result + IntToStr(n)))) + {$IFDEF UNICODE} AnsiString {$ENDIF} (ExtractFileExt(FileName));
-        end;
-      Result := Dir + string(FN);
+      repeat
+        FN := GenerateUuid + ExtractFileExt(FileName);
+      until not FileExists(FN);
+      Result := Dir + FN;
       Break;
       end;
 end;
@@ -130,6 +149,19 @@ begin
   DownloadedBytes := 0;
   TotalBytes := -1;
   Result := inherited Prepare;
+end;
+
+procedure TExternalDownloader.PrepareDownload(const FinalFileName: string; out DownloadFileName, LogFileName: string);
+var
+  FN: string;
+begin
+  FN := GetAnsiCompatibleFileName(FinalFileName);
+  DownloadFileName := FN;
+  if Options.DownloadToTempFiles then
+    DownloadFileName := DownloadFileName + '.part';
+  LogFileName := GetTempDir + ExtractFileName(FN) + '.log';
+  if FileExists(LogFileName) then
+    SysUtils.DeleteFile(LogFileName);
 end;
 
 end.

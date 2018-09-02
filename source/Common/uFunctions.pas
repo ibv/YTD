@@ -57,9 +57,9 @@ function ShowTotalProgressBar(Handle: THandle; State: TProgressBarState; const C
 function GetSpecialFolder(FolderID: integer): string;
 function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''; const Parameters: string = ''): boolean;
 function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
-function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle = 0): boolean; overload;
-function Run(const FileName, CommandLine: string; OwnerHandle: THandle = 0): boolean; overload;
-function Run(const FileName: string; OwnerHandle: THandle = 0): boolean; overload;
+function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle = 0; Elevated: boolean = False): boolean; overload;
+function Run(const FileName, CommandLine: string; OwnerHandle: THandle = 0; Elevated: boolean = False): boolean; overload;
+function Run(const FileName: string; OwnerHandle: THandle = 0; Elevated: boolean = False): boolean; overload;
 function GetTempDir: string;
 function CheckRedirect(Http: THttpSend; var Url: string): boolean;
 function CheckProtocol(const Url: string; const Protocols: array of string): integer;
@@ -228,19 +228,21 @@ begin
     Result := True;
 end;
 
-function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle): boolean; overload;
+function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle; Elevated: boolean): boolean; overload;
+const
+  Actions: array[boolean] of PChar = ('open', 'runas');
 begin
-  Result := ShellExecute(OwnerHandle, 'open', PChar(FileName), PChar(CommandLine), PChar(WorkDir), SW_SHOWNORMAL) > 32;
+  Result := ShellExecute(OwnerHandle, Actions[Elevated], PChar(FileName), PChar(CommandLine), PChar(WorkDir), SW_SHOWNORMAL) > 32;
 end;
 
-function Run(const FileName, CommandLine: string; OwnerHandle: THandle): boolean;
+function Run(const FileName, CommandLine: string; OwnerHandle: THandle; Elevated: boolean): boolean;
 begin
-  Result := Run(FileName, CommandLine, '', OwnerHandle);
+  Result := Run(FileName, CommandLine, '', OwnerHandle, Elevated);
 end;
 
-function Run(const FileName: string; OwnerHandle: THandle): boolean;
+function Run(const FileName: string; OwnerHandle: THandle; Elevated: boolean): boolean;
 begin
-  Result := Run(FileName, '', OwnerHandle);
+  Result := Run(FileName, '', OwnerHandle, Elevated);
 end;
 
 function GetTempDir: string;

@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.56+                                                   (c) 2009-16 Pepak
+YTD v1.57+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
@@ -213,10 +213,8 @@ NebickoVPapulke.sk  | HTTP     |       | http://www.nebickovpapulke.sk/epizoda/e
 News.BBC.co.uk      | MS       |       | http://news.bbc.co.uk/player/nol/newsid_7300000/newsid_7306100/7306107.stm?bw=bb&mp=wm&asb=1&news=1&ms3=54&ms_javascript=true&bbcws=2
 NHL.com             | HTTP     | 9     | http://video.nhl.com/videocenter/console?hlp=8474138&fr=false
 NothingToxic.com    | HTTP     |       | http://www.nothingtoxic.com/media/1279921781/Bad_Doggie_Eats_An_Entire_Swiffer_Mop
-Nova.cz             | RTMP     | 8     | http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
-                    |          |       | http://vikend.nova.cz/clanek/novinky/vikend-20-3-sedmimilove-boty.html
-                    | MS       | 8     | http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
-NovaPlus.Nova.cz    | HLS      |       | http://novaplus.nova.cz/porad/dokonaly-svet/video/1735-dokonaly-svet-1-dil-vanoce-v-karibiku
+Nova.cz             | RTMP     |       | http://novaplus.nova.cz/porad/snidane-s-novou/video/9731-snidane-s-novou-20-7-2016/
+                    | HTTP     |       | http://tn.nova.cz/clanek/odbornik-prozradil-nejvetsi-hrozby-ceskych-silnic-rozhovor.html
 NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw2yj
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
@@ -306,7 +304,6 @@ TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?vi
 Ted.com             | RTMP     |       | http://www.ted.com/talks/lang/cze/beau_lotto_optical_illusions_show_how_we_see.html
 ThatVideoSite.com   | HTTP     |       | http://www.thatvideosite.com/video/penguins_dont_like_water
 TheGuardian.com     | HTTP     |       | http://www.theguardian.com/environment/2015/dec/30/giant-squid-that-swam-into-japanese-bay-guided-back-out-to-sea-by-diver
-TN.Nova.cz          | HTTP     | 6     | http://tn.nova.cz/magazin/hi-tech/veda/dnes-ve-13-14-mine-zemi-planetka-mozna-je-umela.html
 TodaysBigThing.com  | HTTP     |       | http://www.todaysbigthing.com/2010/06/01
 Tontuyau.com        | HTTP     |       | http://www.tontuyau.com/v.asp?id=21715
 TopRecepty.cz       | HTTP     |       | http://www.toprecepty.cz/recept/18507-bramborak-+-videorecept/
@@ -320,7 +317,6 @@ TVcom.cz            | MS       |       | http://bojove-sporty.tvcom.cz/video/545
 TVLux.sk            | MS       |       | http://www.tvlux.sk/archiv/play/2511
 TVNoe.tbsystem.cz   | HTTP     |       | http://tvnoe.tbsystem.cz/index.php?cs/videoarchiv/hlubinami-vesmiru-2010-04-12-mikulasek
 TVNoe.cz            | HTTP     |       | http://www.tvnoe.cz/video/5638
-TVNoviny.sk         | HTTP     | 8     | http://tvnoviny.sk/video/videospravy/televizne-noviny/2432970
 TVP.pl              | HTTP     |       | http://vod.tvp.pl/21576772/inka-1946
                     |          |       | http://vod.tvp.pl/sess/tvplayer.php?object_id=21576772&autoplay=true
 TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/index.php?file=9285&jednani=66

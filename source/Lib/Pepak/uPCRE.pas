@@ -62,11 +62,13 @@ type
       function Match(const Subject: PCREString): boolean; overload;
       function SubexpressionByName(const Name: PCREString): PCREString; overload;
       function SubexpressionByName(const Name: PCREString; out Value: PCREString): boolean; overload;
+      function SubexpressionByNameEx(const Name: PCREString; out Value: PCREString): boolean; overload;
       {$IFDEF UNICODE}
       class function Match(const Pattern, Subject, SubexpressionName: string; out Value: string): boolean; overload;
       function Match(const Subject: string): boolean; overload;
       function SubexpressionByName(const Name: string): string; overload;
       function SubexpressionByName(const Name: string; out Value: string): boolean; overload;
+      function SubexpressionByNameEx(const Name: string; out Value: string): boolean; overload;
       {$ENDIF}
     end;
 
@@ -211,6 +213,30 @@ begin
     Value := '';
 end;
 
+function TRegExp.SubexpressionByNameEx(const Name: PCREString; out Value: PCREString): boolean;
+var ix: integer;
+begin
+  if Name = '' then begin
+    if {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.GroupCount {$ELSE} Self.SubexpressionCount {$ENDIF} > 0 then
+      Value := {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.Groups {$ELSE} Self.Subexpressions {$ENDIF} [1]
+    else
+      Value := {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.MatchedText {$ELSE} Self.MatchedExpression {$ENDIF} ;
+    Result := True;
+  end
+  else begin
+    Result := SubExpressionByName(Name, Value);
+    if not Result then begin
+      ix := StrToIntDef( {$IFDEF UNICODE} string {$ENDIF} (Name), -1);
+      if ix = 0 then
+        Value := {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.MatchedText {$ELSE} Self.MatchedExpression {$ENDIF}
+      else if (ix > 0) and (ix <= {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.GroupCount {$ELSE} Self.SubexpressionCount {$ENDIF} ) then begin
+        Value := {$IFDEF UPCRE_NATIVEIMPLEMENTATION} Self.Groups {$ELSE} Self.SubExpressions {$ENDIF} [ix];
+        Result := True;
+      end;
+    end;
+  end;
+end;
+
 {$IFDEF UNICODE}
 function TRegExp.Match(const Subject: string): boolean;
 begin
@@ -226,6 +252,13 @@ function TRegExp.SubexpressionByName(const Name: string; out Value: string): boo
 var s: PCREString;
 begin
   Result := Self.SubexpressionByName(PCREString(Name), s);
+  Value := string(s);
+end;
+
+function TRegExp.SubexpressionByNameEx(const Name: string; out Value: string): boolean;
+var s: PCREString;
+begin
+  Result := Self.SubexpressionByNameEx(PCREString(Name), s);
   Value := string(s);
 end;
 {$ENDIF}

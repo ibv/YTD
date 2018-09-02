@@ -1,11 +1,50 @@
 ﻿______________________________________________________________________________
 
-YTD v1.56                                                    (c) 2009-16 Pepak
+YTD v1.57                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.57:
+
+    * Updated providers:
+      - DrsnySvet.cz
+      - iDNES.cz
+      - Nova.cz (všechny kromě Voyo)
+      - Novinky.cz
+      - XHamster.com
+      - XTube.com
+
+    * Removed providers:
+      - TVNoviny.sk
+      - Voyo.cz
+
+    * Scripting language: 
+      - In <condition type="..."> you can use "regexp" as an alias for the
+        existing comparison type "regexp_match".
+      - When working with regular expressions (<regexp>, <regexp_multi>, 
+        regexp_match etc.), you can replace the attribute "id" with a direct
+        search pattern value in attribute "pattern". The processing of 
+        attribute "match" was enhanced so that the attribute is no longer
+        mandatory. It is is empty or not present, it will return the first
+        matched subgroup, if it contains a number it will return the
+        relevant subgroup. Details can be found in chapter 4.4 of the 
+        scripting documentation.
+
+    * The function for downloading of missing DLLs was enhanced with a 
+      support for UAC. That means that when run under Windows Vista, the
+      application will ask for elevated privileges before attempting to
+      install the libraries.
+
+    * Fixed a bug with downloading of RTMP/RTSP content: When two videos of
+      the same name were being downloaded at the same time, the result could
+      be a failed download (due to EFOpenError error) or even a loss of one
+      of the files without asking the user, regardless of the configuration
+      settings.
+
+
 
   v1.56:
 
@@ -13,7 +52,7 @@ CHANGELOG
       - Blesk.cz
       - Bondagezilla.com (porn)
       - CETV.sk
-      - Cum.sk
+      - Čum.sk
       - ITNSource.com
       - Lidovky.cz
       - Video.Disney.cz

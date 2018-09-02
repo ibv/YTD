@@ -40,9 +40,9 @@ unit guiFunctions;
 interface
 
 uses
-  SysUtils, Classes, Windows, ShellApi,
+  SysUtils, Classes, Windows, ShellApi,  {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   {$IFDEF SETUP}
-    uSetup,
+    uSetup, uSystem,
     {$IFNDEF GUI_WINAPI}
       Forms, Dialogs,
       {$IFDEF DELPHIXE4_UP}
@@ -311,6 +311,7 @@ end;
 function DownloadAndInstallExternalLibrary(const Url: string; OwnerHandle: THandle; Options: TYTDOptions): boolean;
 var
   LibData: TMemoryStream;
+  Dir: string;
 begin
   Result := False;
   LibData := TMemoryStream.Create;
@@ -318,8 +319,20 @@ begin
     if DownloadFromHttp(Url, Options, LibData) then
       begin
       LibData.Position := 0;
-      if Unzip(LibData, ExtractFilePath(ExpandFileName(ParamStr(0)))) then
-        Result := True;
+      if not Result then
+        if Unzip(LibData, ExtractFilePath(ExpandFileName(ParamStr(0)))) then
+          Result := True;
+      {$IFDEF SETUP}
+      if not Result then
+        begin
+        Dir := SystemTempFile(SystemTempDir, 'YTDLib');
+        ForceDirectories(Dir);
+        if not Unzip(LibData, Dir) then
+          ForceDeleteDirectory(Dir)
+        else
+          Result := Run(ParamStr(0), SETUP_PARAM_INSTALL_LIBRARY + ' ' + AnsiQuotedStr(Dir, '"'), 0, True);
+        end;
+      {$ENDIF}
       end;
   finally
     FreeAndNil(LibData);

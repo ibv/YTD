@@ -403,7 +403,7 @@ const
   MINIMUM_SIZE_TO_KEEP = 10240;
 var LogFileName, ErrorMsg: string;
     RetCode: integer;
-    FN, FinalFN, TempFN: string;
+    FN, FinalFN: string;
 begin
   inherited Download;
   DownloadedBytes := 0;
@@ -415,15 +415,8 @@ begin
   {$ENDIF}
   SetProxyUrl;
   FinalFN := FileName;
-  TempFN := GetAnsiCompatibleFileName(FinalFN);
-  if Options.DownloadToTempFiles then
-    FN := TempFN + '.part'
-  else
-    FN := TempFN;
+  PrepareDownload(FinalFN, FN, LogFileName);
   SetRtmpDumpOption('o', FN);
-  LogFileName := GetTempDir + ExtractFileName(TempFN) + '.log';
-  if FileExists(LogFileName) then
-    DeleteFile(PChar(LogFileName));
   if not RtmpDump_Init then
     SetLastErrorMsg(Format(ERR_FAILED_TO_LOAD_DLL, ['rtmpdump_dll.dll']))
   else
@@ -439,18 +432,7 @@ begin
     if not Result then
       if ParseErrorLog(LogFileName, ErrorMsg) then
         SetLastErrorMsg(Format(ERR_RTMPDUMP_ERROR, [ErrorMsg]));
-    if not Result then
-      if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
-        DeleteFile(PChar(FN));
-    //if Result then
-      if FN <> FinalFN then
-        begin
-        if FileExists(FinalFN) then
-          DeleteFile(PChar(FinalFN));
-        if FileExists(FN) then
-          if RenameFile(FN, FinalFN) then
-            FN := FinalFN;
-        end;
+    FinalizeDownload(FinalFN, FN, Result, MINIMUM_SIZE_TO_KEEP);
     end;
 end;
 

@@ -40,7 +40,7 @@ unit uOptions;
 interface
 
 uses
-  SysUtils, Classes, Windows, ShlObj, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
+  SysUtils, Classes, Windows, ShlObj, {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   HttpSend,
   uLanguages, uXml;
 

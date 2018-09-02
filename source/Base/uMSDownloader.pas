@@ -169,7 +169,7 @@ const
   MINIMUM_SIZE_TO_KEEP = 10240;
 var LogFileName: string;
     RetCode: integer;
-    FN, FinalFN, TempFN: string;
+    FN, FinalFN: string;
 begin
   inherited Download;
   DownloadedBytes := 0;
@@ -178,16 +178,9 @@ begin
   Result := False;
   SetProxyUrl;
   FinalFN := FileName;
-  TempFN := GetAnsiCompatibleFileName(FinalFN);
-  if Options.DownloadToTempFiles then
-    FN := TempFN + '.part'
-  else
-    FN := TempFN;
+  PrepareDownload(FinalFN, FN, LogFileName);
   SetMsdlOption('v');
   SetMsdlOption('o', FN);
-  LogFileName := GetTempDir + ExtractFileName(TempFN) + '.log';
-  if FileExists(LogFileName) then
-    DeleteFile(PChar(LogFileName));
   SetMsdlOption('l', LogFileName);
   SetMsdlOption(MSDL_OPTION_URL, MovieURL);
   if not Msdl_Init then
@@ -198,18 +191,7 @@ begin
     RetCode := Msdl_Download(Integer(Self), MsdlDownloadProgressCallback, MsdlOptions);
     if (RetCode >= 0) and (FileExists(FN)) and (FileGetSize(FN) > 65536) then
       Result := True;
-    if not Result then
-      if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
-        DeleteFile(PChar(FN));
-    if Result then
-      if FN <> FinalFN then
-        begin
-        if FileExists(FinalFN) then
-          DeleteFile(PChar(FinalFN));
-        if FileExists(FN) then
-          if RenameFile(FN, FinalFN) then
-            FN := FinalFN;
-        end;
+    FinalizeDownload(FinalFN, FN, Result, MINIMUM_SIZE_TO_KEEP);
     end;
 end;
 

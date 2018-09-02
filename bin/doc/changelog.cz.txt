@@ -1,11 +1,46 @@
 ﻿______________________________________________________________________________
 
-YTD v1.56                                                    (c) 2009-16 Pepak
+YTD v1.57                                                    (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.57:
+
+    * Aktualizovaní poskytovatelé:
+      - DrsnySvet.cz
+      - iDNES.cz
+      - Nova.cz (všechny kromě Voyo)
+      - Novinky.cz
+      - XHamster.com
+      - XTube.com
+
+    * Odstranění poskytovatelé:
+      - TVNoviny.sk
+      - Voyo.cz
+
+    * Skriptovací jazyk: 
+      - Pro typ porovnání "regexp_match" v <condition type="..."> lze 
+        ekvivalentně použít také "regexp".
+      - V odkazech na regulární výrazy (<regexp>, <regexp_multi>, regexp_match
+        atd.) lze místo atributu "id" použít přímo zápis hledaného vzoru v
+        atributu "pattern". Byla rozšířena funkcionalita atributu "match"
+        tak, že tento je nyní nepovinný (pak vrací první nalezenou podskupinu)
+        nebo může obsahovat číslo (pak vrací příslušnou podskupinu v pořadí).
+        Detaily viz dokumentace, kapitola 4.4.
+
+    * Funkce pro stáhnutí chybějících DLL knihoven byla doplněna o podporu
+      UAC. To znamená, že by si aplikace měla na Windows Vista a novějších 
+      automaticky vyžádat zvýšená práva a s nimi provést instalaci.
+
+    * Opravena chyba při stahování RTMP/RTSP obsahu, kdy se mohlo při
+      stahování dvou videí se stejným názvem jedno z nich bez dotazu smazat
+      nezávisle na nastavení, případně se jedno z nich odmítlo stahovat
+      s chybou EFOpenError.
+
+
 
   v1.56:
 
@@ -13,7 +48,7 @@ CHANGELOG
       - Blesk.cz
       - Bondagezilla.com (porno)
       - CETV.sk
-      - Cum.sk
+      - Čum.sk
       - ITNSource.com
       - Lidovky.cz
       - Video.Disney.cz
