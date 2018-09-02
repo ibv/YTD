@@ -1,11 +1,55 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.92                                     (c) 2009-11 Pepak
+YouTube Downloader v0.93                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v0.93:
+
+   * New providers:
+      - 8teenXXX.com (porn)
+      - Huste.sk
+      - MamaOzenMa.sk
+      - MojePorno.sk (porn)
+      - OK-Team.cz
+      - PicSpoon.com
+      - VeeHD.com
+      - Video.Google.com
+
+    * EuroGamer.cz:
+      - Support for subtitle download and conversion to .srt.
+
+    * iDnes.cz:
+      - Fixed http://zpravy.idnes.cz/drabova-radiace-v-podoli-je-zvysena-tisickrat-zdroj-tam-muze-byt-roky-12b-/domaci.aspx?c=A110929_111532_domaci_jj
+    
+    * iPrima.cz:
+      - With some videos, which were hosted on Stream.cz but didn't have a
+        dedicated page there, the default (low) quality version was downloaded,
+        not HQ.
+      - Support for Show Jana Krause archives. There is no way to download one
+        episode; instead, all episodes in an archive download sequentially.
+      - Livebox.cz-hosted media (including Show Jana Krause) tend to skip back 
+        every few seconds. There is nothing I can do about that.
+
+    * Markiza.sk:
+      - Fixed names for videos such as http://video.markiza.sk/archiv-tv-markiza/bez-servitky/68688.
+        Note that the "old" naming scheme is actually more accurate, this fix
+        basically corrects a deficiency in Markiza.sk itself.
+
+    * GUI: Experimental fix for non-translated error messages in download
+      threads.
+
+    * GUI: Fixed an EListError exception when exploring a folder without 
+      actually having selected a video.
+
+    * GUI: Fixed a non-working media playback, folder explore and some other
+      functions, in case a destination directory was selected (these functions
+      worked fine in the default settings with unset destination directory).
+
+
 
   v0.92:
 

@@ -483,7 +483,7 @@ msgstr "Pridať príponu .part počas sťahovania"
 #: GUI/VCL/guiOptionsVCL.dfm:225
 msgid "Store media into su&bdirectories according to their "
 "providers"
-msgstr "Uložiť súboy do podpriečinkov podľa poskytovateľov"
+msgstr "Uložiť súbory do podpriečinkov podľa poskytovateľov"
 
 #. FormOptions..PageOptions..TabNetworkOptions..Caption
 #: GUI/VCL/guiOptionsVCL.dfm:230

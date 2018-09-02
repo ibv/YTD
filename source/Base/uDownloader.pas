@@ -121,13 +121,14 @@ type
     protected
       function ConvertString(const Text: TStream; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ConvertString(Text: AnsiString; Encoding: TPageEncoding): string; overload; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-      function HtmlDecode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function HtmlDecode(const Text: string; Unicode: boolean = False): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function HtmlEncode(const Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function UrlEncode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function Base64Decode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function JSDecode( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function StripSlashes( {$IFNDEF BUGGYANSISTRINGCONVERT} const {$ENDIF} Text: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function ContentTypeToExtension(const ContentType: string): string;
     protected
       function ExtractUrlRoot(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function ExtractUrlFileName(const Url: string): string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -621,7 +622,7 @@ begin
     FN := GetFileName;
     Result := ValidateFileName(FN);
     if Result then
-      SetFileName(FN)
+      SetFileName(ExpandFileName(FN))
     else
       SetLastErrorMsg(Format(ERR_VALIDATE_FILENAME_FAILED, [FN]));
     end;
@@ -665,9 +666,14 @@ const
         (Html: '&amp;'  ; Txt: '&' ; DecodeOnly: false)
       );
 
-function TDownloader.HtmlDecode(const Text: string): string;
+function TDownloader.HtmlDecode(const Text: string; Unicode: boolean): string;
 var
   i, Start, Code: integer;
+  {$IFNDEF UNICODE}
+  WC: WideChar;
+  WS: WideString;
+  s: string;
+  {$ENDIF}
 begin
   Result := Text;
   for i := 0 to Pred(Length(HtmlDecodeItems)) do
@@ -688,6 +694,13 @@ begin
         {$IFDEF UNICODE}
         if (Code >= 0) and (Code <= 65535) then
         {$ELSE}
+        if Unicode then
+          begin
+          WC := WideChar(Code);
+          WS := WC;
+          s := String(WS);
+          Code := Ord(s[1]);
+          end;
         if (Code >= 0) and (Code <= 255) then
         {$ENDIF}
           begin
@@ -986,6 +999,32 @@ begin
         Result := True;
     finally
       FreeAndNil(Xml);
+      end;
+end;
+
+function TDownloader.ContentTypeToExtension(const ContentType: string): string;
+type
+  TContentTypeExt = record
+    ContentType: string;
+    Extension: string;
+    end;
+const
+  ContentTypes: array[0..3] of TContentTypeExt
+    = (
+        (ContentType: 'video/x-flv';                    Extension: '.flv'),
+        (ContentType: 'video/x-mp4';                    Extension: '.mp4'),
+        (ContentType: 'video/x-webm';                   Extension: '.webm'),
+        (ContentType: 'application/x-shockwave-flash';  Extension: '.swf')
+      );
+var
+  i: integer;
+begin
+  Result := '';
+  for i := 0 to Pred(Length(ContentTypes)) do
+    if AnsiCompareText(ContentType, ContentTypes[i].ContentType) = 0 then
+      begin
+      Result := ContentTypes[i].Extension;
+      Break;
       end;
 end;
 

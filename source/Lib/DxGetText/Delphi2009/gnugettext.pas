@@ -293,7 +293,11 @@ type
     class
     private
       fOnDebugLine:TOnDebugLine;
+      {$IFDEF PEPAK}
+      fLoadResStringLock: TRtlCriticalSection;
+      {$ELSE}
       CreatorThread:Cardinal;  /// Only this thread can use LoadResString
+      {$ENDIF}
     public
       Enabled:Boolean;      /// Set this to false to disable translations
       DesignTimeCodePage:Integer;  /// See MultiByteToWideChar() in Win32 API for documentation
@@ -1334,7 +1338,11 @@ end;
 
 constructor TGnuGettextInstance.Create;
 begin
+  {$IFDEF PEPAK}
+  InitializeCriticalSection(fLoadResStringLock);
+  {$ELSE}
   CreatorThread:=GetCurrentThreadId;
+  {$ENDIF}
   {$ifdef MSWindows}
   DesignTimeCodePage:=CP_ACP;
   {$endif}
@@ -1397,6 +1405,9 @@ begin
   FreeAndNil (DebugLog);
   FreeAndNil (DebugLogCS);
   {$endif}
+  {$IFDEF PEPAK}
+  DeleteCriticalSection(fLoadResStringLock);
+  {$ENDIF}
   inherited;
 end;
 
@@ -2265,12 +2276,21 @@ begin
   {$ifdef DXGETTEXTDEBUG}
   DebugWriteln ('Loaded resourcestring: '+utf8encode(Result));
   {$endif}
+  {$IFDEF PEPAK}
+  EnterCriticalSection(fLoadResStringLock);
+  try
+    Result:=ResourceStringGettext(Result);
+  finally
+    LeaveCriticalSection(fLoadResStringLock);
+    end;
+  {$ELSE}
   if CreatorThread<>GetCurrentThreadId then begin
     {$ifdef DXGETTEXTDEBUG}
     DebugWriteln ('LoadResString was called from an invalid thread. Resourcestring was not translated.');
     {$endif}
   end else
     Result:=ResourceStringGettext(Result);
+  {$ENDIF}
 end;
 
 procedure TGnuGettextInstance.RetranslateComponent(AnObject: TComponent;

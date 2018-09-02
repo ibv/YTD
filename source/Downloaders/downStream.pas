@@ -100,7 +100,7 @@ const
 const
   REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*\|[^<]*)?</title>';
   REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.+?)"';
-  REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>.+?)=(?P<VARVALUE>.*?)(?:&amp;|&)';
+  REGEXP_FLASHVARS_PARSER = '(?<=^|&amp;|&)(?P<VARNAME>.+?)=(?P<VARVALUE>.*?)(?:&amp;|&|$)';
 
 { TDownloader_Stream }
 

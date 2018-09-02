@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downEuroGamer;
+unit downVeeHD;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -45,103 +45,83 @@ uses
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_EuroGamer = class(THttpDownloader)
+  TDownloader_VeeHD = class(THttpDownloader)
     private
     protected
-      MovieIDRegExp: TRegExp;
-      MovieUrlFromInfoRegExp: TRegExp;
-      SubtitlesRegExp: TRegExp;
-      MediaInfo: string;
+      MovieInfoUrlRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
-      class function Features: TDownloaderFeatures; override;
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      {$IFDEF SUBTITLES}
-      function ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
-      {$ENDIF}
     end;
 
 implementation
 
 uses
-  {$IFDEF SUBTITLES}
-  uSubtitles,
-  {$ENDIF}
   uStringConsts,
   uDownloadClassifier,
   uMessages;
 
-// http://www.eurogamer.cz/videos/elder-scrolls-v-skyrim-video?size=hd
+// http://veehd.com/video/4639434_Solar-Sinter
 const
-  URLREGEXP_BEFORE_ID = 'eurogamer\.cz/';
+  URLREGEXP_BEFORE_ID = 'veehd\.com/video/';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H1_CLASS;
-  REGEXP_MOVIE_ID = '\.addVariable\s*\(\s*"playlist_id"\s*,\s*"(?P<ID>[0-9]+)"';
-  REGEXP_MOVIE_URL = '(?:^|&)file(?:\[[^\]]*\])?=(?P<URL>https?[^&]+)';
-  REGEXP_SUBTITLES = '(?<=^|&)sub_[0-9]+\[[^\]]*\]=(?P<CAPTION>[^&]*)&sub_start_[0-9]+\[[^\]]*\]=(?P<START>[0-9.]+)&sub_end_[0-9]+\[[^\]]*\]=(?P<END>[0-9.]+)(?=&|$)';
+  REGEXP_MOVIE_TITLE =  '<title>(?P<TITLE>.*?)(\s+on Veehd)?</title>';
+  REGEXP_MOVIE_URL =    '"url"\s*:\s*"(?P<URL>http.+?)"';
+  REGEXP_MOVIE_INFO_URL = '\bfunction\s+load_stream.*?\{\s*src\s*:\s*"(?P<URL>.+?)"';
 
-{ TDownloader_EuroGamer }
+{ TDownloader_VeeHD }
 
-class function TDownloader_EuroGamer.Provider: string;
+class function TDownloader_VeeHD.Provider: string;
 begin
-  Result := 'EuroGamer.cz';
+  Result := 'VeeHD.com';
 end;
 
-class function TDownloader_EuroGamer.Features: TDownloaderFeatures;
-begin
-  Result := inherited Features + [
-    {$IFDEF SUBTITLES} dfSubtitles {$ENDIF}
-    ];
-end;
-
-class function TDownloader_EuroGamer.UrlRegExp: string;
+class function TDownloader_VeeHD.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_EuroGamer.Create(const AMovieID: string);
+constructor TDownloader_VeeHD.Create(const AMovieID: string);
 begin
-  inherited;
+  inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieTitleRegExp := RegExCreate(Format(REGEXP_MOVIE_TITLE, ['title']));
-  MovieIDRegExp := RegExCreate(REGEXP_MOVIE_ID);
-  SubtitlesRegExp := RegExCreate(REGEXP_SUBTITLES);
-  MovieUrlFromInfoRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  MovieUrlRegExp := RegExCreate(REGEXP_MOVIE_URL);
+  MovieInfoUrlRegExp := RegExCreate(REGEXP_MOVIE_INFO_URL);
 end;
 
-destructor TDownloader_EuroGamer.Destroy;
+destructor TDownloader_VeeHD.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieIDRegExp);
-  RegExFreeAndNil(SubtitlesRegExp);
-  RegExFreeAndNil(MovieUrlFromInfoRegExp);
+  RegExFreeAndNil(MovieUrlRegExp);
+  RegExFreeAndNil(MovieInfoUrlRegExp);
   inherited;
 end;
 
-function TDownloader_EuroGamer.GetMovieInfoUrl: string;
+function TDownloader_VeeHD.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.eurogamer.cz/' + MovieID;
+  Result := 'http://www.veehd.com/video/' + MovieID;
 end;
 
-function TDownloader_EuroGamer.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ID, Url: string;
+function TDownloader_VeeHD.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Url, InfoPage: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  MediaInfo := '';
-  if not GetRegExpVar(MovieIDRegExp, Page, 'ID', ID) then
+  if not GetRegExpVar(MovieInfoUrlRegExp, Page, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, Format('http://www.eurogamer.cz/get_pls.php?playlist_id=%s&profile_id=hd&r=957&player_mode=normal', [ID]), MediaInfo) then
+  else if not DownloadPage(Http, 'http://veehd.com' + Url, InfoPage) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(MovieUrlFromInfoRegExp, MediaInfo, 'URL', Url) then
+  else if not GetRegExpVar(MovieUrlRegExp, InfoPage, 'URL', Url) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
   else
     begin
@@ -151,37 +131,7 @@ begin
     end;
 end;
 
-{$IFDEF SUBTITLES}
-function TDownloader_EuroGamer.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-const
-  ONE_SECOND = 1/(24*60*60);
-var
-  n: integer;
-  Sub: string;
-  SubStart, SubEnd: TDateTime;
-begin
-  Result := False;
-  fSubtitles := '';
-  fSubtitlesExt := '';
-  n := 0;
-  if MediaInfo <> '' then
-    if SubtitlesRegExp.Match(MediaInfo) then
-      try
-        repeat
-          Sub := HtmlDecode(UrlDecode(SubtitlesRegExp.SubexpressionByName('CAPTION')), True);
-          SubStart := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('START'), '.', DecimalSeparator, []));
-          SubEnd := StrToFloat(StringReplace(SubtitlesRegExp.SubexpressionByName('END'), '.', DecimalSeparator, []));
-          fSubtitles := fSubtitles + SubtitlesToSrt(n, SubStart*ONE_SECOND, SubEnd*ONE_SECOND, Sub);
-        until not SubtitlesRegExp.MatchAgain;
-        fSubtitlesExt := '.srt';
-        Result := fSubtitles <> '';
-      except
-        Result := False;
-        end;
-end;
-{$ENDIF}
-
 initialization
-  RegisterDownloader(TDownloader_EuroGamer);
+  RegisterDownloader(TDownloader_VeeHD);
 
 end.

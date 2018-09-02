@@ -1,12 +1,57 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.92                                     (c) 2009-11 Pepak
+YouTube Downloader v0.93                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
+  v0.93:
+
+    * Noví poskytovatelé:
+      - 8teenXXX.com (porno)
+      - Huste.sk
+      - MamaOzenMa.sk
+      - MojePorno.sk (porno)
+      - OK-Team.cz
+      - PicSpoon.com
+      - VeeHD.com
+      - Video.Google.com
+
+    * EuroGamer.cz:
+      - Podpora pro stahování titulkù a konverzi do .srt.
+
+    * iDnes.cz:
+      - Nestahovalo se napø. http://zpravy.idnes.cz/drabova-radiace-v-podoli-je-zvysena-tisickrat-zdroj-tam-muze-byt-roky-12b-/domaci.aspx?c=A110929_111532_domaci_jj
+    
+    * iPrima.cz:
+      - U videí hostovaných na Stream.cz, která ale nemají na Stream.cz
+        vlastní stránku, se stahovala výchozí verze videa, i když byla k
+        dispozici kvalitnìjší.
+      - Podpora pro *archívy* Show Jana Krause (založené na RTMP protokolu).
+        Nelze vybrat konkrétní díl, stahují se postupnì všechny.
+      - Pro videa hostovaná na Livebox.cz (vèetnì Show Jana Krause) ètìte
+        stránku podpory.
+
+    * Markiza.sk:
+      - Vylepšeno pojmenovávání videí (napø. http://video.markiza.sk/archiv-tv-markiza/bez-servitky/68688).
+        Svým zpùsobem jde o zavedení nové chyby, ne o opravu - pùvodní názvy
+        byly správné, jak je zná systém Markízy, jenom byly nevhodné pro lidi.
+
+    * GUI: Experimentální oprava na problém, že chyby vzniklé ve stahovacích
+      vláknech nebyly pøeloženy a zobrazovaly se anglicky.
+
+    * GUI: Opravena chyba EListError pøi pokusu o otevøení adresáøe videa,
+      pokud nebylo žádné video vybráno.
+
+    * GUI: Opraveno nefunkèní pøehrávání videa, otevøení adresáøe a nìkteré
+      další funkce, pokud bylo zvoleno stahování do nìjakého konkrétního 
+      adresáøe (ve výchozím nastavení "stahovat do aktuálního pracovního
+      adresáøe" to fungovalo i døíve).
+
+
+  
   v0.92:
   
     * Noví poskytovatelé:

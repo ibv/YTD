@@ -44,9 +44,11 @@ const
   REGEXP_COMMON_URL_PREFIX = '^https?://(?:[a-z0-9-]+\.)*';
   REGEXP_COMMON_URL = REGEXP_COMMON_URL_PREFIX + REGEXP_BASE_URL;
     // Protocol HTTP or HTTPS, any number of subdomains, pre-ID, downloader class, ID, post-ID
+  REGEXP_ANYTHING = '.*';
   REGEXP_SOMETHING = '.+';
   REGEXP_NUMBERS = '[0-9]+';
   REGEXP_PATH_COMPONENT = '[^/?&]+';
+  REGEXP_PARAM_COMPONENT = '[^&]+';
 
   // Common regular expressions for getting Title
   REGEXP_TITLE_TITLE = '<title>\s*(?P<TITLE>.*?)\s*</title>';

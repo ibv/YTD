@@ -50,6 +50,7 @@ type
     protected
       {$IFDEF JSON}
       JSONSourceRegExp: TRegExp;
+      TitleFixRegExp: TRegExp;
       {$ELSE}
       PlaylistItemRegExp: TRegExp;
       NotAnAdRegExp: TRegExp;
@@ -85,11 +86,12 @@ const
 {$IFDEF JSON}
 const
   JSON_SOURCE_REGEXP = '(?P<JSON>\{.*\})';
+  JSON_TITLE_FIX_REGEXP = '(?P<TITLE>.*?)[ .-]*$';
 {$ELSE}
 const
   PLAYLIST_ITEM_REGEXP = '\{\s*"provider"\s*:(?P<INSIDE>.*?)"url"\s*:\s*"(?P<URL>https?://[^"]+)"';
   NOTANAD_REGEXP = '"notanadd"\s*:\s*(?P<TRUE>true)\b';
-  DESCRIPTION_REGEXP = '"description"\s*:\s*"(?P<DESC>[^"]*)"';
+  DESCRIPTION_REGEXP = '"description"\s*:\s*"(?P<DESC>[^"]*?)[ .-]*"';
 {$ENDIF}
 
 { TDownloader_Markiza }
@@ -110,6 +112,7 @@ begin
   InfoPageEncoding := peUTF8;
   {$IFDEF JSON}
   JSONSourceRegExp := RegExCreate(JSON_SOURCE_REGEXP);
+  TitleFixRegExp := RegExCreate(JSON_TITLE_FIX_REGEXP);
   {$ELSE}
   PlaylistItemRegExp := RegExCreate(PLAYLIST_ITEM_REGEXP);
   NotAnAdRegExp := RegExCreate(NOTANAD_REGEXP);
@@ -121,6 +124,7 @@ destructor TDownloader_Markiza.Destroy;
 begin
   {$IFDEF JSON}
   RegExFreeAndNil(JSONSourceRegExp);
+  RegExFreeAndNil(TitleFixRegExp);
   {$ELSE}
   RegExFreeAndNil(PlaylistItemRegExp);
   RegExFreeAndNil(NotAnAdRegExp);
@@ -135,9 +139,9 @@ begin
 end;
 
 function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-{$IFDEF JSON_SOURCE_REGEXP}
+{$IFDEF JSON}
 var JSON, Playlist, NotAnAd, UrlNode, TitleNode: TJSON;
-    JSONsrc: string;
+    JSONsrc, Title: string;
     i: integer;
 {$ELSE}
 var Url, Inside, NotAnAd, Title: string;
@@ -173,7 +177,10 @@ begin
                         Result := True;
                         end;
                       if JSONNodeByPath(Playlist.Child[i], 'customProperties/description', TitleNode) then
-                        SetName(TitleNode.Value);
+                        if GetRegExpVar(TitleFixRegExp, TitleNode.Value, 'TITLE', Title) then
+                          SetName(Title)
+                        else
+                          SetName(TitleNode.Value);
                       Exit;
                       end;
 

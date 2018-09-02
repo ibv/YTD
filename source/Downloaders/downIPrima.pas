@@ -73,6 +73,7 @@ type
       StreamCDNIDRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
     public
       class function Provider: string; override;
@@ -207,6 +208,15 @@ begin
   Result := Format(PRIMA_MOVIE_INFO_URL, [MovieID]);
 end;
 
+function TDownloader_iPrima_Stream.GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean;
+begin
+  inherited GetFlashVarsIdStrings(ID, cdnLQ, cdnHQ, cdnHD, Title);
+  cdnLQ := 'lqID';
+  cdnHQ := 'hqID';
+  cdnHD := 'hdID';
+  Result := True;
+end;
+
 function TDownloader_iPrima_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var Url, ID, EmbeddedPage: string;
     EmbeddedPageXml: TXmlDoc;
@@ -220,6 +230,8 @@ begin
     else
       try
         Result := inherited AfterPrepareFromPage(EmbeddedPage, EmbeddedPageXml, Http);
+        if not Result then
+          Result := inherited AfterPrepareFromPage(Page, PageXml, Http);
       finally
         FreeAndNil(EmbeddedPageXml);
         end;

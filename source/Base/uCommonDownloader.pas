@@ -170,7 +170,7 @@ end;
 {$IFDEF SUBTITLES}
 function TCommonDownloader.GetSubtitlesFileName: string;
 begin
-  Result := ChangeFileExt(GetFileName, fSubtitlesExt);
+  Result := ChangeFileExt(FileName, fSubtitlesExt);
 end;
 
 function TCommonDownloader.ReadSubtitles(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

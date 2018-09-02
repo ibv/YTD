@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downIDnes_Embed;
+unit downGoogleVideo_Embed;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -42,11 +42,13 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
-  TDownloader_IDnes_Embed = class(TRtmpDownloader)
+  TDownloader_GoogleVideo_Embed = class(THttpDownloader)
     private
+    protected
+      Extension: string;
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
@@ -62,101 +64,85 @@ implementation
 
 uses
   uStringConsts,
-  uStringUtils,
-  uMessages,
-  uDownloadClassifier;
+  uDownloadClassifier,
+  uMessages;
 
-// http://servis.idnes.cz/stream/flv/data.asp?idvideo=V110523_130926_tv-spolecnost_zkl&reklama=1&idrubriky=hobby-zahrada&idostrova=hobby&idclanku=A110523_110238_hobby-zahrada_mce
+// http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
 const
-  URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        'servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+';
+  URLREGEXP_BEFORE_ID = 'video\.google\.com/:googleplayer\.swf\?';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
-{ TDownloader_IDnes_Embed }
+{ TDownloader_GoogleVideo_Embed }
 
-class function TDownloader_IDnes_Embed.Provider: string;
+class function TDownloader_GoogleVideo_Embed.Provider: string;
 begin
-  Result := 'iDnes.cz';
+  Result := 'Google.com';
 end;
 
-class function TDownloader_IDnes_Embed.UrlRegExp: string;
+class function TDownloader_GoogleVideo_Embed.UrlRegExp: string;
 begin
   Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
-constructor TDownloader_IDnes_Embed.Create(const AMovieID: string);
+constructor TDownloader_GoogleVideo_Embed.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peXml;
+  InfoPageEncoding := peUTF8;
   InfoPageIsXml := True;
 end;
 
-destructor TDownloader_IDnes_Embed.Destroy;
+destructor TDownloader_GoogleVideo_Embed.Destroy;
 begin
   inherited;
 end;
 
-function TDownloader_IDnes_Embed.GetMovieInfoUrl: string;
+function TDownloader_GoogleVideo_Embed.GetMovieInfoUrl: string;
 begin
-  Result := MovieID;
+  Result := 'http://video.google.com/videofeed?fgvns=1&fai=1&' + MovieID;
 end;
 
-function TDownloader_IDnes_Embed.GetFileNameExt: string;
+function TDownloader_GoogleVideo_Embed.GetFileNameExt: string;
 begin
-  Result := '.mp4';
+  Result := Extension;
 end;
 
-function TDownloader_IDnes_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ItemType, Server, Path, VideoFile, Title, Stream: string;
-    Items: TXmlNode;
-    i: integer;
+function TDownloader_GoogleVideo_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
+var
+  Node: TXmlNode;
+  Title, Url, ContentType: string;
+  i: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not XmlNodeByPath(PageXml, 'items', Items) then
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
+  if not XmlNodeByPath(PageXml, 'channel/item/media:group', Node) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
   else
     begin
-    for i := 0 to Pred(Items.NodeCount) do
-      if string(Items.Nodes[i].Name) = 'item' then
-        if GetXmlVar(Items.Nodes[i], 'type', ItemType) then
-          if ItemType = 'video' then
+    if GetXmlVar(Node, 'media:title', Title) then
+      if Title <> '' then
+        SetName(Title);
+    for i := 0 to Pred(Node.NodeCount) do
+      if Node[i].Name = 'media:content' then
+        if GetXmlAttr(Node[i], '', 'url', Url) then
+          if GetXmlAttr(Node[i], '', 'type', ContentType) then
             begin
-            {$IFNDEF DIRTYHACKS}
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/server', Server) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['server']))
-            else
-            {$ENDIF}
-            if not GetXmlVar(Items.Nodes[i], 'linkvideo/path', Path) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['path']))
-            else if not GetXmlVar(Items.Nodes[i], 'linkvideo/file', VideoFile) then
-              SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['file']))
-            else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
-              SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-            else
+            Extension := ContentTypeToExtension(ContentType);
+            if Extension <> '.swf' then
               begin
-              SetName(Title);
-              Stream := 'mp4:' + Path + VideoFile;
-              {$IFDEF DIRTYHACKS}
-              Server := 'stream7.idnes.cz/vod/'; // For some reason the "real" server does not work!
-              {$ENDIF}
-              MovieUrl := 'rtmpt://' + Server + Stream;
-              Self.RtmpUrl := 'rtmpt://' + Server;
-              Self.Playpath := Stream;
-              Self.FlashVer := FLASH_DEFAULT_VERSION;
-              Self.SwfUrl := 'http://g.idnes.cz/swf/flv/player.swf?v=20101103';
-              Self.TcUrl := 'rtmpt://' + Server;
-              Self.PageUrl := 'http://video.idnes.cz/?' + MovieID;
+              MovieUrl := Url;
+              if UnpreparedName = '' then
+                SetName('Google Video ' + MovieID);
               SetPrepared(True);
               Result := True;
+              Exit;
               end;
-            Exit;
             end;
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
     end;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_IDnes_Embed);
+  RegisterDownloader(TDownloader_GoogleVideo_Embed);
 
 end.
+

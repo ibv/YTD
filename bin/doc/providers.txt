@@ -1,6 +1,6 @@
 ______________________________________________________________________________
 
-YouTube Downloader v0.92                                     (c) 2009-11 Pepak
+YouTube Downloader v0.93                                     (c) 2009-11 Pepak
 http://www.pepak.net/download/youtube-downloader/         http://www.pepak.net
 ______________________________________________________________________________
 
@@ -102,6 +102,8 @@ Hasici150.tv        | RTMP     |       | http://www.hasici150.tv/cz/Media-galeri
 Hell.tv             | HTTP     |       | http://www.hell.tv/t/videos/3222/police-brutality-at-the-jefferson-memorial.html
 Hrej.cz             | HTTP     | 5     | http://www.hrej.cz/tv/crysis-2-pribehovy-trailer-cz--1087/
 HudebniVideoKlipy.cz| HTTP     |       | http://www.hudebnivideoklipy.cz/chinaski-kerka-119555.html
+Huste.sk            | HTTP     |       | http://hudba.huste.sk/exkluzivne/kat:videoklipy/klip:2010-05-26-videoklipy-get-low-skener.html
+                    |          |       | http://hudba.huste.tv/grimaso-feat-s-a-s-suvereno/2010-05-26-videoklipy-get-low-skener.html
 i-Concerts.com      | HTTP     |       | http://www.i-concerts.com/#/?q=en/concert/black-kids-nme-awards-shows-en
 iDnes.cz            | RTMP     |       | http://video.idnes.cz/?c=A110315_160842_zajimavosti_nh&idVideo=V110315_150332_tv_zpravy_kbe
                     |          | 7     | http://hobby.idnes.cz/cesi-griluji-radi-a-spatne-neumi-vybrat-ani-maso-rika-pohlreich-p7z-/hobby-zahrada.asp?c=A110523_110238_hobby-zahrada_mce
@@ -110,7 +112,8 @@ ILikeBike.cz        | MS       | 4     | http://www.ilikebike.cz/?year=2011&week
 ima.umn.edu         | RTMP     |       | http://www.ima.umn.edu/videos/?id=1187
 iPrima.cz           | HTTP     |       | http://www.iprima.cz/videoarchiv/44524/all/all
                     |          |       | http://www.iprima.cz/videoplayer/85680
-                    |          | N     | http://www.iprima.cz/showjanakrause
+                    |          |       | http://www.iprima.cz/showjanakrause
+                    | RTMP     | 4,9   | http://www.iprima.cz/showjanakrause/videoarchiv-brezen-2011/
                     | RTMP     |       | http://www.iprima.cz/videoarchiv/164106
 iViewTube.com       | HTTP     |       | http://www.iviewtube.com/videos/182040/beastie-boys-make-some-noise-(official-music-video) 
 Joj.sk              | HTTP     |       | http://www.joj.sk/anosefe/anosefe-epizody/2011-05-09-ano-sefe-.html
@@ -125,6 +128,7 @@ Loupak.cz           | HTTP     |       | http://www.loupak.cz/video/auto-moto/55
 Markiza.sk          | HTTP     |       | http://video.markiza.sk/archiv-tv-markiza/dnes/36829
                     |          |       | http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
                     |          |       | http://particka.markiza.sk/archiv.php?vid=65598
+MamaOzenMa.sk       | HTTP     |       | http://www.mamaozenma.sk/video-mama-ozen-ma/detail/mama-ozen-ma-06-09-2011-3.html
 MediaSport.cz       | HTTP     | 4     | http://www.mediasport.cz/rally-cz/video/09_luzicke_cerny_rz1.html
 MegaVideo.com       | HTTP     |       | http://www.megavideo.com/?v=2MJBY4HB
 MetaCafe.com        | HTTP     |       | http://www.metacafe.com/watch/4577253/kick_ass_release_trailer/
@@ -157,10 +161,12 @@ NovaMov.com         | HTTP     |       | http://www.novamov.com/video/i0d0yi9eqw
                     |          |       | http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 Novinky.cz          | HTTP     |       | http://video.novinky.cz/video/doporucujeme/?videoId=10869&page=1
                     |          |       | http://www.novinky.cz/zena/vztahy-a-sex/217423-jak-prekonat-manzelske-krize.html
+OK-Team.cz          | HTTP     |       | http://ok-team.cz/sekce/tajemstvi/tajemstvi.php?taj=architekt
 OverStream.net      | HTTP     |       | http://www.overstream.net/view.php?oid=uinsn9n7uomx
                     |          |       | http://www.overstream.net/swf/player/oplx?oid=m8t4s4uzibl0
 PBS.org             | HTTP     |       | http://www.pbs.org/newshour/bb/world/jan-june11/libya_03-08.html
 PCPlanets.com       | HTTP     |       | http://www.pcplanets.com/videos-225353-Bamboo.shtml
+PicSpoon.com        | HTTP     |       | http://www.picspoon.com/videos/link/benny_the_bull_day_at_the_mall.php
 PracticalMethod.com | HTTP     |       | http://practicalmethod.com/lang/en/2011/03/upper-and-lower-body-coordination-online-video-trailer/
 PrahovaHD.ro        | RTMP     |       | http://live.prahovahd.ro/playondemand.php?server=193.238.58.18&playfile=food.mp4&subtitrare=http://live.prahovahd.ro/food.srt&categ=Documentare&subcateg=Film
 PrazdninyVTelci.cz  | MS       |       | http://www.prazdninyvtelci.cz/cast/?sekce=1&idw=376
@@ -201,7 +207,7 @@ Music.Stream.cz     | HTTP     |       | http://music.stream.cz/klip/268709-avri
 StreetFire.com      | HTTP     |       | http://www.streetfire.net/video/porsche-911-gt2_2007066.htm
 Studio-Plus.tv      | HTTP     |       | http://studio-plus.tv/?video_id=270
 StupidVideos.com    | HTTP     |       | http://www.stupidvideos.com/tv/homepage_1/Amazing_Aquarium/
-STV.sk              | RTMP     | 3     | http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
+STV.sk              | RTMP     | 9     | http://www.stv.sk/online/archiv/spravy-stv?id=43633&scroll=
 Super.cz            | HTTP     |       | http://video.super.cz/supervidea/supervidea-doporucujeme/?videoId=3950&page=1
 Tangle.com          | HTTP     |       | http://www.tangle.com/view_video?viewkey=fe586286e688a7cb197e
 TeacherTube.com     | HTTP     |       | http://teachertube.com/viewVideo.php?video_id=177149&title=Top_10_Mistakes_New_Teachers_Make
@@ -219,7 +225,10 @@ TVPraha11.cz        | HTTP     |       | http://www.tvpraha11.cz/zastupitelstvo/
 TVS.pl              | RTMP     |       | http://www.tvs.pl/informacje/32172,szpitalna_kapsula__szybsze_diagnozowanie_pacjentow_i_oszczednosc_czasu_dla_pracownikow_szpitala.html
 Tyzden.sk           | HTTP     |       | http://www.tyzden.sk/lampa/lampa-z-16-12-2010.html
 UStream.tv          | HTTP     |       | http://www.ustream.tv/recorded/7022540
+VeeHD.com           | HTTP     |       | http://veehd.com/video/4639434_Solar-Sinter
 VideaCesky.cz       | HTTP     |       | http://www.videacesky.cz/serialy/upoutavka-na-treti-radu-the-guild
+Video.Google.com    | HTTP     |       | http://video.google.com/googleplayer.swf?docid=-3219629169575348946&hl=cs&fs=true
+                    |          |       | http://video.google.com/videoplay?docid=-9077214414651731007&ei=y-8dS-n9JZ6q2wK7o-CRCA
 Video.Tiscali.cz    | HTTP     |       | http://video.tiscali.cz/the-duty-calls-trailer-283 
 VideoAlbumy.azet.sk | HTTP     |       | http://videoalbumy.azet.sk/land-rover/A1OFbSJBBXOF6yyp/
 VideoClipsDump.com  | HTTP     |       | http://www.videoclipsdump.com/media/1951/Karate_Fail/
@@ -249,6 +258,7 @@ ZkoukniTo.cz        | HTTP     |       | http://www.zkouknito.cz/video_59813_hol
 Zmozek.cz           | HTTP     |       | http://www.zmozek.cz/textypisni.php?pisen=415
 Zoznam.sk           | HTTP     |       | http://free.zoznam.sk/video/Splhajuci-buldozer
 ------------------------------------------------------------------------------
+8teenXXX.com        | HTTP     | F     |
 AdultLoop.com       | HTTP     | F     |
 Beeg.com            | HTTP     | F     |
 Brazzers.com        | HTTP     | F     |
@@ -263,6 +273,7 @@ JenProMuze.cz       | HTTP     | F     |
 KeezMovies.com      | HTTP     | F     |
 MachoVideo.com      | HTTP     | F     |
 MegaPorn.com        | HTTP     | F     |
+MojePorno.sk        | HTTP     | F     |
 PornHost.com        | HTTP     | F     |
 PornHub.com         | HTTP     | F     |
 PornoTube.com       | HTTP     | F     |
@@ -366,6 +377,7 @@ X ... Momentálnì nefunkèní.
       interpreter (e.g. CMD.EXE).
 
 
+
 8 ... Pro správnou funkci je vyžadován Secure Token. Jde o tajný øetìzec,
       kterým se klient autentizuje serveru a potvrzuje tak, že je oprávnìn
       si o média øíkat. Získání tohoto tokenu je na vás - z právních dùvodù
@@ -376,3 +388,9 @@ X ... Momentálnì nefunkèní.
       during the handshake. It's up to you to provide the token - YTD doesn't
       have it and I will not disclose either its value or how to get it, for
       legal reasons.
+
+
+
+9 ... Název videa není detekován.
+
+      Stream name is not detected.

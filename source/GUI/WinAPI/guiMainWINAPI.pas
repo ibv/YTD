@@ -776,7 +776,8 @@ var Index: integer;
 begin
   Result := True;
   Index := ListViewGetSelectedItem(DownloadListHandle);
-  DownloadList.Items[Index].ExploreMedia;
+  if Index >= 0 then
+    DownloadList.Items[Index].ExploreMedia;
 end;
 
 function TFormMain.ActionOptions: boolean;

@@ -220,7 +220,7 @@ begin
         ID := Options.SelectedConverterID;
       if Options.ReadConverter(ID, Converter) then
         begin
-        MediaFile := ExpandFileName(Downloader.Options.DestinationPath + Downloader.FileName);
+        MediaFile := ExpandFileName(Downloader.FileName);
         CommandLine := '"' + Converter.ExePath + '" ' + Converter.CommandLine;
         CommandLine := StringReplace(CommandLine, '{$FULLPATH}', MediaFile, [rfReplaceAll, rfIgnoreCase]);
         CommandLine := StringReplace(CommandLine, '{$FILENAME}', ExtractFileName(MediaFile), [rfReplaceAll, rfIgnoreCase]);
@@ -361,14 +361,10 @@ begin
 end;
 
 procedure TDownloadListItem.PlayMedia;
-var FN: string;
 begin
   if (State = dtsFinished) then
-    begin
-    FN := Downloader.Options.DestinationPath + Downloader.FileName;
-    if FileExists(FN) then
-      Run(FN);
-    end;
+    if FileExists(Downloader.FileName) then
+      Run(Downloader.FileName);
 end;
 
 procedure TDownloadListItem.ExploreMedia;
@@ -376,10 +372,9 @@ var FN: string;
 begin
   if State in [dtsDownloading, dtsFinished, dtsFailed, dtsAborted] then
     begin
-    FN := Downloader.Options.DestinationPath + Downloader.FileName;
-    if FileExists(FN) then
+    if FileExists(Downloader.FileName) then
       begin
-      FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(FN)));
+      FN := {$IFDEF DELPHI2009_UP} ExcludeTrailingPathDelimiter {$ELSE} ExcludeTrailingBackslash {$ENDIF} (ExtractFilePath(ExpandFileName(Downloader.FileName)));
       Run(FN);
       end;
     end;
