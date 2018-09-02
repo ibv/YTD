@@ -1,11 +1,41 @@
 ﻿______________________________________________________________________________
 
-YTD v1.29                                                    (c) 2009-13 Pepak
+YTD v1.30                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.30:
+
+    * Updated Providers:
+      - Hrej.cz
+      - iDnes.cz
+      - MojeVideo.sk
+      - PornTube.com
+      - Tube8.com
+      - ZDF.de
+
+    * CeskaTelevize.cz: Again downloads the highest-quality video. The reason
+      why this didn't work correctly was that the hearing-impaired version
+      was marked with bitrate 5000, much higher than the other versions.
+      YTD now sets maximum bitrate to 4999 unless you explicitly set it to
+      another value in the configuration.
+
+    * NovaMov.com: The server is now almost ready for downloads, except that
+      I have no sample video to finalize the downloader.
+
+    * Stream.cz: Works again. Servers which were dependent on Stream.cz but
+      no longer use it were removed: HudebniVideoKlipy.cz, Mixer.cz, 
+      Novinky.cz, Sport.cz, Super.cz.
+
+    * If YTD encounters an existing file and asks what to do about it, the
+      save dialog always opens in the file's directory. In the older versions
+      it might have opened on the desktop, if you didn't specify a download
+      directory.
+
+
 
   v1.29:
 

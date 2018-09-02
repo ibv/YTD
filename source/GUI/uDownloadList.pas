@@ -270,8 +270,11 @@ procedure TDownloadList.DownloadItemFileNameValidate(Sender: TObject; var FileNa
         Result := True;
       end;
 
+var
+  InitialDir: string;
 {$IFNDEF GUI_WINAPI}
-var D: TSaveDialog;
+var
+  D: TSaveDialog;
 {$ENDIF}
 begin
   if FileExists(FileName) then
@@ -284,16 +287,17 @@ begin
         Valid := AutoRename(FileName);
       else
         begin
+        InitialDir := ExcludeTrailingPathDelimiter(ExtractFilePath(FileName));
+        if InitialDir = '' then
+          InitialDir := GetCurrentDir;
         {$IFDEF GUI_WINAPI}
-        Valid := SaveDialog(FileName, ExcludeTrailingPathDelimiter(ExtractFilePath(FileName)), PChar(_('File already exists.'))); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
+        Valid := SaveDialog(FileName, InitialDir, PChar(_('File already exists.'))); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
         {$ELSE}
         D := TSaveDialog.Create(nil);
         try
           D.DefaultExt := Copy(ExtractFileExt(FileName), 2, MaxInt);
           D.FileName := FileName;
-          D.InitialDir := ExcludeTrailingPathDelimiter(ExtractFilePath(FileName));
-          if D.InitialDir = '' then
-            D.InitialDir := GetCurrentDir;
+          D.InitialDir := InitialDir;
           D.Options := D.Options + [ofOverwritePrompt, ofNoChangeDir, ofNoReadOnlyReturn] - [ofReadOnly];
           D.Title := _('File already exists.'); // GUI: Filename already exists. User is being asked to provide a new filename or confirm the existing one.
           Valid := D.Execute;

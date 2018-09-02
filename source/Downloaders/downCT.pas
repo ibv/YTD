@@ -502,7 +502,7 @@ const REKLAMA = '-AD-';
 var MovieObject, Url, ID, BaseUrl, Stream: string;
     Xml: TXmlDoc;
     Body, Node: TXmlNode;
-    i: integer;
+    i, RealMaxBitrate: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
@@ -510,6 +510,10 @@ begin
   BaseUrls.Clear;
   Streams.Clear;
   {$ENDIF}
+  if MaxBitrate = 0 then
+    RealMaxBitrate := 4999 // mene kvalitni videa se stopou pro neslysici jsou oznacena bitrate 5000
+  else
+    RealMaxBitrate := MaxBitrate;
   if not GetMovieObject(Http, Page, MovieObject) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_EMBEDDED_OBJECT)
   else if not ConvertMovieObject(MovieObject) then
@@ -532,7 +536,7 @@ begin
                 if GetXmlAttr(Node, '', 'base', BaseUrl) then
                   begin
                   // Pro stahovani jen casti reportaze - atributy duration="139" clipBegin="2675"
-                  if not Smil_FindBestVideo(Node, Stream, MaxBitrate) then
+                  if not Smil_FindBestVideo(Node, Stream, RealMaxBitrate) then
                     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
                   else
                     begin

@@ -83,7 +83,7 @@ const
 
 class function TDownloader_STV.Provider: string;
 begin
-  Result := 'STV.sk';
+  Result := 'RTVS.sk';
 end;
 
 class function TDownloader_STV.UrlRegExp: string;

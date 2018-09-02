@@ -45,7 +45,7 @@ uses
   uDownloader, uCommonDownloader, downIPrima;
 
 type
-  TDownloader_PrimaCool = class(TDownloader_iPrima_LiveBox)
+  TDownloader_PrimaCool = class(TDownloader_iPrima)
     private
     protected
       function GetMovieInfoUrl: string; override;

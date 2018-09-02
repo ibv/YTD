@@ -66,8 +66,8 @@ uses
 
 // http://embed.novamov.com/embed.php?width=600&height=480&v=h3lbk4hti5l97
 const
-  URLREGEXP_BEFORE_ID = 'embed\.novamov\.com/embed\.php\?';
-  URLREGEXP_ID =        REGEXP_SOMETHING;
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + 'novamov\.(?:com|me)/api/player\.api\.php\?file=' + REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
@@ -82,7 +82,7 @@ end;
 
 class function TDownloader_NovaMov_Embed.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_NovaMov_Embed.Create(const AMovieID: string);
@@ -100,7 +100,7 @@ end;
 
 function TDownloader_NovaMov_Embed.GetMovieInfoUrl: string;
 begin
-  Result := 'http://embed.novamov.com/embed.php?' + MovieID;
+  Result := MovieID;
 end;
 
 function TDownloader_NovaMov_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;

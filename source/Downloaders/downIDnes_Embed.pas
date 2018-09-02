@@ -42,15 +42,16 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uRtmpDownloader;
+  uDownloader, uCommonDownloader, uNestedDownloader,
+  uRtmpDirectDownloader, uHttpDirectDownloader;
 
 type
-  TDownloader_IDnes_Embed = class(TRtmpDownloader)
+  TDownloader_IDnes_Embed = class(TNestedDownloader)
     private
     protected
       function GetMovieInfoUrl: string; override;
       function GetFileNameExt: string; override;
-      function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      function IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -63,6 +64,7 @@ implementation
 uses
   uStringConsts,
   uStrings,
+  uFunctions,
   uMessages,
   uDownloadClassifier;
 
@@ -71,6 +73,10 @@ const
   URLREGEXP_BEFORE_ID = '';
   URLREGEXP_ID =        'servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+';
   URLREGEXP_AFTER_ID =  '';
+
+type
+  TDownloader_iDnes_HTTP = class(THttpDirectDownloader);
+  TDownloader_iDnes_RTMP = class(TRtmpDirectDownloader);
 
 { TDownloader_IDnes_Embed }
 
@@ -106,12 +112,12 @@ begin
   Result := '.mp4';
 end;
 
-function TDownloader_IDnes_Embed.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var ItemType, Server, Path, VideoFile, Title: string;
-    Items: TXmlNode;
-    i: integer;
+function TDownloader_IDnes_Embed.IdentifyDownloader(var Page: string; PageXml: TXmlDoc; Http: THttpSend; out Downloader: TDownloader): boolean;
+var
+  ItemType, Server, Path, VideoFile, Title: string;
+  Items: TXmlNode;
+  i: integer;
 begin
-  inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not XmlNodeByPath(PageXml, 'items', Items) then
     SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
@@ -131,14 +137,14 @@ begin
               SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND , ['file']))
             else if not GetXmlVar(Items.Nodes[i], 'title', Title) then
               SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+            else if IsHttpProtocol(Server) then
+              begin
+              Downloader := TDownloader_iDnes_HTTP.CreateWithName(Server + Path + VideoFile, Title);
+              Result := True;
+              end
             else
               begin
-              SetName(Title);
-              //Self.AppName := 'vod/';
-              Self.PlayPath := 'mp4:' + Path + VideoFile;
-              Self.RtmpUrl := 'rtmpt://' + Server;
-              MovieUrl := Self.RtmpUrl + Self.PlayPath;
-              SetPrepared(True);
+              Downloader := TDownloader_iDnes_RTMP.CreateWithName('rtmpt://' + Server + 'mp4:' + Path + VideoFile, Title);
               Result := True;
               end;
             Exit;

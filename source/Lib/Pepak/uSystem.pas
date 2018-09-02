@@ -744,7 +744,7 @@ begin
   ExecInfo.nShow := Command;
   CoInitializeEx(nil, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE);
   try
-    if ShellExecuteEx(@ExecInfo) then
+    if ShellExecuteEx( {$IFDEF FPC} LPShellExecuteInfo {$ENDIF} (@ExecInfo)) then
       Result := ExecInfo.hInstApp
     else
       begin

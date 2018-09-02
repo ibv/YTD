@@ -49,9 +49,10 @@ type
   TDownloader_NovaMov = class(TNestedDownloader)
     private
     protected
+      UrlComponentsRegexp: TRegExp;
+    protected
       function GetMovieInfoUrl: string; override;
-      function GetNestedID(out ID: string): boolean; override;
-      function CreateNestedDownloaderFromID(const MovieID: string): boolean; override;
+      function GetTransformedUrl(out Url: string): boolean; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
@@ -67,13 +68,20 @@ uses
   uMessages;
 
 // http://www.novamov.com/video/i0d0yi9eqw2yj
+// http://www.novamov.me/video/980511a4b44e1
 const
-  URLREGEXP_BEFORE_ID = 'novamov\.com/video/';
-  URLREGEXP_ID =        REGEXP_PATH_COMPONENT;
+  REGEXP_SERVER_PART = 'novamov\.(?:com|me)';
+  REGEXP_PATH_PART = '/(?:video/|embed\.php\b.*?[?&]v=)';
+  REGEXP_ID_PART = '[A-Za-z0-9]+';
+
+const
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + REGEXP_SERVER_PART + REGEXP_PATH_PART + REGEXP_ID_PART;
   URLREGEXP_AFTER_ID =  '';
 
 const
   REGEXP_MOVIE_TITLE =  REGEXP_TITLE_H3;
+  REGEXP_URL_COMPONENTS = REGEXP_COMMON_URL_PREFIX + '(?P<SERVER>' + REGEXP_SERVER_PART + ')' + REGEXP_PATH_PART + '(?P<ID>' + REGEXP_ID_PART + ')';
 
 { TDownloader_NovaMov }
 
@@ -84,7 +92,7 @@ end;
 
 class function TDownloader_NovaMov.UrlRegExp: string;
 begin
-  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_NovaMov.Create(const AMovieID: string);
@@ -92,28 +100,33 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
+  UrlComponentsRegexp := RegExCreate(REGEXP_URL_COMPONENTS);
 end;
 
 destructor TDownloader_NovaMov.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
+  RegExFreeAndNil(UrlComponentsRegexp);
   inherited;
 end;
 
 function TDownloader_NovaMov.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.novamov.com/video/' + MovieID;
+  Result := MovieID;
 end;
 
-function TDownloader_NovaMov.GetNestedID(out ID: string): boolean;
+function TDownloader_NovaMov.GetTransformedUrl(out Url: string): boolean;
+var
+  Server, ID: string;
 begin
-  ID := 'width=600&height=480&v=' + MovieID;
-  Result := True;
-end;
-
-function TDownloader_NovaMov.CreateNestedDownloaderFromID(const MovieID: string): boolean;
-begin
-  Result := CreateNestedDownloaderFromDownloader(TDownloader_NovaMov_Embed.Create(MovieID));
+  Result := False;
+  if GetRegExpVars(UrlComponentsRegexp, MovieID, ['SERVER', 'ID'], [@Server, @ID]) then
+    if Server <> '' then
+      if ID <> '' then
+        begin
+        Url := 'http://www.' + Server + '/api/player.api.php?file=' + ID;
+        Result := True;
+        end;
 end;
 
 initialization

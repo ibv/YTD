@@ -49,7 +49,9 @@ type
   TDownloader_PornTube = class(THttpDownloader)
     private
     protected
-      MovieInfoRegExp: TRegExp;
+      PlaylistRegExp: TRegExp;
+      PlaylistItemRegExp: TRegExp;
+      StreamsRegExp: TRegExp;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -73,7 +75,9 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_INFO =   '\.addVariable\s*\(\s*''config''\s*,\s*''(?P<URL>.+?)''';
+  REGEXP_MOVIE_PLAYLIST = 'var\s+playerConfigPlaylist\s*=\s*\[(?P<INFO>.*?)\]\s*;';
+  REGEXP_MOVIE_PLAYLIST_ITEM = '\bsources\s*:\s*\[\s*(?P<ITEM>.*?)\]\s*,\s*title\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_STREAMS = '\{\s*"file"\s*:\s*"(?P<URL>https?:[^"]+)"\s*,\s*"label"\s*:\s*"(?P<QUALITY>\d+)[^"]*".*?\}';
 
 { TDownloader_PornTube }
 
@@ -91,12 +95,16 @@ constructor TDownloader_PornTube.Create(const AMovieID: string);
 begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUtf8;
-  MovieInfoRegExp := RegExCreate(REGEXP_MOVIE_INFO);
+  PlaylistRegExp := RegExCreate(REGEXP_MOVIE_PLAYLIST);
+  PlaylistItemRegExp := RegExCreate(REGEXP_MOVIE_PLAYLIST_ITEM);
+  StreamsRegExp := RegExCreate(REGEXP_MOVIE_STREAMS);
 end;
 
 destructor TDownloader_PornTube.Destroy;
 begin
-  RegExFreeAndNil(MovieInfoRegExp);
+  RegExFreeAndNil(PlaylistRegExp);
+  RegExFreeAndNil(PlaylistItemRegExp);
+  RegExFreeAndNil(StreamsRegExp);
   inherited;
 end;
 
@@ -107,57 +115,42 @@ end;
 
 function TDownloader_PornTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  InfoUrl, Title, Url, BestUrl, sQuality: string;
-  InfoXml: TXmlDoc;
-  StreamListNode: TXmlNode;
-  i, n, BestQuality, Quality: integer;
+  Playlist, PlaylistItem, Title, BestUrl, Url, sQuality: string;
+  Quality, BestQuality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  if not GetRegExpVar(MovieInfoRegExp, Page, 'URL', InfoUrl) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadXml(Http, GetRelativeUrl(GetMovieInfoUrl, InfoUrl), InfoXml) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else
-    try
-      if not GetXmlVar(InfoXml, 'videotitle', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-      else if not XmlNodeByPath(InfoXml, 'qualityselector.streams', StreamListNode) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else
-        begin
+  if GetRegExpVar(PlaylistRegExp, Page, 'INFO', Playlist) then
+    if GetRegExpVars(PlaylistItemRegExp, Playlist, ['ITEM', 'TITLE'], [@PlaylistItem, @Title]) then
+      begin
+      {$IFDEF MULTIDOWNLOADS}
+      repeat
+      {$ENDIF}
         BestUrl := '';
         BestQuality := -1;
-        for i := 0 to Pred(StreamListNode.NodeCount) do
-          if StreamListNode.Nodes[i].Name = 'stream' then
-            if GetXmlVar(StreamListNode.Nodes[i], 'file', Url) then
-              if Url <> '' then
-                if GetXmlAttr(StreamListNode.Nodes[i], '', 'label', sQuality) then
-                  begin
-                  n := Length(sQuality);
-                  while n > 0 do
-                    if CharInSet(sQuality[n], ['0'..'9']) then
-                      Break
-                    else
-                      Dec(n);
-                  sQuality := Copy(sQuality, 1, n);
-                  Quality := StrToIntDef(sQuality, 0);
-                  if Quality > BestQuality then
-                    begin
-                    BestUrl := Url;
-                    BestQuality := Quality;
-                    end;
-                  end;
+        if GetRegExpVars(StreamsRegExp, PlaylistItem, ['URL', 'QUALITY'], [@Url, @sQuality]) then
+          repeat
+            Quality := StrToIntDef(sQuality, 0);
+            if (Url <> '') and (Quality > BestQuality) then
+              begin
+              BestUrl := Url;
+              BestQuality := Quality;
+              end;
+          until not GetRegExpVarsAgain(StreamsRegExp, ['URL', 'QUALITY'], [@Url, @sQuality]);
         if BestUrl <> '' then
           begin
-          MovieUrl := BestUrl;
-          SetName(Title);
+          SetName(JSDecode(Title));
+          MovieUrl := JSDecode(BestUrl);
+          {$IFDEF MULTIDOWNLOADS}
+          NameList.Add(Title);
+          UrlList.Add(MovieUrl);
+          {$ENDIF}
           SetPrepared(True);
           Result := True;
           end;
-        end;
-    finally
-      FreeAndNil(InfoXml);
+      {$IFDEF MULTIDOWNLOADS}
+      until not GetRegExpVarsAgain(PlaylistItemRegExp, ['ITEM', 'TITLE'], [@PlaylistItem, @Title]);
+      {$ENDIF}
       end;
 end;
 

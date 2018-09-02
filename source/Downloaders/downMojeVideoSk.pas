@@ -79,9 +79,11 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
+  REGEXP_SOME_STRING = '(?:\s*[''"][^''"]*[''"]\s*,)';
+  REGEXP_SOME_NUMBER = '(?:\s*\d+\s*,)';
   REGEXP_EXTRACT_TITLE = REGEXP_TITLE_TITLE;
   REGEXP_EXTRACT_ID = '\bvar\s+rvid\s*=\s*(?P<ID>[0-9]+)';
-  REGEXP_EXTRACT_TIMESTAMP = '\bplv\s*\(.*?,\s*(?P<TS>[0-9]+)\s*\)\s*;';
+  REGEXP_EXTRACT_TIMESTAMP = '\bplvad\s*\(' + REGEXP_SOME_STRING + '{2}' + REGEXP_SOME_NUMBER + '{4}' + REGEXP_SOME_STRING + '{1}' + REGEXP_SOME_NUMBER + '{2}' + REGEXP_SOME_STRING + '{1}' + REGEXP_SOME_NUMBER + '{1}\s*(?P<TS>\d+)';
 
 { TDownloader_MojeVideoSk }
 
@@ -97,7 +99,7 @@ end;
 
 class function TDownloader_MojeVideoSk.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features + [dfRequireSecureToken];
+  Result := inherited Features + [{dfRequireSecureToken}];
 end;
 
 constructor TDownloader_MojeVideoSk.Create(const AMovieID: string);
@@ -126,20 +128,21 @@ function TDownloader_MojeVideoSk.AfterPrepareFromPage(var Page: string; PageXml:
 const
   Server {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'http://fs5.mojevideo.sk';
 var
-  ID, Signature, Timestamp, Stream: string;
+  ID, {Signature, Timestamp,} Stream: string;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   if not GetRegExpVar(VideoIdRegExp, Page, 'ID', ID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  else if not GetRegExpVar(TimestampRegExp, Page, 'TS', Timestamp) then
-    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
+  //else if not GetRegExpVar(TimestampRegExp, Page, 'TS', Timestamp) then
+  //  SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['timestamp']))
   else
     begin
     Stream := Format('/%s.mp4', [ID]);
-    Timestamp := LowerCase(IntToHex({UnixTimestamp} StrToInt(Timestamp), 8));
-    Signature := HexEncode(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (Self.Token + Stream + Timestamp)));
-    MovieUrl := Format('%s/dll/%s/%s%s', [Server, Signature, Timestamp, Stream]);
+    //Timestamp := LowerCase(IntToHex({UnixTimestamp} StrToInt(Timestamp), 8));
+    //Signature := HexEncode(MD5( {$IFDEF UNICODE} AnsiString {$ENDIF} (Self.Token + Stream + Timestamp)));
+    //MovieUrl := Format('%s/dll/%s/%s%s', [Server, Signature, Timestamp, Stream]);
+    MovieUrl := Format('%s/securevd%s', [Server, Stream]);
     SetPrepared(True);
     Result := True;
     end;

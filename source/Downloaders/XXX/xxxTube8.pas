@@ -75,7 +75,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_TITLE = '\bvar\s+videotitle\s*=\s*"(?P<TITLE>.*?)"';
+  REGEXP_MOVIE_TITLE = '\bvideotitle\s*=\s*"(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS = REGEXP_FLASHVARS_JS;
   REGEXP_FLASHVARS_ITEMS = REGEXP_PARSER_FLASHVARS_JS;
 

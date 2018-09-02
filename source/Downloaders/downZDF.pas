@@ -67,7 +67,7 @@ uses
 
 // http://www.zdf.de/ZDFmediathek/beitrag/video/1246826/Vorschau-zur-Sendung-vom-09.03.2011#/beitrag/video/1308766/Ägypten---4-Geheimnis-des-ewigen-Lebens
 const
-  URLREGEXP_BEFORE_ID = 'zdf\.de/ZDFmediathek/';
+  URLREGEXP_BEFORE_ID = 'zdf\.de/ZDFmediathek/(?:hauptnavigation/.*?#/|(?!hauptnavigation/))';
   URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 

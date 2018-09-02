@@ -49,12 +49,9 @@ type
   TDownloader_Stream = class(THttpDownloader)
     private
     protected
-      MovieParamsRegExp: TRegExp;
-      FlashVarsParserRegExp: TRegExp;
-      ExternalCDNID: string;
+      StreamsRegexp: TRegExp;
     protected
       function GetMovieInfoUrlForID(const ID: string): string; virtual;
-      function GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean; virtual;
     protected
       function GetMovieInfoUrl: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
@@ -63,15 +60,6 @@ type
       class function UrlRegExp: string; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
-      function Prepare: boolean; override;
-    end;
-
-  TDownloader_Stream_Cache = class(THttpDirectDownloader)
-    private
-    protected
-    public
-      class function Provider: string; override;
-      class function UrlRegExp: string; override;
     end;
 
 implementation
@@ -89,19 +77,13 @@ uses
 // http://www.stream.cz/object/410282-reklamozrouti-medvedi-reklama
 // http://www.stream.cz/profil/seznam.cz/safranjan?video_id=604024
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!\bmusic\.)stream\.cz/(?:[^/]+/|.*[&?]video_id=)';
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '(?:music)?stream\.cz/';
+  URLREGEXP_ID =        REGEXP_SOMETHING;
   URLREGEXP_AFTER_ID =  '';
 
 const
-  DIRECTURLREGEXP_BEFORE_ID = '^';
-  DIRECTURLREGEXP_ID =        'https?://(?:[a-z0-9-]+\.)*cdn-cache[^.]+\.stream\.cz/.+';
-  DIRECTURLREGEXP_AFTER_ID =  '';
-
-const
-  REGEXP_MOVIE_TITLE = '<title>(?P<TITLE>.*?)(?:\s*\|[^<]*)?</title>';
-  REGEXP_MOVIE_PARAMS = '<param\s+name="flashvars"\s+value="(?P<PARAM>.+?)"';
-  REGEXP_FLASHVARS_PARSER = '(?<=^|&amp;|&)(?P<VARNAME>.+?)=(?P<VARVALUE>.*?)(?:&amp;|&|$)';
+  REGEXP_MOVIE_TITLE = REGEXP_TITLE_META_OGTITLE;
+  REGEXP_MOVIE_STREAMS = '\{\s*"source"\s*:\s*"(?P<URL>https?://[^"]+)"\s*,\s*"type"\s*:\s*"[^"]*"\s*,\s*"quality_label"\s*:\s*"[^"]*"\s*,\s*"quality"\s*:\s*"(?P<QUALITY>\d+)[^"]*"\s*\}';
 
 { TDownloader_Stream }
 
@@ -112,7 +94,7 @@ end;
 
 class function TDownloader_Stream.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);
+  Result := Format(REGEXP_COMMON_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
 
 constructor TDownloader_Stream.Create(const AMovieID: string);
@@ -120,15 +102,13 @@ begin
   inherited Create(AMovieID);
   InfoPageEncoding := peUTF8;
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
-  MovieParamsRegExp := RegExCreate(REGEXP_MOVIE_PARAMS);
-  FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
+  StreamsRegexp := RegExCreate(REGEXP_MOVIE_STREAMS);
 end;
 
 destructor TDownloader_Stream.Destroy;
 begin
   RegExFreeAndNil(MovieTitleRegExp);
-  RegExFreeAndNil(MovieParamsRegExp);
-  RegExFreeAndNil(FlashVarsParserRegExp);
+  RegExFreeAndNil(StreamsRegexp);
   inherited;
 end;
 
@@ -139,107 +119,37 @@ end;
 
 function TDownloader_Stream.GetMovieInfoUrlForID(const ID: string): string;
 begin
-  Result := 'http://www.stream.cz/video/' + ID;
-end;
-
-function TDownloader_Stream.GetFlashVarsIdStrings(out ID, cdnLQ, cdnHQ, cdnHD, Title: string): boolean;
-begin
-  ID := 'id';
-  cdnLQ := 'cdnLQ';
-  cdnHQ := 'cdnHQ';
-  cdnHD := 'cdnHD';
-  Title := '';
-  Result := True;
+  Result := 'http://www.stream.cz/' + ID;
 end;
 
 function TDownloader_Stream.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-var {$IFDEF XMLINFO}
-    Xml: TXmlDoc;
-    TitleNode, ContentNode: TjanXmlNode2;
-    {$ENDIF}
-    Params, CdnID, CdnLQ, CdnHQ, CdnHD, ID, Title: string;
-    AttrCdnID, AttrCdnLQ, AttrCdnHQ, AttrCdnHD, AttrTitle: string;
+var
+  BestUrl, Url, sQuality: string;
+  BestQuality, Quality: integer;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  Params := '';
-  CdnID := '';
-  if ExternalCDNID <> '' then
-    CdnID := ExternalCDNID
-  else
-    begin
-    if not GetRegExpVar(MovieParamsRegExp, Page, 'PARAM', Params) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-    else if not GetFlashVarsIdStrings(AttrCdnID, AttrCdnLQ, AttrCdnHQ, AttrCdnHD, AttrTitle) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO)
-    else if not GetRegExpVarPairs(FlashVarsParserRegExp, Params,
-                   [AttrCdnID, AttrCdnLQ, AttrCdnHQ, AttrCdnHD, AttrTitle],
-                   [@ID,       @CdnLQ,    @CdnHQ,    @CdnHD,    @Title ])
-    then
-    //else if not GetRegExpVar(MovieCdnIdFromParamsRegExp, Params, 'ID', CdnID) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-    else
-      begin
-      if CdnHD <> '' then
-        CdnID := CdnHD
-      else if CdnHQ <> '' then
-        CdnID := CdnHQ
-      else if CdnLQ <> '' then
-        CdnID := CdnLQ
-      else
+  BestUrl := '';
+  BestQuality := -1;
+  if GetRegExpVars(StreamsRegexp, Page, ['URL', 'QUALITY'], [@Url, @sQuality]) then
+    repeat
+      Quality := StrToIntDef(sQuality, 0);
+      if Quality > BestQuality then
         begin
-        CdnID := '';
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
+        BestUrl := Url;
+        BestQuality := Quality;
         end;
-      end;
-    end;
-  if CdnID <> '' then
+    until not GetRegExpVarsAgain(StreamsRegexp, ['URL', 'QUALITY'], [@Url, @sQuality]);
+  if BestUrl <> '' then
     begin
-    {$IFDEF XMLINFO}
-    if GetRegExpVar(MovieIdFromParamsRegExp, Params, 'ID', ID) then
-      try
-        if DownloadXml(Http, 'http://flash.stream.cz/get_info/' + ID, Xml) then
-          try
-            if GetXmlVar(Xml, 'video/title', Title) then
-              SetName(Title);
-          finally
-            Xml.Free;
-            end;
-      except
-        ;
-        end;
-    {$ENDIF}
-    if DownloadPage(Http, 'http://cdn-dispatcher.stream.cz/?id=' + CdnID, hmHEAD) then
-      begin
-      if Title <> '' then
-        SetName(Title);
-      MovieURL := LastUrl;
-      Result := True;
-      SetPrepared(True);
-      end;
+    MovieUrl := JSDecode(BestUrl);
+    SetName(UrlDecode(UnpreparedName));
+    SetPrepared(True);
+    Result := True;
     end;
-end;
-
-function TDownloader_Stream.Prepare: boolean;
-begin
-  ExternalCDNID := '';
-  Result := inherited Prepare;
-end;
-
-{ TDownloader_Stream_Cache }
-
-class function TDownloader_Stream_Cache.Provider: string;
-begin
-  Result := TDownloader_Stream.Provider;
-end;
-
-class function TDownloader_Stream_Cache.UrlRegExp: string;
-begin
-  Result := Format(DIRECTURLREGEXP_BEFORE_ID + '(?P<%s>' + DIRECTURLREGEXP_ID + ')' + DIRECTURLREGEXP_AFTER_ID, [MovieIDParamName]);
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Stream_Cache);
   RegisterDownloader(TDownloader_Stream);
 
 end.

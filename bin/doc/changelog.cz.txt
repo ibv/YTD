@@ -1,11 +1,38 @@
 ﻿______________________________________________________________________________
 
-YTD v1.29                                                    (c) 2009-13 Pepak
+YTD v1.30                                                    (c) 2009-13 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.30:
+
+    * Aktualizovaní poskytovatelé:
+      - Hrej.cz
+      - iDnes.cz
+      - MojeVideo.sk
+      - PornTube.com
+      - Tube8.com
+      - ZDF.de
+
+    * CeskaTelevize.cz: Opět se stahují nejkvalitnější videa. Problém byl
+      v tom, že videa se stopou pro neslyšící mají vyznačenou bitrate 5000,
+      vyšší než všechna ostatní. V programu je to nyní řešeno tak, že pokud
+      není explicitně uvedena maximální povolená bitrate, dosadí se 4999.
+
+    * NovaMov.com: V zásadě je připraveno, jenom nemám žádné funkční video,
+      na kterém bych mohl dokončit poslední (ale nezbytnou) část stahování.
+
+    * Stream.cz: Opět funkční. Odstraněny servery HudebniVideoKlipy.cz, 
+      Mixer.cz, Novinky.cz, Sport.cz, Super.cz, které ho použivaly.
+
+    * Pokud se YTD potřebuje zeptat na přepsání souboru, vždy otevře dialog
+      v adresáři, ve kterém se ten soubor nachází. Dosud to záviselo na tom,
+      jestli byl explicitně určen cílový adresář.
+
+
 
   v1.29:
 

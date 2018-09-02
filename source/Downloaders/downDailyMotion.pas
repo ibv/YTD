@@ -75,7 +75,7 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_MOVIE_PARAMS = '[{,]\s*"sequence"\s*:\s*"(?P<PARAMS>.+?)"';
+  REGEXP_MOVIE_PARAMS = '&apiSequenceURL=(?P<PARAMS>.+?)["&]';
   REGEXP_JSON_VARS = '"(?P<VARNAME>[a-z_][a-z0-9_]*)"\s*:\s*"(?P<VARVALUE>.*?)"';
 
 { TDownloader_DailyMotion }
