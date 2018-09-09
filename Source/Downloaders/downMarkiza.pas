@@ -36,66 +36,102 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit downMarkiza;
 {$INCLUDE 'ytd.inc'}
+{$DEFINE CONVERTSUBTITLES}
+  // Convert subtitles to .srt format
+
 
 interface
 
 uses
   SysUtils, Classes,
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+  {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
+  uPCRE, uXml, HttpSend, SynaUtil,
+  uOptions,
+  {$IFDEF GUI}
+    ///guiDownloaderOptions,
+    {$IFDEF GUI_WINAPI}
+//      guiOptionsWINAPI_CT,
+    {$ELSE}
+      ///guiOptionsLCL_CT,
+    {$ENDIF}
+  {$ENDIF}
+  uDownloader, uCommonDownloader, uHLSDownloader;
 
 type
-  TDownloader_Markiza = class(THttpDownloader)
+  TDownloader_Markiza = class(THLSDownloader)
     private
+      {$IFDEF MULTIDOWNLOADS}
+      fNameList: TStringList;
+      fUrlList: TStringList;
+      fDownloadIndex: integer;
+      {$ENDIF}
     protected
-      {$IFDEF JSON}
-      JSONSourceRegExp: TRegExp;
-      TitleFixRegExp: TRegExp;
-      {$ELSE}
-      PlaylistItemRegExp: TRegExp;
-      NotAnAdRegExp: TRegExp;
-      DescriptionRegExp: TRegExp;
+      ///PlaylistInfoRegExp: TRegExp;
+      ///PlaylistUrlRegExp: TRegExp;
+      StreamUrlRegExp: TRegExp;
+      StreamTitleRegExp: TRegExp;
+      StreamTitle2RegExp: TRegExp;
+      StreamTitleFromPageRegExp: TRegExp;
+      IFrameUrlRegExp: TRegExp;
+      {$IFDEF MULTIDOWNLOADS}
+      property NameList: TStringList read fNameList;
+      property UrlList: TStringList read fUrlList;
+      property DownloadIndex: integer read fDownloadIndex write fDownloadIndex;
       {$ENDIF}
     protected
       function GetMovieInfoUrl: string; override;
+      function GetFileNameExt: string; override;
       function AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean; override;
+      ///function GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;
+      function GetPlaylistInfo(Http: THttpSend; const Page: string; out Title: string): boolean;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
+      {$IFDEF MULTIDOWNLOADS}
+      function Prepare: boolean; override;
+      function ValidatePrepare: boolean; override;
+      function First: boolean; override;
+      function Next: boolean; override;
+      {$ENDIF}
     end;
+
+
+const
+  OPTION_CT_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
+  OPTION_CT_MAXBITRATE_DEFAULT = 0;
 
 implementation
 
 uses
   uStringConsts,
-  {$IFDEF JSON}
-  uJSON,
-  {$ENDIF}
+  uStrings,
   uDownloadClassifier,
+  uFunctions,
   uMessages;
 
-// http://video.markiza.sk/archiv-tv-markiza/112/8723
-// http://doma.markiza.sk/archiv-doma/rebeli-na-strednej/60667
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*(?<!voyo\.)(?<!particka\.)markiza\.sk/archiv-(?:[^/]*)/[^/]+/';
-    // Pozn.: Musi tam byt dva look-behindy, protoze look-behind musi mit pevnou delku
-  URLREGEXP_ID =        '[0-9]+';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:markiza)\.sk/.+';
   URLREGEXP_AFTER_ID =  '';
 
-{$IFDEF JSON}
 const
-  JSON_SOURCE_REGEXP = '(?P<JSON>\{.*\})';
-  JSON_TITLE_FIX_REGEXP = '(?P<TITLE>.*?)[ .-]*$';
-{$ELSE}
-const
-  PLAYLIST_ITEM_REGEXP = '\{\s*"provider"\s*:(?P<INSIDE>.*?)"url"\s*:\s*"(?P<URL>https?://[^"]+)"';
-  NOTANAD_REGEXP = '"notanadd"\s*:\s*(?P<TRUE>true)\b';
-  DESCRIPTION_REGEXP = '"description"\s*:\s*"(?P<DESC>[^"]*?)[ .-]*"';
-{$ENDIF}
-
-{ TDownloader_Markiza }
+  ///REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
+  ///REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_STREAM_URL = 'bitrates\s*=(?:.|\s)+?:\s"(?P<URLS>.+?)"';
+  ///REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_STREAM_TITLE = 'mb-5(?:.|\s)+?"e-title">(?P<TITLE>.+?)</h3>';
+  ///REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
+  ///REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
+  REGEXP_IFRAME_URL = '<iframe\s+src="(?P<URL>(.+?))" style';
+  REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
 
 class function TDownloader_Markiza.Provider: string;
 begin
@@ -104,124 +140,195 @@ end;
 
 class function TDownloader_Markiza.UrlRegExp: string;
 begin
-  Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
+  Result := Format(REGEXP_BASE_URL, [URLREGEXP_BEFORE_ID, MovieIDParamName, URLREGEXP_ID, URLREGEXP_AFTER_ID]);
 end;
+
+class function TDownloader_Markiza.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features;
+end;
+
+
+
 
 constructor TDownloader_Markiza.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUTF8;
-  {$IFDEF JSON}
-  JSONSourceRegExp := RegExCreate(JSON_SOURCE_REGEXP);
-  TitleFixRegExp := RegExCreate(JSON_TITLE_FIX_REGEXP);
-  {$ELSE}
-  PlaylistItemRegExp := RegExCreate(PLAYLIST_ITEM_REGEXP);
-  NotAnAdRegExp := RegExCreate(NOTANAD_REGEXP);
-  DescriptionRegExp := RegExCreate(DESCRIPTION_REGEXP);
+  {$IFDEF MULTIDOWNLOADS}
+  fNameList := TStringList.Create;
+  fUrlList := TStringList.Create;
   {$ENDIF}
+  InfoPageEncoding := peUTF8;
+  ///PlaylistInfoRegExp := RegExCreate(REGEXP_PLAYLIST_INFO);
+  ///PlaylistUrlRegExp := RegExCreate(REGEXP_PLAYLIST_URL);
+  StreamUrlRegExp := RegExCreate(REGEXP_STREAM_URL);
+  StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE);
+  ///StreamTitle2RegExp := RegExCreate(REGEXP_STREAM_TITLE_BETTER);
+  StreamTitleFromPageRegExp := RegExCreate(REGEXP_STREAM_TITLEFROMPAGE);
+  IFrameUrlRegExp := RegExCreate(REGEXP_IFRAME_URL);
+  Referer := GetMovieInfoUrl;
 end;
 
 destructor TDownloader_Markiza.Destroy;
 begin
-  {$IFDEF JSON}
-  RegExFreeAndNil(JSONSourceRegExp);
-  RegExFreeAndNil(TitleFixRegExp);
-  {$ELSE}
-  RegExFreeAndNil(PlaylistItemRegExp);
-  RegExFreeAndNil(NotAnAdRegExp);
-  RegExFreeAndNil(DescriptionRegExp);
+  ///RegExFreeAndNil(PlaylistInfoRegExp);
+  ///RegExFreeAndNil(PlaylistUrlRegExp);
+  RegExFreeAndNil(StreamUrlRegExp);
+  RegExFreeAndNil(StreamTitleRegExp);
+  ///RegExFreeAndNil(StreamTitle2RegExp);
+  RegExFreeAndNil(StreamTitleFromPageRegExp);
+  RegExFreeAndNil(IFrameUrlRegExp);
+  {$IFDEF MULTIDOWNLOADS}
+  FreeAndNil(fNameList);
+  FreeAndNil(fUrlList);
   {$ENDIF}
   inherited;
 end;
 
 function TDownloader_Markiza.GetMovieInfoUrl: string;
 begin
-  Result := 'http://www.markiza.sk/js/flowplayer/config.js?&media=' + MovieID;
+  Result := MovieID;
 end;
 
 function TDownloader_Markiza.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
-{$IFDEF JSON}
-var JSON, Playlist, NotAnAd, UrlNode, TitleNode: TJSON;
-    JSONsrc, Title: string;
-    i: integer;
-{$ELSE}
-var Url, Inside, NotAnAd, Title: string;
-{$ENDIF}
+var
+  Prot, User, Pass, Host, Port, Part, Para, Page2: string;
+  PlaylistType, PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Title, Title2: string;
+  {$IFDEF MULTIDOWNLOADS}
+  Urls: TStringArray;
+  i: integer;
+  {$ELSE}
+  Url: string;
+  {$ENDIF}
+
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  {$IFDEF JSON}
-    {$IFDEF FPC}
-      {$MESSAGE WARN 'LkJSON fails on Markiza.sk'}
-    {$ELSE}
-      {$IFDEF DELPHI6_UP}
-        {$MESSAGE WARN 'LkJSON fails on Markiza.sk'}
-      {$ENDIF}
-    {$ENDIF}
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE);
-    if GetRegExpVar(JSONSourceRegExp, Page, 'JSON', JSONsrc) then
-      begin
-      JSON := JSONCreate(JSONsrc);
-      if JSON <> nil then
-        try
-          if JSONNodeByPath(JSON, 'playlist', Playlist) then
-            for i := 0 to Pred(Playlist.Count) do
-              if Playlist.Child[i] <> nil then
-                if Playlist.Child[i] is TlkJSONobject then
-                  if JSONNodeByPath(Playlist.Child[i], 'customProperties/notanadd', NotAnAd) then
-                    if (NotAnAd is TlkJSONboolean) and TlkJSONboolean(NotAnAd).Value then
-                      begin
-                      if JSONNodeByPath(Playlist.Child[i], 'url', UrlNode) then
-                        begin
-                        MovieUrl := UrlNode.Value;
-                        SetPrepared(True);
-                        Result := True;
-                        end;
-                      if JSONNodeByPath(Playlist.Child[i], 'customProperties/description', TitleNode) then
-                        if GetRegExpVar(TitleFixRegExp, TitleNode.Value, 'TITLE', Title) then
-                          SetName(Title)
-                        else
-                          Name := TitleNode.Value;
-                      Exit;
-                      end;
 
-        finally
-          JSONFreeAndNil(JSON);
-          end;
-      end;
-  {$ELSE ~JSON}
-    if PlaylistItemRegExp.Match(Page) then
+  ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
+  if not GetRegExpVar(StreamTitleRegExp, Page, 'TITLE', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
+  else if not GetRegExpVar(IFrameUrlRegExp, Page, 'URL', PlaylistUrlPage) then
+      if PlaylistUrlPage <> '' then
+      SetLastErrorMsg(Format(ERR_SERVER_ERROR, [PlaylistUrlPage]))
+    else
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http, PlaylistUrlPage, Playlist) then
+     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
+  {$IFDEF MULTIDOWNLOADS}
+  else if not GetRegExpAllVar(StreamUrlRegExp, Playlist, 'URLS', Urls) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  {$ELSE}
+  else if not GetRegExpVar(StreamUrlRegExp, Playlist, 'URL', Url) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+  {$ENDIF}
+  else
+    begin
+    Title := trim(AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title))));
+    ///if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
+    ///  Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
+    if Title = '' then
+      if not GetRegExpVar(StreamTitleFromPageRegExp, Page, 'TITLE', Title) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
+    {$IFDEF MULTIDOWNLOADS}
+    for i := 0 to Pred(Length(Urls)) do
       begin
-      repeat
-        if PlaylistItemRegExp.SubexpressionByName('URL', Url) then
-          if PlaylistItemRegExp.SubexpressionByName('INSIDE', Inside) then
-            if GetRegExpVar(NotAnAdRegExp, Inside, 'TRUE', NotAnAd) then
-              begin
-              if GetRegExpVar(DescriptionRegExp, Inside, 'DESC', Title) then
-              {$IFDEF MULTIDOWNLOADS}
-                NameList.Add(Title);
-              UrlList.Add(Url);
-              {$ELSE}
-                Name := Trim(Title);
-              MovieUrl := Url;
-              SetPrepared(True);
-              Result := True;
-              Break;
-              {$ENDIF}
-              end;
-      until not PlaylistItemRegExp.MatchAgain;
-      {$IFDEF MULTIDOWNLOADS}
-      if UrlList.Count > 0 then
-        begin
-        SetPrepared(True);
-        Result := True;
-        end;
-      {$ENDIF}
+      UrlList.Add(JSDecode(Urls[i]));
+      if Length(Urls) > 1 then
+        NameList.Add(Format('%s [%d]', [Title, Succ(i)]))
+      else
+        NameList.Add(Title);
       end;
-  {$ENDIF ~JSON}
+    Name := NameList[0];
+    {$ENDIF}
+    Name := Title;
+    MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
+    SetPrepared(True);
+    Result := True;
+    end;
 end;
+
+
+
+function TDownloader_Markiza.GetFileNameExt: string;
+begin
+  Result := '.ts';
+end;
+
+{function TDownloader_Markiza.GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;
+var
+  Url, Page2: string;
+begin
+  Result := GetRegExpVars(PlaylistInfoRegExp, Page, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
+  if not Result then
+    if GetRegExpVar(IFrameUrlRegExp, Page, 'URL', Url) then
+      if DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), Page2, peUtf8) then
+        Result := GetRegExpVars(PlaylistInfoRegExp, Page2, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
+end;}
+
+function TDownloader_Markiza.GetPlaylistInfo(Http: THttpSend; const Page: string; out Title: string): boolean;
+var
+  Url, Page2: string;
+begin
+  Result := GetRegExpVars(StreamTitleRegExp, Page, ['TITLE'], [@Title]);
+end;
+
+{$IFDEF MULTIDOWNLOADS}
+
+function TDownloader_Markiza.Prepare: boolean;
+begin
+  NameList.Clear;
+  UrlList.Clear;
+  DownloadIndex := 0;
+  Result := inherited Prepare;
+end;
+
+function TDownloader_Markiza.ValidatePrepare: boolean;
+var
+  DownIndex: integer;
+begin
+  DownIndex := DownloadIndex;
+  try
+    Result := inherited ValidatePrepare;
+  finally
+    DownloadIndex := DownIndex;
+    end;
+end;
+
+function TDownloader_Markiza.First: boolean;
+begin
+  if ValidatePrepare then
+    if UrlList.Count <= 0 then
+      Result := MovieURL <> ''
+    else
+      begin
+      DownloadIndex := -1;
+      Result := Next;
+      end
+  else
+    Result := False;
+end;
+
+function TDownloader_Markiza.Next: boolean;
+begin
+  Result := False;
+  if ValidatePrepare then
+    begin
+    DownloadIndex := Succ(DownloadIndex);
+    if (DownloadIndex >= 0) and (DownloadIndex < UrlList.Count) then
+      begin
+      Name := NameList[DownloadIndex];
+      SetFileName('');
+      MovieURL := UrlList[DownloadIndex];
+      Result := True;
+      end;
+    end;
+end;
+
+{$ENDIF}
 
 initialization
   RegisterDownloader(TDownloader_Markiza);
 
 end.
+
