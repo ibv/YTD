@@ -55,7 +55,8 @@ uses
   SynaCode,
   uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
   guiOptions, guiFunctions, uDialogs, uUpgrade,
-  uDownloadList, uDownloadListItem, uDownloadThread;
+  uDownloadList, uDownloadListItem, uDownloadThread, System.ImageList,
+  System.Actions;
 
 {$IFDEF SYSTRAY}
 const
@@ -264,6 +265,9 @@ begin
     DownloadList.OnDownloadProgress := DownloadListProgress;
     DownloadList.OnError := DownloadListItemChange;
     DownloadList.OnFinished := DownloadListItemChange;
+    {$IFDEF  DELPHI23_UP}
+      Downloads.DoubleBuffered:=True;
+    {$ENDIF}
     {$IFDEF CONVERTERS}
     DownloadList.OnConverted := DownloadListItemChange;
     {$ELSE}
@@ -662,7 +666,7 @@ end;
 
 procedure TFormYTD.actReportBugExecute(Sender: TObject);
 begin
-  if Downloads.SelCount < 1 then
+  ///if Downloads.SelCount < 1 then
     Exit;
   if not IsSSLAvailable then
     MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
@@ -675,7 +679,7 @@ end;
 
 procedure TFormYTD.actDonateExecute(Sender: TObject);
 begin
-  Run(DONATE_URL, Handle);
+  ///Run(DONATE_URL, Handle);
 end;
 
 procedure TFormYTD.actConvertExecute(Sender: TObject);

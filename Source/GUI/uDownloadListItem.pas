@@ -361,7 +361,7 @@ begin
     {$ENDIF}
     Thread.Terminate;
     {$IFDEF DELPHITHREADS}
-    Thread.WaitFor;
+    ///Thread.WaitFor;
     {$ENDIF}
     end;
 end;
