@@ -1,11 +1,21 @@
 ﻿______________________________________________________________________________
 
-YTD v1.59                                                    (c) 2009-18 Pepak/IVB
+YTD v1.60                                                    (c) 2009-18 Pepak/ibv
+https://ibv.github.io/YTD/
+
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.60:
+
+    * Updated providers:
+      - Novinky.cz
+      - Novaplus.cz
+      - Markiza.sk
+
 
   v1.59.2:
 
