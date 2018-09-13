@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.60.20180910.0</version>
+  <version>1.60.20180913.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -824,9 +824,9 @@
         </url>
       </nested_download>
     </script>
-    <script id="iprima.cz" provider="iPrima.cz" changed="20170203">
+    <script id="iprima.cz" provider="iPrima.cz" changed="20180913">
       <regexps>
-        <regexp id="productid1" match="ID"><![CDATA[<input\s+type="hidden"\s+name="productId"\s+value="(?P<ID>.+?)"]]></regexp>
+        <regexp id="productid1" match="ID"><![CDATA[prehravac/embedded\?id=(?P<ID>.+?)"]]></regexp>			
         <regexp id="productid2" match="ID"><![CDATA[_videoimport(?P<ID>\w+?)_]]></regexp>
         <regexp id="statusok" match="CONTENT"><![CDATA[^(?P<CONTENT>OK)$]]></regexp>
         <regexp id="options" match="CONTENT"><![CDATA[\bvar\s+\w*[pP]layerOptions\s*=\s*(?P<CONTENT>\{.*?\})\s*;]]></regexp>
