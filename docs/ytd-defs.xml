@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.60.20180913.0</version>
+  <version>1.60.20180915.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -826,7 +826,7 @@
     </script>
     <script id="iprima.cz" provider="iPrima.cz" changed="20180913">
       <regexps>
-        <regexp id="productid1" match="ID"><![CDATA[prehravac/embedded\?id=(?P<ID>.+?)"]]></regexp>			
+        <regexp id="productid1" match="ID"><![CDATA[prehravac/embedded\?id=(?P<ID>.+?)"]]></regexp>
         <regexp id="productid2" match="ID"><![CDATA[_videoimport(?P<ID>\w+?)_]]></regexp>
         <regexp id="statusok" match="CONTENT"><![CDATA[^(?P<CONTENT>OK)$]]></regexp>
         <regexp id="options" match="CONTENT"><![CDATA[\bvar\s+\w*[pP]layerOptions\s*=\s*(?P<CONTENT>\{.*?\})\s*;]]></regexp>
@@ -1047,6 +1047,39 @@
           </url>
         </http_download>
       </multi_regexp>
+    </script>
+    <script id="markiza.sk" provider="Markiza.sk" changed="20180915">
+      <regexps>
+        <regexp id="iframe1" match="URL"><![CDATA[<iframe\s+src="(?P<URL>(.+?))" style]]></regexp>
+	<regexp id="title" match="TITLE"><![CDATA[videoTitle:\s*"(?P<TITLE>.+?)",]]></regexp>
+        <regexp id="url" match="URL"><![CDATA[var (:bitrates|src)\s*=(?:.|\s)+?:\s"(?P<URL>.+?)"]]></regexp>
+      </regexps>
+      <set_var id="page">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="_movie_id"/>
+          </url>
+        </download_page>
+      </set_var>
+      <set_var id="iframe">
+        <download_page encoding="utf8">
+          <url>
+            <regexp id="iframe1" content="page"/>
+          </url>
+        </download_page>
+      </set_var>
+       <set_var id="url">
+        <regexp id="url" content="iframe"/>
+      </set_var>
+      <hls_download>
+        <title>
+          <regexp id="title" content="iframe"/>
+        </title>
+        <url>
+          <get_var id="url"/>
+        </url>
+        <extension>.ts</extension>
+      </hls_download>
     </script>
     <script id="mc2.sk" provider="MC2.sk">
       <regexps>
@@ -2488,6 +2521,7 @@
     <url script="kaotic.com"><![CDATA[kaotic\.com/video/.+$]]></url>
     <url script="lidovky.cz"><![CDATA[lidovky\.cz/.+$]]></url>
     <url script="livestream.com"><![CDATA[livestream\.com/.+$]]></url>
+    <url script="markiza.sk"><![CDATA[markiza\.sk/.+$]]></url>
     <url script="mc2.sk"><![CDATA[mc2\.sk/.+$]]></url>
     <url script="natabanu.com"><![CDATA[natabanu\.com/.+$]]></url>
     <url script="nova.cz"><![CDATA[nova\.cz/.+$]]></url>
