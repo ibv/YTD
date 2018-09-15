@@ -125,7 +125,7 @@ const
 const
   ///REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
   ///REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
-  REGEXP_STREAM_URL = 'bitrates\s*=(?:.|\s)+?:\s"(?P<URLS>.+?)"';
+  REGEXP_STREAM_URL = 'var (:bitrates|src)\s*=(?:.|\s)+?:\s"(?P<URLS>.+?)"';
   ///REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_STREAM_TITLE = 'mb-5(?:.|\s)+?"e-title">(?P<TITLE>.+?)</h3>';
   ///REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
