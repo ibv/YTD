@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.60.20180915.0</version>
+  <version>1.60.20181114.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1048,11 +1048,13 @@
         </http_download>
       </multi_regexp>
     </script>
-    <script id="markiza.sk" provider="Markiza.sk" changed="20180915">
+    <script id="markiza.sk" provider="Markiza.sk" changed="20181114">
       <regexps>
         <regexp id="iframe1" match="URL"><![CDATA[<iframe\s+src="(?P<URL>(.+?))" style]]></regexp>
-	<regexp id="title" match="TITLE"><![CDATA[videoTitle:\s*"(?P<TITLE>.+?)",]]></regexp>
+        <regexp id="title" match="TITLE"><![CDATA[videoTitle:\s*"(?P<TITLE>.+?)",]]></regexp>
         <regexp id="url" match="URL"><![CDATA[var (:bitrates|src)\s*=(?:.|\s)+?:\s"(?P<URL>.+?)"]]></regexp>
+        <regexp id="chapters" match="URL"><![CDATA[relatedLoc: "(?P<URL>.+?)"]]></regexp>
+        <regexp id="chapurls" match="URL"><![CDATA[{"bitrates"(?:.|\s)+?{"hls":"(?P<URL>.+?)"(?:.|\s)+?"contentTitle":"(?P<TITLE>.+?)"]]></regexp>
       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
@@ -1068,10 +1070,43 @@
           </url>
         </download_page>
       </set_var>
-       <set_var id="url">
-        <regexp id="url" content="iframe"/>
-      </set_var>
-      <hls_download>
+      <if>  
+        <condition type="regexp_match" id="chapters" content="iframe">
+          <set_var id="url">
+            <decode_url>
+             <replace search="\" replacement="">
+	    <regexp id="chapters" content="iframe"/>
+            </replace>
+	    </decode_url>
+          </set_var>
+          <set_var id="playlist">
+          <download_page encoding="utf8">
+           <url>
+	     <get_var id="url"/>
+            </url>
+           </download_page>
+          </set_var>
+          <multi_regexp id="chapurls" content="playlist" var_prefix="ch_" match="TITLE,URL">
+	  <hls_download>
+	    <title>
+            <trim>
+              <strip_tags>
+                <get_var id="ch_TITLE"/>
+              </strip_tags>
+            </trim>
+          </title>
+          <url>
+            <get_var id="ch_URL"/>
+          </url>
+           <extension>.ts</extension>
+           </hls_download>
+	  </multi_regexp>
+        </condition>
+        <else>
+        <set_var id="url">
+          <regexp id="url" content="iframe"/>
+        </set_var>
+        <hls_download>
         <title>
           <regexp id="title" content="iframe"/>
         </title>
@@ -1079,7 +1114,9 @@
           <get_var id="url"/>
         </url>
         <extension>.ts</extension>
-      </hls_download>
+        </hls_download>
+        </else>
+      </if>
     </script>
     <script id="mc2.sk" provider="MC2.sk">
       <regexps>
