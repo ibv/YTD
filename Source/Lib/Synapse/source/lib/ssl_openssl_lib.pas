@@ -103,36 +103,48 @@ uses
 {$IFDEF CIL}
 const
   {$IFDEF LINUX}
-  DLLSSLName = 'libssl.so';
-  DLLUtilName = 'libcrypto.so';
+  DLLSSLNames: array[1..1] of string = ('libssl.so');
+  DLLUtilNames: array[1..1] of string = ('libcrypto.so');
   {$ELSE}
-  DLLSSLName = 'ssleay32.dll';
-  DLLUtilName = 'libeay32.dll';
+  DLLSSLNames: array[1..1] of string = ('ssleay32.dll');
+  DLLUtilNames: array[1..1] of string = ('libeay32.dll');
   {$ENDIF}
 {$ELSE}
 var
   {$IFNDEF MSWINDOWS}
     {$IFDEF DARWIN}
-    DLLSSLName: string = 'libssl.dylib';
-    DLLUtilName: string = 'libcrypto.dylib';
+    DLLSSLNames: array[1..1] of string = ('libssl.dylib');
+    DLLUtilNames: array[1..1] of string = ('libcrypto.dylib');
     {$ELSE}
      {$IFDEF OS2}
       {$IFDEF OS2GCC}
-    DLLSSLName: string = 'kssl.dll';
-    DLLUtilName: string = 'kcrypto.dll';
+      DLLSSLNames: array[1..1] of string = ('kssl.dll');
+      DLLUtilNames: array[1..1] of string = ('kcrypto.dll');
       {$ELSE OS2GCC}
-    DLLSSLName: string = 'ssl.dll';
-    DLLUtilName: string = 'crypto.dll';
+      DLLSSLNames: array[1..1] of string = ('ssl.dll');
+      DLLUtilNames: array[1..1] of string = ('crypto.dll');
       {$ENDIF OS2GCC}
      {$ELSE OS2}
-    DLLSSLName: string = 'libssl.so';
-    DLLUtilName: string = 'libcrypto.so';
+    DLLSSLNames: array[1..5] of string = ('libssl.so',
+                                          {above file only exist in dev-packages that are not installed by default on most distributions}
+                                          'libssl.so.1.1',
+                                          'libssl.so.1.0.2', 'libssl.so.1.0.0',
+                                          'libssl.so.10');
+    DLLUtilNames: array[1..5] of string = ('libcrypto.so',
+                                           {above file only exist in dev-packages that are not installed by default on most distributions}
+                                           'libcrypto.so.1.1',
+                                           'libcrypto.so.1.0.2', 'libcrypto.so.1.0.0',
+                                           'libcrypto.so.10'
+                                           );
      {$ENDIF OS2}
     {$ENDIF}
   {$ELSE}
-  DLLSSLName: string = 'ssleay32.dll';
-  DLLSSLName2: string = 'libssl32.dll';
-  DLLUtilName: string = 'libeay32.dll';
+  DLLSSLNames: array[1..4] of string = ('libssl-1_1.dll', 'ssleay32.dll', 'libssl32.dll',
+                                       {just in case someone renames them:}
+                                       'libssl.dll');
+  DLLUtilNames: array[1..4] of string = ('libcrypto-1_1.dll', 'libeay32.dll',
+                                       {just in case someone renames them:}
+                                        'libcrypto.dll', 'libeay.dll');
   {$ENDIF}
 {$ENDIF}
 
@@ -1861,7 +1873,7 @@ end;
 function InitSSLInterface: Boolean;
 var
   s: string;
-  x: integer;
+  x,i: integer;
 begin
   {pf}
   if SSLLoaded then
@@ -1878,12 +1890,14 @@ begin
       SSLLibHandle := 1;
       SSLUtilHandle := 1;
 {$ELSE}
-      SSLUtilHandle := LoadLib(DLLUtilName);
-      SSLLibHandle := LoadLib(DLLSSLName);
-  {$IFDEF MSWINDOWS}
-      if (SSLLibHandle = 0) then
-        SSLLibHandle := LoadLib(DLLSSLName2);
-  {$ENDIF}
+      for i := low(DLLUtilNames) to high(DLLUtilNames) do begin
+        SSLUtilHandle := LoadLib(DLLUtilNames[i]);
+        if SSLUtilHandle <> 0 then break;
+      end;
+      for i := low(DLLSSLNames) to high(DLLSSLNames) do begin
+        SSLLibHandle := LoadLib(DLLSSLNames[i]);
+        if SSLLibHandle <> 0 then break;
+      end;
 {$ENDIF}
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
       begin
