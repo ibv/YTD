@@ -18,6 +18,9 @@ double buffering, takže odpadá blikání při překreslování okna.
 Velikost exe se zvětšila z 1,3 MB (Delphi7) na 4MB (Delphi 10.2.3)
 ```
 
+## Download
+Zde [releases](../../releases)
+
 
 ## Stav
 
