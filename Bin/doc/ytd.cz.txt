@@ -2,6 +2,10 @@
 
 YTD v1.50+                                                   (c) 2009-16 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
+
+YTD v1.60+	                                             (c) 2018-19 ibv
+https://ibv.github.io/YTD/
+
 ______________________________________________________________________________
 
 Nástroj pro stahování videa z YouTube a dalších webových úložišť videa. Funguje 

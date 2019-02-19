@@ -1,13 +1,35 @@
 ﻿______________________________________________________________________________
 
-YTD v1.59                                                    (c) 2009-18 Pepak/IVB
+YTD v1.62                                                    (c) 2009-19 Pepak/ibv
+https://ibv.github.io/YTD/
+
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
 
-  v1.59a:
+  v1.62:
+
+    * Aktualizovaní poskytovatelé:
+      - Jihoceskatelevize.cz
+
+
+  v1.61:
+
+    * Aktualizovaní poskytovatelé:
+      - Youtube.com
+
+
+  v1.60:
+
+    * Aktualizovaní poskytovatelé:
+      - Novinky.cz
+      - Novaplus.cz
+      - Markiza.sk
+
+
+  v1.59.2:
 	  
     * Aktualizovaní poskytovatelé:
       - CeskaTelevize.cz
