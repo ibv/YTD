@@ -138,6 +138,7 @@ begin
     else
       begin
       BestPlaylistUrl := '';
+      BestPlaylistUrl := MovieUrl;
       BestPlaylistQuality := -1;
       PlaylistStream := TTextStream.Create(TStringStream.Create(Playlist), True);
       try

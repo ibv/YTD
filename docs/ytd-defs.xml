@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.61.20190211.0</version>
+  <version>1.62.20190219.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -905,6 +905,33 @@
           <regexp id="url" content="page"/>
         </url>
       </http_download>
+    </script>
+    <script id="jihoceskatelevize.cz" provider="JihoceskaTV.cz" changed="20190219">
+      <regexps>
+	<regexp id="title"><![CDATA[<title>(?P<TITLE>.*?) \|.+</title>]]></regexp>
+	<regexp id="url"><![CDATA[data-src="(?P<URL>.+?)"></div>]]></regexp>
+	<regexp id="chapurls" match="URL"><![CDATA[(?P<URL>video.+?\.ts)]]></regexp>
+      </regexps>
+      <set_var id="page">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="_movie_id"/>
+          </url>
+        </download_page>
+      </set_var>
+      <set_var id="title">
+         <regexp id="title" content="page"/>
+      </set_var>
+ 	  <hls_download>
+	    <title>
+                <get_var id="title"/>
+          </title>
+          <url>
+		<regexp id="url" content="page"/>
+          </url>
+	  
+           <extension>.ts</extension>
+           </hls_download>
     </script>
     <script id="joj.sk-embed" provider="Joj.sk" changed="20160706">
       <regexps>
@@ -2560,6 +2587,7 @@
     <url script="idnes.cz"><![CDATA[(?<!\brajce\.)idnes\.cz/.+$]]></url>
     <url script="iprima.cz"><![CDATA[iprima\.cz/.+$]]></url>
     <url script="itnsource.com"><![CDATA[itnsource\.com/.+$]]></url>
+    <url script="jihoceskatelevize.cz"><![CDATA[jihoceskatelevize\.cz/.+$]]></url>
     <url script="joj.sk-embed"><![CDATA[media\.joj\.sk/.+$]]></url>
     <url script="joj.sk"><![CDATA[joj\.sk/.+$]]></url>
     <url script="kaotic.com"><![CDATA[kaotic\.com/video/.+$]]></url>
