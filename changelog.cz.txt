@@ -13,6 +13,8 @@ CHANGELOG
 
     * Aktualizovaní poskytovatelé:
       - Jihoceskatelevize.cz
+      - iPrima.cz
+
 
 
   v1.61:
