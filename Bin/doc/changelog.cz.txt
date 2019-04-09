@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.62                                                    (c) 2009-19 Pepak/ibv
+YTD v1.63                                                    (c) 2009-19 Pepak/ibv
 https://ibv.github.io/YTD/
 
 http://www.pepak.net/ytd                                  http://www.pepak.net
@@ -9,10 +9,19 @@ ______________________________________________________________________________
 CHANGELOG
 ---------
 
+
+  v1.63:
+
+    * Aktualizovaní poskytovatelé:
+      - Ceskatelevize.cz
+ 
+
   v1.62:
 
     * Aktualizovaní poskytovatelé:
       - Jihoceskatelevize.cz
+      - iPrima.cz
+
 
 
   v1.61:

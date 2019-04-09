@@ -1,9 +1,9 @@
 object FormAbout: TFormAbout
   Left = 208
   Top = 104
-  Width = 430
-  Height = 300
   Caption = 'About YTD'
+  ClientHeight = 261
+  ClientWidth = 414
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,6 +13,9 @@ object FormAbout: TFormAbout
   OldCreateOrder = False
   Position = poOwnerFormCenter
   Scaled = False
+  DesignSize = (
+    414
+    261)
   PixelsPerInch = 96
   TextHeight = 13
   object LabelYTD: TLabel
@@ -81,10 +84,10 @@ object FormAbout: TFormAbout
   object LabelHomepage: TLabel
     Left = 112
     Top = 72
-    Width = 150
+    Width = 146
     Height = 13
     Anchors = [akTop, akRight]
-    Caption = 'http://www.pepak.net/ytd'
+    Caption = 'https://ibv.github.io/YTD'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11

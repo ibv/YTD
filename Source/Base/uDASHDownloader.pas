@@ -2,12 +2,12 @@
 
 ______________________________________________________________________________
 
-YTD v1.00                                                    (c) 2009-12 Pepak
-http://www.pepak.net/ytd                                  http://www.pepak.net
+YTD v1.63                                                    (c) 2019  ibv
+https://ibv.github.io/YTD/
 ______________________________________________________________________________
 
 
-Copyright (c) 2009-12 Pepak (http://www.pepak.net)
+Copyright (c) 201 ibv (https://ibv.github.io/YTD/)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit uHLSDownloader;
+unit uDASHdownloader;
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -44,13 +44,49 @@ uses
   {$ifdef mswindows}
     Windows,
   {$ELSE}
-    LCLIntf, LCLType, LMessages,
+  LCLIntf, LCLType, {LMessages,}
   {$ENDIF}
-  uPCRE, uXml, uHttp, uCompatibility, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uDASHDownloader;
+  uPCRE, uXml, uHttp, HttpSend, blcksock,
+  uDownloader, uCommonDownloader;
 
 type
-  THLSDownloader = class(TCommonDownloader)
+  TMPDObject = class
+    private
+      fBaseURL:  String;
+      fAudioList: TList;
+      fVideoList: TList;
+      fXml: TXmlDoc;
+      fMedia,fInit,
+      fAMedia,fAInit: string;
+      fAudioStartNumber,
+      fAudioEndNumber,
+      fVideoStartNumber,
+      fVideoEndNumber : integer;
+
+      procedure ParseMPD;
+    public
+      fm:  string;
+      constructor Create(Xml: TXmlDoc);
+      destructor Destroy;
+
+      function GetBestID(BandWidth:integer;Video:boolean = true):string;
+
+      property AudioList: TList read fAudioList;
+      property VideoList: TList read fVideoList;
+      property BaseURL: String read fBaseURL write fBaseURL;
+      property VideoMedia: string read fMedia;
+      property VideoInit: string read fInit;
+      property VideoStartNumber: integer read fVideoStartNumber;
+      property VideoEndNumber: integer read fVideoEndNumber;
+      property AudioMedia: string read fAMedia;
+      property AudioInit: string read fAInit;
+      property AudioStartNumber: integer read fAudioStartNumber;
+      property AudioEndNumber: integer read fAudioEndNumber;
+
+  end;
+
+
+  TDASHDownloader = class(TCommonDownloader)
     private
       fCookies: TStringList;
       fRetryCount: integer;
@@ -61,7 +97,6 @@ type
       fDownloadedPreviousFragments: int64;
       fAborted: boolean;
       fMaxBitRate: integer;
-      //
       fMPD: TMPDObject;
     protected
       QualityRegExp: TRegExp;
@@ -73,9 +108,6 @@ type
       procedure SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function InitDownloadInfo: boolean;
       procedure CleanupDownloadInfo;
-      //--
-      function InitDownloadInfoDASH: boolean;
-
       property Cookies: TStringList read fCookies;
       property VideoDownloader: THttpSend read fVideoDownloader;
       property Fragments: TStringList read fFragments;
@@ -86,142 +118,187 @@ type
       destructor Destroy; override;
       function Prepare: boolean; override;
       function Download: boolean; override;
-      //--
-      function DownloadDASH: boolean;
-
       procedure AbortTransfer; override;
       property RetryCount: integer read fRetryCount write fRetryCount;
+      property MPD: TMPDObject read fMPD;
     end;
 
 implementation
 
 uses
-  SynaUtil, SynaCode,
-  uLanguages, uMessages, uFunctions, uFiles
+  SynaUtil, strutils,
+  uLanguages, uMessages, uFunctions;
 
-  ;
 
-const
-  REGEXP_QUALITY = '^#.*?\bBANDWIDTH\s*=\s*(?P<QUALITY>\d+)';
 
-  //--
-  OPTION_CT_DASH_SUPPORT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'dash_support';
+{ TMPDObject }
 
-{ THLSDownloader }
+constructor TMPDObject.Create(Xml:TXmlDoc);
+begin
+  fXml := Xml;
+  fAudioList:=TList.Create;
+  fVideoList:=TList.Create;
+  fBaseURL := '';
+  fMedia:='';
+  fInit:='';
+  fAMedia:='';
+  fAInit:='';
+  fVideoStartNumber:=0;
+  fVideoEndNumber:=0;
+  fAudioStartNumber:=0;
+  fAudioEndNumber:=0;
 
-constructor THLSDownloader.Create(const AMovieID: string);
+  ParseMPD;
+end;
+
+
+destructor TMPDObject.Destroy;
+begin
+  FreeAndNil(fAudioList);
+  FreeAndNil(fVideoList);
+end;
+
+
+procedure TMPDObject.ParseMPD;
+var
+  Node,Node1 : TXmlNode;
+  lang: string;
+begin
+  if fXml.NodeByPath('BaseURL', Node) then
+      BaseURL := XmlValueIncludingCData(Node);
+
+  if fxml.NodeByPathAndAttr('Period/AdaptationSet','mimeType','video/mp4',Node1) then
+  begin
+    if XmlNodeByPath(Node1,'SegmentTemplate',Node) then
+    begin
+      fmedia := XmlAttribute(Node, 'media');
+      finit := XmlAttribute(Node, 'initialization');
+      fVideostartNumber := Node.ReadAttributeInteger('startNumber',0);
+    end;
+
+    Node1.FindNodes('S',fVideoList);
+    fVideoEndNumber := TXMLNode(fVideoList[0]).ReadAttributeInteger('r',0);
+    inc(fVideoEndNumber,fVideoList.count-1);
+
+    Node1.FindNodes('Representation',fVideoList);
+  end;
+
+  if fxml.NodeByPathAndAttr('Period/AdaptationSet','mimeType','audio/mp4',Node1) then
+  begin
+    lang := XmlAttribute(Node1, 'lang');
+
+    if XmlNodeByPath(Node1,'SegmentTemplate',Node) then
+    begin
+      famedia := XmlAttribute(Node, 'media');
+      fainit := XmlAttribute(Node, 'initialization');
+      fAudiostartNumber := Node.ReadAttributeInteger('startNumber',0);
+    end;
+
+    Node1.FindNodes('S',fAudioList);
+    fAudioEndNumber := TXMLNode(fAudioList[0]).ReadAttributeInteger('r',0);
+    inc(fAudioEndNumber,fAudioList.count-1);
+
+    Node1.FindNodes('Representation',fAudioList);
+
+  end;
+end;
+
+
+function TMPDObject.GetBestID(BandWidth:integer;Video:boolean = true):string;
+var
+  i,j,k,quality: integer;
+  id,media,init:string;
+  Node: TXmlNode;
+  List: TList;
+begin
+  result:='';
+  List:=fVideoList;
+  media:=fmedia;
+  init :=finit;
+  if not Video then
+  begin
+    List:=fAudioList;
+    media:=famedia;
+    init:=fainit;
+  end;
+  for i:=0 to List.Count-1 do
+  begin
+     Node := TXMLNode(List[i]);
+     id := XmlAttribute(node, 'id');
+     Quality := Node.ReadAttributeInteger('bandwidth',0);
+     if (BandWidth-Quality <= 0)  then  break;
+  end;
+  if id <> '' then result:=id;
+
+  Init := StringReplace(init,'$RepresentationID$',id,[]);
+  Media := StringReplace(media,'$RepresentationID$',id,[]);
+  // time based segment
+  if AnsiContainsStr(media, '$Time') then
+  begin
+    // ToDo
+  end
+  else
+  // id based segment
+  if AnsiContainsStr(media, '$Number') then
+  begin
+    media := StringReplace(media,'$Number','',[]);
+    j := pos('%',media);
+    k := LastDelimiter('$', media);
+    fm := copy(media,j+1,k-j-1);
+  end;
+
+  if Video then
+  begin
+    fmedia:=media;
+    finit:=init;
+  end
+  else
+  begin
+    famedia:=media;
+    fainit:=init;
+  end;
+
+
+end;
+
+
+
+
+{ TDASHDownloader }
+
+constructor TDASHDownloader.Create(const AMovieID: string);
 begin
   inherited;
   fCookies := TStringList.Create;
   fVideoDownloader := nil;
   fFragments := TStringList.Create;
   fRetryCount := 3;
-  QualityRegExp := RegExCreate(REGEXP_QUALITY);
   fMaxBitRate := MaxInt;
 end;
 
-destructor THLSDownloader.Destroy;
+destructor TDASHDownloader.Destroy;
 begin
   FreeAndNil(fCookies);
   FreeAndNil(fVideoDownloader);
   FreeAndNil(fFragments);
-  RegExFreeAndNil(QualityRegExp);
   FreeAndNil(fMPD);
   inherited;
 end;
 
-function THLSDownloader.CreateHttp: THttpSend;
+function TDASHDownloader.CreateHttp: THttpSend;
 begin
   Result := inherited CreateHttp;
   Result.Cookies.Assign(Cookies);
 end;
 
-function THLSDownloader.GetContentUrl: string;
+function TDASHDownloader.GetContentUrl: string;
 begin
-  Result := Format('HLS "%s"', [MovieURL]);
-  //--
-  if Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
-  begin
-    Result := Format('DASH "%s"', [MovieURL]);
-  end;
-
-end;
-
-function THLSDownloader.InitDownloadInfo: boolean;
-var
-  Http: THttpSend;
-  Playlist, BestPlaylistUrl, Line, sQuality: string;
-  BestPlaylistQuality, Quality: integer;
-  PlaylistStream: TTextStream;
-begin
-  Result := False;
-  CleanupDownloadInfo;
-  Http := CreateHttp;
-  try
-    if not DownloadPage(Http, MovieUrl, Playlist) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-    else
-      begin
-      BestPlaylistUrl := '';
-      BestPlaylistUrl := MovieUrl;
-      BestPlaylistQuality := -1;
-      PlaylistStream := TTextStream.Create(TStringStream.Create(Playlist), True);
-      try
-        while PlaylistStream.ReadLine(Line) do
-          if GetRegExpVar(QualityRegExp, Line, 'QUALITY', sQuality) then
-            begin
-            Quality := StrToIntDef(sQuality, 0);
-            if (fMaxBitRate-Quality >=0) and (Quality > BestPlaylistQuality) then
-              while PlaylistStream.ReadLine(Line) do
-                if Line <> '' then
-                  if Line[1] <> '#' then
-                    begin
-                    BestPlaylistUrl := GetRelativeUrl(MovieUrl, Line);
-                    BestPlaylistQuality := Quality;
-                    Break;
-                    end;
-            end;
-      finally
-        FreeAndNil(PlaylistStream);
-        end;
-      if BestPlaylistUrl <> '' then
-        if not DownloadPage(Http, BestPlaylistUrl, Playlist) then
-          SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-        else
-          begin
-          PlaylistStream := TTextStream.Create(TStringStream.Create(Playlist), True);
-          try
-            while PlaylistStream.ReadLine(Line) do
-              if Line <> '' then
-                if Line[1] <> '#' then
-                  //if IsHttpProtocol(Line) then
-                    begin
-                    Fragments.Add(GetRelativeUrl(BestPlaylistUrl, Line));
-                    if not Result then
-                      begin
-                      fVideoDownloader := CreateHttp;
-                      fVideoDownloader.Cookies.Assign(Http.Cookies);
-                      fVideoDownloader.Sock.OnStatus := SockStatusMonitor;
-                      fDownloadedThisFragment := 0;
-                      fDownloadedPreviousFragments := 0;
-                      Result := True;
-                      end;
-                    end;
-          finally
-            FreeAndNil(PlaylistStream);
-            end;
-          end;
-      end;
-  finally
-    FreeAndNil(Http);
-    if not Result then
-      CleanupDownloadInfo;
-    end;
+  Result := Format('DASH "%s"', [MovieURL]);
 end;
 
 
-//--
-function THLSDownloader.InitDownloadInfoDASH: boolean;
+
+function TDASHDownloader.InitDownloadInfo: boolean;
 var
   Http: THttpSend;
   init, id: string;
@@ -237,6 +314,7 @@ begin
     else
     begin
       id:='';
+
       fMPD := TMPDObject.Create(Xml);
       // video stream
       id   := fMPD.GetBestID(fMaxBitRate);
@@ -272,23 +350,21 @@ begin
       CleanupDownloadInfo;
     end;
 end;
-//--
 
-
-procedure THLSDownloader.CleanupDownloadInfo;
+procedure TDASHDownloader.CleanupDownloadInfo;
 begin
   Fragments.Clear;
   FreeAndNil(fVideoDownloader);
   Aborted := False;
 end;
 
-function THLSDownloader.Prepare: boolean;
+function TDASHDownloader.Prepare: boolean;
 begin
   Result := inherited Prepare;
   CleanupDownloadInfo;
 end;
 
-function THLSDownloader.Download: boolean;
+function TDASHDownloader.Download: boolean;
 var
   FinalFN, FN: string;
   Stream: TFileStream;
@@ -298,94 +374,9 @@ var
 begin
   inherited Download;
   Result := False;
-
-  if Options.ReadProviderOptionDef('CeskaTelevize.cz', 'dash_support', false) then
-  begin
-    result:=DownloadDASH;
-    exit;
-  end;
-
   if MovieURL = '' then
     SetLastErrorMsg(ERR_DOWNLOAD_EMPTY_URL)
   else if not InitDownloadInfo then
-    SetLastErrorMsg(ERR_DOWNLOAD_NOT_INITIALIZED)
-  else if Fragments.Count < 1 then
-    SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
-  else
-    begin
-    FinalFN := FileName;
-    if Options.DownloadToTempFiles then
-      FN := FinalFN + '.part'
-    else
-      FN := FinalFN;
-    if FileExists(FN) then
-      DeleteFile(PChar(FN));
-    try
-      SetLastErrorMsg(ERR_HTTP_NO_DATA_READ);
-      Stream := nil;
-      try
-        for i := 0 to Pred(Fragments.Count) do
-          begin
-          FragmentDownloaded := False;
-          Retry := RetryCount;
-          while Retry >= 0 do
-            if DownloadBinary(VideoDownloader, Fragments[i], FragmentData) then
-              begin
-              FragmentDownloaded := True;
-              Inc(fFragmentsDownloaded);
-              fDownloadedPreviousFragments := fDownloadedPreviousFragments + fDownloadedThisFragment;
-              fDownloadedThisFragment := 0;
-              if FragmentData <> '' then
-                begin
-                if Stream = nil then
-                  begin
-                  Stream := TFileStream.Create(FN, fmCreate);
-                  {$IFDEF SHAREABLEFILES}
-                  FreeAndNil(Stream);
-                  Stream := TFileStream.Create(FN, fmOpenWrite or fmShareDenyWrite);
-                  {$ENDIF}
-                  end;
-                Stream.WriteBuffer(FragmentData[1], Length(FragmentData));
-                end;
-              Break;
-              end
-            else
-              Dec(Retry);
-          if not FragmentDownloaded then
-            Exit;
-          end;
-        Result := True;
-      finally
-        FreeAndNil(Stream);
-        end;
-    finally
-      if Result then
-        if FN <> FinalFN then
-          begin
-          if FileExists(FinalFN) then
-            DeleteFile(PChar(FinalFN));
-          if FileExists(FN) then
-            if RenameFile(FN, FinalFN) then
-              FN := FinalFN;
-          end;
-      end;
-    end;
-end;
-
-//--
-function THLSDownloader.DownloadDASH: boolean;
-var
-  FinalFN, FN: string;
-  Stream: TFileStream;
-  FragmentDownloaded: boolean;
-  FragmentData: AnsiString;
-  i, Retry: integer;
-begin
-  inherited Download;
-  Result := False;
-  if MovieURL = '' then
-    SetLastErrorMsg(ERR_DOWNLOAD_EMPTY_URL)
-  else if not InitDownloadInfoDASH then
     SetLastErrorMsg(ERR_DOWNLOAD_NOT_INITIALIZED)
   else if Fragments.Count < 1 then
     SetLastErrorMsg(ERR_INVALID_MEDIA_INFO_PAGE)
@@ -459,9 +450,8 @@ begin
       end;
     end;
 end;
-//--
 
-procedure THLSDownloader.AbortTransfer;
+procedure TDASHDownloader.AbortTransfer;
 begin
   inherited;
   Aborted := True;
@@ -469,7 +459,7 @@ begin
     VideoDownloader.Sock.AbortSocket;
 end;
 
-procedure THLSDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string);
+procedure TDASHDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketReason; const Value: string);
 begin
   SetLastErrorMsg(_(SockStatusReasons[Reason]));
   if (Reason = HR_ReadCount) then
@@ -478,12 +468,12 @@ begin
     DoProgress;
 end;
 
-function THLSDownloader.GetDownloadedSize: int64;
+function TDASHDownloader.GetDownloadedSize: int64;
 begin
   Result := fDownloadedPreviousFragments + fDownloadedThisFragment;
 end;
 
-function THLSDownloader.GetTotalSize: int64;
+function TDASHDownloader.GetTotalSize: int64;
 var
   AverageSizePerFragment: int64;
 begin

@@ -1,9 +1,9 @@
 object FormSetup: TFormSetup
   Left = 18
   Top = 95
-  Width = 411
-  Height = 200
   Caption = 'Setup'
+  ClientHeight = 161
+  ClientWidth = 395
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +11,9 @@ object FormSetup: TFormSetup
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = True
+  DesignSize = (
+    395
+    161)
   PixelsPerInch = 96
   TextHeight = 13
   object LabelDestinationDir: TLabel

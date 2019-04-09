@@ -23,17 +23,18 @@ HD video, pokud je k dispozici.
 4. Protokoly MMS/RTSP
 5. Protokol HDS
 6. Protokol HLS
-7. Playlisty
-8. Konverze stáhnutých souborů
-9. Distribuční archív
-10. Konfigurace
-11. Syntaxe příkazového řádku
-12. Návratové kódy
-13. Lokalizace
-14. Podpora
-15. Kompilace
-16. Napsali o programu
-17. Licence
+7. Protokol MPEG-DASH
+8. Playlisty
+9. Konverze stáhnutých souborů
+10. Distribuční archív
+11. Konfigurace
+12. Syntaxe příkazového řádku
+13. Návratové kódy
+14. Lokalizace
+15. Podpora
+16. Kompilace
+17. Napsali o programu
+18. Licence
 
 
 
@@ -157,7 +158,16 @@ zabývat.
 
 
 
-7. PLAYLISTY
+7. PROTOKOL MPEG-DASH
+---------------------
+
+Od verze 1.63 je podporován protokol MPEG-DASH. Jde o protokol postavený na HTTP
+a je tvořen .mpd playlistem, který odkazuje na jednotlivé části videa a audia.
+
+
+
+
+8. PLAYLISTY
 ------------
 
 Od verze 0.19 jsou podporovány zdroje, ve kterých je jeden pořad tvořen
@@ -167,7 +177,7 @@ které ne - stahují se vždy všechny.
 
 
 
-8. KONVERZE STÁHNUTÝCH SOUBORŮ
+9. KONVERZE STÁHNUTÝCH SOUBORŮ
 ------------------------------
 
 Od verze 0.50 podporuje YouTube Downloader funkci, která do jisté míry
@@ -251,7 +261,7 @@ výhodu.
 
 
 
-9. DISTRIBUČNÍ ARCHÍV
+10. DISTRIBUČNÍ ARCHÍV
 ---------------------
 
 Až do verze 0.86 včetně byl YTD distribuován v archívu ZIP s tím, že si ho
@@ -296,7 +306,7 @@ distribučního modelu a dokonce k nim přidat:
 
 
 
-10. KONFIGURACE
+11. KONFIGURACE
 ---------------
 
 Od verze 0.50 používá YouTube Downloader pro svoji konfiguraci XML soubor
@@ -750,7 +760,7 @@ a "0" (ne).
 
 
 
-11. SYNTAXE PŘÍKAZOVÉHO ŘÁDKU
+12. SYNTAXE PŘÍKAZOVÉHO ŘÁDKU
 -----------------------------
 
   ytd.exe <param> [<param>] [<param>] ...
@@ -808,7 +818,7 @@ a "0" (ne).
 
 
 
-12. NÁVRATOVÉ KÓDY
+13. NÁVRATOVÉ KÓDY
 ------------------
 
 Verze pro příkazový řádek podporuje návratové kódy (errorlevel). Možné hodnoty
@@ -833,7 +843,7 @@ jsou:
 
 
 
-13. LOKALIZACE
+14. LOKALIZACE
 --------------
 
 Pro lokalizaci používá YouTube Downloader GNU GetText. Pro případné zájemce
@@ -865,10 +875,13 @@ i "default.po"), rád ho zařadím do budoucích verzí YouTube Downloaderu.
 
 
 
-14. PODPORA
+15. PODPORA
 -----------
 
 Podporu naleznete na následujících stránkách:
+
+- https://ibv.github.io/YTD/
+- https://github.com/ibv/YTD
 
 - Pepakovo fórum: 
   http://forum.pepak.net
@@ -878,8 +891,7 @@ Podporu naleznete na následujících stránkách:
   http://www.pepak.net/ytd/youtube-downloader-podpora/
 
 
-
-15. KOMPILACE
+16. KOMPILACE
 -------------
 
 Na domácí stránce programu naleznete i jeho zdrojový kód, který si můžete sami
@@ -895,6 +907,7 @@ Podporovány jsou následující kompilátory:
 - Delphi 2009
 - Delphi XE2
 - Delphi XE4
+- Delphi 10.3 CE
 - FreePascal
 
 Program by měl jít s minimálními úpravami zkompilovat i na ostatních verzích
@@ -942,7 +955,7 @@ WinAPI (DEFINE GUI_WINAPI v ytd.inc).
 
 
 
-16. NAPSALI O PROGRAMU
+17. NAPSALI O PROGRAMU
 ----------------------
 
 http://blog.zarohem.cz/clanek.asp?cislo=1605
@@ -955,7 +968,7 @@ http://magazin.stahuj.centrum.cz/youtube-downloader-stahujte-videa-i-z-ceskych-w
 
 
 
-17. LICENCE
+18. LICENCE
 -----------
 
 YouTube Downloader je publikován pod tzv. novou BSD licencí. Její text 

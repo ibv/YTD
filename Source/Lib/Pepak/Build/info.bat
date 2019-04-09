@@ -13,7 +13,7 @@ goto :eof
 :info
 set project=ytd
 set project_title=YTD
-set project_url=http://www.pepak.net/ytd
+set project_url=https://ibv.github.io/YTD
 set releasedir=..\
 set exedir=..\Bin\
 set srcdir=.\

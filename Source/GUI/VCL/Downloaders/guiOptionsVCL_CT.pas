@@ -46,6 +46,7 @@ uses
 
 type
   TFrameDownloaderOptionsPage_CT = class(TFrameDownloaderOptionsPageCommon)
+    CheckDash: TCheckBox;
     Label1: TLabel;
     LabelMaximumVideoBitrate: TLabel;
     EditMaximumVideoBitrate: TEdit;
@@ -80,13 +81,15 @@ end;
 procedure TFrameDownloaderOptionsPage_CT.LoadFromOptions;
 begin
   inherited;
-  EditMaximumVideoBitrate.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT));
+  EditMaximumVideoBitrate.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_CT_MAX_VIDEO_WIDTH, OPTION_CT_MAX_VIDEO_WIDTH_DEFAULT));
+  CheckDash.Checked := Options.ReadProviderOptionDef(Provider,OPTION_CT_DASH_SUPPORT,false);
 end;
 
 procedure TFrameDownloaderOptionsPage_CT.SaveToOptions;
 begin
   inherited;
-  Options.WriteProviderOption(Provider, OPTION_CT_MAXBITRATE, StrToIntDef(EditMaximumVideoBitrate.Text, 0));
+  Options.WriteProviderOption(Provider, OPTION_CT_MAX_VIDEO_WIDTH, StrToIntDef(EditMaximumVideoBitrate.Text, 0));
+  Options.WriteProviderOption(Provider, OPTION_CT_DASH_SUPPORT, CheckDash.Checked);
 end;
 
 end.

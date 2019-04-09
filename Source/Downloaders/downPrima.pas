@@ -103,7 +103,7 @@ type
 
 
 const
-  OPTION_Prima_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
+  OPTION_Prima_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_video_width';
   OPTION_Prima_MAXBITRATE_DEFAULT = 0;
 
 implementation

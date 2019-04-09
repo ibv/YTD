@@ -40,7 +40,12 @@ unit guiOptions;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   {$IFNDEF GUI_WINAPI} 
     Dialogs,
     {$IFDEF DELPHIXE4_UP}
@@ -93,6 +98,14 @@ type
 
 implementation
 
+
+{const
+
+  MB_APPLMODAL = $00000000;
+  MB_SYSTEMMODAL = $00001000;
+  MB_TASKMODAL = $00002000; }
+
+
 { TYTDOptionsGUI }
 
 {gnugettext: scan-all}
@@ -135,6 +148,10 @@ const
   DEFAULT_CONVERTER_TO_MP3 =
       'Convert movie to MP3'
       ;
+  DEFAULT_CONVERTER_TO_MP4 =
+      'Change container to .MP4'
+      ;
+
   ERROR_LOADING_CONFIG =
     'Error loading configuration file. Error %s:'#10 +
     '%s'#10 +
@@ -225,12 +242,14 @@ procedure TYTDOptionsGUI.BuildDefaultConfig;
       CONVERTER_ID_TO_XVID     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-xvid';
       CONVERTER_ID_TO_H264     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-h264';
       CONVERTER_ID_TO_MP3      {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-mp3';
+      CONVERTER_ID_TO_MP4      {$IFDEF MINIMIZESIZE} :string {$ENDIF} = '-convert-to-mp4';
       CONVERTER_TITLE_MENCODER {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'Mencoder - ';
       CONVERTER_TITLE_FFMPEG   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'FFmpeg - ';
       CONVERTER_TITLE_TO_AVI   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_AVI;
       CONVERTER_TITLE_TO_XVID  {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_XVID;
       CONVERTER_TITLE_TO_H264  {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_H264;
       CONVERTER_TITLE_TO_MP3   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_MP3;
+      CONVERTER_TITLE_TO_MP4   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = DEFAULT_CONVERTER_TO_MP4;
       CONVERTER_EXE_MENCODER   {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'mencoder.exe';
       CONVERTER_EXE_FFMPEG     {$IFDEF MINIMIZESIZE} :string {$ENDIF} = 'ffmpeg.exe';
   {$ENDIF}
@@ -239,6 +258,9 @@ begin
     {$IFDEF CONVERTERSMUSTBEACTIVATED}
       ConvertersActivated := False;
     {$ENDIF}
+
+    InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_MP4,  CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_MP4),  CONVERTER_EXE_FFMPEG,   '-i "{$FILEPATH}/{$FILENOEXT}.mpv" -i "{$FILEPATH}/{$FILENOEXT}.mpa" -codec copy -shortest -y "{$FILEPATH}{$FILENOEXT}.mp4"', cvMinimized);
+
     InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_AVI,  CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_AVI),  CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -acodec copy -vcodec copy -y "{$FULLPATH}.avi"', cvMinimized);
     InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_XVID, CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_XVID), CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -acodec libmp3lame -vcodec mpeg4 -b 1200k -vtag DX50 -y "{$FULLPATH}.avi"', cvMinimized);
     InitConverter(CONVERTER_ID_FFMPEG   + CONVERTER_ID_TO_H264, CONVERTER_TITLE_FFMPEG   + _(CONVERTER_TITLE_TO_H264), CONVERTER_EXE_FFMPEG,   '-i "{$FULLPATH}" -vcodec libx264 -preset fast -tune film -profile main -crf 22 -threads 0  -acodec aac -strict experimental -y "{$FULLPATH}.avi"', cvMinimized);

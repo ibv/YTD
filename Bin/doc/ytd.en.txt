@@ -24,16 +24,17 @@ has several variants, the highest-quality one is downloaded.
 4. MMS/RTSP protocols
 5. HDS protocol
 6. HLS protocol
-7. Playlists
-8. Conversion of downloaded files
-9. The distribution archive
-10. Configuration
-11. Command-line syntax
-12. Result codes
-13. Localization
-14. Support
-15. Compiling
-16. License
+7. MPEG-DASH protocol
+8. Playlists
+9. Conversion of downloaded files
+10. The distribution archive
+11. Configuration
+12. Command-line syntax
+13. Result codes
+14. Localization
+15. Support
+16. Compiling
+17. License
 
 
 
@@ -156,8 +157,16 @@ which won't be as easy to combine. When that happens, I will see what can
 I do about it.
 
 
+7. HLS PROTOCOL
+---------------
 
-7. PLAYLISTS
+Since version 1.63, the MPEG-DASH protocol is supported. It is a HTTP-based protocol
+built around a .mpdu playlist and these in turn contain links to the movie and audio
+chunks. 
+
+
+
+8. PLAYLISTS
 ------------
 
 Since version 0.19, sources which contain multiple files on one page are
@@ -167,7 +176,7 @@ of course use the GUI version and delete unwanted streams from there.
 
 
 
-8. CONVERSION OF DOWNLOADED FILES
+9. CONVERSION OF DOWNLOADED FILES
 ---------------------------------
 
 Version 0.50 added support for calling external applications after a download
@@ -254,7 +263,7 @@ the downloaded files, you can always do so in a BAT file.
 
 
 
-9. THE DISTRIBUTION ARCHIVE
+10. THE DISTRIBUTION ARCHIVE
 ---------------------------
 
 Up to version 0.86, YTD was distrubuted in the form of a standard ZIP archive,
@@ -299,7 +308,7 @@ of the ZIP archive as possible while adding new ones:
 
 
 
-10. CONFIGURATION
+11. CONFIGURATION
 ----------------
 
 Since version 0.50 stores YouTube Downloader its configuration in a XML file
@@ -777,7 +786,7 @@ except in file/directory names. Logical values (true-false) are stored as
 
 
 
-11. COMMAND-LINE SYNTAX
+12. COMMAND-LINE SYNTAX
 -----------------------
 
   ytd.exe <param> [<param>] [<param>] ...
@@ -835,7 +844,7 @@ except in file/directory names. Logical values (true-false) are stored as
 
 
 
-12. RESULT CODES
+13. RESULT CODES
 ----------------
 
 The command-line version supports result codes (errorlevel). Possible values
@@ -862,7 +871,7 @@ are:
 
 
 
-13. LOCALIZATION
+14. LOCALIZATION
 ----------------
 
 YouTube Downloader uses GNU GetText for its localization needs. If you are
@@ -892,10 +901,13 @@ and "default.po" files) for inclusion in future versions of YouTube Downloader.
 
 
 
-14. SUPPORT
+15. SUPPORT
 -----------
 
 Support is provided at:
+
+- https://ibv.github.io/YTD/
+- https://github.com/ibv/YTD
 
 - Pepak Forum: 
   http://forum.pepak.net
@@ -906,7 +918,7 @@ Support is provided at:
 
 
 
-15. COMPILING
+16. COMPILING
 -------------
 
 Source code to YouTube Downloader can be downloaded from the program's
@@ -922,6 +934,7 @@ These compilers are supported:
 - Delphi 2009
 - Delphi XE2
 - Delphi XE4
+- Delphi 10.3 CE
 - FreePascal
 
 It should be possible to compile the program with other versions of Delphi
@@ -968,7 +981,7 @@ With FreePascal, the graphical interface is only supported in the WinAPI mode
 
 
 
-16. LICENSE
+17. LICENSE
 -----------
 
 YouTube Downloader is published under the new BSD license. You can read the

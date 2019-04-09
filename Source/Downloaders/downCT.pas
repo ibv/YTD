@@ -103,8 +103,9 @@ type
 
 
 const
-  OPTION_CT_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
-  OPTION_CT_MAXBITRATE_DEFAULT = 0;
+  OPTION_CT_MAX_VIDEO_WIDTH {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_video_width';
+  OPTION_CT_MAX_VIDEO_WIDTH_DEFAULT = 0;
+  OPTION_CT_DASH_SUPPORT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'dash_support';
 
 implementation
 
@@ -119,6 +120,9 @@ const
   URLREGEXP_BEFORE_ID = '';
   URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
   URLREGEXP_AFTER_ID =  '';
+
+  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
+  DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
 
 const
   REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
@@ -218,15 +222,23 @@ var
     result:=url;
   end;
 
+ 
+
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
+  // pro DASH play list
+  if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
+  begin
+    Http.UserAgent:=DEFAULT_USER_AGENT;
+  end;
   ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
   if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,
                            'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist',
-                           {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=flash'),
+                           ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=flash'),
+                           {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
                            HTTP_FORM_URLENCODING_UTF8,
                            ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
                            PlaylistUrlPage,
@@ -284,7 +296,9 @@ var
   Bitrate: integer;
 begin
   inherited;
-  Bitrate := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAXBITRATE, OPTION_CT_MAXBITRATE_DEFAULT);
+  Bitrate := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAX_VIDEO_WIDTH, OPTION_CT_MAX_VIDEO_WIDTH_DEFAULT);
+  ///if TDownloader_CT.classtype = THLSDownloader then
+  if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
   case Bitrate of
        512:  MaxBitRate:=628000;
        720:  MaxBitRate:=1160000;
@@ -292,12 +306,24 @@ begin
       1280:  MaxBitRate:=3712000;
       1920:  MaxBitRate:=6272000;
       else   MaxBitRate:=MaxInt;
-  end;
+  end
+  else
+  case Bitrate of
+       512:  MaxBitRate:=500000;
+       720:  MaxBitRate:=1032000;
+      1024:  MaxBitRate:=2048000;
+      1280:  MaxBitRate:=3584000;
+      1920:  MaxBitRate:=6144000;
+      else   MaxBitRate:=MaxInt;
+  end
 end;
 
 
 function TDownloader_CT.GetFileNameExt: string;
 begin
+  Result:='.mpv';
+  ///if TDownloader_CT.classtype = THLSDownloader then
+  if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
   Result := '.ts';
 end;
 
