@@ -47,7 +47,8 @@ uses
   {$ENDIF}
   uLanguages, uMessages, uOptions, uDialogs, uFunctions, guiFunctions,
   uDownloadClassifier, uDownloader, guiOptions,
-  guiDownloaderOptions, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader;
+  guiDownloaderOptions, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader,
+  System.Actions;
   
 type
   TFormOptions = class(TForm)
@@ -112,6 +113,7 @@ type
     procedure actStartMenuShortcutExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ListDownloaderOptionsClick(Sender: TObject);
+    procedure actCancelExecute(Sender: TObject);
   private
     fLoading: boolean;
     fOptions: TYTDOptionsGUI;
@@ -355,6 +357,11 @@ begin
       Abort;
       end;
   {$ENDIF}
+end;
+
+procedure TFormOptions.actCancelExecute(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TFormOptions.actDesktopShortcutExecute(Sender: TObject);

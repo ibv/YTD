@@ -46,7 +46,7 @@ uses
   {$ELSE}
     LCLIntf, LCLType, LMessages,
   {$ENDIF}
-  uPCRE, uXml, uHttp, uCompatibility, HttpSend, blcksock,
+  uPCRE, uXml, uHttp, HttpSend, blcksock,
   uDownloader, uCommonDownloader, uDASHDownloader;
 
 type
@@ -96,8 +96,8 @@ type
 implementation
 
 uses
-  SynaUtil, SynaCode,
-  uLanguages, uMessages, uFunctions, uFiles
+
+  uLanguages, uMessages, uFiles
 
   ;
 
@@ -140,7 +140,7 @@ function THLSDownloader.GetContentUrl: string;
 begin
   Result := Format('HLS "%s"', [MovieURL]);
   //--
-  if Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
+  if (LowerCase(Provider)='ceskatelevize.cz') and Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
   begin
     Result := Format('DASH "%s"', [MovieURL]);
   end;
@@ -299,7 +299,7 @@ begin
   inherited Download;
   Result := False;
 
-  if Options.ReadProviderOptionDef('CeskaTelevize.cz', 'dash_support', false) then
+  if (LowerCase(Provider)='ceskatelevize.cz') and Options.ReadProviderOptionDef('CeskaTelevize.cz', 'dash_support', false) then
   begin
     result:=DownloadDASH;
     exit;

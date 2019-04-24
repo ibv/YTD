@@ -126,8 +126,8 @@ type
 implementation
 
 uses
-  SynaUtil, strutils,
-  uLanguages, uMessages, uFunctions;
+  strutils,
+  uLanguages, uMessages;
 
 
 

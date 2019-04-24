@@ -1,9 +1,9 @@
 object FormOptions: TFormOptions
   Left = 284
   Top = 158
-  Width = 551
-  Height = 465
   Caption = 'Options'
+  ClientHeight = 426
+  ClientWidth = 535
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,6 +15,9 @@ object FormOptions: TFormOptions
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
+  DesignSize = (
+    535
+    426)
   PixelsPerInch = 96
   TextHeight = 13
   object BtnOK: TButton
@@ -44,11 +47,14 @@ object FormOptions: TFormOptions
     Top = 0
     Width = 543
     Height = 389
-    ActivePage = TabDownloadOptions
+    ActivePage = TabMain
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 2
     object TabMain: TTabSheet
       Caption = 'Main settings'
+      DesignSize = (
+        535
+        361)
       object LabelLanguage: TLabel
         Left = 8
         Top = 180
@@ -149,6 +155,9 @@ object FormOptions: TFormOptions
     object TabDownloadOptions: TTabSheet
       Caption = 'Download settings'
       ImageIndex = 1
+      DesignSize = (
+        535
+        361)
       object LabelOverwriteMode: TLabel
         Left = 8
         Top = 188
@@ -205,7 +214,6 @@ object FormOptions: TFormOptions
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
         TabOrder = 9
       end
       object EditDownloadDir: TEdit
@@ -232,7 +240,6 @@ object FormOptions: TFormOptions
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
         TabOrder = 11
         OnChange = ComboConverterChange
       end
@@ -287,7 +294,6 @@ object FormOptions: TFormOptions
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
         TabOrder = 8
       end
       object CheckAutoDeleteFinishedDownloads: TCheckBox
@@ -303,6 +309,9 @@ object FormOptions: TFormOptions
     object TabNetworkOptions: TTabSheet
       Caption = 'Network settings'
       ImageIndex = 2
+      DesignSize = (
+        535
+        361)
       object LabelProxyHost: TLabel
         Left = 8
         Top = 40
@@ -409,6 +418,7 @@ object FormOptions: TFormOptions
     object actCancel: TAction
       Caption = '&Cancel'
       ShortCut = 27
+      OnExecute = actCancelExecute
     end
     object actDownloadDir: TAction
       Caption = '...'

@@ -105,8 +105,8 @@ type
 
 
 const
-  OPTION_CT_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
-  OPTION_CT_MAXBITRATE_DEFAULT = 0;
+  OPTION_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_bitrate';
+  OPTION_MAXBITRATE_DEFAULT = 0;
 
 implementation
 
@@ -123,13 +123,9 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  ///REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
-  ///REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
   REGEXP_STREAM_URL = 'var (:bitrates|src)\s*=(?:.|\s)+?:\s"(?P<URLS>.+?)"';
-  ///REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
-  REGEXP_STREAM_TITLE = 'mb-5(?:.|\s)+?"e-title">(?P<TITLE>.+?)</h3>';
-  ///REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
-  ///REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
+  ///REGEXP_STREAM_TITLE = 'mb-5(?:.|\s)+?"e-title">(?P<TITLE>.+?)</h3>';
+  REGEXP_STREAM_TITLE = 'videoTitle:\s*"(?P<TITLE>.+?)",';
   REGEXP_IFRAME_URL = '<iframe\s+src="(?P<URL>(.+?))" style';
   REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
 
@@ -206,9 +202,9 @@ begin
   Result := False;
 
   ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
-  if not GetRegExpVar(StreamTitleRegExp, Page, 'TITLE', Title) then
+  {if not GetRegExpVar(StreamTitleRegExp, Page, 'TITLE', Title) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
-  else if not GetRegExpVar(IFrameUrlRegExp, Page, 'URL', PlaylistUrlPage) then
+  else} if not GetRegExpVar(IFrameUrlRegExp, Page, 'URL', PlaylistUrlPage) then
       if PlaylistUrlPage <> '' then
       SetLastErrorMsg(Format(ERR_SERVER_ERROR, [PlaylistUrlPage]))
     else
@@ -224,12 +220,12 @@ begin
   {$ENDIF}
   else
     begin
+    if Title = '' then
+      if not GetRegExpVar(StreamTitleFromPageRegExp, PlayList, 'TITLE', Title) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
     Title := trim(AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title))));
     ///if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
     ///  Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
-    if Title = '' then
-      if not GetRegExpVar(StreamTitleFromPageRegExp, Page, 'TITLE', Title) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
     {$IFDEF MULTIDOWNLOADS}
     for i := 0 to Pred(Length(Urls)) do
       begin

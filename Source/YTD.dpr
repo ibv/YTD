@@ -88,6 +88,7 @@ uses
   uHLSDownloader in 'Base\uHLSDownloader.pas',
   uHLSDirectDownloader in 'Base\uHLSDirectDownloader.pas',
   uScriptedDownloader in 'Base\uScriptedDownloader.pas',
+  uDASHDownloader in 'Base\uDASHDownloader.pas',
   // Command Line Version
   {$IFDEF CLI}
     uYTD in 'CLI\uYTD.pas',
@@ -123,10 +124,11 @@ uses
       guiOptionsVCL in 'GUI\VCL\guiOptionsVCL.pas' {FormOptions},
       guiOptionsVCL_Downloader in 'GUI\VCL\Downloaders\guiOptionsVCL_Downloader.pas' {FrameDownloaderOptionsPageVCL: TFrame},
       guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
-      //guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
+      guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
       guiOptionsVCL_EuroSeptik in 'GUI\VCL\Downloaders\guiOptionsVCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
       guiOptionsVCL_Joj in 'GUI\VCL\Downloaders\guiOptionsVCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
       guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
+      guiOptionsVCL_Prima in 'GUI\VCL\Downloaders\guiOptionsVCL_Prima.pas' {FrameDownloaderOptionsPage_Prima: TFrame},
       {$IFDEF CONVERTERS}
       guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
       {$ENDIF}
@@ -295,6 +297,7 @@ uses
   downPracticalMethod in 'Downloaders\downPracticalMethod.pas',
   downPrahovaHD in 'Downloaders\downPrahovaHD.pas',
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
+  downPrima in 'Downloaders\downPrima.pas',
   downProglas in 'Downloaders\downProglas.pas',
   downProstoPleer in 'Downloaders\downProstoPleer.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',

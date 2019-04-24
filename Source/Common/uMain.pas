@@ -51,7 +51,7 @@ uses
     FileCtrl,
     {$ENDIF}
     uSetup,
-    uCompatibility,
+
     {$IFDEF SETUP_GUI}
       {$IFDEF GUI_WINAPI}
         guiSetupWINAPI,
@@ -65,8 +65,8 @@ uses
     uConsoleApp,
   {$ENDIF}
   {$IFDEF GUI}
-    guiConsts,
-    guiFunctions,
+
+
     {$IFDEF GUI_WINAPI}
       guiMainWINAPI,
     {$ELSE}

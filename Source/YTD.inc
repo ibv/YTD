@@ -1,5 +1,5 @@
-{$INCLUDE 'lib\pepak\jedi.inc'}
-{$INCLUDE 'lib\pepak\pepak.inc'}
+{$INCLUDE 'Lib\Pepak\jedi.inc'}
+{$INCLUDE 'Lib\Pepak\pepak.inc'}
 
 //-----Behavior/functionality--------------------------------------------------
 
@@ -43,7 +43,10 @@
   // share flags should not apply). This define provides a workaround, allowing
   // files being played while they are still downloading.
 
-{$DEFINE GUI_WINAPI} 
+{$DEFINE GUI_LCL}
+  // GUI is created with LCL, Linux 
+
+{.$DEFINE GUI_WINAPI} 
   // GUI is created with WinAPI. Otherwise GUI is created with VCL. The WinAPI
   // GUI has several advantages, such as a double-buffered download list or
   // a compatibility with FreePascal, not mentioning a seriously reduced
@@ -72,7 +75,7 @@
   // Use temporary files for downloads, then rename them when the download
   // is complete.
 
-{.DEFINE JSON}
+{$DEFINE JSON}
   // Many providers use JSON for their data storage. While it may be a good idea
   // to use a JSON parser for this data, in fact it is often better to simply
   // use regular expressions: One, it is shorter, and two, it turns out LkJSON
@@ -82,7 +85,7 @@
   // Build the non-working providers in. By default they are only available
   // in the debug mode.
 
-{$DEFINE SINGLEINSTANCE}
+{.$DEFINE SINGLEINSTANCE}
   // Support for running the GUI version as single instance. A new instance can
   // be spawned by using the --newinstance argument.
 
@@ -119,10 +122,10 @@
 {.DEFINE RELEASE} 
   // Remove unnecessary debug information
 
-{.DEFINE NO_GUI}
+{.$DEFINE NO_GUI}
   // Don't compile the GUI version
 
-{.DEFINE NO_CLI}
+{$DEFINE NO_CLI}
   // Don't compile the command-line version
 
 {.DEFINE NO_SETUP}
@@ -164,6 +167,7 @@
   {$UNDEF CONVERTERS}
   {$UNDEF THREADEDVERSION}
   {$UNDEF GUI_WINAPI}
+  {$UNDEF GUI_LCL}
   {$UNDEF SETUP}
 {$ENDIF}
 
@@ -180,7 +184,7 @@
 // I can't get the systray icon to work under FreePascal.
 
 {$IFDEF FPC}
-  {$UNDEF SYSTRAY}
+  {.$UNDEF SYSTRAY}
 {$ENDIF}
 
 
