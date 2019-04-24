@@ -40,13 +40,17 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows, {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
+  SysUtils, Classes, Windows,
+  {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   HttpSend, SynaUtil, SynaCode,
   uOptions, uPCRE, uXML, uAMF, uFunctions, uLanguages,
   {$IFDEF GUI}
-  guiDownloaderOptions,
+  guiDownloaderOptions;
   {$ENDIF}
-  uCompatibility;
+  ///uCompatibility;
+
+
+
 
 type
   EDownloaderError = class(Exception);
@@ -224,12 +228,15 @@ implementation
 uses
   uStringConsts,
   uStrings,
-  uMessages;
+  uMessages,
+  math
+  ;
 
 const
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/58.0.1';
-  DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
+  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
+  DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%d.0.%d.%d Safari/537.36';
 
 var
   UrlRegExps: TRegExpCache = nil;
@@ -273,7 +280,8 @@ begin
   PrepareLifetime := 60; // 60 seconds
   {$ENDIF}
   fHttp := THttpSend.Create;
-  fHttp.UserAgent := DEFAULT_USER_AGENT;
+  ///fHttp.UserAgent := DEFAULT_USER_AGENT;
+  fHttp.UserAgent := format(DEFAULT_USER_AGENT, [RandomRange(63, 73),RandomRange(3239, 3683),RandomRange(0, 100)]);
   MovieID := AMovieID;
 end;
 

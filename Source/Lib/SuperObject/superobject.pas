@@ -947,11 +947,11 @@ var
   p: PSOChar;
 begin
   Result := FloatToStr(value);
-  if {$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator <> '.' then
+  if FormatSettings.DecimalSeparator <> '.' then
   begin
     p := PSOChar(Result);
     while p^ <> #0 do
-      if p^ <> SOChar({$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator) then
+      if p^ <> SOChar(FormatSettings.DecimalSeparator) then
       inc(p) else
       begin
         p^ := '.';
@@ -965,11 +965,11 @@ var
   p: PSOChar;
 begin
   Result := CurrToStr(value);
-  if {$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator <> '.' then
+  if FormatSettings.DecimalSeparator <> '.' then
   begin
     p := PSOChar(Result);
     while p^ <> #0 do
-      if p^ <> SOChar({$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator) then
+      if p^ <> SOChar(FormatSettings.DecimalSeparator) then
       inc(p) else
       begin
         p^ := '.';
