@@ -13,6 +13,7 @@ CHANGELOG
 
     * Updated providers:
       - Ceskatelevize.cz
+      - Youtube.com
 
 
   v1.62:

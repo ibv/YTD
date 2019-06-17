@@ -14,6 +14,7 @@ CHANGELOG
 
     * Aktualizovaní poskytovatelé:
       - Ceskatelevize.cz
+      - Youtube.com
  
 
   v1.62:
