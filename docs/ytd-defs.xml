@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.63.20190409.0</version>
+  <version>1.63.20191225.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1194,9 +1194,9 @@
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20190201">
+    <script id="nova.cz" provider="Nova.cz" changed="20191225">
       <regexps>
-	      <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style=.*</iframe>\s]]></regexp>
+	      <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
@@ -1224,6 +1224,19 @@
       <set_var id="urls">
         <regexp id="urls" content="page"/>
       </set_var>
+      <if><!--hls -->
+        <condition type="json_var_exists" id="urls" path="hls">
+         <hls_download>
+          <title>
+            <get_var id="title"/>
+           </title>
+            <url>
+               <get_json_var id="urls" path="hls"/>
+            </url>
+          <extension>.mp4</extension>  
+          </hls_download>
+        </condition>          
+      <else><!-- ostatni -->    
       <set_var id="u">
         <get_json_var id="urls"/>
       </set_var>
@@ -1241,6 +1254,8 @@
           </replace>
         </url>
       </http_download>
+     </else>
+    </if>
     </script>
     <script id="novinky.cz" provider="Novinky.cz" changed="20180823">
       <regexps>
