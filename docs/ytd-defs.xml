@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.63.20191225.0</version>
+  <version>1.63.20191228.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -2101,7 +2101,7 @@
           </url>
         </http_download>
       </script>
-      <script id="freevideo.cz" provider="FreeVideo.cz" changed="20160628">
+      <script id="freevideo.cz" provider="FreeVideo.cz" changed="20191228">
         <set_var id="page">
           <download_page encoding="utf8">
             <url>
@@ -2114,7 +2114,7 @@
         </set_var>
         <http_download>
           <title>
-            <regexp id="h2" content="page"/>
+            <regexp id="h1" content="page"/>
           </title>
           <url>
             <regexp id="video_url" content="video"/>
