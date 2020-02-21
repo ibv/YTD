@@ -1,164 +1,124 @@
-7-Zip for installers 9.20
--------------------------
+7-Zip Extra 19.00
+-----------------
 
-7-Zip is a file archiver for Windows 98/ME/NT/2000/2003/XP. 
+7-Zip Extra is package of extra modules of 7-Zip. 
 
-7-Zip Copyright (C) 1999-2010 Igor Pavlov.
+7-Zip Copyright (C) 1999-2019 Igor Pavlov.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+7-Zip is free software. Read License.txt for more information about license.
 
-7zr.exe is reduced version of 7za.exe of 7-Zip.
-7zr.exe supports only 7z format with this codecs: LZMA, LZMA2, BCJ, BCJ2, ARM, Copy.
+Source code of binaries can be found at:
+  http://www.7-zip.org/
 
-Example of compressing command for installation packages:
+This package contains the following files:
 
-7zr a -t7z archive.7z * -m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
+7za.exe     - standalone console version of 7-Zip with reduced formats support.
+7za.dll     - library for working with 7z archives
+7zxa.dll    - library for extracting from 7z archives
+License.txt - license information
+readme.txt  - this file
 
-
-7zSD.sfx is SFX module for installers (it uses msvcrt.dll)
-
-SFX modules for installers (7zS.sfx and 7zSD.sfx) allow to create installation program. 
-Such module extracts archive to temp folder and then runs specified program and removes 
-temp files after program finishing. Self-extract archive for installers must be created 
-as joining 3 files: SFX_Module, Installer_Config, 7z_Archive. 
-Installer_Config is optional file. You can use the following command to create installer 
-self-extract archive:
-
-copy /b 7zSD.sfx + config.txt + archive.7z archive.exe
-
-The smallest installation package size can be achieved, if installation files was 
-uncompressed before including to 7z archive.
-
--y switch for installer module (at runtime) specifies quiet mode for extracting.
-
-Installer Config file format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Config file contains commands for Installer. File begins from string 
-;!@Install@!UTF-8! and ends with ;!@InstallEnd@!. File must be written 
-in UTF-8 encoding. File contains string pairs: 
-
-ID_String="Value"
-
-ID_String          Description 
-
-Title              Title for messages 
-BeginPrompt        Begin Prompt message 
-Progress           Value can be "yes" or "no". Default value is "yes". 
-RunProgram         Command for executing. Default value is "setup.exe". 
-                   Substring %%T will be replaced with path to temporary 
-                   folder, where files were extracted 
-Directory          Directory prefix for "RunProgram". Default value is ".\\" 
-ExecuteFile        Name of file for executing 
-ExecuteParameters  Parameters for "ExecuteFile" 
+Far\        - plugin for Far Manager
+x64\        - binaries for x64
 
 
-You can omit any values.
+All 32-bit binaries can work in:
+  Windows 2000 / 2003 / 2008 / XP / Vista / 7 / 8 / 10
+  and  in any Windows x64 version with WoW64 support.
+All x64 binaries can work in any Windows x64 version. 
 
-There are two ways to run program: RunProgram and ExecuteFile. 
-Use RunProgram, if you want to run some program from .7z archive. 
-Use ExecuteFile, if you want to open some document from .7z archive or 
-if you want to execute some command from Windows.
+All binaries use msvcrt.dll.
 
-If you use RunProgram and if you specify empty directory prefix: Directory="", 
-the system searches for the executable file in the following sequence:
+7za.exe 
+-------
 
-1. The directory from which the application (installer) loaded. 
-2. The temporary folder, where files were extracted. 
-3. The Windows system directory. 
+7za.exe - is a standalone console version of 7-Zip with reduced formats support.
 
+  Extra: 7za.exe             : support for only some formats of 7-Zip.
+  7-Zip: 7z.exe with 7z.dll  : support for all formats of 7-Zip.
 
-Config file Examples
-~~~~~~~~~~~~~~~~~~~~
+7za.exe and 7z.exe from 7-Zip have same command line interface.
+7za.exe doesn't use external DLL files.
 
-;!@Install@!UTF-8!
-Title="7-Zip 4.00"
-BeginPrompt="Do you want to install the 7-Zip 4.00?"
-RunProgram="setup.exe"
-;!@InstallEnd@!
+You can read Help File (7-zip.chm) from 7-Zip package for description 
+of all commands and switches for 7za.exe and 7z.exe.
+
+7za.exe features:
+
+  - High compression ratio in 7z format
+  - Supported formats:
+      - Packing / unpacking: 7z, xz, ZIP, GZIP, BZIP2 and TAR 
+      - Unpacking only: Z, lzma, CAB.
+  - Highest compression ratio for ZIP and GZIP formats.
+  - Fast compression and decompression
+  - Strong AES-256 encryption in 7z and ZIP formats.
+
+Note: LZMA SDK contains 7zr.exe - more reduced version of 7za.exe.
+But you can use 7zr.exe as "public domain" code.
 
 
 
-;!@Install@!UTF-8!
-Title="7-Zip 4.00"
-BeginPrompt="Do you want to install the 7-Zip 4.00?"
-ExecuteFile="7zip.msi"
-;!@InstallEnd@!
+DLL files
+---------
+
+7za.dll and 7zxa.dll are reduced versions of 7z.dll from 7-Zip.
+7za.dll and 7zxa.dll support only 7z format.
+Note: 7z.dll is main DLL file that works with all archive types in 7-Zip.
+
+7za.dll and 7zxa.dll support the following decoding methods:
+    - LZMA, LZMA2, PPMD, BCJ, BCJ2, COPY, 7zAES, BZip2, Deflate.
+
+7za.dll also supports 7z encoding with the following encoding methods:
+    - LZMA, LZMA2, PPMD, BCJ, BCJ2, COPY, 7zAES.
+
+7za.dll and 7zxa.dll work via COM interfaces.
+But these DLLs don't use standard COM interfaces for objects creating.
+
+Look also example code that calls DLL functions (in source code of 7-Zip):
+ 
+ 7zip\UI\Client7z
+
+Another example of binary that uses these interface is 7-Zip itself.
+The following binaries from 7-Zip use 7z.dll:
+  - 7z.exe (console version)
+  - 7zG.exe (GUI version)
+  - 7zFM.exe (7-Zip File Manager)
+
+Note: The source code of LZMA SDK also contains the code for similar DLLs
+(DLLs without BZip2, Deflate support). And these files from LZMA SDK can be 
+used as "public domain" code. If you use LZMA SDK files, you don't need to 
+follow GNU LGPL rules, if you want to change the code.
 
 
 
-;!@Install@!UTF-8!
-Title="7-Zip 4.01 Update"
-BeginPrompt="Do you want to install the 7-Zip 4.01 Update?"
-ExecuteFile="msiexec.exe"
-ExecuteParameters="/i 7zip.msi REINSTALL=ALL REINSTALLMODE=vomus"
-;!@InstallEnd@!
+
+License FAQ
+-----------
+
+Can I use the EXE or DLL files from 7-Zip in a commercial application?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Yes, but you are required to specify in documentation for your application:
+  (1) that you used parts of the 7-Zip program, 
+  (2) that 7-Zip is licensed under the GNU LGPL license and 
+  (3) you must give a link to www.7-zip.org, where the source code can be found.
+
+
+Can I use the source code of 7-Zip in a commercial application?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Since 7-Zip is licensed under the GNU LGPL you must follow the rules of that license. 
+In brief, it means that any LGPL'ed code must remain licensed under the LGPL. 
+For instance, you can change the code from 7-Zip or write a wrapper for some 
+code from 7-Zip and compile it into a DLL; but, the source code of that DLL 
+(including your modifications / additions / wrapper) must be licensed under 
+the LGPL or GPL. 
+Any other code in your application can be licensed as you wish. This scheme allows 
+users and developers to change LGPL'ed code and recompile that DLL. That is the 
+idea of free software. Read more here: http://www.gnu.org/. 
 
 
 
-Small SFX modules for installers
---------------------------------
-
-7zS2.sfx     - small SFX module (GUI version)
-7zS2con.sfx  - small SFX module (Console version)
-
-Small SFX modules support this codecs: LZMA, LZMA2, BCJ, BCJ2, ARM, COPY
-
-Small SFX module is similar to common SFX module for installers.
-The difference (what's new in small version):
- - Smaller size (28 KB vs 100 KB)
- - C source code instead of Ñ++
- - No installer Configuration file
- - No extracting progress window
- - It decompresses solid 7z blocks (it can be whole 7z archive) to RAM.
-   So user that calls SFX installer must have free RAM of size of largest 
-   solid 7z block (size of 7z archive at simplest case).
-
-How to use
-----------
-
-copy /b 7zS2.sfx + archive.7z sfx.exe
-
-When you run installer sfx module (sfx.exe)
-1) It creates "7zNNNNNNNN" temp folder in system temp folder.
-2) It extracts .7z archive to that folder
-3) It executes one file from "7zNNNNNNNN" temp folder. 
-4) It removes "7zNNNNNNNN" temp folder
-
-You can send parameters to installer, and installer will transfer them to extracted .exe file.
-
-Small SFX uses 3 levels of priorities to select file to execute:
-
-  1) Files in root folder have higher priority than files in subfolders.
-  2) File extension priorities (from high to low priority order): 
-       bat, exe, inf, msi, cab (under Windows CE), html, htm
-  3) File name priorities (from high to low priority order): 
-       setup, install, run, start
-
-Windows CE (ARM) version of 7zS2.sfx is included to 7-Zip for Windows Mobile package.
+Note: You can look also LZMA SDK, which is available under a more liberal license.
 
 
-Examples
---------
-
-1) To create compressed console 7-Zip:
-
-7z a c.7z 7z.exe 7z.dll -m0=lzma2 -mx
-copy /b 7zS2con.sfx + c.7z 7zCompr.exe
-7zCompr.exe b -md22
-
-
-2) To create compressed GUI 7-Zip:
-
-7z a g.7z 7zg.exe 7z.dll -mx
-copy /b 7zS2.sfx + g.7z 7zgCompr.exe
-7zgCompr.exe b -md22
-
-
-3) To open some file:
-
-7z a h.7z readme.txt -mx
-copy /b 7zS2.sfx + h.7z 7zTxt.exe 
-7zTxt.exe
+---
+End of document

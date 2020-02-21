@@ -1,9 +1,9 @@
 object FormYTD: TFormYTD
   Left = 203
   Top = 139
-  Width = 719
-  Height = 392
   Caption = 'YTD'
+  ClientHeight = 353
+  ClientWidth = 703
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,144 +21,144 @@ object FormYTD: TFormYTD
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 711
+    Width = 703
     Height = 29
     ButtonHeight = 23
     Images = ActionImages
     TabOrder = 0
     object ToolAddNew: TToolButton
       Left = 0
-      Top = 2
+      Top = 0
       Action = actAddNewUrl
     end
     object ToolAddFromFile: TToolButton
       Left = 23
-      Top = 2
+      Top = 0
       Action = actAddUrlsFromFile
     end
     object ToolAddFromHTMLfile: TToolButton
       Left = 46
-      Top = 2
+      Top = 0
       Action = actAddUrlsFromHTMLfile
     end
     object ToolAddFromHTML: TToolButton
       Left = 69
-      Top = 2
+      Top = 0
       Action = actAddUrlsFromHTML
     end
     object ToolAddClipboard: TToolButton
       Left = 92
-      Top = 2
+      Top = 0
       Action = actAddUrlsFromClipboard
     end
     object ToolButton2: TToolButton
       Left = 115
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 9
       Style = tbsSeparator
     end
     object ToolCopy: TToolButton
       Left = 123
-      Top = 2
+      Top = 0
       Action = actCopyUrlsToClipboard
     end
     object ToolSave: TToolButton
       Left = 146
-      Top = 2
+      Top = 0
       Action = actSaveUrlList
     end
     object ToolButton1: TToolButton
       Left = 169
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 9
       Style = tbsSeparator
     end
     object ToolStart: TToolButton
       Left = 177
-      Top = 2
+      Top = 0
       Action = actStart
     end
     object ToolStop: TToolButton
       Left = 200
-      Top = 2
+      Top = 0
       Action = actStop
     end
     object ToolConvert: TToolButton
       Left = 223
-      Top = 2
+      Top = 0
       Action = actConvert
     end
     object ToolButton5: TToolButton
       Left = 246
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 4
       Style = tbsSeparator
     end
     object ToolDelete: TToolButton
       Left = 254
-      Top = 2
+      Top = 0
       Action = actDeleteURL
     end
     object ToolButton9: TToolButton
       Left = 277
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 7
       Style = tbsSeparator
     end
     object ToolOptions: TToolButton
       Left = 285
-      Top = 2
+      Top = 0
       Action = actOptions
     end
     object ToolEditConfigFile: TToolButton
       Left = 308
-      Top = 2
+      Top = 0
       Action = actEditConfigFile
     end
     object ToolButton4: TToolButton
       Left = 331
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 15
       Style = tbsSeparator
     end
     object ToolRefresh: TToolButton
       Left = 339
-      Top = 2
+      Top = 0
       Action = actRefresh
     end
     object ToolButton3: TToolButton
       Left = 362
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 9
       Style = tbsSeparator
     end
     object ToolReportBug: TToolButton
       Left = 370
-      Top = 2
+      Top = 0
       Action = actReportBug
     end
     object ToolDonate: TToolButton
       Left = 393
-      Top = 2
+      Top = 0
       Action = actDonate
     end
     object ToolAbout: TToolButton
       Left = 416
-      Top = 2
+      Top = 0
       Action = actAbout
     end
   end
   object Downloads: TListView
     Left = 0
     Top = 29
-    Width = 711
-    Height = 317
+    Width = 703
+    Height = 305
     Align = alClient
     Columns = <
       item
@@ -188,23 +188,27 @@ object FormYTD: TFormYTD
         Caption = 'Progress'
         Width = 96
       end>
+    DoubleBuffered = False
     GridLines = True
     HideSelection = False
     MultiSelect = True
     OwnerData = True
     ReadOnly = True
     RowSelect = True
+    ParentDoubleBuffered = False
     PopupMenu = DownloadsPopup
     StateImages = StateImages
     TabOrder = 1
     ViewStyle = vsReport
     OnData = DownloadsData
     OnDblClick = DownloadsDblClick
+    OnMouseDown = DownloadsMouseDown
+    ExplicitTop = 35
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 346
-    Width = 711
+    Top = 334
+    Width = 703
     Height = 19
     AutoHint = True
     Panels = <>
@@ -372,7 +376,7 @@ object FormYTD: TFormYTD
     Left = 168
     Top = 144
     Bitmap = {
-      494C0101110013000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010111001500040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       000000000000000000000000000000000000FFFFFFFFDC9B73FFD58351FFD17D
       4BFFDFA37FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -1043,7 +1047,7 @@ object FormYTD: TFormYTD
     Left = 168
     Top = 208
     Bitmap = {
-      494C0101070009000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010107000900040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
@@ -1412,5 +1416,33 @@ object FormYTD: TFormYTD
     Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     Left = 472
     Top = 208
+  end
+  object VQualityPopUp: TPopupMenu
+    Left = 416
+    Top = 144
+    object Item1: TMenuItem
+      Caption = 'Auto'
+      OnClick = Item1Click
+    end
+    object Item2: TMenuItem
+      Caption = 'Full HD'
+      OnClick = Item2Click
+    end
+    object Item3: TMenuItem
+      Caption = 'HD'
+      OnClick = Item3Click
+    end
+    object item4: TMenuItem
+      Caption = 'High'
+      OnClick = item4Click
+    end
+    object Item5: TMenuItem
+      Caption = 'Med'
+      OnClick = Item5Click
+    end
+    object Item6: TMenuItem
+      Caption = 'Low'
+      OnClick = Item6Click
+    end
   end
 end

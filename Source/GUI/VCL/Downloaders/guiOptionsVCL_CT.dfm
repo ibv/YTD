@@ -32,7 +32,7 @@ inherited FrameDownloaderOptionsPage_CT: TFrameDownloaderOptionsPage_CT
       Top = -5
       Width = 261
       Height = 26
-      Caption = 'Support MPEG-DASH (experimental)'
+      Caption = 'Support MPEG-DASH'
       TabOrder = 1
     end
   end

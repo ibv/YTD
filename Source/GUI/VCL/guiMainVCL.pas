@@ -146,6 +146,15 @@ type
     mnuPlay: TMenuItem;
     mnuExplore: TMenuItem;
     actMenu: TAction;
+    Item1: TMenuItem;
+    Item2: TMenuItem;
+    Item3: TMenuItem;
+    Item6: TMenuItem;
+    item4: TMenuItem;
+    Item5: TMenuItem;
+    VQualityPopUp: TPopupMenu;
+    procedure DownloadsMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -175,11 +184,18 @@ type
     procedure actPlayExecute(Sender: TObject);
     procedure actExploreFolderExecute(Sender: TObject);
     procedure actMenuExecute(Sender: TObject);
+    procedure Item1Click(Sender: TObject);
+    procedure Item2Click(Sender: TObject);
+    procedure Item3Click(Sender: TObject);
+    procedure item4Click(Sender: TObject);
+    procedure Item5Click(Sender: TObject);
+    procedure Item6Click(Sender: TObject);
   protected
     fLoading: boolean;
     fNextTotalRecalculation: TDateTime;
     fTotalProgress: int64;
     fTotalData: int64;
+    fMenuID: integer;
     {$IFDEF SYSTRAY}
     fNotifyIconData: TNotifyIconData;
     procedure WMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
@@ -252,7 +268,8 @@ begin
     {$IFDEF SINGLEINSTANCE}
     RegisterMainInstance(Self.Handle);
     {$ENDIF}
-    Caption := APPLICATION_CAPTION {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ;
+    ///Caption := APPLICATION_CAPTION {$IFDEF UNICODE} + ' (Unicode)' {$ELSE} + ' (ANSI)' {$ENDIF} ;
+    Caption := APPLICATION_CAPTION {$IFDEF WIN64} + ' - x64' {$ENDIF};
     Options := TYTDOptionsGUI.Create;
     TScriptedDownloader.InitMainScriptEngine(Options.ScriptFileName);
     UseLanguage(Options.Language);
@@ -1007,5 +1024,87 @@ begin
   P := ClientToScreen(Point(0, 0));
   DownloadsPopup.Popup(P.X, P.Y);
 end;
+
+procedure TFormYTD.DownloadsMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  i, j, ind: integer;
+  pr, value: string;
+  Item : TLIstItem;
+  pnt: TPoint;
+
+const
+   Res : array[0..5] of integer = (0,1920,1280,1024,720,512);
+
+begin
+  if button  = mbMiddle then
+  begin
+    Item := Downloads.GetItemAt(X, Y);
+    if Assigned(Item) then
+    begin
+      fMenuID:=-1;
+      i := Item.index;
+      for ind:=0 to VQualityPopUp.Items.Count-1 do
+      begin
+        VQualityPopUp.Items[ind].Checked:=false;
+        if Res[ind] = DownloadList[i].Downloader.MaxVResolution{.MaxVResolution} then
+        begin
+          VQualityPopUp.Items[ind].Checked:=true;
+          j:=ind;
+        end;
+      end;
+    end;
+    if GetCursorPos(pnt) then
+     VQualityPopUp.Popup(pnt.X, pnt.Y);
+    if (j <> fMenuID) and (fMenuID >= 0) then
+    begin
+      VQualityPopUp.Items[j].Checked:=false;
+      VQualityPopUp.Items[fMenuID].Checked:=true;
+      value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
+      Options.WriteProviderOption(DownloadList[i].Downloader.ProviderName, 'max_video_width', Res[fMenuID]);
+      Options.WriteProviderOption(DownloadList[i].Downloader.ProviderName, 'max_video_bitrate', value);
+      DownloadList[i].Downloader.MaxVResolution:=Res[fMenuID];
+      ///DownloadList[i].MaxVBitrate := StrToIntDef(value,0);
+      DownloadList[i].Downloader.MaxVBitRate := StrToIntDef(value,0);
+      ///InputQuery('Max Video Bitrate', 'Please type your value', value);
+    end;
+  end;
+end;
+
+procedure TFormYTD.Item1Click(Sender: TObject);
+begin
+  fMenuID:=0;
+end;
+
+procedure TFormYTD.Item2Click(Sender: TObject);
+begin
+  fMenuID:=1;
+
+end;
+
+procedure TFormYTD.Item3Click(Sender: TObject);
+begin
+  fMenuID:=2;
+
+end;
+
+procedure TFormYTD.item4Click(Sender: TObject);
+begin
+  fMenuID:=3;
+
+end;
+
+procedure TFormYTD.Item5Click(Sender: TObject);
+begin
+  fMenuID:=4;
+
+end;
+
+procedure TFormYTD.Item6Click(Sender: TObject);
+begin
+  fMenuID:=5;
+
+end;
+
 
 end.

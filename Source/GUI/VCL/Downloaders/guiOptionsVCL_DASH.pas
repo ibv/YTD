@@ -34,27 +34,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit guiOptionsVCL_YouTube;
+unit guiOptionsVCL_DASH;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses 
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType,
+  {$ENDIF}
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,
   uDownloader, guiOptionsVCL_Downloader, guiOptionsVCL_CommonDownloader;
 
 type
-  TFrameDownloaderOptionsPage_YouTube = class(TFrameDownloaderOptionsPageCommon)
+
+
+  { TFrameDownloaderOptionsPage_DASH }
+
+  TFrameDownloaderOptionsPage_DASH = class(TFrameDownloaderOptionsPageCommon)
     CheckDashAudio: TCheckBox;
     CheckDashVideo: TCheckBox;
-    LabelPreferredLanguages: TLabel;
-    EditPreferredLanguages: TEdit;
-    LabelMaximumVideoWidth: TLabel;
-    EditMaximumVideoWidth: TEdit;
-    LabelMaximumVideoHeight: TLabel;
-    EditMaximumVideoHeight: TEdit;
-    CheckAvoidWebM: TCheckBox;
   private
   protected
   public
@@ -66,55 +68,35 @@ type
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 uses
-  downYouTube;
+  downDash;
 
-{ TFrameDownloaderOptionsPage_YouTube }
+{ TFrameDownloaderOptionsPage_DASH }
 
-constructor TFrameDownloaderOptionsPage_YouTube.Create(AOwner: TComponent);
-begin
-  inherited;
-  {$IFNDEF SUBTITLES}
-  EditPreferredLanguages.Enabled := False;
-  {$ENDIF}
-end;
-
-destructor TFrameDownloaderOptionsPage_YouTube.Destroy;
+constructor TFrameDownloaderOptionsPage_DASH.Create(AOwner: TComponent);
 begin
   inherited;
 end;
 
-procedure TFrameDownloaderOptionsPage_YouTube.LoadFromOptions;
+destructor TFrameDownloaderOptionsPage_DASH.Destroy;
 begin
   inherited;
-  {$IFDEF SUBTITLES}
-  EditPreferredLanguages.Text := Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_PREFERREDLANGUAGES, OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT);
-  if Supports(dfSubtitles, [EditPreferredLanguages, LabelPreferredLanguages]) then
-    ;
-  {$ENDIF}
-  EditMaximumVideoWidth.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT));
-  EditMaximumVideoHeight.Text := IntToStr(Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT));
-  CheckAvoidWebM.Checked := Options.ReadProviderOptionDef(Provider, OPTION_YOUTUBE_AVOIDWEBM, OPTION_YOUTUBE_AVOIDWEBM_DEFAULT);
+end;
+
+procedure TFrameDownloaderOptionsPage_DASH.LoadFromOptions;
+begin
+  inherited;
   CheckDashVideo.Checked := Options.ReadProviderOptionDef(Provider,OPTION_DASH_VIDEO_SUPPORT,false);
   CheckDashAudio.Checked := Options.ReadProviderOptionDef(Provider,OPTION_DASH_AUDIO_SUPPORT,false);
-
 end;
 
-procedure TFrameDownloaderOptionsPage_YouTube.SaveToOptions;
+procedure TFrameDownloaderOptionsPage_DASH.SaveToOptions;
 begin
   inherited;
-  {$IFDEF SUBTITLES}
-  if EditPreferredLanguages.Enabled then
-    Options.WriteProviderOption(Provider, OPTION_YOUTUBE_PREFERREDLANGUAGES, EditPreferredLanguages.Text);
-  {$ENDIF}
-  Options.WriteProviderOption(Provider, OPTION_YOUTUBE_MAXVIDEOWIDTH, StrToIntDef(EditMaximumVideoWidth.Text, 0));
-  Options.WriteProviderOption(Provider, OPTION_YOUTUBE_MAXVIDEOHEIGHT, StrToIntDef(EditMaximumVideoHeight.Text, 0));
-  Options.WriteProviderOption(Provider, OPTION_YOUTUBE_AVOIDWEBM, CheckAvoidWebM.Checked);
   Options.WriteProviderOption(Provider, OPTION_DASH_VIDEO_SUPPORT, CheckDashVideo.Checked);
   Options.WriteProviderOption(Provider, OPTION_DASH_AUDIO_SUPPORT, CheckDashAudio.Checked);
-
 end;
 
 end.

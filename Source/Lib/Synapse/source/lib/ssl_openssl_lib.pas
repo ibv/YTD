@@ -139,12 +139,22 @@ var
      {$ENDIF OS2}
     {$ENDIF}
   {$ELSE}
-  DLLSSLNames: array[1..4] of string = ('libssl-1_1.dll', 'ssleay32.dll', 'libssl32.dll',
+    {$IFDEF WIN64}
+      DLLSSLNames: array[1..4] of string = ('libssl-1_1-x64.dll', 'ssleay32.dll', 'libssl32.dll',
                                        {just in case someone renames them:}
                                        'libssl.dll');
-  DLLUtilNames: array[1..4] of string = ('libcrypto-1_1.dll', 'libeay32.dll',
+      DLLUtilNames: array[1..4] of string = ('libcrypto-1_1-64.dll', 'libeay32.dll',
                                        {just in case someone renames them:}
                                         'libcrypto.dll', 'libeay.dll');
+    {$ELSE}
+      DLLSSLNames: array[1..4] of string = ('libssl-1_1.dll', 'ssleay32.dll', 'libssl32.dll',
+                                       {just in case someone renames them:}
+                                       'libssl.dll');
+      DLLUtilNames: array[1..4] of string = ('libcrypto-1_1.dll', 'libeay32.dll',
+                                       {just in case someone renames them:}
+                                        'libcrypto.dll', 'libeay.dll');
+
+    {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 

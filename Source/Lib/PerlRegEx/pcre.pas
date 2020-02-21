@@ -801,7 +801,11 @@ type
 
 const
   {$IFDEF MSWINDOWS}
-  libpcremodulename = 'pcrelib.dll';
+    {$IFDEF WIN64}
+      libpcremodulename = 'pcre64.dll';
+    {$ELSE}
+      libpcremodulename = 'pcrelib.dll';
+    {$ENDIF}
   {$ENDIF MSWINDOWS}
   {$IFDEF UNIX}
   libpcremodulename = 'libpcre.so.0';

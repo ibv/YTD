@@ -69,7 +69,7 @@ uses
 // Known media formats
 const
   URLREGEXP_BEFORE_ID = '^';
-  URLREGEXP_ID =        'https?://[^/]+/[^?]+\.(?:avi|mp[34g]|flv)';
+  URLREGEXP_ID =        'https?://[^/]+/[^?]+\.(?:avi|mp[34g]|flv|webm)';
   URLREGEXP_AFTER_ID =  '';
 
 { THttpDirectDownloader }

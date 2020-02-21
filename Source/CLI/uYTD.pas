@@ -41,9 +41,9 @@ interface
 
 uses
   SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
-  HttpSend,
+
   uConsoleApp, uOptions, uLanguages, uMessages, uFunctions, uUpgrade,
-  uDownloader, uCommonDownloader,
+  uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   {$IFDEF SETUP}
   uHttpDirectDownloader, uSetup,

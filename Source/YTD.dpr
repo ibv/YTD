@@ -89,6 +89,7 @@ uses
   uHLSDirectDownloader in 'Base\uHLSDirectDownloader.pas',
   uScriptedDownloader in 'Base\uScriptedDownloader.pas',
   uDASHDownloader in 'Base\uDASHDownloader.pas',
+  uMPD in 'Base\uMPD.pas',
   // Command Line Version
   {$IFDEF CLI}
     uYTD in 'CLI\uYTD.pas',
@@ -129,6 +130,7 @@ uses
       guiOptionsVCL_Joj in 'GUI\VCL\Downloaders\guiOptionsVCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
       guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       guiOptionsVCL_Prima in 'GUI\VCL\Downloaders\guiOptionsVCL_Prima.pas' {FrameDownloaderOptionsPage_Prima: TFrame},
+      guiOptionsVCL_DASH in 'GUI\VCL\Downloaders\guiOptionsVCL_DASH.pas' {FrameDownloaderOptionsPage_DASH: TFrame},
       {$IFDEF CONVERTERS}
       guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
       {$ENDIF}
@@ -184,6 +186,7 @@ uses
   downCT in 'Downloaders\downCT.pas',
   downCurrent in 'Downloaders\downCurrent.pas',
   downDailyHaha in 'Downloaders\downDailyHaha.pas',
+  downDash in 'Downloaders\downDash.pas',
   downDeutscheBahn in 'Downloaders\downDeutscheBahn.pas',
   downDenik in 'Downloaders\downDenik.pas',
   downDevilDucky in 'Downloaders\downDevilDucky.pas',

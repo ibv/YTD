@@ -42,8 +42,14 @@ unit downYouTube;
 interface
 
 uses
-  SysUtils, Classes, Windows,
-  uPCRE, uXml, uCompatibility, uLanguages,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType,
+  {$ENDIF}
+
+  uPCRE, uXml, uLanguages,
   HttpSend, SynaCode,
   uOptions,
   {$IFDEF GUI}
@@ -66,11 +72,11 @@ type
       YouTubeConfigJSRegExp: TRegExp;
       YouTubeConfigJSONRegExp: TRegExp;
       FormatListRegExp: TRegExp;
+      AdaptiveFormatListRegExp: TRegExp;
       FlashVarsParserRegExp: TRegExp;
       JSONParserRegExp: TRegExp;
+      JSONPlayerRegExp: TRegExp;
       FormatUrlMapRegExp: TRegExp;
-      FormatUrlMapVarsRegExp: TRegExp;
-      YouTubeStsRegExp: TRegExp;
       YouTubeJsRegExp: TRegExp;
       YouTubeDecipherRegExp: TRegExp;
       YouTubeDecipherBodyRegExp: TRegExp;
@@ -78,12 +84,15 @@ type
       MaxWidth, MaxHeight: integer;
       AvoidWebM: boolean;
       JsCode,ObfuscationScheme: string;
+      fAudioURL, fAudioFormat: string;
+      fADownloader: TDownloader;
       {$IFDEF SUBTITLES}
         PreferredLanguages: string;
       {$ENDIF}
     protected
       function CompareQuality(Quality: integer; const FileFormat: string; RefQuality: integer; const RefFileFormat: string): integer;
-      function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string;
+      function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string; overload;
+      function GetBestVideoFormat(const FormatList: string): string; overload;
       function GetVideoFormatExt(const VideoFormat: string): string;
       function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live, Vevo: boolean; out Url: string; out Downloader: TDownloader): boolean;
       function ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
@@ -121,6 +130,9 @@ const
     OPTION_YOUTUBE_PREFERREDLANGUAGES {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'preferred_languages';
     OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'en';
   {$ENDIF}
+  OPTION_DASH_VIDEO_SUPPORT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'dash_video_support';
+  OPTION_DASH_AUDIO_SUPPORT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'dash_audio_support';
+
 
 implementation
 
@@ -132,7 +144,7 @@ uses
   {$IFDEF SUBTITLES}
   uSubtitles,
   {$ENDIF}
-  strutils,
+  strutils, uJson,
   uMessages;
 
 // http://www.youtube.com/v/b5AWQ5aBjgE
@@ -151,23 +163,26 @@ const
   REGEXP_EXTRACT_CONFIG = '<embed\b[^>]*\sflashvars="(?P<FLASHVARS>[^"]+)"';
   REGEXP_EXTRACT_CONFIG_JS = '\bflashvars\s*=(?P<QUOTE>\\?["''])(?P<FLASHVARS>.+?)(?P=QUOTE)';
   REGEXP_EXTRACT_CONFIG_JSON = '(?:\.playerConfig|\bytplayer\.config)\s*=\s*\{(?P<JSON>.+?)\}\s*;';
-  REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
   REGEXP_FLASHVARS_PARSER = '(?:^|&amp;|&)(?P<VARNAME>[^&]+?)=(?P<VARVALUE>[^&]+)';
   REGEXP_JSON_PARSER = REGEXP_PARSER_FLASHVARS_JS;
-  ///REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)/(?P<VIDEOQUALITY>[0-9]+)/(?P<AUDIOQUALITY>[0-9]+)/(?P<LENGTH>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
-  REGEXP_FORMAT_LIST = '(?P<FORMAT>[0-9]+)/(?P<WIDTH>[0-9]+)x(?P<HEIGHT>[0-9]+)'; //'34/640x360/9/0/115,5/0/7/0/0'
-  REGEXP_FORMAT_URL_MAP_ITEM = '(?:^|,)(?P<ITEM>.*?)(?:$|(?=,))';
-  REGEXP_FORMAT_URL_MAP_VARS = '(?:^|&)(?P<VARNAME>[^=]+)=(?P<VARVALUE>[^&]*)';
+  REGEXP_FORMAT_LIST = '"formats":\[(?P<FORMATS>.+?)\]'; //''
+  REGEXP_AFORMAT_LIST = '"adaptiveFormats":\[(?P<AFORMATS>.+?)\]'; //''
+  REGEXP_FORMAT_URL_MAP_ITEM = '{(?P<ITEM>.*?)}(?={\S|,{)';
+  REGEXP_FORMAT_URL_MAP_VARS = '"(?P<VARNAME>.+?)":(?P<VARVALUE>.+?)(?=\S|,)';
   REGEXP_EXTRACT_STS = '"sts":(?P<STS>.+?),';
   REGEXP_EXTRACT_JS = '"js":"(?P<JS>.+?)"';
-  REGEXP_EXTRACT_DECIPHER_FCE = 'a=a\.split\(""\);(?P<FCE>.+?);return a.join\(""\)};';
+  REGEXP_MOVIE_TITLE = '.*?"title"\s*:\s*"(?P<TITLE>.+?)"';
+  REGEXP_EXTRACT_DECIPHER_FCE = '.=.\.split\(""\);(?P<FCE>.+?);return ..join\(""\)};';
   REGEXP_EXTRACT_DECIPHER_BODY = ';var %s={(?P<FCEBODY>[.|\s|\S]+?)};';
+  REGEX_EXTRACT_PLAYER_RESPONSE = 'player_response=(?P<PLRESPON>.+?)&csn=';
 
 const
   EXTENSION_FLV {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '.flv';
   EXTENSION_WEBM {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '.webm';
   EXTENSION_MP4 {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '.mp4';
+  EXTENSION_MP4_AUDIO {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '.mpa';
   EXTENSION_3GP {$IFDEF MINIMIZESIZE} : string {$ENDIF} = '.3gp';
+
 
 type
   TDownloader_YouTube_HTTP = class(THttpDirectDownloader);
@@ -216,18 +231,22 @@ begin
   MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
   FlashVarsParserRegExp := RegExCreate(REGEXP_FLASHVARS_PARSER);
   JSONParserRegExp := RegExCreate(REGEXP_JSON_PARSER);
+  JSONPlayerRegExp := RegExCreate(REGEX_EXTRACT_PLAYER_RESPONSE);
+
   FormatListRegExp := RegExCreate(REGEXP_FORMAT_LIST);
+  AdaptiveFormatListRegExp := RegExCreate(REGEXP_AFORMAT_LIST);
+
   FormatUrlMapRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_ITEM);
-  FormatUrlMapVarsRegExp := RegExCreate(REGEXP_FORMAT_URL_MAP_VARS);
+
   MaxWidth := OPTION_YOUTUBE_MAXVIDEOWIDTH_DEFAULT;
   MaxHeight := OPTION_YOUTUBE_MAXVIDEOHEIGHT_DEFAULT;
   {$IFDEF SUBTITLES}
     PreferredLanguages := OPTION_YOUTUBE_PREFERREDLANGUAGES_DEFAULT;
   {$ENDIF}
-  YouTubeStsRegExp := RegExCreate(REGEXP_EXTRACT_STS);
   YouTubeJsRegExp := RegExCreate(REGEXP_EXTRACT_JS);
   YouTubeDecipherRegExp := RegExCreate(REGEXP_EXTRACT_DECIPHER_FCE);
-  ///YouTubeDecipherBodyRegExp := RegExCreate(REGEXP_EXTRACT_DECIPHER_BODY);
+  fAudioURL:='';
+  fAudioFormat:='';
 end;
 
 destructor TDownloader_YouTube.Destroy;
@@ -239,11 +258,12 @@ begin
   RegExFreeAndNil(FlashVarsParserRegExp);
   RegExFreeAndNil(JSONParserRegExp);
   RegExFreeAndNil(FormatListRegExp);
+  RegExFreeAndNil(AdaptiveFormatListRegExp);
   RegExFreeAndNil(FormatUrlMapRegExp);
-  RegExFreeAndNil(FormatUrlMapVarsRegExp);
-  RegExFreeAndNil(YouTubeStsRegExp);
   RegExFreeAndNil(YouTubeJsRegExp);
   RegExFreeAndNil(YouTubeDecipherRegExp);
+  RegExFreeAndNil(JSONPlayerRegExp);
+  ///RegExFreeAndNil(YouTubeDecipherBodyRegExp);
   inherited;
 end;
 
@@ -390,6 +410,8 @@ begin
       Result := EXTENSION_WEBM;
     13, 17, 18:
       Result := EXTENSION_3GP;
+    139..141, 256, 258, 325, 328 :
+      Result := EXTENSION_MP4_AUDIO;
     else
       Result := EXTENSION_MP4;
     end;
@@ -408,52 +430,94 @@ end;
 function TDownloader_YouTube.ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
 var
   Status, Reason, FmtList, FmtUrlMap, VideoFormat, PS, PTK: string;
+  Formats, AFormats: string;
+  charArray : Array[0..0] of Char;
+  strArray  : TArray<String>; ///Array of String;
+
   D: TDownloader;
 begin
   Result := False;
   Title := '';
   Url := '';
-  if GetRegExpVarPairs(Parser, FlashVars, ['status', 'reason', 'fmt_list', 'title', 'url_encoded_fmt_stream_map', 'ps', 'ptk'], [@Status, @Reason, @FmtList, @Title, @FmtUrlMap, @PS, @PTK]) then
+  fAudioFormat:='';
+
+  if not GetRegExpVar(MovieTitleRegExp, TextDecoder(FlashVars), 'TITLE', Title) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
+  Title := UrlDecode(Title, peUtf8);
+  if not GetRegExpVar(FormatListRegExp, TextDecoder(FlashVars), 'FORMATS', Formats) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']));
+  if not GetRegExpVar(AdaptiveFormatListRegExp, TextDecoder(FlashVars), 'AFORMATS', AFormats) then
+    SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format-URL Map']))  ;
+
+  if AFormats <> '' then
+    Formats := Formats + ','+ AFormats;
+
+  ///if GetRegExpVarPairs(Parser, TextDecoder(FlashVars), ['status', 'reason', 'fmt_list', 'url_encoded_fmt_stream_map', 'ps', 'ptk'], [@Status, @Reason, @FmtList, @FmtUrlMap, @PS, @PTK]) then
+  if GetRegExpVarPairs(Parser, TextDecoder(FlashVars), ['status', 'reason', 'ps', 'ptk'], [@Status, @Reason, @PS, @PTK]) then
     if Status = 'fail' then
       SetLastErrorMsg(Format(ERR_SERVER_ERROR, [Utf8ToString(Utf8String(UrlDecode(Reason)))]))
-    else if FmtList = '' then
+    {else if FmtList = '' then
       SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format List']))
     else if FmtUrlMap = '' then
-      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format-URL Map']))
+      SetLastErrorMsg(Format(ERR_VARIABLE_NOT_FOUND, ['Format-URL Map']))}
     else
       begin
-      ObfuscationScheme := PTK;
-      FmtUrlMap := TextDecoder(FmtUrlMap);
-      VideoFormat := GetBestVideoFormat(TextDecoder(Trim(FmtList)), FmtUrlMap);
-      if VideoFormat = '' then
-        VideoFormat := '22';
-      Extension := GetVideoFormatExt(VideoFormat);
-      if not GetDownloader(Http, VideoFormat, FmtUrlMap, PS = 'live', PTK = 'vevo', Url, D) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-      else if CreateNestedDownloaderFromDownloader(D) then
+        ObfuscationScheme := PTK;
+        FmtUrlMap := TextDecoder(Trim(Formats));///TextDecoder(FmtUrlMap);
+        ///VideoFormat := GetBestVideoFormat(TextDecoder(Trim(FmtList)), FmtUrlMap);
+        VideoFormat := GetBestVideoFormat(FmtUrlMap);
+        charArray[0] := ',';
+        strArray     := VideoFormat.Split(charArray);
+        VideoFormat := strArray[0];
+        fAudioFormat := strArray[1];
+        if VideoFormat = '' then VideoFormat := '22';
+        if StrToIntDef(VideoFormat, 0) <= 35 then fAudioFormat:='';
+        ///if fAudioFormat = VideoFormat then fAudioFormat:='';
+
+        Extension := GetVideoFormatExt(VideoFormat);
+        if fAudioFormat <> '' then Extension:='.mpv';
+
+        if not GetDownloader(Http, VideoFormat, FmtUrlMap, PS = 'live', PTK = 'vevo', Url, D) then
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+        else if fAudioFormat <> ''  then
+          if not GetDownloader(Http, fAudioFormat, FmtUrlMap, PS = 'live', PTK = 'vevo', fAudioURL, fADownloader) then
+            SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_AUDIO_URL)
+        else if CreateNestedDownloaderFromDownloader(D) then
         begin
-        Title := UrlDecode(Title, peUtf8);
-        Result := True;
+          {if not GetRegExpVar(MovieTitleRegExp, TextDecoder(FlashVars), 'TITLE', Title) then
+          SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
+          Title := UrlDecode(Title, peUtf8);}
+          Result := True;
         end;
       end;
 end;
 
 function TDownloader_YouTube.GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live, Vevo: boolean; out Url: string; out Downloader: TDownloader): boolean;
 var
-  FoundFormat, Server, Stream, Signature, Signature2, SP: string;
+  FoundFormat, Server, Stream, Signature, Signature2, sp: string;
   Formats: TStringArray;
   i: integer;
   HTTPDownloader: TDownloader_YouTube_HTTP;
   RTMPDownloader: TDownloader_YouTube_RTMP;
+  fJson: TJSON;
 begin
   Result := False;
   Url := '';
   Downloader := nil;
+
   if GetRegExpAllVar(FormatUrlMapRegExp, FormatUrlMap, 'ITEM', Formats) then
     for i := 0 to Pred(Length(Formats)) do
-      if GetRegExpVarPairs(FormatUrlMapVarsRegExp, Formats[i], ['itag', 'url', 'conn', 'stream', 'sig', 's', 'sp'], [@FoundFormat, @Url, @Server, @Stream, @Signature, @Signature2, @SP]) then
-        if FoundFormat = VideoFormat then
-          begin
+    begin
+      fJson := JSONCreate('{'+Formats[i]+'}');
+      FoundFormat := JSONValue(fJson, 'itag');
+      url := JSONValue(fJson, 'url');
+      signature := JSONValue(fJson, 'sig');
+      signature2 := JSONValue(fJson, 's');
+      sp := JSONValue(fJson, 'sp');
+      JSONFreeAndNil(fJson);
+      if FoundFormat = VideoFormat then
+      begin
+          Url:=StringReplace(Url,'"','',[]);
           if Url <> '' then
             begin
             Url := UrlDecode(Url);
@@ -463,11 +527,10 @@ begin
             begin
               ///if Vevo then
               Signature := UpdateVevoSignature(UrlDecode(Signature));
-              if sp='sig' then
-                Url := Url + '&sig=' + Signature
-              else
-                Url := Url + '&signature=' + Signature;
+              if sp='' then sp:='signature';
+              Url := Url + Format('&%s=%s',[sp,signature]);
             end;
+            if pos('ratebypass',url) < 1 then url := url +'&ratebypass=yes';
             HTTPDownloader := TDownloader_YouTube_HTTP.Create(Url);
             HTTPDownloader.Cookies.Assign(Http.Cookies);
             Downloader := HTTPDownloader;
@@ -486,7 +549,8 @@ begin
             Result := True;
             end;
           Break;
-          end;
+       end;
+   end;
 end;
 
 function TDownloader_YouTube.CompareQuality(Quality: integer; const FileFormat: string; RefQuality: integer; const RefFileFormat: string): integer;
@@ -562,6 +626,64 @@ begin
     until not GetRegExpVarsAgain(FormatListRegExp, ['WIDTH', 'HEIGHT', 'FORMAT'], [@sWidth, @sHeight, @VideoFormat]);
 end;
 
+
+function TDownloader_YouTube.GetBestVideoFormat(const FormatList: string): string;
+var
+  mimetype,qualitylabel: string;
+  Formats: TStringArray;
+  i: integer;
+  QualityIndex, BestVideoQuality, BestAudioQuality, Width, Height: integer;
+  VideoQuality, AudioQuality: integer;
+  sAudioQuality, sWidth, sHeight, VideoFormat,
+  BestVideoFormat, AudioFormat: string;
+  fJson: TJSON;
+
+begin
+  Result := '';
+  BestVideoQuality := 0;
+  BestAudioQuality := 0;
+  BestVideoFormat := '';
+  AudioFormat := '';
+
+  if GetRegExpAllVar(FormatUrlMapRegExp, FormatList, 'ITEM', Formats) then
+    for i := 0 to Pred(Length(Formats)) do
+    begin
+        fJson := JSONCreate('{'+Formats[i]+'}');
+        VideoFormat := JSONValue(fJson, 'itag');
+        swidth := JSONValue(fJson, 'width');
+        sHeight := JSONValue(fJson, 'height');
+        mimetype := JSONValue(fJson, 'mimeType');
+        qualitylabel := JSONValue(fJson, 'qualityLabel');
+        sAudioQuality := JSONValue(fJson, 'audioSampleRate');
+        if pos('audio',mimetype) > 0 then
+          if pos('mp4a',mimetype) > 0 then AudioFormat:=VideoFormat;
+        JSONFreeAndNil(fJson);
+      if (VideoFormat<>'') and (pos('video',mimetype)> 0) then
+      begin
+        AudioQuality := StrToIntDef(StringReplace(sAudioQuality,'"','',[]), 0);
+        if AudioQuality > 0 then AudioFormat := VideoFormat;
+        Width := StrToIntDef(StringReplace(sWidth,'"','',[]) ,0);
+        Height := StrToIntDef(StringReplace(sHeight,'"','',[]), 0);
+        VideoQuality := Width * Height;
+        QualityIndex := CompareQuality(VideoQuality, VideoFormat, BestVideoQuality, BestVideoFormat);
+        if QualityIndex = 0 then
+          QualityIndex := CompareQuality(AudioQuality, VideoFormat, BestAudioQuality, BestVideoFormat);
+        if QualityIndex > 0 then
+          if (Width <= MaxWidth) or (MaxWidth <= 0) then
+            if (Height <= MaxHeight) or (MaxHeight <= 0) then
+              begin
+                BestVideoQuality := VideoQuality;
+                BestAudioQuality := AudioQuality;
+                BestVideoFormat := VideoFormat;
+                Result := VideoFormat;
+              end;
+      end;
+    end;
+  Result:=result+','+AudioFormat;
+end;
+
+
+///https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=-XIQKxA0cNk&format=xml
 function TDownloader_YouTube.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var FlashVars, Title, Url, sts, js, jscore: string;
     InfoFound: boolean;
@@ -569,25 +691,25 @@ begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
   InfoFound := False;
-  GetRegExpVar(YouTubeStsRegExp, Page, 'STS', sts);
   GetRegExpVar(YouTubeJsRegExp, Page, 'JS', js);
   js := StringReplace(js,'\','',[rfReplaceAll, rfIgnoreCase]);
   if AnsiStartsStr('/', js) then
     js:='https://www.youtube.com'+js;
   if js <> '' then Downloadpage(Http, js, JsCode);
-  if DownloadPage(Http, 'https://www.youtube.com/get_video_info?video_id=' + MovieID + '&sts='+sts+'&el=embedded', FlashVars) then
+  if DownloadPage(Http, 'https://www.youtube.com/get_video_info?video_id=' + MovieID + '&el=embedded', FlashVars) then
+  ///if DownloadPage(Http, 'https://www.youtube.com/get_video_info?html5=1&video_id=' + MovieID , FlashVars) then
     InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, FlashVars, Title, Url);
   if not InfoFound then
   begin
-    if DownloadPage(Http, 'https://www.youtube.com/get_video_info?video_id=' + MovieID + '&sts='+sts+'&el=detailpage', FlashVars) then
-    InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, FlashVars, Title, Url);
+    if DownloadPage(Http, 'https://www.youtube.com/get_video_info?video_id=' + MovieID + '&el=detailpage', FlashVars) then
+      InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, FlashVars, Title, Url);
   end;
-  if not InfoFound then
+  {if not InfoFound then
     if GetRegExpVar(YouTubeConfigJSRegExp, Page, 'FLASHVARS', FlashVars) then
       InfoFound := ProcessFlashVars(Http, FlashVarsParserRegExp, FlashVarsDecode, JSDecode(FlashVars), Title, Url);
   if not InfoFound then
     if GetRegExpVar(YouTubeConfigJSONRegExp, Page, 'JSON', FlashVars) then
-      InfoFound := ProcessFlashVars(Http, JSONParserRegExp, JSONVarsDecode, JSDecode(FlashVars), Title, Url);
+      InfoFound := ProcessFlashVars(Http, JSONParserRegExp, JSONVarsDecode, JSDecode(FlashVars), Title, Url);}
   if InfoFound then
     begin
     if Title <> '' then
@@ -664,7 +786,6 @@ begin
   // v "assets"\s*:\s*\{\s*"js"\s*:\s*"(?P<URL>\\/\\/s.ytimg.com\\/[^"]+?)"
   // (pozor, neobsahuje protokol, jen server a cestu).
 
- 
   RE:='';
   SW:='';
   SL:='';
@@ -678,7 +799,7 @@ begin
   try
     ExtractStrings([#10], [], PChar(body), List);
     for i:=0 to List.count-1 do
-      begin
+    begin
     if AnsiContainsStr(List[i], 'reverse') then
        RE:=copy(List[i],1,2)
     else
@@ -701,9 +822,6 @@ begin
     List.Free;
     RegExFreeAndNil(YouTubeDecipherBodyRegExp);
   end;
-  ///Slice(Result,1);
-  ///YoutubeSwap(Result,55);
-  ///YoutubeSwap(Result,49);
 
 end;
 
@@ -711,6 +829,7 @@ function TDownloader_YouTube.Download: boolean;
 var
   Msg: string;
 begin
+  /// video stream
   Result := inherited Download;
   if not Result then
     if LastErrorMsg = Format(ERR_HTTP_RESULT_CODE, [403]) then
@@ -722,6 +841,27 @@ begin
         else
           SetLastErrorMsg(Msg);
         end;
+  /// audio stream
+  if (fAudioURL<>'') and (fAudioFormat<>'') then
+    begin
+      Extension := GetVideoFormatExt(fAudioFormat);
+      if CreateNestedDownloaderFromDownloader(fADownloader) then
+      begin
+        if fADownloader <> nil then
+        begin
+          result := fADownloader.Prepare;
+          fADownloader.Name := name+Extension;
+          fADownloader.Options := Options;
+          fADownloader.OnProgress := OnProgress;
+          fADownloader.OnFileNameValidate := NestedFileNameValidate;
+          ///Result := fADownloader.ValidateFileName and fADownloader.Download;
+          Result :=  fADownloader.Download;
+        end;
+      end;
+      if not Result then
+         SetLastErrorMsg('Error doanload Audio stream');
+
+    end;
 end;
 
 { TDownloader_YouTube_RTMP }

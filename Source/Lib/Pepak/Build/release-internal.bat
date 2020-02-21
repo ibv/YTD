@@ -11,7 +11,10 @@ set skip_source=1
 set skip_build=0
 rem set compress=exe
 rem set variant_name=
-rem set variant_suffix=
+set variant_suffix=
+
+if /i "%~2"=="x64" set variant_suffix=_x64
+
 
 if exist "%releasedir%%project%-%version%%variant_suffix%.%compress%" del "%releasedir%%project%-%version%%variant_suffix%.%compress%"
 if not "%skip_source%"=="1" (
@@ -71,6 +74,7 @@ goto :eof
 rem 1 = compression
 rem 2 = target filename
 rem 3 = source directory
+
 if "%~1"=="exe" (
   call :pack-exe "%~1" "%~2" "%~3" "%srcdir%"
 ) else if "%~1"=="7z" (

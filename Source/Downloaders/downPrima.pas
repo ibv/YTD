@@ -112,7 +112,7 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-  uFunctions,
+
   uMessages;
 
 const
@@ -347,13 +347,13 @@ begin
   inherited;
   Bitrate := Value.ReadProviderOptionDef(Provider, OPTION_Prima_MAXBITRATE, OPTION_Prima_MAXBITRATE_DEFAULT);
   case Bitrate of
-       512:  MaxBitRate:=540672;
-       640:  MaxBitRate:=950272;
-       768:  MaxBitRate:=1155072;
-      1024:  MaxBitRate:=1667072;
-      1280:  MaxBitRate:=2310144;
-      1920:  MaxBitRate:=3334144;
-      else   MaxBitRate:=MaxInt;
+       512:  MaxVBitRate:=540672;
+       640:  MaxVBitRate:=950272;
+       768:  MaxVBitRate:=1155072;
+      1024:  MaxVBitRate:=1667072;
+      1280:  MaxVBitRate:=2310144;
+      1920:  MaxVBitRate:=3334144;
+      else   MaxVBitRate:=MaxInt;
   end;
 end;
 

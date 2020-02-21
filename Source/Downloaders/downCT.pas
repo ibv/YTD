@@ -300,21 +300,21 @@ begin
   ///if TDownloader_CT.classtype = THLSDownloader then
   if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
   case Bitrate of
-       512:  MaxBitRate:=628000;
-       720:  MaxBitRate:=1160000;
-      1024:  MaxBitRate:=2176000;
-      1280:  MaxBitRate:=3712000;
-      1920:  MaxBitRate:=6272000;
-      else   MaxBitRate:=MaxInt;
+       512:  MaxVBitRate:=628000;
+       720:  MaxVBitRate:=1160000;
+      1024:  MaxVBitRate:=2176000;
+      1280:  MaxVBitRate:=3712000;
+      1920:  MaxVBitRate:=6272000;
+      else   MaxVBitRate:=MaxInt;
   end
   else
   case Bitrate of
-       512:  MaxBitRate:=500000;
-       720:  MaxBitRate:=1032000;
-      1024:  MaxBitRate:=2048000;
-      1280:  MaxBitRate:=3584000;
-      1920:  MaxBitRate:=6144000;
-      else   MaxBitRate:=MaxInt;
+       512:  MaxVBitRate:=500000;
+       720:  MaxVBitRate:=1032000;
+      1024:  MaxVBitRate:=2048000;
+      1280:  MaxVBitRate:=3584000;
+      1920:  MaxVBitRate:=6144000;
+      else   MaxVBitRate:=MaxInt;
   end
 end;
 

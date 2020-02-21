@@ -44,10 +44,10 @@ uses
   {$ifdef mswindows}
     Windows,
   {$ELSE}
-    LCLIntf, LCLType, LMessages,
+    LCLIntf, LCLType,
   {$ENDIF}
-  uPCRE, uXml, uHttp, HttpSend, blcksock,
-  uDownloader, uCommonDownloader, uDASHDownloader;
+  uPCRE, uXml, uHttp,  HttpSend, blcksock,
+  uDownloader, uCommonDownloader, uMPD;
 
 type
   THLSDownloader = class(TCommonDownloader)
@@ -60,7 +60,6 @@ type
       fDownloadedThisFragment: int64;
       fDownloadedPreviousFragments: int64;
       fAborted: boolean;
-      fMaxBitRate: integer;
       //
       fMPD: TMPDObject;
     protected
@@ -80,7 +79,6 @@ type
       property VideoDownloader: THttpSend read fVideoDownloader;
       property Fragments: TStringList read fFragments;
       property Aborted: boolean read fAborted write fAborted;
-      property MaxBitRate: integer read fMaxBitRate write fMaxBitRate;
     public
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
@@ -96,8 +94,8 @@ type
 implementation
 
 uses
-
-  uLanguages, uMessages, uFiles
+  SynaUtil,
+  uLanguages, uMessages, uFunctions, uFiles
 
   ;
 
@@ -110,6 +108,8 @@ const
 { THLSDownloader }
 
 constructor THLSDownloader.Create(const AMovieID: string);
+var
+  i: integer;
 begin
   inherited;
   fCookies := TStringList.Create;
@@ -117,7 +117,6 @@ begin
   fFragments := TStringList.Create;
   fRetryCount := 3;
   QualityRegExp := RegExCreate(REGEXP_QUALITY);
-  fMaxBitRate := MaxInt;
 end;
 
 destructor THLSDownloader.Destroy;
@@ -163,15 +162,24 @@ begin
     else
       begin
       BestPlaylistUrl := '';
+      /// pro JihoCeskaTV, funguje i pro default;
       BestPlaylistUrl := MovieUrl;
       BestPlaylistQuality := -1;
       PlaylistStream := TTextStream.Create(TStringStream.Create(Playlist), True);
+
+      {with TFileStream.create('list.m3u',fmCreate) do
+      try
+        writeBuffer(PlayList[1],length(Playlist));
+      finally
+        free;
+      end;}
+
       try
         while PlaylistStream.ReadLine(Line) do
           if GetRegExpVar(QualityRegExp, Line, 'QUALITY', sQuality) then
             begin
             Quality := StrToIntDef(sQuality, 0);
-            if (fMaxBitRate-Quality >=0) and (Quality > BestPlaylistQuality) then
+            if (MaxVBitRate-Quality >=0) and (Quality > BestPlaylistQuality) then
               while PlaylistStream.ReadLine(Line) do
                 if Line <> '' then
                   if Line[1] <> '#' then
@@ -237,9 +245,11 @@ begin
     else
     begin
       id:='';
+
+      ///Xml.SaveToFile('list.mpd');
       fMPD := TMPDObject.Create(Xml);
       // video stream
-      id   := fMPD.GetBestID(fMaxBitRate);
+      id   := fMPD.GetBestID(MaxVBitRate);
       Fragments.Add(GetRelativeUrl(fMPD.BaseURL, fMPD.VideoInit));
       for i:=0 to fMPD.VideoEndNumber do
       begin

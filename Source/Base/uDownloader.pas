@@ -40,7 +40,12 @@ unit uDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   HttpSend, SynaUtil, SynaCode,
   uOptions, uPCRE, uXML, uAMF, uFunctions, uLanguages,
@@ -48,9 +53,6 @@ uses
   guiDownloaderOptions;
   {$ENDIF}
   ///uCompatibility;
-
-
-
 
 type
   EDownloaderError = class(Exception);
@@ -99,6 +101,10 @@ type
       fLastPrepareTime: TDateTime;
       fPrepareLifetime: Integer;
       {$ENDIF}
+      fProviderName: string;
+      fVideoResolution: integer;
+      fVideoBitrate: integer;
+
     protected
       function GetName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetName(const Value: string); virtual;
@@ -187,7 +193,8 @@ type
       class function Provider: string; virtual; abstract;
       class function Features: TDownloaderFeatures; virtual;
       class function UrlRegExp: string; virtual; abstract;
-      class function IsSupportedUrl(const Url: string; out MovieID: string): boolean; virtual;
+      class function IsSupportedUrl(const Url: string; out MovieID: string): boolean; overload;
+      class function IsSupportedUrl(const Url: string; out MovieID, Provid: string): boolean; overload;
       class function MovieIDParamName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; virtual;
@@ -221,6 +228,11 @@ type
       property Options: TYTDOptions read fOptions write SetOptions;
       property OnProgress: TDownloaderProgressEvent read fOnProgress write fOnProgress;
       property OnFileNameValidate: TDownloaderFileNameValidateEvent read fOnFileNameValidate write fOnFileNameValidate;
+
+      property ProviderName: string read fProviderName write fProviderName;
+      property MaxVResolution: integer read fVideoResolution write fVideoResolution;
+      property MaxVBitrate: integer read fVideoBitrate write fVideoBitrate;
+
     end;
 
 implementation
@@ -264,6 +276,13 @@ begin
       Result := MovieID <> '';
 end;
 
+class function TDownloader.IsSupportedUrl(const Url: string; out MovieID,Provid : string): boolean;
+begin
+  Provid := Provider;
+  Result := IsSupportedUrl(Url,MovieID);
+end;
+
+
 {$IFDEF GUI}
 class function TDownloader.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
 begin
@@ -283,6 +302,7 @@ begin
   ///fHttp.UserAgent := DEFAULT_USER_AGENT;
   fHttp.UserAgent := format(DEFAULT_USER_AGENT, [RandomRange(63, 73),RandomRange(3239, 3683),RandomRange(0, 100)]);
   MovieID := AMovieID;
+  ///fVideoBitRate := MaxInt;
 end;
 
 destructor TDownloader.Destroy;
