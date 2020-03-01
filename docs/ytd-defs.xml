@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.64.20200220.0</version>
+  <version>1.64.20200301.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1504,17 +1504,16 @@
         </url>
       </http_download>
     </script>
-    <script id="rtvs.sk" provider="RTVS.sk" changed="20160826">
+    <script id="rtvs.sk" provider="RTVS.sk" changed="20200301">
       <regexps>
         <regexp id="info_url" match="URL"><![CDATA[\$\.getJSON\s*\(\s*'(?P<URL>.+?)']]></regexp>
-        <regexp id="playlist" match="INFO"><![CDATA["playlist"\s*:\s*\[\s*\{\s*(?P<INFO>.+?)\s*\}\s*\]]]></regexp>
         <regexp id="title" match="INFO"><![CDATA["name"\s*:\s*"(?P<INFO>.*?)"]]></regexp>
         <regexp id="url_base" match="URL"><![CDATA["baseUrl"\s*:\s*"(?P<URL>https?://(?P<NOPROTO>.+?))"]]></regexp>
-        <regexp id="info_url2" match="URL"><![CDATA["playlist"\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
-        <regexp id="playlist2" match="INFO"><![CDATA["sources"\s*:\s*\[\s*\{\s*(?P<INFO>.+?)\s*\}\s*\]]]></regexp>
+        <regexp id="info_url2" match="URL"><![CDATA[var url =\s*"(?P<URL>.+?)&"]]></regexp>
+        <regexp id="playlist2" match="INFO"><![CDATA["sources"\s*:\s*\[\s*\{.*?"src"\s*:\s*"(?P<INFO>.+?)"]]></regexp>
         <regexp id="title2" match="INFO"><![CDATA["title"\s*:\s*"(?P<INFO>.*?)"]]></regexp>
         <regexp id="hds" match="URL"><![CDATA["url"\s*:\s*"(?P<URL>smil:.+?)"]]></regexp>
-        <regexp id="hls" match="URL"><![CDATA["file"\s*:\s*"(?P<URL>https?:.+?/playlist\.m3u8\?.+?)"]]></regexp>
+        <regexp id="hls" match="URL"><![CDATA[(?P<URL>https?:.+?/playlist\.m3u8)\?]]></regexp>
         <regexp id="rtmp" match="URL"><![CDATA[(?P<URL>https?://(?P<RTMP>[^/]+/stv-tv-arch)/_definst_/smil:(?P<PLAYPATH>.+?)\.smil/manifest\.f4m(?P<AUTH>\?.+))]]></regexp>
         <regexp id="http" match="URL"><![CDATA["details"\s*:\s*\{\s*"name"\s*:\s*"(?P<NAME>[^"]+)"[^}]*\}\s*,\s*"url"\s*:\s*"(?P<URL>https?://.+?)"]]></regexp>
       </regexps>
@@ -1526,28 +1525,6 @@
         </download_page>
       </set_var>
       <if>
-        <condition type="regexp_match" id="info_url" content="page">
-          <set_var id="info_url">
-            <relative_url>
-              <url>
-                <regexp id="info_url" content="page"/>
-              </url>
-            </relative_url>
-          </set_var>
-          <set_var id="info">
-            <download_page encoding="utf8">
-              <url>
-                <get_var id="info_url"/>
-              </url>
-            </download_page>
-          </set_var>
-          <set_var id="playlist">
-            <regexp id="playlist" content="info"/>
-          </set_var>
-          <set_var id="title">
-            <regexp id="title" content="playlist"/>
-          </set_var>
-        </condition>
         <condition type="regexp_match" id="info_url2" content="page">
           <set_var id="info_url">
             <regexp id="info_url2" content="page"/>
@@ -1567,7 +1544,7 @@
           </set_var>
         </condition>
       </if>
-      <if>
+       <if>
         <condition type="regexp_match" id="http" content="playlist">
           <http_download>
             <title>
@@ -1603,8 +1580,10 @@
               <get_var id="title"/>
             </title>
             <url>
-              <regexp id="hls" content="playlist"/>
+              <!--regexp id="hls" content="playlist"/-->
+              <get_var id="playlist"/>
             </url>
+           <extension>.mp4</extension> 
           </hls_download>
         </condition>
       </if>
@@ -1856,10 +1835,10 @@
         </url>
       </smoothstream_download>
     </script>
-    <script id="tvnoe.cz" provider="TV Noe.cz">
+    <script id="tvnoe.cz" provider="TV Noe.cz" changed="20200301">
       <regexps>
-        <regexp id="title" match="CONTENT"><![CDATA[<h2\s+class="title"[^>]*>(?P<CONTENT>.*?)</h2>]]></regexp>
-        <regexp id="url" match="URL"><![CDATA[<iframe\s+src="(?P<URL>https?://video\.tvnoe\.cz/getVideo\.php\?.+?)"]]></regexp>
+        <regexp id="title" match="CONTENT"><![CDATA[<h2>(?P<CONTENT>.*?)</h2>]]></regexp>
+        <regexp id="url" match="URL"><![CDATA[src:.+?'(?P<URL>.+?)',]]></regexp>
       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
@@ -1868,18 +1847,19 @@
           </url>
         </download_page>
       </set_var>
-      <nested_download>
-        <title>
+        <hls_download>
+         <title>
           <decode_html>
             <strip_tags>
               <regexp id="title" content="page"/>
             </strip_tags>
           </decode_html>
-        </title>
-        <url>
-          <regexp id="url" content="page"/>
-        </url>
-      </nested_download>
+          </title>
+          <url>
+            <regexp id="url" content="page"/>
+          </url>
+         <extension>.mp4</extension>  
+     </hls_download>
     </script>
     <script id="tvnoe.cz-embed" provider="TV Noe.cz">
       <regexps>
