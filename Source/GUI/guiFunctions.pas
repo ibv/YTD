@@ -40,7 +40,13 @@ unit guiFunctions;
 interface
 
 uses
-  SysUtils, Classes, Windows, ShellApi,  {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,  ShellApi,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+  {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   {$IFDEF SETUP}
     uSetup, uSystem,
     {$IFNDEF GUI_WINAPI}
@@ -72,6 +78,7 @@ implementation
 uses
   uScriptedDownloader, uRtmpDownloader, uMSDownloader;
 
+
 function GetProgressStr(DoneSize, TotalSize: int64): string;
 var n: int64;
 begin
@@ -82,6 +89,7 @@ begin
     Result := Format('%s (%d.%d%%)', [Result, n div 10, n mod 10]);
     end
 end;
+
 
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 var
@@ -119,7 +127,7 @@ begin
     if Upgrade.OnlineYTDUrl = '' then
       Upgrade.TestUpgrades(False, False);
     if Upgrade.OnlineYTDUrl <> '' then
-      if MessageBox(OwnerHandle, PChar(MSG_DOWNLOAD_OR_UPGRADE), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+      if MessageBox(OwnerHandle, PChar(MSG_DOWNLOAD_OR_UPGRADE), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONQUESTION or $00002000{MB_TASKMODAL}) = idYes then
         if (Upgrade.OnlineYTD <> nil) or Upgrade.DownloadYTDUpgrade(False, False) then
           if Upgrade.UpgradeYTD then
             {$IFDEF GUI_WINAPI}
@@ -325,10 +333,15 @@ begin
       {$IFDEF SETUP}
       if not Result then
         begin
-        Dir := SystemTempFile(SystemTempDir, 'YTDLib');
+        ///Dir := SystemTempFile(SystemTempDir, 'YTDLib');
+        Dir := 'YTDLib';
         ForceDirectories(Dir);
         if not Unzip(LibData, Dir) then
-          ForceDeleteDirectory(Dir)
+          {$ifdef mswindows}
+          ///ForceDeleteDirectory(Dir)
+          {.$else}
+          RemoveDir(Dir)
+          {$endif}
         else
           Result := Run(ParamStr(0), SETUP_PARAM_INSTALL_LIBRARY + ' ' + AnsiQuotedStr(Dir, '"'), 0, True);
         end;
@@ -347,7 +360,7 @@ begin
   // OpenSSL
   if not IsSSLAvailable then
     if not Options.IgnoreMissingOpenSSL then
-      if MessageBox(OwnerHandle, PChar(MSG_OPENSSL_NOT_FOUND + #10#10 + MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+      if MessageBox(OwnerHandle, PChar(MSG_OPENSSL_NOT_FOUND + #10#10 + MSG_OPENSSL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or $00002000{MB_TASKMODAL}) = idYes then
         if DownloadAndInstallExternalLibrary(MY_OPENSSL_URL, OwnerHandle, Options) then
           NeedsRestart := True
         else
@@ -355,7 +368,7 @@ begin
   // RtmpDump
   if not TRtmpDownloader.CheckForPrerequisites then
     if not Options.IgnoreMissingRtmpDump then
-      if MessageBox(OwnerHandle, PChar(MSG_RTMPDUMP_NOT_FOUND + #10#10 + MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+      if MessageBox(OwnerHandle, PChar(MSG_RTMPDUMP_NOT_FOUND + #10#10 + MSG_RTMPDUMP_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or $00002000{MB_TASKMODAL}) = idYes then
         if DownloadAndInstallExternalLibrary(MY_RTMPDUMP_URL, OwnerHandle, Options) then
           NeedsRestart := True
         else
@@ -363,14 +376,14 @@ begin
   // RtmpDump
   if not TMSDownloader.CheckForPrerequisites then
     if not Options.IgnoreMissingMSDL then
-      if MessageBox(OwnerHandle, PChar(MSG_MSDL_NOT_FOUND + #10#10 + MSG_MSDL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or MB_TASKMODAL) = idYes then
+      if MessageBox(OwnerHandle, PChar(MSG_MSDL_NOT_FOUND + #10#10 + MSG_MSDL_NOT_FOUND_ACTION_SUFFIX), PChar(APPLICATION_TITLE), MB_YESNO or MB_ICONWARNING or $00002000{MB_TASKMODAL}) = idYes then
         if DownloadAndInstallExternalLibrary(MY_MSDL_URL, OwnerHandle, Options) then
           NeedsRestart := True
         else
           Run(MSDL_URL);
   // Restart?
   if NeedsRestart then
-    MessageBox(OwnerHandle, PChar(MSG_EXTERNAL_LIBS_WERE_DOWNLOADED), PChar(APPLICATION_TITLE), MB_ICONINFORMATION or MB_OK or MB_TASKMODAL)
+    MessageBox(OwnerHandle, PChar(MSG_EXTERNAL_LIBS_WERE_DOWNLOADED), PChar(APPLICATION_TITLE), MB_ICONINFORMATION or MB_OK or $00002000{MB_TASKMODAL})
 end;
 
 initialization

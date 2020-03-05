@@ -40,11 +40,26 @@ unit guiDownloaderOptions;
 interface
 
 uses
-  {$IFDEF GUI_WINAPI} guiOptionsWINAPI_Downloader {$ELSE} guiOptionsVCL_Downloader {$ENDIF}
+  {$IFDEF GUI_WINAPI}
+    guiOptionsWINAPI_Downloader
+  {$ELSE}
+    {$IFNDEF GUI_LCL}
+      guiOptionsVCL_Downloader
+    {$ELSE}
+      guiOptionsLCL_Downloader
+    {$ENDIF}
+  {$ENDIF}
   ;
 
 type
-  TFrameDownloaderOptionsPage = {$IFDEF GUI_WINAPI} guiOptionsWINAPI_Downloader.TFrameDownloaderOptionsPage {$ELSE} guiOptionsVCL_Downloader.TFrameDownloaderOptionsPage {$ENDIF} ;
+  TFrameDownloaderOptionsPage = {$IFDEF GUI_WINAPI} guiOptionsWINAPI_Downloader.TFrameDownloaderOptionsPage
+    														{$ELSE}
+                                  {$IFDEF GUI_LCL}
+                                    guiOptionsLCL_Downloader.TFrameDownloaderOptionsPage
+                                	{$ELSE}
+                                    guiOptionsVCL_Downloader.TFrameDownloaderOptionsPage
+                                  {$ENDIF}
+                                {$ENDIF} ;
   TFrameDownloaderOptionsPageClass = class of TFrameDownloaderOptionsPage;
 
 implementation

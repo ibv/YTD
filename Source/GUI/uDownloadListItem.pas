@@ -40,10 +40,15 @@ unit uDownloadListItem;
 interface
 
 uses
-  SysUtils, Classes, Windows, ShellApi, 
+  SysUtils, Classes,
+  {$ifndef fpc}
+    Windows,  ShellApi,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages, Process, FileUtil,
+  {$ENDIF}
   uDownloader, uDownloadThread,
   {$IFDEF CONVERTERS}
-  uCreateProcessAsync,
+  ///uCreateProcessAsync,
   {$ENDIF}
   uOptions, uFunctions, uCompatibility;
 
@@ -70,8 +75,8 @@ type
       fConvertThread: TThread;
       fConvertHandle: THandle;
       fOnConvertThreadFinished: TNotifyEvent;
-    fTitle: string;
       {$ENDIF}
+      fTitle: string;
     protected
       procedure SetState(Value: TDownloadThreadState); virtual;
       procedure SetTotalSize(Value: int64); virtual;
@@ -148,6 +153,7 @@ begin
   fDownloader := ADownloader;
   fDownloaderOwned := ADownloaderOwned;
   fThread := nil;
+  fDownLoader.MaxVResolution := 0;
   InitStatus;
 end;
 
@@ -161,7 +167,7 @@ begin
     end;
   if ConvertHandle <> 0 then
     begin
-    UnregisterWait(ConvertHandle);
+    ///UnregisterWait(ConvertHandle);
     ConvertHandle := 0;
     end;
   {$ENDIF}
@@ -208,6 +214,7 @@ begin
     OnConvertThreadFinished(Self);
 end;
 
+{$ifndef fpc}
 function TDownloadListItem.Convert(Force: boolean; const ForceConverter: string): boolean;
 var Converter: TConverter;
     ID, CommandLine, MediaFile: string;
@@ -268,6 +275,56 @@ begin
         end;
       end;
 end;
+{$else}
+function TDownloadListItem.Convert(Force: boolean; const ForceConverter: string): boolean;
+var Converter: TConverter;
+    ID, CommandLine, MediaFile: string;
+    i: integer;
+    s: string;
+    Splitted: TStringList;
+    MyArray: array of string ;
+begin
+  result:=false;
+  if Force or (State = dtsFinished) then
+    if (ConvertState = ctsWaiting) or Force then
+    begin
+      if Force and (ForceConverter <> '') then
+        ID := ForceConverter
+      else
+        ID := Options.SelectedConverterID;
+      if Options.ReadConverter(ID, Converter) then
+      begin
+        MediaFile := ExpandFileName(Downloader.FileName);
+        ///CommandLine := '"' + Converter.ExePath + '" ' + Converter.CommandLine;
+        CommandLine := Converter.CommandLine;
+        CommandLine := StringReplace(CommandLine, '{$FULLPATH}', MediaFile, [rfReplaceAll, rfIgnoreCase]);
+        CommandLine := StringReplace(CommandLine, '{$FILENAME}', ExtractFileName(MediaFile), [rfReplaceAll, rfIgnoreCase]);
+        CommandLine := StringReplace(CommandLine, '{$FILEPATH}', ExtractFilePath(MediaFile), [rfReplaceAll, rfIgnoreCase]);
+        CommandLine := StringReplace(CommandLine, '{$FILEEXT}', ExtractFileExt(MediaFile), [rfReplaceAll, rfIgnoreCase]);
+        CommandLine := StringReplace(CommandLine, '{$FILENOEXT}', ChangeFileExt(ExtractFileName(MediaFile), ''), [rfReplaceAll, rfIgnoreCase]);
+        CommandLine := StringReplace(CommandLine, '{$TITLE}', Downloader.Name, [rfReplaceAll, rfIgnoreCase]);
+        CommandLine := Trim(CommandLine);
+
+        Splitted:=TStringList.Create;
+        Splitted.Delimiter := ' ';
+        Splitted.DelimitedText := CommandLine;
+        // Convert from TStringList to Array of String
+        SetLength(MyArray, Splitted.Count);
+        For i := 0 To Splitted.Count-1 Do
+          MyArray[i] := Splitted[i];
+	Splitted.free;
+
+	if RunCommand(FindDefaultExecutablePath(Converter.ExePath), MyArray, s) then
+        begin
+          SetConvertState(ctsConverting);
+          Result := True;
+        end
+        else SetConvertState(ctsFailedRun);
+      end;
+    end;
+end;
+{$endif}
+
 {$ENDIF}
 
 procedure TDownloadListItem.SetTotalSize(Value: int64);

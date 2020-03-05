@@ -40,7 +40,12 @@ unit uDownloadList;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifndef fpc}
+    Windows
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   {$IFDEF GUI_WINAPI} uDialogs, {$ELSE} Dialogs, {$ENDIF}
   uCompatibility, uDownloadListItem, uDownloadThread,
   uDownloadClassifier, uDownloader,
@@ -205,6 +210,8 @@ begin
   {$IFDEF CONVERTERS}
   Item.OnConvertThreadFinished := DownloadItemConvertThreadFinished;
   {$ENDIF}
+  Item.Downloader.MaxVResolution := Options.ReadProviderOptionDef(Downloader.ProviderName, 'max_video_width', 0);
+  Item.Downloader.MaxVBitrate := Options.ReadProviderOptionDef(Downloader.ProviderName, 'max_video_bitrate', MaxInt);
   Result := List.AddObject(Source, Item);
   NotifyList;
   if Options.AutoStartDownloads then

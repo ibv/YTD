@@ -99,11 +99,11 @@ type
 implementation
 
 
-{const
+const
 
   MB_APPLMODAL = $00000000;
   MB_SYSTEMMODAL = $00001000;
-  MB_TASKMODAL = $00002000; }
+  MB_TASKMODAL = $00002000;
 
 
 { TYTDOptionsGUI }
