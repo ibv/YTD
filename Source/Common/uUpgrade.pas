@@ -42,8 +42,12 @@ unit uUpgrade;
 interface
 
 uses
-  SysUtils, Classes, Windows,
-  HttpSend, SynaUtil, uXML,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+    LCLIntf, LCLType, LMessages, uXml,
+  {$ENDIF}
+  HttpSend, SynaUtil,
   uCompatibility, uOptions, {$IFDEF SETUP} uSetup, {$ENDIF} uFunctions, uPCRE;
 
 type
@@ -305,11 +309,12 @@ begin
     end;
 end;}
 
+
 function TYTDUpgrade.GetNewestVersionUrl(const BaseUrl: string; out Version, Url: string): boolean;
   // Note: Must be thread-safe
 var
   Http: THttpSend;
-  Parameters: string;
+  Ver, Protocol, User, Password, Host, Port, Path, Parameters: string;
   IsRedirect: boolean;
   fXml: TXmlDoc;
   Node: TXmlNode;
@@ -345,7 +350,6 @@ begin
     Version := '';
     end;
 end;
-
 
 
 function TYTDUpgrade.GetNewestVersion(const BaseUrl: string; out Version, Url: string; out Data: TStream): boolean;

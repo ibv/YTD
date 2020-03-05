@@ -49,7 +49,12 @@ unit uFlvFile;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {.$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uCompatibility;
 
 type

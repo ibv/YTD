@@ -35,28 +35,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uMain;
-{$INCLUDE 'ytd.inc'}
+
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
+{$INCLUDE 'ytd.inc'
+
+uses FileUtil;}
 
 interface
 
 procedure Main;
 
+
+
 implementation
 
 uses
-  SysUtils, Classes, Windows, Messages, CommCtrl,
-  {$IFDEF SETUP}
+  {$ifdef mswindows}
+    CommCtrl, Windows,
     ShlObj,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages, FileUtil,
+  {$ENDIF}
+  SysUtils, Messages,
+  {$IFDEF SETUP}
+
     {$IFNDEF DELPHI7_UP}
     FileCtrl,
     {$ENDIF}
     uSetup,
-
+    uCompatibility,
     {$IFDEF SETUP_GUI}
       {$IFDEF GUI_WINAPI}
         guiSetupWINAPI,
       {$ELSE}
-        guiSetupVCL,
+        {$IFNDEF GUI_LCL}
+  		    guiSetupVCL,
+  		  {$ELSE}
+          guiSetupLCL,
+        {$ENDIF}
       {$ENDIF}
     {$ENDIF}
   {$ENDIF}
@@ -65,13 +84,17 @@ uses
     uConsoleApp,
   {$ENDIF}
   {$IFDEF GUI}
-
-
+    guiConsts,
+    guiFunctions,
     {$IFDEF GUI_WINAPI}
       guiMainWINAPI,
     {$ELSE}
       Forms,
-      guiMainVCL,
+      {$IFNDEF GUI_LCL}
+        guiMainVCL,
+  		{$ELSE}
+  	    guiMainLCL,
+  		{$ENDIF}
     {$ENDIF}
   {$ENDIF}
   uSystem, uFunctions, uMessages;
@@ -180,7 +203,7 @@ begin
       InstallDir := '';
       if i < ParamCount then
         InstallDir := ParamStr(Succ(i));
-      if (InstallDir <> '') and FileExists(InstallDir) then
+      if (InstallDir <> '') and FileExists(InstallDir){ *Převedeno z FileExists* } then
         Result := stUninstallPhase2
       else
         Result := stUninstallPhase1;
@@ -339,10 +362,10 @@ begin
     if OK then
       begin
       if DesktopShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe, SETUP_PARAM_GUI);
+        ///CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, InstExe, SETUP_PARAM_GUI);
       if StartMenuShortcut then
-        CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, InstExe, SETUP_PARAM_GUI);
-      RegisterUninstallApplication(APPLICATION_UNINSTALL_ID, 'YTD (pepak)', AnsiQuotedStr(InstExe, '"') + ' --uninstall');
+        ///CreateShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, InstExe, SETUP_PARAM_GUI);
+      ///RegisterUninstallApplication(APPLICATION_UNINSTALL_ID, 'YTD (pepak)', AnsiQuotedStr(InstExe, '"') + ' --uninstall');
       end;
     end;
   if not OK then
@@ -390,7 +413,7 @@ begin
             Writeln(Format(ERR_INSTALL_LIBRARY_FAILED, [FailedList]))
           else
           {$ENDIF}
-            MessageBox(0, PChar(Format(ERR_INSTALL_LIBRARY_FAILED, [FailedList])), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or MB_TASKMODAL);
+            MessageBox(0, PChar(Format(ERR_INSTALL_LIBRARY_FAILED, [FailedList])), PChar(APPLICATION_TITLE), MB_OK or MB_ICONERROR or $00002000{MB_TASKMODAL});
           end
         else
           begin
@@ -406,9 +429,10 @@ var
   Dir, FileName, FN: string;
 begin
   ExitCode := RESCODE_UNINSTALL_FAILED;
-  if MessageBox(0, PChar(MSG_WANT_TO_UNINSTALL), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or MB_TASKMODAL) = idYes then
+  if MessageBox(0, PChar(MSG_WANT_TO_UNINSTALL), PChar(APPLICATION_TITLE), MB_YESNOCANCEL or MB_ICONQUESTION or $00002000{MB_TASKMODAL}) = idYes then
     begin
-    Dir := IncludeTrailingPathDelimiter(SystemTempFile(SystemTempDir, 'YTD'));
+    ///Dir := IncludeTrailingPathDelimiter(SystemTempFile(SystemTempDir, 'YTD'));
+    Dir := IncludeTrailingPathDelimiter('YTD');
     CreateDir(Dir);
     FileName := Dir + ExtractFileName(ParamStr(0));
     if CopyFile(PChar(ParamStr(0)), PChar(FileName), False) then
@@ -449,15 +473,16 @@ begin
         if (Dir <> '') and (ExtractFilePath(Dir) <> '') then
           begin
           for i := 1 to MAX_DELETE_TRIES do
-            if ForceDeleteDirectory(Dir) then
+            ///if ForceDeleteDirectory(Dir) then
+            if RemoveDir(Dir) then
               Break
             else
               Sleep(DELAY_BETWEEN_TRIES);
-          DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ExeFileName);
-          DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, ExeFileName);
-          UnregisterUninstallApplication(APPLICATION_UNINSTALL_ID);
+          ///DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_DESKTOPDIRECTORY, ExeFileName);
+          ///DeleteShortcut(APPLICATION_SHORTCUT, '', CSIDL_COMMON_PROGRAMS, ExeFileName);
+          ///UnregisterUninstallApplication(APPLICATION_UNINSTALL_ID);
           ExitCode := RESCODE_OK;
-          MessageBox(0, PChar(MSG_UNINSTALL_COMPLETE), PChar(APPLICATION_TITLE), MB_OK or MB_TASKMODAL);
+          MessageBox(0, PChar(MSG_UNINSTALL_COMPLETE), PChar(APPLICATION_TITLE), MB_OK or $00002000{MB_TASKMODAL});
           end;
         end;
 end;
@@ -467,7 +492,7 @@ procedure Main;
 begin
   try
     ExitCode := RESCODE_OK;
-    InitCommonControls; // Needed because of the manifest file
+    ///InitCommonControls; // Needed because of the manifest file
     // Test for IDE
     StartedFromIDE := False;
     {$IFNDEF FPC}

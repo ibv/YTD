@@ -36,12 +36,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 unit uFunctions;
 {$INCLUDE 'ytd.inc'}
-{$DEFINE COMOBJ}
+{.$DEFINE COMOBJ}
 
 interface
 
 uses
-  SysUtils, Classes, Windows, {$IFDEF COMOBJ} ComObj, {$ENDIF} ShlObj, ActiveX, ShellApi,
+  {$ifndef fpc}
+    Windows, ActiveX, ShellApi,
+    ShlObj,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages, Process,
+  {$ENDIF}
+
+  SysUtils, Classes, {$IFDEF COMOBJ} ComObj, {$ENDIF}
   HttpSend, SynaUtil, Blcksock,
   {$IFDEF SETUP}
   uSetup,
@@ -121,6 +128,7 @@ const
   States: array[TProgressBarState] of DWORD = (TBPF_NOPROGRESS, TBPF_INDETERMINATE, TBPF_NORMAL, TBPF_ERROR, TBPF_PAUSED);
 begin
   Result := False;
+  {$ifndef fpc}
   if (Win32MajorVersion > 6) or ((Win32MajorVersion = 6) and (Win32MinorVersion >= 1)) then
     begin
     if not TaskBarListInitialized then
@@ -151,9 +159,11 @@ begin
       Result := True;
       end;
     end;
+  {$endif}
 end;
 
 function GetSpecialFolder(FolderID: integer): string;
+{$ifndef fpc}
 var PIDL : PItemIDList;
     DirBuf: array[0..MAX_PATH] of char;
 begin
@@ -164,6 +174,9 @@ begin
   finally
     CoTaskMemFree(PIDL);
     end;
+ {$else}
+begin
+  {$endif}
 end;
 
 function CreateShortcut(const ShortcutName, Where: string; WhereCSIDL: integer; const FileName, Parameters: string): boolean;
@@ -171,6 +184,7 @@ var
   IObject: IUnknown;
   FN, Dir, ShortcutFile: string;
 begin
+{$ifndef fpc}
   CoInitialize(nil);
   try
     {$IFDEF COMOBJ}
@@ -208,6 +222,7 @@ begin
   finally
     CoUninitialize;
     end;
+  {$endif}
 end;
 
 function DeleteShortcut(const ShortcutName, Where: string; WhereCSIDL: integer = 0; const FileName: string = ''): boolean;
@@ -231,8 +246,14 @@ end;
 function Run(const FileName, CommandLine, WorkDir: string; OwnerHandle: THandle; Elevated: boolean): boolean; overload;
 const
   Actions: array[boolean] of PChar = ('open', 'runas');
+var
+  res:string ;
 begin
+  {$ifndef fpc}
   Result := ShellExecute(OwnerHandle, Actions[Elevated], PChar(FileName), PChar(CommandLine), PChar(WorkDir), SW_SHOWNORMAL) > 32;
+  {$else}
+  Result:=RunCommand(FileName,CommandLine,res);
+  {$endif}
 end;
 
 function Run(const FileName, CommandLine: string; OwnerHandle: THandle; Elevated: boolean): boolean;
@@ -245,14 +266,35 @@ begin
   Result := Run(FileName, '', OwnerHandle, Elevated);
 end;
 
+{
 function GetTempDir: string;
 const MAX_TEMP_PATH = MAX_PATH + 16;
 begin
   SetLength(Result, MAX_TEMP_PATH);
-  SetLength(Result, GetTempPath(MAX_TEMP_PATH, @(Result[1])));
+  ///SetLength(Result, GetTempPath(MAX_TEMP_PATH, @(Result[1])));
   if Result <> '' then
     Result := IncludeTrailingPathDelimiter(Result);
 end;
+}
+
+/// http://lists.lazarus.freepascal.org/pipermail/lazarus/2011-June/064087.html
+function GetTempDir: String;
+{$IFDEF MSWINDOWS}
+var
+  VTempFolder: array[0..MAX_PATH] of Char;
+{$ENDIF}
+begin
+Result := GetTempDir;
+{$IFDEF UNIX}
+  Result := GetTempDir;
+{$ENDIF}
+{$IFNDEF FPC}
+  GetTempPath(MAX_PATH, @VTempFolder);
+  Result := IncludeTrailingPathDelimiter(StrPas(VTempFolder));
+{$ENDIF}
+end;
+
+
 
 function CheckRedirect(Http: THttpSend; var Url: string): boolean;
 const
@@ -433,6 +475,9 @@ var
   Dir, FN: string;
   Data: AnsiString;
   FS: TFileStream;
+{$ifdef fpc}
+  const  FILE_ATTRIBUTE_DIRECTORY=16;
+{$endif}
 begin
   Result := True;
   Zip := TZipFile.Create;

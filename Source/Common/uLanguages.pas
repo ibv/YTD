@@ -35,7 +35,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit uLanguages;
-{$INCLUDE 'YTD.inc'}
+
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
+{$INCLUDE 'ytd.inc'}
 
 interface
 

@@ -40,7 +40,13 @@ unit uScripts;
 interface
 
 uses
-  SysUtils, Classes, Windows, NativeXml,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+  NativeXml,
   uPCRE, uXML, uJSON, HttpSend, blcksock,
   uDownloader, uOptions;
 
