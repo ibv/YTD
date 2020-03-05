@@ -52,7 +52,7 @@ uses
     {$IFDEF GUI_WINAPI}
       guiOptionsWINAPI_CT,
     {$ELSE}
-      guiOptionsVCL_CT,
+      guiOptionsLCL_CT,
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uHLSDownloader;

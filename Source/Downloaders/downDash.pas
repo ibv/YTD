@@ -56,7 +56,7 @@ uses
     {$IFDEF GUI_WINAPI}
 //      guiOptionsWINAPI_CT,
     {$ELSE}
-      guiOptionsVCL_DASH,
+      guiOptionsLCL_DASH,
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uHLSDownloader, uDASHDownloader;
