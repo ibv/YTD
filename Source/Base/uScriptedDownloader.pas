@@ -131,7 +131,7 @@ type
     public
       class function MainScriptEngine: TScriptEngine;
       class procedure InitMainScriptEngine(const FileName: string);
-      class function IsSupportedUrl(const AUrl: string; out AMovieID, Provider: string): boolean; ///virtual ;
+      class function IsSupportedUrl(const AUrl: string; out AMovieID, Provider: string): boolean; override;
       class function Provider: string; override;
       class function UrlRegExp: string; override;
       constructor Create(const AScriptID, AMovieID: string; AScriptEngine: TScriptEngine = nil); reintroduce; overload;
@@ -194,9 +194,10 @@ end;
 
 class function TScriptedDownloader.UrlRegExp: string;
 begin
-  ///Raise EScriptedDownloaderError.Create(_('TScriptedDownloader.UrlRegExp may not be called.'));
-  Result := Format(REGEXP_BASE_URL, ['', MovieIDParamName, '', '']);
+  Raise EScriptedDownloaderError.Create(_('TScriptedDownloader.UrlRegExp may not be called.'));
+  ///Result := Format(REGEXP_BASE_URL, ['', MovieIDParamName, '', '']);
 end;
+
 
 class function TScriptedDownloader.IsSupportedUrl(const AUrl: string; out AMovieID, Provider: string): boolean;
 var

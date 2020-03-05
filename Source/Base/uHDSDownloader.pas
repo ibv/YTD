@@ -40,7 +40,12 @@ unit uHDSDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {.$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uPCRE, uXml, uHttp, uFlvFile, uCompatibility, HttpSend, blcksock,
   uDownloader, uCommonDownloader;
 

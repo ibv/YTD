@@ -42,6 +42,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
   uPCRE, uXml, uHttp, HttpSend, blcksock,
+  {$ifdef mswindows} FileUtil, {$endif}
   uDownloader, uCommonDownloader;
 
 type
@@ -194,13 +195,15 @@ begin
             VideoDownloader.OutputStream.Free;
             VideoDownloader.OutputStream := nil;
             if Result then
-              if (not FileExists(FN)) or (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+              ///if (not FileExists(FN)) or (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+              if (not FileExists(FN)) or (FileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
                 begin
                 SetLastErrorMsg(ERR_HTTP_NO_DATA_READ);
                 Result := False;
                 end;
             if not Result then
-              if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+              ///if FileExists(FN) and (GetFileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
+              if FileExists(FN) and (FileSize(FN) < MINIMUM_SIZE_TO_KEEP) then
                 DeleteFile(PChar(FN));
             if Result then
               if FN <> FinalFN then

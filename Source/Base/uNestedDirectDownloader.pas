@@ -40,7 +40,12 @@ unit uNestedDirectDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {.$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uPCRE, uXml, HttpSend, blcksock, 
   uDownloader, uCommonDownloader, uNestedDownloader,
   uOptions;

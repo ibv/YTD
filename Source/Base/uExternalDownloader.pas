@@ -40,7 +40,12 @@ unit uExternalDownloader;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {.$ELSE}
+    LCLIntf, LCLType, LMessages, FileUtil,
+  {$ENDIF}
   uGUID, uFunctions, uSystem,
   uDownloader, uCommonDownloader;
 
@@ -90,7 +95,8 @@ var
   FN: string;
 begin
   if not DownloadSuccessful then
-    if FileExists(DownloadFileName) and (GetFileSize(DownloadFileName) < MinimumSizeToKeep) then
+    ///if FileExists(DownloadFileName) and (GetFileSize(DownloadFileName) < MinimumSizeToKeep) then
+    if FileExists(DownloadFileName) and (FileSize(DownloadFileName) < MinimumSizeToKeep) then
       SysUtils.DeleteFile(DownloadFileName);
   if {DownloadSuccessful} FileExists(DownloadFileName) then
     if (DownloadFileName <> FinalFileName) then

@@ -193,8 +193,8 @@ type
       class function Provider: string; virtual; abstract;
       class function Features: TDownloaderFeatures; virtual;
       class function UrlRegExp: string; virtual; abstract;
-      class function IsSupportedUrl(const Url: string; out MovieID: string): boolean; overload;
-      class function IsSupportedUrl(const Url: string; out MovieID, Provid: string): boolean; overload;
+      class function IsSupported_Url(const Url: string; out MovieID: string): boolean; virtual;
+      class function IsSupportedUrl(const Url: string; out MovieID, Provid: string): boolean; virtual;
       class function MovieIDParamName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       {$IFDEF GUI}
       class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; virtual;
@@ -265,7 +265,7 @@ begin
   Result := [];
 end;
 
-class function TDownloader.IsSupportedUrl(const Url: string; out MovieID: string): boolean;
+class function TDownloader.IsSupported_Url(const Url: string; out MovieID: string): boolean;
 var
   RE: TRegExp;
 begin
@@ -279,7 +279,7 @@ end;
 class function TDownloader.IsSupportedUrl(const Url: string; out MovieID,Provid : string): boolean;
 begin
   Provid := Provider;
-  Result := IsSupportedUrl(Url,MovieID);
+  Result := IsSupported_Url(Url,MovieID);
 end;
 
 
