@@ -35,21 +35,33 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 program YTD;
-{$INCLUDE 'YTD.inc'}
+
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
+
+{$INCLUDE 'ytd.inc'}
 {$INCLUDE 'YTD_Warnings.inc'}
 
 {$IFDEF CLI}
-  {$APPTYPE CONSOLE}
+  ///{$APPTYPE CONSOLE}
 {$ENDIF}
 
-{$R *.res}
+{.$R *.res}
 {%File 'YTD.version'}
 {%File 'YTD.inc'}
 
 uses
+  {$IFnDEF FPC}
+  {$ELSE}
+  ///cthreads,
+    //cmem,
+  Interfaces,
+  {$ENDIF}
   {$IFDEF FASTMM}
   FastMM4,
   {$ENDIF}
+  DefaultTranslator,
   uLanguages in 'Common\uLanguages.pas',
   // Base objects and units
   uMain in 'Common\uMain.pas',
@@ -117,23 +129,43 @@ uses
       guiConverterWINAPI in 'GUI\WinAPI\guiConverterWINAPI.pas',
       {$ENDIF}
     {$ELSE}
-      guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
-      guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
-      {$IFDEF SETUP_GUI}
-      guiSetupVCL in 'GUI\VCL\guiSetupVCL.pas' {FormSetup},
-      {$ENDIF}
-      guiOptionsVCL in 'GUI\VCL\guiOptionsVCL.pas' {FormOptions},
-      guiOptionsVCL_Downloader in 'GUI\VCL\Downloaders\guiOptionsVCL_Downloader.pas' {FrameDownloaderOptionsPageVCL: TFrame},
-      guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
+      {$IFDEF GUI_LCL}
+        guiMainLCL in 'GUI\LCL\guiMainLCL.pas' {FormYTD},
+        guiAboutLCL in 'GUI\LCL\guiAboutLCL.pas' {FormAbout},
+        {$IFDEF SETUP_GUI}
+        guiSetupLCL in 'GUI\LCL\guiSetupLCL.pas' {FormSetup},
+        {$ENDIF}
+        guiOptionsLCL in 'GUI\LCL\guiOptionsLCL.pas' {FormOptions},
+        guiOptionsLCL_Downloader in 'GUI\LCL\Downloaders\guiOptionsLCL_Downloader.pas' {FrameDownloaderOptionsPageLCL: TFrame},
+        guiOptionsLCL_CommonDownloader in 'GUI\LCL\Downloaders\guiOptionsLCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonLCL: TFrame},
+        guiOptionsLCL_CT in 'GUI\LCL\Downloaders\guiOptionsLCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
+        guiOptionsLCL_EuroSeptik in 'GUI\LCL\Downloaders\guiOptionsLCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
+        guiOptionsLCL_Joj in 'GUI\LCL\Downloaders\guiOptionsLCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
+        guiOptionsLCL_YouTube in 'GUI\LCL\Downloaders\guiOptionsLCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
+        guiOptionsLCL_Prima in 'GUI\LCL\Downloaders\guiOptionsLCL_Prima.pas' {FrameDownloaderOptionsPage_Prima: TFrame},
+        guiOptionsLCL_DASH in 'GUI\LCL\Downloaders\guiOptionsLCL_DASH.pas' {FrameDownloaderOptionsPage_DASH: TFrame},
+        {$IFDEF CONVERTERS}
+        guiConverterLCL in 'GUI\LCL\guiConverterLCL.pas' {FormSelectConverter},
+        {$ENDIF}
+      {$ELSE}
+        guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
+        guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
+        {$IFDEF SETUP_GUI}
+        guiSetupVCL in 'GUI\VCL\guiSetupVCL.pas' {FormSetup},
+        {$ENDIF}
+        guiOptionsVCL in 'GUI\VCL\guiOptionsVCL.pas' {FormOptions},
+        guiOptionsVCL_Downloader in 'GUI\VCL\Downloaders\guiOptionsVCL_Downloader.pas' {FrameDownloaderOptionsPageVCL: TFrame},
+        guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
       guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
-      guiOptionsVCL_EuroSeptik in 'GUI\VCL\Downloaders\guiOptionsVCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
-      guiOptionsVCL_Joj in 'GUI\VCL\Downloaders\guiOptionsVCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
-      guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
+        guiOptionsVCL_EuroSeptik in 'GUI\VCL\Downloaders\guiOptionsVCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
+        guiOptionsVCL_Joj in 'GUI\VCL\Downloaders\guiOptionsVCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
+        guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
       guiOptionsVCL_Prima in 'GUI\VCL\Downloaders\guiOptionsVCL_Prima.pas' {FrameDownloaderOptionsPage_Prima: TFrame},
       guiOptionsVCL_DASH in 'GUI\VCL\Downloaders\guiOptionsVCL_DASH.pas' {FrameDownloaderOptionsPage_DASH: TFrame},
-      {$IFDEF CONVERTERS}
-      guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
-      {$ENDIF}
+        {$IFDEF CONVERTERS}
+        guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
+        {$ENDIF}
+       {$ENDIF}
     {$ENDIF}
     guiConsts in 'GUI\guiConsts.pas',
     guiDownloaderOptions in 'GUI\guiDownloaderOptions.pas',
@@ -247,7 +279,7 @@ uses
   downLiveLeakEmbedded in 'Downloaders\downLiveLeakEmbedded.pas',
   downLiveVideo in 'Downloaders\downLiveVideo.pas',
   downLoupak in 'Downloaders\downLoupak.pas',
-  downMarkiza in 'Downloaders\downMarkiza.pas',
+  ///downMarkiza in 'Downloaders\downMarkiza.pas',
   downMarkizaParticka in 'Downloaders\downMarkizaParticka.pas',
   downMatrix2001 in 'Downloaders\downMatrix2001.pas',
   downMediaSport in 'Downloaders\downMediaSport.pas',
@@ -300,9 +332,9 @@ uses
   downPracticalMethod in 'Downloaders\downPracticalMethod.pas',
   downPrahovaHD in 'Downloaders\downPrahovaHD.pas',
   downPrazdninyVTelci in 'Downloaders\downPrazdninyVTelci.pas',
-  downPrima in 'Downloaders\downPrima.pas',
   downProglas in 'Downloaders\downProglas.pas',
   downProstoPleer in 'Downloaders\downProstoPleer.pas',
+  downPrima in 'Downloaders\downPrima.pas',
   downPublicTV in 'Downloaders\downPublicTV.pas',
   downQipRu_Embed in 'Downloaders\downQipRu_Embed.pas',
   downRaajje in 'Downloaders\downRaajje.pas',
@@ -463,6 +495,8 @@ uses
   listGameAnyone in 'Playlists\listGameAnyone.pas',
   listYouTube in 'Playlists\listYouTube.pas',
   listYouTubePage in 'Playlists\listYouTubePage.pas';
+
+{$R *.res}
 
 begin
   Main;
