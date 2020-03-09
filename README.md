@@ -12,10 +12,10 @@ Původní verzi autor Pepak již neudržuje, odkaz zde http://www.pepak.net/ytd/
 
 ### Poznámka
 ```
-Od verze 1.60+ se používá pro kompilaci Delphi 10.3 CE. 
+Od verze 1.64+ se používá pro kompilaci Lazarus 2.0.6, fpc 3.0.4. 
 Větev GUIWinAPI už nebudu rozvíjet, jednak to moc neumím a taky nové VCL komponenty v Delphi už používaji 
 double buffering, takže odpadá blikání při překreslování okna.
-Velikost exe se zvětšila z 1,3 MB (Delphi7) na 4MB (Delphi 10.2.3)
+Velikost exe se zvětšila z 1,3 MB (Delphi7) na 4MB (Lazarus, fpc)
 ```
 
 ## Download
