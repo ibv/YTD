@@ -2,11 +2,26 @@ unit supertimezone;
 
 {$INCLUDE 'super.inc'}
 
+{$mode delphi}
+
 interface
 
 uses
-  Windows, Registry, SysUtils, Math, {$ifndef LEGACYVERSION}Generics.Collections,{$endif}
+  {$ifdef mswindows}
+    Windows,
+  {$ENDIF}
+    LCLIntf, LCLType, LMessages, DateUtils, {fgl, unix, baseunix,}
+  Registry, SysUtils, Math, {$ifdef mswindows}{$ifndef LEGACYVERSION}Generics.Collections,{$endif}{$endif}
   supertypes;
+
+
+type
+  timezone = record
+    tz_minuteswest,tz_dsttime:integer;
+  end;
+  ptimezone =^timezone;
+  TTimeZone = timezone;
+
 
 type
   TSuperTimeZone = class
@@ -23,18 +38,36 @@ type
 
     { Windows Internals }
     function TzSpecificLocalTimeToSystemTime(
+      {$ifdef mswindows}
       const lpTimeZoneInformation: PTimeZoneInformation;
+      {$else}
+      const lpTimeZoneInformation: PTimeZone;
+      {$endif}
       var lpLocalTime, lpUniversalTime: TSystemTime): BOOL;
 
     function SystemTimeToTzSpecificLocalTime(
+      {$ifdef mswindows}
       const lpTimeZoneInformation: PTimeZoneInformation;
+      {$else}
+      const lpTimeZoneInformation: PTimeZone;
+      {$endif}
       var lpUniversalTime, lpLocalTime: TSystemTime): BOOL;
 
+    {$ifdef mswindows}
     function GetTimezoneBias(const pTZinfo: PTimeZoneInformation;
       lpFileTime: PFileTime; islocal: Boolean; pBias: PLongint): Boolean;
+    {$else}
+    function GetTimezoneBias(const pTZinfo: PTimeZone;
+      lpFileTime: PFileTime; islocal: Boolean; pBias: PLongint): Boolean;
+    {$endif}
 
+    {$ifdef mswindows}
     function CompTimeZoneID(const pTZinfo: PTimeZoneInformation;
       lpFileTime: PFileTime; IsLocal: Boolean): LongWord;
+    {$else}
+    function CompTimeZoneID(const pTZinfo: PTimeZone;
+      lpFileTime: PFileTime; IsLocal: Boolean): LongWord;
+    {$endif}
 
     function DayLightCompareDate(const date: PSystemTime;
       const compareDate: PSystemTime): Integer;
@@ -43,7 +76,8 @@ type
     class constructor Init;
     class destructor Finish;
     class var FCacheCS: TRTLCriticalSection;
-    class var FCache: TObjectDictionary<string, TSuperTimeZone>;
+    class var FCache: TObjectDictionary;string, TSuperTimeZone>;
+    ///class var FCache: TDictionary<string, TSuperTimeZone>;
     {$endif}
     class function GetSuperTimeZoneInstance(const Name: string): TSuperTimeZone; {$ifndef LEGACYVERSION}static;{$endif}
     class function GetLocalSuperTimeZoneInstance: TSuperTimeZone; {$ifndef LEGACYVERSION}static;{$endif}
@@ -84,7 +118,7 @@ type
     {$endif}
   end;
 
-{$IFDEF MSWINDOWS}
+{$IFNDEF MSWINDOWS}
   {$WARN SYMBOL_PLATFORM OFF}
 
 (* NOT DST Aware *)
@@ -148,7 +182,7 @@ begin
 end;
 {$endif}
 
-{$IFDEF MSWINDOWS}
+{$IFNDEF MSWINDOWS}
 
 { Convert Local -> UTC for specific time-zones using the Windows API only. NOT Guaranteed to work }
 

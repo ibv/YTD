@@ -8,7 +8,7 @@ if errorlevel 1 exit 1
 set version=%~1
 set build=release noupx %build%
 set skip_source=1
-set skip_build=0
+rem set skip_build=0
 rem set compress=exe
 rem set variant_name=
 set variant_suffix=

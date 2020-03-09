@@ -16,7 +16,13 @@ unit SciZipFile;
 
 interface
 
-uses SysUtils, Classes, zlib, Windows;
+uses SysUtils, Classes, zlib,
+{$ifdef mswindows
+  Windows,
+{.$ELSE}
+  LCLIntf, LCLType, LMessages
+{$ENDIF}
+ ;
 
 type
 

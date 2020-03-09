@@ -67,7 +67,12 @@ unit uCreateProcessAsync;
 interface
 
 uses
-  Classes, Windows;
+  Classes,
+  {$ifdef mswindows}
+  Windows;
+{$ELSE}
+  LCLIntf, LCLType, LMessages;
+{$ENDIF}
 
 type
   TProcessFinishedEvent = procedure (Sender: TThread; hProcess, hThread: THandle; ResultCode: DWORD) of object;

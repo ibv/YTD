@@ -76,6 +76,7 @@
 
 {$ifdef FPC}
   {$DEFINE HAVE_INLINE}
+  {$define LEGACYVERSION}
 {$endif}
 {$ifdef VER170ORGREATER}
   {$DEFINE HAVE_INLINE}

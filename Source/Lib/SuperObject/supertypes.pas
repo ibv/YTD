@@ -1,7 +1,7 @@
 unit supertypes;
 
 {$IFDEF FPC}
-  {$MODE OBJFPC}{$H+}
+  {.$MODE OBJFPC}{$H+}
 {$ENDIF}
 
 interface

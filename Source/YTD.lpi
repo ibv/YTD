@@ -24,7 +24,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="64"/>
-      <BuildNr Value="15"/>
+      <BuildNr Value="24"/>
       <StringTable ProductVersion="1.61"/>
     </VersionInfo>
     <BuildModes Count="3">
@@ -1257,7 +1257,7 @@
       <Filename Value="../Bin/ytd.exe" ApplyConventions="False"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="Common;Base;Downloaders;Playlists;Lib/Synapse/source/lib;Lib/Pepak;$(ProjOutDir)"/>
+      <IncludeFiles Value="Common;Base;Downloaders;Playlists;Lib/Synapse/source/lib;$(ProjOutDir)"/>
       <Libraries Value="../Bin"/>
       <OtherUnitFiles Value="Common;Base;Downloaders;Playlists;Lib/Synapse/source/lib;Lib/Pepak;Lib/NativeXML;Lib/SciZipFile;Lib/PerlRegEx;Lib/SuperObject;Lib/lkJSON;Lib/RtmpDump;Lib/MSDL;GUI/LCL/Downloaders;Lib/DxGetText/Delphi2009"/>
       <UnitOutputDirectory Value="Units"/>

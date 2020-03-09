@@ -40,7 +40,13 @@ unit uCompatibility;
 interface
 
 uses
-  SysConst, SysUtils, Classes, Windows, ShellApi;
+  {$ifdef mswindows}
+     Windows, ShellApi,
+  {$else}
+
+  {$endif}
+
+  SysConst, SysUtils, Classes ;
 
 {$IFNDEF DELPHI7_UP}
 type
@@ -163,23 +169,23 @@ type
   ITaskbarList = interface(IUnknown)
     ['{56FDF342-FD6D-11D0-958A-006097C9A090}']
     function HrInit: HRESULT; stdcall;
-    function AddTab(hwnd: HWND): HRESULT; stdcall;
-    function DeleteTab(hwnd: HWND): HRESULT; stdcall;
-    function ActivateTab(hwnd: HWND): HRESULT; stdcall;
-    function SetActiveAlt(hwnd: HWND): HRESULT; stdcall;
+    ///function AddTab(hwnd: HWND): HRESULT; stdcall;
+    ///function DeleteTab(hwnd: HWND): HRESULT; stdcall;
+    ///unction ActivateTab(hwnd: HWND): HRESULT; stdcall;
+    ///function SetActiveAlt(hwnd: HWND): HRESULT; stdcall;
   end;
 
   ITaskbarList2 = interface(ITaskbarList)
     ['{602D4995-B13A-429B-A66E-1935E44F4317}']
-    function MarkFullscreenWindow(hwnd: HWND; fFullscreen: BOOL): HRESULT; stdcall;
+    ///function MarkFullscreenWindow(hwnd: HWND; fFullscreen: BOOL): HRESULT; stdcall;
   end;
 
 type
   THUMBBUTTON = record 
     dwMask: DWORD;
-    iId: UINT;
-    iBitmap: UINT;
-    hIcon: HICON;
+    ///iId: UINT;
+    ///iBitmap: UINT;
+    ///hIcon: HICON;
     szTip: packed array[0..259] of WCHAR;
     dwFlags: DWORD;
   end;
@@ -215,6 +221,8 @@ const
 type
   ITaskbarList3 = interface(ITaskbarList2) 
     ['{EA1AFB91-9E28-4B86-90E9-9E9F8A5EEFAF}']
+    ///
+    {
     function SetProgressValue(hwnd: HWND; ullCompleted, ullTotal: UInt64): HRESULT; stdcall;
     function SetProgressState(hwnd: HWND; tbpFlags: Integer): HRESULT; stdcall;
     function RegisterTab(hwndTab, hwndMDI: HWND): HRESULT; stdcall;
@@ -227,6 +235,7 @@ type
     function SetOverlayIcon(hwnd: HWND; hIcon: HICON; pszDescription: LPCWSTR): HRESULT; stdcall;
     function SetThumbnailTooltip(hwnd: HWND; pszTip: LPCWSTR): HRESULT; stdcall;
     function SetThumbnailClip(hwnd: HWND; var prcClip: TRect): HRESULT; stdcall;
+    }
   end;
 
 type
@@ -242,7 +251,7 @@ const
 type
   ITaskbarList4 = interface(ITaskbarList3)
     ['{C43DC798-95D1-4BEA-9030-BB99E2983A1A}']
-    function SetTabProperties(hwndTab: HWND; stpFlags: STPFLAG): HRESULT; stdcall;
+    ///function SetTabProperties(hwndTab: HWND; stpFlags: STPFLAG): HRESULT; stdcall;
   end;
 {$ENDIF}
 
@@ -270,7 +279,32 @@ const
   INVALID_FILE_SIZE = $ffffffff;
 {$ENDIF}
 
+{$ifndef mswindows}
+function StringToWide(const S: AnsiString): WideString;
+{$endif}
+
 implementation
+
+{$ifndef mswindows}
+function StringToWide(const S: AnsiString): WideString;
+var
+  n: integer;
+  x, y: integer;
+begin
+  try
+  SetLength(Result, Length(S) div 2);
+  for n := 1 to Length(S) div 2 do
+  begin
+    x := Ord(S[((n-1) * 2) + 1]);
+    y := Ord(S[((n-1) * 2) + 2]);
+    Result[n] := WideChar(x * 256 + y);
+  end;
+
+  except
+
+  end;
+end;
+{$endif}
 
 {$IFNDEF DELPHI7_UP}
 function IncludeTrailingPathDelimiter(const Path: string): string;

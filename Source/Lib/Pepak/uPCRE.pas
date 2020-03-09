@@ -39,22 +39,30 @@ unit uPCRE;
 
 interface
 
-{$UNDEF UPCRE_NATIVEIMPLEMENTATION}
+///{$UNDEF UPCRE_NATIVEIMPLEMENTATION}
+{$DEFINE UPCRE_NATIVEIMPLEMENTATION}
 {$IFDEF WIN64}
   {$DEFINE UPCRE_NATIVEIMPLEMENTATION}
 {$ENDIF}
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+   {$ifdef mswindows}
+     Windows,
+   {.$ELSE}
+     LCLIntf, LCLType, LMessages,
+   {$ENDIF}
+
   {$IFDEF UPCRE_NATIVEIMPLEMENTATION}
-  RegularExpressionsCore
+  PerlRegEx {RegularExpressionsCore}
   {$ELSE}
   PerlRegEx
   {$ENDIF}
   ;
 
 type
-  PCREString = {$IFDEF UPCRE_NATIVEIMPLEMENTATION} UTF8String {$ELSE} PerlRegEx.PCREString {$ENDIF};
+  ///PCREString = {$IFDEF UPCRE_NATIVEIMPLEMENTATION} UTF8String {$ELSE} PerlRegEx.PCREString {$ENDIF};
+  PCREString = {$IFNDEF UPCRE_NATIVEIMPLEMENTATION} UTF8String {$ELSE} PerlRegEx.PCREString {$ENDIF};
 
   TRegExp = class(TPerlRegEx)
     public
@@ -123,7 +131,7 @@ end;
 {$HINTS OFF}
 function RegExCreate(const Pattern: PCREString; Options: TRegExpOptions): TRegExp;
 begin
-  Result := TRegExp.Create {$IFNDEF UPCRE_NATIVEIMPLEMENTATION} (nil) {$ENDIF} ;
+  Result := TRegExp.Create  ;
   try
     Result.Options := OptionsToNativeOptions(Options);
     Result.RegEx := Pattern;

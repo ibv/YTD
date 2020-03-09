@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, 
   {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
-  {$IFDEF FPC} Variants, {$ENDIF}
+  ///{$IFDEF FPC} Variants, {$ENDIF}
   {$IFDEF JSON_SUPEROBJECT}
     SuperObject,
     SuperTypes

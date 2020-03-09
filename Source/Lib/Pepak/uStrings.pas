@@ -40,15 +40,21 @@ unit uStrings;
 interface
 
 uses
-  SysUtils, Windows,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages, lazutf8,
+  {$ENDIF}
+
+  SysUtils,
   uCompatibility;
 
 type
   EStringError = class(Exception);
 
-function OemToAnsi(Value: Pointer; Length: integer): AnsiString; overload;
+///function OemToAnsi(Value: Pointer; Length: integer): AnsiString; overload;
 function OemToAnsi(const Value: AnsiString): AnsiString; overload;
-function AnsiToOem(Value: Pointer; Length: integer): AnsiString; overload;
+///function AnsiToOem(Value: Pointer; Length: integer): AnsiString; overload;
 function AnsiToOem(const Value: AnsiString): AnsiString; overload;
 
 function AnsiToWide(Value: Pointer; Length: integer): WideString; overload;
@@ -80,6 +86,7 @@ function SplitNameValueWide(Data: PWideChar; DataChars: integer; Separator: PWid
 
 implementation
 
+{$ifndef fpc}
 function OemToAnsi(Value: Pointer; Length: integer): AnsiString;
 begin
   if Length > 0 then
@@ -91,15 +98,21 @@ begin
   else
     Result := '';
 end;
+{$endif}
 
 function OemToAnsi(const Value: AnsiString): AnsiString;
 begin
   if Value = '' then
     Result := ''
   else
+    {$ifndef fpc}
     Result := OemToAnsi(@(Value[1]), Length(Value));
+    {$else}
+    Result:=UTF8ToAnsi(Copy(Value,1,Length(Value)));
+    {$endif}
 end;
 
+{$ifndef fpc}
 function AnsiToOem(Value: Pointer; Length: integer): AnsiString;
 begin
   if Length > 0 then
@@ -111,27 +124,40 @@ begin
   else
     Result := '';
 end;
+{$endif}
 
 function AnsiToOem(const Value: AnsiString): AnsiString;
 begin
   if Value = '' then
     Result := ''
   else
+    {$ifndef fpc}
     Result := AnsiToOem(@(Value[1]), Length(Value));
+    {$else}
+    result:= AnsiToUTF8(Value);
+    {$endif}
 end;
+
+
+
+
 
 function AnythingToWide(CodePage: integer; Value: Pointer; Length: integer): WideString;
 var n: integer;
 begin
   if Length > 0 then
     begin
-    n := 2*Length;
-    SetLength(Result, n);
-    n := MultiByteToWideChar(CodePage, 0 (*8 {MB_ERR_INVALID_CHARS}*), Value, Length, @(Result[1]), n);
-    if n > 0 then
-      SetLength(Result, n)
-    else
-      Raise EStringError.Create('Conversion failed.');
+    {$ifdef mswindows}
+      n := 2*Length;
+      SetLength(Result, n);
+      n := MultiByteToWideChar(CodePage, 0 (*8 {MB_ERR_INVALID_CHARS}*), Value, Length, @(Result[1]), n);
+      if n > 0 then
+        SetLength(Result, n)
+      else
+        Raise EStringError.Create('Conversion failed.');
+    {$else}
+       Result:=StringToWide(AnsiString(Value^));
+    {$endif}
     end
   else
     Result := '';
@@ -160,6 +186,7 @@ var n: integer;
 begin
   if Length > 0 then
     begin
+    {$ifdef mswindows}
     n := 2*Length;
     SetLength(Result, n);
     n := WideCharToMultiByte(CodePage, 0, Value, Length, @(Result[1]), n, nil, nil);
@@ -167,6 +194,10 @@ begin
       SetLength(Result, n)
     else
       Raise EStringError.Create('Conversion failed.');
+    ///end
+    {$else}
+    Result:=Copy(AnsiString(Value^),1,length);
+    {$endif}
     end
   else
     Result := '';
@@ -187,7 +218,8 @@ end;
 
 function WideToAnsi(const Value: WideChar): AnsiChar; overload;
 begin
-  Result := (WideToAnsi(@(Value), 1))[1];
+  ///Result := (WideToAnsi(@(Value), 1))[1];
+  Result := AnsiChar(Value);
 end;
 
 function WideToUtf8(Value: Pointer; Length: integer): Utf8String;
@@ -215,7 +247,11 @@ begin
   {$IFDEF UNICODE}
   Result := Utf8ToWide(Value);
   {$ELSE}
+  {$ifdef mswindows}
   Result := WideToAnsi(Utf8ToWide(Value));
+  {$else}  // Linux is native in UTF8
+  Result := Value;
+  {$endif}
   {$ENDIF}
 end;
 
@@ -224,7 +260,11 @@ begin
   {$IFDEF UNICODE}
   Result := WideToUtf8(Value);
   {$ELSE}
+  {$ifdef mswindows}
   Result := WideToUtf8(AnsiToWide(Value));
+  {$else}  // Linux is native in UTF8
+  Result := WideString(Value);
+  {$endif}
   {$ENDIF}
   if BOM then
     Result := {$IFDEF UNICODE} Char($feff) {$ELSE} #$ef#$bb#$bf {$ENDIF} + Result;
@@ -232,7 +272,11 @@ end;
 
 function AnsiEncodedUtf8ToString(const Value: AnsiString): string;
 begin
+  {$ifdef mswindows}
   Result := {$IFDEF FPC} string {$ENDIF} (AnythingToWide(CP_UTF8, @Value[1], Length(Value)));
+  {$else}  // Linux is native in UTF8
+  Result:=Value
+  {$endif}
 end;
 
 function StringToAnsiEncodedUtf8(const Value: string; BOM: boolean = False): AnsiString;

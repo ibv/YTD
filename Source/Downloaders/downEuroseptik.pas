@@ -47,7 +47,11 @@ uses
     {$IFDEF GUI_WINAPI}
       guiOptionsWINAPI_EuroSeptik,
     {$ELSE}
-      guiOptionsVCL_EuroSeptik,
+      {$IFNDEF GUI_LCL}
+        guiOptionsVCL_EuroSeptik,
+      {$ELSE}
+        guiOptionsLCL_EuroSeptik,
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uNestedDownloader;

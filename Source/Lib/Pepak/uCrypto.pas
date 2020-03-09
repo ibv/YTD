@@ -40,7 +40,11 @@ unit uCrypto;
 interface
 
 uses
-  Windows;
+  {$ifdef mswindows}
+    Windows,
+  {.$ELSE}
+    LCLIntf, LCLType, LMessages;
+  {$ENDIF}
 
 // Nebo s pouzitim Crypto API:
 // http://stackoverflow.com/questions/7985744/simple-aes-encryption-using-winapi
@@ -55,11 +59,20 @@ function RC4_Decrypt(Input, Output, Key: PAnsiChar; KeyBytes, DataBytes: integer
 
 implementation
 
+///uses
+///  dl;
+
 const
+  {$ifdef mswindows}
   LIBEAY32_NAME = 'libeay32.dll';
+  {$else}
+  LIBEAY32_NAME = 'libcrypto.so';
+  {$endif}
+
 
 const
   AES_MAXNR = 14;
+
 
 type
   AES_KEY = record
@@ -82,7 +95,13 @@ type
 
 var
   LibEay32Lock: TRtlCriticalSection;
+  {$ifdef mswindows}
   LibEay32Handle: THandle = 0;
+  {$else}
+  LibEay32Handle: Pointer = nil;
+  {$endif}
+
+
   AES_encrypt: TAESEncryptFunction = nil;
   AES_set_encrypt_key: TAESSetEncryptKeyFunction = nil;
   AES_decrypt: TAESDecryptFunction = nil;
@@ -90,6 +109,15 @@ var
   RC4: TRC4Function = nil;
   RC4_set_key: TRC4SetKeyFunction = nil;
 
+{$ifndef mswindows}
+procedure ZeroMemory(Destination: Pointer; Length: DWORD);
+begin
+ FillChar(Destination^, Length, 0);
+end;
+{$endif}
+
+
+{$ifdef mswindows}
 procedure Init;
 begin
   if LibEay32Handle = 0 then
@@ -134,6 +162,54 @@ begin
     LeaveCriticalSection(LibEay32Lock);
     end;
 end;
+
+{$else}
+procedure Init;
+begin
+  if LibEay32Handle = nil then
+    begin
+    EnterCriticalSection(LibEay32Lock);
+    try
+      if LibEay32Handle = nil then
+        begin
+        LibEay32handle := dlopen(LIBEAY32_NAME, RTLD_NOW or RTLD_GLOBAL);
+        if LibEay32Handle <> nil then
+          begin
+          AES_encrypt := dlsym(LibEay32Handle, 'AES_encrypt');
+          AES_set_encrypt_key := dlsym(LibEay32Handle, 'AES_set_encrypt_key');
+          AES_decrypt := dlsym(LibEay32Handle, 'AES_decrypt');
+          AES_set_decrypt_key := dlsym(LibEay32Handle, 'AES_set_decrypt_key');
+          RC4 := dlsym(LibEay32Handle, 'RC4');
+          RC4_set_key := dlsym(LibEay32Handle, 'RC4_set_key');
+          end;
+        end;
+    finally
+      LeaveCriticalSection(LibEay32Lock);
+      end;
+    end;
+end;
+
+
+procedure Done;
+begin
+  EnterCriticalSection(LibEay32Lock);
+  try
+    if LibEay32Handle <> nil then
+      begin
+      dlclose(libeay32handle);
+      LibEay32Handle := nil;
+      AES_encrypt := nil;
+      AES_set_encrypt_key := nil;
+      AES_decrypt := nil;
+      AES_set_decrypt_key := nil;
+      RC4 := nil;
+      RC4_set_key := nil;
+      end;
+  finally
+    LeaveCriticalSection(LibEay32Lock);
+    end;
+end;
+{$endif}
 
 function AES_Encrypt_ECB(Input, Output, Key: PAnsiChar; Bits: integer): boolean;
 var
@@ -275,10 +351,19 @@ begin
 end;
 
 initialization
-  InitializeCriticalSection(LibEay32Lock);
+  {$ifdef mswindows}
+  ///InitializeCriticalSection(LibEay32Lock);
+  {.$else}
+  ///Init;
+  InitCriticalSection(LibEay32Lock);
+  {$endif}
 
 finalization
   Done;
-  DeleteCriticalSection(LibEay32Lock);
+  {$ifdef mswindows}
+  ///DeleteCriticalSection(LibEay32Lock);
+  {.$else}
+  DoneCriticalSection(LibEay32Lock);
+  {$endif}
 
 end.

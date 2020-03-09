@@ -611,8 +611,8 @@ type
 {$ELSE}
     function QueryInterface(const IID: TGUID; out Obj): HResult; virtual; stdcall;
 {$ENDIF}
-    function _AddRef: Integer; virtual; stdcall;
-    function _Release: Integer; virtual; stdcall;
+    function _AddRef: Integer; virtual; {$ifdef mswindows} stdcall{$else}cdecl{$endif};
+    function _Release: Integer; virtual; {$ifdef mswindows} stdcall{$else}cdecl{$endif};
 
     function GetO(const path: SOString): ISuperObject;
     procedure PutO(const path: SOString; const Value: ISuperObject);
@@ -812,7 +812,13 @@ function SOInvoke(const obj: TValue; const method: string; const params: string;
 
 implementation
 uses
-  sysutils, Windows, superdate
+  sysutils,
+  {$ifndef fpc}
+    Windows
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+  superdate
 {$IFDEF FPC}
   ,sockets
 {$ELSE}
@@ -947,11 +953,11 @@ var
   p: PSOChar;
 begin
   Result := FloatToStr(value);
-  if FormatSettings.DecimalSeparator <> '.' then
+  if {$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator <> '.' then
   begin
     p := PSOChar(Result);
     while p^ <> #0 do
-      if p^ <> SOChar(FormatSettings.DecimalSeparator) then
+      if p^ <> SOChar({$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator) then
       inc(p) else
       begin
         p^ := '.';
@@ -965,11 +971,11 @@ var
   p: PSOChar;
 begin
   Result := CurrToStr(value);
-  if FormatSettings.DecimalSeparator <> '.' then
+  if {$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator <> '.' then
   begin
     p := PSOChar(Result);
     while p^ <> #0 do
-      if p^ <> SOChar(FormatSettings.DecimalSeparator) then
+      if p^ <> SOChar({$ifdef NEED_FORMATSETTINGS}FormatSettings.{$endif}DecimalSeparator) then
       inc(p) else
       begin
         p^ := '.';
@@ -4230,12 +4236,12 @@ begin
   end;
 end;
 
-function TSuperObject._AddRef: Integer; stdcall;
+function TSuperObject._AddRef: Integer; {$ifdef mswindows} stdcall{$else}cdecl{$endif};
 begin
   Result := InterlockedIncrement(FRefCount);
 end;
 
-function TSuperObject._Release: Integer; stdcall;
+function TSuperObject._Release: Integer; {$ifdef mswindows} stdcall{$else}cdecl{$endif};
 begin
   Result := InterlockedDecrement(FRefCount);
   if Result = 0 then

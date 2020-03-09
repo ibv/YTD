@@ -40,10 +40,16 @@ unit uYTD;
 interface
 
 uses
-  SysUtils, Classes, Windows, {$IFNDEF DELPHIXE2_UP} FileCtrl, {$ENDIF}
-
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+  {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
+  HttpSend,
   uConsoleApp, uOptions, uLanguages, uMessages, uFunctions, uUpgrade,
-  uDownloader,
+  uDownloader, uCommonDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   {$IFDEF SETUP}
   uHttpDirectDownloader, uSetup,
@@ -330,9 +336,9 @@ function TYTD.DoExecute: integer;
 var Param: string;
     n: integer;
 begin
-  TestLibraryPresence(IsSSLAvailable, MSG_OPENSSL_NOT_FOUND, MY_OPENSSL_URL);
-  TestLibraryPresence(TRtmpDownloader.CheckForPrerequisites, MSG_RTMPDUMP_NOT_FOUND, MY_RTMPDUMP_URL);
-  TestLibraryPresence(TMSDownloader.CheckForPrerequisites, MSG_MSDL_NOT_FOUND, MY_MSDL_URL);
+  ///TestLibraryPresence(IsSSLAvailable, MSG_OPENSSL_NOT_FOUND, MY_OPENSSL_URL);
+  ///TestLibraryPresence(TRtmpDownloader.CheckForPrerequisites, MSG_RTMPDUMP_NOT_FOUND, MY_RTMPDUMP_URL);
+  ///TestLibraryPresence(TMSDownloader.CheckForPrerequisites, MSG_MSDL_NOT_FOUND, MY_MSDL_URL);
   if ParamCount = 0 then
     begin
     ShowSyntax;

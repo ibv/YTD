@@ -42,7 +42,13 @@ interface
 {$DEFINE TEXTFUNCTIONS}
 
 uses
-  SysUtils, Classes, Windows,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages, lazutf8, FileUtil,
+  {$ENDIF}
+
+  SysUtils, Classes,
   uCompatibility, uStrings;
 
 type
@@ -229,6 +235,7 @@ begin
       begin
       P := Pointer(NativeUInt(Source.Memory) + NativeUInt(BomLength));
       CodePage := EncodingToCodePage(Encoding);
+      {$ifdef mswindows}
       Size := MultiByteToWideChar(CodePage, 0 {MB_ERR_INVALID_CHARS}, P, Source.Size - BomLength, nil, 0);
       if Size = 0 then
         Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
@@ -237,6 +244,10 @@ begin
       NewSize := MultiByteToWideChar(CodePage, 0 {MB_ERR_INVALID_CHARS}, P, Source.Size - BomLength, @Content[1], Size);
       if NewSize = 0 then
         Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
+			{$else}
+      Content:=StringToWide(AnsiString(P^));
+      NewSize:=length(Content);
+      {$endif}
       Result := TMemoryStream.Create;
       try
         Result.WriteBuffer(Content[1], NewSize * Sizeof(WideChar));
@@ -303,6 +314,7 @@ procedure SaveMemoryToFileW(const FileName: string; Data: Pointer; DataLength: i
 var Stream: TMemoryStream;
     CodePage, Size, NewSize: integer;
     SavedOK, IsNewFile: boolean;
+    s:ansistring;
 begin
   SavedOK := False;
   if Encoding = feAuto then
@@ -311,17 +323,23 @@ begin
     if Encoding <> feUTF16 then
       begin
       CodePage := EncodingToCodePage(Encoding);
+      {$ifdef mswindows}
       Size := WideCharToMultiByte(CodePage, 0 {MB_ERR_INVALID_CHARS}, Data, DataLength div Sizeof(WideChar), nil, 0, nil, nil);
       if Size = 0 then
         Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
+      {$endif}
       Stream := TMemoryStream.Create;
       try
+        {$ifdef mswindows}
         Inc(Size);
         Stream.Size := Size;
         NewSize := WideCharToMultiByte(CodePage, 0 {MB_ERR_INVALID_CHARS}, Data, DataLength div Sizeof(WideChar), Stream.Memory, Size, nil, nil);
         if NewSize = 0 then
           Raise EConvertError.CreateFmt('Invalid unicode characters encountered(%d)', [GetLastError]);
         Stream.Size := NewSize;
+        {$else}
+        Stream.Write(Data, DataLength);
+        {$endif}
         IsNewFile := not FileExists(FileName);
         if BOM and (Encoding in [feUTF16, feUTF8]) and (IsNewFile or (not Append)) then
           begin
@@ -408,11 +426,16 @@ begin
       Exit;
       end;
   // Try to convert the string as UTF8. If it succeeds, assume UTF8
+  {$ifdef mswindows}
   if MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, Data, DataLength, nil, 0) <> 0 then
     begin
     Result := feUtf8;
     Exit;
     end;
+  {$else}
+    result:=feUtf8;
+    exit;
+  {$endif}
   // I need to decide between Unicode and ANSI.
   // Assumption: ANSI doesn't use binary zero very often, except maybe separating words or lines
   // or as a filler. Unicode will have binary zero in all 7-bit ASCII characters, which will presumably
@@ -442,10 +465,12 @@ end;
 
 {$ENDIF}
 
+
 function FileGetSize(const FileName: string): int64;
 var Handle: THandle;
     FileSizeHigh, FileSizeLow: DWORD;
 begin
+  {$ifdef mswindows}
   Result := -1;
   Handle := CreateFile(PChar(FileName), 0, FILE_SHARE_READ or FILE_SHARE_WRITE, nil, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
   if Handle <> INVALID_HANDLE_VALUE then
@@ -456,6 +481,9 @@ begin
     finally
       CloseHandle(Handle);
       end;
+  {$else}
+    result:=FileSize(FileName);
+  {$endif}
 end;
 
 function FileGetDateTime(const FileName: string): TDateTime;
@@ -815,11 +843,16 @@ begin
         Dec(n);
       if n > 0 then
         begin
+        {$ifdef mswindows}
         if MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, PAnsiChar(StrBuf), n, nil, 0) <> 0 then
           begin
           fEncoding := feUtf8;
           Exit;
           end;
+        {$else}
+          fEncoding := feUtf8;
+          Exit;
+        {$endif}
         end;
       end;
     // I need to decide between Unicode and ANSI.

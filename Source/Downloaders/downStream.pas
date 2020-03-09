@@ -44,7 +44,12 @@ unit downStream;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uPCRE, uXml, uJSON, HttpSend, SynaCode,
   uDownloader, uCommonDownloader, uHttpDownloader, uHttpDirectDownloader;
 

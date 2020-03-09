@@ -1,5 +1,6 @@
-@echo off
+@echo Off
 setlocal
+
 if "%~1"=="" goto :syntax
 
 set version=
@@ -8,6 +9,7 @@ set variant_suffix=
 set compress=
 set skip_build=
 set skip_source=
+
 
 if not "%~1"=="" (
   set version=%~1
@@ -34,7 +36,9 @@ if not "%~1"=="" (
   shift /1
 )
 
+
 call "%~d0%~p0release-internal" "%version%" %1 %2 %3 %4 %5 %6 %7 %8 %9
+
 if errorlevel 1 exit 1
 goto :eof
 

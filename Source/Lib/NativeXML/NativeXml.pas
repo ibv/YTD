@@ -31,16 +31,21 @@ unit NativeXml;
 
 interface
 
-{$i nativexml.inc}
+{$i NativeXml.inc}
 
 uses
-  Windows,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   {$IFDEF CLR}
   System.Text,
   {$ENDIF}
   {$IFDEF USEGRAPHICS}
   {$IFDEF LINUX}
-  QGraphics,
+  ///QGraphics,
+  Graphics,
   {$ELSE}
   Graphics,
   {$ENDIF}
@@ -2137,8 +2142,13 @@ end;
 function GetTimeZoneBias: Integer;
 // uses windows unit, func GetTimeZoneInformation
 var
+  {$ifdef mswindows}
   TimeZoneInfo: TTimeZoneInformation;
+  {$else}
+  d: double;
+  {$endif}
 begin
+  {$ifdef mswindows}
   case GetTimeZoneInformation(TimeZoneInfo) of
     TIME_ZONE_ID_UNKNOWN: Result := TimeZoneInfo.Bias;
     TIME_ZONE_ID_STANDARD: Result := TimeZoneInfo.Bias + TimeZoneInfo.StandardBias;
@@ -2146,6 +2156,10 @@ begin
   else
     Result := 0;
   end;
+  {$else}
+    result := GetLocalTimeOffset;
+  {$endif}
+
 end;
 
 function sdDateTimeFromString(const ADate: UTF8String; UseLocalBias: Boolean): TDateTime;

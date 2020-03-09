@@ -37,13 +37,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 unit uGUID;
 {$INCLUDE 'pepak.inc'}
 
-{$DEFINE DYNAMIC}
+{.$DEFINE DYNAMIC}
 
 interface
 
 {$IFDEF DYNAMIC}
 uses
-  Windows;
+  {$ifdef mswindows}
+    Windows;
+  {$ELSE}
+    LCLIntf, LCLType, LMessages;
+  {$ENDIF}
 {$ENDIF}
 
 type
@@ -65,9 +69,9 @@ const
 {$ELSE}
 
   {$EXTERNALSYM UuidCreate}
-  function UuidCreate(var Uuid: TGUID): RPC_STATUS; stdcall;
+  ///function UuidCreate(var Uuid: TGUID): RPC_STATUS; stdcall;
   {$EXTERNALSYM UuidToString}
-  function UuidToString(Uuid: PGUID; out StringUuid: PChar): RPC_STATUS; stdcall;
+ /// function UuidToString(Uuid: PGUID; out StringUuid: PChar): RPC_STATUS; stdcall;
 
 {$ENDIF}
 
@@ -76,7 +80,7 @@ function GenerateUuid: string;
 implementation
 
 const
-  LibraryFile = 'rpcrt4.dll';
+  ///LibraryFile = 'rpcrt4.dll';
   UuidCreateName = 'UuidCreate';
   UuidToStringName = {$IFDEF UNICODE} 'UuidToStringW' {$ELSE} 'UuidToStringA' {$ENDIF} ;
 
@@ -86,8 +90,8 @@ const
 
 {$ELSE}
 
-  function UuidCreate; external LibraryFile name UuidCreateName;
-  function UuidToString; external LibraryFile name UuidToStringName;
+  ///function UuidCreate; external LibraryFile name UuidCreateName;
+  ///function UuidToString; external LibraryFile name UuidToStringName;
 
 {$ENDIF}
 
@@ -96,9 +100,12 @@ var GUID: TGUID;
     P: PChar;
 begin
   Result := '';
+  {
   if UuidCreate(GUID) = RPC_S_OK then
     if UuidToString(@GUID, P) = RPC_S_OK then
       Result := P;
+  }
+
 end;
 
 initialization

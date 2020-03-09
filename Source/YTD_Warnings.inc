@@ -15,10 +15,10 @@
 {$IFDEF FPC}
   {$IFDEF GUI}
     {$IFNDEF GUI_WINAPI}
-      {$MESSAGE ERROR 'Graphical version can only be built in GUI_WINAPI mode.'}
+      ///{$MESSAGE ERROR 'Graphical version can only be built in GUI_WINAPI mode.'}
     {$ENDIF}
   {$ENDIF}
-  {$MESSAGE WARN 'FPC implementation of GetText is faulty. Multilanguage capabilities were removed.'}
-  {$MESSAGE WARN 'FPC version needs pcrelib.dll. Find it in Source\Lib\PerlRegEx.'}
+  ///{$MESSAGE WARN 'FPC implementation of GetText is faulty. Multilanguage capabilities were removed.'}
+  ///{$MESSAGE WARN 'FPC version needs pcrelib.dll. Find it in Source\Lib\PerlRegEx.'}
 {$ENDIF}
 

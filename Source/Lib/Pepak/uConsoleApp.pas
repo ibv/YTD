@@ -40,7 +40,13 @@ unit uConsoleApp;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,  ShellApi,
+    ShlObj,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uStrings, uFiles;
 
 type

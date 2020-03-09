@@ -34,30 +34,45 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ******************************************************************************)
 
-unit downSnotr;
+unit downNova;
 {$INCLUDE 'ytd.inc'}
 
 interface
 
 uses
-  SysUtils, Classes,
-  {$ifdef mswindows}
-    Windows,
+SysUtils, Classes,
+{$ifdef mswindows}
+  Windows,
+{$ELSE}
+  LCLIntf, LCLType, LMessages,
+{$ENDIF}
+{$IFDEF DELPHI6_UP} Variants, {$ENDIF}
+uPCRE, uXml, uCrypto, HttpSend, SynaCode,
+uOptions, uCompatibility,
+{$IFDEF GUI}
+  guiDownloaderOptions,
+  {$IFDEF GUI_WINAPI}
+//      guiOptionsWINAPI_CT,
   {$ELSE}
-    LCLIntf, LCLType, LMessages,
+    guiOptionsLCL_Nova,
   {$ENDIF}
-  uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader;
+{$ENDIF}
+uDownloader, uCommonDownloader, downVoyo;
+
+
 
 type
-  TDownloader_Snotr = class(THttpDownloader)
-    private
+  TDownloader_Nova = class(TDownloader_Voyo)
     protected
-      function GetMovieInfoUrl: string; override;
-      function BuildMovieUrl(out Url: string): boolean; override;
+      function GetFlowPlayerConfigRegExp: string; override;
     public
       class function Provider: string; override;
       class function UrlRegExp: string; override;
+      class function Features: TDownloaderFeatures; override;
+      {$IFDEF GUI}
+      class function GuiOptionsClass: TFrameDownloaderOptionsPageClass; override;
+      {$ENDIF}
+
       constructor Create(const AMovieID: string); override;
       destructor Destroy; override;
     end;
@@ -66,55 +81,67 @@ implementation
 
 uses
   uStringConsts,
+  {$IFDEF DIRTYHACKS}
+  uFiles,
+  {$ENDIF}
   uDownloadClassifier,
   uMessages;
 
-// http://www.snotr.com/video/4280
+// http://voyo.nova.cz/product/zpravy/30076-televizni-noviny-28-7-2012
+// http://archiv.nova.cz/multimedia/ulice-1683-1684-dil.html
+// http://voyo.nova.cz/home/plus-video/321-kriminalka-andel-podraz
+// http://voyo.nova.cz/product/filmy/26894-testovaci-video-okresni-prebor-16
 const
-  URLREGEXP_BEFORE_ID = '^https?://(?:[a-z0-9-]+\.)*snotr\.com/video/';
-  URLREGEXP_ID =        '[0-9]+';
-  URLREGEXP_AFTER_ID =  '';
+  URLREGEXP_BEFORE_ID = '';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?<!tn\.)nova\.cz/.+';
+  URLREGEXP_AFTER_ID =  '$';
 
 const
-  REGEXP_MOVIE_TITLE = '<meta\s+name="title"\s+content="(?P<TITLE>.*?)"';
+  REGEXP_CONFIG = 'var\s+voyoPlusConfig\d*\s*=\s*\\?"(?P<CONFIG>.+?)\\?"';
 
-{ TDownloader_Snotr }
+{ TDownloader_Nova }
 
-class function TDownloader_Snotr.Provider: string;
+class function TDownloader_Nova.Provider: string;
 begin
-  Result := 'Snotr.com';
+  Result := 'Nova.cz';
 end;
 
-class function TDownloader_Snotr.UrlRegExp: string;
+class function TDownloader_Nova.UrlRegExp: string;
 begin
   Result := Format(URLREGEXP_BEFORE_ID + '(?P<%s>' + URLREGEXP_ID + ')' + URLREGEXP_AFTER_ID, [MovieIDParamName]);;
 end;
 
-constructor TDownloader_Snotr.Create(const AMovieID: string);
+
+class function TDownloader_Nova.Features: TDownloaderFeatures;
+begin
+  Result := inherited Features;
+end;
+
+
+{$IFDEF GUI}
+class function TDownloader_Nova.GuiOptionsClass: TFrameDownloaderOptionsPageClass;
+begin
+  Result := TFrameDownloaderOptionsPage_Nova;
+end;
+{$ENDIF}
+
+
+constructor TDownloader_Nova.Create(const AMovieID: string);
 begin
   inherited;
-  InfoPageEncoding := peUTF8;
-  MovieTitleRegExp := RegExCreate(REGEXP_MOVIE_TITLE);
 end;
 
-destructor TDownloader_Snotr.Destroy;
+destructor TDownloader_Nova.Destroy;
 begin
-  RegExFreeAndNil(MovieTitleRegExp);
   inherited;
 end;
 
-function TDownloader_Snotr.GetMovieInfoUrl: string;
+function TDownloader_Nova.GetFlowPlayerConfigRegExp: string;
 begin
-  Result := 'http://www.snotr.com/video/' + MovieID;
-end;
-
-function TDownloader_Snotr.BuildMovieUrl(out Url: string): boolean;
-begin
-  URL := 'http://videos.snotr.com/' + MovieID + '.flv';
-  Result := True;
+  Result := REGEXP_CONFIG;
 end;
 
 initialization
-  RegisterDownloader(TDownloader_Snotr);
+  RegisterDownloader(TDownloader_Nova);
 
 end.

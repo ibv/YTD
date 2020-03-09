@@ -40,7 +40,12 @@ unit downGuba;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uPCRE, uXml, HttpSend,
   uDownloader, uCommonDownloader, uHttpDownloader;
 

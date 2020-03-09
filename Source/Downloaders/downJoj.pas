@@ -48,7 +48,11 @@ uses
     {$IFDEF GUI_WINAPI}
       guiOptionsWINAPI_Joj,
     {$ELSE}
-      guiOptionsVCL_Joj,
+      {$IFNDEF GUI_LCL}
+        guiOptionsVCL_Joj,
+      {$ELSE}
+  		  guiOptionsLCL_Joj,
+  		{$ENDIF}
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uDummyDownloader;

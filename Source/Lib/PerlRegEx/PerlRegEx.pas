@@ -13,10 +13,10 @@
 { The Original Code is PerlRegEx.pas.                                                              }
 {                                                                                                  }
 { The Initial Developer of the Original Code is Jan Goyvaerts.                                     }
-{ Portions created by Jan Goyvaerts are Copyright (C) 1999, 2005, 2008  Jan Goyvaerts.             }
+{ Portions created by Jan Goyvaerts are Copyright (C) 1999, 2005, 2008, 2010  Jan Goyvaerts.       }
 { All rights reserved.                                                                             }
 {                                                                                                  }
-{ Design & implementation, by Jan Goyvaerts, 1999, 2005, 2008                                      }
+{ Design & implementation, by Jan Goyvaerts, 1999, 2005, 2008, 2010                                }
 {                                                                                                  }
 { TPerlRegEx is available at http://www.regular-expressions.info/delphi.html                       }
 {                                                                                                  }
@@ -27,13 +27,12 @@ unit PerlRegEx;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes,
-  pcre;
+  SysUtils, Classes, pcre {RegExpr};
 
 type
   TPerlRegExOptions = set of (
     preCaseLess,       // /i -> Case insensitive
-    preMultiLine,      // /m -> ^ and $ also match before/after a newline, not just at the beginning and the end of the PCREString
+    preMultiLine,      // /m -> ^ and $ also match before/after a newline, not just at the beginning and the end of the string
     preSingleLine,     // /s -> Dot matches any character, including \n (newline). Otherwise, it matches anything except \n
     preExtended,       // /x -> Allow regex to contain extra whitespace, newlines and Perl-style comments, all of which will be filtered out
     preAnchored,       // /A -> Successful match can only occur at the start of the subject or right after the previous match
@@ -52,7 +51,7 @@ const
   // Maximum number of subexpressions (backreferences)
   // Subexpressions are created by placing round brackets in the regex, and are referenced by \1, \2, ...
   // In Perl, they are available as $1, $2, ... after the regex matched; with TPerlRegEx, use the Subexpressions property
-  // You can also insert \1, \2, ... in the Replacement PCREString; \0 is the complete matched expression
+  // You can also insert \1, \2, ... in the replacement string; \0 is the complete matched expression
   MAX_SUBEXPRESSIONS = {$IFDEF PEPAK} 1024 {$ELSE} 99 {$ENDIF};
 
 {$IFDEF UNICODE}
@@ -72,7 +71,7 @@ type
   TPerlRegExReplaceEvent = procedure(Sender: TObject; var ReplaceWith: PCREString) of object;
 
 type
-  TPerlRegEx = class(TComponent)
+  TPerlRegEx = class
   private    // *** Property storage, getters and setters
     FCompiled, FStudied: Boolean;
     FOptions: TPerlRegExOptions;
@@ -81,35 +80,35 @@ type
     FStart, FStop: Integer;
     FOnMatch: TNotifyEvent;
     FOnReplace: TPerlRegExReplaceEvent;
-    function GetMatchedExpression: PCREString;
-    function GetMatchedExpressionLength: Integer;
-    function GetMatchedExpressionOffset: Integer;
+    function GetMatchedText: PCREString;
+    function GetMatchedLength: Integer;
+    function GetMatchedOffset: Integer;
     procedure SetOptions(Value: TPerlRegExOptions);
     procedure SetRegEx(const Value: PCREString);
-    function GetSubExpressionCount: Integer;
-    function GetSubExpressions(Index: Integer): PCREString;
-    function GetSubExpressionLengths(Index: Integer): Integer;
-    function GetSubExpressionOffsets(Index: Integer): Integer;
+    function GetGroupCount: Integer;
+    function GetGroups(Index: Integer): PCREString;
+    function GetGroupLengths(Index: Integer): Integer;
+    function GetGroupOffsets(Index: Integer): Integer;
     procedure SetSubject(const Value: PCREString);
     procedure SetStart(const Value: Integer);
     procedure SetStop(const Value: Integer);
     function GetFoundMatch: Boolean;
-  private    // *** Variables used by pcrelib.dll
+  private    // *** Variables used by PCRE
     Offsets: array[0..(MAX_SUBEXPRESSIONS+1)*3] of Integer;
     OffsetCount: Integer;
     pcreOptions: Integer;
     pattern, hints, chartable: Pointer;
     FSubjectPChar: PAnsiChar;
-    FHasStoredSubExpressions: Boolean;
-    FStoredSubExpressions: array of PCREString;
+    FHasStoredGroups: Boolean;
+    FStoredGroups: array of PCREString;
     function GetSubjectLeft: PCREString;
     function GetSubjectRight: PCREString;
   protected
     procedure CleanUp;
         // Dispose off whatever we created, so we can start over. Called automatically when needed, so it is not made public
-    procedure ClearStoredSubExpressions;
+    procedure ClearStoredGroups;
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create;
         // Come to life
     destructor Destroy; override;
         // Clean up after ourselves
@@ -121,62 +120,64 @@ type
         // Study the regex. Studying takes time, but will make the execution of the regex a lot faster.
         // Call study if you will be using the same regex many times
     function Match: Boolean;
-        // Attempt to match the regex
+        // Attempt to match the regex, starting the attempt from the beginning of Subject
     function MatchAgain: Boolean;
-        // Attempt to match the regex to the remainder of the string after the previous match
-        // To avoid problems (when using ^ in the regex), call MatchAgain only after a succesful Match()
+        // Attempt to match the regex to the remainder of Subject after the previous match (as indicated by Start)
     function Replace: PCREString;
         // Replace matched expression in Subject with ComputeReplacement.  Returns the actual replacement text from ComputeReplacement
     function ReplaceAll: Boolean;
         // Repeat MatchAgain and Replace until you drop.  Returns True if anything was replaced at all.
     function ComputeReplacement: PCREString;
         // Returns Replacement with backreferences filled in
-    procedure StoreSubExpressions;
-        // Stores duplicates of SubExpressions[] so they and ComputeReplacement will still return the proper strings
+    procedure StoreGroups;
+        // Stores duplicates of Groups[] so they and ComputeReplacement will still return the proper strings
         // even if FSubject is changed or cleared
-    function NamedSubExpression(const SEName: PCREString): Integer;
-        // Returns the index of the named group SEName
+    function NamedGroup(const Name: PCREString): Integer;
+        // Returns the index of the named group Name
     procedure Split(Strings: TStrings; Limit: Integer);
-        // Split Subject along regex matches.  Items are appended to PCREStrings.
+        // Split Subject along regex matches.  Capturing groups are ignored.
+    procedure SplitCapture(Strings: TStrings; Limit: Integer); overload;
+    procedure SplitCapture(Strings: TStrings; Limit: Integer; Offset: Integer); overload;
+        // Split Subject along regex matches.  Capturing groups are added to Strings as well.
     property Compiled: Boolean read FCompiled;
         // True if the RegEx has already been compiled.
     property FoundMatch: Boolean read GetFoundMatch;
-        // Returns True when MatchedExpression* and SubExpression* indicate a match
+        // Returns True when Matched* and Group* indicate a match
     property Studied: Boolean read FStudied;
         // True if the RegEx has already been studied
-    property MatchedExpression: PCREString read GetMatchedExpression;
-        // The matched PCREString
-    property MatchedExpressionLength: Integer read GetMatchedExpressionLength;
-        // Length of the matched PCREString
-    property MatchedExpressionOffset: Integer read GetMatchedExpressionOffset;
-        // Character offset in the Subject PCREString at which the matched subPCREString starts
+    property MatchedText: PCREString read GetMatchedText;
+        // The matched text
+    property MatchedLength: Integer read GetMatchedLength;
+        // Length of the matched text
+    property MatchedOffset: Integer read GetMatchedOffset;
+        // Character offset in the Subject string at which MatchedText starts
     property Start: Integer read FStart write SetStart;
         // Starting position in Subject from which MatchAgain begins
     property Stop: Integer read FStop write SetStop;
         // Last character in Subject that Match and MatchAgain search through
     property State: TPerlRegExState read FState write FState;
         // State of Subject
-    property SubExpressionCount: Integer read GetSubExpressionCount;
-        // Number of matched subexpressions
-    property SubExpressions[Index: Integer]: PCREString read GetSubExpressions;
-        // Matched subexpressions after a regex has been matched
-    property SubExpressionLengths[Index: Integer]: Integer read GetSubExpressionLengths;
-        // Lengths of the subexpressions
-    property SubExpressionOffsets[Index: Integer]: Integer read GetSubExpressionOffsets;
-        // Character offsets in the Subject PCREString of the subexpressions
+    property GroupCount: Integer read GetGroupCount;
+        // Number of matched capturing groups
+    property Groups[Index: Integer]: PCREString read GetGroups;
+        // Text matched by capturing groups
+    property GroupLengths[Index: Integer]: Integer read GetGroupLengths;
+        // Lengths of the text matched by capturing groups
+    property GroupOffsets[Index: Integer]: Integer read GetGroupOffsets;
+        // Character offsets in Subject at which the capturing group matches start
     property Subject: PCREString read FSubject write SetSubject;
-        // The PCREString on which Match() will try to match RegEx
+        // The string on which Match() will try to match RegEx
     property SubjectLeft: PCREString read GetSubjectLeft;
         // Part of the subject to the left of the match
     property SubjectRight: PCREString read GetSubjectRight;
         // Part of the subject to the right of the match
-  published
+  public
     property Options: TPerlRegExOptions read FOptions write SetOptions;
         // Options
     property RegEx: PCREString read FRegEx write SetRegEx;
         // The regular expression to be matched
     property Replacement: PCREString read FReplacement write FReplacement;
-        // PCREString to replace matched expression with. \number backreferences will be substituted with SubExpressions
+        // Text to replace matched expression with. \number and $number backreferences will be substituted with Groups
         // TPerlRegEx supports the "JGsoft" replacement text flavor as explained at http://www.regular-expressions.info/refreplace.html
     property OnMatch: TNotifyEvent read FOnMatch write FOnMatch;
         // Triggered by Match and MatchAgain after a successful match
@@ -185,7 +186,7 @@ type
   end;
 
 {
-  You can add TPerlRegEx components to a TPerlRegExList to match them all together on the same subject,
+  You can add TPerlRegEx instances to a TPerlRegExList to match them all together on the same subject,
   as if they were one regex regex1|regex2|regex3|...
   TPerlRegExList does not own the TPerlRegEx components, just like a TList
   If a TPerlRegEx has been added to a TPerlRegExList, it should not be used in any other situation
@@ -227,28 +228,22 @@ type
     property MatchedRegEx: TPerlRegEx read FMatchedRegEx;
   end;
 
-procedure Register;
-
 implementation
 
 
          { ********* Unit support routines ********* }
-
-procedure Register;
-begin
-  RegisterComponents('JGsoft', [TPerlRegEx]);
-end;
 
 function FirstCap(const S: string): string;
 begin
   if S = '' then Result := ''
   else begin
     Result := AnsiLowerCase(S);
-  {$IFDEF UNICODE}
-    CharUpperBuffW(@Result[1], 1);
-  {$ELSE}
-    CharUpperBuffA(@Result[1], 1);
-  {$ENDIF}
+    Result[1] := AnsiUpperCase(Result[1])[1];
+//   {$IFDEF UNICODE}
+//     CharUpperBuffW(@Result[1], 1);
+//   {$ELSE}
+//     CharUpperBuffA(@Result[1], 1);
+//   {$ENDIF}
   end
 end;
 
@@ -259,19 +254,19 @@ var
 begin
   Result := AnsiLowerCase(S);
   Up := True;
-{$IFDEF UNICODE}
-  for I := 1 to Length(Result) do begin
-    case Result[I] of
-      #0..'&', '(', '*', '+', ',', '-', '.', '?', '<', '[', '{', #$00B7:
-        Up := True
-      else
-        if Up and (Result[I] <> '''') then begin
-          CharUpperBuffW(@Result[I], 1);
-          Up := False
-        end
-    end;
-  end;
-{$ELSE UNICODE}
+// {$IFDEF UNICODE}
+//   for I := 1 to Length(Result) do begin
+//     case Result[I] of
+//       #0..'&', '(', '*', '+', ',', '-', '.', '?', '<', '[', '{', #$00B7:
+//         Up := True
+//       else
+//         if Up and (Result[I] <> '''') then begin
+//           Result[i] := AnsiUpperCase(Result[i])[1];
+//           Up := False
+//         end
+//     end;
+//   end;
+// {$ELSE UNICODE}
   if SysLocale.FarEast then begin
     I := 1;
     while I <= Length(Result) do begin
@@ -281,7 +276,7 @@ begin
       else begin
         if Result[I] in [#0..'&', '('..'.', '?', '<', '[', '{'] then Up := True
         else if Up and (Result[I] <> '''') then begin
-          CharUpperBuffA(@Result[I], 1);
+          // CharUpperBuffA(@Result[I], 1);
           Result[I] := UpperCase(Result[I])[1];
           Up := False
         end;
@@ -293,12 +288,12 @@ begin
     for I := 1 to Length(Result) do begin
       if Result[I] in [#0..'&', '('..'.', '?', '<', '[', '{', #$B7] then Up := True
       else if Up and (Result[I] <> '''') then begin
-        CharUpperBuffA(@Result[I], 1);
+        // CharUpperBuffA(@Result[I], 1);
         Result[I] := AnsiUpperCase(Result[I])[1];
         Up := False
       end
     end;
-{$ENDIF UNICODE}
+// {$ENDIF UNICODE}
 end;
 
 
@@ -307,17 +302,17 @@ end;
 procedure TPerlRegEx.CleanUp;
 begin
   FCompiled := False; FStudied := False;
-  pcre_dispose(pattern, hints, nil);
+  ///pcre_dispose(pattern, hints, nil);
   pattern := nil;
   hints := nil;
-  ClearStoredSubExpressions;
+  ClearStoredGroups;
   OffsetCount := 0;
 end;
 
-procedure TPerlRegEx.ClearStoredSubExpressions;
+procedure TPerlRegEx.ClearStoredGroups;
 begin
-  FHasStoredSubExpressions := False;
-  FStoredSubExpressions := nil;
+  FHasStoredGroups := False;
+  FStoredGroups := nil;
 end;
 
 procedure TPerlRegEx.Compile;
@@ -359,8 +354,8 @@ var
     Backreference: PCREString;
   begin
     Delete(S, I, J-I);
-    if Number <= SubExpressionCount then begin
-      Backreference := SubExpressions[Number];
+    if Number <= GroupCount then begin
+      Backreference := Groups[Number];
       if Backreference <> '' then begin
         // Ignore warnings; converting to UTF-8 does not cause data loss
         case Mode of
@@ -394,7 +389,7 @@ var
       if (J <= Length(S)) and (S[J] in ['0'..'9']) then begin
         // Expand it to two digits only if that would lead to a valid backreference
         Number2 := Number*10 + Ord(S[J]) - Ord('0');
-        if Number2 <= SubExpressionCount then begin
+        if Number2 <= GroupCount then begin
           Number := Number2;
           Inc(J)
         end;
@@ -418,7 +413,7 @@ var
             while (J <= Length(S)) and (S[J] in ['A'..'Z', 'a'..'z', '0'..'9', '_']) do Inc(J);
             if (J <= Length(S)) and (S[J] = '}') then begin
               Group := Copy(S, I+2, J-I-2);
-              Number := NamedSubExpression(Group);
+              Number := NamedGroup(Group);
             end
           end;
         end;
@@ -440,7 +435,7 @@ var
         end;
         '+': begin
           // \+ or $+ (highest-numbered participating group)
-          Number := SubExpressionCount;
+          Number := GroupCount;
           Inc(J);
         end;
         '`': begin
@@ -482,7 +477,7 @@ begin
               J := J+3;
               while (J <= Length(S)) and (S[J] in ['0'..'9', 'A'..'Z', 'a'..'z', '_']) do Inc(J);
               if (J <= Length(S)) and (S[J] = '>') then begin
-                N := NamedSubExpression(Copy(S, I+3, J-I-3));
+                N := NamedGroup(Copy(S, I+3, J-I-3));
                 Inc(J);
                 Mode := #0;
                 if N > 0 then ReplaceBackreference(N)
@@ -521,11 +516,12 @@ begin
   Result := S
 end;
 
-constructor TPerlRegEx.Create(AOwner: TComponent);
+constructor TPerlRegEx.Create;
 begin
-  inherited Create(AOwner);
+  inherited Create;
   FState := [preNotEmpty];
-  chartable := pcre_maketables;
+
+  ///chartable := pcre_maketables;
 {$IFDEF UNICODE}
   pcreOptions := PCRE_UTF8 or PCRE_NEWLINE_ANY;
 {$ELSE}
@@ -535,7 +531,9 @@ end;
 
 destructor TPerlRegEx.Destroy;
 begin
-  pcre_dispose(pattern, hints, chartable);
+  ///pcre_dispose(pattern, hints, chartable);
+  //if IsPCRELoaded then
+  //   UnloadPCRE;
   inherited Destroy;
 end;
 
@@ -563,49 +561,49 @@ begin
   Result := OffsetCount > 0;
 end;
 
-function TPerlRegEx.GetMatchedExpression: PCREString;
+function TPerlRegEx.GetMatchedText: PCREString;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
-  Result := GetSubExpressions(0);
+  Result := GetGroups(0);
 end;
 
-function TPerlRegEx.GetMatchedExpressionLength: Integer;
+function TPerlRegEx.GetMatchedLength: Integer;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
-  Result := GetSubExpressionLengths(0)
+  Result := GetGroupLengths(0)
 end;
 
-function TPerlRegEx.GetMatchedExpressionOffset: Integer;
+function TPerlRegEx.GetMatchedOffset: Integer;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
-  Result := GetSubExpressionOffsets(0)
+  Result := GetGroupOffsets(0)
 end;
 
-function TPerlRegEx.GetSubExpressionCount: Integer;
+function TPerlRegEx.GetGroupCount: Integer;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
   Result := OffsetCount-1
 end;
 
-function TPerlRegEx.GetSubExpressionLengths(Index: Integer): Integer;
+function TPerlRegEx.GetGroupLengths(Index: Integer): Integer;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
-  Assert((Index >= 0) and (Index <= SubExpressionCount), 'REQUIRE: Index <= SubExpressionCount');
+  Assert((Index >= 0) and (Index <= GroupCount), 'REQUIRE: Index <= GroupCount');
   Result := Offsets[Index*2+1]-Offsets[Index*2]
 end;
 
-function TPerlRegEx.GetSubExpressionOffsets(Index: Integer): Integer;
+function TPerlRegEx.GetGroupOffsets(Index: Integer): Integer;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
-  Assert((Index >= 0) and (Index <= SubExpressionCount), 'REQUIRE: Index <= SubExpressionCount');
+  Assert((Index >= 0) and (Index <= GroupCount), 'REQUIRE: Index <= GroupCount');
   Result := Offsets[Index*2]
 end;
 
-function TPerlRegEx.GetSubExpressions(Index: Integer): PCREString;
+function TPerlRegEx.GetGroups(Index: Integer): PCREString;
 begin
   Assert(FoundMatch, 'REQUIRE: There must be a successful match first');
-  if Index > SubExpressionCount then Result := ''
-    else if FHasStoredSubExpressions then Result := FStoredSubExpressions[Index]
+  if Index > GroupCount then Result := ''
+    else if FHasStoredGroups then Result := FStoredGroups[Index]
     else Result := Copy(FSubject, Offsets[Index*2], Offsets[Index*2+1]-Offsets[Index*2]);
 end;
 
@@ -623,7 +621,7 @@ function TPerlRegEx.Match: Boolean;
 var
   I, Opts: Integer;
 begin
-  ClearStoredSubExpressions;
+  ClearStoredGroups;
   if not Compiled then Compile;
   if preNotBOL in State then Opts := PCRE_NOTBOL else Opts := 0;
   if preNotEOL in State then Opts := Opts or PCRE_NOTEOL;
@@ -644,7 +642,7 @@ function TPerlRegEx.MatchAgain: Boolean;
 var
   I, Opts: Integer;
 begin
-  ClearStoredSubExpressions;
+  ClearStoredGroups;
   if not Compiled then Compile;
   if preNotBOL in State then Opts := PCRE_NOTBOL else Opts := 0;
   if preNotEOL in State then Opts := Opts or PCRE_NOTEOL;
@@ -662,9 +660,9 @@ begin
   end;
 end;
 
-function TPerlRegEx.NamedSubExpression(const SEName: PCREString): Integer;
+function TPerlRegEx.NamedGroup(const Name: PCREString): Integer;
 begin
-  Result := pcre_get_stringnumber(Pattern, PAnsiChar(SEName));
+  Result := pcre_get_stringnumber(Pattern, PAnsiChar(Name));
 end;
 
 function TPerlRegEx.Replace: PCREString;
@@ -675,14 +673,14 @@ begin
   // Allow for just-in-time substitution determination
   if Assigned(OnReplace) then OnReplace(Self, Result);
   // Perform substitution
-  Delete(FSubject, MatchedExpressionOffset, MatchedExpressionLength);
-  if Result <> '' then Insert(Result, FSubject, MatchedExpressionOffset);
+  Delete(FSubject, MatchedOffset, MatchedLength);
+  if Result <> '' then Insert(Result, FSubject, MatchedOffset);
   FSubjectPChar := PAnsiChar(FSubject);
   // Position to continue search
-  FStart := FStart - MatchedExpressionLength + Length(Result);
-  FStop := FStop - MatchedExpressionLength + Length(Result);
+  FStart := FStart - MatchedLength + Length(Result);
+  FStop := FStop - MatchedLength + Length(Result);
   // Replacement no longer matches regex, we assume
-  ClearStoredSubExpressions;
+  ClearStoredGroups;
   OffsetCount := 0;
 end;
 
@@ -744,7 +742,7 @@ begin
   FSubjectPChar := PAnsiChar(Value);
   FStart := 1;
   FStop := Length(Subject);
-  if not FHasStoredSubExpressions then OffsetCount := 0;
+  if not FHasStoredGroups then OffsetCount := 0;
 end;
 
 procedure TPerlRegEx.Split(Strings: TStrings; Limit: Integer);
@@ -757,24 +755,68 @@ begin
     Offset := 1;
     Count := 1;
     repeat
-      Strings.Add(Copy(Subject, Offset, MatchedExpressionOffset - Offset));
+      Strings.Add(Copy(Subject, Offset, MatchedOffset - Offset));
       Inc(Count);
-      Offset := MatchedExpressionOffset + MatchedExpressionLength;
+      Offset := MatchedOffset + MatchedLength;
     until ((Limit > 1) and (Count >= Limit)) or not MatchAgain;
     Strings.Add(Copy(Subject, Offset, MaxInt));
   end
 end;
 
-procedure TPerlRegEx.StoreSubExpressions;
+procedure TPerlRegEx.SplitCapture(Strings: TStrings; Limit, Offset: Integer);
+var
+  Count: Integer;
+  bUseOffset : boolean;
+  iOffset : integer;
+begin
+  Assert(Strings <> nil, 'REQUIRE: Strings');
+  if (Limit = 1) or not Match then Strings.Add(Subject)
+  else
+  begin
+    bUseOffset := Offset <> 1;
+    if Offset <> 1 then
+      Dec(Limit);
+    iOffset := 1;
+    Count := 1;
+    repeat
+      if bUseOffset then
+      begin
+        if MatchedOffset >= Offset then
+        begin
+          bUseOffset := False;
+          Strings.Add(Copy(Subject, 1, MatchedOffset -1));
+          if Self.GroupCount > 0 then
+            Strings.Add(Self.Groups[Self.GroupCount]);
+        end;
+      end
+      else
+      begin
+        Strings.Add(Copy(Subject, iOffset, MatchedOffset - iOffset));
+        Inc(Count);
+        if Self.GroupCount > 0 then
+          Strings.Add(Self.Groups[Self.GroupCount]);
+      end;
+      iOffset := MatchedOffset + MatchedLength;
+    until ((Limit > 1) and (Count >= Limit)) or not MatchAgain;
+    Strings.Add(Copy(Subject, iOffset, MaxInt));
+  end
+end;
+
+procedure TPerlRegEx.SplitCapture(Strings: TStrings; Limit: Integer);
+begin
+  SplitCapture(Strings,Limit,1);
+end;
+
+procedure TPerlRegEx.StoreGroups;
 var
   I: Integer;
 begin
   if OffsetCount > 0 then begin
-    ClearStoredSubExpressions;
-    SetLength(FStoredSubExpressions, SubExpressionCount+1);
-    for I := SubExpressionCount downto 0 do
-      FStoredSubExpressions[I] := SubExpressions[I];
-    FHasStoredSubExpressions := True;
+    ClearStoredGroups;
+    SetLength(FStoredGroups, GroupCount+1);
+    for I := GroupCount downto 0 do
+      FStoredGroups[I] := Groups[I];
+    FHasStoredGroups := True;
   end
 end;
 
@@ -853,19 +895,19 @@ var
   ARegEx: TPerlRegEx;
 begin
   if FMatchedRegEx <> nil then
-    MatchStart := FMatchedRegEx.MatchedExpressionOffset + FMatchedRegEx.MatchedExpressionLength
+    MatchStart := FMatchedRegEx.MatchedOffset + FMatchedRegEx.MatchedLength
   else
     MatchStart := FStart;
   FMatchedRegEx := nil;
   MatchPos := MaxInt;
   for I := 0 to Count-1 do begin
     ARegEx := RegEx[I];
-    if (not ARegEx.FoundMatch) or (ARegEx.MatchedExpressionOffset < MatchStart) then begin
+    if (not ARegEx.FoundMatch) or (ARegEx.MatchedOffset < MatchStart) then begin
       ARegEx.Start := MatchStart;
       ARegEx.MatchAgain;
     end;
-    if ARegEx.FoundMatch and (ARegEx.MatchedExpressionOffset < MatchPos) then begin
-      MatchPos := ARegEx.MatchedExpressionOffset;
+    if ARegEx.FoundMatch and (ARegEx.MatchedOffset < MatchPos) then begin
+      MatchPos := ARegEx.MatchedOffset;
       FMatchedRegEx := ARegEx;
     end;
     if MatchPos = MatchStart then Break;
