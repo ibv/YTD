@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.64.20200301.0</version>
+  <version>1.64.20200401.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1434,6 +1434,44 @@
         <url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
       </http_download>
     </script>
+    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20200401">
+      <regexps>
+        <regexp id="title" match="TITLE"><![CDATA[<h1 class="article-type.+?">(?P<TITLE>.+?)</h1>]]></regexp>
+        <regexp id="part" match="PART"><![CDATA[aria-labelledby="Audio(?P<PART>.+?part)">]]></regexp>
+        <regexp id="list" match="LIST"><![CDATA[aria-labelledby="Audio(?P<LIST>.+?playlist)">]]></regexp>
+        <regexp id="url" match="URL"><![CDATA[<div class=".*aria-labelledby="Audio part">\s+<a href="(?P<URL>.+?)">]]></regexp>
+        <regexp id="playlist" match="URL,TITLE"><![CDATA[<li>.+?id="file-.+?><a href="(?P<URL>.+?)"><div class="filename" title="(?P<TITLE>.+?">.+?</span></div></div></li>]]></regexp>
+      </regexps>
+      <set_var id="page">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="_movie_id"/>
+          </url>
+        </download_page>
+      </set_var>
+        <if>
+        <condition type="regexp_match" id="part" content="page">
+          <http_download>
+            <title>
+              <regexp id="title" content="page"/>
+            </title>
+            <url>
+              <regexp id="url" content="page"/>
+            </url>
+          </http_download>
+        </condition>
+        <condition type="regexp_match" id="list" content="page">
+          <!--http_download>
+            <title>
+              <regexp id="title" content="page"/>
+            </title>
+            <url>
+              <regexp id="url" content="page"/>
+            </url>
+          </http_download-->
+        </condition>
+      </if>
+    </script>
     <script id="rt.com" provider="RT.com">
       <regexps>
         <regexp id="url" match="URL"><![CDATA[\bfile\s*:\s*"(?P<URL>https?://[^"]+\.mp4)"]]></regexp>
@@ -1749,6 +1787,44 @@
         </url>
       </http_download>
     </script>
+    <script id="tvseznam.cz" provider="TV-Seznam.cz"  changed="20200329">
+      <regexps>
+        <regexp id="title" match="TITLE"><![CDATA["name":"(?P<TITLE>.*?)",]]></regexp>
+        <regexp id="url" match="URL"><![CDATA["spl":"(?P<URL>.*?)",]]></regexp>
+        <regexp id="playlist" match="URL"><![CDATA[(?P<URL>.*?/v_.+?)/]]></regexp>
+      </regexps>
+      <set_var id="page">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="_movie_id"/>
+          </url>
+        </download_page>
+      </set_var>
+      <set_var id="url">
+          <regexp id="url" content="page"/>
+      </set_var>
+      <set_var id="title">
+          <regexp id="title" content="page"/>
+      </set_var>
+      <set_var id="page2">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="url"/>spl2,3,VOD
+          </url>
+        </download_page>
+      </set_var>
+      
+      <hls_download>
+        <title>
+          <regexp id="title" content="page"/>
+        </title>
+        <url>
+          <!--regexp id="url" content="page"/-->
+          <regexp id="playlist" content="url"/><copy start="2"><get_json_var id="page2" path="pls/hls/url"/></copy>
+        </url>
+        <extension>.ts</extension>
+      </hls_download>
+     </script>
     <script id="theguardian.com" provider="The Guardian.com">
       <set_var id="page">
         <download_page encoding="utf8">
@@ -2598,6 +2674,7 @@
     <url script="player.zive.cz"><![CDATA[player\.zive\.cz/embed/.+$]]></url>
     <url script="playtvak.cz"><![CDATA[playtvak\.cz/.+$]]></url>
     <url script="playwire.com-embed"><![CDATA[config\.playwire\.com/.+\.json$]]></url>
+    <url script="rozhlas.cz"><![CDATA[rozhlas\.cz/.+$]]></url>
     <url script="rt.com"><![CDATA[rt\.com/.+$]]></url>
     <url script="rtl.be"><![CDATA[rtl\.be/.+$]]></url>
     <url script="rtvs.sk"><![CDATA[rtvs\.sk/.+$]]></url>
@@ -2607,6 +2684,7 @@
     <url script="streamin.to"><![CDATA[streamin\.to/.+$]]></url>
     <url script="sultancesky.cz"><![CDATA[sultancesky\.cz/.+$]]></url>
     <url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
+    <url script="tvseznam.cz"><![CDATA[televizeseznam\.cz/.+$]]></url>
     <url script="theguardian.com"><![CDATA[theguardian\.com/.+$]]></url>
     <url script="tv7.cz"><![CDATA[tv7\.cz/.+$]]></url>
     <url script="tvcom.cz"><![CDATA[tvcom\.cz/.+$]]></url>
