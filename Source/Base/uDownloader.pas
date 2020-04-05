@@ -716,6 +716,7 @@ begin
   SetPrepared(False);
 end;
 
+
 procedure TDownloader.SetLastUrl(const Value: string);
 begin
   fLastURL := Value;
@@ -1190,6 +1191,7 @@ begin
             if Path <> '' then
               if Path[1] = '/' then
                 Delete(Path, 1, 1);
+            if CurrentUrl[length(CurrentUrl)] = '/' then SetLength(CurrentUrl,Length(CurrentUrl)-1);
             CurrentUrl := ExtractUrlPath(CurrentUrl);
             end;
         end;

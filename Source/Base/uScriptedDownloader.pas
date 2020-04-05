@@ -195,9 +195,7 @@ end;
 class function TScriptedDownloader.UrlRegExp: string;
 begin
   Raise EScriptedDownloaderError.Create(_('TScriptedDownloader.UrlRegExp may not be called.'));
-  ///Result := Format(REGEXP_BASE_URL, ['', MovieIDParamName, '', '']);
 end;
-
 
 class function TScriptedDownloader.IsSupportedUrl(const AUrl: string; out AMovieID, Provider: string): boolean;
 var
