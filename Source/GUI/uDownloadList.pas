@@ -146,7 +146,7 @@ end;
 
 destructor TDownloadList.Destroy;
 begin
-  Clear;
+  ///Clear;
   FreeAndNil(fList);
   FreeAndNil(fDownloadingList);
   FreeAndNil(fDownloadClassifier);
@@ -197,6 +197,7 @@ end;
 
 function TDownloadList.AddNewItem(const Source, Title: string; Downloader: TDownloader): integer; 
 var Item: TDownloadListItem;
+    s:string;
 begin
   Item := TDownloadListItem.Create(Downloader, True);
   Item.Title := Title;
