@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <program>
   <ytd>
-    <verze>1.64</verze>
+    <verze>1.65</verze>
     <file>ytd.exe</file>
   </ytd>
   <ytd-ansi>
-    <verze>1.64</verze>
+    <verze>1.65</verze>
     <file>ytd-ansi.exe</file>
   </ytd-ansi>
   <ytd-unicode>
-    <verze>1.64</verze>
+    <verze>1.65</verze>
     <file>ytd-unicode.exe</file>
   </ytd-unicode>
   <ytd-lite>
-    <verze>1.64</verze>
+    <verze>1.65</verze>
     <file>ytd-lite.exe</file>
   </ytd-lite>
   <ytd-defs>
-    <verze>1.64.20200401.0</verze>
+    <verze>1.65.20200405.0</verze>
     <file>ytd-defs.xml</file>
   </ytd-defs>
 </program>
