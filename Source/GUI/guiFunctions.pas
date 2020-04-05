@@ -98,13 +98,28 @@ begin
   DefsVersion := '';
   if TScriptedDownloader.MainScriptEngine <> nil then
     DefsVersion := TScriptedDownloader.MainScriptEngine.Version;
-  BugReportUrl := Format(BUGREPORT_URL,
+  {BugReportUrl := Format(BUGREPORT_URL,
                        [ APPLICATION_VERSION,
                          DefsVersion,
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
                          EncodeUrl(AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
                        ]);
-  Run(BugReportUrl);
+  Run(BugReportUrl);}
+  BugReportUrl := Format(BUGREPORT,
+                       [ APPLICATION_VERSION,
+                         DefsVersion,
+                         (AnsiString(StringToUtf8(DownloadList.Urls[Index]))),
+                         (AnsiString(StringToUtf8(DownloadList[Index].Downloader.LastErrorMsg)))
+                       ]);
+  with TFileStream.create('bugreport.txt',fmCreate) do
+    try
+      writeBuffer(BugReportUrl[1],length(BugReportUrl));
+    finally
+      free;
+    end;
+
+
+
 end;
 
 function IsHttpProtocol(const Url: string): boolean;

@@ -40,7 +40,9 @@ unit uMessages;
 interface
 
 const
-  EOLN = #13#10;
+  ///EOLN = #13#10;
+  EOLN = {$IFDEF LINUX} AnsiChar(#10) {$ENDIF}
+         {$IFDEF MSWINDOWS} AnsiString(#13#10) {$ENDIF};
   APPLICATION_TITLE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} ;
   APPLICATION_VERSION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = {$INCLUDE 'ytd.version'};
   APPLICATION_CAPTION {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'YTD' {$IFNDEF XXX} + ' Lite' {$ENDIF} + ' v' + {$INCLUDE 'ytd.version'};
@@ -53,6 +55,7 @@ const
 const
   DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paypal.com@pepak.net&currency_code=USD';
   BUGREPORT_URL = 'http://ytd.pepak.net/bugreport.php?version=%s&defs=%s&url=%s&error=%s';
+  BUGREPORT = 'version=%s'+EOLN+'defs=%s'+EOLN+'url=%s'+EOLN+'error=%s';
   MY_OPENSSL_URL = 'http://ytd.pepak.net/openssl';
   OPENSSL_URL = 'http://slproweb.com/products/Win32OpenSSL.html';
   MY_RTMPDUMP_URL = 'http://ytd.pepak.net/rtmpdump';

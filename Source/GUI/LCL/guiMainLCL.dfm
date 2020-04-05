@@ -1,7 +1,7 @@
 object FormYTD: TFormYTD
-  Left = 465
+  Left = 362
   Height = 399
-  Top = 213
+  Top = 216
   Width = 734
   Caption = 'YTD'
   ClientHeight = 399
@@ -141,7 +141,6 @@ object FormYTD: TFormYTD
       Left = 394
       Top = 2
       Action = actReportBug
-      Enabled = False
     end
     object ToolDonate: TToolButton
       Left = 417
@@ -191,16 +190,12 @@ object FormYTD: TFormYTD
       end    
       item
         Caption = 'Progress'
-        Width = 146
+        Width = 148
       end>
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     GridLines = True
     HideSelection = False
     MultiSelect = True
     OwnerData = True
-    ParentFont = False
     PopupMenu = DownloadsPopup
     ReadOnly = True
     RowSelect = True

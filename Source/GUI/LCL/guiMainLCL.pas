@@ -380,7 +380,7 @@ begin
     ///Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
   try
-  FreeAndNil(DownloadList);
+    FreeAndNil(DownloadList);
   except
   end;
   {$IFDEF THREADEDVERSION}
@@ -556,10 +556,14 @@ begin
   if Idx >= 0 then
     begin
     ///Downloads.UpdateItems(Idx, Idx);
+    Downloads.BeginUpdate;
+    Downloads.Update;
+
     if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
       if DownloadList[Idx].State = dtsFinished then
         SaveSettings;
     end;
+    Downloads.EndUpdate;
 end;
 
 procedure TFormYTD.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);
@@ -583,7 +587,7 @@ var DlItem: TDownloadListItem;
 begin
   if DownloadList <> nil then
     if Item.Index < DownloadList.Count then
-    begin
+      begin
       DlItem := DownloadList[Item.Index];
       Item.Caption := DownloadList.Urls[Item.Index];
       {$IFNDEF F-PC}
@@ -715,7 +719,7 @@ end;
 
 procedure TFormYTD.actReportBugExecute(Sender: TObject);
 begin
-  ///if Downloads.SelCount < 1 then
+  if Downloads.SelCount < 1 then
     Exit;
   if not IsSSLAvailable then
     MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
@@ -1086,8 +1090,8 @@ begin
   if (fVQID <> fMenuID) and (fMenuID >= 0) then
   begin
     VQualityPopUp.Items[fVQID].Checked:=false;
-    VQualityPopUp.Items[fMenuID].Checked:=true;
-    value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
+      VQualityPopUp.Items[fMenuID].Checked:=true;
+      value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
     Options.WriteProviderOption(DownloadList[fProvID].Downloader.ProviderName, 'max_video_width', Res[fMenuID]);
     Options.WriteProviderOption(DownloadList[fProvID].Downloader.ProviderName, 'max_video_bitrate', value);
     DownloadList[fProvID].Downloader.MaxVResolution:=Res[fMenuID];
