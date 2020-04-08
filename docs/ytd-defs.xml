@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.65.20200405.0</version>
+  <version>1.65.20200408.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1194,10 +1194,11 @@
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20191225">
+    <script id="nova.cz" provider="Nova.cz" changed="20200408">
       <regexps>
-	      <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
+	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
+        <regexp id="urls2" match="URLS2"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
       </regexps>
@@ -1221,10 +1222,12 @@
       <set_var id="title">
         <regexp id="title" content="page"/>
       </set_var>
-      <set_var id="urls">
-        <regexp id="urls" content="page"/>
-      </set_var>
-      <if><!--hls -->
+      <if>
+          <condition type="regexp" id="urls" content="page">
+          <set_var id="urls">
+            <regexp id="urls" content="page"/>
+          </set_var>
+        <if><!--hls -->
         <condition type="json_var_exists" id="urls" path="hls">
          <hls_download>
           <title>
@@ -1236,26 +1239,49 @@
           <extension>.mp4</extension>  
           </hls_download>
         </condition>          
-      <else><!-- ostatni -->    
-      <set_var id="u">
-        <get_json_var id="urls"/>
-      </set_var>
-      <multi_json id="u" var="x">
-        </multi_json>
-      <multi_regexp content="x" id="url" var_prefix="loop_">
-        </multi_regexp>
-      <http_download>
-        <title>
-            <get_var id="title"/>
-        </title>
-        <url>
-          <replace search="\" replacement="">
-            <get_var id="loop_URL"/>
-          </replace>
-        </url>
-      </http_download>
-     </else>
-    </if>
+        <else><!-- ostatni -->   
+            <set_var id="u">
+                <get_json_var id="urls"/>
+            </set_var>
+            <multi_json id="u" var="x">
+                </multi_json>
+            <multi_regexp content="x" id="url" var_prefix="loop_">
+            </multi_regexp>
+            <http_download>
+            <title>
+                <get_var id="title"/>
+            </title>
+            <url>
+            <replace search="\" replacement="">
+                <get_var id="loop_URL"/>
+            </replace>
+            </url>
+            </http_download>
+        </else>
+        </if>
+        </condition>
+          <condition type="regexp" id="urls2" content="page">
+          <set_var id="urls2">
+            <regexp id="urls2" content="page"/>
+          </set_var>
+         <if>
+              <condition type="regexp_match" id="urls2" content="page">
+                <hls_download>
+                <title>
+                    <get_var id="title"/>
+                </title>
+                <url>
+				<replace search="\" replacement="">
+                    <get_var id="urls2"/>
+				</replace>
+                </url>
+                <extension>.ts</extension>  
+                </hls_download>
+              </condition>
+        </if>
+        </condition>
+        
+      </if>
     </script>
     <script id="novinky.cz" provider="Novinky.cz" changed="20180823">
       <regexps>
