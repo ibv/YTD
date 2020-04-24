@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.65.20200408.0</version>
+  <version>1.65.20200424.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1143,6 +1143,39 @@
         <extension>.ts</extension>
         </hls_download>
         </else>
+      </if>
+    </script>
+    <script id="mujrozhlas.cz" provider="Mujrozhlas.cz"  changed="20200424">
+      <regexps>
+        <regexp id="title" match="TITLE"><![CDATA["og:title" content="(?P<TITLE>.+?)".+/>]]></regexp>
+        <regexp id="id" match="ID"><![CDATA["contentId":"(?P<ID>.+?)",]]></regexp>
+        <regexp id="url" match="URL"><![CDATA["audioLinks":\[{"linkType":"download",.+?"url":"(?P<URL>.+?)"}]]></regexp>
+      </regexps>
+      <set_var id="page">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="_movie_id"/>
+          </url>
+        </download_page>
+      </set_var>
+        <if>
+        <condition type="regexp_match" id="id" content="page">
+        <set_var id="playlist">
+        <download_page encoding="utf8">
+          <url>
+            https://api.mujrozhlas.cz/episodes/<regexp id="id" content="page"/>
+          </url>
+        </download_page>
+        </set_var>
+          <http_download>
+            <title>
+                <regexp id="title" content="page"/>
+            </title>
+            <url>
+              <decode_js><regexp id="url" content="playlist"/></decode_js>
+            </url>
+          </http_download>
+        </condition>
       </if>
     </script>
     <script id="mc2.sk" provider="MC2.sk">
@@ -2691,6 +2724,7 @@
     <url script="lidovky.cz"><![CDATA[lidovky\.cz/.+$]]></url>
     <url script="livestream.com"><![CDATA[livestream\.com/.+$]]></url>
     <url script="markiza.sk"><![CDATA[markiza\.sk/.+$]]></url>
+    <url script="mujrozhlas.cz"><![CDATA[mujrozhlas\.cz/.+$]]></url>
     <url script="mc2.sk"><![CDATA[mc2\.sk/.+$]]></url>
     <url script="natabanu.com"><![CDATA[natabanu\.com/.+$]]></url>
     <url script="nova.cz"><![CDATA[nova\.cz/.+$]]></url>
