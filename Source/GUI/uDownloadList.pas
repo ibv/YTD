@@ -146,7 +146,7 @@ end;
 
 destructor TDownloadList.Destroy;
 begin
-  ///Clear;
+  Clear;
   FreeAndNil(fList);
   FreeAndNil(fDownloadingList);
   FreeAndNil(fDownloadClassifier);
@@ -161,13 +161,13 @@ begin
   try
     Options.AutoStartDownloads := False;
     StopAll;
-    for i := 0 to Pred(Count) do
-      Items[i].Free;
+    ///for i := 0 to Pred(Count) do
+      ///Items[i].Free;
     List.Clear;
     DownloadingList.Clear;
   finally
     Options.AutoStartDownloads := AutoSt;
-    end;
+  end;
 end;
 
 function TDownloadList.GetCount: integer;
@@ -197,7 +197,6 @@ end;
 
 function TDownloadList.AddNewItem(const Source, Title: string; Downloader: TDownloader): integer; 
 var Item: TDownloadListItem;
-    s:string;
 begin
   Item := TDownloadListItem.Create(Downloader, True);
   Item.Title := Title;

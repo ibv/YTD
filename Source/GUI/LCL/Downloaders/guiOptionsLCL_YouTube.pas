@@ -40,11 +40,16 @@ unit guiOptionsLCL_YouTube;
 interface
 
 uses 
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  LCLIntf, LCLType, LMessages,
+
+  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,
   uDownloader, guiOptionsLCL_Downloader, guiOptionsLCL_CommonDownloader;
 
 type
+
+  { TFrameDownloaderOptionsPage_YouTube }
+
   TFrameDownloaderOptionsPage_YouTube = class(TFrameDownloaderOptionsPageCommon)
     CheckDashAudio: TCheckBox;
     CheckDashVideo: TCheckBox;

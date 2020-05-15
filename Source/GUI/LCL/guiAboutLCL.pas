@@ -59,6 +59,7 @@ type
   { TFormAbout }
 
   TFormAbout = class(TForm)
+    LabelYTD2: TLabel;
     LabelYTD: TLabel;
     LabelVersionLabel: TLabel;
     LabelVersion: TLabel;
@@ -100,7 +101,8 @@ implementation
 {$R *.dfm}
 
 uses
-  uScriptedDownloader;
+  uScriptedDownloader,
+  ssl_openssl_lib,ssl_openssl;
 
 { TFormAbout }
 
@@ -136,6 +138,8 @@ begin
 end;
 
 procedure TFormAbout.DoFirstShow;
+var
+  arch: string;
 {$IFNDEF THREADEDVERSION}
 var Version, Url: string;
 {$ENDIF}
@@ -144,6 +148,9 @@ begin
   inherited;
   {$ENDIF}
   // Show current version
+  arch:='';
+  if SizeOf(Pointer) > 4 then arch:='x64';
+  LabelYTD2.Caption := arch + ' (fpc)';
   LabelVersion.Caption := APPLICATION_VERSION;
   if TScriptedDownloader.MainScriptEngine <> nil then
     LabelDefsVersion.Caption := TScriptedDownloader.MainScriptEngine.Version;

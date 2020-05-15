@@ -40,11 +40,15 @@ unit guiOptionsLCL_CT;
 interface
 
 uses 
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  LCLIntf, LCLType,
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,
   uDownloader, guiOptionsLCL_Downloader, guiOptionsLCL_CommonDownloader;
 
 type
+
+  { TFrameDownloaderOptionsPage_CT }
+
   TFrameDownloaderOptionsPage_CT = class(TFrameDownloaderOptionsPageCommon)
     CheckDash: TCheckBox;
     Label1: TLabel;

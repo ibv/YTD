@@ -41,7 +41,13 @@ interface
 {$DEFINE LISTVIEW_DONTCREATETEXT}
 
 uses
-  SysUtils, Classes, Windows, CommCtrl,
+  {$ifdef mswindows}
+    Windows, CommCtrl,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages, Types,
+  {$ENDIF}
+
+  SysUtils, Classes,
   uApiCommon;
 
 //----- Generic Windows functions ----------------------------------------------
@@ -65,7 +71,7 @@ function ListViewIsItemSelected(ListView: THandle; Index: integer): boolean;
 function ListViewSelectItem(ListView: THandle; Index: integer; Selected: boolean): boolean;
 function ListViewGetSelectedItems(ListView: THandle; out Indexes: TList; MaxCount: integer = 0): boolean;
 function ListViewGetSelectedItem(ListView: THandle): integer;
-function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
+///function ListViewSetVirtualItemText(DispInfo: PLVDispInfo; const Text: string): boolean;
 function ListViewGetColumnWidth(ListView: THandle; Index: integer): integer;
 function ListViewSetColumnWidth(ListView: THandle; Index: integer; Width: integer): boolean;
 
@@ -83,7 +89,7 @@ resourcestring
 procedure ShowApiError(IsError: boolean; const Description: string);
 begin
   if IsError then
-    ShowApiError(GetLastError, Description);
+    ShowApiError(GetLastOSError, Description);
 end;
 
 procedure ShowApiError(LastError: DWORD; const Description: string);
@@ -91,16 +97,18 @@ var Buf: array[0..32768] of char;
     n: DWORD;
     Msg: string;
 begin
-  if LastError <> NO_ERROR then
+  if LastError <> 0 {NO_ERROR} then
     begin
-    n := FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, LastError, 0, Buf, Length(Buf), nil);
-    if n = 0 then
-      Msg := Format(WINDOWS_ERROR_UNKNOWN, [LastError, LastError])
+    ///n := FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nil, LastError, 0, Buf, Length(Buf), nil);
+    ///if n = 0 then
+      Msg := Format(WINDOWS_ERROR_UNKNOWN, [LastError, LastError]);
+    {
     else
       begin
       Buf[n] := #0;
       Msg := Format(WINDOWS_ERROR, [LastError, LastError, string(Buf)]);
       end;
+    }
     if Description <> '' then
       Msg := Description + #13#10 + Msg;
     Raise EApiError.Create(Msg);
@@ -110,9 +118,12 @@ end;
 function GetWindowTextAsString(hwnd: HWND): string;
 var Buf: array of char;
     n: integer;
+    sz: TSize;
 begin
   Result := '';
-  n := GetWindowTextLength(hwnd);
+  GetTextExtentPoint(hwnd,'',0, sz);
+  n:=sz.cx;
+  ///n := GetWindowTextLength(hwnd);
   if n > 0 then
     begin
     Inc(n);

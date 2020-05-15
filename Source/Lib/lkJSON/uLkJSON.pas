@@ -167,7 +167,12 @@ interface
 {.$DEFINE USE_HASH}
 {.$DEFINE TCB_EXT}
 
-uses windows,
+uses
+{$ifdef mswindows}
+  Windows
+{$ELSE}
+  LCLIntf, LCLType, LMessages,
+{$ENDIF}
   SysUtils,
 {$IFNDEF VER130}
   variants,

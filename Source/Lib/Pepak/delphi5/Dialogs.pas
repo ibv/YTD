@@ -13,7 +13,14 @@ unit Dialogs;
 
 interface
 
-uses Windows, Messages, SysUtils, CommDlg, Classes, Graphics, Controls,
+uses
+{$ifdef mswindows}
+  Windows,
+{$ELSE}
+  LCLIntf, LCLType, LMessages,
+{$ENDIF}
+
+Messages, SysUtils, {CommDlg,} Classes, Graphics, Controls,
   Forms, StdCtrls;
 
 const
@@ -36,7 +43,7 @@ type
     FTemplate: PChar;
     FOnClose: TNotifyEvent;
     FOnShow: TNotifyEvent;
-    procedure WMDestroy(var Message: TWMDestroy); message WM_DESTROY;
+    procedure WMDestroy(var Message: TLMDestroy); message LM_DESTROY;
     procedure WMInitDialog(var Message: TWMInitDialog); message WM_INITDIALOG;
     procedure WMNCDestroy(var Message: TWMNCDestroy); message WM_NCDESTROY;
     procedure MainWndProc(var Message: TMessage);

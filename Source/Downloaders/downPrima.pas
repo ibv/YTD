@@ -43,7 +43,12 @@ unit downPrima;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
   uPCRE, uXml, HttpSend, SynaUtil,
   uOptions,
@@ -112,7 +117,7 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-
+  uFunctions,
   uMessages;
 
 const
@@ -204,7 +209,6 @@ var
   {$ELSE}
   Url: string;
   {$ENDIF}
-
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;

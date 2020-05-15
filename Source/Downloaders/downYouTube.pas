@@ -57,7 +57,11 @@ uses
     {$IFDEF GUI_WINAPI}
       guiOptionsWINAPI_YouTube,
     {$ELSE}
-      guiOptionsLCL_YouTube,
+      {$IFNDEF GUI_LCL}
+      guiOptionsVCL_YouTube,
+      {$ELSE}
+  		guiOptionsLCL_YouTube,
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF}
   uDownloader, uCommonDownloader, uNestedDownloader;
@@ -92,7 +96,7 @@ type
     protected
       function CompareQuality(Quality: integer; const FileFormat: string; RefQuality: integer; const RefFileFormat: string): integer;
       function GetBestVideoFormat(const FormatList, FormatUrlMap: string): string; overload;
-      function GetBestVideoFormat(const FormatList: string): string; overload;
+      function GetBestVideoFormat(const FormatList: string): string;
       function GetVideoFormatExt(const VideoFormat: string): string;
       function GetDownloader(Http: THttpSend; const VideoFormat, FormatUrlMap: string; Live, Vevo: boolean; out Url: string; out Downloader: TDownloader): boolean;
       function ProcessFlashVars(Http: THttpSend; Parser: TRegExp; TextDecoder: TTextDecoderFunction; const FlashVars: string; out Title, Url: string): boolean;
@@ -432,7 +436,7 @@ var
   Status, Reason, FmtList, FmtUrlMap, VideoFormat, PS, PTK: string;
   Formats, AFormats: string;
   charArray : Array[0..0] of Char;
-  strArray  : TArray<String>; ///Array of String;
+  strArray  : Array of String;
 
   D: TDownloader;
 begin

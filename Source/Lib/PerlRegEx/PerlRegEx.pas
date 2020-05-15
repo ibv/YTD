@@ -27,7 +27,7 @@ unit PerlRegEx;
 interface
 
 uses
-  SysUtils, Classes, pcre {RegExpr};
+  SysUtils, Classes, pcre;
 
 type
   TPerlRegExOptions = set of (

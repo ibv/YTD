@@ -40,7 +40,12 @@ interface
 {$INCLUDE 'uApi.inc'}
 
 uses
-  Windows;
+  {$ifdef mswindows}
+    Windows
+  {$ELSE}
+    LCLIntf, LCLType, LMessages , classes
+  {$ENDIF}
+  ;
 
 type
   TColor = TColorRef;

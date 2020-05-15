@@ -40,9 +40,14 @@ unit xxxTube8;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
   uPCRE, uXml, HttpSend, SynaCode,
-  uCrypto, uStrings, uFunctions, 
+  uCrypto, uStrings, uFunctions,
   uDownloader, uCommonDownloader, uHttpDownloader;
 
 type
@@ -179,13 +184,13 @@ begin
       Key[i] := 0
     else
       Key[i] := Ord(Password[Succ(i)]);
-  if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KEY_LENGTH_BITS) then
-    Exit;
+  ///if not AES_Encrypt_ECB(@Key[0], @EncBlock[0], @Key[0], KEY_LENGTH_BITS) then
+  ///  Exit;
   for i := 0 to Pred(KEY_LENGTH_BYTES) do
     Key[i] := EncBlock[i mod BLOCK_LENGTH_BYTES];
   // 2. Decrypt URL in counter mode
-  if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KEY_LENGTH_BITS) then
-    Exit;
+  ///if not AES_Decrypt_CTR(Copy(Data, 1, 8), Copy(Data, 9, MaxInt), Decrypted, @Key[0], KEY_LENGTH_BITS) then
+  ///  Exit;
   Result := Decrypted;
 end;
 

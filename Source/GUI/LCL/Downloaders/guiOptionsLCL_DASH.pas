@@ -40,11 +40,7 @@ unit guiOptionsLCL_DASH;
 interface
 
 uses 
-  {$ifdef mswindows}
-    Windows,
-  {$ELSE}
-    LCLIntf, LCLType,
-  {$ENDIF}
+  LCLIntf, LCLType,
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,
   uDownloader, guiOptionsLCL_Downloader, guiOptionsLCL_CommonDownloader;

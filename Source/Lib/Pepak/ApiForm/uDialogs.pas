@@ -54,7 +54,14 @@ implementation
 {$RESOURCE uDialogs.res}
 
 uses
-  SysUtils, Windows, Messages, ShlObj, ActiveX, CommDlg,
+  {$ifdef mswindows}
+    Windows, ActiveX, ShellApi, CommDlg,
+    ShlObj,
+  {$ELSE}
+    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+
+  SysUtils, Messages,
   uApiFunctions, uApiForm;
 
 const

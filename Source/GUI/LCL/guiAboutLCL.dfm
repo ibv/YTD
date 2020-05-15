@@ -1,7 +1,7 @@
 object FormAbout: TFormAbout
-  Left = 208
+  Left = 334
   Height = 300
-  Top = 104
+  Top = 211
   Width = 430
   Caption = 'About YTD'
   ClientHeight = 300
@@ -11,12 +11,12 @@ object FormAbout: TFormAbout
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poOwnerFormCenter
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.8.0'
   object LabelYTD: TLabel
     Left = 8
-    Height = 22
+    Height = 24
     Top = 8
-    Width = 43
+    Width = 41
     Caption = 'YTD'
     Font.Color = clWindowText
     Font.Height = -19
@@ -29,7 +29,7 @@ object FormAbout: TFormAbout
     Left = 8
     Height = 13
     Top = 40
-    Width = 46
+    Width = 38
     Caption = 'Version:'
     ParentColor = False
   end
@@ -37,7 +37,7 @@ object FormAbout: TFormAbout
     Left = 127
     Height = 13
     Top = 40
-    Width = 82
+    Width = 74
     Caption = 'LabelVersion'
     Font.Color = clWindowText
     Font.Height = -11
@@ -50,7 +50,7 @@ object FormAbout: TFormAbout
     Left = 8
     Height = 13
     Top = 56
-    Width = 92
+    Width = 76
     Caption = 'Newest version:'
     ParentColor = False
   end
@@ -58,7 +58,7 @@ object FormAbout: TFormAbout
     Left = 127
     Height = 13
     Top = 56
-    Width = 62
+    Width = 55
     Caption = 'not found'
     Font.Color = clWindowText
     Font.Height = -11
@@ -71,16 +71,16 @@ object FormAbout: TFormAbout
   object LabelHomepageLabel: TLabel
     Left = 8
     Height = 13
-    Top = 72
-    Width = 65
+    Top = 73
+    Width = 55
     Caption = 'Homepage:'
     ParentColor = False
   end
   object LabelHomepage: TLabel
     Left = 127
     Height = 13
-    Top = 72
-    Width = 157
+    Top = 73
+    Width = 152
     Caption = 'https://ibv.github.io/YTD/'
     Font.Color = clWindowText
     Font.Height = -11
@@ -93,8 +93,8 @@ object FormAbout: TFormAbout
   object LabelMediaProviders: TLabel
     Left = 8
     Height = 13
-    Top = 96
-    Width = 95
+    Top = 97
+    Width = 78
     Caption = 'Media providers:'
     ParentColor = False
   end
@@ -102,7 +102,7 @@ object FormAbout: TFormAbout
     Left = 210
     Height = 13
     Top = 40
-    Width = 111
+    Width = 100
     Caption = 'LabelDefsVersion'
     Font.Color = clWindowText
     Font.Height = -11
@@ -115,7 +115,7 @@ object FormAbout: TFormAbout
     Left = 210
     Height = 13
     Top = 56
-    Width = 62
+    Width = 55
     Caption = 'not found'
     Font.Color = clWindowText
     Font.Height = -11
@@ -127,9 +127,9 @@ object FormAbout: TFormAbout
   end
   object ListProviders: TListView
     Left = 8
-    Height = 153
-    Top = 112
-    Width = 409
+    Height = 155
+    Top = 111
+    Width = 414
     Anchors = [akTop, akLeft, akRight, akBottom]
     Columns = <    
       item
@@ -147,5 +147,13 @@ object FormAbout: TFormAbout
     TabOrder = 0
     ViewStyle = vsReport
     OnData = ListProvidersData
+  end
+  object LabelYTD2: TLabel
+    Left = 64
+    Height = 13
+    Top = 15
+    Width = 28
+    Caption = 'YTD2'
+    ParentColor = False
   end
 end

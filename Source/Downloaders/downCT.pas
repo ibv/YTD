@@ -43,14 +43,19 @@ unit downCT;
 interface
 
 uses
-  SysUtils, Classes, Windows,
+  SysUtils, Classes,
+  {$ifdef mswindows}
+    Windows,
+  {$ELSE}
+    LCLIntf, LCLType,
+  {$ENDIF}
   {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
   uPCRE, uXml, HttpSend, SynaUtil,
   uOptions,
   {$IFDEF GUI}
     guiDownloaderOptions,
     {$IFDEF GUI_WINAPI}
-      guiOptionsWINAPI_CT,
+//      guiOptionsWINAPI_CT,
     {$ELSE}
       guiOptionsLCL_CT,
     {$ENDIF}
@@ -222,7 +227,6 @@ var
     result:=url;
   end;
 
- 
 
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
@@ -264,9 +268,7 @@ begin
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
     begin
-      // novy redirect u ct.cz
-      Urls[0]:=getRedirectUrl(Http, JSDecode(Urls[0]));
-
+    Urls[0]:=getRedirectUrl(Http, JSDecode(Urls[0]));
     Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title)));
     if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
       Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
@@ -324,7 +326,7 @@ begin
   Result:='.mpv';
   ///if TDownloader_CT.classtype = THLSDownloader then
   if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
-  Result := '.ts';
+    Result := '.ts';
 end;
 
 function TDownloader_CT.GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;

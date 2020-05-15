@@ -41,10 +41,10 @@ unit uFunctions;
 interface
 
 uses
-  {$ifndef fpc}
-    Windows, ActiveX, ShellApi,
+  {$ifdef mswindows}
+    Windows, {ActiveX, ShellApi,}
     ShlObj,
-  {$ELSE}
+  {.$ELSE}
     LCLIntf, LCLType, LMessages, Process,
   {$ENDIF}
 
@@ -249,7 +249,7 @@ const
 var
   res:string ;
 begin
-  {$ifndef fpc}
+  {$ifdef mswindows}
   Result := ShellExecute(OwnerHandle, Actions[Elevated], PChar(FileName), PChar(CommandLine), PChar(WorkDir), SW_SHOWNORMAL) > 32;
   {$else}
   Result:=RunCommand(FileName,CommandLine,res);

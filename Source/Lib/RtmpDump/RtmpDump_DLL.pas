@@ -1,4 +1,4 @@
-unit rtmpdump_dll;
+unit RtmpDump_DLL;
 
 interface
 
@@ -24,10 +24,15 @@ function RtmpDump_Download(
 implementation
 
 uses
-  Windows;
+  {$ifdef mswindows}
+    Windows,
+  {.$ELSE}
+    LCLIntf, LCLType, LMessages{, dl};
+  {$ENDIF}
 
 const
-  LIBRARY_NAME = 
+  LIBRARY_NAME =
+  {$ifdef mswindows}
     {$IFDEF WIN32}
     'rtmpdump_dll.dll'
     {$ELSE}
@@ -35,7 +40,21 @@ const
       'rtmpdump_dll_x64.dll'
       {$ENDIF}
     {$ENDIF}
+  {$else}
+     'librtmp.so.1'
+  {$endif}
     ;
+
+type
+  {$IFDEF MSWINDOWS}
+  TModuleHandle = HINST;
+  {$ENDIF MSWINDOWS}
+  {$IFDEF LINUX}
+  TModuleHandle = Pointer;
+  {$ENDIF LINUX}
+
+const
+  INVALID_MODULEHANDLE_VALUE = TModuleHandle(0);
 
 type
   PInternalRtmpDumpOption = ^TInternalRtmpDumpOption;
@@ -47,27 +66,42 @@ type
 type
   TRtmpDumpMainFn = function(Tag: integer; Callback: TRtmpDumpDownloadProgressCallback; OptionCount: integer; Options: PInternalRtmpDumpOption; LogFileName: PAnsiChar): integer; cdecl;
 
-var LibHandle: THandle;
+var {$ifdef mswindows}
+    LibHandle: THandle;
+    {$else}
+    LibHandle: TModuleHandle = INVALID_MODULEHANDLE_VALUE;
+    {$endif}
     RtmpDumpMain: TRtmpDumpMainFn;
 
 function RtmpDump_Init: boolean;
 begin
-  if LibHandle = 0 then
+  ///if LibHandle = 0 then
+  if LibHandle = INVALID_MODULEHANDLE_VALUE then
     begin
+    {$ifdef mswindows}
     LibHandle := LoadLibrary(LIBRARY_NAME);
-    if LibHandle <> 0 then
+    {$else}
+    LibHandle := dlopen(PAnsiChar(LIBRARY_NAME), RTLD_NOW);
+    {$endif}
+    end;
+    ///if LibHandle <> 0 then
+    if LibHandle <> INVALID_MODULEHANDLE_VALUE then
       begin
       RtmpDumpMain := GetProcAddress(LibHandle, 'RtmpDumpMain');
+      ///RtmpDumpMain := dlsym(LibHandle, 'RtmpDumpMain');
       end;
-    end;
   Result := (LibHandle <> 0) and (@RtmpDumpMain <> nil);
+  ///Result := (LibHandle <> INVALID_MODULEHANDLE_VALUE) or (@RtmpDumpMain <> nil);
 end;
 
 procedure RtmpDump_Done;
 begin
-  if LibHandle <> 0 then
+  ///if LibHandle <> 0 then
+  if LibHandle <> INVALID_MODULEHANDLE_VALUE then
     FreeLibrary(LibHandle);
-  LibHandle := 0;
+    ///dlclose(Pointer(LibHandle));
+  ///LibHandle := 0;
+  LibHandle := INVALID_MODULEHANDLE_VALUE;
   RtmpDumpMain := nil;
 end;
 
@@ -97,7 +131,8 @@ begin
 end;
 
 initialization
-  LibHandle := 0;
+  ///LibHandle := 0;
+  LibHandle := INVALID_MODULEHANDLE_VALUE;
   RtmpDumpMain := nil;
 
 finalization
