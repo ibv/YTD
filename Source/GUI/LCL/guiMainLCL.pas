@@ -329,6 +329,8 @@ begin
       //TrayIcon.ShowBalloonHint;
       Application.OnMinimize := ApplicationMinimize;
       end;
+    TrayIcon.Hint:=Caption;
+    TrayIcon.BalloonHint:=Caption;
     {$ENDIF}
     // Use double-buffered listview (removes flickering)
     SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
