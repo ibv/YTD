@@ -1,5 +1,5 @@
 mar<ytd-defs>
-  <version>1.65.20201023.0</version>
+  <version>1.65.20201126.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1515,7 +1515,7 @@ mar<ytd-defs>
         <url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
       </http_download>
     </script>
-    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20200721">
+    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20201126">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<h1 class="article-type.+?">(?P<TITLE>.+?)</h1>]]></regexp>
         <regexp id="part" match="PART"><![CDATA[aria-labelledby="Audio(?P<PART>.+?part)">]]></regexp>
@@ -1534,16 +1534,6 @@ mar<ytd-defs>
         </download_page>
       </set_var>
       <if>
-        <condition type="regexp_match" id="part" content="page">
-          <http_download>
-            <title>
-              <regexp id="title" content="page"/>
-            </title>
-            <url>
-              <regexp id="url" content="page"/>
-            </url>
-          </http_download>
-        </condition>
         <condition type="regexp_match" id="list" content="page">
         <multi_regexp content="page" id="playlist" var_prefix="loop_">
           <http_download>
@@ -1555,6 +1545,16 @@ mar<ytd-defs>
             </url>
           </http_download>
         </multi_regexp>
+        </condition>
+          <condition type="regexp_match" id="part" content="page">
+          <http_download>
+            <title>
+              <regexp id="title" content="page"/>
+            </title>
+            <url>
+              <regexp id="url" content="page"/>
+            </url>
+          </http_download>
         </condition>
         <condition type="regexp_match" id="uuid" content="page">
           <http_download>
