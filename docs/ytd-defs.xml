@@ -1,5 +1,5 @@
 mar<ytd-defs>
-  <version>1.65.20201126.0</version>
+  <version>1.65.20210220.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1515,11 +1515,11 @@ mar<ytd-defs>
         <url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
       </http_download>
     </script>
-    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20201126">
+    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20210220">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<h1 class="article-type.+?">(?P<TITLE>.+?)</h1>]]></regexp>
-        <regexp id="part" match="PART"><![CDATA[aria-labelledby="Audio(?P<PART>.+?part)">]]></regexp>
-        <regexp id="list" match="LIST"><![CDATA[aria-labelledby="Audio(?P<LIST>.+?playlist)">]]></regexp>
+        <regexp id="part"><![CDATA[aria-labelledby="Audio part">]]></regexp>
+        <regexp id="list"><![CDATA[aria-labelledby="Audio playlist">]]></regexp>
         <regexp id="url" match="URL"><![CDATA[<div class=".*aria-labelledby="Audio part">\s+<a href="(?P<URL>.+?)">]]></regexp>
         <regexp id="utitle" match="TITLE"><![CDATA[<div class="content">\s.*<h3>(?P<TITLE>.+?)</em></h3>]]></regexp>
         <regexp id="uuid" match="UUID"><![CDATA[data-uuid="(?P<UUID>.+?)"]]></regexp>
