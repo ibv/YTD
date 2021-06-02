@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.65.20210220.0</version>
+  <version>1.65.20210602.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1885,7 +1885,7 @@
         </url>
       </http_download>
     </script>
-    <script id="tvseznam.cz" provider="TV-Seznam.cz"  changed="20200329">
+    <script id="stream.cz" provider="Stream.cz"  changed="20210602">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA["name":"(?P<TITLE>.*?)",]]></regexp>
         <regexp id="url" match="URL"><![CDATA["spl":"(?P<URL>.*?)",]]></regexp>
@@ -2783,7 +2783,7 @@
     <url script="streamin.to"><![CDATA[streamin\.to/.+$]]></url>
     <url script="sultancesky.cz"><![CDATA[sultancesky\.cz/.+$]]></url>
     <url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
-    <url script="tvseznam.cz"><![CDATA[televizeseznam\.cz/.+$]]></url>
+    <url script="stream.cz"><![CDATA[stream\.cz/.+$]]></url>
     <url script="theguardian.com"><![CDATA[theguardian\.com/.+$]]></url>
     <url script="tv7.cz"><![CDATA[tv7\.cz/.+$]]></url>
     <url script="tvcom.cz"><![CDATA[tvcom\.cz/.+$]]></url>
