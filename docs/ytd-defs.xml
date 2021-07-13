@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.65.20210602.0</version>
+  <version>1.65.20210710.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -824,9 +824,9 @@
         </url>
       </nested_download>
     </script>
-    <!--script id="iprima.cz" provider="iPrima.cz" changed="20180913">
+    <script id="iprima.cz" provider="iPrima.cz" changed="20210710">
       <regexps>
-        <regexp id="productid1" match="ID"><![CDATA[prehravac/embedded\?id=(?P<ID>.+?)"]]></regexp>
+        <regexp id="productid1" match="ID"><![CDATA[let videos = '(?P<ID>.+?)';]]></regexp>
         <regexp id="productid2" match="ID"><![CDATA[_videoimport(?P<ID>\w+?)_]]></regexp>
         <regexp id="statusok" match="CONTENT"><![CDATA[^(?P<CONTENT>OK)$]]></regexp>
         <regexp id="options" match="CONTENT"><![CDATA[\bvar\s+\w*[pP]layerOptions\s*=\s*(?P<CONTENT>\{.*?\})\s*;]]></regexp>
@@ -884,7 +884,7 @@
         </url>
         <extension>.ts</extension>
       </hls_download>
-    </script-->
+    </script>
     <script id="itnsource.com" provider="ITNSource.com" changed="20160706">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<input\s+type="hidden"\s+id="Title0"\s+value="(?P<TITLE>.*?)"]]></regexp>
@@ -2754,7 +2754,7 @@
     <url script="iconcerts.com"><![CDATA[iconcerts\.com/.+$]]></url>
     <url script="idnes.cz-embed"><![CDATA[servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+$]]></url>
     <url script="idnes.cz"><![CDATA[(?<!\brajce\.)idnes\.cz/.+$]]></url>
-    <!--url script="iprima.cz"><![CDATA[iprima\.cz/.+$]]></url-->
+    <url script="iprima.cz"><![CDATA[iprima\.cz/.+$]]></url>
     <url script="itnsource.com"><![CDATA[itnsource\.com/.+$]]></url>
     <url script="jihoceskatelevize.cz"><![CDATA[jihoceskatelevize\.cz/.+$]]></url>
     <url script="joj.sk-embed"><![CDATA[media\.joj\.sk/.+$]]></url>
