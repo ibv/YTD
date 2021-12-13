@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.63                                                    (c) 2009-19 Pepak/ibv
+YTD v1.66                                                    (c) 2009-20 Pepak/ibv
 https://ibv.github.io/YTD/
 
 http://www.pepak.net/ytd                                  http://www.pepak.net
@@ -8,6 +8,34 @@ ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.66: (fpc)
+
+    * knihovny ssl 1.1.1m jsou součástí instalace
+    * Aktualizovaní poskytovatelé:
+      - Ceskatelevize.cz
+  
+
+  v1.65: (fpc)
+
+    * opraveno prekresleni seznamu pri ukonceni stahovani
+    * oprava chyby list index pri ukonceni programu
+    * Aktualizovaní poskytovatelé:
+      - Rozhlas.cz 
+      - Televizeseznam.cz
+    
+
+  v1.64: (fpc)
+
+    * změna kompilátoru - fpc 3.0.4
+    * opraveno identifikace skriptu
+
+  v1.64:
+
+    * 64bit verze
+    * Aktualizovaní poskytovatelé:
+      - iPrima.cz - MPEG-DASH
+      - Youtube.com
 
 
   v1.63:

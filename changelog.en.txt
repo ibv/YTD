@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.63                                                    (c) 2009-19 Pepak/ibv
+YTD v1.66                                                    (c) 2009-209 Pepak/ibv
 https://ibv.github.io/YTD/
 
 http://www.pepak.net/ytd                                  http://www.pepak.net
@@ -8,6 +8,37 @@ ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.66: (fpc)
+
+    * OpenSSL libraries 1.1.1m are bundled with installation package
+    * Updated providers:
+      - Ceskatelevize.cz
+
+
+  v1.65: (fpc)
+
+    * Fixed refresh downloads list after downloading stream
+    * Fixed the "List index out of bounds" error after close YTD
+    * Updated providers:
+      - Rozhlas.cz 
+      - Televizeseznam.cz
+    
+
+
+
+  v1.64: (fpc)
+
+    * new compiler - fpc 3.0.4
+    * updated script identification
+
+  v1.64:
+
+    * x64 version
+    * Updated providers:
+      - iPrima.cz - MPEG-DASH
+      - Youtube.com
+
 
   v1.63:
 
