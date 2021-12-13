@@ -78,6 +78,8 @@ type
       StreamTitle2RegExp: TRegExp;
       StreamTitleFromPageRegExp: TRegExp;
       IFrameUrlRegExp: TRegExp;
+      UrlToken: TregExp;
+      IDEC: TregExp;
       {$IFDEF MULTIDOWNLOADS}
       property NameList: TStringList read fNameList;
       property UrlList: TStringList read fUrlList;
@@ -118,25 +120,40 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-  uFunctions,
+  uFunctions, uJson,
   uMessages;
 
 const
   URLREGEXP_BEFORE_ID = '';
-  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
+  ///URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
+  URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/(?:ivysilani|porady)/.+';
+
   URLREGEXP_AFTER_ID =  '';
 
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
+  ///DEFAULT_USER_AGENT = 'Dalvik/1.6.0 (Linux; U; Android 4.4.4; Nexus 7 Build/KTU84P)';
 
 const
-  REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
+              ///getPlaylistUrl([{"type":"episode","id":"29338140111"}]
+  ///REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
+  REGEXP_PLAYLIST_INFO = 'getPlaylistUrl\(\[\{"type":"(?P<TYP>.+?)","id":"(?P<ID>.+?)"';
   REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_PLAYLIST_URL_NEW = '<playlistURL><!\[CDATA\[(?P<URL>.+?)\]\]></playlistURL>';
   REGEXP_STREAM_URL = '"streamUrls"\s*:\s*\{\s*"main"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_STREAM_URL_NEW = 'video src="(?P<URL>.+?)"';
   REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_STREAM_TITLE_NEW = '<title>(?P<TITLE>.*?)</title';
   REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
   REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
+  REGEXP_URL_TOKEN = '<token>(?P<TOKEN>.*?)</token>';
+  REGEX_PLAYLIST_ID_IDEC = '"id":"(?P<ID>.+?)","idec":"(?P<IDEC>.+?)",';
+
+const
+
+  PLAYLIST_URL = 'https://www.ceskatelevize.cz/services/ivysilani/xml/playlisturl/';
+  TOKEN_URL    = 'https://www.ceskatelevize.cz/services/ivysilani/xml/token/';
 
 class function TDownloader_CT.Provider: string;
 begin
@@ -178,6 +195,8 @@ begin
   StreamTitle2RegExp := RegExCreate(REGEXP_STREAM_TITLE_BETTER);
   StreamTitleFromPageRegExp := RegExCreate(REGEXP_STREAM_TITLEFROMPAGE);
   IFrameUrlRegExp := RegExCreate(REGEXP_IFRAME_URL);
+  UrlToken := RegExCreate(REGEXP_URL_TOKEN);
+  IDEC := RegExCreate(REGEX_PLAYLIST_ID_IDEC);
   Referer := GetMovieInfoUrl;
 end;
 
@@ -190,6 +209,8 @@ begin
   RegExFreeAndNil(StreamTitle2RegExp);
   RegExFreeAndNil(StreamTitleFromPageRegExp);
   RegExFreeAndNil(IFrameUrlRegExp);
+  RegExFreeAndNil(UrlToken);
+  RegExFreeAndNil(IDEC);
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fNameList);
   FreeAndNil(fUrlList);
@@ -202,6 +223,7 @@ begin
   Result := MovieID;
 end;
 
+
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   Prot, User, Pass, Host, Port, Part, Para: string;
@@ -212,6 +234,8 @@ var
   {$ELSE}
   Url: string;
   {$ENDIF}
+  MyText: TStringlist;
+  PlayListIDEC, iframeHash: string;
 
   function getRedirectUrl(Http: THttpSend; Url: string): string;
   var MethodStr: string;
@@ -237,10 +261,19 @@ begin
     Http.UserAgent:=DEFAULT_USER_AGENT;
   end;
   ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
-  if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
+  //
+  if not GetRegExpVars(IDEC, Page, ['ID', 'IDEC'], [@PlayListID, @PlaylistIDEC]) then
+     SetLastErrorMsg('Failed to locate media info page (idec).')
+ else
+  if not DownloadPage(Http,'https://www.ceskatelevize.cz/v-api/iframe-hash/', iframeHash) then
+     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?id='+PlayListID + '&hash=' +iframeHash + '&origin=iVysilani&autoStart=true&IDEC=' + PlayListIDEC, page) then
+    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  //
+  else if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,
-                           'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist',
+                           'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist/',
                            ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=flash'),
                            {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
                            HTTP_FORM_URLENCODING_UTF8,
@@ -269,6 +302,7 @@ begin
   else
     begin
     Urls[0]:=getRedirectUrl(Http, JSDecode(Urls[0]));
+
     Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title)));
     if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
       Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
@@ -293,15 +327,16 @@ begin
     end;
 end;
 
+
 procedure TDownloader_CT.SetOptions(const Value: TYTDOptions);
 var
-  Bitrate: integer;
+  VWithRes: integer;
 begin
   inherited;
-  Bitrate := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAX_VIDEO_WIDTH, OPTION_CT_MAX_VIDEO_WIDTH_DEFAULT);
+  VWithRes := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAX_VIDEO_WIDTH, OPTION_CT_MAX_VIDEO_WIDTH_DEFAULT);
   ///if TDownloader_CT.classtype = THLSDownloader then
   if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
-  case Bitrate of
+  case VWithRes of
        512:  MaxVBitRate:=628000;
        720:  MaxVBitRate:=1160000;
       1024:  MaxVBitRate:=2176000;
@@ -310,14 +345,14 @@ begin
       else   MaxVBitRate:=MaxInt;
   end
   else
-  case Bitrate of
+  case VWithRes of
        512:  MaxVBitRate:=500000;
        720:  MaxVBitRate:=1032000;
       1024:  MaxVBitRate:=2048000;
       1280:  MaxVBitRate:=3584000;
       1920:  MaxVBitRate:=6144000;
       else   MaxVBitRate:=MaxInt;
-  end
+  end;
 end;
 
 
