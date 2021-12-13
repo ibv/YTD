@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.65.20210710.0</version>
+  <version>1.66.20211210.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -199,7 +199,7 @@
         </url>
       </http_download>
     </script>
-    <script id="ceskatelevize.cz" provider="CeskaTelevize.cz" changed="20180712">
+    <script id="ceskatelevize.cz" provider="CeskaTelevize.cz" changed="20211210">
       <regexps>
         <regexp id="iframe"><![CDATA[<(?:iframe\b[^>]*\ssrc)="(?P<URL>(https?://[^/]+)?/ivysilani/[^"]+)"]]></regexp>
         <regexp id="div"><![CDATA[<div\b[^>]*\sclass="video-player">.*?<span\b[^>]*\sdata-url="(?P<URL>((?:https?:)?//[^/]+)?/ivysilani/[^"]+)"]]></regexp>
@@ -2738,7 +2738,7 @@
     <url script="bewusst.tv"><![CDATA[bewusst\.tv/.+$]]></url>
     <url script="blesk.cz"><![CDATA[blesk\.cz/.+$]]></url>
     <url script="ceknito.sk"><![CDATA[ceknito\.(?:cz|sk)/video/.+$]]></url>
-    <url script="ceskatelevize.cz"><![CDATA[ceskatelevize\.cz/(?!ivysilani/).+$]]></url>
+    <!--url script="ceskatelevize.cz"><![CDATA[ceskatelevize\.cz/(?!ivysilani/).+$]]></url-->
     <url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
     <url script="cetv.sk"><![CDATA[cetv\.sk/.+$]]></url>
     <url script="cloudzilla.to"><![CDATA[cloudzilla.to/embed/.+$]]></url>
