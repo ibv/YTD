@@ -49,8 +49,9 @@ uses
   SysUtils, Classes,
    {$ifdef mswindows}
      Windows,
-   {.$ELSE}
-     LCLIntf, LCLType, LMessages,
+   {$ENDIF}
+   {$IFDEF fpc}
+     LCLIntf, LCLType,
    {$ENDIF}
 
   {$IFDEF UPCRE_NATIVEIMPLEMENTATION}

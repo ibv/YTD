@@ -45,10 +45,12 @@ uses
   SysUtils, Classes,
   {$ifdef mswindows}
     Windows,
-    LCLIntf, LCLType, LMessages, uXml,
+  {$ENDIF}
+  {$IFDEF fpc}
+    LCLIntf, LCLType, uXml,
   {$ENDIF}
   HttpSend, SynaUtil,
-  uCompatibility, uOptions, {$IFDEF SETUP} uSetup, {$ENDIF} uFunctions, uPCRE;
+  uOptions, {$IFDEF SETUP} uSetup, {$ENDIF} uFunctions;
 
 type
   TYTDUpgrade = class;

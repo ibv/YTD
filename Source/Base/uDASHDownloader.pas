@@ -43,8 +43,9 @@ uses
   SysUtils, Classes,
   {$ifdef mswindows}
     Windows,
-  {.$ELSE}
-  LCLIntf, LCLType, {LMessages,}
+  {$ENDIF}
+  {$IFDEF fpc}
+  LCLIntf, LCLType,
   {$ENDIF}
   uPCRE, uXml, uHttp, HttpSend, blcksock,
   uDownloader, uCommonDownloader,uMPD;

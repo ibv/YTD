@@ -77,7 +77,7 @@
  *)
 
 {$IFDEF FPC}
-  {$MODE OBJFPC}{$H+}
+  {.$MODE OBJFPC}{$H+}
 {$ENDIF}
 
 {$DEFINE SUPER_METHOD}
@@ -814,7 +814,7 @@ implementation
 uses
   sysutils,
   {$ifndef fpc}
-    Windows
+    Windows,
   {$ELSE}
     LCLIntf, LCLType, LMessages,
   {$ENDIF}

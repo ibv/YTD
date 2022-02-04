@@ -8,40 +8,46 @@ inherited FrameDownloaderOptionsPage_Prima: TFrameDownloaderOptionsPage_Prima
     ClientWidth = 384
     inherited LabelSecureToken: TLabel
       Height = 15
-      Width = 89
+      Width = 84
     end
     inherited LabelUserName: TLabel
       Height = 15
-      Width = 75
+      Width = 98
+      Caption = '&User name/mail:'
     end
     inherited LabelPassword: TLabel
       Height = 15
-      Width = 63
+      Width = 60
     end
     inherited CheckDownloadSubtitles: TCheckBox
-      Height = 26
+      Height = 21
       Width = 369
     end
     inherited CheckConvertSubtitles: TCheckBox
-      Height = 26
+      Height = 21
       Width = 369
     end
     inherited CheckLiveStream: TCheckBox
-      Height = 26
-      Width = 348
+      Height = 21
+      Width = 327
     end
     inherited EditSecureToken: TEdit
+      Height = 26
       Width = 257
     end
     inherited EditUserName: TEdit
+      Height = 26
       Width = 257
     end
     inherited EditPassword: TEdit
+      Height = 26
       Width = 257
+      EchoMode = emPassword
+      PasswordChar = #1
     end
     inherited CheckRealtime: TCheckBox
-      Height = 26
-      Width = 373
+      Height = 21
+      Width = 353
     end
   end
   inherited PanelSpecificOptions: TPanel
@@ -50,16 +56,15 @@ inherited FrameDownloaderOptionsPage_Prima: TFrameDownloaderOptionsPage_Prima
     object LabelMaximumVideoBitrate: TLabel[0]
       Left = 8
       Height = 15
-      Top = 0
-      Width = 172
+      Top = 5
+      Width = 162
       Caption = 'Maximum video &resolution:'
       FocusControl = EditMaximumVideoBitrate
-      ParentColor = False
     end
     object EditMaximumVideoBitrate: TEdit[1]
-      Left = 185
-      Height = 21
-      Top = 0
+      Left = 176
+      Height = 26
+      Top = 3
       Width = 79
       TabOrder = 0
       Text = '0'
@@ -67,10 +72,9 @@ inherited FrameDownloaderOptionsPage_Prima: TFrameDownloaderOptionsPage_Prima
     object Label1: TLabel[2]
       Left = 9
       Height = 15
-      Top = 20
+      Top = 28
       Width = 198
       Caption = '(512,640,768,1024,1280,1920)'
-      ParentColor = False
     end
   end
 end

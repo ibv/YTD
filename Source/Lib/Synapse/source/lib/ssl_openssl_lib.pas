@@ -1,5 +1,5 @@
 {==============================================================================|
-| Project : Ararat Synapse                                       | 003.008.000 |
+| Project : Ararat Synapse                                       | 003.009.000 |
 |==============================================================================|
 | Content: SSL support by OpenSSL                                              |
 |==============================================================================|
@@ -35,10 +35,12 @@
 | The Initial Developer of the Original Code is Lukas Gebauer (Czech Republic).|
 | Portions created by Lukas Gebauer are Copyright (c)2002-2017.                |
 | Portions created by Petr Fejfar are Copyright (c)2011-2012.                  |
+| Portions created by Pepak are Copyright (c)2018.                             |
 | All Rights Reserved.                                                         |
 |==============================================================================|
 | Contributor(s):                                                              |
 |   Tomas Hajny (OS2 support)                                                  |
+|   Pepak (multiversion support)                                               |
 |==============================================================================|
 | History: see HISTORY.HTM from distribution package                           |
 |          (Found at URL: http://www.ararat.cz/synapse/)                       |
@@ -96,6 +98,7 @@ uses
   {$ENDIF}
   SysUtils;
 {$ELSE}
+  SysUtils,
   Windows;
 {$ENDIF}
 
@@ -103,59 +106,89 @@ uses
 {$IFDEF CIL}
 const
   {$IFDEF LINUX}
-  DLLSSLNames: array[1..1] of string = ('libssl.so');
-  DLLUtilNames: array[1..1] of string = ('libcrypto.so');
+  DLLSSLName = 'libssl.so';
+  DLLUtilName = 'libcrypto.so';
   {$ELSE}
-  DLLSSLNames: array[1..1] of string = ('ssleay32.dll');
-  DLLUtilNames: array[1..1] of string = ('libeay32.dll');
+  DLLSSLName = 'ssleay32.dll';
+  DLLUtilName = 'libeay32.dll';
   {$ENDIF}
 {$ELSE}
 var
   {$IFNDEF MSWINDOWS}
     {$IFDEF DARWIN}
-    DLLSSLNames: array[1..1] of string = ('libssl.dylib');
-    DLLUtilNames: array[1..1] of string = ('libcrypto.dylib');
+    DLLSSLName: string = 'libssl.dylib';
+    DLLUtilName: string = 'libcrypto.dylib';
     {$ELSE}
      {$IFDEF OS2}
       {$IFDEF OS2GCC}
-      DLLSSLNames: array[1..1] of string = ('kssl.dll');
-      DLLUtilNames: array[1..1] of string = ('kcrypto.dll');
+    DLLSSLName: string = 'kssl.dll';
+    DLLUtilName: string = 'kcrypto.dll';
       {$ELSE OS2GCC}
-      DLLSSLNames: array[1..1] of string = ('ssl.dll');
-      DLLUtilNames: array[1..1] of string = ('crypto.dll');
+    DLLSSLName: string = 'ssl.dll';
+    DLLUtilName: string = 'crypto.dll';
       {$ENDIF OS2GCC}
      {$ELSE OS2}
-    DLLSSLNames: array[1..5] of string = ('libssl.so',
-                                          {above file only exist in dev-packages that are not installed by default on most distributions}
-                                          'libssl.so.1.1',
-                                          'libssl.so.1.0.2', 'libssl.so.1.0.0',
-                                          'libssl.so.10');
-    DLLUtilNames: array[1..5] of string = ('libcrypto.so',
-                                           {above file only exist in dev-packages that are not installed by default on most distributions}
-                                           'libcrypto.so.1.1',
-                                           'libcrypto.so.1.0.2', 'libcrypto.so.1.0.0',
-                                           'libcrypto.so.10'
-                                           );
+    DLLSSLName: string = 'libssl.so';
+    DLLUtilName: string = 'libcrypto.so';
      {$ENDIF OS2}
     {$ENDIF}
   {$ELSE}
-    {$IFDEF WIN64}
-      DLLSSLNames: array[1..4] of string = ('libssl-1_1-x64.dll', 'ssleay32.dll', 'libssl32.dll',
-                                       {just in case someone renames them:}
-                                       'libssl.dll');
-      DLLUtilNames: array[1..4] of string = ('libcrypto-1_1-64.dll', 'libeay32.dll',
-                                       {just in case someone renames them:}
-                                        'libcrypto.dll', 'libeay.dll');
-    {$ELSE}
-      DLLSSLNames: array[1..4] of string = ('libssl-1_1.dll', 'ssleay32.dll', 'libssl32.dll',
-                                       {just in case someone renames them:}
-                                       'libssl.dll');
-      DLLUtilNames: array[1..4] of string = ('libcrypto-1_1.dll', 'libeay32.dll',
-                                       {just in case someone renames them:}
-                                        'libcrypto.dll', 'libeay.dll');
-
-    {$ENDIF}
+  DLLSSLName: string = 'ssleay32.dll';
+  DLLSSLName2: string = 'libssl32.dll';
+  DLLUtilName: string = 'libeay32.dll';
   {$ENDIF}
+{$IFDEF MSWINDOWS}
+const
+  LibCount = 5;
+  SSLLibNames: array[0..LibCount-1] of string = (
+    // OpenSSL v3.0
+    {$IFDEF WIN64}
+    'libssl-3-x64.dll',
+    {$ELSE}
+    'libssl-3.dll',
+    {$ENDIF}
+    // OpenSSL v1.1.x
+    {$IFDEF WIN64}
+    'libssl-1_1-x64.dll',
+    {$ELSE}
+    'libssl-1_1.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2 distinct names for x64 and x86
+    {$IFDEF WIN64}
+    'ssleay32-x64.dll',
+    {$ELSE}
+    'ssleay32-x86.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2
+    'ssleay32.dll',
+    // OpenSSL (ancient)
+    'libssl32.dll'
+  );
+  CryptoLibNames: array[0..LibCount-1] of string = (
+    // OpenSSL v3.0
+    {$IFDEF WIN64}
+    'libcrypto-3-x64.dll',
+    {$ELSE}
+    'libcrypto-3.dll',
+    {$ENDIF}
+    // OpenSSL v1.1.x
+    {$IFDEF WIN64}
+    'libcrypto-1_1-x64.dll',
+    {$ELSE}
+    'libcrypto-1_1.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2 distinct names for x64 and x86
+    {$IFDEF WIN64}
+    'libeay32-x64.dll',
+    {$ELSE}
+    'libeay32-x86.dll',
+    {$ENDIF}
+    // OpenSSL v1.0.2
+    'libeay32.dll',
+    // OpenSSL (ancient)
+    'libeay32.dll'
+  );
+{$ENDIF}
 {$ENDIF}
 
 type
@@ -1880,10 +1913,20 @@ begin
 {$ENDIF}
 end;
 
+function GetLibFileName(Handle: THandle): string;
+var
+  n: integer;
+begin
+  n := MAX_PATH + 1024;
+  SetLength(Result, n);
+  n := GetModuleFilename(Handle, PChar(Result), n);
+  SetLength(Result, n);
+end;
+
 function InitSSLInterface: Boolean;
 var
   s: string;
-  x,i: integer;
+  i: integer;
 begin
   {pf}
   if SSLLoaded then
@@ -1891,7 +1934,7 @@ begin
       Result := TRUE;
       exit;
     end;
-  {/pf}  
+  {/pf}
   SSLCS.Enter;
   try
     if not IsSSLloaded then
@@ -1900,14 +1943,24 @@ begin
       SSLLibHandle := 1;
       SSLUtilHandle := 1;
 {$ELSE}
-      for i := low(DLLUtilNames) to high(DLLUtilNames) do begin
-        SSLUtilHandle := LoadLib(DLLUtilNames[i]);
-        if SSLUtilHandle <> 0 then break;
+      // Note: It's important to ensure that the libraries both come from the
+      // same directory, preferably the one of the executable. Otherwise a
+      // version mismatch could easily occur.
+      {$IFDEF MSWINDOWS}
+      for i := 0 to Pred(LibCount) do
+      begin
+        SSLUtilHandle := LoadLib(CryptoLibNames[i]);
+        if SSLUtilHandle <> 0 then
+        begin
+          s := ExtractFilePath(GetLibFileName(SSLUtilHandle));
+          SSLLibHandle := LoadLib(s + SSLLibNames[i]);
+          Break;
+        end;
       end;
-      for i := low(DLLSSLNames) to high(DLLSSLNames) do begin
-        SSLLibHandle := LoadLib(DLLSSLNames[i]);
-        if SSLLibHandle <> 0 then break;
-      end;
+      {$ELSE}
+      SSLUtilHandle := LoadLib(DLLUtilName);
+      SSLLibHandle := LoadLib(DLLSSLName);
+      {$ENDIF}
 {$ENDIF}
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
       begin
@@ -2023,14 +2076,8 @@ begin
         OPENSSLaddallalgorithms;
         RandScreen;
 {$ELSE}
-        SetLength(s, 1024);
-        x := GetModuleFilename(SSLLibHandle,PChar(s),Length(s));
-        SetLength(s, x);
-        SSLLibFile := s;
-        SetLength(s, 1024);
-        x := GetModuleFilename(SSLUtilHandle,PChar(s),Length(s));
-        SetLength(s, x);
-        SSLUtilFile := s;
+        SSLLibFile := GetLibFileName(SSLLibHandle);
+        SSLUtilFile := GetLibFileName(SSLUtilHandle);
         //init library
         if assigned(_SslLibraryInit) then
           _SslLibraryInit;

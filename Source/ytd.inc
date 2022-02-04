@@ -9,7 +9,9 @@
 {$DEFINE SYSTRAY}
   // Minimize to systray
 
-{.$DEFINE GETTEXT}
+{$ifdef linux}
+{$DEFINE GETTEXT}
+{$endif}
   // Multilanguage support
 
 {$DEFINE THREADEDVERSION}
@@ -175,9 +177,11 @@
 
 // FreePascal's implementation of GetText is faulty.
 
+{$ifdef linux}
 {$IFDEF FPC}
-  {.$UNDEF GETTEXT}
+  {$UNDEF GETTEXT}
 {$ENDIF}
+{$endif}
 
 
 

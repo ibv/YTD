@@ -536,7 +536,7 @@ const
     {$IFDEF WIN64}
       libpcremodulename = 'pcre64.dll';
     {$ELSE}
-  libpcremodulename = 'pcre3.dll';
+  libpcremodulename = 'pcre32.dll';
     {$ENDIF}
   {$ENDIF MSWINDOWS}
   {$IFDEF LINUX}

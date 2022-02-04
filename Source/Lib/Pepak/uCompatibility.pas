@@ -279,13 +279,13 @@ const
   INVALID_FILE_SIZE = $ffffffff;
 {$ENDIF}
 
-{$ifndef mswindows}
+{$ifdef fpc}
 function StringToWide(const S: AnsiString): WideString;
 {$endif}
 
 implementation
 
-{$ifndef mswindows}
+{$ifdef fpc}
 function StringToWide(const S: AnsiString): WideString;
 var
   n: integer;

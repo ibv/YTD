@@ -43,7 +43,8 @@ uses
   SysUtils, Classes,
   {$ifdef mswindows}
     Windows,
-  {$ELSE}
+  {$ENDIF}
+  {$IFDEF fpc}
     LCLIntf, LCLType,
   {$ENDIF}
   uPCRE, uXml, uHttp,  HttpSend, blcksock,

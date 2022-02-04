@@ -521,7 +521,7 @@ begin
   inherited Create;
   FState := [preNotEmpty];
 
-  ///chartable := pcre_maketables;
+  chartable := pcre_maketables;
 {$IFDEF UNICODE}
   pcreOptions := PCRE_UTF8 or PCRE_NEWLINE_ANY;
 {$ELSE}

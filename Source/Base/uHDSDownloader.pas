@@ -43,10 +43,11 @@ uses
   SysUtils, Classes,
   {$ifdef mswindows}
     Windows,
-  {.$ELSE}
-    LCLIntf, LCLType, LMessages,
   {$ENDIF}
-  uPCRE, uXml, uHttp, uFlvFile, uCompatibility, HttpSend, blcksock,
+  {$IFDEF fpc}
+    LCLIntf, LCLType,
+  {$ENDIF}
+   uXml, uHttp, uFlvFile,  HttpSend, blcksock,
   uDownloader, uCommonDownloader;
 
 type

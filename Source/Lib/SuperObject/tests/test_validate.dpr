@@ -7,7 +7,7 @@ program test_validate;
 
 
 uses
-  SysUtils, superobject;
+  SysUtils, superobject, supertypes;
 
 procedure onerror(sender: Pointer; error: TSuperValidateError; const path: SOString);
 const

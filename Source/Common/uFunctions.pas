@@ -42,10 +42,11 @@ interface
 
 uses
   {$ifdef mswindows}
-    Windows, {ActiveX, ShellApi,}
+    Windows,
     ShlObj,
-  {.$ELSE}
-    LCLIntf, LCLType, LMessages, Process,
+  {$ENDIF}
+  {$IFDEF fpc}
+    LCLIntf, LCLType,  Process,
   {$ENDIF}
 
   SysUtils, Classes, {$IFDEF COMOBJ} ComObj, {$ENDIF}
@@ -53,7 +54,7 @@ uses
   {$IFDEF SETUP}
   uSetup,
   {$ENDIF}
-  uMessages, uCompatibility, uFiles, uStrings, uOptions;
+  uMessages, uCompatibility, uOptions;
 
 type
   TProgressBarState = (pbsNoProgress, pbsUnknown, pbsNormal, pbsError, pbsPaused);
@@ -284,11 +285,9 @@ var
   VTempFolder: array[0..MAX_PATH] of Char;
 {$ENDIF}
 begin
-Result := GetTempDir;
-{$IFDEF UNIX}
+{$IFDEF fpc}
   Result := GetTempDir;
-{$ENDIF}
-{$IFNDEF FPC}
+{$ELSE}
   GetTempPath(MAX_PATH, @VTempFolder);
   Result := IncludeTrailingPathDelimiter(StrPas(VTempFolder));
 {$ENDIF}

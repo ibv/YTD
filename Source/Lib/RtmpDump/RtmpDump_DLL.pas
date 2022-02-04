@@ -26,8 +26,9 @@ implementation
 uses
   {$ifdef mswindows}
     Windows,
-  {.$ELSE}
-    LCLIntf, LCLType, LMessages{, dl};
+  {$ENDIF}
+  {$IFDEF fpc}
+    LCLIntf, LCLType {$IFDEF UNIX}, dl {$ENDIF};
   {$ENDIF}
 
 const
@@ -87,19 +88,28 @@ begin
     ///if LibHandle <> 0 then
     if LibHandle <> INVALID_MODULEHANDLE_VALUE then
       begin
+      {$IFNDEF UNIX}
       RtmpDumpMain := GetProcAddress(LibHandle, 'RtmpDumpMain');
-      ///RtmpDumpMain := dlsym(LibHandle, 'RtmpDumpMain');
+      {$ELSE}
+      RtmpDumpMain := dlsym(LibHandle, 'RtmpDumpMain');
+      {$ENDIF}
       end;
+  {$IFNDEF UNIX}
   Result := (LibHandle <> 0) and (@RtmpDumpMain <> nil);
-  ///Result := (LibHandle <> INVALID_MODULEHANDLE_VALUE) or (@RtmpDumpMain <> nil);
+  {$ELSE}
+  Result := (LibHandle <> INVALID_MODULEHANDLE_VALUE) or (@RtmpDumpMain <> nil);
+  {$ENDIF}
 end;
 
 procedure RtmpDump_Done;
 begin
   ///if LibHandle <> 0 then
   if LibHandle <> INVALID_MODULEHANDLE_VALUE then
+    {$IFNDEF UNIX}
     FreeLibrary(LibHandle);
-    ///dlclose(Pointer(LibHandle));
+    {$ELSE}
+    dlclose(Pointer(LibHandle));
+    {$ENDIF}
   ///LibHandle := 0;
   LibHandle := INVALID_MODULEHANDLE_VALUE;
   RtmpDumpMain := nil;

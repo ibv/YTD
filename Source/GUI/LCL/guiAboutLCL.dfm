@@ -11,117 +11,107 @@ object FormAbout: TFormAbout
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poOwnerFormCenter
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.2.0.4'
   object LabelYTD: TLabel
     Left = 8
-    Height = 24
+    Height = 23
     Top = 8
-    Width = 41
+    Width = 43
     Caption = 'YTD'
     Font.Color = clWindowText
     Font.Height = -19
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold, fsUnderline]
-    ParentColor = False
     ParentFont = False
   end
   object LabelVersionLabel: TLabel
     Left = 8
-    Height = 13
+    Height = 14
     Top = 40
-    Width = 38
+    Width = 46
     Caption = 'Version:'
-    ParentColor = False
   end
   object LabelVersion: TLabel
     Left = 127
-    Height = 13
+    Height = 14
     Top = 40
-    Width = 74
+    Width = 80
     Caption = 'LabelVersion'
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentColor = False
     ParentFont = False
   end
   object LabelNewestVersionLabel: TLabel
     Left = 8
-    Height = 13
+    Height = 14
     Top = 56
-    Width = 76
+    Width = 90
     Caption = 'Newest version:'
-    ParentColor = False
   end
   object LabelNewestVersion: TLabel
     Left = 127
-    Height = 13
+    Height = 14
     Top = 56
-    Width = 55
+    Width = 62
     Caption = 'not found'
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentColor = False
     ParentFont = False
     OnClick = LabelNewestVersionClick
   end
   object LabelHomepageLabel: TLabel
     Left = 8
-    Height = 13
+    Height = 14
     Top = 73
-    Width = 55
+    Width = 65
     Caption = 'Homepage:'
-    ParentColor = False
   end
   object LabelHomepage: TLabel
     Left = 127
-    Height = 13
+    Height = 14
     Top = 73
-    Width = 152
+    Width = 157
     Caption = 'https://ibv.github.io/YTD/'
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentColor = False
     ParentFont = False
     OnClick = LabelHomepageClick
   end
   object LabelMediaProviders: TLabel
     Left = 8
-    Height = 13
+    Height = 14
     Top = 97
-    Width = 78
+    Width = 93
     Caption = 'Media providers:'
-    ParentColor = False
   end
   object LabelDefsVersion: TLabel
     Left = 210
-    Height = 13
+    Height = 14
     Top = 40
-    Width = 100
+    Width = 108
     Caption = 'LabelDefsVersion'
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentColor = False
     ParentFont = False
   end
   object LabelNewestDefsVersion: TLabel
     Left = 210
-    Height = 13
+    Height = 14
     Top = 56
-    Width = 55
+    Width = 62
     Caption = 'not found'
     Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentColor = False
     ParentFont = False
     OnClick = LabelNewestDefsVersionClick
   end
@@ -138,7 +128,7 @@ object FormAbout: TFormAbout
       end    
       item
         Caption = 'Components'
-        Width = 288
+        Width = 299
       end>
     OwnerData = True
     ReadOnly = True
@@ -150,10 +140,9 @@ object FormAbout: TFormAbout
   end
   object LabelYTD2: TLabel
     Left = 64
-    Height = 13
+    Height = 14
     Top = 15
-    Width = 28
+    Width = 29
     Caption = 'YTD2'
-    ParentColor = False
   end
 end

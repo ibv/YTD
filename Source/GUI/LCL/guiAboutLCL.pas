@@ -150,7 +150,11 @@ begin
   // Show current version
   arch:='';
   if SizeOf(Pointer) > 4 then arch:='x64';
+  {$ifdef linux}
+  LabelYTD2.Caption := arch + ' (Linux)';
+  {$else}
   LabelYTD2.Caption := arch + ' (fpc)';
+  {$endif}
   LabelVersion.Caption := APPLICATION_VERSION;
   if TScriptedDownloader.MainScriptEngine <> nil then
     LabelDefsVersion.Caption := TScriptedDownloader.MainScriptEngine.Version;

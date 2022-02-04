@@ -41,8 +41,8 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI2007_UP} Windows, {$ENDIF}
-  uPCRE, uXml, uHttp, HttpSend, blcksock,
-  {$ifdef mswindows} FileUtil, {$endif}
+  uXml, uHttp, HttpSend, blcksock,
+  FileUtil,
   uDownloader, uCommonDownloader;
 
 type

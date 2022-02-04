@@ -409,58 +409,6 @@ if "%compiler%"=="delphi" (
     set has_unicode=1
     set has_namespaces=1
   )
-  %compexe% | find /i "Version 32.0"
-  if not errorlevel 1 (
-    set is_delphixe10=1
-    set is_delphi5_up=1
-    set is_delphi6_up=1
-    set is_delphi7_up=1
-    set is_delphi8_up=1
-    set is_delphi2005_up=1
-    set is_delphi2006_up=1
-    set is_delphi2007_up=1
-    set is_delphi2009_up=1
-    set is_delphi2010_up=1
-    set is_delphixe_up=1
-    set is_delphixe2_up=1
-    set is_delphixe3_up=1
-    set is_delphixe4_up=1
-    set is_delphixe5_up=1
-    set is_delphixe6_up=1
-    set is_delphixe7_up=1
-    set is_delphixe8_up=1
-    set is_delphixe10_up=1
-    set is_delphixe10_1_up=1
-    set has_unicode=1
-    set has_namespaces=1
-  )
-
-  %compexe% | find /i "Version 33.0"
-  if not errorlevel 1 (
-    set is_delphixe10=1
-    set is_delphi5_up=1
-    set is_delphi6_up=1
-    set is_delphi7_up=1
-    set is_delphi8_up=1
-    set is_delphi2005_up=1
-    set is_delphi2006_up=1
-    set is_delphi2007_up=1
-    set is_delphi2009_up=1
-    set is_delphi2010_up=1
-    set is_delphixe_up=1
-    set is_delphixe2_up=1
-    set is_delphixe3_up=1
-    set is_delphixe4_up=1
-    set is_delphixe5_up=1
-    set is_delphixe6_up=1
-    set is_delphixe7_up=1
-    set is_delphixe8_up=1
-    set is_delphixe10_up=1
-    set is_delphixe10_1_up=1
-    set has_unicode=1
-    set has_namespaces=1
-  )
-
 )
 
 rem --- Prepare command line --------------------------------------------------
@@ -580,11 +528,6 @@ if exist "%srcdir%lib\SynEdit\Source\." (
   set lib=%lib%;%srcdir%lib\SynEdit\Source
 )
 
-rem GUI_VCL
-if exist "%srcdir%\GUI\VCL\Downloaders\." (
-  set lib=%lib%;%srcdir%\GUI\VCL\Downloaders
-)
-
 rem --- Build the program -----------------------------------------------------
 call "info" prebuild
 
@@ -598,7 +541,6 @@ if exist "%project%.dof" (
 if exist "%srcdir%%project%.rc" updver.exe -b "%srcdir%%project%.rc"
 if exist "%srcdir%%project%.res" updver.exe -b "%srcdir%%project%.res"
 if exist "%srcdir%%project%.rc" call :resource "%srcdir%%project%.rc"
-
 call :%compiler% "%srcdir%%project%.dpr"
 
 if exist "%project%.cfg._" (
@@ -623,8 +565,6 @@ goto :eof
 rem --- Compile with Delphi ---------------------------------------------------
 :delphi
 if "%~1"=="" goto :eof
-echo "%compexe%" -B -E%exedir% -NU"%srcdir%Units" -U"%srcdir%Units;%lib%" -I"%lib%" %defs% %params% -Q "%%i"
-
 for %%i in (%~1) do (
   echo.
   echo Compiling: %%i

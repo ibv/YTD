@@ -76,7 +76,7 @@ type
     class constructor Init;
     class destructor Finish;
     class var FCacheCS: TRTLCriticalSection;
-    class var FCache: TObjectDictionary;string, TSuperTimeZone>;
+    class var FCache: TObjectDictionary<string, TSuperTimeZone>;
     ///class var FCache: TDictionary<string, TSuperTimeZone>;
     {$endif}
     class function GetSuperTimeZoneInstance(const Name: string): TSuperTimeZone; {$ifndef LEGACYVERSION}static;{$endif}

@@ -1,9 +1,9 @@
 {==============================================================================|
-| Project : Ararat Synapse                                       | 009.010.000 |
+| Project : Ararat Synapse                                       | 009.010.002 |
 |==============================================================================|
 | Content: Library base                                                        |
 |==============================================================================|
-| Copyright (c)1999-2017, Lukas Gebauer                                        |
+| Copyright (c)1999-2021, Lukas Gebauer                                        |
 | All rights reserved.                                                         |
 |                                                                              |
 | Redistribution and use in source and binary forms, with or without           |
@@ -33,7 +33,7 @@
 | DAMAGE.                                                                      |
 |==============================================================================|
 | The Initial Developer of the Original Code is Lukas Gebauer (Czech Republic).|
-| Portions created by Lukas Gebauer are Copyright (c)1999-2017.                |
+| Portions created by Lukas Gebauer are Copyright (c)1999-2021.                |
 | All Rights Reserved.                                                         |
 |==============================================================================|
 | Contributor(s):                                                              |
@@ -245,6 +245,7 @@ type
     LT_TLSv1,
     LT_TLSv1_1,
     LT_TLSv1_2,
+    LT_TLSv1_3,
     LT_SSHv2
     );
 
@@ -309,8 +310,8 @@ type
     {$IFNDEF CIL}
     FFDSet: TFDSet;
     {$ENDIF}
-    FRecvCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
-    FSendCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} ;
+    FRecvCounter: int64;
+    FSendCounter: int64;
     FSendMaxChunk: Integer;
     FStopFlag: Boolean;
     FNonblockSendTimeout: Integer;
@@ -543,7 +544,7 @@ type
      occured.)}
     procedure RecvStreamRaw(const Stream: TStream; Timeout: Integer); virtual;
     {:Read requested count of bytes from socket to stream.}
-    procedure RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} );
+    procedure RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: int64);
 
     {:Receive data to stream. It using @link(RecvBlock) method.}
     procedure RecvStream(const Stream: TStream; Timeout: Integer); virtual;
@@ -762,11 +763,11 @@ type
 
     {:Return count of received bytes on this socket from begin of current
      connection.}
-    property RecvCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FRecvCounter;
+    property RecvCounter: int64 read FRecvCounter;
 
     {:Return count of sended bytes on this socket from begin of current
      connection.}
-    property SendCounter: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} read FSendCounter;
+    property SendCounter: int64 read FSendCounter;
   published
     {:Return descriptive string for given error code. This is class function.
      You may call it without created object!}
@@ -2505,24 +2506,16 @@ begin
   until FLastError <> 0;
 end;
 
-procedure TBlockSocket.RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: {$IFDEF PEPAK} int64 {$ELSE} integer {$ENDIF} );
+procedure TBlockSocket.RecvStreamSize(const Stream: TStream; Timeout: Integer; Size: int64);
 var
   s: AnsiString;
-  {$IFDEF PEPAK}
   n: int64;
-  {$ELSE}
-  n: integer;
-  {$ENDIF}
 {$IFDEF CIL}
   buf: TMemory;
 {$ENDIF}
 begin
-  {$IFDEF PEPAK}
   n := Size div int64(FSendMaxChunk);
   while n > 0 do
-  {$ELSE}
-  for n := 1 to (Size div FSendMaxChunk) do
-  {$ENDIF}
   begin
     {$IFDEF CIL}
     SetLength(buf, FSendMaxChunk);
@@ -2536,11 +2529,9 @@ begin
       Exit;
     WriteStrToStream(Stream, s);
     {$ENDIF}
-    {$IFDEF PEPAK}
-    Dec(n);
-    {$ENDIF}
+    dec(n);
   end;
-  n := Size mod {$IFDEF PEPAK} int64(FSendMaxChunk) {$ELSE} FSendMaxChunk {$ENDIF} ;
+  n := Size mod int64(FSendMaxChunk);
   if n > 0 then
   begin
     {$IFDEF CIL}
@@ -3688,7 +3679,7 @@ begin
   begin
     ip6 := StrToIp6(MCastIP);
     for n := 0 to 15 do
-      Multicast6.ipv6mr_multiaddr.u6_addr8[n] := Ip6[n];
+      Multicast6.ipv6mr_multiaddr.s6_addr[n] := Ip6[n];
     Multicast6.ipv6mr_interface := 0;
     SockCheck(synsock.SetSockOpt(FSocket, IPPROTO_IPV6, IPV6_JOIN_GROUP,
       PAnsiChar(@Multicast6), SizeOf(Multicast6)));
@@ -3715,7 +3706,7 @@ begin
   begin
     ip6 := StrToIp6(MCastIP);
     for n := 0 to 15 do
-      Multicast6.ipv6mr_multiaddr.u6_addr8[n] := Ip6[n];
+      Multicast6.ipv6mr_multiaddr.s6_addr[n] := Ip6[n];
     Multicast6.ipv6mr_interface := 0;
     SockCheck(synsock.SetSockOpt(FSocket, IPPROTO_IPV6, IPV6_LEAVE_GROUP,
       PAnsiChar(@Multicast6), SizeOf(Multicast6)));

@@ -43,11 +43,12 @@ uses
   SysUtils, Classes,
   {$ifdef mswindows}
     Windows,
-  {$ELSE}
-    LCLIntf, LCLType, LMessages,
+  {$ENDIF}
+  {$IFDEF fpc}
+    LCLIntf, LCLType,
   {$ENDIF}
   NativeXml,
-  uPCRE, uXML, uJSON, HttpSend, blcksock,
+  uPCRE, uXML, uJSON, blcksock,
   uDownloader, uOptions;
 
 type

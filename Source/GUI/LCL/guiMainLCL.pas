@@ -40,7 +40,12 @@ unit guiMainLCL;
 interface
 
 uses
-  windows,LCLIntf, LCLType, LMessages,
+  {$ifdef mswindows}
+  Windows,
+  {$endif}
+  {$ifdef fpc}
+  LCLIntf, LCLType, LMessages,
+  {$endif}
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, ComCtrls, ClipBrd, Menus, ImgList, ActnList,
   ToolWin, ExtCtrls,  {CommDlg, CommCtrl,}
@@ -204,16 +209,19 @@ type
     fTotalProgress: int64;
     fTotalData: int64;
     fMenuID: integer;
-    fProvID, fVQID: integer;
     {$IFDEF SYSTRAY}
+    {$ifdef mswindows}
     fNotifyIconData: TNotifyIconData;
     procedure WMClickIcon(var msg: TMessage); message WM_NOTIFYICON;
+    {$endif}
     procedure ApplicationMinimize(Sender: TObject);
     {$ENDIF}
     procedure StartClipboardMonitor;
     procedure StopClipboardMonitor;
+    {$ifdef mswindows}
     procedure WMDrawClipboard(var msg: TMessage); message WM_DRAWCLIPBOARD;
     procedure WMChangeCbChain(var msg: TMessage); message WM_CHANGECBCHAIN;
+    {$endif}
     {$IFDEF SINGLEINSTANCE}
     procedure WMCopyData(var msg: TMessage); message WM_COPYDATA;
     {$ENDIF}
@@ -249,7 +257,6 @@ type
     procedure ExploreMedia(Index: integer); virtual;
     procedure LoadSettings; virtual;
     procedure SaveSettings; virtual;
-    procedure VQualityPopUpSetting;
   public
   end;
 
@@ -290,8 +297,12 @@ begin
     RegisterMainInstance(Self.Handle);
     {$ENDIF}
     arch:='';
-    if SizeOf(Pointer) > 4 then arch:=' - x64';
-    Caption := APPLICATION_CAPTION + arch + ' (fpc)';
+    if SizeOf(Pointer) > 4 then arch:=' x64';
+    {$ifdef mswindows}
+    Caption := APPLICATION_CAPTION + arch + ' (fpc)' ;
+    {$else}
+    Caption := APPLICATION_CAPTION + arch + ' (Linux)' ;
+    {$endif}
     Options := TYTDOptionsGUI.Create;
     TScriptedDownloader.InitMainScriptEngine(Options.ScriptFileName);
     UseLanguage(Options.Language);
@@ -329,8 +340,10 @@ begin
       //TrayIcon.ShowBalloonHint;
       Application.OnMinimize := ApplicationMinimize;
       end;
-    TrayIcon.Hint:=Caption;
-    TrayIcon.BalloonHint:=Caption;
+      {$ifdef mswindows}
+      TrayIcon.Hint:=Caption;
+      TrayIcon.BalloonHint:=Caption;
+      {$endif}
     {$ENDIF}
     // Use double-buffered listview (removes flickering)
     SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
@@ -370,6 +383,7 @@ begin
   {$ENDIF}
 end;
 
+
 procedure TFormYTD.FormDestroy(Sender: TObject);
 begin
   {$IFDEF SINGLEINSTANCE}
@@ -382,7 +396,7 @@ begin
     ///Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
   try
-    FreeAndNil(DownloadList);
+  FreeAndNil(DownloadList);
   except
   end;
   {$IFDEF THREADEDVERSION}
@@ -436,7 +450,6 @@ end;
 
 {$IFDEF SYSTRAY}
 {$ifdef mswindows}
-
 procedure TFormYTD.WMClickIcon(var msg: TMessage);
 begin
   case Msg.lParam of
@@ -447,7 +460,6 @@ begin
       end;
     end;
 end;
-
 {$endif}
 
 procedure TFormYTD.ApplicationMinimize(Sender: TObject);
@@ -464,23 +476,22 @@ begin
   else
     LastClipboardText := '';
   if Options.MonitorClipboard then
-    NextClipboardViewer := SetClipboardViewer(Self.Handle)
+    ///NextClipboardViewer := SetClipboardViewer(Self.Handle)
   else
     NextClipboardViewer := 0;
 end;
 
 procedure TFormYTD.StopClipboardMonitor;
 begin
-  ChangeClipboardChain(Self.Handle, NextClipboardViewer);
+  ///ChangeClipboardChain(Self.Handle, NextClipboardViewer);
   NextClipboardViewer := 0;
 end;
 
 {$ifdef mswindows}
-
 procedure TFormYTD.WMDrawClipboard(var msg: TMessage);
 begin
-  if NextClipboardViewer <> 0 then
-    SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
+  ///if NextClipboardViewer <> 0 then
+  ///  SendMessage(NextClipboardViewer, WM_DRAWCLIPBOARD, 0, 0);
   try
     DownloadList.AutoTryHtmlParserTemporarilyDisabled := True;
     AddFromClipboard(True);
@@ -496,7 +507,6 @@ begin
     NextClipboardViewer := Msg.lParam;
   msg.Result := 0;
 end;
-
 {$endif}
 
 {$IFDEF SINGLEINSTANCE}
@@ -558,14 +568,11 @@ begin
   if Idx >= 0 then
     begin
     ///Downloads.UpdateItems(Idx, Idx);
-    Downloads.BeginUpdate;
     Downloads.Update;
-
     if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
       if DownloadList[Idx].State = dtsFinished then
         SaveSettings;
     end;
-    Downloads.EndUpdate;
 end;
 
 procedure TFormYTD.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);
@@ -593,7 +600,7 @@ begin
       DlItem := DownloadList[Item.Index];
       Item.Caption := DownloadList.Urls[Item.Index];
       {$IFNDEF F-PC}
-      Item.StateIndex := -1;///Integer(DlItem.State);
+      Item.StateIndex := Integer(DlItem.State);
       {$ENDIF}
       Item.SubItems.Add(DlItem.Downloader.Provider);
       sState := _(ThreadStates[DlItem.State]);
@@ -651,7 +658,7 @@ begin
           sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize);
         end;
       {$IFNDEF F-PC}
-      Item.StateIndex := -1;///iStateImage;
+      Item.StateIndex := iStateImage;
       {$ENDIF}
       Item.SubItems.Add(sState);
       Item.SubItems.Add(sTitle);
@@ -822,7 +829,6 @@ end;
 
 procedure TFormYTD.Refresh;
 begin
-  ///{$IFDEF FPC}
   {$IFNDEF FPC}
   if Downloads.Items.Count <> DownloadList.Count then
     begin
@@ -1053,7 +1059,8 @@ end;
 procedure TFormYTD.DownloadsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
-  i, ind: integer;
+  i, j, ind: integer;
+  pr, value: string;
   Item : TLIstItem;
 
 const
@@ -1067,40 +1074,32 @@ begin
     begin
       fMenuID:=-1;
       i := Item.index;
-      fProvID := i;
       for ind:=0 to VQualityPopUp.Items.Count-1 do
       begin
         VQualityPopUp.Items[ind].Checked:=false;
-        if Res[ind] = DownloadList[i].Downloader.MaxVResolution then
+        if Res[ind] = DownloadList[i].Downloader.MaxVResolution{.MaxVResolution} then
         begin
           VQualityPopUp.Items[ind].Checked:=true;
-          fVQID:=ind;
+          j:=ind;
         end;
       end;
     end;
     VQualityPopUp.PopUp;
-  end;
-end;
-
-procedure TFormYTD.VQualityPopUpSetting;
-var
-  value: string;
-const
-   Res : array[0..5] of integer = (0,1920,1280,1024,720,512);
-
-begin
-  if (fVQID <> fMenuID) and (fMenuID >= 0) then
-  begin
-    VQualityPopUp.Items[fVQID].Checked:=false;
+    if (j <> fMenuID) and (fMenuID >= 0) then
+    begin
+      VQualityPopUp.Items[j].Checked:=false;
       VQualityPopUp.Items[fMenuID].Checked:=true;
       value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
-    Options.WriteProviderOption(DownloadList[fProvID].Downloader.ProviderName, 'max_video_width', Res[fMenuID]);
-    Options.WriteProviderOption(DownloadList[fProvID].Downloader.ProviderName, 'max_video_bitrate', value);
-    DownloadList[fProvID].Downloader.MaxVResolution:=Res[fMenuID];
-    DownloadList[fProvID].Downloader.MaxVBitRate := StrToIntDef(value,0);
+      Options.WriteProviderOption(DownloadList[i].Downloader.ProviderName, 'max_video_width', Res[fMenuID]);
+      Options.WriteProviderOption(DownloadList[i].Downloader.ProviderName, 'max_video_bitrate', value);
+      DownloadList[i].Downloader.MaxVResolution:=Res[fMenuID];
+      ///DownloadList[i].MaxVBitrate := StrToIntDef(value,0);
+      DownloadList[i].Downloader.MaxVBitRate := StrToIntDef(value,0);
+      ///InputQuery('Max Video Bitrate', 'Please type your value', value);
+    end;
   end;
-
 end;
+
 
 procedure TFormYTD.actPlayExecute(Sender: TObject);
 begin
@@ -1125,38 +1124,36 @@ end;
 procedure TFormYTD.Item1Click(Sender: TObject);
 begin
   fMenuID:=0;
-  VQualityPopUpSetting;
 end;
 
 procedure TFormYTD.Item2Click(Sender: TObject);
 begin
   fMenuID:=1;
-  VQualityPopUpSetting;
 
 end;
 
 procedure TFormYTD.Item3Click(Sender: TObject);
 begin
   fMenuID:=2;
-  VQualityPopUpSetting;
+
 end;
 
 procedure TFormYTD.item4Click(Sender: TObject);
 begin
   fMenuID:=3;
-  VQualityPopUpSetting;
+
 end;
 
 procedure TFormYTD.Item5Click(Sender: TObject);
 begin
   fMenuID:=4;
-  VQualityPopUpSetting;
+
 end;
 
 procedure TFormYTD.Item6Click(Sender: TObject);
 begin
   fMenuID:=5;
-  VQualityPopUpSetting;
+
 end;
 
 

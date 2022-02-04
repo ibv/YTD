@@ -50,7 +50,7 @@ uses
     LCLIntf, LCLType, LMessages,
   {$ENDIF}
   {$IFDEF DELPHI6_UP} Variants, {$ENDIF}
-  uPCRE, uXml, HttpSend, SynaUtil,
+  uPCRE, uXml, HttpSend, SynaUtil, synacode,
   uOptions,
   {$IFDEF GUI}
     guiDownloaderOptions,
@@ -60,15 +60,17 @@ uses
       guiOptionsLCL_Prima,
     {$ENDIF}
   {$ENDIF}
-  uDownloader, uCommonDownloader, uHLSDownloader;
+  uDownloader, uCommonDownloader, {uHLSDownloader} uDASHdownloader;
 
 type
-  TDownloader_Prima = class(THLSDownloader)
+  TDownloader_Prima = class(TDASHDownloader)
     private
       {$IFDEF MULTIDOWNLOADS}
       fNameList: TStringList;
       fUrlList: TStringList;
       fDownloadIndex: integer;
+      access_token: string;
+      username,password : string;
       {$ENDIF}
     protected
       StreamUrlRegExp: TRegExp;
@@ -77,7 +79,10 @@ type
       ProductID2: TRegExp;
       StatusOK: TRegExp;
       Options: TRegExp;
+      LoginForm: TRegExp;
       HLS : TRegExp;
+      URLCODE : TRegExp;
+      ATOKEN : TRegExp;
       {$IFDEF MULTIDOWNLOADS}
       property NameList: TStringList read fNameList;
       property UrlList: TStringList read fUrlList;
@@ -110,6 +115,13 @@ type
 const
   OPTION_Prima_MAXBITRATE {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'max_video_width';
   OPTION_Prima_MAXBITRATE_DEFAULT = 0;
+  OPTION_PRIMA_USERNAME {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'username';
+  OPTION_PRIMA_USERNAME_DEFAULT = '';
+  OPTION_PRIMA_PASSWORD {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'password';
+  OPTION_PRIMA_PASSWORD_DEFAULT = '';
+  OPTION_DASH_VIDEO_SUPPORT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'dash_video_support';
+  OPTION_DASH_AUDIO_SUPPORT {$IFDEF MINIMIZESIZE} : string {$ENDIF} = 'dash_audio_support';
+
 
 implementation
 
@@ -117,7 +129,7 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-  uFunctions,
+  uFunctions, uJSON, superobject,supertypes,
   uMessages;
 
 const
@@ -126,13 +138,20 @@ const
   URLREGEXP_AFTER_ID =  '';
 
 const
-  REGEXP_PRODUCTID1 = 'prehravac/embedded\?id=(?P<ID>.+?)"';
-  REGEXP_PRODUCTID2 = '_videoimport(?P<ID>\w+?)_';
+  REGEXP_PRODUCTID1 = 'var productId = ''(?P<ID>.+?)'';';
+  REGEXP_PRODUCTID2 = 'var pproduct_id = ''(?P<ID>.+?)'';';
   REGEXP_STATUS_CONTENT   = '^(?P<CONTENT>OK)$';
   REGEXP_OPTIONS_CONTENT  = '\bvar\s+\w*[pP]layerOptions\s*=\s*(?P<CONTENT>\{.*?\})\s*;';
   REGEXP_HLS_CONTENT      = 'tracks\s*:\s*\{\s*HLS\s*:\s*\[(?P<CONTENT>.+?)\]\s*,';
   REGEXP_STREAM_URL = 'src\s*:\s*''(?P<URL>https?://.+?)''';
   REGEXP_STREAM_TITLE = '<meta\s+(name|property)=(?P<QUOTE1>[''"])og:title(?P=QUOTE1)\s+(content|value)=(?P<QUOTE2>[''"])(?P<NAME>.*?)(?P=QUOTE2)';
+  REGECXP_LOGIN_FORM = 'input type="hidden" name="(?P<NAME>.+?)" value="(?P<VALUE>.+?)">';
+  REGECXP_URL_CODE = 'code=(?P<CODE>.+?)&';
+  REGECXP_ACCESS_TOKEN = '"access_token":"(?P<TOKEN>.+?)",';
+
+  _LOGIN_URL = 'https://auth.iprima.cz/oauth2/login';
+  _TOKEN_URL = 'https://auth.iprima.cz/oauth2/token';
+
 
 class function TDownloader_Prima.Provider: string;
 begin
@@ -146,7 +165,7 @@ end;
 
 class function TDownloader_Prima.Features: TDownloaderFeatures;
 begin
-  Result := inherited Features;
+  Result := inherited Features + [dfUserLogin];
 end;
 
 
@@ -174,6 +193,12 @@ begin
   Options    := RegExCreate(REGEXP_OPTIONS_CONTENT);
   HLS        := RegExCreate(REGEXP_HLS_CONTENT);
 
+  LoginForm  := RegExCreate(REGECXP_LOGIN_FORM);
+  URLCODE    := RegExCreate(REGECXP_URL_CODE);
+  ATOKEN    := RegExCreate(REGECXP_ACCESS_TOKEN);
+
+  access_token := '';
+
   Referer := GetMovieInfoUrl;
 end;
 
@@ -186,6 +211,9 @@ begin
   RegExFreeAndNil(StatusOK);
   RegExFreeAndNil(Options);
   RegExFreeAndNil(HLS);
+  RegExFreeAndNil(LoginForm);
+  RegExFreeAndNil(URLCODE);
+  RegExFreeAndNil(ATOKEN);
   {$IFDEF MULTIDOWNLOADS}
   FreeAndNil(fNameList);
   FreeAndNil(fUrlList);
@@ -200,20 +228,44 @@ end;
 
 function TDownloader_Prima.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Prot, User, Pass, Host, Port, Part, Para: string;
-  PlaylistUrl, Title, ID1,ID2, infoxml, opt: string;
-  Xml: TXmlDoc;
+  Title, ID1,ID2: string;
+  i,j: integer;
   {$IFDEF MULTIDOWNLOADS}
   Urls: TStringArray;
-  i: integer;
   {$ELSE}
   Url: string;
   {$ENDIF}
+  Url: string;
+  csToken, csValue,ucode,Data:string;
+  aryers: TSuperArray;
+  o: ISuperObject;
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
 
-  ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
+  if access_token = '' then
+  begin
+  if not DownloadPage(Http,_LOGIN_URL, Data) then
+     SetLastErrorMsg('Downloading login page failed')
+  else if not GetRegExpVars(LoginForm, Data, ['NAME', 'VALUE'], [@csToken, @csValue]) then
+     SetLastErrorMsg('Failed to locate media info page (idec).');
+  if not DownloadPage(Http,_LOGIN_URL, ('_email='+username+'&_password='+password+'&'+csToken+'='+csValue),
+                                       HTTP_FORM_URLENCODING_UTF8 ,
+                                       [],
+                                       Data,
+                                       peUtf8 ) then
+     SetLastErrorMsg('Login in failed')
+  else if not GetRegExpVar(URLCODE, LastURL, 'CODE', ucode) then
+     SetLastErrorMsg('Login code failed')
+  else if not DownloadPage(Http,_TOKEN_URL ,
+    ('scope=openid+email+profile+phone+address+offline_access&client_id=prima_sso&grant_type=authorization_code&code='+ucode+'&redirect_uri=https://auth.iprima.cz/sso/auth-check'),
+     HTTP_FORM_URLENCODING_UTF8, [], Data, peUtf8)  then
+    SetLastErrorMsg('Downloading token failed');
+
+   if not GetRegExpVar(ATOKEN, Data, 'TOKEN', access_token) then
+       SetLastErrorMsg('Getting token failed')
+  end;
+
   if not GetPlaylistInfo(Http, Page, Title) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(ProductID1, Page, 'ID', ID1) then
@@ -222,69 +274,46 @@ begin
   if ID1='' then
     if ID2<>'' then ID1:=ID2
       else SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
-  if not DownloadXML(Http,'http://play.iprima.cz/prehravac/init?_infuse=1&_ts=1467795020741&productId='+ID1,xml)
-  then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
-  infoxml:=Xml.ValueByPath('status');
-  if infoxml<>'OK' then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
-  infoxml:=Xml.ValueByPath('script');
-  if not GetRegExpVar(Options, infoxml, 'CONTENT', opt) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(HLS, opt, 'CONTENT', PlayListUrl) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  {$IFDEF MULTIDOWNLOADS}
-  else if not GetRegExpAllVar(StreamUrlRegExp, PlaylistUrl, 'URL', Urls) then
-        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  {$ELSE}
-  else if not GetRegExpVar(StreamUrlRegExp, PlaylistUrl, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  {$ENDIF}
-  else
-    begin
-    if Title = '' then
+
+  Data:=Http.Cookies.values['prima_uuid'];
+  ClearHttp(Http);
+  Http.Headers.Add('X-OTT-Access-Token: '+access_token);
+  Http.Headers.Add('X-OTT-Device: prima_slot_id_'+data);
+  Http.Cookies.values['prima_uuid']:=data;
+
+  if not DownloadPage(Http,'https://api.play-backend.iprima.cz/api/v1/products/id-'+ID1+'/play',Data, peUtf8,hmGet,false)
+         then   SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
+
+  O:= SO(Data);
+  aryers := o.O['streamInfos'].AsArray();
+  for i := 0 to aryers.Length - 1 do
+  begin
+    if pos('cs',aryers[i].O['lang'].AsString()) <=0 then continue ;
+    if pos('DASH',aryers[i].O['type'].AsString()) <=0 then continue ;
+    Url := aryers[i].O['url'].AsString();
+  end;
+
+  if Title = '' then
       if not GetRegExpVar(StreamTitleRegExp, Page, 'NAME', Title) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
     Title := trim(AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title))));
-    {$IFDEF MULTIDOWNLOADS}
-    for i := 0 to Pred(Length(Urls)) do
-      begin
-      UrlList.Add(JSDecode(Urls[i]));
-      if Length(Urls) > 1 then
-        NameList.Add(Format('%s [%d]', [Title, Succ(i)]))
-      else
-        NameList.Add(Title);
-      end;
-    Name := NameList[0];
-    {$ENDIF}
+    NameList.Add(Title);
     Name := Title;
-    MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
+    MovieURL := Url ;
     SetPrepared(True);
     Result := True;
-    end;
+    Urls:=nil;
 end;
 
 
 
 function TDownloader_Prima.GetFileNameExt: string;
 begin
-  Result := '.ts';
+  Result := '.mpv';
 end;
 
-{function TDownloader_Prima.GetPlaylistInfo(Http: THttpSend; const Page: string; out PlaylistType, PlaylistID: string): boolean;
-var
-  Url, Page2: string;
-begin
-  Result := GetRegExpVars(PlaylistInfoRegExp, Page, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
-  if not Result then
-    if GetRegExpVar(IFrameUrlRegExp, Page, 'URL', Url) then
-      if DownloadPage(Http, GetRelativeUrl(GetMovieInfoUrl, Url), Page2, peUtf8) then
-        Result := GetRegExpVars(PlaylistInfoRegExp, Page2, ['TYP', 'ID'], [@PlaylistType, @PlaylistID]);
-end;}
 
 function TDownloader_Prima.GetPlaylistInfo(Http: THttpSend; const Page: string; out Title: string): boolean;
-var
-  Url, Page2: string;
 begin
   Result := GetRegExpVars(StreamTitleRegExp, Page, ['NAME'], [@Title]);
 end;
@@ -346,11 +375,13 @@ end;
 
 procedure TDownloader_Prima.SetOptions(const Value: TYTDOptions);
 var
-  Bitrate: integer;
+  VWithRes: integer;
 begin
   inherited;
-  Bitrate := Value.ReadProviderOptionDef(Provider, OPTION_Prima_MAXBITRATE, OPTION_Prima_MAXBITRATE_DEFAULT);
-  case Bitrate of
+  username := Value.ReadProviderOptionDef(Provider, OPTION_PRIMA_USERNAME, OPTION_PRIMA_USERNAME_DEFAULT);
+  password := Value.ReadProviderOptionDef(Provider, OPTION_PRIMA_PASSWORD, OPTION_PRIMA_PASSWORD_DEFAULT);
+  VWithRes := Value.ReadProviderOptionDef(Provider, OPTION_Prima_MAXBITRATE, OPTION_Prima_MAXBITRATE_DEFAULT);
+  case VWithRes of
        512:  MaxVBitRate:=540672;
        640:  MaxVBitRate:=950272;
        768:  MaxVBitRate:=1155072;

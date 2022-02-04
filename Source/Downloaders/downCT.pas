@@ -120,14 +120,12 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-  uFunctions, uJson,
+  uFunctions,
   uMessages;
 
 const
   URLREGEXP_BEFORE_ID = '';
-  ///URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/ivysilani/.+';
   URLREGEXP_ID =        REGEXP_COMMON_URL_PREFIX + '(?:ceskatelevize|ct24)\.cz/(?:ivysilani|porady)/.+';
-
   URLREGEXP_AFTER_ID =  '';
 
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
@@ -135,8 +133,6 @@ const
   ///DEFAULT_USER_AGENT = 'Dalvik/1.6.0 (Linux; U; Android 4.4.4; Nexus 7 Build/KTU84P)';
 
 const
-              ///getPlaylistUrl([{"type":"episode","id":"29338140111"}]
-  ///REGEXP_PLAYLIST_INFO = '\bgetPlaylistUrl\s*\(\s*\[\s*\{\s*"type"\s*:\s*"(?P<TYP>.+?)"\s*,\s*"id"\s*:\s*"(?P<ID>\d+)"';
   REGEXP_PLAYLIST_INFO = 'getPlaylistUrl\(\[\{"type":"(?P<TYP>.+?)","id":"(?P<ID>.+?)"';
   REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
   REGEXP_PLAYLIST_URL_NEW = '<playlistURL><!\[CDATA\[(?P<URL>.+?)\]\]></playlistURL>';
@@ -234,7 +230,6 @@ var
   {$ELSE}
   Url: string;
   {$ENDIF}
-  MyText: TStringlist;
   PlayListIDEC, iframeHash: string;
 
   function getRedirectUrl(Http: THttpSend; Url: string): string;
@@ -260,8 +255,6 @@ begin
   begin
     Http.UserAgent:=DEFAULT_USER_AGENT;
   end;
-  ParseUrl(GetMovieInfoUrl, Prot, User, Pass, Host, Port, Part, Para);
-  //
   if not GetRegExpVars(IDEC, Page, ['ID', 'IDEC'], [@PlayListID, @PlaylistIDEC]) then
      SetLastErrorMsg('Failed to locate media info page (idec).')
  else
@@ -269,7 +262,7 @@ begin
      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?id='+PlayListID + '&hash=' +iframeHash + '&origin=iVysilani&autoStart=true&IDEC=' + PlayListIDEC, page) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  //
+
   else if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,
@@ -334,7 +327,6 @@ var
 begin
   inherited;
   VWithRes := Value.ReadProviderOptionDef(Provider, OPTION_CT_MAX_VIDEO_WIDTH, OPTION_CT_MAX_VIDEO_WIDTH_DEFAULT);
-  ///if TDownloader_CT.classtype = THLSDownloader then
   if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
   case VWithRes of
        512:  MaxVBitRate:=628000;
@@ -359,7 +351,6 @@ end;
 function TDownloader_CT.GetFileNameExt: string;
 begin
   Result:='.mpv';
-  ///if TDownloader_CT.classtype = THLSDownloader then
   if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
     Result := '.ts';
 end;

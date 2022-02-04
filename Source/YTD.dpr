@@ -54,9 +54,11 @@ program YTD;
 uses
   {$IFnDEF FPC}
   {$ELSE}
-  ///cthreads,
+    {$ifndef mswindows}
+      cthreads,
+    {$ENDIF}
     //cmem,
-  Interfaces,
+    Interfaces,
   {$ENDIF}
   {$IFDEF FASTMM}
   FastMM4,
@@ -147,6 +149,7 @@ uses
         {$IFDEF CONVERTERS}
         guiConverterLCL in 'GUI\LCL\guiConverterLCL.pas' {FormSelectConverter},
         {$ENDIF}
+        ///guiVQuality in 'GUI\LCL\guiVQuality.pas' {FormVQuality},
       {$ELSE}
         guiMainVCL in 'GUI\VCL\guiMainVCL.pas' {FormYTD},
         guiAboutVCL in 'GUI\VCL\guiAboutVCL.pas' {FormAbout},
@@ -156,12 +159,10 @@ uses
         guiOptionsVCL in 'GUI\VCL\guiOptionsVCL.pas' {FormOptions},
         guiOptionsVCL_Downloader in 'GUI\VCL\Downloaders\guiOptionsVCL_Downloader.pas' {FrameDownloaderOptionsPageVCL: TFrame},
         guiOptionsVCL_CommonDownloader in 'GUI\VCL\Downloaders\guiOptionsVCL_CommonDownloader.pas' {FrameDownloaderOptionsPageCommonVCL: TFrame},
-      guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
+        //guiOptionsVCL_CT in 'GUI\VCL\Downloaders\guiOptionsVCL_CT.pas' {FrameDownloaderOptionsPage_CT: TFrame},
         guiOptionsVCL_EuroSeptik in 'GUI\VCL\Downloaders\guiOptionsVCL_EuroSeptik.pas' {FrameDownloaderOptionsPage_EuroSeptik: TFrame},
         guiOptionsVCL_Joj in 'GUI\VCL\Downloaders\guiOptionsVCL_Joj.pas' {FrameDownloaderOptionsPage_Joj: TFrame},
         guiOptionsVCL_YouTube in 'GUI\VCL\Downloaders\guiOptionsVCL_YouTube.pas' {FrameDownloaderOptionsPage_YouTube: TFrame},
-      guiOptionsVCL_Prima in 'GUI\VCL\Downloaders\guiOptionsVCL_Prima.pas' {FrameDownloaderOptionsPage_Prima: TFrame},
-      guiOptionsVCL_DASH in 'GUI\VCL\Downloaders\guiOptionsVCL_DASH.pas' {FrameDownloaderOptionsPage_DASH: TFrame},
         {$IFDEF CONVERTERS}
         guiConverterVCL in 'GUI\VCL\guiConverterVCL.pas' {FormSelectConverter},
         {$ENDIF}
@@ -499,5 +500,6 @@ uses
 {$R *.res}
 
 begin
+  ///Application.Scaled:=True;
   Main;
 end.

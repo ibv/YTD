@@ -52,7 +52,8 @@ uses
   SysUtils, Classes,
   {$ifdef mswindows}
     Windows,
-  {.$ELSE}
+    {$ENDIF}
+  {$IFDEF fpc}  
     LCLIntf, LCLType, LMessages,
   {$ENDIF}
   uCompatibility;

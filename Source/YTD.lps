@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectSession>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <BuildModes Active="Default"/>
-    <Units Count="393">
+    <Units Count="345">
       <Unit0>
         <Filename Value="YTD.dpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="55"/>
-        <CursorPos X="3" Y="67"/>
+        <TopLine Value="65"/>
+        <CursorPos X="50" Y="50"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -17,27 +17,25 @@
         <Filename Value="Common/uLanguages.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="43"/>
-        <CursorPos X="14" Y="61"/>
+        <TopLine Value="35"/>
+        <CursorPos X="62" Y="69"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="Common/uMain.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="353"/>
-        <CursorPos X="11" Y="392"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="490"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
         <Filename Value="Common/uFlvFile.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="41"/>
-        <CursorPos X="5" Y="55"/>
+        <TopLine Value="117"/>
+        <CursorPos X="16" Y="137"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -46,7 +44,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="466"/>
-        <CursorPos X="43" Y="474"/>
+        <CursorPos X="41" Y="483"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
@@ -63,19 +61,17 @@
       <Unit6>
         <Filename Value="Common/uMessages.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="59"/>
-        <CursorPos X="3" Y="80"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="83"/>
+        <CursorPos X="77" Y="101"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="Common/uOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="882"/>
-        <CursorPos X="22" Y="900"/>
+        <CursorPos X="44" Y="40"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -84,8 +80,8 @@
         <Filename Value="Common/uStringConsts.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="62"/>
-        <CursorPos X="33" Y="98"/>
+        <TopLine Value="66"/>
+        <CursorPos X="21" Y="91"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
@@ -93,8 +89,8 @@
         <Filename Value="Common/uScripts.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="166"/>
-        <CursorPos X="82" Y="183"/>
+        <TopLine Value="25"/>
+        <CursorPos X="23" Y="51"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
@@ -102,8 +98,8 @@
         <Filename Value="Common/uUpgrade.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="30"/>
-        <CursorPos X="23" Y="48"/>
+        <TopLine Value="28"/>
+        <CursorPos X="55" Y="53"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
@@ -111,17 +107,17 @@
         <Filename Value="Common/uDownloadClassifier.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="107"/>
-        <CursorPos X="45" Y="111"/>
+        <TopLine Value="123"/>
+        <CursorPos X="21" Y="131"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="Base/uDownloader.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="1186"/>
-        <CursorPos Y="1204"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="275"/>
+        <CursorPos X="109" Y="278"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -130,8 +126,8 @@
         <Filename Value="Base/uCommonDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="386"/>
-        <CursorPos Y="412"/>
+        <TopLine Value="288"/>
+        <CursorPos Y="306"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
@@ -149,8 +145,8 @@
         <Filename Value="Base/uHttpDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="31"/>
-        <CursorPos X="45" Y="49"/>
+        <TopLine Value="34"/>
+        <CursorPos X="57" Y="61"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
@@ -158,8 +154,7 @@
         <Filename Value="Base/uHttpDirectDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="63"/>
-        <CursorPos Y="85"/>
+        <TopLine Value="93"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
@@ -167,8 +162,8 @@
         <Filename Value="Base/uExternalDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="30"/>
-        <CursorPos X="52" Y="40"/>
+        <TopLine Value="31"/>
+        <CursorPos X="44" Y="34"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
@@ -195,8 +190,8 @@
         <Filename Value="Base/uNestedDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="200"/>
-        <CursorPos Y="218"/>
+        <TopLine Value="66"/>
+        <CursorPos X="43" Y="189"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
@@ -204,8 +199,8 @@
         <Filename Value="Base/uNestedDirectDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="31"/>
-        <CursorPos X="13" Y="45"/>
+        <TopLine Value="19"/>
+        <CursorPos Y="49"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
@@ -232,8 +227,9 @@
         <Filename Value="Base/uRtmpDirectDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="28"/>
-        <CursorPos X="13" Y="51"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
@@ -241,26 +237,27 @@
         <Filename Value="Base/uPlaylistDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="135"/>
-        <CursorPos Y="159"/>
+        <TopLine Value="176"/>
+        <CursorPos X="19" Y="69"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
         <Filename Value="Base/uHDSDownloader.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="31"/>
-        <CursorPos X="5" Y="46"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="36"/>
+        <CursorPos X="13" Y="45"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
         <Filename Value="Base/uHDSDirectDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="95"/>
-        <CursorPos Y="28"/>
+        <TopLine Value="23"/>
+        <CursorPos X="10" Y="44"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit27>
@@ -268,30 +265,28 @@
         <Filename Value="Base/uDASHDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uDASHdownloader"/>
-        <EditorIndex Value="13"/>
-        <TopLine Value="32"/>
-        <CursorPos X="38" Y="50"/>
-        <UsageCount Value="120"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="31"/>
+        <CursorPos X="13" Y="45"/>
+        <UsageCount Value="102"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
         <Filename Value="Base/uHLSDirectDownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="83"/>
-        <CursorPos Y="113"/>
+        <TopLine Value="43"/>
+        <CursorPos Y="92"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="Base/uScriptedDownloader.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="365"/>
-        <CursorPos Y="445"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="345"/>
+        <CursorPos Y="363"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -544,8 +539,8 @@
         <Filename Value="Downloaders/downBreakEmbed.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="22"/>
-        <CursorPos Y="44"/>
+        <TopLine Value="112"/>
+        <CursorPos X="21" Y="139"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
@@ -632,9 +627,8 @@
         <Filename Value="Downloaders/downClipfish.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <TopLine Value="48"/>
+        <CursorPos X="27" Y="67"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
@@ -679,8 +673,9 @@
       <Unit70>
         <Filename Value="Downloaders/downCT.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
-        <TopLine Value="43"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="262"/>
+        <CursorPos X="77" Y="262"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -1016,9 +1011,8 @@
         <Filename Value="Downloaders/downGordonUraCz.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <TopLine Value="74"/>
+        <CursorPos X="75" Y="97"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit104>
@@ -1054,9 +1048,7 @@
         <Filename Value="Downloaders/downHejbejSe.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <TopLine Value="71"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit108>
@@ -1153,8 +1145,8 @@
         <Filename Value="Downloaders/downJoj.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="26"/>
-        <CursorPos X="57" Y="53"/>
+        <TopLine Value="25"/>
+        <CursorPos X="28" Y="37"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit118>
@@ -2536,9 +2528,9 @@
       <Unit259>
         <Filename Value="Downloaders/downYouTube.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
-        <TopLine Value="42"/>
-        <CursorPos X="37" Y="53"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="600"/>
+        <CursorPos X="73" Y="619"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -2636,9 +2628,8 @@
         <Filename Value="Playlists/listHTML.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <TopLine Value="85"/>
+        <CursorPos Y="82"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit269>
@@ -2685,9 +2676,8 @@
         <Filename Value="Playlists/listBlipTV.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <TopLine Value="33"/>
+        <CursorPos X="36" Y="62"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit274>
@@ -2695,27 +2685,28 @@
         <Filename Value="Playlists/listGameAnyone.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
+        <TopLine Value="52"/>
+        <CursorPos X="47" Y="56"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit275>
       <Unit276>
         <Filename Value="Playlists/listYouTube.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="36"/>
-        <CursorPos X="56" Y="57"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="38"/>
+        <CursorPos X="74" Y="59"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit276>
       <Unit277>
         <Filename Value="Playlists/listYouTubePage.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="24"/>
-        <CursorPos X="35" Y="45"/>
+        <TopLine Value="96"/>
+        <CursorPos X="34" Y="45"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit277>
@@ -2731,50 +2722,28 @@
       <Unit279>
         <Filename Value="Lib/Pepak/jedi.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="129"/>
-        <CursorPos X="16" Y="178"/>
-        <UsageCount Value="27"/>
+        <TopLine Value="629"/>
+        <CursorPos X="5" Y="638"/>
+        <UsageCount Value="98"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit279>
       <Unit280>
-        <Filename Value="YTD_Warnings.inc"/>
+        <Filename Value="Lib/Pepak/uCompatibility.pas"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="10" Y="18"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="288"/>
+        <CursorPos X="12" Y="288"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit280>
       <Unit281>
-        <Filename Value="Common/uSetup.pas"/>
+        <Filename Value="ytd.inc"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="45" Y="37"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="144"/>
+        <CursorPos X="4" Y="179"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit281>
       <Unit282>
-        <Filename Value="Lib/Pepak/uCompatibility.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="276"/>
-        <CursorPos X="47" Y="279"/>
-        <UsageCount Value="7"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit282>
-      <Unit283>
-        <Filename Value="GUI/WinAPI/guiSetupWINAPI.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="93"/>
-        <CursorPos X="21" Y="121"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit283>
-      <Unit284>
-        <Filename Value="ytd.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="59"/>
-        <CursorPos X="46" Y="71"/>
-        <UsageCount Value="100"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit284>
-      <Unit285>
         <Filename Value="GUI/VCL/guiSetupVCL.pas"/>
         <ComponentName Value="FormSetup"/>
         <HasResources Value="True"/>
@@ -2782,403 +2751,247 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="18"/>
         <CursorPos X="3" Y="43"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit282>
+      <Unit283>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="130"/>
+        <CursorPos X="76" Y="153"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit283>
+      <Unit284>
+        <Filename Value="Lib/Pepak/uXml.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="100"/>
+        <CursorPos Y="123"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit284>
+      <Unit285>
+        <Filename Value="Lib/NativeXML/NativeXml.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5490"/>
+        <CursorPos Y="5507"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit285>
       <Unit286>
-        <Filename Value="Lib/Pepak/uStrings.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="291"/>
-        <CursorPos Y="176"/>
-        <UsageCount Value="43"/>
+        <Filename Value="GUI/guiFunctions.pas"/>
+        <EditorIndex Value="9"/>
+        <TopLine Value="135"/>
+        <CursorPos Y="145"/>
+        <UsageCount Value="86"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit286>
       <Unit287>
-        <Filename Value="/usr/share/fpcsrc/3.0.0/rtl/objpas/classes/classesh.inc"/>
+        <Filename Value="GUI/uDownloadList.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="2117"/>
-        <CursorPos X="10" Y="2163"/>
-        <UsageCount Value="9"/>
+        <TopLine Value="31"/>
+        <CursorPos X="3" Y="51"/>
+        <UsageCount Value="96"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit287>
       <Unit288>
-        <Filename Value="Lib/Pepak/uXML.pas"/>
-        <UnitName Value="uXml"/>
+        <Filename Value="GUI/uDownloadListItem.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="37"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="28"/>
+        <CursorPos X="15" Y="47"/>
+        <UsageCount Value="95"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit288>
       <Unit289>
-        <Filename Value="Lib/NativeXML/NativeXml.pas"/>
+        <Filename Value="Lib/Synapse/source/lib/httpsend.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="3369"/>
-        <CursorPos X="49" Y="3379"/>
-        <UsageCount Value="27"/>
+        <TopLine Value="684"/>
+        <CursorPos Y="712"/>
+        <UsageCount Value="32"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit289>
       <Unit290>
-        <Filename Value="Lib/SciZipFile/SciZipFile.pas"/>
+        <Filename Value="GUI/uDownloadThread.pas"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="56" Y="26"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="137"/>
+        <CursorPos Y="155"/>
+        <UsageCount Value="80"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit290>
       <Unit291>
-        <Filename Value="../../ldap-1.7/LinLDAP.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1617"/>
-        <CursorPos X="14" Y="1634"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit291>
-      <Unit292>
-        <Filename Value="../../ldap-1.7/synapse/blcksock.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="576"/>
-        <CursorPos X="6" Y="595"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit292>
-      <Unit293>
-        <Filename Value="../../../FreePascal/lazarus/lcl/lcltype.pp"/>
-        <UnitName Value="LCLType"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="19"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit293>
-      <Unit294>
-        <Filename Value="GUI/WinAPI/Options/guiOptionsWINAPI_Downloads.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="356"/>
-        <CursorPos X="10" Y="384"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit294>
-      <Unit295>
-        <Filename Value="GUI/WinAPI/Options/guiOptionsWINAPI_Main.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="221"/>
-        <CursorPos X="57" Y="246"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit295>
-      <Unit296>
-        <Filename Value="GUI/WinAPI/Downloaders/guiOptionsWINAPI_YouTube.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="175"/>
-        <CursorPos X="78" Y="193"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit296>
-      <Unit297>
-        <Filename Value="../../../FreePascal/lazarus/lcl/include/winapih.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="192"/>
-        <CursorPos X="21" Y="150"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit297>
-      <Unit298>
-        <Filename Value="../../../FreePascal/lazarus/lcl/include/intfbasewinapi.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1261"/>
-        <CursorPos X="3" Y="1160"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit298>
-      <Unit299>
-        <Filename Value="GUI/guiFunctions.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="321"/>
-        <CursorPos X="13" Y="342"/>
-        <UsageCount Value="86"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit299>
-      <Unit300>
-        <Filename Value="GUI/uDownloadList.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="198"/>
-        <CursorPos X="19" Y="213"/>
-        <UsageCount Value="98"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit300>
-      <Unit301>
-        <Filename Value="GUI/uDownloadListItem.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="132"/>
-        <CursorPos X="33" Y="154"/>
-        <UsageCount Value="19"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit301>
-      <Unit302>
-        <Filename Value="Lib/PerlRegEx/pcre.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="523"/>
-        <CursorPos X="41" Y="529"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit302>
-      <Unit303>
-        <Filename Value="Lib/Synapse/source/lib/httpsend.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="638"/>
-        <CursorPos Y="729"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit303>
-      <Unit304>
-        <Filename Value="GUI/uDownloadThread.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="155"/>
-        <CursorPos X="47" Y="294"/>
-        <UsageCount Value="53"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit304>
-      <Unit305>
         <Filename Value="Lib/Pepak/uJSON.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="46"/>
         <CursorPos X="18" Y="46"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit305>
-      <Unit306>
+      </Unit291>
+      <Unit292>
         <Filename Value="Lib/SuperObject/superobject.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="983"/>
-        <CursorPos X="17" Y="1043"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit306>
-      <Unit307>
+      </Unit292>
+      <Unit293>
         <Filename Value="Lib/Pepak/pepak.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="88" Y="10"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="20"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit307>
-      <Unit308>
+      </Unit293>
+      <Unit294>
         <Filename Value="Lib/MSDL/src/msdl_dll.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="35" Y="85"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit308>
-      <Unit309>
-        <Filename Value="CLI/uYTD.pas"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="313"/>
-        <CursorPos X="35" Y="333"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit309>
-      <Unit310>
+      </Unit294>
+      <Unit295>
         <Filename Value="GUI/VCL/guiMainVCL.pas"/>
         <ComponentName Value="FormYTD"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="954"/>
-        <CursorPos X="49" Y="997"/>
-        <UsageCount Value="25"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit310>
-      <Unit311>
-        <Filename Value="GUI/guiOptions.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="267"/>
-        <CursorPos X="101" Y="283"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit311>
-      <Unit312>
-        <Filename Value="GUI/VCL/guiAboutVCL.pas"/>
-        <ComponentName Value="FormAbout"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="46" Y="119"/>
-        <UsageCount Value="3"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit312>
-      <Unit313>
-        <Filename Value="GUI/VCL/guiOptionsVCL.pas"/>
-        <ComponentName Value="FormOptions"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="47"/>
-        <CursorPos X="5" Y="62"/>
+        <TopLine Value="944"/>
+        <CursorPos Y="1007"/>
         <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit313>
-      <Unit314>
-        <Filename Value="Downloaders/XXX/xxxTube8.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="152"/>
-        <CursorPos X="6" Y="193"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit314>
-      <Unit315>
-        <Filename Value="Lib/Pepak/uCrypto.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="334"/>
-        <CursorPos Y="362"/>
-        <UsageCount Value="7"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit315>
-      <Unit316>
-        <Filename Value="Downloaders/downVideoNurKz.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="47"/>
-        <CursorPos X="13" Y="68"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit316>
-      <Unit317>
+      </Unit295>
+      <Unit296>
         <Filename Value="../../../FreePascal/lazarus/lcl/include/containedaction.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="71"/>
         <CursorPos Y="100"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit317>
-      <Unit318>
-        <Filename Value="/usr/lib64/lazarus/lcl/include/containedaction.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="70"/>
-        <CursorPos Y="100"/>
-        <UsageCount Value="4"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit318>
-      <Unit319>
+      </Unit296>
+      <Unit297>
         <Filename Value="Lib/MSDL/msdl_dll.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="79"/>
-        <CursorPos X="8" Y="97"/>
-        <UsageCount Value="6"/>
+        <TopLine Value="46"/>
+        <CursorPos Y="79"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit319>
-      <Unit320>
+      </Unit297>
+      <Unit298>
         <Filename Value="../../../FreePascal/lazarus/lcl/include/messagedialogs.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="272"/>
         <CursorPos Y="295"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit320>
-      <Unit321>
+      </Unit298>
+      <Unit299>
         <Filename Value="../../../FreePascal/lazarus/components/lazutils/lazlogger.pas"/>
         <UnitName Value="LazLogger"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="751"/>
         <CursorPos Y="784"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit321>
-      <Unit322>
+      </Unit299>
+      <Unit300>
         <Filename Value="../../../FreePascal/lazarus/lcl/include/customaction.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="225"/>
         <CursorPos Y="247"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit322>
-      <Unit323>
+      </Unit300>
+      <Unit301>
         <Filename Value="../../../FreePascal/lazarus/lcl/include/toolbutton.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="159"/>
         <CursorPos Y="179"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit323>
-      <Unit324>
+      </Unit301>
+      <Unit302>
         <Filename Value="../../../FreePascal/lazarus/lcl/include/wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="6431"/>
         <CursorPos Y="6458"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit324>
-      <Unit325>
+      </Unit302>
+      <Unit303>
         <Filename Value="../../../FreePascal/lazarus/lcl/lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos Y="123"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit325>
-      <Unit326>
+      </Unit303>
+      <Unit304>
         <Filename Value="../../../FreePascal/lazarus/lcl/interfaces/gtk2/gtk2proc.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3608"/>
         <CursorPos Y="3631"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit326>
-      <Unit327>
+      </Unit304>
+      <Unit305>
         <Filename Value="../../../FreePascal/lazarus/lcl/interfaces/gtk2/gtk2callback.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2440"/>
         <CursorPos Y="2461"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit327>
-      <Unit328>
+      </Unit305>
+      <Unit306>
         <Filename Value="../../../FreePascal/lazarus/lcl/interfaces/gtk2/gtk2widgetset.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2406"/>
         <CursorPos Y="2432"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit328>
-      <Unit329>
+      </Unit306>
+      <Unit307>
         <Filename Value="Lib/Synapse/source/lib/synachar.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1762"/>
         <CursorPos X="46" Y="1786"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit329>
-      <Unit330>
+      </Unit307>
+      <Unit308>
         <Filename Value="GUI/guiConsts.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="146"/>
         <CursorPos X="106" Y="47"/>
-        <UsageCount Value="4"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit330>
-      <Unit331>
-        <Filename Value="Lib/SuperObject/supertimezone.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="14" Y="5"/>
-        <UsageCount Value="11"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit331>
-      <Unit332>
-        <Filename Value="Lib/Synapse/source/lib/synautil.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1353"/>
-        <CursorPos Y="1385"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit332>
-      <Unit333>
+      </Unit308>
+      <Unit309>
+        <Filename Value="Lib/SuperObject/supertimezone.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="38"/>
+        <CursorPos X="28" Y="69"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit309>
+      <Unit310>
+        <Filename Value="Lib/Synapse/source/lib/synautil.pas"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="1296"/>
+        <CursorPos X="34" Y="1317"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit310>
+      <Unit311>
         <Filename Value="Lib/Pepak/uFAR.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1024"/>
         <CursorPos X="21" Y="1034"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit333>
-      <Unit334>
+      </Unit311>
+      <Unit312>
         <Filename Value="GUI/VCL/guiConverterVCL.pas"/>
         <ComponentName Value="FormSelectConverter"/>
         <HasResources Value="True"/>
@@ -3186,256 +2999,93 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="58"/>
         <CursorPos X="42" Y="80"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit334>
-      <Unit335>
-        <Filename Value="/usr/share/fpcsrc/3.0.0/rtl/objpas/sysutils/finah.inc"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="10" Y="29"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit335>
-      <Unit336>
-        <Filename Value="../../../FreePascal/lazarus/components/lazutils/fileutil.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="977"/>
-        <CursorPos Y="1001"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit336>
-      <Unit337>
-        <Filename Value="/usr/share/fpcsrc/3.0.0/packages/rtl-objpas/src/inc/strutils.pp"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="133"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit337>
-      <Unit338>
-        <Filename Value="GUI/guiDownloaderOptions.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="9"/>
-        <CursorPos X="47" Y="47"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit338>
-      <Unit339>
-        <Filename Value="GUI/LCL/guiSetupLCL.pas"/>
-        <ComponentName Value="FormSetup"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="65"/>
-        <CursorPos Y="110"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit339>
-      <Unit340>
+      </Unit312>
+      <Unit313>
         <Filename Value="GUI/LCL/guiMainLCL.pas"/>
         <ComponentName Value="FormYTD"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="1099"/>
-        <CursorPos X="5" Y="1134"/>
-        <UsageCount Value="100"/>
+        <TopLine Value="396"/>
+        <CursorPos X="112" Y="407"/>
+        <UsageCount Value="103"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit340>
-      <Unit341>
+      </Unit313>
+      <Unit314>
         <Filename Value="GUI/LCL/guiOptionsLCL.pas"/>
         <ComponentName Value="FormOptions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="154"/>
-        <CursorPos X="47" Y="166"/>
-        <UsageCount Value="31"/>
+        <TopLine Value="32"/>
+        <CursorPos X="73" Y="49"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit341>
-      <Unit342>
-        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_CommonDownloader.pas"/>
-        <ComponentName Value="FrameDownloaderOptionsPageCommon"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="27"/>
-        <CursorPos X="116" Y="54"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit342>
-      <Unit343>
-        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_EuroSeptik.pas"/>
-        <ComponentName Value="FrameDownloaderOptionsPage_EuroSeptik"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="27"/>
-        <CursorPos X="48" Y="67"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit343>
-      <Unit344>
-        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_Joj.pas"/>
-        <ComponentName Value="FrameDownloaderOptionsPage_Joj"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="27"/>
-        <CursorPos X="69" Y="61"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit344>
-      <Unit345>
+      </Unit314>
+      <Unit315>
         <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_YouTube.pas"/>
         <ComponentName Value="FrameDownloaderOptionsPage_YouTube"/>
         <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="25"/>
-        <CursorPos X="12" Y="43"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit345>
-      <Unit346>
-        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_Nova.pas"/>
-        <ComponentName Value="FrameDownloaderOptionsPage_Nova"/>
-        <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="14"/>
-        <UsageCount Value="3"/>
+        <TopLine Value="70"/>
+        <UsageCount Value="2"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit346>
-      <Unit347>
+      </Unit315>
+      <Unit316>
         <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/inc/dynlibs.pas"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="4"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit347>
-      <Unit348>
-        <Filename Value="/usr/lib64/lazarus/lcl/include/customaction.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="226"/>
-        <CursorPos Y="247"/>
-        <UsageCount Value="4"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit348>
-      <Unit349>
-        <Filename Value="/usr/lib64/lazarus/lcl/comctrls.pp"/>
-        <UnitName Value="ComCtrls"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1602"/>
-        <CursorPos X="14" Y="1620"/>
-        <UsageCount Value="3"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit349>
-      <Unit350>
-        <Filename Value="GUI/LCL/guiAboutLCL.pas"/>
-        <ComponentName Value="FormAbout"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="128"/>
-        <CursorPos X="50" Y="156"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit350>
-      <Unit351>
+      </Unit316>
+      <Unit317>
         <Filename Value="Lib/Pepak/uPCRE.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="180"/>
-        <CursorPos X="15" Y="44"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="338"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit351>
-      <Unit352>
-        <Filename Value="Downloaders/downNova.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="74"/>
-        <CursorPos X="47" Y="45"/>
-        <UsageCount Value="12"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit352>
-      <Unit353>
-        <Filename Value="Downloaders/downVoyo.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="75"/>
-        <CursorPos X="18" Y="82"/>
-        <UsageCount Value="3"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit353>
-      <Unit354>
-        <Filename Value="Downloaders/downPrima.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="37"/>
-        <CursorPos X="18" Y="55"/>
-        <UsageCount Value="27"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit354>
-      <Unit355>
-        <Filename Value="Downloaders/downNovaTN.pas"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="3"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit355>
-      <Unit356>
+      </Unit317>
+      <Unit318>
         <Filename Value="Lib/PerlRegEx/PerlRegEx.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="58"/>
-        <CursorPos X="5" Y="966"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="310"/>
+        <CursorPos Y="330"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit356>
-      <Unit357>
-        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_Prima.pas"/>
-        <ComponentName Value="FrameDownloaderOptionsPage_Prima"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="19"/>
-        <CursorPos X="6" Y="37"/>
-        <UsageCount Value="12"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit357>
-      <Unit358>
+      </Unit318>
+      <Unit319>
         <Filename Value="Base/uHLSDownloader.pas"/>
-        <EditorIndex Value="9"/>
-        <TopLine Value="165"/>
-        <CursorPos Y="187"/>
-        <UsageCount Value="55"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="274"/>
+        <CursorPos X="61" Y="285"/>
+        <UsageCount Value="103"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit358>
-      <Unit359>
-        <Filename Value="/usr/lib64/lazarus/lcl/defaulttranslator.pas"/>
-        <UnitName Value="DefaultTranslator"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit359>
-      <Unit360>
+      </Unit319>
+      <Unit320>
         <Filename Value="Downloaders/downCTDash.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="34"/>
-        <CursorPos X="104" Y="295"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="357"/>
+        <CursorPos X="103" Y="364"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit360>
-      <Unit361>
+      </Unit320>
+      <Unit321>
         <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_CT.pas"/>
         <ComponentName Value="FrameDownloaderOptionsPage_CT"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <EditorIndex Value="11"/>
-        <CursorPos X="25" Y="10"/>
-        <UsageCount Value="19"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="62"/>
+        <CursorPos X="71" Y="79"/>
+        <UsageCount Value="12"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit361>
-      <Unit362>
+      </Unit321>
+      <Unit322>
         <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_Downloader.pas"/>
         <ComponentName Value="FrameDownloaderOptionsPage"/>
         <HasResources Value="True"/>
@@ -3443,405 +3093,314 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="35"/>
         <CursorPos X="14" Y="61"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit362>
-      <Unit363>
+      </Unit322>
+      <Unit323>
         <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/objpas/sysutils/finah.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="29"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit363>
-      <Unit364>
-        <Filename Value="Common/backup/uFunctions.pas"/>
+      </Unit323>
+      <Unit324>
+        <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/linux/ostypes.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="237"/>
-        <CursorPos X="17" Y="253"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit364>
-      <Unit365>
-        <Filename Value="C:/lazarus/fpc/3.0.4/source/rtl/objpas/fgl.pp"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="319"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit365>
-      <Unit366>
-        <Filename Value="Lib/generics.collections/src/generics.collections.pas"/>
-        <UnitName Value="Generics.Collections"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit366>
-      <Unit367>
-        <Filename Value="Lib/generics.collections/src/inc/generics.dictionariesh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="620"/>
-        <CursorPos X="3" Y="648"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit367>
-      <Unit368>
-        <Filename Value="Lib/SuperObject/super.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="63"/>
-        <CursorPos X="62" Y="66"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit368>
-      <Unit369>
-        <Filename Value="Lib/RtmpDump/RtmpDump_DLL.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="37" Y="37"/>
+        <TopLine Value="180"/>
+        <CursorPos X="67" Y="195"/>
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit369>
-      <Unit370>
-        <Filename Value="C:/lazarus/fpc/3.0.4/source/rtl/win/sysosh.inc"/>
+      </Unit324>
+      <Unit325>
+        <Filename Value="GUI/LCL/guiVQuality.pas"/>
+        <ComponentName Value="FormVResolution"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="3" Y="33"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit370>
-      <Unit371>
-        <Filename Value="C:/lazarus/fpc/3.0.4/source/rtl/win/wininc/redef.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="171"/>
-        <CursorPos X="11" Y="204"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit371>
-      <Unit372>
-        <Filename Value="C:/lazarus/lcl/include/customform.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2782"/>
-        <CursorPos Y="2806"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit372>
-      <Unit373>
-        <Filename Value="C:/lazarus/fpc/3.0.4/source/packages/regexpr/src/regexpr.pas"/>
-        <UnitName Value="RegExpr"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="638"/>
-        <CursorPos X="19" Y="673"/>
-        <UsageCount Value="6"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit373>
-      <Unit374>
-        <Filename Value="Lib/Synapse/source/lib/ssl_openssl_lib.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="141"/>
-        <CursorPos X="29" Y="160"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit374>
-      <Unit375>
-        <Filename Value="C:/lazarus/lcl/comctrls.pp"/>
-        <UnitName Value="ComCtrls"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="1637"/>
-        <CursorPos X="3" Y="1652"/>
+        <TopLine Value="46"/>
+        <CursorPos X="54" Y="61"/>
         <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit375>
-      <Unit376>
-        <Filename Value="C:/lazarus/fpc/3.0.4/source/rtl/win/wininc/messages.inc"/>
+      </Unit325>
+      <Unit326>
+        <Filename Value="Base/uMPD.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="985"/>
-        <CursorPos X="6" Y="1003"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="162"/>
+        <CursorPos X="58" Y="162"/>
+        <UsageCount Value="99"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit376>
-      <Unit377>
-        <Filename Value="Lib/DxGetText/Delphi2009/gnugettext.pas"/>
+      </Unit326>
+      <Unit327>
+        <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/objpas/classes/classesh.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="978"/>
-        <CursorPos X="3" Y="996"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="826"/>
+        <CursorPos X="3" Y="735"/>
+        <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit377>
-      <Unit378>
-        <Filename Value="Lib/DxGetText/gnugettext.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="893"/>
-        <CursorPos X="3" Y="836"/>
-        <UsageCount Value="7"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit378>
-      <Unit379>
-        <Filename Value="Lib/DxGetText/fpc/gnugettext.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2437"/>
-        <CursorPos X="57" Y="1573"/>
-        <UsageCount Value="8"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit379>
-      <Unit380>
-        <Filename Value="Lib/DxGetText/fpc/gnugettext_fpc.pp"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="22"/>
-        <CursorPos X="14" Y="55"/>
-        <UsageCount Value="7"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit380>
-      <Unit381>
-        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_DASH.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="22"/>
-        <CursorPos X="54" Y="40"/>
-        <UsageCount Value="7"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit381>
-      <Unit382>
+      </Unit327>
+      <Unit328>
         <Filename Value="Downloaders/downDash.pas"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="41"/>
-        <CursorPos X="18" Y="59"/>
-        <UsageCount Value="29"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="172"/>
+        <CursorPos X="3" Y="190"/>
+        <UsageCount Value="99"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit328>
+      <Unit329>
+        <Filename Value="GUI/LCL/Downloaders/guiOptionsLCL_DASH.pas"/>
+        <ComponentName Value="FrameDownloaderOptionsPage_DASH"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="62"/>
+        <CursorPos Y="96"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit329>
+      <Unit330>
+        <Filename Value="Lib/Synapse/source/lib/mimepart.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="857"/>
+        <CursorPos X="14" Y="875"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit330>
+      <Unit331>
+        <Filename Value="/usr/lib64/lazarus/lcl/include/listitems.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="802"/>
+        <CursorPos Y="828"/>
+        <UsageCount Value="3"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit331>
+      <Unit332>
+        <Filename Value="/usr/lib64/lazarus/lcl/include/listitem.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="532"/>
+        <CursorPos Y="562"/>
+        <UsageCount Value="3"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit332>
+      <Unit333>
+        <Filename Value="GUI/guiOptions.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="218"/>
+        <CursorPos X="71" Y="222"/>
+        <UsageCount Value="6"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit333>
+      <Unit334>
+        <Filename Value="GUI/LCL/guiAboutLCL.pas"/>
+        <ComponentName Value="FormAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="133"/>
+        <CursorPos X="40" Y="156"/>
+        <UsageCount Value="13"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit334>
+      <Unit335>
+        <Filename Value="Downloaders/downPrima.pas"/>
+        <EditorIndex Value="6"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit382>
-      <Unit383>
-        <Filename Value="C:/lazarus/lcl/lclmessageglue.pas"/>
-        <UnitName Value="LCLMessageGlue"/>
+      </Unit335>
+      <Unit336>
+        <Filename Value="Lib/Synapse/source/lib/blcksock.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="98"/>
-        <CursorPos X="49" Y="131"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="2756"/>
+        <CursorPos X="54" Y="2777"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit383>
-      <Unit384>
-        <Filename Value="C:/lazarus/lcl/include/messagedialogs.inc"/>
+      </Unit336>
+      <Unit337>
+        <Filename Value="Lib/Synapse/source/lib/ssl_openssl.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="206"/>
-        <CursorPos Y="224"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="49"/>
+        <CursorPos X="26" Y="53"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit384>
-      <Unit385>
-        <Filename Value="Base/backup/uScriptedDownloader.pas"/>
+      </Unit337>
+      <Unit338>
+        <Filename Value="Lib/Synapse/source/lib/ssl_openssl11.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="932"/>
-        <CursorPos X="15" Y="950"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="673"/>
+        <CursorPos X="6" Y="181"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit385>
-      <Unit386>
-        <Filename Value="Common/backup/uScripts.pas"/>
+      </Unit338>
+      <Unit339>
+        <Filename Value="Lib/Synapse/source/lib/ssl_openssl11_lib.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="166"/>
-        <CursorPos X="82" Y="183"/>
+        <TopLine Value="412"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit339>
+      <Unit340>
+        <Filename Value="Lib/Synapse/source/lib/synacode.pas"/>
+        <EditorIndex Value="13"/>
+        <TopLine Value="115"/>
+        <CursorPos X="26" Y="151"/>
+        <UsageCount Value="31"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit340>
+      <Unit341>
+        <Filename Value="Downloaders/downVoyo.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="469"/>
+        <CursorPos X="63" Y="486"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit341>
+      <Unit342>
+        <Filename Value="Lib/SciZipFile/SciZipFile.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="7"/>
+        <CursorPos X="19" Y="24"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit342>
+      <Unit343>
+        <Filename Value="Lib/Pepak/uCrypto.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="338"/>
+        <CursorPos Y="361"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit343>
+      <Unit344>
+        <Filename Value="Lib/PerlRegEx/pcre.pas"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="519"/>
+        <CursorPos X="45" Y="539"/>
         <UsageCount Value="11"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit386>
-      <Unit387>
-        <Filename Value="C:/lazarus/lcl/include/listitem.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="36"/>
-        <CursorPos Y="62"/>
-        <UsageCount Value="11"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit387>
-      <Unit388>
-        <Filename Value="C:/lazarus/components/lazutils/lazutf8.pas"/>
-        <UnitName Value="LazUTF8"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="40"/>
-        <CursorPos X="21" Y="61"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit388>
-      <Unit389>
-        <Filename Value="Common/backup/uDownloadClassifier.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="114"/>
-        <CursorPos X="21" Y="132"/>
-        <UsageCount Value="9"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit389>
-      <Unit390>
-        <Filename Value="C:/lazarus/lcl/interfaces/gtk3/gtk3widgets.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="14" Y="94"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit390>
-      <Unit391>
-        <Filename Value="Lib/Pepak/uFiles.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="504"/>
-        <CursorPos Y="524"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit391>
-      <Unit392>
-        <Filename Value="Common/backup/uOptions.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="164"/>
-        <CursorPos X="52" Y="182"/>
-        <UsageCount Value="10"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
-      </Unit392>
+      </Unit344>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
-        <Filename Value="Downloaders/downCT.pas"/>
-        <Caret Line="270" Column="37" TopLine="253"/>
+        <Filename Value="Downloaders/downYouTube.pas"/>
+        <Caret Line="789" TopLine="762"/>
       </Position1>
       <Position2>
-        <Filename Value="GUI/LCL/guiMainLCL.pas"/>
-        <Caret Line="296" Column="36"/>
+        <Filename Value="Downloaders/downYouTube.pas"/>
+        <Caret Line="790" TopLine="762"/>
       </Position2>
       <Position3>
-        <Filename Value="GUI/LCL/guiMainLCL.pas"/>
-        <Caret Line="1134" Column="5" TopLine="1099"/>
+        <Filename Value="Downloaders/downYouTube.pas"/>
+        <Caret Line="789" Column="63" TopLine="762"/>
       </Position3>
       <Position4>
-        <Filename Value="Downloaders/downDash.pas"/>
-        <Caret Line="59" Column="18" TopLine="41"/>
+        <Filename Value="Downloaders/downYouTube.pas"/>
+        <Caret Line="773" Column="51" TopLine="758"/>
       </Position4>
       <Position5>
-        <Filename Value="Base/uDownloader.pas"/>
-        <Caret Line="1204" TopLine="1186"/>
+        <Filename Value="GUI/guiFunctions.pas"/>
+        <Caret Line="138" TopLine="120"/>
       </Position5>
       <Position6>
-        <Filename Value="Common/uMessages.pas"/>
-        <Caret Line="77" Column="7" TopLine="59"/>
+        <Filename Value="GUI/guiFunctions.pas"/>
+        <Caret Line="139" TopLine="120"/>
       </Position6>
       <Position7>
-        <Filename Value="Common/uMessages.pas"/>
-        <Caret Line="78" Column="7" TopLine="59"/>
+        <Filename Value="GUI/guiFunctions.pas"/>
+        <Caret Line="142" TopLine="120"/>
       </Position7>
       <Position8>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="118" Column="39" TopLine="105"/>
+        <Filename Value="GUI/guiFunctions.pas"/>
+        <Caret Line="144" TopLine="120"/>
       </Position8>
       <Position9>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="181" Column="74" TopLine="162"/>
+        <Filename Value="YTD.dpr"/>
+        <Caret Line="336" Column="3" TopLine="308"/>
       </Position9>
       <Position10>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="899" Column="102" TopLine="879"/>
+        <Filename Value="Base/uHDSDownloader.pas"/>
+        <Caret Line="50" Column="11" TopLine="35"/>
       </Position10>
       <Position11>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="300" Column="41" TopLine="278"/>
+        <Filename Value="Base/uHLSDownloader.pas"/>
+        <Caret Line="285" Column="61" TopLine="274"/>
       </Position11>
       <Position12>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="299" Column="36" TopLine="282"/>
+        <Filename Value="YTD.dpr"/>
+        <Caret Line="319" Column="34" TopLine="308"/>
       </Position12>
       <Position13>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="900" Column="29" TopLine="885"/>
+        <Filename Value="YTD.dpr"/>
+        <Caret Line="50" Column="50" TopLine="34"/>
       </Position13>
       <Position14>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="120" Column="40" TopLine="104"/>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <Caret Line="172" Column="39" TopLine="136"/>
       </Position14>
       <Position15>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="182" Column="76" TopLine="154"/>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <Caret Line="446" Column="36" TopLine="418"/>
       </Position15>
       <Position16>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="900" Column="46" TopLine="871"/>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <Caret Line="160" Column="28" TopLine="134"/>
       </Position16>
       <Position17>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="120" Column="16" TopLine="104"/>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <Caret Line="71" Column="37" TopLine="46"/>
       </Position17>
       <Position18>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="182" Column="52" TopLine="164"/>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <Caret Line="160" Column="22" TopLine="130"/>
       </Position18>
       <Position19>
-        <Filename Value="Common/uOptions.pas"/>
-        <Caret Line="900" Column="22" TopLine="882"/>
+        <Filename Value="Lib/Pepak/uStrings.pas"/>
+        <Caret Line="339" Column="39" TopLine="265"/>
       </Position19>
       <Position20>
-        <Filename Value="YTD.dpr"/>
-        <Caret Line="44" Column="41" TopLine="38"/>
+        <Filename Value="Common/uOptions.pas"/>
+        <Caret Line="52" Column="3" TopLine="34"/>
       </Position20>
       <Position21>
-        <Filename Value="YTD.dpr"/>
-        <Caret Line="502" Column="5" TopLine="468"/>
+        <Filename Value="Lib/Synapse/source/lib/synautil.pas"/>
+        <Caret Line="1317" Column="34" TopLine="1296"/>
       </Position21>
       <Position22>
-        <Filename Value="YTD.dpr"/>
-        <Caret TopLine="55"/>
+        <Filename Value="Lib/PerlRegEx/pcre.pas"/>
+        <Caret Line="539" Column="45" TopLine="519"/>
       </Position22>
-      <Position23>
-        <Filename Value="YTD.dpr"/>
-        <Caret Line="67" Column="3" TopLine="55"/>
-      </Position23>
-      <Position24>
-        <Filename Value="Common/uMain.pas"/>
-        <Caret Line="545" Column="15" TopLine="528"/>
-      </Position24>
-      <Position25>
-        <Filename Value="Common/uMessages.pas"/>
-        <Caret Line="79" Column="25" TopLine="59"/>
-      </Position25>
-      <Position26>
-        <Filename Value="CLI/uYTD.pas"/>
-        <Caret Line="340" Column="62" TopLine="343"/>
-      </Position26>
-      <Position27>
-        <Filename Value="Common/uMessages.pas"/>
-        <Caret Line="79" Column="3" TopLine="59"/>
-      </Position27>
-      <Position28>
-        <Filename Value="Common/uMessages.pas"/>
-        <Caret Line="80" Column="3" TopLine="59"/>
-      </Position28>
-      <Position29>
-        <Filename Value="CLI/uYTD.pas"/>
-        <Caret Line="339" Column="13" TopLine="313"/>
-      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0" ActiveMode="default"/>
+      <Modes ActiveMode="default"/>
     </RunParams>
+    <HistoryLists Count="1">
+      <List0 Name="LaunchingApplication" Type="File" Count="1">
+        <Item1 Value="/usr/bin/konsole -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </List0>
+    </HistoryLists>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="GUI/VCL/guiMainVCL.pas"/>
-        <Line Value="1018"/>
-      </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Lib/PerlRegEx/pcre.pas"/>
-        <Line Value="873"/>
-      </Item2>
-    </BreakPoints>
-    <Watches Count="5">
-      <Item1>
+    <Watches>
+      <Item>
         <Expression Value="s"/>
-      </Item1>
-      <Item2>
-        <Expression Value="DownloadList.Count"/>
-      </Item2>
-      <Item3>
+      </Item>
+      <Item>
+        <Expression Value="source"/>
+      </Item>
+      <Item>
         <Expression Value="UrlRegExp"/>
-      </Item3>
-      <Item4>
-        <Expression Value="i"/>
-      </Item4>
-      <Item5>
-        <Expression Value="Downloads.Items[i].Selected"/>
-      </Item5>
+      </Item>
+      <Item>
+        <Expression Value="WideoFormat"/>
+      </Item>
+      <Item>
+        <Expression Value="width"/>
+      </Item>
+      <Item>
+        <Expression Value="height"/>
+      </Item>
     </Watches>
   </Debugging>
 </CONFIG>

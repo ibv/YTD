@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes,
   uPCRE, uXml, HttpSend,
-  uDownloader, uCommonDownloader, uHttpDownloader, uPlaylistDownloader;
+  uDownloader, uCommonDownloader, uPlaylistDownloader;
 
 type
   TPlaylist_YouTube_Page = class(TPlaylistDownloader)

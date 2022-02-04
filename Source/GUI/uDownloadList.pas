@@ -41,13 +41,14 @@ interface
 
 uses
   SysUtils, Classes,
-  {$ifndef fpc}
-    Windows
-  {$ELSE}
-    LCLIntf, LCLType, LMessages,
+  {$ifdef mswindows}
+    Windows,
+  {$ENDIF}
+  {$IFDEF fpc}
+    LCLIntf, LCLType,
   {$ENDIF}
   {$IFDEF GUI_WINAPI} uDialogs, {$ELSE} Dialogs, {$ENDIF}
-  uCompatibility, uDownloadListItem, uDownloadThread,
+  uDownloadListItem, uDownloadThread,
   uDownloadClassifier, uDownloader,
   uPlaylistDownloader, listHTML, listHTMLfile,
   uOptions, uLanguages, uFunctions;
@@ -167,7 +168,7 @@ begin
     DownloadingList.Clear;
   finally
     Options.AutoStartDownloads := AutoSt;
-  end;
+    end;
 end;
 
 function TDownloadList.GetCount: integer;
@@ -197,6 +198,7 @@ end;
 
 function TDownloadList.AddNewItem(const Source, Title: string; Downloader: TDownloader): integer; 
 var Item: TDownloadListItem;
+    s:string;
 begin
   Item := TDownloadListItem.Create(Downloader, True);
   Item.Title := Title;

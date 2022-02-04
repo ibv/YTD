@@ -41,9 +41,10 @@ interface
 
 uses
   SysUtils, Classes,
-  {$ifndef fpc}
+  {$ifdef mswindows}
     Windows,  ShellApi,
-  {$ELSE}
+  {$ENDIF}
+  {$IFDEF fpc}
     LCLIntf, LCLType, LMessages, Process, FileUtil,
   {$ENDIF}
   uDownloader, uDownloadThread,

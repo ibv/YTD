@@ -44,12 +44,12 @@ uses
     Windows, ActiveX, ShellApi,
     ShlObj,
   {$ELSE}
-    LCLIntf, LCLType, LMessages, fileutil,
+    LCLIntf, LCLType, fileutil,
   {$ENDIF}
 
   SysUtils, Classes, {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   HttpSend,
-  uLanguages, uXml;
+  uXml;
 
 type
   TOverwriteMode = (omNever, omAlways, omRename, omAsk);
@@ -292,9 +292,6 @@ const
   {$ENDIF}
   XML_DEFAULT_DOWNLOADTOTEMPFILES = False;
   XML_DEFAULT_DOWNLOADTOPROVIDERSUBDIRS = False;
-  ///XML_DEFAULT_IGNOREMISSINGOPENSSL = False;
-  ///XML_DEFAULT_IGNOREMISSINGRTMPDUMP = False;
-  ///XML_DEFAULT_IGNOREMISSINGMSDL = False;
   XML_DEFAULT_IGNOREMISSINGOPENSSL = True;
   XML_DEFAULT_IGNOREMISSINGRTMPDUMP = True;
   XML_DEFAULT_IGNOREMISSINGMSDL = True;
@@ -307,22 +304,25 @@ resourcestring
 { TYTDOptions }
 
 constructor TYTDOptions.Create;
-var PathBuf: array[0..MAX_PATH+1] of Char;
-    LocalXml, ExeXml: string;
+///var PathBuf: array[0..MAX_PATH+1] of Char;
+///    LocalXml, ExeXml: string;
 begin
   inherited Create;
   fXml := TXmlDoc.Create;
-  LocalXml := ExtractFileName(ChangeFileExt(ParamStr(0), '.xml'));
+  {LocalXml := ExtractFileName(ChangeFileExt(ParamStr(0), '.xml'));
   ExeXml := ChangeFileExt(ParamStr(0), '.xml');
   if FileExists(LocalXml) then
     fMainXmlFileName := LocalXml
   else if FileExists(ExeXml) then
     fMainXmlFileName := ExeXml
   else
-    fMainXmlFileName := LocalXml;
+    fMainXmlFileName := LocalXml;}
+  ///fMainXmlFileName := GetAppConfigDir(False)+'ytd.xml';
+  fMainXmlFileName := 'ytd.xml';
+
   fUserXmlFileName := '';
   ///if SHGetSpecialFolderPath(0, PathBuf, CSIDL_APPDATA, False) then
-  ///  fUserXmlFileName := PathBuf + '\YouTube Downloader\ytd.xml';
+  ///  fUserXmlFileName := PathBuf + '\YTD\ytd.xml';
   Init;
 end;
 
@@ -687,7 +687,6 @@ begin
       begin
       ProfileDir := ExtractFilePath(XmlFileName);
       Result := ProfileDir + DEFS_FILENAME;
-      ///if (not FileExists(Result)) or (GetFileDateTime(Result) < GetFileDateTime(MainFileName)) then
       {$ifndef fpc}
       if (not FileExists(Result)) or (GetFileDateTime(Result) < GetFileDateTime(MainFileName)) then
       {$else}
