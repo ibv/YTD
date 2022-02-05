@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.66.20211210.0</version>
+  <version>1.67.20220127.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -2418,6 +2418,57 @@
           </headers>
         </http_download>
       </script>
+      <script id="pvideo.cz" provider="Pvideo.cz" changed="20220126">
+        <regexps>
+          <regexp id="info" match="INFO"><![CDATA[<video id="video"(?P<INFO>.+?)</video></div><script>]]></regexp>
+          <regexp id="url" match="URL"><![CDATA[src="(?P<URL>.+?)"\s*title="(?P<QUALITY>.+?)p"\s*type="(?P<TYPE>.+?)"]]></regexp>
+          <regexp id="type" match="X"><![CDATA[^(?P<X>application/x-mpegURL)$]]></regexp>    
+        </regexps>
+        <set_var id="page">
+          <download_page encoding="ansi">
+            <url>
+              <get_var id="_movie_id"/>
+            </url>
+          </download_page>
+        </set_var>
+        <set_var id="info">
+          <regexp id="info" content="page"/>
+        </set_var>
+        <multi_regexp id="url" content="info" var_prefix="urls_" match="QUALITY,URL,TYPE">
+          <best_var id="urls_QUALITY" type="numeric_ascending">
+            <set_var id="url">
+              <get_var id="urls_URL"/>
+            </set_var>
+            <set_var id="type">
+              <get_var id="urls_TYPE"/>
+            </set_var>
+          </best_var>
+        </multi_regexp>
+       <if>
+          <condition type="regexp_match" id="type" content="type">    
+            <hls_download>
+             <title>
+               <regexp id="meta_ogtitle" content="page"/>
+             </title>
+             <url>
+               <get_var id="url"/>
+             </url>
+             <extension>.mp4</extension>
+            </hls_download>
+          </condition>
+          <else>
+            <http_download>
+             <title>
+               <regexp id="meta_ogtitle" content="page"/>
+             </title>
+             <url>
+               <get_var id="url"/>
+             </url>
+             <extension>.mp4</extension>
+            </http_download>
+        </else>
+      </if>
+      </script>
       <script id="randyblue.com" provider="RandyBlue.com">
         <regexps>
           <regexp id="info" match="ID"><![CDATA[\bvid\s*\(\s*'(?P<ID>\d+)'\s*,\s*'(?P<TYPE>\w+)'\s*\)\s*;]]></regexp>
@@ -2739,7 +2790,7 @@
     <url script="blesk.cz"><![CDATA[blesk\.cz/.+$]]></url>
     <url script="ceknito.sk"><![CDATA[ceknito\.(?:cz|sk)/video/.+$]]></url>
     <!--url script="ceskatelevize.cz"><![CDATA[ceskatelevize\.cz/(?!ivysilani/).+$]]></url-->
-    <url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
+     <url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
     <url script="cetv.sk"><![CDATA[cetv\.sk/.+$]]></url>
     <url script="cloudzilla.to"><![CDATA[cloudzilla.to/embed/.+$]]></url>
     <url script="csfd.cz"><![CDATA[csfd\.cz/.+$]]></url>
@@ -2754,7 +2805,7 @@
     <url script="iconcerts.com"><![CDATA[iconcerts\.com/.+$]]></url>
     <url script="idnes.cz-embed"><![CDATA[servi[sx]\.idnes\.cz/(?:media/video\.aspx?|stream/flv/data\.asp)\?.+$]]></url>
     <url script="idnes.cz"><![CDATA[(?<!\brajce\.)idnes\.cz/.+$]]></url>
-    <url script="iprima.cz"><![CDATA[iprima\.cz/.+$]]></url>
+    <!--url script="iprima.cz"><![CDATA[iprima\.cz/.+$]]></url-->
     <url script="itnsource.com"><![CDATA[itnsource\.com/.+$]]></url>
     <url script="jihoceskatelevize.cz"><![CDATA[jihoceskatelevize\.cz/.+$]]></url>
     <url script="joj.sk-embed"><![CDATA[media\.joj\.sk/.+$]]></url>
@@ -2808,6 +2859,7 @@
       <url script="jenpromuze.cz"><![CDATA[jenpromuze\.cz/video/.+$]]></url>
       <url script="navratdoreality.cz"><![CDATA[navratdoreality\.cz/.+$]]></url>
       <url script="perfectgirls.net"><![CDATA[perfectgirls\.net/.+$]]></url>
+      <url script="pvideo.cz"><![CDATA[pvideo\.cz/.+$]]></url>
       <url script="randyblue.com"><![CDATA[randyblue\.com/.+$]]></url>
       <url script="redtube.com"><![CDATA[redtube\.com/.+$]]></url>
       <url script="sextubespot.com"><![CDATA[sextubespot\.com/videos/.+$]]></url>
