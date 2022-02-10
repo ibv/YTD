@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.67.20220209.0</version>
+  <version>1.67.20220210.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1515,7 +1515,7 @@
         <url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
       </http_download>
     </script>
-    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20220209">
+    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20220210">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<h1 class="article-type.+?">(?P<TITLE>.+?)</h1>]]></regexp>
         <regexp id="part"><![CDATA[aria-labelledby="Audio part">]]></regexp>
@@ -1576,7 +1576,7 @@
            <multi_regexp content="json" id="data-title" var_prefix="loop_" match="TITLE,URL">
           <http_download>
             <title>
-              <replace search=":" replacement=""><get_var id="loop_TITLE"/></replace>
+              <replace search=":" replacement=""><decode_js><get_var id="loop_TITLE"/></decode_js></replace>
             </title>
             <url>
               <decode_js><get_var id="loop_URL"/></decode_js>
