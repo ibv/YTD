@@ -972,7 +972,7 @@ begin
         'u':
           begin
             System.Insert( {$IFDEF FPC} string {$ENDIF} (WideChar(StrToInt('$' + Copy(Result, i+2, 4)))), Result, i);
-            System.Delete(Result, i+1, 6);
+            System.Delete(Result, i+2, 6);
           end;
         'r':
           begin
