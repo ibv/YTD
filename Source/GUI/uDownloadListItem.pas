@@ -78,6 +78,7 @@ type
       fOnConvertThreadFinished: TNotifyEvent;
       {$ENDIF}
       fTitle: string;
+      fPlaySound: boolean;
     protected
       procedure SetState(Value: TDownloadThreadState); virtual;
       procedure SetTotalSize(Value: int64); virtual;
@@ -142,6 +143,7 @@ type
       {$IFDEF CONVERTERS}
       property OnConvertThreadFinished: TNotifyEvent read fOnConvertThreadFinished write fOnConvertThreadFinished;
       {$ENDIF}
+      property PlaySound: boolean read fPlaySound write fPlaySound;
     end;
 
 implementation
@@ -156,6 +158,7 @@ begin
   fThread := nil;
   fDownLoader.MaxVResolution := 0;
   InitStatus;
+  fPlaySound:=true;
 end;
 
 destructor TDownloadListItem.Destroy;

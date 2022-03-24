@@ -1,0 +1,72 @@
+LazarusResources.Add('gpl.txt','TXT',[
+  '  Copyright (C) <year> <name of author> <contact>'#13#10#13#10'  This source'
+  +' is free software; you can redistribute it and/or modify it under'#13#10'  '
+  +'the terms of the GNU General Public License as published by the Free'#13#10
+  +'  Software Foundation; either version 2 of the License, or (at your option)'
+  +#13#10'  any later version.'#13#10#13#10'  This code is distributed in the h'
+  +'ope that it will be useful, but WITHOUT ANY'#13#10'  WARRANTY; without even'
+  +' the implied warranty of MERCHANTABILITY or FITNESS'#13#10'  FOR A PARTICUL'
+  +'AR PURPOSE.  See the GNU General Public License for more'#13#10'  details.'
+  +#13#10#13#10'  A copy of the GNU General Public License is available on the '
+  +'World Wide Web'#13#10'  at <http://www.gnu.org/copyleft/gpl.html>. You can '
+  +'also obtain it by writing'#13#10'  to the Free Software Foundation, Inc., 5'
+  +'9 Temple Place - Suite 330, Boston,'#13#10'  MA 02111-1307, USA.'
+]);
+LazarusResources.Add('lgpl.txt','TXT',[
+  '  Copyright (C) <year> <name of author> <contact>'#13#10#13#10'  This librar'
+  +'y is free software; you can redistribute it and/or modify it'#13#10'  under'
+  +' the terms of the GNU Library General Public License as published by'#13#10
+  +'  the Free Software Foundation; either version 2 of the License, or (at you'
+  +'r'#13#10'  option) any later version.'#13#10#13#10'  This program is distri'
+  +'buted in the hope that it will be useful, but WITHOUT'#13#10'  ANY WARRANTY'
+  +'; without even the implied warranty of MERCHANTABILITY or'#13#10'  FITNESS '
+  +'FOR A PARTICULAR PURPOSE. See the GNU Library General Public License'#13#10
+  +'  for more details.'#13#10#13#10'  You should have received a copy of the G'
+  +'NU Library General Public License'#13#10'  along with this library; if not,'
+  +' write to the Free Software Foundation,'#13#10'  Inc., 59 Temple Place - Su'
+  +'ite 330, Boston, MA 02111-1307, USA.'
+]);
+LazarusResources.Add('mit.txt','TXT',[
+  '  Copyright (c) <year> <copyright holders>'#13#10#13#10'  Permission is here'
+  +'by granted, free of charge, to any person obtaining a copy'#13#10'  of this'
+  +' software and associated documentation files (the "Software"), to'#13#10'  '
+  +'deal in the Software without restriction, including without limitation the'
+  +#13#10'  rights to use, copy, modify, merge, publish, distribute, sublicense'
+  +', and/or'#13#10'  sell copies of the Software, and to permit persons to who'
+  +'m the Software is'#13#10'  furnished to do so, subject to the following con'
+  +'ditions:'#13#10#13#10'  The above copyright notice and this permission noti'
+  +'ce shall be included in'#13#10'  all copies or substantial portions of the '
+  +'Software.'#13#10#13#10'  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY'
+  +' OF ANY KIND, EXPRESS OR'#13#10'  IMPLIED, INCLUDING BUT NOT LIMITED TO THE'
+  +' WARRANTIES OF MERCHANTABILITY,'#13#10'  FITNESS FOR A PARTICULAR PURPOSE A'
+  +'ND NONINFRINGEMENT. IN NO EVENT SHALL THE'#13#10'  AUTHORS OR COPYRIGHT HOL'
+  +'DERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER'#13#10'  LIABILITY, WHETHER '
+  +'IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING'#13#10'  FROM, OUT OF '
+  +'OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS'#13#10'  IN'
+  +' THE SOFTWARE.'
+]);
+LazarusResources.Add('modifiedgpl.txt','TXT',[
+  '  Copyright (C) <year> <name of author> <contact>'#13#10#13#10'  This librar'
+  +'y is free software; you can redistribute it and/or modify it'#13#10'  under'
+  +' the terms of the GNU Library General Public License as published by'#13#10
+  +'  the Free Software Foundation; either version 2 of the License, or (at you'
+  +'r'#13#10'  option) any later version with the following modification:'#13#10
+  +#13#10'  As a special exception, the copyright holders of this library give '
+  +'you'#13#10'  permission to link this library with independent modules to pr'
+  +'oduce an'#13#10'  executable, regardless of the license terms of these inde'
+  +'pendent modules,and'#13#10'  to copy and distribute the resulting executabl'
+  +'e under terms of your choice,'#13#10'  provided that you also meet, for eac'
+  +'h linked independent module, the terms'#13#10'  and conditions of the licen'
+  +'se of that module. An independent module is a'#13#10'  module which is not '
+  +'derived from or based on this library. If you modify'#13#10'  this library,'
+  +' you may extend this exception to your version of the library,'#13#10'  but'
+  +' you are not obligated to do so. If you do not wish to do so, delete this'
+  +#13#10'  exception statement from your version.'#13#10#13#10'  This program '
+  +'is distributed in the hope that it will be useful, but WITHOUT'#13#10'  ANY'
+  +' WARRANTY; without even the implied warranty of MERCHANTABILITY or'#13#10' '
+  +' FITNESS FOR A PARTICULAR PURPOSE. See the GNU Library General Public Licen'
+  +'se'#13#10'  for more details.'#13#10#13#10'  You should have received a cop'
+  +'y of the GNU Library General Public License'#13#10'  along with this librar'
+  +'y; if not, write to the Free Software Foundation,'#13#10'  Inc., 59 Temple '
+  +'Place - Suite 330, Boston, MA 02111-1307, USA.'
+]);

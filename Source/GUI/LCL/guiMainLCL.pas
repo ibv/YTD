@@ -48,7 +48,7 @@ uses
   {$endif}
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Buttons, ComCtrls, ClipBrd, Menus, ImgList, ActnList,
-  ToolWin, ExtCtrls,  {CommDlg, CommCtrl,}
+  ToolWin, ExtCtrls,
   {$IFNDEF DELPHI7_UP}
   FileCtrl,
   {$ENDIF}
@@ -58,9 +58,8 @@ uses
   {$IFDEF DELPHIX_SEATTLE_UP}
   Types,
   {$ENDIF}
-  SynaCode,
-  uLanguages, uFunctions, uMessages, uOptions, uStrings, uCompatibility,
-  guiOptions, guiFunctions, {uDialogs,} uUpgrade,
+  uLanguages, uFunctions, uMessages, uOptions, uCompatibility, uplaysound,
+  guiOptions, guiFunctions, uUpgrade,
   uDownloadList, uDownloadListItem, uDownloadThread, Types;
 
 {$IFDEF SYSTRAY}
@@ -82,6 +81,15 @@ type
     Item6: TMenuItem;
     item4: TMenuItem;
     Item5: TMenuItem;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    mnuResolut: TMenuItem;
+    playsound1: Tplaysound;
+    Separator1: TMenuItem;
     VQualityPopUp: TPopupMenu;
     ToolVQuality: TToolButton;
     TrayIcon: TTrayIcon;
@@ -202,7 +210,15 @@ type
     procedure item4Click(Sender: TObject);
     procedure Item5Click(Sender: TObject);
     procedure Item6Click(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem5Click(Sender: TObject);
+    procedure MenuItem6Click(Sender: TObject);
     procedure TrayIconClick(Sender: TObject);
+  private
+    procedure SetResolution(Ind, Res: integer);
   protected
     fLoading: boolean;
     fNextTotalRecalculation: TDateTime;
@@ -280,6 +296,9 @@ const
   LVM_SETHOVERTIME             = LVM_FIRST + 71;
   LVM_GETHOVERTIME             = LVM_FIRST + 72;
 
+
+const
+   Res : array[0..5] of integer = (0,1920,1280,1024,720,512);
 
 { TFormYTD }
 
@@ -651,6 +670,13 @@ begin
               {$ENDIF}
               end;
           {$ENDIF}
+            if DlItem.PlaySound and Options.EndSound then
+            begin
+              playsound1.SoundFile:=Options.EndSoundFile;
+              playsound1.PlayStyle:=psASync;
+              playsound1.Execute;
+              DlItem.PlaySound:=false;
+            end;
           end;
         dtsFailed:
           sProgress := DlItem.ErrorMessage + ' (' + DlItem.ErrorClass + ')';
@@ -703,6 +729,14 @@ var i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
+
+  if Options.StartSound then
+  begin
+    playsound1.SoundFile:=Options.StartSoundFile;
+    playsound1.PlayStyle:=psASync;
+    playsound1.Execute;
+  end;
+
   if Downloads.SelCount = 1 then
     StartPauseResumeTask(Downloads.Selected.Index)
   else
@@ -1060,45 +1094,45 @@ procedure TFormYTD.DownloadsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
   i, j, ind: integer;
-  pr, value: string;
   Item : TLIstItem;
 
-const
-   Res : array[0..5] of integer = (0,1920,1280,1024,720,512);
-
 begin
-  if button  = mbMiddle then
+  if button  = mbLeft then
   begin
     Item := Downloads.GetItemAt(X, Y);
+
     if Assigned(Item) then
     begin
-      fMenuID:=-1;
       i := Item.index;
-      for ind:=0 to VQualityPopUp.Items.Count-1 do
+      ind := DownloadList[i].Downloader.MaxVResolution;
+      for j := Low(Res) to High(Res) do
       begin
-        VQualityPopUp.Items[ind].Checked:=false;
-        if Res[ind] = DownloadList[i].Downloader.MaxVResolution{.MaxVResolution} then
-        begin
-          VQualityPopUp.Items[ind].Checked:=true;
-          j:=ind;
-        end;
+        mnuResolut[j].Checked:=false;
+        if ind = res[j] then
+          mnuResolut[j].Checked:=true;
       end;
+
     end;
-    VQualityPopUp.PopUp;
-    if (j <> fMenuID) and (fMenuID >= 0) then
-    begin
-      VQualityPopUp.Items[j].Checked:=false;
-      VQualityPopUp.Items[fMenuID].Checked:=true;
-      value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
-      Options.WriteProviderOption(DownloadList[i].Downloader.ProviderName, 'max_video_width', Res[fMenuID]);
-      Options.WriteProviderOption(DownloadList[i].Downloader.ProviderName, 'max_video_bitrate', value);
-      DownloadList[i].Downloader.MaxVResolution:=Res[fMenuID];
-      ///DownloadList[i].MaxVBitrate := StrToIntDef(value,0);
-      DownloadList[i].Downloader.MaxVBitRate := StrToIntDef(value,0);
-      ///InputQuery('Max Video Bitrate', 'Please type your value', value);
-    end;
+
   end;
 end;
+
+
+procedure TFormYTD.SetResolution(Ind, Res: integer);
+var
+ value: string;
+
+begin
+    if (ind <> fMenuID) and (fMenuID >= 0) then
+    begin
+      value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
+      Options.WriteProviderOption(DownloadList[ind].Downloader.ProviderName, 'max_video_width', Res);
+      Options.WriteProviderOption(DownloadList[ind].Downloader.ProviderName, 'max_video_bitrate', value);
+      DownloadList[ind].Downloader.MaxVResolution:=Res;
+      DownloadList[ind].Downloader.MaxVBitRate := StrToIntDef(value,0);
+    end;
+end;
+
 
 
 procedure TFormYTD.actPlayExecute(Sender: TObject);
@@ -1154,6 +1188,55 @@ procedure TFormYTD.Item6Click(Sender: TObject);
 begin
   fMenuID:=5;
 
+end;
+
+procedure TFormYTD.MenuItem1Click(Sender: TObject);
+begin
+  fMenuID:=0;
+  mnuResolut[fMenuID].Checked:=true;
+
+  SetResolution(Downloads.Selected.index, Res[fMenuID]);
+end;
+
+procedure TFormYTD.MenuItem2Click(Sender: TObject);
+begin
+  fMenuID:=1;
+  mnuResolut[fMenuID].Checked:=true;
+
+  SetResolution(Downloads.Selected.index, Res[fMenuID]);
+
+end;
+
+procedure TFormYTD.MenuItem3Click(Sender: TObject);
+begin
+  fMenuID:=2;
+  mnuResolut[fMenuID].Checked:=true;
+
+  SetResolution(Downloads.Selected.index, Res[fMenuID]);
+end;
+
+procedure TFormYTD.MenuItem4Click(Sender: TObject);
+begin
+  fMenuID:=3;
+  mnuResolut[fMenuID].Checked:=true;
+
+  SetResolution(Downloads.Selected.index, Res[fMenuID]);
+end;
+
+procedure TFormYTD.MenuItem5Click(Sender: TObject);
+begin
+  fMenuID:=4;
+  mnuResolut[fMenuID].Checked:=true;
+
+  SetResolution(Downloads.Selected.index, Res[fMenuID]);
+end;
+
+procedure TFormYTD.MenuItem6Click(Sender: TObject);
+begin
+  fMenuID:=5;
+  mnuResolut[fMenuID].Checked:=true;
+
+  SetResolution(Downloads.Selected.index, Res[fMenuID]);
 end;
 
 

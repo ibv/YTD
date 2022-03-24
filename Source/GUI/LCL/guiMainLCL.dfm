@@ -1,7 +1,7 @@
 object FormYTD: TFormYTD
-  Left = 465
+  Left = 605
   Height = 399
-  Top = 213
+  Top = 347
   Width = 734
   Caption = 'YTD'
   ClientHeight = 399
@@ -161,7 +161,7 @@ object FormYTD: TFormYTD
   end
   object Downloads: TListView
     Left = 0
-    Height = 347
+    Height = 354
     Top = 29
     Width = 734
     Align = alClient
@@ -209,8 +209,8 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 376
+    Height = 16
+    Top = 383
     Width = 734
     AutoHint = True
     Panels = <>
@@ -1209,6 +1209,37 @@ object FormYTD: TFormYTD
         B0FFFDFEFDFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       }
     end
+    object Separator1: TMenuItem
+      Caption = '-'
+    end
+    object mnuResolut: TMenuItem
+      Caption = 'Set max video resolution'
+      ImageIndex = 17
+      object MenuItem1: TMenuItem
+        Caption = 'Auto'
+        OnClick = MenuItem1Click
+      end
+      object MenuItem2: TMenuItem
+        Caption = 'Full HD'
+        OnClick = MenuItem2Click
+      end
+      object MenuItem3: TMenuItem
+        Caption = 'HD'
+        OnClick = MenuItem3Click
+      end
+      object MenuItem4: TMenuItem
+        Caption = 'High'
+        OnClick = MenuItem4Click
+      end
+      object MenuItem5: TMenuItem
+        Caption = 'Med'
+        OnClick = MenuItem5Click
+      end
+      object MenuItem6: TMenuItem
+        Caption = 'Low'
+        OnClick = MenuItem6Click
+      end
+    end
     object N1: TMenuItem
       Caption = '-'
     end
@@ -1931,5 +1962,25 @@ object FormYTD: TFormYTD
       Caption = 'Low'
       OnClick = Item6Click
     end
+  end
+  object playsound1: Tplaysound
+    About.Description.Strings = (
+      'Plays WAVE sounds in Windows or Linux'#10'Public methods: Execute and StopSound'
+    )
+    About.Title = 'PlaySound'
+    About.Height = 400
+    About.Width = 400
+    About.Font.Color = clNavy
+    About.Font.Height = -13
+    About.BackGroundColor = clCream
+    About.Version = '0.0.8'
+    About.Authorname = 'Gordon Bamber'
+    About.Organisation = 'Public Domain'
+    About.AuthorEmail = 'minesadorada@charcodelvalle.com'
+    About.ComponentName = 'PlaySound'
+    About.LicenseType = abModifiedGPL
+    PlayCommand = 'play'
+    Left = 632
+    Top = 80
   end
 end

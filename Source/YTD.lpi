@@ -25,14 +25,14 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
+      <OutDir Value="../Bin/locale"/>
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
-      <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="67"/>
-      <BuildNr Value="2"/>
-      <StringTable ProductVersion="1.67"/>
+      <MinorVersionNr Value="68"/>
+      <BuildNr Value="1"/>
+      <StringTable ProductVersion="1.68"/>
     </VersionInfo>
     <MacroValues Count="1">
       <Macro1 Name="LCLWidgetType" Value="win32"/>
@@ -52,10 +52,13 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="playwavepackage"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="279">
       <Unit0>
@@ -171,7 +174,7 @@
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="Base/uDASHDownloader.pas"/>
+        <Filename Value="Base/udashdownloader.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uDASHdownloader"/>
       </Unit28>
@@ -1199,6 +1202,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="False"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
@@ -1211,4 +1215,17 @@
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL -dPEPAK"/>
     </Other>
   </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
 </CONFIG>

@@ -1,0 +1,83 @@
+object mainform: Tmainform
+  Left = 415
+  Height = 257
+  Top = 305
+  Width = 352
+  BorderIcons = [biSystemMenu]
+  Caption = 'mainform'
+  ClientHeight = 257
+  ClientWidth = 352
+  DefaultMonitor = dmPrimary
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '1.7'
+  object cmd_Async: TButton
+    Left = 264
+    Height = 25
+    Top = 180
+    Width = 75
+    Caption = 'Play Async'
+    OnClick = cmd_AsyncClick
+    TabOrder = 0
+  end
+  object BitBtn1: TBitBtn
+    Left = 264
+    Height = 30
+    Top = 216
+    Width = 75
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 1
+  end
+  object cmd_Sync: TButton
+    Left = 264
+    Height = 25
+    Top = 148
+    Width = 75
+    Caption = 'Play Sync'
+    OnClick = cmd_SyncClick
+    TabOrder = 2
+  end
+  object TIPropertyGrid1: TTIPropertyGrid
+    Left = 4
+    Height = 238
+    Top = 8
+    Width = 252
+    CheckboxForBoolean = False
+    DefaultValueFont.Color = clWindowText
+    Filter = [tkInteger, tkChar, tkEnumeration, tkFloat, tkSet, tkMethod, tkSString, tkLString, tkAString, tkWString, tkVariant, tkArray, tkRecord, tkInterface, tkClass, tkObject, tkWChar, tkBool, tkInt64, tkQWord, tkDynArray, tkInterfaceRaw, tkProcVar, tkUString, tkUChar, tkHelper]
+    Indent = 16
+    NameFont.Color = clWindowText
+    TIObject = playsound1
+    ValueFont.Color = clMaroon
+  end
+  object cmd_StopSound: TButton
+    Left = 264
+    Height = 25
+    Top = 112
+    Width = 75
+    Caption = 'Stop Sound'
+    OnClick = cmd_StopSoundClick
+    TabOrder = 4
+  end
+  object playsound1: Tplaysound
+    About.Description.Strings = (
+      'Plays WAVE sounds in Windows or Linux'
+    )
+    About.Title = 'About About About About About About PlaySound'
+    About.Height = 400
+    About.Width = 400
+    About.Font.Color = clNavy
+    About.Font.Height = -13
+    About.BackGroundColor = clCream
+    About.Version = '0.0.1'
+    About.Authorname = 'Gordon Bamber'
+    About.Organisation = 'Public Domain'
+    About.AuthorEmail = 'minesadorada@charcodelvalle.com'
+    About.ComponentName = 'PlaySound'
+    About.LicenseType = abLGPL
+    left = 104
+    top = 40
+  end
+end

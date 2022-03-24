@@ -124,6 +124,17 @@ type
       function GetAddIndexToNames: TIndexForNames;
       procedure SetAddIndexToNames(const Value: TIndexForNames);
       function GetScriptFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+
+      function GetStartSound: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetStartSound(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetStartSoundFile: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetStartSoundFile(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetEndSound: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetEndSound(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetEndSoundFile: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetEndSoundFile(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+
+
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
         procedure SetSelectedConverterID(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -175,6 +186,10 @@ type
       property DestinationPath: string read GetDestinationPath write SetDestinationPath;
       property ErrorLog: string read GetErrorLog write SetErrorLog;
       property AutoStartDownloads: boolean read GetAutoStartDownloads write SetAutoStartDownloads;
+      property StartSound: boolean read GetStartSound write SetStartSound;
+      property EndSound: boolean read GetEndSound write SetEndSound;
+      property StartSoundFile: string read GetStartSoundFile write SetStartSoundFile;
+      property EndSoundFile: string read GetEndSoundFile write SetEndSoundFile;
       property AutoDeleteFinishedDownloads: boolean read GetAutoDeleteFinishedDownloads write SetAutoDeleteFinishedDownloads;
       property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
       property DownloadRetryCount: integer read GetDownloadRetryCount write SetDownloadRetryCount;
@@ -243,6 +258,10 @@ const
   XML_PATH_ERRORLOG = 'config/error_log';
   XML_PATH_AUTOSTARTDOWNLOADS = 'gui/auto_start_downloads';
   XML_PATH_DELETFINISHEDDOWNLOADS = 'gui/auto_delete_finished_downloads';
+  XML_PATH_STARTSOUND = 'gui/start_sound';
+  XML_PATH_ENDSOUND = 'gui/end_sound';
+  XML_PATH_STARTSOUNDFILE = 'gui/start_sound_file';
+  XML_PATH_ENDSOUNDFILE = 'gui/end_sound_file';
   XML_PATH_AUTOTRYHTMLPARSER = 'config/auto_try_html_parser';
   XML_PATH_DOWNLOADRETRYCOUNT = 'config/download_retry_count';
   XML_PATH_SCRIPTFILENAME = 'config/script_filename';
@@ -275,6 +294,10 @@ const
   XML_DEFAULT_DESTINATIONPATH = '';
   XML_DEFAULT_ERRORLOG = '';
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
+  XML_DEFAULT_STARTSOUND = False;
+  XML_DEFAULT_ENDSOUND = False;
+  XML_DEFAULT_STARTSOUNDFILE = '';
+  XML_DEFAULT_ENDSOUNDFILE = '';
   XML_DEFAULT_DELETFINISHEDDOWNLOADS = False;
   XML_DEFAULT_AUTOTRYHTMLPARSER = True;
   XML_DEFAULT_DOWNLOADRETRYCOUNT = 0;
@@ -701,6 +724,53 @@ begin
       end;
     end;
 end;
+
+
+
+function TYTDOptions.GetStartSound: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_STARTSOUND), XML_DEFAULT_STARTSOUND);
+end;
+
+procedure TYTDOptions.SetStartSound(const Value: boolean);
+begin
+  SetOption(XML_PATH_STARTSOUND, BooleanToXml(Value));
+end;
+
+
+function TYTDOptions.GetStartSoundFile: string;
+begin
+  Result := GetOption(XML_PATH_STARTSOUNDFILE, XML_DEFAULT_STARTSOUNDFILE);
+end;
+
+
+procedure TYTDOptions.SetStartSoundFile(const Value: string);
+begin
+  SetOption(XML_PATH_STARTSOUNDFILE, Value);
+end;
+
+
+function TYTDOptions.GetEndSound: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_ENDSOUND), XML_DEFAULT_ENDSOUND);
+end;
+
+procedure TYTDOptions.SetEndSound(const Value: boolean);
+begin
+  SetOption(XML_PATH_ENDSOUND, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetEndSoundFile: string;
+begin
+  Result := GetOption(XML_PATH_ENDSOUNDFILE, XML_DEFAULT_ENDSOUNDFILE);
+end;
+
+procedure TYTDOptions.SetEndSoundFile(const Value: string);
+begin
+  SetOption(XML_PATH_ENDSOUNDFILE, Value);
+end;
+
+
 
 {$IFDEF SUBTITLES}
 function TYTDOptions.GetSubtitlesEnabled: boolean;

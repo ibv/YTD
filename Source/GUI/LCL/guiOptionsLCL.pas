@@ -40,9 +40,9 @@ unit guiOptionsLCL;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages,
+  LCLIntf, LCLType, {LMessages,}
 
-  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  {Messages,} SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ActnList, ComCtrls,
   {$IFDEF DELPHIXE4_UP}
   UITypes,
@@ -56,6 +56,14 @@ type
   { TFormOptions }
 
   TFormOptions = class(TForm)
+    acEndPlaySound: TAction;
+    actStartPlaySound: TAction;
+    BtnStartSound: TButton;
+    BtnEndSound: TButton;
+    CheckStartSound: TCheckBox;
+    CheckEndSound: TCheckBox;
+    EditStartSoundFile: TEdit;
+    EditEndSoundFile: TEdit;
     LabelOverwriteMode: TLabel;
     ComboOverwriteMode: TComboBox;
     LabelDownloadDir: TLabel;
@@ -69,6 +77,7 @@ type
     actOK: TAction;
     actCancel: TAction;
     actDownloadDir: TAction;
+    ODlg: TOpenDialog;
     PageOptions: TPageControl;
     TabMain: TTabSheet;
     CheckPortableMode: TCheckBox;
@@ -108,7 +117,11 @@ type
     Label1: TLabel;
     ComboAddIndexToNames: TComboBox;
     CheckAutoDeleteFinishedDownloads: TCheckBox;
+    procedure acEndPlaySoundExecute(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
+    procedure actStartPlaySoundExecute(Sender: TObject);
+    procedure CheckEndSoundChange(Sender: TObject);
+    procedure CheckStartSoundChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
@@ -202,6 +215,17 @@ begin
     EditDownloadDir.Text := Options.DestinationPath;
     ComboOverwriteMode.ItemIndex := OverwriteMode[Options.OverwriteMode];
     EditRetryCount.Text := IntToStr(Options.DownloadRetryCount);
+
+    CheckStartSound.Checked:= Options.StartSound;
+    EditStartSoundFile.Text:= Options.StartSoundFile;
+    EditStartSoundFile.Enabled:= CheckStartSound.Checked;
+    BtnStartSound.Enabled:= CheckStartSound.Checked;
+
+    CheckEndSound.Checked:= Options.EndSound;
+    EditEndSoundFile.Text:= Options.EndSoundFile;
+    EditEndSoundFile.Enabled:= CheckEndSound.Checked;
+    BtnEndSound.Enabled:= CheckEndSound.Checked;
+
     {$IFDEF CONVERTERS}
     PrepareConverterComboBox(ComboConverter, Options, Options.SelectedConverterID);
     fConverterIndex := ComboConverter.ItemIndex;
@@ -320,6 +344,11 @@ begin
   ///Options.MinimizeToTray := CheckMinimizeToTray.Checked;
   // Download options
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
+  Options.StartSound := CheckStartSound.Checked;
+  Options.EndSound := CheckEndSound.Checked;
+  Options.StartSoundFile := EditStartSoundFile.Text;
+  Options.EndSoundFile := EditEndSoundFile.Text;
+
   Options.AutoDeleteFinishedDownloads := CheckAutoDeleteFinishedDownloads.Checked;
   Options.AutoTryHtmlParser := CheckAutoTryHtmlParser.Checked;
   Options.SubtitlesEnabled := CheckSubtitlesEnabled.Checked;
@@ -351,6 +380,32 @@ end;
 procedure TFormOptions.actCancelExecute(Sender: TObject);
 begin
   close;
+end;
+
+procedure TFormOptions.acEndPlaySoundExecute(Sender: TObject);
+begin
+   if ODlg.Execute then
+        EditEndSoundFile.Text := Odlg.FileName;
+end;
+
+procedure TFormOptions.actStartPlaySoundExecute(Sender: TObject);
+begin
+  if ODlg.Execute then
+        EditStartSoundFile.Text := Odlg.FileName;
+
+end;
+
+procedure TFormOptions.CheckEndSoundChange(Sender: TObject);
+begin
+  EditEndSoundFile.Enabled := CheckEndSound.Checked;
+  btnEndSound.Enabled:= CheckEndSound.Checked;
+
+end;
+
+procedure TFormOptions.CheckStartSoundChange(Sender: TObject);
+begin
+  EditStartSoundFile.Enabled := CheckStartSound.Checked;
+  btnStartSound.Enabled:= CheckStartSound.Checked;
 end;
 
 

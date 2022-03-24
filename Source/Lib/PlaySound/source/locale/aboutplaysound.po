@@ -1,0 +1,35 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: aboutplaysound.rs_about
+msgid "About"
+msgstr ""
+
+#: aboutplaysound.rs_aboutboxerror
+msgid "Subcomponent TAboutBox Error"
+msgstr ""
+
+#: aboutplaysound.rs_by
+msgid "By"
+msgstr ""
+
+#: aboutplaysound.rs_componentname
+msgid "Component name"
+msgstr ""
+
+#: aboutplaysound.rs_datafilemissing
+msgid "Resource datafile license.lrs is missing"
+msgstr ""
+
+#: aboutplaysound.rs_for
+msgid "For"
+msgstr ""
+
+#: aboutplaysound.rs_license
+msgid "License"
+msgstr ""
+
+#: aboutplaysound.rs_licensetexterror
+msgid "There is something wrong with the Licence text"
+msgstr ""
+
