@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.66                                                    (c) 2009-20 Pepak/ibv
+YTD v1.68                                                    (c) 2009-20 Pepak/ibv
 https://ibv.github.io/YTD/
 
 http://www.pepak.net/ytd                                  http://www.pepak.net
@@ -8,6 +8,24 @@ ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.68: (fpc)
+
+    * Aktualizovaní poskytovatelé:
+      - Ceskatelevize.cz
+
+    * Přidána volba zvuku začátku a konce stahování
+    * Volba pro max rozlišení přidaná do hlavního menu
+  
+
+
+  v1.67: (fpc)
+
+    * Aktualizovaní poskytovatelé:
+      - iPrima.cz
+      - youtube.com
+  
+
 
   v1.66: (fpc)
 
