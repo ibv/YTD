@@ -144,7 +144,7 @@ const
   REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
   REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
   REGEXP_URL_TOKEN = '<token>(?P<TOKEN>.*?)</token>';
-  REGEX_PLAYLIST_ID_IDEC = '"id":"(?P<ID>.+?)","idec":"(?P<IDEC>.+?)",';
+  REGEX_PLAYLIST_ID_IDEC = '"idec":"(?P<IDEC>.+?)",*?';
 
 const
 
@@ -255,20 +255,20 @@ begin
   begin
     Http.UserAgent:=DEFAULT_USER_AGENT;
   end;
-  if not GetRegExpVars(IDEC, Page, ['ID', 'IDEC'], [@PlayListID, @PlaylistIDEC]) then
+
+  if not GetRegExpVars(IDEC, Page, ['IDEC'], [@PlaylistIDEC]) then
      SetLastErrorMsg('Failed to locate media info page (idec).')
  else
   if not DownloadPage(Http,'https://www.ceskatelevize.cz/v-api/iframe-hash/', iframeHash) then
      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?id='+PlayListID + '&hash=' +iframeHash + '&origin=iVysilani&autoStart=true&IDEC=' + PlayListIDEC, page) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+  else if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?hash=' +iframeHash + '&origin=iVysilani&autoStart=true&start=0&IDEC=' + PlayListIDEC, page) then
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
 
-  else if not GetPlaylistInfo(Http, Page, PlaylistType, PlaylistID) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,
                            'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist/',
-                           ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=flash'),
-                           {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
+                           ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
+                           {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist[0][type]=episode&playlist[0][id]='+PlaylistIDEC+'&playlist[0][startTime]=0'+
+                                                      '&requestSource=iVysilani&type=dash&canPlayDRM=false&requestUrl=/ivysilani/embed/iFramePlayer.php'),
                            HTTP_FORM_URLENCODING_UTF8,
                            ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
                            PlaylistUrlPage,
