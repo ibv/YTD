@@ -241,7 +241,7 @@ uses
   uStringConsts,
   uStrings,
   uMessages,
-  math
+  math, strutils
   ;
 
 const
@@ -971,8 +971,7 @@ begin
       case Result[i+1] of
         'u':
           begin
-            System.Insert( {$IFDEF FPC} string {$ENDIF} (WideChar(StrToInt('$' + Copy(Result, i+2, 4)))), Result, i);
-            System.Delete(Result, i+2, 6);
+            result:=AnsiReplaceStr(Result, '\u' + Copy(Result, i+2, 4), WideChar(StrToInt('$' + Copy(Result, i+2, 4))));
           end;
         'r':
           begin
