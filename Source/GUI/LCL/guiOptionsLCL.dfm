@@ -1,10 +1,10 @@
 object FormOptions: TFormOptions
   Left = 273
-  Height = 396
+  Height = 395
   Top = 214
   Width = 551
   Caption = 'Options'
-  ClientHeight = 396
+  ClientHeight = 395
   ClientWidth = 551
   Color = clBtnFace
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object FormOptions: TFormOptions
   object BtnOK: TButton
     Left = 391
     Height = 25
-    Top = 365
+    Top = 364
     Width = 75
     Action = actOK
     Anchors = [akRight, akBottom]
@@ -29,7 +29,7 @@ object FormOptions: TFormOptions
   object btnCancel: TButton
     Left = 471
     Height = 25
-    Top = 365
+    Top = 364
     Width = 75
     Action = actCancel
     Anchors = [akRight, akBottom]
@@ -39,7 +39,7 @@ object FormOptions: TFormOptions
   end
   object PageOptions: TPageControl
     Left = 0
-    Height = 344
+    Height = 343
     Top = 0
     Width = 543
     ActivePage = TabDownloadOptions
@@ -48,7 +48,7 @@ object FormOptions: TFormOptions
     TabOrder = 2
     object TabMain: TTabSheet
       Caption = 'Main settings'
-      ClientHeight = 318
+      ClientHeight = 317
       ClientWidth = 535
       object LabelLanguage: TLabel
         Left = 8
@@ -86,7 +86,7 @@ object FormOptions: TFormOptions
       object BtnDesktopShortcut: TButton
         Left = 8
         Height = 25
-        Top = 258
+        Top = 257
         Width = 512
         Action = actDesktopShortcut
         Anchors = [akLeft, akRight, akBottom]
@@ -95,7 +95,7 @@ object FormOptions: TFormOptions
       object BtnStartMenuShortcut: TButton
         Left = 8
         Height = 25
-        Top = 290
+        Top = 289
         Width = 512
         Action = actStartMenuShortcut
         Anchors = [akLeft, akRight, akBottom]
@@ -149,13 +149,13 @@ object FormOptions: TFormOptions
     end
     object TabDownloadOptions: TTabSheet
       Caption = 'Download settings'
-      ClientHeight = 318
+      ClientHeight = 317
       ClientWidth = 535
       ImageIndex = 1
       object LabelOverwriteMode: TLabel
         Left = 8
         Height = 13
-        Top = 232
+        Top = 246
         Width = 60
         Caption = '&Existing files:'
         FocusControl = ComboOverwriteMode
@@ -163,7 +163,7 @@ object FormOptions: TFormOptions
       object LabelDownloadDir: TLabel
         Left = 8
         Height = 13
-        Top = 179
+        Top = 201
         Width = 94
         Caption = '&Download directory:'
         FocusControl = EditDownloadDir
@@ -171,7 +171,7 @@ object FormOptions: TFormOptions
       object LabelConverter: TLabel
         Left = 8
         Height = 13
-        Top = 285
+        Top = 292
         Width = 49
         Caption = '&Converter:'
         FocusControl = ComboConverter
@@ -179,7 +179,7 @@ object FormOptions: TFormOptions
       object LabelRetryCount: TLabel
         Left = 8
         Height = 13
-        Top = 260
+        Top = 271
         Width = 58
         Caption = '&Retry count:'
         FocusControl = EditRetryCount
@@ -187,7 +187,7 @@ object FormOptions: TFormOptions
       object Label1: TLabel
         Left = 8
         Height = 13
-        Top = 204
+        Top = 221
         Width = 141
         Caption = 'Append &index to playlist items:'
         FocusControl = ComboAddIndexToNames
@@ -204,7 +204,7 @@ object FormOptions: TFormOptions
       object ComboOverwriteMode: TComboBox
         Left = 176
         Height = 21
-        Top = 226
+        Top = 240
         Width = 352
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
@@ -214,15 +214,15 @@ object FormOptions: TFormOptions
       object EditDownloadDir: TEdit
         Left = 176
         Height = 21
-        Top = 175
+        Top = 192
         Width = 336
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 6
       end
       object BtnDownloadDir: TButton
-        Left = 511
+        Left = 513
         Height = 21
-        Top = 175
+        Top = 191
         Width = 17
         Action = actDownloadDir
         Anchors = [akTop, akRight]
@@ -231,7 +231,7 @@ object FormOptions: TFormOptions
       object ComboConverter: TComboBox
         Left = 176
         Height = 21
-        Top = 281
+        Top = 288
         Width = 352
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
@@ -278,7 +278,7 @@ object FormOptions: TFormOptions
       object EditRetryCount: TEdit
         Left = 176
         Height = 21
-        Top = 253
+        Top = 264
         Width = 49
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 10
@@ -286,7 +286,7 @@ object FormOptions: TFormOptions
       object ComboAddIndexToNames: TComboBox
         Left = 176
         Height = 21
-        Top = 199
+        Top = 216
         Width = 352
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
@@ -311,9 +311,9 @@ object FormOptions: TFormOptions
         TabOrder = 12
       end
       object BtnStartSound: TButton
-        Left = 511
+        Left = 513
         Height = 21
-        Top = 120
+        Top = 121
         Width = 17
         Action = actStartPlaySound
         Anchors = [akTop, akRight]
@@ -322,17 +322,17 @@ object FormOptions: TFormOptions
       object EditEndSoundFile: TEdit
         Left = 176
         Height = 21
-        Top = 147
+        Top = 144
         Width = 336
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 14
       end
       object BtnEndSound: TButton
-        Left = 511
+        Left = 513
         Height = 21
-        Top = 147
+        Top = 143
         Width = 17
-        Action = acEndPlaySound
+        Action = actEndPlaySound
         Anchors = [akTop, akRight]
         TabOrder = 15
       end
@@ -349,17 +349,44 @@ object FormOptions: TFormOptions
       object CheckEndSound: TCheckBox
         Left = 8
         Height = 19
-        Top = 151
+        Top = 148
         Width = 168
         Anchors = [akTop, akLeft, akRight]
         Caption = 'End sound'
         OnChange = CheckEndSoundChange
         TabOrder = 17
       end
+      object CheckFailSound: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 170
+        Width = 168
+        Anchors = [akTop, akLeft, akRight]
+        Caption = 'Fail sound'
+        OnChange = CheckFailSoundChange
+        TabOrder = 18
+      end
+      object EditFailSoundFile: TEdit
+        Left = 176
+        Height = 21
+        Top = 168
+        Width = 336
+        Anchors = [akTop, akLeft, akRight]
+        TabOrder = 19
+      end
+      object BtnFailSound: TButton
+        Left = 513
+        Height = 21
+        Top = 167
+        Width = 17
+        Action = actFailPlaySound
+        Anchors = [akTop, akRight]
+        TabOrder = 20
+      end
     end
     object TabNetworkOptions: TTabSheet
       Caption = 'Network settings'
-      ClientHeight = 318
+      ClientHeight = 317
       ClientWidth = 535
       ImageIndex = 2
       object LabelProxyHost: TLabel
@@ -434,12 +461,12 @@ object FormOptions: TFormOptions
     end
     object TabDownloaderOptions: TTabSheet
       Caption = 'Downloader settings'
-      ClientHeight = 318
+      ClientHeight = 317
       ClientWidth = 535
       ImageIndex = 3
       object ListDownloaderOptions: TListBox
         Left = 0
-        Height = 318
+        Height = 317
         Top = 0
         Width = 169
         Align = alLeft
@@ -451,7 +478,7 @@ object FormOptions: TFormOptions
       end
       object PanelDownloaderOptions: TPanel
         Left = 169
-        Height = 318
+        Height = 317
         Top = 0
         Width = 366
         Align = alClient
@@ -462,7 +489,7 @@ object FormOptions: TFormOptions
   end
   object ActionList: TActionList
     Left = 16
-    Top = 336
+    Top = 352
     object actOK: TAction
       Caption = '&OK'
       OnExecute = actOKExecute
@@ -491,15 +518,19 @@ object FormOptions: TFormOptions
       Caption = '...'
       OnExecute = actStartPlaySoundExecute
     end
-    object acEndPlaySound: TAction
+    object actEndPlaySound: TAction
       Caption = '...'
-      OnExecute = acEndPlaySoundExecute
+      OnExecute = actEndPlaySoundExecute
+    end
+    object actFailPlaySound: TAction
+      Caption = '...'
+      OnExecute = actFailPlaySoundExecute
     end
   end
   object ODlg: TOpenDialog
     Filter = 'All files|*.*|WAV files|*.wav'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
     Left = 71
-    Top = 336
+    Top = 352
   end
 end

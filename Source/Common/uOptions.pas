@@ -124,16 +124,21 @@ type
       function GetAddIndexToNames: TIndexForNames;
       procedure SetAddIndexToNames(const Value: TIndexForNames);
       function GetScriptFileName: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-
+      // start sound
       function GetStartSound: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetStartSound(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetStartSoundFile: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetStartSoundFile(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      // end sound
       function GetEndSound: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetEndSound(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       function GetEndSoundFile: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
       procedure SetEndSoundFile(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
-
+      //fail sound
+      function GetFailSound: boolean; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetFailSound(const Value: boolean); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      function GetFailSoundFile: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
+      procedure SetFailSoundFile(const Value: string); {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
 
       {$IFDEF CONVERTERS}
         function GetSelectedConverterID: string; {$IFNDEF MINIMIZESIZE} virtual; {$ENDIF}
@@ -188,8 +193,10 @@ type
       property AutoStartDownloads: boolean read GetAutoStartDownloads write SetAutoStartDownloads;
       property StartSound: boolean read GetStartSound write SetStartSound;
       property EndSound: boolean read GetEndSound write SetEndSound;
+      property FailSound: boolean read GetFailSound write SetFailSound;
       property StartSoundFile: string read GetStartSoundFile write SetStartSoundFile;
       property EndSoundFile: string read GetEndSoundFile write SetEndSoundFile;
+      property FailSoundFile: string read GetFailSoundFile write SetFailSoundFile;
       property AutoDeleteFinishedDownloads: boolean read GetAutoDeleteFinishedDownloads write SetAutoDeleteFinishedDownloads;
       property AutoTryHtmlParser: boolean read GetAutoTryHtmlParser write SetAutoTryHtmlParser;
       property DownloadRetryCount: integer read GetDownloadRetryCount write SetDownloadRetryCount;
@@ -260,8 +267,10 @@ const
   XML_PATH_DELETFINISHEDDOWNLOADS = 'gui/auto_delete_finished_downloads';
   XML_PATH_STARTSOUND = 'gui/start_sound';
   XML_PATH_ENDSOUND = 'gui/end_sound';
+  XML_PATH_FAILSOUND = 'gui/fail_sound';
   XML_PATH_STARTSOUNDFILE = 'gui/start_sound_file';
   XML_PATH_ENDSOUNDFILE = 'gui/end_sound_file';
+  XML_PATH_FAILSOUNDFILE = 'gui/fail_sound_file';
   XML_PATH_AUTOTRYHTMLPARSER = 'config/auto_try_html_parser';
   XML_PATH_DOWNLOADRETRYCOUNT = 'config/download_retry_count';
   XML_PATH_SCRIPTFILENAME = 'config/script_filename';
@@ -296,8 +305,10 @@ const
   XML_DEFAULT_AUTOSTARTDOWNLOADS = True;
   XML_DEFAULT_STARTSOUND = False;
   XML_DEFAULT_ENDSOUND = False;
+  XML_DEFAULT_FAILSOUND = False;
   XML_DEFAULT_STARTSOUNDFILE = '';
   XML_DEFAULT_ENDSOUNDFILE = '';
+  XML_DEFAULT_FAILSOUNDFILE = '';
   XML_DEFAULT_DELETFINISHEDDOWNLOADS = False;
   XML_DEFAULT_AUTOTRYHTMLPARSER = True;
   XML_DEFAULT_DOWNLOADRETRYCOUNT = 0;
@@ -726,7 +737,7 @@ begin
 end;
 
 
-
+// start sound
 function TYTDOptions.GetStartSound: boolean;
 begin
   Result := XmlToBoolean(GetOption(XML_PATH_STARTSOUND), XML_DEFAULT_STARTSOUND);
@@ -749,7 +760,7 @@ begin
   SetOption(XML_PATH_STARTSOUNDFILE, Value);
 end;
 
-
+// end sound
 function TYTDOptions.GetEndSound: boolean;
 begin
   Result := XmlToBoolean(GetOption(XML_PATH_ENDSOUND), XML_DEFAULT_ENDSOUND);
@@ -768,6 +779,28 @@ end;
 procedure TYTDOptions.SetEndSoundFile(const Value: string);
 begin
   SetOption(XML_PATH_ENDSOUNDFILE, Value);
+end;
+
+
+// fail sound
+function TYTDOptions.GetFailSound: boolean;
+begin
+  Result := XmlToBoolean(GetOption(XML_PATH_FAILSOUND), XML_DEFAULT_FAILSOUND);
+end;
+
+procedure TYTDOptions.SetFailSound(const Value: boolean);
+begin
+  SetOption(XML_PATH_FAILSOUND, BooleanToXml(Value));
+end;
+
+function TYTDOptions.GetFailSoundFile: string;
+begin
+  Result := GetOption(XML_PATH_FAILSOUNDFILE, XML_DEFAULT_FAILSOUNDFILE);
+end;
+
+procedure TYTDOptions.SetFailSoundFile(const Value: string);
+begin
+  SetOption(XML_PATH_FAILSOUNDFILE, Value);
 end;
 
 

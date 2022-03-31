@@ -612,10 +612,12 @@ var DlItem: TDownloadListItem;
     iStateImage: integer;
     {$ENDIF}
     Progress, Total: int64;
+    canPlay: boolean;
 begin
   if DownloadList <> nil then
     if Item.Index < DownloadList.Count then
       begin
+      canPlay:=false;
       DlItem := DownloadList[Item.Index];
       Item.Caption := DownloadList.Urls[Item.Index];
       {$IFNDEF F-PC}
@@ -673,13 +675,18 @@ begin
             if DlItem.PlaySound and Options.EndSound then
             begin
               playsound1.SoundFile:=Options.EndSoundFile;
-              playsound1.PlayStyle:=psASync;
-              playsound1.Execute;
-              DlItem.PlaySound:=false;
+              canPlay:=true;
             end;
           end;
         dtsFailed:
+          begin
           sProgress := DlItem.ErrorMessage + ' (' + DlItem.ErrorClass + ')';
+          if DlItem.PlaySound and Options.FailSound then
+          begin
+            playsound1.SoundFile:=Options.FailSoundFile;
+            canPlay:=true;
+          end;
+          end;
         dtsAborted:
           sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize);
         end;
@@ -690,6 +697,12 @@ begin
       Item.SubItems.Add(sTitle);
       Item.SubItems.Add(sSize);
       Item.SubItems.Add(sProgress);
+      if canPlay then
+       begin
+         playsound1.PlayStyle:=psASync;
+         playsound1.Execute;
+         DlItem.PlaySound:=false;
+       end;
       end;
   GetProgress(Progress, Total);
   if Total > 0 then

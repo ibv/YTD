@@ -56,12 +56,16 @@ type
   { TFormOptions }
 
   TFormOptions = class(TForm)
-    acEndPlaySound: TAction;
+    actEndPlaySound: TAction;
+    actFailPlaySound: TAction;
     actStartPlaySound: TAction;
+    BtnFailSound: TButton;
     BtnStartSound: TButton;
     BtnEndSound: TButton;
+    CheckFailSound: TCheckBox;
     CheckStartSound: TCheckBox;
     CheckEndSound: TCheckBox;
+    EditFailSoundFile: TEdit;
     EditStartSoundFile: TEdit;
     EditEndSoundFile: TEdit;
     LabelOverwriteMode: TLabel;
@@ -117,10 +121,12 @@ type
     Label1: TLabel;
     ComboAddIndexToNames: TComboBox;
     CheckAutoDeleteFinishedDownloads: TCheckBox;
-    procedure acEndPlaySoundExecute(Sender: TObject);
+    procedure actEndPlaySoundExecute(Sender: TObject);
+    procedure actFailPlaySoundExecute(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
     procedure actStartPlaySoundExecute(Sender: TObject);
     procedure CheckEndSoundChange(Sender: TObject);
+    procedure CheckFailSoundChange(Sender: TObject);
     procedure CheckStartSoundChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -225,6 +231,11 @@ begin
     EditEndSoundFile.Text:= Options.EndSoundFile;
     EditEndSoundFile.Enabled:= CheckEndSound.Checked;
     BtnEndSound.Enabled:= CheckEndSound.Checked;
+
+    CheckFailSound.Checked:= Options.FailSound;
+    EditFailSoundFile.Text:= Options.FailSoundFile;
+    EditFailSoundFile.Enabled:= CheckFailSound.Checked;
+    BtnFailSound.Enabled:= CheckFailSound.Checked;
 
     {$IFDEF CONVERTERS}
     PrepareConverterComboBox(ComboConverter, Options, Options.SelectedConverterID);
@@ -346,8 +357,10 @@ begin
   Options.AutoStartDownloads := CheckAutoDownload.Checked;
   Options.StartSound := CheckStartSound.Checked;
   Options.EndSound := CheckEndSound.Checked;
+  Options.FailSound := CheckFailSound.Checked;
   Options.StartSoundFile := EditStartSoundFile.Text;
   Options.EndSoundFile := EditEndSoundFile.Text;
+  Options.FailSoundFile := EditFailSoundFile.Text;
 
   Options.AutoDeleteFinishedDownloads := CheckAutoDeleteFinishedDownloads.Checked;
   Options.AutoTryHtmlParser := CheckAutoTryHtmlParser.Checked;
@@ -382,30 +395,40 @@ begin
   close;
 end;
 
-procedure TFormOptions.acEndPlaySoundExecute(Sender: TObject);
+procedure TFormOptions.actEndPlaySoundExecute(Sender: TObject);
 begin
    if ODlg.Execute then
         EditEndSoundFile.Text := Odlg.FileName;
+end;
+
+procedure TFormOptions.actFailPlaySoundExecute(Sender: TObject);
+begin
+   if ODlg.Execute then
+         EditFailSoundFile.Text := Odlg.FileName;
 end;
 
 procedure TFormOptions.actStartPlaySoundExecute(Sender: TObject);
 begin
   if ODlg.Execute then
         EditStartSoundFile.Text := Odlg.FileName;
-
 end;
 
 procedure TFormOptions.CheckEndSoundChange(Sender: TObject);
 begin
   EditEndSoundFile.Enabled := CheckEndSound.Checked;
-  btnEndSound.Enabled:= CheckEndSound.Checked;
+  BtnEndSound.Enabled:= CheckEndSound.Checked;
+end;
 
+procedure TFormOptions.CheckFailSoundChange(Sender: TObject);
+begin
+  EditFailSoundFile.Enabled := CheckFailSound.Checked;
+  BtnFailSound.Enabled:= CheckFailSound.Checked;
 end;
 
 procedure TFormOptions.CheckStartSoundChange(Sender: TObject);
 begin
   EditStartSoundFile.Enabled := CheckStartSound.Checked;
-  btnStartSound.Enabled:= CheckStartSound.Checked;
+  BtnStartSound.Enabled:= CheckStartSound.Checked;
 end;
 
 
