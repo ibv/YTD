@@ -1,4 +1,7 @@
 
+
+@echo '%~1'  > ytd.version
+
 pushd ..\Install\
 @echo #define AppVer '%~1' ; > version.txt
 popd
