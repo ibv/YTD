@@ -136,11 +136,12 @@ const
   REGEXP_PLAYLIST_INFO = 'getPlaylistUrl\(\[\{"type":"(?P<TYP>.+?)","id":"(?P<ID>.+?)"';
   REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
   REGEXP_PLAYLIST_URL_NEW = '<playlistURL><!\[CDATA\[(?P<URL>.+?)\]\]></playlistURL>';
-  REGEXP_STREAM_URL = '"streamUrls"\s*:\s*\{\s*"main"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_STREAM_URL = '{"type":"VOD",.*?"streamUrls"\s*:\s*\{\s*"main"\s*:\s*"(?P<URL>https?:.+?)"';
+
   REGEXP_STREAM_URL_NEW = 'video src="(?P<URL>.+?)"';
-  REGEXP_STREAM_TITLE = '"playlist"\s*:\s*\[.*?"title"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_STREAM_TITLE = '{"type":"VOD".*?,"title"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_STREAM_TITLE_NEW = '<title>(?P<TITLE>.*?)</title';
-  REGEXP_STREAM_TITLE_BETTER = '"playlist"\s*:\s*\[.*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
+  REGEXP_STREAM_TITLE_BETTER = '{"type":"VOD".*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
   REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
   REGEXP_URL_TOKEN = '<token>(?P<TOKEN>.*?)</token>';
