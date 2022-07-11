@@ -77,6 +77,7 @@ type
       StreamTitleRegExp: TRegExp;
       ProductID1: TRegExp;
       ProductID2: TRegExp;
+      PlayerID: TregExp;
       StatusOK: TRegExp;
       Options: TRegExp;
       LoginForm: TRegExp;
@@ -140,6 +141,7 @@ const
 const
   REGEXP_PRODUCTID1 = 'var productId = ''(?P<ID>.+?)'';';
   REGEXP_PRODUCTID2 = 'var pproduct_id = ''(?P<ID>.+?)'';';
+  REGEXP_PLAYERID = 'let videos = ''(?P<ID>.+?)'';';
   REGEXP_STATUS_CONTENT   = '^(?P<CONTENT>OK)$';
   REGEXP_OPTIONS_CONTENT  = '\bvar\s+\w*[pP]layerOptions\s*=\s*(?P<CONTENT>\{.*?\})\s*;';
   REGEXP_HLS_CONTENT      = 'tracks\s*:\s*\{\s*HLS\s*:\s*\[(?P<CONTENT>.+?)\]\s*,';
@@ -189,6 +191,7 @@ begin
 
   ProductID1 := RegExCreate(REGEXP_PRODUCTID1);
   ProductID2 := RegExCreate(REGEXP_PRODUCTID2);
+  PlayerID   := RegExCreate(REGEXP_PLAYERID);
   StatusOK   := RegExCreate(REGEXP_STATUS_CONTENT);
   Options    := RegExCreate(REGEXP_OPTIONS_CONTENT);
   HLS        := RegExCreate(REGEXP_HLS_CONTENT);
@@ -208,6 +211,7 @@ begin
   RegExFreeAndNil(StreamTitleRegExp);
   RegExFreeAndNil(ProductID1);
   RegExFreeAndNil(ProductID2);
+  RegExFreeAndNil(PlayerID);
   RegExFreeAndNil(StatusOK);
   RegExFreeAndNil(Options);
   RegExFreeAndNil(HLS);
@@ -228,7 +232,7 @@ end;
 
 function TDownloader_Prima.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
-  Title, ID1,ID2: string;
+  Title, ID1,ID2,PID: string;
   i,j: integer;
   {$IFDEF MULTIDOWNLOADS}
   Urls: TStringArray;
@@ -250,10 +254,7 @@ begin
   else if not GetRegExpVars(LoginForm, Data, ['NAME', 'VALUE'], [@csToken, @csValue]) then
      SetLastErrorMsg('Failed to locate media info page (idec).');
   if not DownloadPage(Http,_LOGIN_URL, ('_email='+username+'&_password='+password+'&'+csToken+'='+csValue),
-                                       HTTP_FORM_URLENCODING_UTF8 ,
-                                       [],
-                                       Data,
-                                       peUtf8 ) then
+                                       HTTP_FORM_URLENCODING_UTF8 , [], Data, peUtf8 ) then
      SetLastErrorMsg('Login in failed')
   else if not GetRegExpVar(URLCODE, LastURL, 'CODE', ucode) then
      SetLastErrorMsg('Login code failed')
@@ -269,11 +270,13 @@ begin
   if not GetPlaylistInfo(Http, Page, Title) then
     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(ProductID1, Page, 'ID', ID1) then
-    else if not GetRegExpVar(ProductID2, Page, 'ID', ID2) then
-      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
+    if not GetRegExpVar(ProductID2, Page, 'ID', ID2) then
+      if not GetRegExpVar(PlayerID, Page, 'ID', PID) then
+         SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
   if ID1='' then
     if ID2<>'' then ID1:=ID2
-      else SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
+      else if PID='' then
+        SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
 
   Data:=Http.Cookies.values['prima_uuid'];
   ClearHttp(Http);
@@ -281,16 +284,33 @@ begin
   Http.Headers.Add('X-OTT-Device: prima_slot_id_'+data);
   Http.Cookies.values['prima_uuid']:=data;
 
-  if not DownloadPage(Http,'https://api.play-backend.iprima.cz/api/v1/products/id-'+ID1+'/play',Data, peUtf8,hmGet,false)
-         then   SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
+  if PID <>'' then
+  begin
+    Http.Headers.Add('X-OTT-CDN-Url-Type: WEB');
+    if not DownloadPage(Http,'https://api.play-backend.iprima.cz/api/v1/products/play/ids-'+PID,Data, peUtf8,hmGet,false) then
+      SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
+    if data[1] = char('[') then
+    begin
+      data[1] := char('');
+      if data[length(data)] =char(']') then data[length(data)] :=char('');
+      data:=trim(data);
+    end;
+  end
+  else
+    if not DownloadPage(Http,'https://api.play-backend.iprima.cz/api/v1/products/id-'+ID1+'/play',Data, peUtf8,hmGet,false) then
+       SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE);
+
 
   O:= SO(Data);
-  aryers := o.O['streamInfos'].AsArray();
-  for i := 0 to aryers.Length - 1 do
-  begin
-    if pos('cs',aryers[i].O['lang'].AsString()) <=0 then continue ;
-    if pos('DASH',aryers[i].O['type'].AsString()) <=0 then continue ;
-    Url := aryers[i].O['url'].AsString();
+  try
+    aryers := o.O['streamInfos'].AsArray();
+    for i := 0 to aryers.Length - 1 do
+    begin
+      if pos('cs',aryers[i].O['lang'].AsString()) <=0 then continue ;
+      if pos('DASH',aryers[i].O['type'].AsString()) <=0 then continue ;
+      Url := aryers[i].O['url'].AsString();
+    end;
+  finally
   end;
 
   if Title = '' then
