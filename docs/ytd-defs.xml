@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.69.20220712.0</version>
+  <version>1.69.20220803.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1249,9 +1249,9 @@
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20200408">
+    <script id="nova.cz" provider="Nova.cz" changed="20220803">
       <regexps>
-	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
+	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
         <regexp id="urls2" match="URLS2"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
@@ -1264,6 +1264,9 @@
           </url>
         </download_page>
       </set_var>
+      <set_var id="title">
+        <replace search="|" replacement="-"><regexp id="title" content="page"/></replace>
+      </set_var>
       <set_var id="iframe">
         <regexp id="iframe" content="page"/>
       </set_var>
@@ -1273,9 +1276,6 @@
             <get_var id="iframe"/>
           </url>
         </download_page>
-      </set_var>
-      <set_var id="title">
-        <regexp id="title" content="page"/>
       </set_var>
       <if>
           <condition type="regexp" id="urls" content="page">
