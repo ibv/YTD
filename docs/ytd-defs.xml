@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.69.20220825.0</version>
+  <version>1.69.20230316.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1075,16 +1075,14 @@
         </http_download>
       </multi_regexp>
     </script>
-    <script id="markiza.sk" provider="Markiza.sk" changed="20201023">
+    <script id="markiza.sk" provider="Markiza.sk" changed="20230316">
       <regexps>
-	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
+        <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
-        <regexp id="urls2" match="URLS2"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
+        <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
-        <!--regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp-->
-        <regexp id="title" match="TITLE"><![CDATA["content_title":"(?P<TITLE>.+?)"]]></regexp>
-            
-      </regexps>
+        <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
+       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
           <url>
@@ -1149,7 +1147,7 @@
           </set_var>
          <if>
               <condition type="regexp_match" id="urls2" content="page">
-                <hls_download>
+                <dash_download>
                 <title>
                     <get_var id="title"/>
                 </title>
@@ -1158,8 +1156,8 @@
                     <get_var id="urls2"/>
 				</replace>
                 </url>
-                <extension>.ts</extension>  
-                </hls_download>
+                <extension>.mpv</extension>  
+                </dash_download>
               </condition>
         </if>
         </condition>
@@ -1249,11 +1247,11 @@
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20220825">
+    <script id="nova.cz" provider="Nova.cz" changed="20230316">
       <regexps>
 	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
-        <regexp id="urls2" match="URLS2"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
+        <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
       </regexps>
@@ -1321,7 +1319,7 @@
           </set_var>
          <if>
               <condition type="regexp_match" id="urls2" content="page">
-                <hls_download>
+                <dash_download>
                 <title>
                     <get_var id="title"/>
                 </title>
@@ -1330,12 +1328,11 @@
                     <get_var id="urls2"/>
 				</replace>
                 </url>
-                <extension>.ts</extension>  
-                </hls_download>
+                <extension>.mpv</extension>  
+                </dash_download>
               </condition>
         </if>
         </condition>
-        
       </if>
     </script>
     <script id="novinky.cz" provider="Novinky.cz" changed="20180823">
