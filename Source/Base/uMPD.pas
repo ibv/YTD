@@ -2,7 +2,7 @@
 
 ______________________________________________________________________________
 
-YTD v1.64                                                    (c) 2019  ibv
+YTD v1.69                                                    (c) 2023  ibv
 https://ibv.github.io/YTD/
 ______________________________________________________________________________
 
@@ -53,8 +53,10 @@ type
   TMPDObject = class
     private
       fBaseURL:  String;
-      fAudioList: TList;
-      fVideoList: TList;
+      fAudioRepreList: TList;
+      fVideoRepreList: TList;
+      fVideoSegmentList: TList;
+      fAudioSegmentList: TList;
       fXml: TXmlDoc;
       fMedia,fInit,
       fAMedia,fAInit: string;
@@ -73,8 +75,8 @@ type
 
       function GetBestID(BandWidth:integer;Video:boolean = true):string;
 
-      property AudioList: TList read fAudioList;
-      property VideoList: TList read fVideoList;
+      property AudioSegmenList: TList read fAudioSegmentList;
+      property VideoSegmentList: TList read fVideoSegmentList;
       property BaseURL: String read fBaseURL write fBaseURL;
       property VideoMedia: string read fMedia;
       property VideoInit: string read fInit;
@@ -105,8 +107,10 @@ uses
 constructor TMPDObject.Create(Xml:TXmlDoc);
 begin
   fXml := Xml;
-  fAudioList:=TList.Create;
-  fVideoList:=TList.Create;
+  fAudioRepreList:=TList.Create;
+  fVideoRepreList:=TList.Create;
+  fAudioSegmentList:=TList.Create;
+  fVideoSegmentList:=TList.Create;
   fBaseURL := '';
   fMedia:='';
   fInit:='';
@@ -127,8 +131,10 @@ end;
 
 destructor TMPDObject.Destroy;
 begin
-  FreeAndNil(fAudioList);
-  FreeAndNil(fVideoList);
+  FreeAndNil(fAudioRepreList);
+  FreeAndNil(fVideoRepreList);
+  FreeAndNil(fAudioSegmentList);
+  FreeAndNil(fVideoSegmentList);
 end;
 
 
@@ -150,20 +156,20 @@ begin
       fVideostartNumber := Node.ReadAttributeInteger('startNumber',0);
     end;
 
-    Node1.FindNodes('S',fVideoList);
+    Node1.FindNodes('S',fVideoSegmentList);
     fVideoEndNumber:=0;
-    for i:=0 to fVideoList.Count-1 do
+    // id based segment
+    if not AnsiContainsStr(fMedia, '$Time$') then
     begin
-      if TXMLNode(fVideoList[i]).ReadAttributeInteger('r',0) > 0 then
+      for i:=0 to fVideoSegmentList.Count-1 do
       begin
-         fVideoEndNumber := TXMLNode(fVideoList[i]).ReadAttributeInteger('r',0);
-         fVTimeT := TXMLNode(fVideoList[i]).ReadAttributeInteger('t',0);
-         fVTimeD := TXMLNode(fVideoList[i]).ReadAttributeInteger('d',0);
+        ///if TXMLNode(fVideoSegmentList[i]).ReadAttributeInteger('r',0) > 0 then
+          inc(fVideoEndNumber,TXMLNode(fVideoSegmentList[i]).ReadAttributeInteger('r',0));
       end;
     end;
-    inc(fVideoEndNumber,fVideoList.count-1);
+    inc(fVideoEndNumber,fVideoSegmentList.count-1);
 
-    Node1.FindNodes('Representation',fVideoList);
+    Node1.FindNodes('Representation',fVideoRepreList);
   end;
 
   if fxml.NodeByPathAndAttr('Period/AdaptationSet','mimeType','audio/mp4',Node1) then
@@ -177,20 +183,20 @@ begin
       fAudiostartNumber := Node.ReadAttributeInteger('startNumber',0);
     end;
 
-    Node1.FindNodes('S',fAudioList);
+    Node1.FindNodes('S',fAudioSegmentList);
     fAudioEndNumber := 0;
-    for i:=0 to fAudioList.Count-1 do
+    // id based segment
+    if not AnsiContainsStr(faMedia, '$Time$') then
     begin
-      if TXMLNode(fAudioList[i]).ReadAttributeInteger('r',0) > 0 then
+      for i:=0 to fAudioSegmentList.Count-1 do
       begin
-         fAudioEndNumber := TXMLNode(fAudioList[i]).ReadAttributeInteger('r',0);
-         fATimeT := TXMLNode(fAudioList[i]).ReadAttributeInteger('t',0);
-         fATimeD := TXMLNode(fAudioList[i]).ReadAttributeInteger('d',0);
+        ///if TXMLNode(fAudioSegmentList[i]).ReadAttributeInteger('r',0) > 0 then
+          inc(fAudioEndNumber,TXMLNode(fAudioSegmentList[i]).ReadAttributeInteger('r',0));
       end;
     end;
-    inc(fAudioEndNumber,fAudioList.count-1);
+    inc(fAudioEndNumber,fAudioSegmentList.count-1);
 
-    Node1.FindNodes('Representation',fAudioList);
+    Node1.FindNodes('Representation',fAudioRepreList);
 
   end;
 end;
@@ -204,12 +210,12 @@ var
   List: TList;
 begin
   result:='';
-  List:=fVideoList;
+  List:=fVideoRepreList;
   media:=fmedia;
   init :=finit;
   if not Video then
   begin
-    List:=fAudioList;
+    List:=fAudioRepreList;
     media:=famedia;
     init:=fainit;
   end;
@@ -224,13 +230,7 @@ begin
 
   Init := StringReplace(init,'$RepresentationID$',id,[]);
   Media := StringReplace(media,'$RepresentationID$',id,[]);
-  // time based segment
-  if AnsiContainsStr(media, '$Time') then
-  begin
-    // ToDo
-  end
-  else
-  // id based segment
+  // id based segment, CT
   if AnsiContainsStr(media, '$Number') then
   begin
     //%06d$

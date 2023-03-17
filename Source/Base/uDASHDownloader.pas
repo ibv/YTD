@@ -2,7 +2,7 @@
 
 ______________________________________________________________________________
 
-YTD v1.63                                                    (c) 2019  ibv
+YTD v1.63                                                    (c) 2023  ibv
 https://ibv.github.io/YTD/
 ______________________________________________________________________________
 
@@ -142,7 +142,9 @@ function TDASHDownloader.InitDownloadInfo: boolean;
 var
   Http: THttpSend;
   init, id: string;
-  i : integer;
+  i,j : integer;
+  ATimeT,ATimeD,
+    SegTime,Segnumber : integer;
   Xml: TXmlDoc;
   Prot, User, Pass, Host, Port, Path, Para, URI: string;
 begin
@@ -155,9 +157,7 @@ begin
     else
     begin
       id:='';
-
       fMPD := TMPDObject.Create(Xml);
-
       id   := fMPD.GetBestID(fMaxBitRate);
       // without baseurl
       if fMPD.BaseURL = '' then
@@ -169,7 +169,6 @@ begin
           port:=':'+port;
         fMPD.BaseURL := Prot+'://'+host+port+copy(path,1,LastDelimiter('/',Path));
       end;
-
       if not Result then
       begin
         fVideoDownloader := CreateHttp;
@@ -183,24 +182,39 @@ begin
       // video stream
       if Options.ReadProviderOptionDef(Provider, OPTION_DASH_VIDEO_SUPPORT, false) then
       begin
-        VideoEndNumber := fMPD.VideoEndNumber;
         Fragments.Add(GetRelativeUrl(fMPD.BaseURL, fMPD.VideoInit));
+        if AnsiContainsStr(fMPD.VideoMedia, '$Time$') then
+        begin
+          // time based segment
+          SegNumber := fMPD.VideoStartNumber;
+          SegTime := 0;
+          for i:=0 to fMPD.VideoSegmentList.Count-1 do
+          begin
+            ATimeT := TXMLNode(fMPD.VideoSegmentList[i]).ReadAttributeInteger('t',0);
+            ATimeD := TXMLNode(fMPD.VideoSegmentList[i]).ReadAttributeInteger('d',0);
+            if ATimeT >0 then SegTime := ATimeT;
+            //
+            init := StringReplace(fMPD.VideoMedia,'$Time$',format('%d', [SegTime]),[]);
+            Fragments.Add(GetRelativeUrl(fMPD.BaseURL, init));
+            //
+            inc(SegNumber);
+            for j:=0 to TXMLNode(fMPD.VideoSegmentList[i]).ReadAttributeInteger('r',0)-1 do
+            begin
+              inc(SegTime,ATimeD);
+              init := StringReplace(fMPD.VideoMedia,'$Time$',format('%d', [SegTime]),[]);
+              Fragments.Add(GetRelativeUrl(fMPD.BaseURL, init));
+              inc(SegNumber);
+            end;
+            inc(SegTime,ATimeD);
+          end;
+          VideoEndNumber := SegNumber;
+        end
+        else
         for i:=0 to fMPD.VideoEndNumber do
         begin
-          {if not Result then
-          begin
-            fVideoDownloader := CreateHttp;
-            fVideoDownloader.Cookies.Assign(Http.Cookies);
-            fVideoDownloader.Sock.OnStatus := SockStatusMonitor;
-            fDownloadedThisFragment := 0;
-            fDownloadedPreviousFragments := 0;
-            Result := True;
-          end;}
+          // pro CT '%06d'
           if pos('%',fMPD.VideoMedia) >0 then
            init := StringReplace(fMPD.VideoMedia,'%'+fMPD.fm+'$',format('%.'+fMPD.fm, [i+fMPD.VideoStartNumber]),[]);
-          if pos('$Time$',fMPD.VideoMedia) >0 then
-           init := StringReplace(fMPD.VideoMedia,'$Time$',format('%d', [fMPD.VideoTimeT + i*fMPD.VideoTimeD]),[]);
-
           Fragments.Add(GetRelativeUrl(fMPD.BaseURL, init));
         end;
       end;
@@ -210,13 +224,37 @@ begin
       begin
         id   := fMPD.GetBestID(128000,false);
         Fragments.Add(GetRelativeUrl(fMPD.BaseURL, fMPD.AudioInit));
+        if AnsiContainsStr(fMPD.AudioMedia, '$Time$') then
+        begin
+          // time based segment
+          SegNumber := fMPD.AudioStartNumber;
+          SegTime := 0;
+          for i:=0 to fMPD.AudioSegmenList.Count-1 do
+          begin
+            ATimeT := TXMLNode(fMPD.AudioSegmenList[i]).ReadAttributeInteger('t',0);
+            ATimeD := TXMLNode(fMPD.AudioSegmenList[i]).ReadAttributeInteger('d',0);
+            if ATimeT > 0 then SegTime := ATimeT;
+            //
+            init := StringReplace(fMPD.AudioMedia,'$Time$',format('%d', [SegTime]),[]);
+            Fragments.Add(GetRelativeUrl(fMPD.BaseURL, init));
+            //
+            inc(SegNumber);
+            for j:=0 to TXMLNode(fMPD.AudioSegmenList[i]).ReadAttributeInteger('r',0)-1 do
+            begin
+              inc(SegTime,ATimeD);
+              init := StringReplace(fMPD.AudioMedia,'$Time$',format('%d', [SegTime]),[]);
+              Fragments.Add(GetRelativeUrl(fMPD.BaseURL, init));
+              inc(SegNumber);
+            end;
+            inc(SegTime,ATimeD);
+          end;
+        end
+        else
         for i:=0 to fMPD.AudioEndNumber do
         begin
+          // pro CT '%06d'
           if pos('%',fMPD.AudioMedia) >0 then
            init := StringReplace(fMPD.AudioMedia,'%'+fMPD.fm+'$',format('%.'+fMPD.fm, [i+fMPD.AudioStartNumber]),[]);
-          if pos('$Time$',fMPD.AudioMedia) >0 then
-           init := StringReplace(fMPD.AudioMedia,'$Time$',format('%d', [fMPD.AudioTimeT + i*fMPD.AudioTimeD]),[]);
-
           Fragments.Add(GetRelativeUrl(fMPD.BaseURL, init));
         end;
       end;
@@ -274,8 +312,7 @@ begin
         begin
           FragmentDownloaded := False;
           Retry := RetryCount;
-
-          if  (i=VideoEndNumber+2) and Options.ReadProviderOptionDef(Provider, OPTION_DASH_AUDIO_SUPPORT, false) then
+          if  (i=VideoEndNumber+1) and Options.ReadProviderOptionDef(Provider, OPTION_DASH_AUDIO_SUPPORT, false) then
           begin
             FN:=ChangeFileExt(FN, '.mpa');
             FInalFN:=FN;
@@ -309,14 +346,6 @@ begin
               Dec(Retry);
           if not FragmentDownloaded then
             Exit;
-
-          {if i=fMPD.VideoEndNumber+1 then
-          begin
-            FN:=ChangeFileExt(FN, '.mpa');
-            FInalFN:=FN;
-            FreeAndNil(Stream);
-          end;}
-
         end;
         Result := True;
       finally

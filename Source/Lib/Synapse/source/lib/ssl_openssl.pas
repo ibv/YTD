@@ -86,7 +86,7 @@ accepting of new connections!
   {$WARN IMPLICIT_STRING_CAST_LOSS OFF}
 {$ENDIF}
 
-unit ssl_openssl;
+unit ssl_openssl{$IFDEF SUPPORTS_DEPRECATED} deprecated{$IFDEF SUPPORTS_DEPRECATED_DETAILS} 'Use ssl_openssl3 with OpenSSL 3.0 instead'{$ENDIF}{$ENDIF};
 
 interface
 
@@ -155,7 +155,7 @@ type
     {:See @inherited}
     function GetPeerNameHash: cardinal; override; {pf}
     {:See @inherited}
-    function GetPeerFingerprint: string; override;
+    function GetPeerFingerprint: ansistring; override;
     {:See @inherited}
     function GetCertInfo: string; override;
     {:See @inherited}
@@ -193,7 +193,6 @@ constructor TSSLOpenSSL.Create(const Value: TTCPBlockSocket);
 begin
   inherited Create(Value);
   FCiphers := 'DEFAULT';
-  ///FCiphers := 'DEFAULT@SECLEVEL=1';
   FSsl := nil;
   Fctx := nil;
 end;
@@ -820,7 +819,7 @@ begin
   X509Free(cert);
 end;
 
-function TSSLOpenSSL.GetPeerFingerprint: string;
+function TSSLOpenSSL.GetPeerFingerprint: ansistring;
 var
   cert: PX509;
   x: integer;

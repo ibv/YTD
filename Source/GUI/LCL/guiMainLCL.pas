@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ******************************************************************************)
 
 unit guiMainLCL;
+
 {$INCLUDE 'ytd.inc'}
 
 interface
@@ -64,7 +65,7 @@ uses
 
 {$IFDEF SYSTRAY}
 const
-  WM_NOTIFYICON  = WM_USER + 1;
+  WM_NOTIFYICON = WM_USER + 1;
 {$ENDIF}
 
 type
@@ -174,10 +175,10 @@ type
     mnuExplore: TMenuItem;
     actMenu: TAction;
     procedure DownloadsMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+      Shift: TShiftState; X, Y: integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure DownloadsDblClick(Sender: TObject);
     procedure DownloadsData(Sender: TObject; Item: TListItem);
     procedure actAddNewUrlExecute(Sender: TObject);
@@ -258,8 +259,10 @@ type
     {$ENDIF}
     procedure Refresh; virtual;
     procedure DownloadListChange(Sender: TObject); virtual;
-    procedure DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem); virtual;
-    procedure DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem); virtual;
+    procedure DownloadListItemChange(Sender: TDownloadList;
+      Item: TDownloadListItem); virtual;
+    procedure DownloadListProgress(Sender: TDownloadList;
+      Item: TDownloadListItem); virtual;
     function AddFromClipboard(IgnoreUnchangedText: boolean = False): integer; virtual;
     function AddTask(const Url: string): boolean; virtual;
     procedure AddTaskFromHTML(const Source: string); virtual;
@@ -276,7 +279,8 @@ type
   public
   end;
 
-var FormYTD: TFormYTD;
+var
+  FormYTD: TFormYTD;
 
 implementation
 
@@ -284,21 +288,21 @@ implementation
 
 uses
   guiConsts, guiAboutLCL, {$IFDEF CONVERTERS} guiConverterLCL, {$ENDIF} guiOptionsLCL,
-  uScriptedDownloader;
+  synautil, uScriptedDownloader;
 
 const
 
-  LVM_FIRST                    = $1000;
-  LVM_GETHEADER                = LVM_FIRST + 31;
+  LVM_FIRST = $1000;
+  LVM_GETHEADER = LVM_FIRST + 31;
   LVM_SETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 54;
   LVM_GETEXTENDEDLISTVIEWSTYLE = LVM_FIRST + 55;
-  LVM_GETSUBITEMRECT           = LVM_FIRST + 56;
-  LVM_SETHOVERTIME             = LVM_FIRST + 71;
-  LVM_GETHOVERTIME             = LVM_FIRST + 72;
+  LVM_GETSUBITEMRECT = LVM_FIRST + 56;
+  LVM_SETHOVERTIME = LVM_FIRST + 71;
+  LVM_GETHOVERTIME = LVM_FIRST + 72;
 
 
 const
-   Res : array[0..5] of integer = (0,1920,1280,1024,720,512);
+  Res: array[0..5] of integer = (0, 1920, 1280, 1024, 720, 512);
 
 { TFormYTD }
 
@@ -315,12 +319,12 @@ begin
     {$IFDEF SINGLEINSTANCE}
     RegisterMainInstance(Self.Handle);
     {$ENDIF}
-    arch:='';
-    if SizeOf(Pointer) > 4 then arch:=' x64';
+    arch := '';
+    if SizeOf(Pointer) > 4 then arch := ' x64';
     {$ifdef mswindows}
-    Caption := APPLICATION_CAPTION + arch + ' (fpc)' ;
+    Caption := APPLICATION_CAPTION + arch + ' (fpc)';
     {$else}
-    Caption := APPLICATION_CAPTION + arch + ' (Linux)' ;
+    Caption := APPLICATION_CAPTION + arch + ' (Linux)';
     {$endif}
     Options := TYTDOptionsGUI.Create;
     TScriptedDownloader.InitMainScriptEngine(Options.ScriptFileName);
@@ -346,7 +350,7 @@ begin
     StartClipboardMonitor;
     {$IFDEF SYSTRAY}
     if Options.MinimizeToTray then
-      begin
+    begin
       { ///Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
       fNotifyIconData.cbSize := Sizeof(fNotifyIconData);
       fNotifyIconData.Wnd := Self.Handle;
@@ -358,18 +362,22 @@ begin
       Shell_NotifyIcon(NIM_ADD, @fNotifyIconData);}
       //TrayIcon.ShowBalloonHint;
       Application.OnMinimize := ApplicationMinimize;
-      end;
+    end;
       {$ifdef mswindows}
-      TrayIcon.Hint:=Caption;
-      TrayIcon.BalloonHint:=Caption;
+    TrayIcon.Hint := Caption;
+    TrayIcon.BalloonHint := Caption;
       {$endif}
     {$ENDIF}
     // Use double-buffered listview (removes flickering)
-    SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or LVS_EX_DOUBLEBUFFER);
+    SendMessage(Downloads.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, 0,
+      SendMessage(Downloads.Handle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) or
+      LVS_EX_DOUBLEBUFFER);
     // Window size
-    if (Options.MainFormLeft > -32768) and (Options.MainFormLeft < (Screen.Width + 20)) then
+    if (Options.MainFormLeft > -32768) and (Options.MainFormLeft <
+      (Screen.Width + 20)) then
       Self.Left := Options.MainFormLeft;
-    if (Options.MainFormTop > -32768) and (Options.MainFormTop < (Screen.Height + 20)) then
+    if (Options.MainFormTop > -32768) and (Options.MainFormTop <
+      (Screen.Height + 20)) then
       Self.Top := Options.MainFormTop;
     if Options.MainFormWidth > 0 then
       Self.Width := Options.MainFormWidth;
@@ -378,21 +386,21 @@ begin
     // Column widths
     for i := 0 to Pred(Downloads.Columns.Count) do
       if Options.DownloadListColumnWidth[i] > 0 then
-      Downloads.Columns[i].Width := Options.DownloadListColumnWidth[i];
+        Downloads.Columns[i].Width := Options.DownloadListColumnWidth[i];
     {$IFDEF SINGLEINSTANCE}
     // Load URLs from command line
     for i := 1 to ParamCount do
-      begin
+    begin
       Param := ParamStr(i);
       if Param <> '' then
         if Param[1] <> '-' then
           AddTask(Param);
-      end;
+    end;
     {$ENDIF}
     CheckForExternalLibraries(0, Options);
   finally
     fLoading := False;
-    end;
+  end;
   {$IFDEF THREADEDVERSION}
   Upgrade := TYTDUpgrade.Create(Options);
   Upgrade.OnNewYTDFound := NewYTDEvent;
@@ -412,10 +420,10 @@ begin
   StopClipboardMonitor;
   {$IFDEF SYSTRAY}
   ///if Options.MinimizeToTray then
-    ///Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
+  ///Shell_NotifyIcon(NIM_DELETE, @fNotifyIconData);
   {$ENDIF}
   try
-  FreeAndNil(DownloadList);
+    FreeAndNil(DownloadList);
   except
   end;
   {$IFDEF THREADEDVERSION}
@@ -429,28 +437,29 @@ var
   i: integer;
 begin
   if Now >= fNextTotalRecalculation then
-    begin
+  begin
     fTotalProgress := 0;
     fTotalData := 0;
     if DownloadList <> nil then
       for i := 0 to Pred(DownloadList.Count) do
         if DownloadList[i].State in [dtsWaiting, dtsPreparing, dtsDownloading] then
-          begin
+        begin
           Inc(fTotalProgress, DownloadList[i].DownloadedSize);
           Inc(fTotalData, DownloadList[i].TotalSize);
-          end;
-    end;
-  fNextTotalRecalculation := Now + 0.5/(24*60*60);
+        end;
+  end;
+  fNextTotalRecalculation := Now + 0.5 / (24 * 60 * 60);
   Progress := fTotalProgress;
   Total := fTotalData;
 end;
 
-procedure TFormYTD.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TFormYTD.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 begin
   if DownloadList.DownloadingCount <= 0 then
     CanClose := True
   else
-    CanClose := (MessageDlg(_(MAINFORM_CAN_CLOSE), mtConfirmation, [mbYes, mbNo, mbCancel], 0) = mrYes);
+    CanClose := (MessageDlg(_(MAINFORM_CAN_CLOSE), mtConfirmation,
+      [mbYes, mbNo, mbCancel], 0) = mrYes);
 end;
 
 procedure TFormYTD.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -473,19 +482,21 @@ procedure TFormYTD.WMClickIcon(var msg: TMessage);
 begin
   case Msg.lParam of
     {WM_LBUTTONDBLCLK} WM_LBUTTONDOWN:
-      begin
-        Show;
-        BringToFront;
-      end;
+    begin
+      Show;
+      BringToFront;
     end;
+  end;
 end;
+
 {$endif}
 
 procedure TFormYTD.ApplicationMinimize(Sender: TObject);
 begin
-  WindowState:=wsMinimized;
+  WindowState := wsMinimized;
   Hide;
 end;
+
 {$ENDIF}
 
 procedure TFormYTD.StartClipboardMonitor;
@@ -495,7 +506,7 @@ begin
   else
     LastClipboardText := '';
   if Options.MonitorClipboard then
-    ///NextClipboardViewer := SetClipboardViewer(Self.Handle)
+  ///NextClipboardViewer := SetClipboardViewer(Self.Handle)
   else
     NextClipboardViewer := 0;
 end;
@@ -516,7 +527,7 @@ begin
     AddFromClipboard(True);
   finally
     DownloadList.AutoTryHtmlParserTemporarilyDisabled := False;
-    end;
+  end;
   msg.Result := 0;
 end;
 
@@ -526,6 +537,7 @@ begin
     NextClipboardViewer := Msg.lParam;
   msg.Result := 0;
 end;
+
 {$endif}
 
 {$IFDEF SINGLEINSTANCE}
@@ -538,13 +550,14 @@ begin
   if Info <> nil then
     if Info^.dwData = COPYDATA_URL then
       if (Info^.cbData > 0) and (Info^.lpData <> nil) then
-        begin
-        SetLength(UrlW, Info^.cbData div Sizeof(WideChar));
+      begin
+        SetLength(UrlW, Info^.cbData div Sizeof(widechar));
         Move(Info^.lpData^, UrlW[1], Info^.cbData);
         AddTask(UrlW);
-        end;
+      end;
   Msg.Result := 0;
 end;
+
 {$ENDIF}
 
 {$IFDEF THREADEDVERSION}
@@ -552,11 +565,12 @@ procedure TFormYTD.NewYTDEvent(Sender: TYTDUpgrade);
 begin
   if (Sender.OnlineYTDVersion <> '') and (Sender.OnlineYTDUrl <> '') then
     if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) < 0 then
-      begin
+    begin
       actReportBug.Enabled := False;
-      if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Sender.OnlineYTDVersion]), mtInformation, [mbYes, mbNo], 0) = mrYes then
+      if MessageDlg(Format(_(MAINFORM_NEW_VERSION_AVAILABLE), [Sender.OnlineYTDVersion]),
+        mtInformation, [mbYes, mbNo], 0) = mrYes then
         guiFunctions.UpgradeYTD(Sender, Handle);
-      end;
+    end;
 end;
 
 procedure TFormYTD.NewDefsEvent(Sender: TYTDUpgrade);
@@ -564,14 +578,17 @@ begin
   if Sender.CompareVersions(APPLICATION_VERSION, Sender.OnlineYTDVersion) >= 0 then
     if TScriptedDownloader.MainScriptEngine <> nil then
       if (Sender.OnlineDefsVersion <> '') and (Sender.OnlineDefsUrl <> '') then
-        if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version, Sender.OnlineDefsVersion) < 0 then
-          begin
+        if Sender.CompareVersions(TScriptedDownloader.MainScriptEngine.Version,
+          Sender.OnlineDefsVersion) < 0 then
+        begin
           actReportBug.Enabled := False;
-          if MessageDlg(Format(_(MAINFORM_NEW_DEFS_VERSION_AVAILABLE), [Sender.OnlineDefsVersion]), mtInformation, [mbYes, mbNo], 0) = mrYes then
+          if MessageDlg(Format(_(MAINFORM_NEW_DEFS_VERSION_AVAILABLE),
+            [Sender.OnlineDefsVersion]), mtInformation, [mbYes, mbNo], 0) = mrYes then
             if guiFunctions.UpgradeDefs(Sender, Handle, True) then
               actReportBug.Enabled := True;
-          end;
+        end;
 end;
+
 {$ENDIF}
 
 procedure TFormYTD.DownloadListChange(Sender: TObject);
@@ -579,49 +596,54 @@ begin
   Refresh;
 end;
 
-procedure TFormYTD.DownloadListItemChange(Sender: TDownloadList; Item: TDownloadListItem);
-var Idx: integer;
+procedure TFormYTD.DownloadListItemChange(Sender: TDownloadList;
+  Item: TDownloadListItem);
+var
+  Idx: integer;
 begin
   Idx := Sender.IndexOf(Item);
   Downloads.Items.Count := Sender.Count;
   if Idx >= 0 then
-    begin
+  begin
     ///Downloads.UpdateItems(Idx, Idx);
     Downloads.Update;
     if (DownloadList <> nil) and (DownloadList[Idx] <> nil) then
       if DownloadList[Idx].State = dtsFinished then
         SaveSettings;
-    end;
+  end;
 end;
 
 procedure TFormYTD.DownloadListProgress(Sender: TDownloadList; Item: TDownloadListItem);
-var Ticks: DWORD;
+var
+  Ticks: DWORD;
 begin
   Ticks := GetTickCount64;
-  if (Ticks > NextProgressUpdate) or ((NextProgressUpdate > $f0000000) and (Ticks < $10000000)) then
-    begin
+  if (Ticks > NextProgressUpdate) or ((NextProgressUpdate > $f0000000) and
+    (Ticks < $10000000)) then
+  begin
     NextProgressUpdate := Ticks + 250; // 0.25 sec.
     Downloads.Refresh;
-    end;
+  end;
 end;
 
 procedure TFormYTD.DownloadsData(Sender: TObject; Item: TListItem);
-var DlItem: TDownloadListItem;
-    sState, sTitle, sSize, sProgress: string;
+var
+  DlItem: TDownloadListItem;
+  sState, sTitle, sSize, sProgress: string;
     {$IFNDEF F-PC}
-    iStateImage: integer;
+  iStateImage: integer;
     {$ENDIF}
-    Progress, Total: int64;
-    canPlay: boolean;
+  Progress, Total: int64;
+  canPlay: boolean;
 begin
   if DownloadList <> nil then
     if Item.Index < DownloadList.Count then
-      begin
-      canPlay:=false;
+    begin
+      canPlay := False;
       DlItem := DownloadList[Item.Index];
       Item.Caption := DownloadList.Urls[Item.Index];
       {$IFNDEF F-PC}
-      Item.StateIndex := Integer(DlItem.State);
+      Item.StateIndex := integer(DlItem.State);
       {$ENDIF}
       Item.SubItems.Add(DlItem.Downloader.Provider);
       sState := _(ThreadStates[DlItem.State]);
@@ -632,64 +654,69 @@ begin
       sSize := '';
       sProgress := '';
       if DlItem.Downloader.Prepared then
-        begin
+      begin
         sTitle := DlItem.Downloader.Name;
         if DlItem.TotalSize >= 0 then
           sSize := PrettySize(DlItem.TotalSize);
-        end;
+      end;
       case DlItem.State of
         dtsWaiting:
           ;
         dtsPreparing:
-          begin
+        begin
           if DlItem.Paused then
-            begin
+          begin
             sState := _(THREADSTATE_PAUSED); // Download thread state: Paused
             {$IFNDEF F-PC}
             iStateImage := 4;
             {$ENDIF}
-            end;
           end;
+        end;
         dtsDownloading:
-          begin
-          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize);
+        begin
+          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize,
+            DlItem.DownloadedSize - DlItem.LastFragment, TickDelta(DlItem.TimeTick, GetTick));
+          DlItem.TimeTick := GetTick;
+          DlItem.LastFragment := DlItem.DownloadedSize;
           if DlItem.Paused then
-            begin
+          begin
             sState := _(THREADSTATE_PAUSED); // Download thread state: Paused
             {$IFNDEF F-PC}
             iStateImage := 4;
             {$ENDIF}
-            end;
           end;
+        end;
         dtsFinished:
-          begin
+        begin
           {$IFDEF CONVERTERS}
-            if (DlItem.ConvertState <> ctsWaiting) or (Options.SelectedConverterID <> '') then
-              begin
-              sState := _(ConvertThreadStates[DlItem.ConvertState]);
-              {$IFNDEF F-PC}
-              iStateImage := ConvertThreadStateImgs[DlItem.ConvertState];
-              {$ENDIF}
-              end;
-          {$ENDIF}
-            if DlItem.PlaySound and Options.EndSound then
-            begin
-              playsound1.SoundFile:=Options.EndSoundFile;
-              canPlay:=true;
-            end;
-          end;
-        dtsFailed:
+          if (DlItem.ConvertState <> ctsWaiting) or
+            (Options.SelectedConverterID <> '') then
           begin
+            sState := _(ConvertThreadStates[DlItem.ConvertState]);
+              {$IFNDEF F-PC}
+            iStateImage := ConvertThreadStateImgs[DlItem.ConvertState];
+              {$ENDIF}
+          end;
+          {$ENDIF}
+          if DlItem.PlaySound and Options.EndSound then
+          begin
+            playsound1.SoundFile := Options.EndSoundFile;
+            canPlay := True;
+          end;
+        end;
+        dtsFailed:
+        begin
           sProgress := DlItem.ErrorMessage + ' (' + DlItem.ErrorClass + ')';
           if DlItem.PlaySound and Options.FailSound then
           begin
-            playsound1.SoundFile:=Options.FailSoundFile;
-            canPlay:=true;
+            playsound1.SoundFile := Options.FailSoundFile;
+            canPlay := True;
           end;
-          end;
-        dtsAborted:
-          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize);
         end;
+        dtsAborted:
+          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize,
+            DlItem.DownloadedSize - DlItem.LastFragment, TickDelta(DlItem.TimeTick, GetTick));
+      end;
       {$IFNDEF F-PC}
       Item.StateIndex := iStateImage;
       {$ENDIF}
@@ -698,12 +725,14 @@ begin
       Item.SubItems.Add(sSize);
       Item.SubItems.Add(sProgress);
       if canPlay then
-       begin
-         playsound1.PlayStyle:=psASync;
-         playsound1.Execute;
-         DlItem.PlaySound:=false;
-       end;
+      begin
+        playsound1.PlayStyle := psASync;
+        playsound1.Execute;
+        DlItem.PlaySound := False;
       end;
+      ///DlItem.TimeTick:=GetTick;
+      ///DlItem.LastFragment:=DlItem.DownloadedSize;
+    end;
   GetProgress(Progress, Total);
   if Total > 0 then
     ShowTotalProgressBar(Self.Handle, pbsNormal, Progress, Total)
@@ -712,7 +741,8 @@ begin
 end;
 
 procedure TFormYTD.actAddNewUrlExecute(Sender: TObject);
-var Url: string;
+var
+  Url: string;
 begin
   Url := '';
   if Clipboard.HasFormat(CF_TEXT) then
@@ -723,11 +753,13 @@ begin
 end;
 
 procedure TFormYTD.actDeleteURLExecute(Sender: TObject);
-var i: integer;
+var
+  i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_(MAINFORM_DELETE_TRANSFERS), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  if MessageDlg(_(MAINFORM_DELETE_TRANSFERS), mtConfirmation,
+    [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   if Downloads.SelCount = 1 then
     DeleteTask(Downloads.Selected.Index)
@@ -738,15 +770,16 @@ begin
 end;
 
 procedure TFormYTD.actStartExecute(Sender: TObject);
-var i: integer;
+var
+  i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
 
   if Options.StartSound then
   begin
-    playsound1.SoundFile:=Options.StartSoundFile;
-    playsound1.PlayStyle:=psASync;
+    playsound1.SoundFile := Options.StartSoundFile;
+    playsound1.PlayStyle := psASync;
     playsound1.Execute;
   end;
 
@@ -759,11 +792,13 @@ begin
 end;
 
 procedure TFormYTD.actStopExecute(Sender: TObject);
-var i: integer;
+var
+  i: integer;
 begin
   if Downloads.SelCount < 1 then
     Exit;
-  if MessageDlg(_(MAINFORM_STOP_TRANSFERS), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then 
+  if MessageDlg(_(MAINFORM_STOP_TRANSFERS), mtConfirmation,
+    [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
   if Downloads.SelCount = 1 then
     StopTask(Downloads.Selected.Index)
@@ -779,11 +814,13 @@ begin
     Exit;
   if not IsSSLAvailable then
     MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
-  else if DownloadList[Downloads.Selected.Index].DownloadedSize > MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
+  else if DownloadList[Downloads.Selected.Index].DownloadedSize >
+    MAX_DOWNLOAD_SIZE_FOR_BUGREPORT then
     MessageDlg(_(MAINFORM_NOBUGREPORTIFDOWNLOADSTARTED), mtError, [mbOK], 0)
-  else if MessageDlg(_(MAINFORM_REPORT_BUG), mtConfirmation, [mbYes, mbNo, mbCancel], 0) <> mrYes then
+  else if MessageDlg(_(MAINFORM_REPORT_BUG), mtConfirmation,
+    [mbYes, mbNo, mbCancel], 0) <> mrYes then
     Exit;
-  ReportBug(DownloadList, Downloads.Selected.Index);  
+  ReportBug(DownloadList, Downloads.Selected.Index);
 end;
 
 procedure TFormYTD.actDonateExecute(Sender: TObject);
@@ -793,17 +830,18 @@ end;
 
 procedure TFormYTD.actConvertExecute(Sender: TObject);
 {$IFDEF CONVERTERS}
-var i: integer;
-    ConverterID: string;
+var
+  i: integer;
+  ConverterID: string;
 {$ENDIF}
 begin
   {$IFDEF CONVERTERS}
   {$IFDEF CONVERTERSMUSTBEACTIVATED}
   if not Options.ConvertersActivated then
-    begin
+  begin
     MessageDlg(_(CONVERTERS_INACTIVE_WARNING), mtError, [mbOK], 0);
     Exit;
-    end;
+  end;
   {$ENDIF}
   if Downloads.SelCount < 1 then
     Exit;
@@ -812,7 +850,7 @@ begin
   else
     ConverterID := LastConverterID;
   if SelectConverter(Options, ConverterID, Self, _(MAINFORM_CONVERT_WITH)) then
-    begin
+  begin
     LastConverterID := ConverterID;
     if Downloads.SelCount = 1 then
       ConvertTask(Downloads.Selected.Index, LastConverterID)
@@ -820,7 +858,7 @@ begin
       for i := 0 to Pred(Downloads.Items.Count) do
         if Downloads.Items[i].Selected then
           ConvertTask(i, LastConverterID);
-    end;
+  end;
   {$ENDIF}
 end;
 
@@ -836,15 +874,16 @@ begin
 end;
 
 procedure TFormYTD.actCopyUrlsToClipboardExecute(Sender: TObject);
-var i: integer;
-    s: string;
+var
+  i: integer;
+  s: string;
 begin
   if Downloads.SelCount < 1 then
     Exit;
   if Downloads.SelCount = 1 then
     s := DownloadList.Urls[Downloads.Selected.Index]
   else
-    begin
+  begin
     s := '';
     for i := 0 to Pred(Downloads.Items.Count) do
       if Downloads.Items[i].Selected then
@@ -852,16 +891,16 @@ begin
           s := DownloadList.Urls[i]
         else
           s := s + EOLN + DownloadList.Urls[i];
-    end;
+  end;
   if s <> '' then
-    begin
+  begin
     StopClipboardMonitor;
     try
       Clipboard.AsText := s;
     finally
       StartClipboardMonitor;
-      end;
     end;
+  end;
 end;
 
 procedure TFormYTD.actCopyUrlsToClipboard2Execute(Sender: TObject);
@@ -878,12 +917,12 @@ procedure TFormYTD.Refresh;
 begin
   {$IFNDEF FPC}
   if Downloads.Items.Count <> DownloadList.Count then
-    begin
+  begin
     if Downloads.Items.Count > DownloadList.Count then
       Downloads.Items.Clear;
     while Downloads.Items.Count < DownloadList.Count do
       Downloads.Items.Add;
-    end;
+  end;
   {$ELSE}
   Downloads.Items.Count := DownloadList.Count;
   {$ENDIF}
@@ -891,16 +930,17 @@ begin
 end;
 
 function TFormYTD.AddFromClipboard(IgnoreUnchangedText: boolean): integer;
-var L: TStringList;
-    i: integer;
-    s: string;
+var
+  L: TStringList;
+  i: integer;
+  s: string;
 begin
   Result := 0;
   if Clipboard.HasFormat(CF_TEXT) then
-    begin
+  begin
     s := Clipboard.AsText;
     if (not IgnoreUnchangedText) or (s <> LastClipboardText) then
-      begin
+    begin
       L := TStringList.Create;
       try
         L.Text := s;
@@ -909,9 +949,9 @@ begin
             Inc(Result);
       finally
         FreeAndNil(L);
-        end;
       end;
     end;
+  end;
 end;
 
 function TFormYTD.AddTask(const Url: string): boolean;
@@ -934,7 +974,8 @@ begin
 end;
 
 procedure TFormYTD.StartPauseResumeTask(Index: integer);
-var Item: TDownloadListItem;
+var
+  Item: TDownloadListItem;
 begin
   Item := DownloadList.Items[Index];
   if Item.Downloading then
@@ -943,10 +984,10 @@ begin
     else
       Item.Pause
   else
-    begin
+  begin
     Item.RetryCount := Options.DownloadRetryCount;
     Item.Start;
-    end;
+  end;
 end;
 
 procedure TFormYTD.StopTask(Index: integer);
@@ -959,6 +1000,7 @@ procedure TFormYTD.ConvertTask(Index: integer; const ConverterID: string);
 begin
   DownloadList.Items[Index].Convert(True, ConverterID);
 end;
+
 {$ENDIF}
 
 procedure TFormYTD.PlayMedia(Index: integer);
@@ -972,7 +1014,8 @@ begin
 end;
 
 procedure TFormYTD.actSelectAllExecute(Sender: TObject);
-var i: integer;
+var
+  i: integer;
 begin
   for i := 0 to Pred(Downloads.Items.Count) do
     Downloads.Items[i].Selected := True;
@@ -986,18 +1029,19 @@ end;
 procedure TFormYTD.SaveSettings;
 begin
   if not fLoading then
-    begin
+  begin
     DownloadList.SaveToOptions;
     Options.Save;
-    end;
+  end;
 end;
 
 procedure TFormYTD.actAddUrlsFromFileExecute(Sender: TObject);
-var L: TStringList;
-    i, n: integer;
+var
+  L: TStringList;
+  i, n: integer;
 begin
   if OpenUrlList.Execute then
-    begin
+  begin
     L := TStringList.Create;
     try
       n := 0;
@@ -1010,16 +1054,17 @@ begin
         MessageDlg(_(MAINFORM_NO_SUPPORTED_URL), mtError, [mbOK], 0);
     finally
       FreeAndNil(L);
-      end;
     end;
+  end;
 end;
 
 procedure TFormYTD.actSaveUrlListExecute(Sender: TObject);
-var L: TStringList;
-    i: integer;
+var
+  L: TStringList;
+  i: integer;
 begin
   if SaveUrlList.Execute then
-    begin
+  begin
     L := TStringList.Create;
     try
       for i := 0 to Pred(DownloadList.Count) do
@@ -1028,12 +1073,13 @@ begin
       L.SaveToFile(SaveUrlList.FileName);
     finally
       FreeAndNil(L);
-      end;
     end;
+  end;
 end;
 
 procedure TFormYTD.actAddUrlsFromHTMLExecute(Sender: TObject);
-var Url: string;
+var
+  Url: string;
 begin
   if Clipboard.HasFormat(CF_TEXT) then
     Url := Clipboard.AsText;
@@ -1056,18 +1102,18 @@ begin
       ShowModal;
     finally
       Free;
-      end;
+    end;
 end;
 
 procedure TFormYTD.DownloadsDblClick(Sender: TObject);
 //var CursorPos: TPoint;
 //    HitTestInfo: THitTests;
 begin
-//  CursorPos := Downloads.ScreenToClient(Mouse.CursorPos);
-//  HitTestInfo := Downloads.GetHitTestInfoAt(CursorPos.X, CursorPos.Y);
-//  if HitTestInfo <= [htOnIcon, htOnItem, htOnLabel, htOnStateIcon] then
-    if Downloads.Selected <> nil then
-      PlayMedia(Downloads.Selected.Index);
+  //  CursorPos := Downloads.ScreenToClient(Mouse.CursorPos);
+  //  HitTestInfo := Downloads.GetHitTestInfoAt(CursorPos.X, CursorPos.Y);
+  //  if HitTestInfo <= [htOnIcon, htOnItem, htOnLabel, htOnStateIcon] then
+  if Downloads.Selected <> nil then
+    PlayMedia(Downloads.Selected.Index);
 end;
 
 procedure TFormYTD.actEditConfigFileExecute(Sender: TObject);
@@ -1075,42 +1121,44 @@ begin
   Options.Save;
   MessageDlg(_(MAINFORM_EDIT_CONFIG), mtWarning, [mbOK], 0);
   {$ifdef mswindows}
-  if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil, SW_SHOWNORMAL) <= 32 then
+  if ShellExecute(Handle, 'edit', PChar(Options.FileName), nil, nil,
+    SW_SHOWNORMAL) <= 32 then
     Run('notepad', '"' + Options.FileName + '"', Handle);
   {$else}
-    Run('leafpad',  Options.FileName  , Handle);
+  Run('leafpad', Options.FileName, Handle);
   {$endif}
 end;
 
 procedure TFormYTD.actOptionsExecute(Sender: TObject);
-var F: TFormOptions;
+var
+  F: TFormOptions;
 begin
   F := TFormOptions.Create(Self);
   try
     F.Options := Options;
-    if F.ShowModal = mrOK then
-      begin
+    if F.ShowModal = mrOk then
+    begin
       SaveSettings;
       if Options.AutoStartDownloads then
         DownloadList.StartAll;
       StopClipboardMonitor;
       StartClipboardMonitor;
-      end;
+    end;
   finally
     FreeAndNil(F);
-    end;
+  end;
 end;
 
 
 
 procedure TFormYTD.DownloadsMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
+  Shift: TShiftState; X, Y: integer);
 var
   i, j, ind: integer;
-  Item : TLIstItem;
+  Item: TLIstItem;
 
 begin
-  if button  = mbLeft then
+  if button = mbLeft then
   begin
     Item := Downloads.GetItemAt(X, Y);
 
@@ -1120,9 +1168,9 @@ begin
       ind := DownloadList[i].Downloader.MaxVResolution;
       for j := Low(Res) to High(Res) do
       begin
-        mnuResolut[j].Checked:=false;
+        mnuResolut[j].Checked := False;
         if ind = res[j] then
-          mnuResolut[j].Checked:=true;
+          mnuResolut[j].Checked := True;
       end;
 
     end;
@@ -1133,17 +1181,19 @@ end;
 
 procedure TFormYTD.SetResolution(Ind, Res: integer);
 var
- value: string;
+  Value: string;
 
 begin
-    if (ind <> fMenuID) and (fMenuID >= 0) then
-    begin
-      value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
-      Options.WriteProviderOption(DownloadList[ind].Downloader.ProviderName, 'max_video_width', Res);
-      Options.WriteProviderOption(DownloadList[ind].Downloader.ProviderName, 'max_video_bitrate', value);
-      DownloadList[ind].Downloader.MaxVResolution:=Res;
-      DownloadList[ind].Downloader.MaxVBitRate := StrToIntDef(value,0);
-    end;
+  if (ind <> fMenuID) and (fMenuID >= 0) then
+  begin
+    Value := Inputbox(MSG_MAX_VIDEO_BITRATE, MSG_VIDEO_BITRATE_VALUE, '0');
+    Options.WriteProviderOption(DownloadList[ind].Downloader.ProviderName,
+      'max_video_width', Res);
+    Options.WriteProviderOption(DownloadList[ind].Downloader.ProviderName,
+      'max_video_bitrate', Value);
+    DownloadList[ind].Downloader.MaxVResolution := Res;
+    DownloadList[ind].Downloader.MaxVBitRate := StrToIntDef(Value, 0);
+  end;
 end;
 
 
@@ -1170,51 +1220,51 @@ end;
 
 procedure TFormYTD.Item1Click(Sender: TObject);
 begin
-  fMenuID:=0;
+  fMenuID := 0;
 end;
 
 procedure TFormYTD.Item2Click(Sender: TObject);
 begin
-  fMenuID:=1;
+  fMenuID := 1;
 
 end;
 
 procedure TFormYTD.Item3Click(Sender: TObject);
 begin
-  fMenuID:=2;
+  fMenuID := 2;
 
 end;
 
 procedure TFormYTD.item4Click(Sender: TObject);
 begin
-  fMenuID:=3;
+  fMenuID := 3;
 
 end;
 
 procedure TFormYTD.Item5Click(Sender: TObject);
 begin
-  fMenuID:=4;
+  fMenuID := 4;
 
 end;
 
 procedure TFormYTD.Item6Click(Sender: TObject);
 begin
-  fMenuID:=5;
+  fMenuID := 5;
 
 end;
 
 procedure TFormYTD.MenuItem1Click(Sender: TObject);
 begin
-  fMenuID:=0;
-  mnuResolut[fMenuID].Checked:=true;
+  fMenuID := 0;
+  mnuResolut[fMenuID].Checked := True;
 
   SetResolution(Downloads.Selected.index, Res[fMenuID]);
 end;
 
 procedure TFormYTD.MenuItem2Click(Sender: TObject);
 begin
-  fMenuID:=1;
-  mnuResolut[fMenuID].Checked:=true;
+  fMenuID := 1;
+  mnuResolut[fMenuID].Checked := True;
 
   SetResolution(Downloads.Selected.index, Res[fMenuID]);
 
@@ -1222,32 +1272,32 @@ end;
 
 procedure TFormYTD.MenuItem3Click(Sender: TObject);
 begin
-  fMenuID:=2;
-  mnuResolut[fMenuID].Checked:=true;
+  fMenuID := 2;
+  mnuResolut[fMenuID].Checked := True;
 
   SetResolution(Downloads.Selected.index, Res[fMenuID]);
 end;
 
 procedure TFormYTD.MenuItem4Click(Sender: TObject);
 begin
-  fMenuID:=3;
-  mnuResolut[fMenuID].Checked:=true;
+  fMenuID := 3;
+  mnuResolut[fMenuID].Checked := True;
 
   SetResolution(Downloads.Selected.index, Res[fMenuID]);
 end;
 
 procedure TFormYTD.MenuItem5Click(Sender: TObject);
 begin
-  fMenuID:=4;
-  mnuResolut[fMenuID].Checked:=true;
+  fMenuID := 4;
+  mnuResolut[fMenuID].Checked := True;
 
   SetResolution(Downloads.Selected.index, Res[fMenuID]);
 end;
 
 procedure TFormYTD.MenuItem6Click(Sender: TObject);
 begin
-  fMenuID:=5;
-  mnuResolut[fMenuID].Checked:=true;
+  fMenuID := 5;
+  mnuResolut[fMenuID].Checked := True;
 
   SetResolution(Downloads.Selected.index, Res[fMenuID]);
 end;
@@ -1257,10 +1307,10 @@ end;
 procedure TFormYTD.TrayIconClick(Sender: TObject);
 begin
   if WindowState = wsMinimized then
-    begin
-      WindowState:=wsNormal;
-      Show;
-    end;
+  begin
+    WindowState := wsNormal;
+    Show;
+  end;
 end;
 
 

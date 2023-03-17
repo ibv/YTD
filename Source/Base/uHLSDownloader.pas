@@ -340,28 +340,30 @@ begin
           FragmentDownloaded := False;
           Retry := RetryCount;
           while Retry >= 0 do
+          begin
             if DownloadBinary(VideoDownloader, Fragments[i], FragmentData) then
-              begin
+            begin
               FragmentDownloaded := True;
               Inc(fFragmentsDownloaded);
               fDownloadedPreviousFragments := fDownloadedPreviousFragments + fDownloadedThisFragment;
               fDownloadedThisFragment := 0;
               if FragmentData <> '' then
-                begin
+              begin
                 if Stream = nil then
-                  begin
+                begin
                   Stream := TFileStream.Create(FN, fmCreate);
                   {$IFDEF SHAREABLEFILES}
                   FreeAndNil(Stream);
                   Stream := TFileStream.Create(FN, fmOpenWrite or fmShareDenyWrite);
                   {$ENDIF}
-                  end;
-                Stream.WriteBuffer(FragmentData[1], Length(FragmentData));
                 end;
+                Stream.WriteBuffer(FragmentData[1], Length(FragmentData));
+              end;
               Break;
-              end
+            end
             else
               Dec(Retry);
+          end;
           if not FragmentDownloaded then
             Exit;
           end;
@@ -484,7 +486,9 @@ procedure THLSDownloader.SockStatusMonitor(Sender: TObject; Reason: THookSocketR
 begin
   SetLastErrorMsg(_(SockStatusReasons[Reason]));
   if (Reason = HR_ReadCount) then
+  begin
     fDownloadedThisFragment := fDownloadedThisFragment + StrToInt64(Value);
+  end;
   if not (Reason in [HR_SocketClose, HR_Error]) then
     DoProgress;
 end;
@@ -493,6 +497,7 @@ function THLSDownloader.GetDownloadedSize: int64;
 begin
   Result := fDownloadedPreviousFragments + fDownloadedThisFragment;
 end;
+
 
 function THLSDownloader.GetTotalSize: int64;
 var

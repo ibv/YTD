@@ -104,6 +104,7 @@ type
       procedure ProcessNestedDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessHDSDownload(Node: TXmlNode; Vars: TScriptVariables);
       procedure ProcessHLSDownload(Node: TXmlNode; Vars: TScriptVariables);
+      procedure ProcessDASHDownload(Node: TXmlNode; Vars: TScriptVariables);
       function ProcessNodeContent(Node: TXmlNode; Vars: TScriptVariables): string;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables; out Value: string): boolean; overload;
       function ProcessGetVar(Node: TXmlNode; Vars: TScriptVariables): string; overload;
@@ -163,6 +164,7 @@ uses
   uNestedDirectDownloader,
   uHDSDirectDownloader,
   uHLSDirectDownloader,
+  uDASHDirectDownloader,
   NativeXml  ;
 
 
@@ -440,6 +442,8 @@ begin
         ProcessHDSDownload(ChildNode, Vars)
       else if ChildNode.Name = 'hls_download' then
         ProcessHLSDownload(ChildNode, Vars)
+      else if ChildNode.Name = 'dash_download' then
+        ProcessDASHDownload(ChildNode, Vars)
       else if ChildNode.Name = 'nested_download' then
         ProcessNestedDownload(ChildNode, Vars)
       else if ChildNode.Name = 'multi_regexp' then
@@ -623,6 +627,24 @@ begin
     Raise;
     end;
 end;
+
+procedure TScriptedDownloader.ProcessDASHDownload(Node: TXmlNode; Vars: TScriptVariables);
+var
+  Downloader: TDASHDirectDownloader;
+  Url, Title, Ext: string;
+begin
+  ProcessCommonDownload(Node, Vars, Url, Title, Ext);
+  Downloader := TDASHDirectDownloader.CreateWithName(Url, Title);
+  try
+    Downloader.SetFileNameExt(Ext);
+    Downloader.MaxVBitRate:=self.MaxVBitRate;
+    AddDownloader(Downloader);
+  except
+    FreeAndNil(Downloader);
+    Raise;
+    end;
+end;
+
 
 procedure TScriptedDownloader.ProcessSetVar(Node: TXmlNode; Vars: TScriptVariables);
 var

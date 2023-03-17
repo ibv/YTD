@@ -60,7 +60,7 @@ type
       fDownloader: TDownloader;
       fThread: TDownloadThread;
       fState: TDownloadThreadState;
-      fTotalSize, fDownloadedSize: int64;
+      fTotalSize, fDownloadedSize, fFragment, fTicks: int64;
       fErrorClass: string;
       fErrorMessage: string;
       fOnDownloadProgress: TNotifyEvent;
@@ -119,6 +119,8 @@ type
       property State: TDownloadThreadState read fState;
       property TotalSize: int64 read fTotalSize;
       property DownloadedSize: int64 read fDownloadedSize;
+      property LastFragment: int64 read fFragment write fFragment;
+      property TimeTick: int64 read fTicks write fTicks;
       property ErrorClass: string read fErrorClass;
       property ErrorMessage: string read fErrorMessage;
       property Waiting: boolean read GetWaiting;
@@ -186,6 +188,8 @@ begin
   SetState(dtsWaiting);
   SetTotalSize(-1);
   SetDownloadedSize(0);
+  fFragment:=0;
+  fTicks:=GetTickCount;
   SetErrorClass('');
   SetErrorMessage('');
   {$IFDEF CONVERTERS}
@@ -340,6 +344,8 @@ procedure TDownloadListItem.SetDownloadedSize(Value: int64);
 begin
   fDownloadedSize := Value;
 end;
+
+
 
 procedure TDownloadListItem.SetErrorClass(const Value: string);
 begin

@@ -246,9 +246,11 @@ uses
 
 const
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)';
-  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/58.0.1';
-  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.3 Safari/537.36';
+  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0';
+  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36';
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%d.0.%d.%d Safari/537.36';
+
+
 
 var
   UrlRegExps: TRegExpCache = nil;
@@ -300,9 +302,7 @@ begin
   {$ENDIF}
   fHttp := THttpSend.Create;
   ///fHttp.UserAgent := DEFAULT_USER_AGENT;
-  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.3 Safari/537.36';
-  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%d.0.%d.%d Safari/537.36';
-  fHttp.UserAgent := format(DEFAULT_USER_AGENT, [RandomRange(71, 74),RandomRange(3700, 3710),RandomRange(0, 100)]);
+  fHttp.UserAgent := format(DEFAULT_USER_AGENT, [RandomRange(74, 103),RandomRange(3700, 3710),RandomRange(0, 100)]);
   MovieID := AMovieID;
   ///fVideoBitRate := MaxInt;
 end;

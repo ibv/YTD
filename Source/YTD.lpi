@@ -30,9 +30,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="68"/>
+      <MinorVersionNr Value="70"/>
       <BuildNr Value="1"/>
-      <StringTable ProductVersion="1.68"/>
+      <StringTable ProductName="YTD" ProductVersion="1.70"/>
     </VersionInfo>
     <MacroValues Count="1">
       <Macro1 Name="LCLWidgetType" Value="win32"/>
@@ -43,9 +43,6 @@
         <Item1 ID="922055607083" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
-    <PublishOptions>
-      <Version Value="2"/>
-    </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="1">

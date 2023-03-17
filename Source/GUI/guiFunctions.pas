@@ -60,7 +60,7 @@ uses
   SynaCode, SynaUtil,
   uFunctions, uLanguages, uDownloadList, uMessages, uStrings, uOptions, uUpgrade;
 
-function GetProgressStr(DoneSize, TotalSize: int64): string;
+function GetProgressStr(DoneSize, TotalSize, DoneFragment, DTime: int64): string;
 procedure ReportBug(DownloadList: TDownloadList; Index: integer);
 function IsHttpProtocol(const Url: string): boolean;
 procedure UpgradeYTD(Upgrade: TYTDUpgrade; OwnerHandle: THandle);
@@ -80,14 +80,17 @@ uses
   uScriptedDownloader, uRtmpDownloader, uMSDownloader;
 
 
-function GetProgressStr(DoneSize, TotalSize: int64): string;
+function GetProgressStr(DoneSize, TotalSize, DoneFragment, DTime: int64): string;
 var n: int64;
+    s: string;
 begin
   Result := PrettySize(DoneSize);
+  s := PrettySize(round(DoneFragment*1000/(DTime)));
+  if s = '' then s:=IntToStr(round(DoneFragment*1000/(DTime)));
   if TotalSize > 0 then
     begin
     n := 1000*DoneSize div TotalSize;
-    Result := Format('%s (%d.%d%%)', [Result, n div 10, n mod 10]);
+    Result := Format('%s (%d.%d%%), speed: %s/s ', [Result, n div 10, n mod 10, s]);
     end
 end;
 
