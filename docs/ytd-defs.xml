@@ -1,5 +1,5 @@
-mar<ytd-defs>
-  <version>1.65.20201126.0</version>
+<ytd-defs>
+  <version>1.70.20230317.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -199,7 +199,7 @@ mar<ytd-defs>
         </url>
       </http_download>
     </script>
-    <script id="ceskatelevize.cz" provider="CeskaTelevize.cz" changed="20180712">
+    <script id="ceskatelevize.cz" provider="CeskaTelevize.cz" changed="20211210">
       <regexps>
         <regexp id="iframe"><![CDATA[<(?:iframe\b[^>]*\ssrc)="(?P<URL>(https?://[^/]+)?/ivysilani/[^"]+)"]]></regexp>
         <regexp id="div"><![CDATA[<div\b[^>]*\sclass="video-player">.*?<span\b[^>]*\sdata-url="(?P<URL>((?:https?:)?//[^/]+)?/ivysilani/[^"]+)"]]></regexp>
@@ -824,9 +824,9 @@ mar<ytd-defs>
         </url>
       </nested_download>
     </script>
-    <!--script id="iprima.cz" provider="iPrima.cz" changed="20180913">
+    <script id="iprima.cz" provider="iPrima.cz" changed="20210710">
       <regexps>
-        <regexp id="productid1" match="ID"><![CDATA[prehravac/embedded\?id=(?P<ID>.+?)"]]></regexp>
+        <regexp id="productid1" match="ID"><![CDATA[let videos = '(?P<ID>.+?)';]]></regexp>
         <regexp id="productid2" match="ID"><![CDATA[_videoimport(?P<ID>\w+?)_]]></regexp>
         <regexp id="statusok" match="CONTENT"><![CDATA[^(?P<CONTENT>OK)$]]></regexp>
         <regexp id="options" match="CONTENT"><![CDATA[\bvar\s+\w*[pP]layerOptions\s*=\s*(?P<CONTENT>\{.*?\})\s*;]]></regexp>
@@ -884,7 +884,7 @@ mar<ytd-defs>
         </url>
         <extension>.ts</extension>
       </hls_download>
-    </script-->
+    </script>
     <script id="itnsource.com" provider="ITNSource.com" changed="20160706">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<input\s+type="hidden"\s+id="Title0"\s+value="(?P<TITLE>.*?)"]]></regexp>
@@ -1075,16 +1075,14 @@ mar<ytd-defs>
         </http_download>
       </multi_regexp>
     </script>
-    <script id="markiza.sk" provider="Markiza.sk" changed="20201023">
+    <script id="markiza.sk" provider="Markiza.sk" changed="20230316">
       <regexps>
-	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
+        <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
-        <regexp id="urls2" match="URLS2"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
+        <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
-        <!--regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp-->
-        <regexp id="title" match="TITLE"><![CDATA["content_title":"(?P<TITLE>.+?)"]]></regexp>
-            
-      </regexps>
+        <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
+       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
           <url>
@@ -1149,7 +1147,7 @@ mar<ytd-defs>
           </set_var>
          <if>
               <condition type="regexp_match" id="urls2" content="page">
-                <hls_download>
+                <dash_download>
                 <title>
                     <get_var id="title"/>
                 </title>
@@ -1158,8 +1156,8 @@ mar<ytd-defs>
                     <get_var id="urls2"/>
 				</replace>
                 </url>
-                <extension>.ts</extension>  
-                </hls_download>
+                <extension>.mpv</extension>  
+                </dash_download>
               </condition>
         </if>
         </condition>
@@ -1249,11 +1247,11 @@ mar<ytd-defs>
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20200408">
+    <script id="nova.cz" provider="Nova.cz" changed="20230316">
       <regexps>
-	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.src="(?P<IFRAME>.+?)".style="position.*</iframe>\s]]></regexp>
+	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
-        <regexp id="urls2" match="URLS2"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
+        <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
       </regexps>
@@ -1264,6 +1262,9 @@ mar<ytd-defs>
           </url>
         </download_page>
       </set_var>
+      <set_var id="title">
+        <replace search="|" replacement="-"><regexp id="title" content="page"/></replace>
+      </set_var>
       <set_var id="iframe">
         <regexp id="iframe" content="page"/>
       </set_var>
@@ -1273,9 +1274,6 @@ mar<ytd-defs>
             <get_var id="iframe"/>
           </url>
         </download_page>
-      </set_var>
-      <set_var id="title">
-        <regexp id="title" content="page"/>
       </set_var>
       <if>
           <condition type="regexp" id="urls" content="page">
@@ -1321,7 +1319,7 @@ mar<ytd-defs>
           </set_var>
          <if>
               <condition type="regexp_match" id="urls2" content="page">
-                <hls_download>
+                <dash_download>
                 <title>
                     <get_var id="title"/>
                 </title>
@@ -1330,12 +1328,11 @@ mar<ytd-defs>
                     <get_var id="urls2"/>
 				</replace>
                 </url>
-                <extension>.ts</extension>  
-                </hls_download>
+                <extension>.mpv</extension>  
+                </dash_download>
               </condition>
         </if>
         </condition>
-        
       </if>
     </script>
     <script id="novinky.cz" provider="Novinky.cz" changed="20180823">
@@ -1515,16 +1512,19 @@ mar<ytd-defs>
         <url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
       </http_download>
     </script>
-    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20201126">
+    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20220328">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<h1 class="article-type.+?">(?P<TITLE>.+?)</h1>]]></regexp>
-        <regexp id="part" match="PART"><![CDATA[aria-labelledby="Audio(?P<PART>.+?part)">]]></regexp>
-        <regexp id="list" match="LIST"><![CDATA[aria-labelledby="Audio(?P<LIST>.+?playlist)">]]></regexp>
+        <regexp id="part"><![CDATA[aria-labelledby="Audio part">]]></regexp>
+        <regexp id="list"><![CDATA[aria-labelledby="Audio playlist">]]></regexp>
         <regexp id="url" match="URL"><![CDATA[<div class=".*aria-labelledby="Audio part">\s+<a href="(?P<URL>.+?)">]]></regexp>
         <regexp id="utitle" match="TITLE"><![CDATA[<div class="content">\s.*<h3>(?P<TITLE>.+?)</em></h3>]]></regexp>
         <regexp id="uuid" match="UUID"><![CDATA[data-uuid="(?P<UUID>.+?)"]]></regexp>
         <regexp id="playlist" match="URL,TITLE"><![CDATA[<li><div.*?id="file-.+?><a href="(?P<URL>.+?)">.+?<div class="filename__text".+?>(?P<TITLE>.+?)</div></div></a>]]></regexp>
-    
+        <regexp id="data-player" match="DPLAYER"><![CDATA["playlist":\[(?P<DPLAYER>.+?)\]}]]></regexp>
+        <regexp id="data-title"><![CDATA[,{"title":"(?P<TITLE>.+?)","since".+?"download".*?"url":"(?P<URL>.+?)"}],"podcastLinks"*?]]></regexp>
+        <regexp id="data-title-hls" match="TITLE,URL"><![CDATA[,{"title":"(?P<TITLE>.+?)","since".*?:"hls",.*?,"url":"(?P<URL>.+?)"}*?]]></regexp>
+        <regexp id="hls"><![CDATA["hls",.+?,"url":".+?"}]]></regexp>
       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
@@ -1546,7 +1546,7 @@ mar<ytd-defs>
           </http_download>
         </multi_regexp>
         </condition>
-          <condition type="regexp_match" id="part" content="page">
+        <condition type="regexp_match" id="part" content="page">
           <http_download>
             <title>
               <regexp id="title" content="page"/>
@@ -1567,6 +1567,38 @@ mar<ytd-defs>
               https://croaod.cz/download/<regexp id="uuid" content="page"/>.mp3
             </url>
           </http_download>
+        </condition>
+        <condition type="regexp_match" id="data-player" content="page">
+           <set_var id="json">
+                ,<regexp id="data-player" content="page"/>
+           </set_var>
+          <if><!--hls -->
+            <condition type="regexp_match" id="hls" content="json">
+            <multi_regexp content="json" id="data-title-hls" var_prefix="loop_" match="TITLE,URL">   
+               <hls_download>
+                <title>
+                    <replace search=":" replacement=""><decode_js><get_var id="loop_TITLE"/></decode_js></replace>
+                </title>
+                <url>
+                    <replace search="playlist" replacement="chunklist"><replace search="\" replacement=""><decode_js><get_var id="loop_URL"/></decode_js></replace></replace>
+                </url>
+                <extension>.m4a</extension>  
+            </hls_download>
+            </multi_regexp>
+            </condition>          
+          <else><!-- ostatni -->      
+            <multi_regexp content="json" id="data-title" var_prefix="loop_" match="TITLE,URL">
+            <http_download>
+                <title>
+                    <replace search=":" replacement=""><decode_js><get_var id="loop_TITLE"/></decode_js></replace>
+                </title>
+                <url>
+                    <decode_js><get_var id="loop_URL"/></decode_js>
+                </url>
+            </http_download>
+            </multi_regexp>
+          </else>
+          </if>
         </condition>
       </if>
     </script>
@@ -1885,7 +1917,7 @@ mar<ytd-defs>
         </url>
       </http_download>
     </script>
-    <script id="tvseznam.cz" provider="TV-Seznam.cz"  changed="20200329">
+    <script id="stream.cz" provider="Stream.cz"  changed="20210602">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA["name":"(?P<TITLE>.*?)",]]></regexp>
         <regexp id="url" match="URL"><![CDATA["spl":"(?P<URL>.*?)",]]></regexp>
@@ -2418,6 +2450,57 @@ mar<ytd-defs>
           </headers>
         </http_download>
       </script>
+      <script id="pvideo.cz" provider="Pvideo.cz" changed="20220126">
+        <regexps>
+          <regexp id="info" match="INFO"><![CDATA[<video id="video"(?P<INFO>.+?)</video></div><script>]]></regexp>
+          <regexp id="url" match="URL"><![CDATA[src="(?P<URL>.+?)"\s*title="(?P<QUALITY>.+?)p"\s*type="(?P<TYPE>.+?)"]]></regexp>
+          <regexp id="type" match="X"><![CDATA[^(?P<X>application/x-mpegURL)$]]></regexp>    
+        </regexps>
+        <set_var id="page">
+          <download_page encoding="ansi">
+            <url>
+              <get_var id="_movie_id"/>
+            </url>
+          </download_page>
+        </set_var>
+        <set_var id="info">
+          <regexp id="info" content="page"/>
+        </set_var>
+        <multi_regexp id="url" content="info" var_prefix="urls_" match="QUALITY,URL,TYPE">
+          <best_var id="urls_QUALITY" type="numeric_ascending">
+            <set_var id="url">
+              <get_var id="urls_URL"/>
+            </set_var>
+            <set_var id="type">
+              <get_var id="urls_TYPE"/>
+            </set_var>
+          </best_var>
+        </multi_regexp>
+       <if>
+          <condition type="regexp_match" id="type" content="type">    
+            <hls_download>
+             <title>
+               <regexp id="meta_ogtitle" content="page"/>
+             </title>
+             <url>
+               <get_var id="url"/>
+             </url>
+             <extension>.mp4</extension>
+            </hls_download>
+          </condition>
+          <else>
+            <http_download>
+             <title>
+               <regexp id="meta_ogtitle" content="page"/>
+             </title>
+             <url>
+               <get_var id="url"/>
+             </url>
+             <extension>.mp4</extension>
+            </http_download>
+        </else>
+      </if>
+      </script>
       <script id="randyblue.com" provider="RandyBlue.com">
         <regexps>
           <regexp id="info" match="ID"><![CDATA[\bvid\s*\(\s*'(?P<ID>\d+)'\s*,\s*'(?P<TYPE>\w+)'\s*\)\s*;]]></regexp>
@@ -2738,8 +2821,8 @@ mar<ytd-defs>
     <url script="bewusst.tv"><![CDATA[bewusst\.tv/.+$]]></url>
     <url script="blesk.cz"><![CDATA[blesk\.cz/.+$]]></url>
     <url script="ceknito.sk"><![CDATA[ceknito\.(?:cz|sk)/video/.+$]]></url>
-    <url script="ceskatelevize.cz"><![CDATA[ceskatelevize\.cz/(?!ivysilani/).+$]]></url>
-    <url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
+    <!--url script="ceskatelevize.cz"><![CDATA[ceskatelevize\.cz/(?!ivysilani/).+$]]></url-->
+     <url script="cestyksobe.cz"><![CDATA[cestyksobe\.cz/.+$]]></url>
     <url script="cetv.sk"><![CDATA[cetv\.sk/.+$]]></url>
     <url script="cloudzilla.to"><![CDATA[cloudzilla.to/embed/.+$]]></url>
     <url script="csfd.cz"><![CDATA[csfd\.cz/.+$]]></url>
@@ -2783,7 +2866,7 @@ mar<ytd-defs>
     <url script="streamin.to"><![CDATA[streamin\.to/.+$]]></url>
     <url script="sultancesky.cz"><![CDATA[sultancesky\.cz/.+$]]></url>
     <url script="super.cz"><![CDATA[super\.cz/.+$]]></url>
-    <url script="tvseznam.cz"><![CDATA[televizeseznam\.cz/.+$]]></url>
+    <url script="stream.cz"><![CDATA[stream\.cz/.+$]]></url>
     <url script="theguardian.com"><![CDATA[theguardian\.com/.+$]]></url>
     <url script="tv7.cz"><![CDATA[tv7\.cz/.+$]]></url>
     <url script="tvcom.cz"><![CDATA[tvcom\.cz/.+$]]></url>
@@ -2808,6 +2891,7 @@ mar<ytd-defs>
       <url script="jenpromuze.cz"><![CDATA[jenpromuze\.cz/video/.+$]]></url>
       <url script="navratdoreality.cz"><![CDATA[navratdoreality\.cz/.+$]]></url>
       <url script="perfectgirls.net"><![CDATA[perfectgirls\.net/.+$]]></url>
+      <url script="pvideo.cz"><![CDATA[pvideo\.cz/.+$]]></url>
       <url script="randyblue.com"><![CDATA[randyblue\.com/.+$]]></url>
       <url script="redtube.com"><![CDATA[redtube\.com/.+$]]></url>
       <url script="sextubespot.com"><![CDATA[sextubespot\.com/videos/.+$]]></url>

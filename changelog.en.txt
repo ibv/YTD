@@ -1,13 +1,63 @@
 ﻿______________________________________________________________________________
 
-YTD v1.64                                                    (c) 2009-209 Pepak/ibv
+YTD v1.70                                                 (c) 2018-2023 ibv
 https://ibv.github.io/YTD/
-
+                                                          (c) 2009-2018 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
 ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.70: (fpc)
+
+    * Updated providers:
+      - Nova.cz
+      - Markiza.sk 
+      - Ceskatelevize.cz 
+
+
+  v1.69: (fpc)
+
+    * Updated providers:
+      - Ceskatelevize.cz
+      - iPrima.cz 
+
+
+
+  v1.68: (fpc)
+
+    * Updated providers:
+      - Ceskatelevize.cz
+
+    * Option for select sound efect for start and end of downloading stream
+    * Option for max resolution added to the main menu 
+
+
+  v1.67: (fpc)
+
+    * Updated providers:
+      - iPrima.cz
+      - youtube.om
+
+
+  v1.66: (fpc)
+
+    * OpenSSL libraries 1.1.1m are bundled with installation package
+    * Updated providers:
+      - Ceskatelevize.cz
+
+
+  v1.65: (fpc)
+
+    * Fixed refresh downloads list after downloading stream
+    * Fixed the "List index out of bounds" error after close YTD
+    * Updated providers:
+      - Rozhlas.cz 
+      - Televizeseznam.cz
+    
+
+
 
   v1.64: (fpc)
 
