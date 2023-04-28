@@ -783,6 +783,10 @@ begin
     playsound1.Execute;
   end;
 
+  {$ifdef debug}
+   debug:=true;
+  {$endif}
+
   if Downloads.SelCount = 1 then
     StartPauseResumeTask(Downloads.Selected.Index)
   else

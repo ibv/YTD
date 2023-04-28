@@ -122,7 +122,7 @@ uses
   uStringConsts,
   uStrings,
   uDownloadClassifier,
-  uFunctions,
+  uFunctions, {$ifdef debug} uLog, {$endif}
   uMessages;
 
 const
@@ -285,21 +285,20 @@ begin
     StreamType:='type=html&streamingProtocol=dash';
   end;
 
-  if not DownloadPage(Http,'https://www.ceskatelevize.cz/v-api/iframe-hash/', iframeHash) then
+  if not DownloadPage(Http,'https://www.ceskatelevize.cz/v-api/iframe-hash/', iframeHash) or (Http.ResultCode <>200) then
      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
   else if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?hash=' +iframeHash + '&origin=iVysilani&autoStart=true&start=0&IDEC=' + PlayListIDEC, page) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
+      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE);
 
-  else if not DownloadPage(Http,
-                           'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist/',
-                           ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
-                           {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist[0][type]='+PlayListType+'&playlist[0][id]='+PlaylistIDEC+'&playlist[0][startTime]=0'+
-                                                      '&requestSource='+RequestSource+'&'+StreamType+'&canPlayDRM=false&requestUrl=/ivysilani/embed/iFramePlayer.php'),
-                           HTTP_FORM_URLENCODING_UTF8,
-                           ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
-                           PlaylistUrlPage,
-                           peUtf8
-                          )
+  if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist/',
+            ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
+            {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist[0][type]='+PlayListType+'&playlist[0][id]='+PlaylistIDEC+'&playlist[0][startTime]=0'+
+            '&requestSource='+RequestSource+'&'+StreamType+'&canPlayDRM=false&requestUrl=/ivysilani/embed/iFramePlayer.php'),
+            HTTP_FORM_URLENCODING_UTF8,
+            ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
+            PlaylistUrlPage,
+            peUtf8
+            )
   then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
   else if not GetRegExpVar(PlaylistUrlRegExp, PlaylistUrlPage, 'URL', PlaylistUrl) then
@@ -328,6 +327,14 @@ begin
     if Title = '' then
       if not GetRegExpVar(StreamTitleFromPageRegExp, Page, 'TITLE', Title) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
+
+        {$ifdef debug}
+        if debug then
+           uLog.Log('GET: %s', [URLs[0]]);
+
+         debug:=false;
+        {$endif}
+
     {$IFDEF MULTIDOWNLOADS}
     for i := 0 to Pred(Length(Urls)) do
       begin
@@ -342,6 +349,9 @@ begin
     Name := Title;
     MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
     SetPrepared(True);
+
+
+
     Result := True;
     end;
 end;

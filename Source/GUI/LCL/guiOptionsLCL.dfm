@@ -1,11 +1,11 @@
 object FormOptions: TFormOptions
-  Left = 273
+  Left = 272
   Height = 395
   Top = 214
-  Width = 551
+  Width = 552
   Caption = 'Options'
   ClientHeight = 395
-  ClientWidth = 551
+  ClientWidth = 552
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -14,9 +14,9 @@ object FormOptions: TFormOptions
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.4.0'
   object BtnOK: TButton
-    Left = 391
+    Left = 392
     Height = 25
     Top = 364
     Width = 75
@@ -27,7 +27,7 @@ object FormOptions: TFormOptions
     TabOrder = 0
   end
   object btnCancel: TButton
-    Left = 471
+    Left = 472
     Height = 25
     Top = 364
     Width = 75
@@ -41,15 +41,15 @@ object FormOptions: TFormOptions
     Left = 0
     Height = 343
     Top = 0
-    Width = 543
-    ActivePage = TabDownloadOptions
+    Width = 544
+    ActivePage = TabMain
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 2
     object TabMain: TTabSheet
       Caption = 'Main settings'
       ClientHeight = 317
-      ClientWidth = 535
+      ClientWidth = 536
       object LabelLanguage: TLabel
         Left = 8
         Height = 13
@@ -57,12 +57,13 @@ object FormOptions: TFormOptions
         Width = 51
         Caption = '&Language:'
         FocusControl = EditLanguage
+        ParentColor = False
       end
       object CheckPortableMode: TCheckBox
         Left = 7
         Height = 19
         Top = 8
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = '&Portable mode'
         TabOrder = 0
@@ -71,7 +72,7 @@ object FormOptions: TFormOptions
         Left = 7
         Height = 19
         Top = 24
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = '&Check for new versions on startup'
         TabOrder = 1
@@ -87,7 +88,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 25
         Top = 257
-        Width = 512
+        Width = 513
         Action = actDesktopShortcut
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 5
@@ -96,7 +97,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 25
         Top = 289
-        Width = 512
+        Width = 513
         Action = actStartMenuShortcut
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 6
@@ -105,7 +106,7 @@ object FormOptions: TFormOptions
         Left = 7
         Height = 19
         Top = 40
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Mo&nitor clipboard for downloadable URLs'
         TabOrder = 2
@@ -114,7 +115,7 @@ object FormOptions: TFormOptions
         Left = 7
         Height = 19
         Top = 56
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Disable &OpenSSL warning'
         TabOrder = 3
@@ -123,7 +124,7 @@ object FormOptions: TFormOptions
         Left = 7
         Height = 19
         Top = 72
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Disable &RtmpDump warning'
         TabOrder = 7
@@ -132,7 +133,7 @@ object FormOptions: TFormOptions
         Left = 7
         Height = 19
         Top = 88
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Disable &MSDL warning'
         TabOrder = 8
@@ -141,7 +142,7 @@ object FormOptions: TFormOptions
         Left = 7
         Height = 19
         Top = 104
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Minimize to system &tray'
         TabOrder = 9
@@ -150,7 +151,7 @@ object FormOptions: TFormOptions
     object TabDownloadOptions: TTabSheet
       Caption = 'Download settings'
       ClientHeight = 317
-      ClientWidth = 535
+      ClientWidth = 536
       ImageIndex = 1
       object LabelOverwriteMode: TLabel
         Left = 8
@@ -159,6 +160,7 @@ object FormOptions: TFormOptions
         Width = 60
         Caption = '&Existing files:'
         FocusControl = ComboOverwriteMode
+        ParentColor = False
       end
       object LabelDownloadDir: TLabel
         Left = 8
@@ -167,6 +169,7 @@ object FormOptions: TFormOptions
         Width = 94
         Caption = '&Download directory:'
         FocusControl = EditDownloadDir
+        ParentColor = False
       end
       object LabelConverter: TLabel
         Left = 8
@@ -175,6 +178,7 @@ object FormOptions: TFormOptions
         Width = 49
         Caption = '&Converter:'
         FocusControl = ComboConverter
+        ParentColor = False
       end
       object LabelRetryCount: TLabel
         Left = 8
@@ -183,6 +187,7 @@ object FormOptions: TFormOptions
         Width = 58
         Caption = '&Retry count:'
         FocusControl = EditRetryCount
+        ParentColor = False
       end
       object Label1: TLabel
         Left = 8
@@ -191,12 +196,13 @@ object FormOptions: TFormOptions
         Width = 141
         Caption = 'Append &index to playlist items:'
         FocusControl = ComboAddIndexToNames
+        ParentColor = False
       end
       object CheckAutoDownload: TCheckBox
         Left = 8
         Height = 19
         Top = 8
-        Width = 202
+        Width = 203
         Anchors = [akTop, akLeft, akRight]
         Caption = '&Automatically start downloads'
         TabOrder = 0
@@ -205,7 +211,7 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 240
-        Width = 352
+        Width = 353
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         Style = csDropDownList
@@ -215,12 +221,12 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 192
-        Width = 336
+        Width = 337
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 6
       end
       object BtnDownloadDir: TButton
-        Left = 513
+        Left = 514
         Height = 21
         Top = 191
         Width = 17
@@ -232,7 +238,7 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 288
-        Width = 352
+        Width = 353
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         OnChange = ComboConverterChange
@@ -243,7 +249,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 56
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Download &subtitles if available'
         TabOrder = 3
@@ -252,7 +258,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 40
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Automatically try &HTML parser'
         TabOrder = 2
@@ -261,7 +267,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 72
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Append a .part e&xtension while downloading'
         TabOrder = 4
@@ -270,7 +276,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 88
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Store media into su&bdirectories according to their providers'
         TabOrder = 5
@@ -279,7 +285,7 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 264
-        Width = 49
+        Width = 50
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 10
       end
@@ -287,7 +293,7 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 216
-        Width = 352
+        Width = 353
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         Style = csDropDownList
@@ -297,7 +303,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 24
-        Width = 266
+        Width = 267
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Automatically delete &finished downloads'
         TabOrder = 1
@@ -306,12 +312,12 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 120
-        Width = 336
+        Width = 337
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 12
       end
       object BtnStartSound: TButton
-        Left = 513
+        Left = 514
         Height = 21
         Top = 121
         Width = 17
@@ -323,12 +329,12 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 144
-        Width = 336
+        Width = 337
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 14
       end
       object BtnEndSound: TButton
-        Left = 513
+        Left = 514
         Height = 21
         Top = 143
         Width = 17
@@ -340,7 +346,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 126
-        Width = 168
+        Width = 169
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Start sound'
         OnChange = CheckStartSoundChange
@@ -350,7 +356,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 148
-        Width = 168
+        Width = 169
         Anchors = [akTop, akLeft, akRight]
         Caption = 'End sound'
         OnChange = CheckEndSoundChange
@@ -360,7 +366,7 @@ object FormOptions: TFormOptions
         Left = 8
         Height = 19
         Top = 170
-        Width = 168
+        Width = 169
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Fail sound'
         OnChange = CheckFailSoundChange
@@ -370,12 +376,12 @@ object FormOptions: TFormOptions
         Left = 176
         Height = 21
         Top = 168
-        Width = 336
+        Width = 337
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 19
       end
       object BtnFailSound: TButton
-        Left = 513
+        Left = 514
         Height = 21
         Top = 167
         Width = 17
@@ -387,7 +393,7 @@ object FormOptions: TFormOptions
     object TabNetworkOptions: TTabSheet
       Caption = 'Network settings'
       ClientHeight = 317
-      ClientWidth = 535
+      ClientWidth = 536
       ImageIndex = 2
       object LabelProxyHost: TLabel
         Left = 8
@@ -396,6 +402,7 @@ object FormOptions: TFormOptions
         Width = 52
         Caption = 'Proxy &host:'
         FocusControl = EditProxyHost
+        ParentColor = False
       end
       object LabelProxyPort: TLabel
         Left = 8
@@ -404,6 +411,7 @@ object FormOptions: TFormOptions
         Width = 50
         Caption = 'Proxy &port:'
         FocusControl = EditProxyPort
+        ParentColor = False
       end
       object LabelProxyUser: TLabel
         Left = 8
@@ -412,6 +420,7 @@ object FormOptions: TFormOptions
         Width = 78
         Caption = 'Proxy &username:'
         FocusControl = EditProxyUser
+        ParentColor = False
       end
       object LabelProxyPass: TLabel
         Left = 8
@@ -420,12 +429,13 @@ object FormOptions: TFormOptions
         Width = 77
         Caption = 'Proxy pass&word:'
         FocusControl = EditProxyPass
+        ParentColor = False
       end
       object CheckUseProxy: TCheckBox
         Left = 8
         Height = 19
         Top = 8
-        Width = 520
+        Width = 521
         Anchors = [akTop, akLeft, akRight]
         Caption = 'U&se proxy server'
         TabOrder = 0
@@ -462,7 +472,7 @@ object FormOptions: TFormOptions
     object TabDownloaderOptions: TTabSheet
       Caption = 'Downloader settings'
       ClientHeight = 317
-      ClientWidth = 535
+      ClientWidth = 536
       ImageIndex = 3
       object ListDownloaderOptions: TListBox
         Left = 0
@@ -480,7 +490,7 @@ object FormOptions: TFormOptions
         Left = 169
         Height = 317
         Top = 0
-        Width = 366
+        Width = 367
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1

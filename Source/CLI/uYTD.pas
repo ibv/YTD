@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes,
   {$ifdef mswindows}
-    Windows
+    Windows,
   {$ELSE}
     LCLIntf, LCLType, LMessages,
   {$ENDIF}

@@ -242,6 +242,9 @@ uses
   uStrings,
   uMessages,
   math, strutils
+  {$ifdef DEBUG}
+  ,uLog
+  {$endif}
   ;
 
 const
@@ -335,6 +338,11 @@ end;
 procedure TDownloader.SetLastErrorMsg(const Value: string);
 begin
   fLastErrorMsg := Value;
+  (*{$ifdef debug}
+  if debug then
+     uLog.Log('LastErrorMsg: %s', [Value]);
+  {$endif}*)
+
 end;
 
 function TDownloader.GetName: string;
@@ -479,6 +487,7 @@ end;
 
 function TDownloader.DownloadPage(Http: THttpSend; Url: string; Method: THttpMethod; Clear: boolean): boolean;
 var MethodStr: string;
+    Head: string;
 begin
   repeat
     Url := Trim(Url);
@@ -491,7 +500,18 @@ begin
       hmHEAD: MethodStr := 'HEAD';
     else      MethodStr := 'GET';
     end;
+    {$ifdef debug}
+    Head:=Http.Headers.Text;
+    if Method=hmPost then
+      Head:=ConvertString(Http.InputStream, peUTF8);
+    {$endif}
+
     Result := Http.HttpMethod(MethodStr, Url);
+    {$ifdef debug}
+     if debug then
+        uLog.Log('%s: %s'+EOLN+'UserAgent: %s'+EOLN+'Headers: %s', [MethodStr, Url, Http.UserAgent, Head]);
+        uLog.Log('Response: %s'+EOLN+'Headers: %s', [copy(HtmlDecode(ConvertString(Http.Document, peUTF8)),1,1024),Http.Headers.Text]);
+    {$endif}
     Method:=hmGET;
   until (not Result) or (not CheckRedirect(Http, Url));
   Http.Document.Seek(0, 0);

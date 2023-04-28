@@ -39,6 +39,8 @@ unit uMessages;
 
 interface
 
+var
+  debug: boolean = false;
 const
   ///EOLN = #13#10;
   EOLN = {$IFDEF LINUX} AnsiChar(#10) {$ENDIF}

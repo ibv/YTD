@@ -15,7 +15,7 @@ object FormYTD: TFormYTD
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   ShowHint = True
-  LCLVersion = '2.2.0.4'
+  LCLVersion = '2.2.4.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 29
@@ -161,7 +161,7 @@ object FormYTD: TFormYTD
   end
   object Downloads: TListView
     Left = 0
-    Height = 354
+    Height = 347
     Top = 29
     Width = 734
     Align = alClient
@@ -209,8 +209,8 @@ object FormYTD: TFormYTD
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 16
-    Top = 383
+    Height = 23
+    Top = 376
     Width = 734
     AutoHint = True
     Panels = <>
@@ -1967,7 +1967,7 @@ object FormYTD: TFormYTD
     About.Description.Strings = (
       'Plays WAVE sounds in Windows or Linux'#10'Public methods: Execute and StopSound'
     )
-    About.Title = 'PlaySound'
+    About.Title = 'About About About PlaySound'
     About.Height = 400
     About.Width = 400
     About.Font.Color = clNavy

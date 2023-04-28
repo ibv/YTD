@@ -118,19 +118,19 @@
 // They are only listed here for reference and documentation. DO NOT define
 // them here.
 
-{.DEFINE DEBUG}
+{.$DEFINE DEBUG}
   // Include debug code
 
 {.DEFINE RELEASE} 
   // Remove unnecessary debug information
 
-{DEFINE NO_GUI}
+{.DEFINE NO_GUI}
   // Don't compile the GUI version
 
-{.DEFINE NO_CLI}
+{DEFINE NO_CLI}
   // Don't compile the command-line version
 
-{.DEFINE NO_SETUP}
+{DEFINE NO_SETUP}
   // Don't compile the setup/install/upgrade code
 
 {.DEFINE NO_XXX}  
@@ -157,7 +157,7 @@
 {$ENDIF}
 
 {$IFNDEF NO_SETUP}
-  {$DEFINE SETUP}
+  {.$DEFINE SETUP}
 {$ENDIF}
 
 

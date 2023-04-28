@@ -50,13 +50,14 @@ uses
   {$IFNDEF DELPHI7_UP} FileCtrl, {$ENDIF}
   {$IFDEF SETUP}
     uSetup, uSystem,
+  {$ENDIF}
     {$IFNDEF GUI_WINAPI}
       Forms, Dialogs,
       {$IFDEF DELPHIXE4_UP}
       UITypes,
       {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
+  {.$ENDIF}
   SynaCode, SynaUtil,
   uFunctions, uLanguages, uDownloadList, uMessages, uStrings, uOptions, uUpgrade;
 

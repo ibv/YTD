@@ -1,6 +1,7 @@
 unit uLog;
 {$INCLUDE 'pepak.inc'}
 {$INCLUDE 'uLog.inc'}
+{$INCLUDE 'ytd.inc'}
 
 {$IFNDEF DEBUG}
   {$UNDEF DEBUGLOG}
@@ -9,7 +10,11 @@ unit uLog;
 interface
 
 uses
-  SysUtils, Windows, Classes;
+  SysUtils,
+  {$ifdef mswindows}
+    Windows,
+  {$endif}
+  Classes;
 
 procedure Log(const Msg: string); overload;
 procedure Log(const Msg: string; const Params: array of const); overload;
@@ -33,7 +38,8 @@ begin
   try
     if LogFileName = '' then
       begin
-      LogFileName := GetModuleName(hInstance) + '.log';
+      ///LogFileName := GetModuleName(hInstance) + '.log';
+      LogFileName := 'ytd.log';
       if FileExists(LogFileName) then
         SysUtils.DeleteFile(LogFileName);
       end;
@@ -43,13 +49,13 @@ begin
     else
       Rewrite(T);
     try
-      Writeln(T, Msg);
+      Writeln(T, FormatDateTime('d.m.yyyy hh:nn:ss ', now)+Msg);
     finally
       CloseFile(T);
-      end;
+    end;
   except
     // Do nothing
-    end;
+  end;
   {$ENDIF}
 end;
 
