@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.70.20230317.0</version>
+  <version>1.70.20230810.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1075,11 +1075,12 @@
         </http_download>
       </multi_regexp>
     </script>
-    <script id="markiza.sk" provider="Markiza.sk" changed="20230316">
+    <script id="markiza.sk" provider="Markiza.sk" changed="20230810">
       <regexps>
         <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
         <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
+        <regexp id="urls3" match="URLS3"><![CDATA[,{"src":"(?P<URLS3>.+?)","type":"application\\/dash]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
        </regexps>
@@ -1161,10 +1162,24 @@
               </condition>
         </if>
         </condition>
-        
+        <condition type="regexp_match" id="urls3" content="page">
+          <set_var id="urls3">
+            <regexp id="urls3" content="page"/>
+          </set_var>
+            <dash_download>
+            <title>
+              <get_var id="title"/>
+            </title>
+            <url>
+              <replace search="\" replacement="">
+                <get_var id="urls3"/>
+              </replace>
+            </url>
+            <extension>.mpv</extension>
+          </dash_download>
+        </condition>
       </if>
     </script>
-    
     <script id="mujrozhlas.cz" provider="Mujrozhlas.cz"  changed="20200424">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA["og:title" content="(?P<TITLE>.+?)".+/>]]></regexp>
@@ -1247,11 +1262,12 @@
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20230316">
+    <script id="nova.cz" provider="Nova.cz" changed="20230810">
       <regexps>
 	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
         <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
+        <regexp id="urls3" match="URLS3"><![CDATA[,{"src":"(?P<URLS3>.+?)","type":"application\\/dash]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?)</title>]]></regexp>
       </regexps>
@@ -1332,6 +1348,22 @@
                 </dash_download>
               </condition>
         </if>
+        </condition>
+        <condition type="regexp_match" id="urls3" content="page">
+          <set_var id="urls3">
+            <regexp id="urls3" content="page"/>
+          </set_var>
+            <dash_download>
+            <title>
+              <get_var id="title"/>
+            </title>
+            <url>
+              <replace search="\" replacement="">
+                <get_var id="urls3"/>
+              </replace>
+            </url>
+            <extension>.mpv</extension>
+          </dash_download>
         </condition>
       </if>
     </script>
