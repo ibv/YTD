@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.70.20230810.0</version>
+  <version>1.70.20231106.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1262,10 +1262,12 @@
         </nested_download>
       </multi_regexp>
     </script>
-    <script id="nova.cz" provider="Nova.cz" changed="20230810">
+    <script id="nova.cz" provider="Nova.cz" changed="20231106">
       <regexps>
 	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.data-src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
+	    <regexp id="embedUrl" match="EMBEDURL"><![CDATA[\s"embedUrl":.?"(?P<EMBEDURL>.+?)"\s]]></regexp>
         <regexp id="urls" match="URLS"><![CDATA[(:bitrates|src)\s*=\s+(?P<URLS>(\{(.+?)\}));]]></regexp>
+        <regexp id="urls1" match="URLS1"><![CDATA["tracks":{"HLS":\[{"src":"(?P<URLS1>.+?)"]]></regexp>
         <regexp id="urls2" match="URLS2"><![CDATA[,"DASH":\[{"src":"(?P<URLS2>.+?)"]]></regexp>
         <regexp id="urls3" match="URLS3"><![CDATA[,{"src":"(?P<URLS3>.+?)","type":"application\\/dash]]></regexp>
         <regexp id="url" match="URL"><![CDATA["(?P<URL>.+?)"]]></regexp>
@@ -1281,13 +1283,22 @@
       <set_var id="title">
         <replace search="|" replacement="-"><regexp id="title" content="page"/></replace>
       </set_var>
-      <set_var id="iframe">
-        <regexp id="iframe" content="page"/>
-      </set_var>
+      <if>
+        <condition type="regexp" id="iframe" content="page">
+          <set_var id="url">
+            <regexp id="iframe" content="page"/>
+          </set_var>
+        </condition>
+        <condition type="regexp" id="embedUrl" content="page">
+          <set_var id="url">
+            <replace search="\" replacement=""><regexp id="embedUrl" content="page"/></replace>
+          </set_var>
+        </condition>
+      </if>
       <set_var id="page">
         <download_page encoding="utf8">
           <url>
-            <get_var id="iframe"/>
+            <get_var id="url"/>
           </url>
         </download_page>
       </set_var>
@@ -1329,6 +1340,22 @@
         </else>
         </if>
         </condition>
+        <!--condition type="regexp_match" id="urls1" content="page">
+          <set_var id="urls1">
+            <regexp id="urls1" content="page"/>
+          </set_var>
+            <hls_download>
+            <title>
+              <get_var id="title"/>
+            </title>
+            <url>
+              <replace search="\" replacement="">
+                <get_var id="urls1"/>
+              </replace>
+            </url>
+            <extension>.mp4</extension>
+          </hls_download>
+        </condition-->
           <condition type="regexp" id="urls2" content="page">
           <set_var id="urls2">
             <regexp id="urls2" content="page"/>
@@ -1340,9 +1367,9 @@
                     <get_var id="title"/>
                 </title>
                 <url>
-				<replace search="\" replacement="">
+                  <replace search="\" replacement="">
                     <get_var id="urls2"/>
-				</replace>
+                  </replace>
                 </url>
                 <extension>.mpv</extension>  
                 </dash_download>
