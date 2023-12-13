@@ -43,7 +43,7 @@ uses
   LCLIntf, LCLType, LMessages,
 
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, HttpSend,  ComCtrls,
+  StdCtrls, ComCtrls,
   {$IFDEF DELPHIXE4_UP}
   UITypes,
   {$ENDIF}
@@ -167,7 +167,7 @@ begin
   // Show available version
   LabelNewestVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found') {$ENDIF} ; // GUI: Check for a new version wasn't made yet - or failed.
   LabelNewestDefsVersion.Caption := {$IFDEF THREADEDVERSION} _('checking...') {$ELSE} _('not found') {$ENDIF} ; // GUI: Check for a new version wasn't made yet - or failed.
-  LabelSSL.Caption:=ChangeFileExt(DLLSSLName, '');
+  LabelSSL.Caption:=OpenSSLVersion(0);
   Application.ProcessMessages;
   if Options <> nil then
     begin

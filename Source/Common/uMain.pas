@@ -313,6 +313,7 @@ begin
         {$ENDIF}
         end;
   {$ELSE}
+    Application.Scaled:=True;
     Application.Initialize;
     Application.Title := 'YTD';
     Application.CreateForm(TFormYTD, FormYTD);
