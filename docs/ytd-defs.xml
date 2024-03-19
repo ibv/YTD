@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.70.20231212.0</version>
+  <version>1.70.20240319.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1176,11 +1176,16 @@
         </condition>
       </if>
     </script>
-    <script id="mujrozhlas.cz" provider="Mujrozhlas.cz"  changed="20200424">
+    <script id="mujrozhlas.cz" provider="Mujrozhlas.cz"  changed="20240319">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA["og:title" content="(?P<TITLE>.+?)".+/>]]></regexp>
-        <regexp id="id" match="ID"><![CDATA["contentId":"(?P<ID>.+?)",]]></regexp>
+        <regexp id="shorttitle" match="PART"><![CDATA["shortTitle":"(?P<TITLE>.+?)"]]></regexp>
+        <regexp id="part" match="PART"><![CDATA["part":(?P<PART>.+?),]]></regexp>
+        <regexp id="id" match="ID"><![CDATA[class="b-episode" data-entry='\{.+?;(?P<ID>\w{8}-\w{4}-\w{4}-\w{4}-\w{12})]]></regexp>  
         <regexp id="url" match="URL"><![CDATA["audioLinks":\[{.+?"linkType":"download",.+?"url":"(?P<URL>.+?)"}]]></regexp>
+        <regexp id="url2" match="URL"><![CDATA["audioLinks":\[\{.*?"variant":"hls",.*?"url":"(?P<URL>.+?)"]]></regexp>
+        <regexp id="url3" match="URL"><![CDATA["audioLinks":\[\{.*?"variant":"dash",.*?"url":"(?P<URL>.+?)"]]></regexp>
+        <regexp id="url4" match="URL"><![CDATA["audioLinks":\[\{.*?"variant":"mp3",.*?"url":"(?P<URL>.+?)"]]></regexp>
       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
@@ -1191,21 +1196,46 @@
       </set_var>
         <if>
         <condition type="regexp_match" id="id" content="page">
-        <set_var id="playlist">
-        <download_page encoding="utf8">
-          <url>
-            https://api.mujrozhlas.cz/episodes/<regexp id="id" content="page"/>
-          </url>
-        </download_page>
-        </set_var>
-          <http_download>
-            <title>
-                <regexp id="title" content="page"/>
-            </title>
-            <url>
-              <decode_js><regexp id="url" content="playlist"/></decode_js>
-            </url>
-          </http_download>
+            <multi_regexp content="page" id="id" var_prefix="loop_">   
+              <set_var id="playlist">
+                <download_page encoding="utf8">
+                  <url>
+                    https://api.mujrozhlas.cz/episodes/<get_var id="loop_ID"/>
+                  </url>
+                </download_page>
+              </set_var>
+              <if>
+                <condition type="regexp_match" id="part" content="playlist">
+                    <set_var id="part">
+                      -<regexp id="part" content="playlist"/>
+                    </set_var>
+                </condition>
+              </if>
+              <if>
+                <condition  type="regexp_match" id="url2" content="playlist">
+                  <hls_download>
+                    <title>
+                      <decode_js><regexp id="shorttitle" content="playlist" match="TITLE"/></decode_js><get_var id="part"/>
+                    </title>
+                    <url>
+                      <replace search="\" replacement=""><regexp id="url2" content="playlist"/></replace>
+                    </url>
+                    <extension>.m4a</extension>
+                  </hls_download>
+                </condition>
+                <condition  type="regexp_match" id="url4" content="playlist">
+                  <http_download>
+                    <title>
+                      <decode_js><regexp id="shorttitle" content="playlist" match="TITLE"/></decode_js><get_var id="part"/>
+                    </title>
+                    <url>
+                      <replace search="\" replacement=""><regexp id="url4" content="playlist"/></replace>
+                    </url>
+                    <extension>.mp3</extension>
+                  </http_download>
+                </condition>
+              </if>
+            </multi_regexp>
         </condition>
       </if>
     </script>
