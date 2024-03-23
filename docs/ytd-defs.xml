@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.70.20240319.0</version>
+  <version>1.70.20240323.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -1176,12 +1176,14 @@
         </condition>
       </if>
     </script>
-    <script id="mujrozhlas.cz" provider="Mujrozhlas.cz"  changed="20240319">
+    <script id="mujrozhlas.cz" provider="Mujrozhlas.cz"  changed="20240323">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA["og:title" content="(?P<TITLE>.+?)".+/>]]></regexp>
         <regexp id="shorttitle" match="PART"><![CDATA["shortTitle":"(?P<TITLE>.+?)"]]></regexp>
         <regexp id="part" match="PART"><![CDATA["part":(?P<PART>.+?),]]></regexp>
+        <regexp id="partn"><![CDATA["part":null,]]></regexp>
         <regexp id="id" match="ID"><![CDATA[class="b-episode" data-entry='\{.+?;(?P<ID>\w{8}-\w{4}-\w{4}-\w{4}-\w{12})]]></regexp>  
+        <regexp id="ide" match="IDE"><![CDATA["episode","id":"(?P<IDE>\w{8})-\w{4}-\w{4}-\w{4}-\w{12}"]]></regexp>
         <regexp id="url" match="URL"><![CDATA["audioLinks":\[{.+?"linkType":"download",.+?"url":"(?P<URL>.+?)"}]]></regexp>
         <regexp id="url2" match="URL"><![CDATA["audioLinks":\[\{.*?"variant":"hls",.*?"url":"(?P<URL>.+?)"]]></regexp>
         <regexp id="url3" match="URL"><![CDATA["audioLinks":\[\{.*?"variant":"dash",.*?"url":"(?P<URL>.+?)"]]></regexp>
@@ -1205,11 +1207,16 @@
                 </download_page>
               </set_var>
               <if>
-                <condition type="regexp_match" id="part" content="playlist">
+                <condition type="regexp_match" id="partn" content="playlist">
                     <set_var id="part">
-                      -<regexp id="part" content="playlist"/>
+                      -<regexp id="ide" content="playlist"/>
                     </set_var>
                 </condition>
+                <else>
+                    <set_var id="part">
+                      -<replace search="null" replacement=""><regexp id="part" content="playlist"/></replace>
+                    </set_var>
+                </else>
               </if>
               <if>
                 <condition  type="regexp_match" id="url2" content="playlist">
@@ -1231,7 +1238,6 @@
                     <url>
                       <replace search="\" replacement=""><regexp id="url4" content="playlist"/></replace>
                     </url>
-                    <extension>.mp3</extension>
                   </http_download>
                 </condition>
               </if>
@@ -1593,7 +1599,7 @@
         <url><get_var id="baseurl"/>/<get_var id="besturl"/></url>
       </http_download>
     </script>
-    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20220328">
+    <script id="rozhlas.cz" provider="Rozhlas.cz"  changed="20240320">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<h1 class="article-type.+?">(?P<TITLE>.+?)</h1>]]></regexp>
         <regexp id="part"><![CDATA[aria-labelledby="Audio part">]]></regexp>
@@ -1606,6 +1612,7 @@
         <regexp id="data-title"><![CDATA[,{"title":"(?P<TITLE>.+?)","since".+?"download".*?"url":"(?P<URL>.+?)"}],"podcastLinks"*?]]></regexp>
         <regexp id="data-title-hls" match="TITLE,URL"><![CDATA[,{"title":"(?P<TITLE>.+?)","since".*?:"hls",.*?,"url":"(?P<URL>.+?)"}*?]]></regexp>
         <regexp id="hls"><![CDATA["hls",.+?,"url":".+?"}]]></regexp>
+        <regexp id="field-audio-list"><![CDATA[.+?"title":"(?P<TITLE>.+?)",".+?"variant":"mp3".+?"url":"(?P<URL>.+?)"]]></regexp>
       </regexps>
       <set_var id="page">
         <download_page encoding="utf8">
@@ -1653,7 +1660,18 @@
            <set_var id="json">
                 ,<regexp id="data-player" content="page"/>
            </set_var>
-          <if><!--hls -->
+          <if>
+              <condition type="regexp_match" id="field-audio-list" content="json">
+                <http_download>
+                  <title>
+                    <decode_js><regexp id="field-audio-list" content="json" match="TITLE"/></decode_js>
+                  </title>
+                  <url>
+                    <replace search="\" replacement=""><regexp id="field-audio-list" content="json" match="URL"/></replace>
+                  </url>
+                </http_download>
+              </condition>
+              <!--hls -->
             <condition type="regexp_match" id="hls" content="json">
             <multi_regexp content="json" id="data-title-hls" var_prefix="loop_" match="TITLE,URL">   
                <hls_download>
@@ -1667,17 +1685,17 @@
             </hls_download>
             </multi_regexp>
             </condition>          
-          <else><!-- ostatni -->      
-            <multi_regexp content="json" id="data-title" var_prefix="loop_" match="TITLE,URL">
-            <http_download>
-                <title>
+          <else><!-- ostatni -->   
+              <multi_regexp content="json" id="data-title" var_prefix="loop_" match="TITLE,URL">
+                <http_download>
+                  <title>
                     <replace search=":" replacement=""><decode_js><get_var id="loop_TITLE"/></decode_js></replace>
-                </title>
-                <url>
+                  </title>
+                  <url>
                     <decode_js><get_var id="loop_URL"/></decode_js>
-                </url>
-            </http_download>
-            </multi_regexp>
+                  </url>
+                </http_download>
+              </multi_regexp>
           </else>
           </if>
         </condition>
