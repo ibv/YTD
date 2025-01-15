@@ -1,6 +1,6 @@
 ﻿______________________________________________________________________________
 
-YTD v1.70                                                 (c) 2018-2023 ibv
+YTD v1.71                                                 (c) 2018-2025 ibv
 https://ibv.github.io/YTD/
                                                           (c) 2009-2018 Pepak
 http://www.pepak.net/ytd                                  http://www.pepak.net
@@ -8,6 +8,13 @@ ______________________________________________________________________________
 
 CHANGELOG
 ---------
+
+  v1.71: (fpc)
+
+    * Updated providers:
+      - Ceskatelevize.cz 
+
+
 
   v1.70: (fpc)
 
