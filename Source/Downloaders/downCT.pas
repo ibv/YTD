@@ -74,6 +74,10 @@ type
       PlaylistInfoRegExp: TRegExp;
       PlaylistUrlRegExp: TRegExp;
       StreamUrlRegExp: TRegExp;
+      StreamUrlRegExpNew: TRegExp;
+      StreamUrlRegVodUrl: TRegExp;
+      StreamUrlRegVodUrlMPD: TRegExp;
+      StreamUrlRegVodTitle: TRegExp;
       StreamTitleRegExp: TRegExp;
       StreamTitle2RegExp: TRegExp;
       StreamTitleFromPageRegExp: TRegExp;
@@ -121,8 +125,8 @@ implementation
 uses
   uStringConsts,
   uStrings,
-  uDownloadClassifier,
-  uFunctions, {$ifdef debug} uLog, {$endif}
+  uDownloadClassifier, uJson,
+  uFunctions, {$ifdef DEBUG} uLog, {$endif}
   uMessages;
 
 const
@@ -137,12 +141,16 @@ const
 const
   REGEXP_PLAYLIST_INFO = 'getPlaylistUrl\(\[\{"type":"(?P<TYP>.+?)","id":"(?P<ID>.+?)"';
   REGEXP_PLAYLIST_URL = '"url"\s*:\s*"(?P<URL>https?:.+?)"';
-  REGEXP_PLAYLIST_URL_NEW = '<playlistURL><!\[CDATA\[(?P<URL>.+?)\]\]></playlistURL>';
+  //REGEXP_PLAYLIST_URL_NEW = '<playlistURL><!\[CDATA\[(?P<URL>.+?)\]\]></playlistURL>';
   REGEXP_STREAM_URL = '{"type":"VOD",.*?"streamUrls"\s*:\s*\{\s*"main"\s*:\s*"(?P<URL>https?:.+?)"';
+  REGEXP_STREAM_VOD_URL = 'PLAYLIST_VOD_URI":"(?P<URL>.+?)",';
+  REGEXP_STREAM_VOD_URL_MPD = '"url":"(?P<URL>.+?)",';
+  REGEXP_STREAM_VOD_TITLE = '"externalId":"\d+?","title":"(?P<TITLE>.+?)",';
 
-  REGEXP_STREAM_URL_NEW = 'video src="(?P<URL>.+?)"';
+  ///REGEXP_STREAM_URL_NEW = 'video src="(?P<URL>.+?)"';
+  REGEXP_STREAM_URL_NEW = '<script type="application/javascript" src="(?P<URL>.+?)" defer></script>';
   REGEXP_STREAM_TITLE = '{"type":"VOD".*?,"title"\s*:\s*"(?P<TITLE>.*?)"';
-  REGEXP_STREAM_TITLE_NEW = '<title>(?P<TITLE>.*?)</title';
+  //REGEXP_STREAM_TITLE_NEW = '<title>(?P<TITLE>.*?)</title';
   REGEXP_STREAM_TITLE_BETTER = '{"type":"VOD".*?"gemius"\s*:\s*\{[^}]*"NAZEV"\s*:\s*"(?P<TITLE>.*?)"';
   REGEXP_IFRAME_URL = '<(?:iframe\b[^>]*\ssrc|a\b[^>]*\shref)="(?P<URL>(?:https?://[^/]+)?/ivysilani/.+?)"';
   REGEXP_STREAM_TITLEFROMPAGE = REGEXP_TITLE_TITLE;
@@ -192,6 +200,10 @@ begin
   PlaylistInfoRegExp := RegExCreate(REGEXP_PLAYLIST_INFO);
   PlaylistUrlRegExp := RegExCreate(REGEXP_PLAYLIST_URL);
   StreamUrlRegExp := RegExCreate(REGEXP_STREAM_URL);
+  StreamUrlRegExpNew := RegExCreate(REGEXP_STREAM_URL_NEW);
+  StreamUrlRegVodUrl := RegExCreate(REGEXP_STREAM_VOD_URL);
+  StreamUrlRegVodUrlMPD := RegExCreate(REGEXP_STREAM_VOD_URL_MPD);
+  StreamUrlRegVodTitle := RegExCreate(REGEXP_STREAM_VOD_TITLE);
   StreamTitleRegExp := RegExCreate(REGEXP_STREAM_TITLE);
   StreamTitle2RegExp := RegExCreate(REGEXP_STREAM_TITLE_BETTER);
   StreamTitleFromPageRegExp := RegExCreate(REGEXP_STREAM_TITLEFROMPAGE);
@@ -208,6 +220,10 @@ begin
   RegExFreeAndNil(PlaylistInfoRegExp);
   RegExFreeAndNil(PlaylistUrlRegExp);
   RegExFreeAndNil(StreamUrlRegExp);
+  RegExFreeAndNil(StreamUrlRegExpNew);
+  RegExFreeAndNil(StreamUrlRegVodUrl);
+  RegExFreeAndNil(StreamUrlRegVodUrlMPD);
+  RegExFreeAndNil(StreamUrlRegVodTitle);
   RegExFreeAndNil(StreamTitleRegExp);
   RegExFreeAndNil(StreamTitle2RegExp);
   RegExFreeAndNil(StreamTitleFromPageRegExp);
@@ -232,7 +248,7 @@ end;
 function TDownloader_CT.AfterPrepareFromPage(var Page: string; PageXml: TXmlDoc; Http: THttpSend): boolean;
 var
   Prot, User, Pass, Host, Port, Part, Para: string;
-  PlayListType,PlaylistID, PlaylistUrlPage, PlaylistUrl, Playlist, Title, Title2: string;
+  PlayListType,PlaylistID, PlaylistUrlPage, PlaylistUrl, PlayListUrlMPD, Playlist, Title, Title2, URL_MPD: string;
   {$IFDEF MULTIDOWNLOADS}
   Urls: TStringArray;
   i: integer;
@@ -241,6 +257,7 @@ var
   {$ENDIF}
   PlayListIDEC, iframeHash: string;
   StreamType, RequestSource: string;
+  json: TJson;
 
   function getRedirectUrl(Http: THttpSend; Url: string): string;
   var MethodStr: string;
@@ -260,14 +277,10 @@ var
 begin
   inherited AfterPrepareFromPage(Page, PageXml, Http);
   Result := False;
-  // pro DASH play list
-  if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
-  begin
-    Http.UserAgent:=DEFAULT_USER_AGENT;
-  end;
 
   PlayListType:='episode';
-  StreamType:='type=dash';
+  //StreamType:='type=dash';
+  StreamType:='streamType=dash';
   RequestSource:='iVysilani';
 
   if not GetRegExpVars(IDEC, Page, ['IDEC'], [@PlaylistIDEC]) then
@@ -285,75 +298,85 @@ begin
     StreamType:='type=html&streamingProtocol=dash';
   end;
 
-  if not DownloadPage(Http,'https://www.ceskatelevize.cz/v-api/iframe-hash/', iframeHash) or (Http.ResultCode <>200) then
-     SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/embed/iFramePlayer.php?hash=' +iframeHash + '&origin=iVysilani&autoStart=true&start=0&IDEC=' + PlayListIDEC, page) then
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE);
+  // pro DASH play list
+  if not Options.ReadProviderOptionDef(Provider, OPTION_CT_DASH_SUPPORT, false) then
+  begin
+    Http.UserAgent:=DEFAULT_USER_AGENT;
+    StreamType:='streamType=hls';
+  end;
 
-  if not DownloadPage(Http,'https://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist/',
-            ///{$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist%5B0%5D%5Btype%5D=' + PlaylistType + '&playlist%5B0%5D%5Bid%5D=' + PlaylistID + '&requestUrl=' + UrlEncode(Part) + '&requestSource=iVysilani&addCommercials=1&type=dash'),
-            {$IFDEF UNICODE} AnsiString {$ENDIF} ('playlist[0][type]='+PlayListType+'&playlist[0][id]='+PlaylistIDEC+'&playlist[0][startTime]=0'+
-            '&requestSource='+RequestSource+'&'+StreamType+'&canPlayDRM=false&requestUrl=/ivysilani/embed/iFramePlayer.php'),
-            HTTP_FORM_URLENCODING_UTF8,
-            ['x-addr: 127.0.0.1', 'X-Requested-With: XMLHttpRequest'],
-            PlaylistUrlPage,
-            peUtf8
-            )
-  then
+  {$ifdef debug}
+   ///debug:=true;
+  {$endif}
+
+  // VOD stream
+
+  if not DownloadPage(Http,'https://player.ceskatelevize.cz/?origin=iVysilani&IDEC='+PlaylistIDEC, PlaylistUrlPage) then
     SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  else if not GetRegExpVar(PlaylistUrlRegExp, PlaylistUrlPage, 'URL', PlaylistUrl) then
-    if PlaylistUrlPage <> '' then
-      SetLastErrorMsg(Format(ERR_SERVER_ERROR, [PlaylistUrlPage]))
-    else
-      SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_INFO_PAGE)
-  else if not DownloadPage(Http, JSDecode(PlaylistUrl), Playlist) then
-    SetLastErrorMsg(ERR_FAILED_TO_DOWNLOAD_MEDIA_INFO_PAGE)
-  {$IFDEF MULTIDOWNLOADS}
-  else if not GetRegExpAllVar(StreamUrlRegExp, Playlist, 'URL', Urls) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  {$ELSE}
-  else if not GetRegExpVar(StreamUrlRegExp, Playlist, 'URL', Url) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
-  {$ENDIF}
-  else if not GetRegExpVar(StreamTitleRegExp, Playlist, 'TITLE', Title) then
-    SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE)
   else
-    begin
-    Urls[0]:=getRedirectUrl(Http, JSDecode(Urls[0]));
+  begin
+    if not GetRegExpVar(StreamUrlRegExpNew, PlayListUrlPage, 'URL', PlaylistUrl) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else  if not DownloadPage(Http,'https://player.ceskatelevize.cz'+PlaylistUrl, PlaylistUrlPage) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL) ;
 
-    Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title)));
-    if GetRegExpVar(StreamTitle2RegExp, Playlist, 'TITLE', Title2) and (Title2 <> '') then
-      Title := AnsiEncodedUtf8ToString( {$IFDEF UNICODE} AnsiString {$ENDIF} (JSDecode(Title2)));
-    if Title = '' then
-      if not GetRegExpVar(StreamTitleFromPageRegExp, Page, 'TITLE', Title) then
+    if not GetRegExpVar(StreamUrlRegVodUrl, PlayListUrlPage, 'URL', PlaylistUrl) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL)
+    else if not DownloadPage(Http,PlaylistURL+'/stream-data/media/external/'+PlaylistIDEC+'?canPlayDrm=true&quality=web&'+StreamType, PlaylistUrlPage) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
+
+
+    json:=JSONCreate(PlayListUrlPage);
+    if not JSONValue(json, 'title', Title) then
+       SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
+    if not JSONValue(json, 'streams[0]/url', PlayListUrl) then
+         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL);
+    JSONFreeAndNil(json);
+
+    {if not GetRegExpVar(StreamUrlRegVodTitle, PlayListUrlPage, 'TITLE', Title) then
         SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_TITLE);
+    if not GetRegExpVar(StreamUrlRegVodUrlMPD, PlayListUrlPage, 'URL', PlaylistUrl) then
+        SetLastErrorMsg(ERR_FAILED_TO_LOCATE_MEDIA_URL); }
+    Title := StringReplace(Title, '|', '-', [rfReplaceAll]);
+
+    Url_MPD:=getRedirectUrl(Http, JSDecode(PlaylistUrl));
+
 
         {$ifdef debug}
         if debug then
-           uLog.Log('GET: %s', [URLs[0]]);
+           uLog.Log('GET: %s', [Url_MPD]);
 
          debug:=false;
         {$endif}
 
     {$IFDEF MULTIDOWNLOADS}
-    for i := 0 to Pred(Length(Urls)) do
-      begin
-      UrlList.Add(JSDecode(Urls[i]));
+      UrlList.Add(JSDecode(Url_MPD));
       if Length(Urls) > 1 then
-        NameList.Add(Format('%s [%d]', [Title, Succ(i)]))
+        NameList.Add(Format('%s [%d]', [Title, 0]))
       else
         NameList.Add(Title);
-      end;
     Name := NameList[0];
     {$ENDIF}
     Name := Title;
-    MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
+    ///MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Urls[0]) {$ELSE} Url {$ENDIF};
+    MovieURL := {$IFDEF MULTIDOWNLOADS} JSDecode(Url_MPD) {$ELSE} Url {$ENDIF};
     SetPrepared(True);
 
 
 
     Result := True;
-    end;
+
+
+    {
+    with TFileStream.create('playlisturl.html',fmCreate) do
+    try
+       writeBuffer(PlayListUrlPage[1],length(PlaylistUrlPage));
+    finally
+       free;
+    end; }
+
+
+  end;
 end;
 
 
