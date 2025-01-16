@@ -3,8 +3,20 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<script type="text/javascript" src="top_up/javascripts/top_up-min.js?images_path=/top_up/images/top_up" ></script>
-<script type="text/javascript" src="top_up/javascripts/jquery/*.js"></script>
+ 
+<script type="text/javascript" src="javascripts/jquery-3.7.1.min.js"></script>
+ 
+    <style>
+          #myImage {
+            width: 454px; /* Nastav šířku obrázku */
+            cursor: pointer; /* Změna kurzoru na ukazatel */
+            transition: transform 0.3s ease; /* Plynulý přechod */
+            position: relative; /* Přidáno pro správné umístění */
+            z-index: 10; /* Zajišťuje, že obrázek bude nad ostatními prvky */
+        }
+    </style>
+ 
+ 
  
 <title>YTD</title>
 <link href="main.css" rel="stylesheet" type="text/css" />
@@ -13,6 +25,31 @@
 </head>
 
 <body>
+
+<script>
+$(document).ready(function() {
+    var isScaled = false;
+
+    $('#myImage').click(function(event) {
+        event.stopPropagation(); // Zabráníme propagaci události kliknutí
+        if (!isScaled) {
+            $(this).css('transform', 'scale(2.5)'); // Zvětšení
+            isScaled = true;
+        } else {
+            $(this).css('transform', 'scale(1)'); // Zmenšení
+            isScaled = false;
+        }
+    });
+
+    $(document).click(function() {
+        if (isScaled) {
+            $('#myImage').css('transform', 'scale(1)'); // Zmenšení
+            isScaled = false;
+        }
+    });
+});
+</script>
+
 <div class="wrapper">
 <div class="header">
 <div class="logo">
@@ -35,7 +72,7 @@
   <a href="http://www.pepak.net/ytd/ytd">http://www.pepak.net/ytd/ytd</a></b>
   </p>
   
-  <p> <a href="images/ytd.png" toptions="overlayClose = 1"><img src="images/ytd.png" alt="YTD Downloader" width="454" height="254" /></a></p>
+  <p> <img src="images/ytd.png" alt="YTD Downloader" width="454" height="254" id="myImage"  /></p>
   <p>
   Stabilní funkce:
   </p>
