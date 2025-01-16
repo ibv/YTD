@@ -252,6 +252,7 @@ const
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0';
   ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36';
   DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/%d.0.%d.%d Safari/537.36';
+  ///DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
 
 
@@ -305,7 +306,7 @@ begin
   {$ENDIF}
   fHttp := THttpSend.Create;
   ///fHttp.UserAgent := DEFAULT_USER_AGENT;
-  fHttp.UserAgent := format(DEFAULT_USER_AGENT, [RandomRange(74, 103),RandomRange(3700, 3710),RandomRange(0, 100)]);
+  fHttp.UserAgent := format(DEFAULT_USER_AGENT, [RandomRange(100, 131),RandomRange(0, 120),RandomRange(0, 100)]);
   MovieID := AMovieID;
   ///fVideoBitRate := MaxInt;
 end;
@@ -338,11 +339,6 @@ end;
 procedure TDownloader.SetLastErrorMsg(const Value: string);
 begin
   fLastErrorMsg := Value;
-  (*{$ifdef debug}
-  if debug then
-     uLog.Log('LastErrorMsg: %s', [Value]);
-  {$endif}*)
-
 end;
 
 function TDownloader.GetName: string;

@@ -222,7 +222,8 @@ begin
       // audio stream
       if Options.ReadProviderOptionDef(Provider, OPTION_DASH_AUDIO_SUPPORT, false) then
       begin
-        id   := fMPD.GetBestID(128000,false);
+        //id   := fMPD.GetBestID(128000,false);
+        id   := fMPD.GetBestID(256000,false);
         Fragments.Add(GetRelativeUrl(fMPD.BaseURL, fMPD.AudioInit));
         if AnsiContainsStr(fMPD.AudioMedia, '$Time$') then
         begin

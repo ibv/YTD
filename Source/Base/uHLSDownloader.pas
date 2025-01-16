@@ -268,7 +268,7 @@ begin
       end;
 
       // audio stream
-      id   := fMPD.GetBestID(128000,false);
+      id   := fMPD.GetBestID(256000,false);
       Fragments.Add(GetRelativeUrl(fMPD.BaseURL, fMPD.AudioInit));
       for i:=0 to fMPD.AudioEndNumber do
       begin
