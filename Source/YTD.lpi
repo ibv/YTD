@@ -30,7 +30,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="70"/>
+      <MinorVersionNr Value="71"/>
       <BuildNr Value="1"/>
       <StringTable ProductName="YTD" ProductVersion="1.70"/>
     </VersionInfo>
@@ -43,6 +43,11 @@
         <Item1 ID="922055607083" Modes="Default" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <DestinationDirectory Value="D:/ivo/src/fpc/YTD/project"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="1">
@@ -1195,11 +1200,13 @@
       </SyntaxOptions>
     </Parsing>
     <CodeGeneration>
-      <TargetCPU Value="i386"/>
+      <Checks>
+        <OverflowChecks Value="True"/>
+      </Checks>
     </CodeGeneration>
     <Linking>
       <Debugging>
-        <GenerateDebugInfo Value="False"/>
+        <DebugInfoType Value="dsDwarf2Set"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
