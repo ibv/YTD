@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.71.20250115.0</version>
+  <version>1.71.20250201.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -2567,9 +2567,9 @@
           </headers>
         </http_download>
       </script>
-      <script id="pvideo.cz" provider="Pvideo.cz" changed="20220126">
+      <script id="pvideo.cz" provider="Pvideo.cz" changed="20250201">
         <regexps>
-          <regexp id="info" match="INFO"><![CDATA[<video id="video"(?P<INFO>.+?)</video></div><script>]]></regexp>
+          <regexp id="info" match="INFO"><![CDATA[<video id="video"(?P<INFO>.+?)</video></div><div class]]></regexp>
           <regexp id="url" match="URL"><![CDATA[src="(?P<URL>.+?)"\s*title="(?P<QUALITY>.+?)p"\s*type="(?P<TYPE>.+?)"]]></regexp>
           <regexp id="type" match="X"><![CDATA[^(?P<X>application/x-mpegURL)$]]></regexp>    
         </regexps>
