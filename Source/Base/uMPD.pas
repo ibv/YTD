@@ -149,7 +149,7 @@ begin
 
   if fxml.NodeByPathAndAttr('Period/AdaptationSet','mimeType','video/mp4',Node1) then
   begin
-    if XmlNodeByPath(Node1,'SegmentTemplate',Node) then
+    if XmlNodeByPath(Node1,'SegmentTemplate',Node) or XmlNodeByPath(Node1,'Representation/SegmentTemplate',Node) then
     begin
       fmedia := XmlAttribute(Node, 'media');
       finit := XmlAttribute(Node, 'initialization');
@@ -176,7 +176,7 @@ begin
   begin
     lang := XmlAttribute(Node1, 'lang');
 
-    if XmlNodeByPath(Node1,'SegmentTemplate',Node) then
+    if XmlNodeByPath(Node1,'SegmentTemplate',Node) or XmlNodeByPath(Node1,'Representation/SegmentTemplate',Node) then
     begin
       famedia := XmlAttribute(Node, 'media');
       fainit := XmlAttribute(Node, 'initialization');
