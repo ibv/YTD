@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.71.20250505.0</version>
+  <version>1.71.20251026.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -641,6 +641,48 @@
         </title>
         <url><get_var id="url"/>?hdcore=3.3.1</url>
       </hds_download>
+    </script>
+    <script id="fotrnatripu.tv" provider="FotrNaTripu.tv"  changed="20231023">
+      <regexps>
+        <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.+?).\|]]></regexp>    
+        <regexp id="url" match="URL"><![CDATA[case true\:[\s,\S]*?src.=."(?P<URL>.+?)";]]></regexp>
+        <regexp id="url_embed" match="URL"><![CDATA[_ONND_URL_EMBED.=.'(?P<URL>.+?)'.+?;+]]></regexp>
+        <regexp id="url_embed_mid" match="MID"><![CDATA["mid"\:"(?P<MID>.+?)","+?]]></regexp>
+        <regexp id="url_m3u8" match="URL"><![CDATA["sourcetype"\:"hls","url":"(?P<URL>.+?)"]]></regexp>
+      </regexps>
+      <set_var id="page">
+        <download_page encoding="utf8">
+          <url>
+            <get_var id="_movie_id"/>
+          </url>
+        </download_page>
+      </set_var>
+      <set_var id="embed">
+        <download_page encoding="utf8">
+          <url>
+            <regexp id="url" content="page"/>
+          </url>
+        </download_page>
+      </set_var>
+      <set_var id="hls_m3u8">
+          <download_page encoding="utf8">
+            <url><regexp id="url_embed" content="embed"/>/frame86.php?mid=<regexp id="url_embed_mid" content="embed"/>&wtop=<get_var id="_movie_id"/></url>
+            <referer>https://fotrnatripu.tv</referer>
+          </download_page>
+      </set_var>
+       <hls_download>
+        <title>
+          <replace search=":" replacement="">
+            <replace search="," replacement=""><regexp id="title" content="page"/></replace>
+          </replace>
+        </title>
+        <url>
+           <replace search="\" replacement="">
+             <regexp id="url_m3u8" content="hls_m3u8"/>
+           </replace>
+        </url>
+        <extension>.ts</extension>
+      </hls_download>
     </script>
     <script id="gazeta.tv" provider="Gazeta.tv">
       <regexps>
@@ -1294,6 +1336,17 @@
         </nested_download>
       </multi_regexp>
     </script>
+    <script id="m3u8" provider="M3U8" changed="20251026">
+       <hls_download>
+        <title>
+          stream
+        </title>
+        <url>
+          <get_var id="_movie_id"/>
+         </url>
+         <extension>.ts</extension>
+      </hls_download>
+    </script> 
     <script id="nova.cz" provider="Nova.cz" changed="20231212">
       <regexps>
 	    <regexp id="iframe" match="IFRAME"><![CDATA[\s<iframe.*?src="(?P<IFRAME>.+?)".*?data-video-id=.*</iframe>\s]]></regexp>
@@ -2946,6 +2999,7 @@
     <url script="drsnysvet.cz"><![CDATA[drsnysvet\.cz/.+$]]></url>
     <url script="facebook.com"><![CDATA[facebook\.com/.+$]]></url>
     <url script="film.seznam.cz"><![CDATA[film\.seznam\.cz(?:/.+)?$]]></url>
+    <url script="fotrnatripu.tv"><![CDATA[fotrnatripu\.tv.+$]]></url>
     <url script="gamespot.com-embed" subexpression="ID"><![CDATA[gamespot\.com/videos/embed/(?P<ID>\d+)]]></url>
     <url script="gazeta.tv"><![CDATA[gazeta\.tv/plej/.+$]]></url>
     <url script="iconcerts.com"><![CDATA[iconcerts\.com/.+$]]></url>
@@ -2962,6 +3016,7 @@
     <url script="markiza.sk"><![CDATA[markiza\.sk/.+$]]></url>
     <url script="mujrozhlas.cz"><![CDATA[mujrozhlas\.cz/.+$]]></url>
     <url script="mc2.sk"><![CDATA[mc2\.sk/.+$]]></url>
+    <url script="m3u8"><![CDATA[.+\.m3u8$]]></url>
     <url script="natabanu.com"><![CDATA[natabanu\.com/.+$]]></url>
     <url script="nova.cz"><![CDATA[nova\.cz/.+$]]></url>
     <url script="novinky.cz"><![CDATA[novinky\.cz/.+$]]></url>
