@@ -1,5 +1,4 @@
 
-
 @echo '%~1'  > ytd.version
 
 pushd ..\Install\
@@ -35,30 +34,35 @@ rem "c:\Program Files (x86)\Inno Setup 6\ISCC.exe" ..\Install\ytd.iss
 
 
 
+rem ----- Simple OpenSSL version variable -----
+if "%VERZE%"=="" set "VERZE=4"
+
 rem ##### 7z All bits #####
 pushd ..\Bin
 
 if not exist 32bit (
   mkdir 32bit
-) 
+)
 if not exist 64bit (
   mkdir 64bit
-) 
+)
+
 rem 32bit
 if exist 32bit (
-   copy /y ytd.exe 32bit
-   copy /y libcrypto-1_1.dll 32bit 
-   copy /y libssl-1_1.dll 32bit
-   copy /y pcre32.dll 32bit
+  copy /y ytd.exe 32bit
+  copy /y libcrypto-%VERZE%.dll 32bit
+  copy /y libssl-%VERZE%.dll 32bit
+  copy /y pcre32.dll 32bit
 )
+
 rem 64bit
 if exist 64bit (
-   copy /y ytd-64.exe 64bit
-   copy /y libcrypto-1_1-x64.dll 64bit 
-   copy /y libssl-1_1-x64.dll 64bit
-   copy /y pcre64.dll 64bit
-
+  copy /y ytd-64.exe 64bit
+  copy /y libcrypto-%VERZE%-x64.dll 64bit
+  copy /y libssl-%VERZE%-x64.dll 64bit
+  copy /y pcre64.dll 64bit
 )
+
 
 ..\Source\Lib\7-zip\7za a -t7z -ms=on -mx=9 -md=64m ..\Install\ytd-"%~1"-x32_64.7z @..\Install\archive7z.txt
 popd
