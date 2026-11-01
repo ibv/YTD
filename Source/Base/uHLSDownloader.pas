@@ -202,9 +202,11 @@ begin
           try
             while PlaylistStream.ReadLine(Line) do
               if Line <> '' then
-                if Line[1] <> '#' then
+                if (Line[1] <> '#') or ((Line[1]='#') and (pos('#EXT-X-MAP:URI=',Line)>0)) then
                   //if IsHttpProtocol(Line) then
                     begin
+                    Line := StringReplace(Line,'#EXT-X-MAP:URI=','',[]);
+                    Line := StringReplace(Line,'"','',[rfReplaceAll]);
                     Fragments.Add(GetRelativeUrl(BestPlaylistUrl, Line));
                     if not Result then
                       begin
