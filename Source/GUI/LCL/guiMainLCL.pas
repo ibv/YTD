@@ -684,6 +684,7 @@ begin
             {$IFNDEF F-PC}
             iStateImage := 4;
             {$ENDIF}
+	    sProgress := '';
           end;
         end;
         dtsFinished:
@@ -714,8 +715,9 @@ begin
           end;
         end;
         dtsAborted:
-          sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize,
-            DlItem.DownloadedSize - DlItem.LastFragment, TickDelta(DlItem.TimeTick, GetTick));
+          ///sProgress := GetProgressStr(DlItem.DownloadedSize, DlItem.TotalSize,
+            ///DlItem.DownloadedSize - DlItem.LastFragment, TickDelta(DlItem.TimeTick, GetTick));
+	  sProgress := '';
       end;
       {$IFNDEF F-PC}
       Item.StateIndex := iStateImage;
@@ -1176,9 +1178,7 @@ begin
         if ind = res[j] then
           mnuResolut[j].Checked := True;
       end;
-
     end;
-
   end;
 end;
 
