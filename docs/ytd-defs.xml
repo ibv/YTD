@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.71.20251026.0</version>
+  <version>1.72.20261030.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -2069,7 +2069,7 @@
         </url>
       </http_download>
     </script>
-    <script id="stream.cz" provider="Stream.cz"  changed="20250505">
+    <script id="stream.cz" provider="Stream.cz"  changed="20261030">
       <regexps>
         <regexp id="title" match="TITLE"><![CDATA[<title>(?P<TITLE>.*?)</title]]></regexp>
         <regexp id="url" match="URL"><![CDATA["spl":"(?P<URL>.*?)",]]></regexp>
@@ -2092,14 +2092,12 @@
           </url>
         </download_page>
       </set_var>
-      
       <hls_download>
         <title>
           <replace search=" | Stream" replacement=""><regexp id="title" content="page"/></replace>
         </title>
         <url>
-          <!--regexp id="url" content="page"/-->
-          <regexp id="playlist" content="url"/><copy start="2"><get_json_var id="page2" path="pls/hls/url"/></copy>
+          <regexp id="playlist" content="url"/><copy start="2"><get_json_var id="page2" path="pls/hls_fmp4/url"/></copy>
         </url>
         <extension>.ts</extension>
       </hls_download>
