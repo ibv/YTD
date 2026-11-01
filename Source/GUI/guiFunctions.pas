@@ -86,8 +86,11 @@ var n: int64;
     s: string;
 begin
   Result := PrettySize(DoneSize);
-  s := PrettySize(round(DoneFragment*1000/(DTime)));
-  if s = '' then s:=IntToStr(round(DoneFragment*1000/(DTime)));
+  if DTime<>0 then
+  begin
+    s := PrettySize(round(DoneFragment*1000/(DTime)));
+    if s = '' then s:=IntToStr(round(DoneFragment*1000/(DTime)));
+  end;
   if TotalSize > 0 then
     begin
     n := 1000*DoneSize div TotalSize;
