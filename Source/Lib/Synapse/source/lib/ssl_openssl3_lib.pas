@@ -103,32 +103,46 @@ uses
 var
   {$IFNDEF MSWINDOWS}
     {$IFDEF DARWIN}
-    DLLSSLName: string = 'libssl.3.dylib';
-    DLLUtilName: string = 'libcrypto.3.dylib';
+    ///DLLSSLName: string = 'libssl.3.dylib';
+    ///DLLUtilName: string = 'libcrypto.3.dylib';
+    DLLSSLNames: array[1..1] of string = ('libssl.3.dylib');
+    DLLUtilNames: array[1..1] of string = ('libcrypto.3.dylib');
     {$ELSE}
      {$IFDEF OS2}
       {$IFDEF OS2GCC}
-    DLLSSLName: string = 'kssl.dll';
-    DLLUtilName: string = 'kcrypto.dll';
+    ///DLLSSLName: string = 'kssl.dll';
+    ///DLLUtilName: string = 'kcrypto.dll';
+    DLLSSLNames: array[1..1] of string = ('kssl.dll');
+    DLLUtilNames: array[1..1] of string = ('kcrypto.dll');
       {$ELSE OS2GCC}
-    DLLSSLName: string = 'ssl.dll';
-    DLLUtilName: string = 'crypto.dll';
+    ///DLLSSLName: string = 'ssl.dll';
+    ///DLLUtilName: string = 'crypto.dll';
+    DLLSSLNames: array[1..1] of string = ('ssl.dll');
+    DLLUtilNames: array[1..1] of string = ('crypto.dll');
       {$ENDIF OS2GCC}
      {$ELSE OS2} //linux
-    DLLSSLName: string = 'libssl.so.3';
-    DLLUtilName: string = 'libcrypto.so.3';
+    ///DLLSSLName: string = 'libssl.so.3';
+    ///DLLUtilName: string = 'libcrypto.so.3';
+    DLLSSLNames: array[1..1] of string = ('libssl.so.3');
+    DLLUtilNames: array[1..1] of string = ('libcrypto.so.3');
      {$ENDIF OS2}
     {$ENDIF}
   {$ELSE}
     {$IFDEF WIN64}
-  DLLSSLName: string = 'libssl-3-x64.dll';
-  DLLUtilName: string = 'libcrypto-3-x64.dll';
+  ///DLLSSLName: string = 'libssl-3-x64.dll';
+  ///DLLUtilName: string = 'libcrypto-3-x64.dll';
+  DLLSSLNames: array[1..2] of string = ('libssl-4-x64.dll','libssl-3-x64.dll');
+  DLLUtilNames: array[1..2] of string = ('libcrypto-4-x64.dll','libcrypto-3-x64.dll');
     {$ELSE}
-  DLLSSLName: string = 'libssl-3.dll';
-  DLLUtilName: string = 'libcrypto-3.dll';
+  ///DLLSSLName: string = 'libssl-3.dll';
+  ///DLLUtilName: string = 'libcrypto-3.dll';
+  DLLSSLNames: array[1..2] of string = ('libssl-4.dll','libssl-3.dll');
+  DLLUtilNames: array[1..2] of string = ('libcrypto-4.dll','libcrypto-3.dll');
     {$ENDIF}
   {$ENDIF}
 
+
+  
 type
   SslPtr = Pointer;
   PSslPtr = ^SslPtr;
@@ -1257,7 +1271,7 @@ end;
 function InitSSLInterface: Boolean;
 var
   s: string;
-  x: integer;
+  x,i: integer;
 begin
   {pf}
   if SSLLoaded then
@@ -1270,8 +1284,22 @@ begin
   try
     if not IsSSLloaded then
     begin
-      SSLUtilHandle := LoadLib(DLLUtilName);
-      SSLLibHandle := LoadLib(DLLSSLName);
+      ///SSLUtilHandle := LoadLib(DLLUtilName);
+      ///SSLLibHandle := LoadLib(DLLSSLName);
+      {$IFDEF CIL}
+            SSLLibHandle := 1;
+            SSLUtilHandle := 1;
+      {$ELSE}
+            for i := low(DLLUtilNames) to high(DLLUtilNames) do begin
+              SSLUtilHandle := LoadLib(DLLUtilNames[i]);
+              if SSLUtilHandle <> 0 then break;
+            end;
+            for i := low(DLLSSLNames) to high(DLLSSLNames) do begin
+              SSLLibHandle := LoadLib(DLLSSLNames[i]);
+              if SSLLibHandle <> 0 then break;
+            end;
+      {$ENDIF}
+      
       if (SSLLibHandle <> 0) and (SSLUtilHandle <> 0) then
       begin
         _SslGetError := GetProcAddr(SSLLibHandle, 'SSL_get_error');
