@@ -1,5 +1,5 @@
 <ytd-defs>
-  <version>1.72.20261030.0</version>
+  <version>1.72.20261106.0</version>
   <scripts>
     <script id="1tv.ru" provider="1tv.ru">
       <regexps>
@@ -2188,11 +2188,12 @@
         </url>
       </smoothstream_download>
     </script>
-    <script id="tvnoe.cz" provider="TV Noe.cz" changed="20240901">
+    <script id="tvnoe.cz" provider="TV Noe.cz" changed="20261106">
       <regexps>
         <regexp id="title" match="CONTENT"><![CDATA[<h2>(?P<CONTENT>.*?)</h2>]]></regexp>
         <regexp id="title2" match="TITLE"><![CDATA[<title>(?P<TITLE>.*?)</title>]]></regexp>
-        <regexp id="url" match="URL"><![CDATA[src:.+?'(?P<URL>.+?)',]]></regexp>
+        <regexp id="url_hls" match="URL"><![CDATA[HLS:[\s,\S]*?src:.+?'(?P<URL>.+?)',]]></regexp>
+        <regexp id="url_dash" match="URL"><![CDATA[DASH:[\s,\S]*?src:.+?'(?P<URL>.+?)',]]></regexp>
         <regexp id="duration" match="DURATION"><![CDATA[duration.=.(?P<DURATION>\d+),]]></regexp>
         <regexp id="utctime" match="UTCTIME"><![CDATA[fromUtcTime.=.(?P<UTCTIME>\d+);]]></regexp>
       </regexps>
@@ -2216,7 +2217,7 @@
           </hls_download>
         </condition>          
         <else><!-- ostatni -->  
-          <hls_download>
+          <dash_download>
           <title>
             <decode_html>
               <strip_tags>
@@ -2225,10 +2226,10 @@
             </decode_html>
           </title>
           <url>
-            <regexp id="url" content="page"/>
+            <regexp id="url_dash" content="page"/>
           </url>
-          <extension>.mp4</extension>  
-          </hls_download>
+          <extension>.mpv</extension>  
+          </dash_download>
         </else>
      </if>
     </script>
